@@ -1,0 +1,51 @@
+{
+  "archive": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/drive-download-20261014T092658Z-1-001.zip",
+  "sha256": "b45b809658baaef1f40dc96f83a24b785267dd18a4d02c88790ba6b708072d12",
+  "inventory": [
+    {
+      "filename": "Tableau de bord Angel Care.png",
+      "bytes": 1787533,
+      "sha256": "4f27be7b6e317133941421a1f0aa34f467dc5c2f9c28a154f5e4c02f52109a61"
+    },
+    {
+      "filename": "png2pdf (1).pdf",
+      "bytes": 24472450,
+      "sha256": "c22fa914ffb83c00a57d7af6840b46280f5b0da638c05cbdee2484b32b714018"
+    }
+  ],
+  "extractedTo": "/private/tmp/angelcare-dce-20261014/references",
+  "baselineBackup": "/private/tmp/angelcare-dce-20261014/baseline.tar.gz",
+  "baselineFiles": {
+    "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/continuity.ts": "f2d7ad1fa42aed3acfb66c5f8f0aa500cf9c2bd3ce324c8dfa80e8a9a0d0f258",
+    "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/repository.ts": "a35837ab90c68d8f39c9e79ba4305621784f455cdb8fb978ef54f4af95cf8ff2",
+    "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/processing.ts": "51d42d9817f86a2516a9e229bac3eb37126635618244385a8e32ac8601380d6b",
+    "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/START_HERE.md": "88d8094510635c482fa5986c476ea3d6feee017ff41b2e2be151da583cfb5ced",
+    "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/model.ts": "ebdc828ea747672040b2012569dee71df853fc3f604f7c669049bce709c7dad8",
+    "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/imports.ts": "6af758688301514e7b30862bceca405790d4eb810e95a69d00b36016befe3ae3",
+    "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/types.ts": "621f6bdcf5269610741756707467e27e209f66ff51629f1289af678b4e7bf366",
+    "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/google.ts": "7a84b39de0f9a3cd90f61d0be55dc5e7e08b3650180c738e355567b3e9539261",
+    "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/reception.ts": "eac19afd670d3d116d6e45c3b2bc8fb1d2d9cc8b119d7c2d8d4a37775aab1e88",
+    "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/registry.ts": "e19ec6ad6c25c90faf95bafab9d59d3455c65a27df4b3f0d7e656e7a00c5a12f",
+    "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/database/02_VERIFY_DCE_ADMIN_R1.sql": "8bddf4076c38af78ca98f5d59f3924aff7fb5e0a420d2e9bda6df3a38f2e6060",
+    "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/database/03_DISABLE_DCE_ADMIN_R1.sql": "52c4d4a1543e88026a4c53d4cbc0b481e277eefa8ceac721a864bf43aafe4a9f",
+    "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/database/01_DCE_ADMIN_R1.sql": "671c55acaf19e0001363993f79b42e37a3cf528c48b68acdf111251538b53ee9",
+    "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/workspace.module.css": "ffbcb32281636f5cb84a406bf8f96997a968782323686ea4ca20e5b559a0829b",
+    "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/Dashboard.tsx": "87dafcf9e8884c381e9acad9ed441742f5e6dad95917c375d9e4c958fed12174",
+    "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/Preview.tsx": "37e0dd11c6fd7acccefde20ff5b2e9a5655b306213d636bb877855b7e608bfa4",
+    "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/Editor.tsx": "d985fa13470df8db75fc4c3d56c3d590b2bc0fe4350c3dceb96ec49b13172d07",
+    "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/Imports.tsx": "ac3734f680a81b25447e8600cca2152e8453dc734af93bd546e2eb1c3f4bc063",
+    "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/Registry.tsx": "655e5b480246cba536dc04fd5ccd41452b9bac556d5ab9d0692e20894bf42797",
+    "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/Operations.tsx": "caf7b58fb5f56b8e6cd567da679dcf8907fdde826fb20a27ce2bb717723a9d71",
+    "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/Workspace.tsx": "24d370c306895e9bf2194cc37979e199b8494635d8030970c6c04a93c4f87055",
+    "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/Insights.tsx": "9c9d9e467605f85924a52cb7f51d5b128aa54920d612992e078968b2a2b4b983",
+    "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/Monetization.tsx": "278fb68281f3882de391c87c2043a82421c2c4e81f57a93ca9c7c045839d7211",
+    "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/Media.tsx": "a963a3d4a0dc860b8796947bab14e50a4fad9c55a2081f0891cc85422ad907f7",
+    "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/ui.tsx": "07ea405782d3997ab8304a0bd6ef92376b78259fbea4eb7e255af08d802c079b",
+    "apps/marketplace-web/app/angelcare-marketplace/(protected)/(digital-experience-admin)/admin/digital-customer-experience/layout.tsx": "9d7abb3e685e0e6098a0b0d01c15801722290b3151f12790cd2102b891a7dbaf",
+    "apps/marketplace-web/app/angelcare-marketplace/(protected)/(digital-experience-admin)/admin/digital-customer-experience/[[...section]]/page.tsx": "118a4f66bbe099ca032421fa26e154162a251f1ff1ea116fb7440187bad2837c",
+    "apps/marketplace-web/app/api/angelcare-marketplace/admin/digital-customer-experience/route.ts": "743fc7eadeba4cf97a409666151ba85653b51aeb5a0023538b0b0df0cb910102"
+  },
+  "pdfPageCount": 10,
+  "pageOrder": "physical n is labelled 11-n",
+  "visualInspection": "All 10 pages inspected at 1698\u00d72400 and full dashboard inspected on 2026-10-14"
+}

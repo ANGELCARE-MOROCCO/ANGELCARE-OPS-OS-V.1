@@ -1,5 +1,5 @@
 export type FooterLocale='fr'|'en'|'ar'
-export type FooterStudioMode='command'|'profiles'|'composer'|'themes'|'components'|'contacts'|'navigation'|'localization'|'targeting'|'schedules'|'history'|'analytics'|'settings'
+export type FooterStudioMode='command'|'brand'|'profiles'|'composer'|'themes'|'components'|'contacts'|'navigation'|'localization'|'targeting'|'schedules'|'history'|'analytics'|'settings'
 export type FooterLocalizedText={fr:string;en:string;ar:string}
 export type FooterThemeTokens={background:string;background_alt:string;surface:string;surface_alt:string;text:string;muted:string;accent:string;accent_alt:string;line:string;glow:string;authority:string;success:string;warning:string;radius:number;density:'compact'|'balanced'|'generous';shadow:string}
 export type FooterTheme={id:string;theme_key:string;name:FooterLocalizedText;description:FooterLocalizedText;layout_key:string;tokens:FooterThemeTokens;preview_metadata:Record<string,unknown>;status:'active'|'draft'|'archived';is_system:boolean;updated_at?:string}

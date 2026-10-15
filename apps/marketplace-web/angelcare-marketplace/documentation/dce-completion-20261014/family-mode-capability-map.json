@@ -1,0 +1,3100 @@
+[
+  {
+    "family": "documents",
+    "number": 1,
+    "name": [
+      "Documents & Guides",
+      "Documents & guides",
+      "الوثائق والأدلة"
+    ],
+    "modes": [
+      {
+        "key": "Article Reader",
+        "family": "documents",
+        "engine": "article",
+        "controls": [
+          "subtype",
+          "searchEnabled",
+          "readingWidth"
+        ],
+        "requiredCollections": [
+          "units"
+        ],
+        "description": [
+          "Article Reader authoring and inspection",
+          "Édition et inspection · Article Reader",
+          "التحرير والفحص · Article Reader"
+        ],
+        "version": 2
+      },
+      {
+        "key": "PDF Reader",
+        "family": "documents",
+        "engine": "pdf",
+        "controls": [
+          "searchEnabled"
+        ],
+        "requiredCollections": [
+          "units"
+        ],
+        "description": [
+          "PDF Reader authoring and inspection",
+          "Édition et inspection · PDF Reader",
+          "التحرير والفحص · PDF Reader"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Chaptered Guide",
+        "family": "documents",
+        "engine": "chaptered",
+        "controls": [
+          "searchEnabled"
+        ],
+        "requiredCollections": [
+          "units"
+        ],
+        "description": [
+          "Chaptered Guide authoring and inspection",
+          "Édition et inspection · Chaptered Guide",
+          "التحرير والفحص · Chaptered Guide"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Rich Article",
+        "family": "documents",
+        "engine": "rich",
+        "controls": [
+          "blocks"
+        ],
+        "requiredCollections": [
+          "units"
+        ],
+        "description": [
+          "Rich Article authoring and inspection",
+          "Édition et inspection · Rich Article",
+          "التحرير والفحص · Rich Article"
+        ],
+        "version": 2
+      }
+    ],
+    "actions": [
+      {
+        "id": "read",
+        "label": [
+          "Read",
+          "Lire",
+          "قراءة"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "chapters",
+        "label": [
+          "Chapter navigation",
+          "Navigation par chapitre",
+          "تصفح الفصول"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "save",
+        "label": [
+          "Bookmark",
+          "Marquer pour plus tard",
+          "إشارة مرجعية"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "share",
+        "label": [
+          "Share",
+          "Partager",
+          "مشاركة"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "download",
+        "label": [
+          "Download",
+          "Télécharger",
+          "تنزيل"
+        ],
+        "requires": [
+          "downloadAllowed",
+          "compatible_source"
+        ],
+        "preview": "source"
+      },
+      {
+        "id": "print",
+        "label": [
+          "Print",
+          "Imprimer",
+          "طباعة"
+        ],
+        "requires": [
+          "printAllowed",
+          "print_source"
+        ],
+        "preview": "source"
+      },
+      {
+        "id": "preview",
+        "label": [
+          "Preview",
+          "Aperçu",
+          "معاينة"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "search",
+        "label": [
+          "Search within",
+          "Rechercher dans le contenu",
+          "البحث داخل المحتوى"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "zoom",
+        "label": [
+          "Zoom",
+          "Zoom",
+          "تكبير"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "review",
+        "label": [
+          "Review",
+          "Avis / revue",
+          "مراجعة"
+        ],
+        "requires": [
+          "eligibility",
+          "moderation_policy"
+        ],
+        "preview": "inspect"
+      }
+    ],
+    "collections": [
+      "units",
+      "blocks"
+    ],
+    "originalPage": 9
+  },
+  {
+    "family": "printables",
+    "number": 2,
+    "name": [
+      "Printables & Worksheets",
+      "Imprimables & fiches",
+      "المطبوعات وأوراق العمل"
+    ],
+    "modes": [
+      {
+        "key": "Printable Preview",
+        "family": "printables",
+        "engine": "print",
+        "controls": [
+          "paper",
+          "orientation",
+          "colourMode",
+          "minimumDpi",
+          "printAllowed"
+        ],
+        "requiredCollections": [
+          "units"
+        ],
+        "description": [
+          "Printable Preview authoring and inspection",
+          "Édition et inspection · Printable Preview",
+          "التحرير والفحص · Printable Preview"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Page Carousel",
+        "family": "printables",
+        "engine": "carousel",
+        "controls": [
+          "subtype",
+          "paper",
+          "downloadAllowed",
+          "orientation",
+          "colourMode",
+          "minimumDpi",
+          "edition",
+          "printAllowed"
+        ],
+        "requiredCollections": [
+          "units"
+        ],
+        "description": [
+          "Page Carousel authoring and inspection",
+          "Édition et inspection · Page Carousel",
+          "التحرير والفحص · Page Carousel"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Flipbook Preview",
+        "family": "printables",
+        "engine": "flipbook",
+        "controls": [
+          "subtype",
+          "paper",
+          "downloadAllowed",
+          "orientation",
+          "colourMode",
+          "minimumDpi",
+          "edition",
+          "printAllowed"
+        ],
+        "requiredCollections": [
+          "units"
+        ],
+        "description": [
+          "Flipbook Preview authoring and inspection",
+          "Édition et inspection · Flipbook Preview",
+          "التحرير والفحص · Flipbook Preview"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Download Gate",
+        "family": "printables",
+        "engine": "gate",
+        "controls": [
+          "accessPolicyId",
+          "downloadAllowed"
+        ],
+        "requiredCollections": [
+          "units"
+        ],
+        "description": [
+          "Download Gate authoring and inspection",
+          "Édition et inspection · Download Gate",
+          "التحرير والفحص · Download Gate"
+        ],
+        "version": 2
+      }
+    ],
+    "actions": [
+      {
+        "id": "preview",
+        "label": [
+          "Preview",
+          "Aperçu",
+          "معاينة"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "zoom",
+        "label": [
+          "Zoom",
+          "Zoom",
+          "تكبير"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "download",
+        "label": [
+          "Download",
+          "Télécharger",
+          "تنزيل"
+        ],
+        "requires": [
+          "downloadAllowed",
+          "compatible_source"
+        ],
+        "preview": "source"
+      },
+      {
+        "id": "print",
+        "label": [
+          "Print",
+          "Imprimer",
+          "طباعة"
+        ],
+        "requires": [
+          "printAllowed",
+          "print_source"
+        ],
+        "preview": "source"
+      },
+      {
+        "id": "save",
+        "label": [
+          "Bookmark",
+          "Marquer pour plus tard",
+          "إشارة مرجعية"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "rate",
+        "label": [
+          "Rate",
+          "Noter",
+          "تقييم"
+        ],
+        "requires": [
+          "eligibility",
+          "moderation_policy"
+        ],
+        "preview": "inspect"
+      },
+      {
+        "id": "share",
+        "label": [
+          "Share",
+          "Partager",
+          "مشاركة"
+        ],
+        "requires": [],
+        "preview": "stage"
+      }
+    ],
+    "collections": [
+      "units"
+    ],
+    "originalPage": 9
+  },
+  {
+    "family": "stories",
+    "number": 3,
+    "name": [
+      "Storybooks & Reading",
+      "Histoires & lecture",
+      "القصص والقراءة"
+    ],
+    "modes": [
+      {
+        "key": "Flipbook",
+        "family": "stories",
+        "engine": "flipbook",
+        "controls": [
+          "subtype",
+          "narrationAssetId",
+          "edition",
+          "pageLayout",
+          "pageSeconds"
+        ],
+        "requiredCollections": [
+          "units"
+        ],
+        "description": [
+          "Flipbook authoring and inspection",
+          "Édition et inspection · Flipbook",
+          "التحرير والفحص · Flipbook"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Read-aloud story mode",
+        "family": "stories",
+        "engine": "read_aloud",
+        "controls": [
+          "cues",
+          "narrationAssetId"
+        ],
+        "requiredCollections": [
+          "units"
+        ],
+        "description": [
+          "Read-aloud story mode authoring and inspection",
+          "Édition et inspection · Read-aloud story mode",
+          "التحرير والفحص · Read-aloud story mode"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Immersive reading mode",
+        "family": "stories",
+        "engine": "immersive",
+        "controls": [
+          "readingWidth"
+        ],
+        "requiredCollections": [
+          "units"
+        ],
+        "description": [
+          "Immersive reading mode authoring and inspection",
+          "Édition et inspection · Immersive reading mode",
+          "التحرير والفحص · Immersive reading mode"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Slideshow story mode",
+        "family": "stories",
+        "engine": "slideshow",
+        "controls": [
+          "pageSeconds",
+          "cues"
+        ],
+        "requiredCollections": [
+          "units"
+        ],
+        "description": [
+          "Slideshow story mode authoring and inspection",
+          "Édition et inspection · Slideshow story mode",
+          "التحرير والفحص · Slideshow story mode"
+        ],
+        "version": 2
+      }
+    ],
+    "actions": [
+      {
+        "id": "read",
+        "label": [
+          "Read",
+          "Lire",
+          "قراءة"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "next",
+        "label": [
+          "Next",
+          "Suivant",
+          "التالي"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "narration",
+        "label": [
+          "Narration",
+          "Narration",
+          "السرد"
+        ],
+        "requires": [
+          "locale_narration_source"
+        ],
+        "preview": "stage"
+      },
+      {
+        "id": "bookmark",
+        "label": [
+          "bookmark",
+          "bookmark",
+          "bookmark"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "previous",
+        "label": [
+          "Previous",
+          "Précédent",
+          "السابق"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "fullscreen",
+        "label": [
+          "Fullscreen",
+          "Plein écran",
+          "ملء الشاشة"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "save",
+        "label": [
+          "Bookmark",
+          "Marquer pour plus tard",
+          "إشارة مرجعية"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "share",
+        "label": [
+          "Share",
+          "Partager",
+          "مشاركة"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "rate",
+        "label": [
+          "Rate",
+          "Noter",
+          "تقييم"
+        ],
+        "requires": [
+          "eligibility",
+          "moderation_policy"
+        ],
+        "preview": "inspect"
+      },
+      {
+        "id": "download",
+        "label": [
+          "Download",
+          "Télécharger",
+          "تنزيل"
+        ],
+        "requires": [
+          "downloadAllowed",
+          "compatible_source"
+        ],
+        "preview": "source"
+      }
+    ],
+    "collections": [
+      "units",
+      "cues"
+    ],
+    "originalPage": 8
+  },
+  {
+    "family": "learning",
+    "number": 4,
+    "name": [
+      "Courses & Learning Paths",
+      "Cours & parcours",
+      "الدورات ومسارات التعلّم"
+    ],
+    "modes": [
+      {
+        "key": "Course player",
+        "family": "learning",
+        "engine": "course",
+        "controls": [
+          "subtype",
+          "passingScore",
+          "nativeId",
+          "completion",
+          "allowRestart"
+        ],
+        "requiredCollections": [
+          "units"
+        ],
+        "description": [
+          "Course player authoring and inspection",
+          "Édition et inspection · Course player",
+          "التحرير والفحص · Course player"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Mixed media lesson path",
+        "family": "learning",
+        "engine": "mixed_path",
+        "controls": [
+          "subtype",
+          "passingScore",
+          "nativeId",
+          "completion",
+          "allowRestart"
+        ],
+        "requiredCollections": [
+          "units"
+        ],
+        "description": [
+          "Mixed media lesson path authoring and inspection",
+          "Édition et inspection · Mixed media lesson path",
+          "التحرير والفحص · Mixed media lesson path"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Chaptered video course",
+        "family": "learning",
+        "engine": "video_course",
+        "controls": [
+          "completion"
+        ],
+        "requiredCollections": [
+          "units"
+        ],
+        "description": [
+          "Chaptered video course authoring and inspection",
+          "Édition et inspection · Chaptered video course",
+          "التحرير والفحص · Chaptered video course"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Assessment-linked learning path",
+        "family": "learning",
+        "engine": "assessment_path",
+        "controls": [
+          "passingScore",
+          "questions"
+        ],
+        "requiredCollections": [
+          "units"
+        ],
+        "description": [
+          "Assessment-linked learning path authoring and inspection",
+          "Édition et inspection · Assessment-linked learning path",
+          "التحرير والفحص · Assessment-linked learning path"
+        ],
+        "version": 2
+      }
+    ],
+    "actions": [
+      {
+        "id": "start",
+        "label": [
+          "Start",
+          "Commencer",
+          "بدء"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "resume",
+        "label": [
+          "Resume",
+          "Reprendre",
+          "استئناف"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "complete",
+        "label": [
+          "Complete",
+          "Terminer",
+          "إكمال"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "practice",
+        "label": [
+          "practice",
+          "practice",
+          "practice"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "resources",
+        "label": [
+          "resources",
+          "resources",
+          "resources"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "next",
+        "label": [
+          "Next",
+          "Suivant",
+          "التالي"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "quiz",
+        "label": [
+          "Assessment",
+          "Évaluation",
+          "تقييم المعرفة"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "download",
+        "label": [
+          "Download",
+          "Télécharger",
+          "تنزيل"
+        ],
+        "requires": [
+          "downloadAllowed",
+          "compatible_source"
+        ],
+        "preview": "source"
+      },
+      {
+        "id": "review",
+        "label": [
+          "Review",
+          "Avis / revue",
+          "مراجعة"
+        ],
+        "requires": [
+          "eligibility",
+          "moderation_policy"
+        ],
+        "preview": "inspect"
+      },
+      {
+        "id": "restart",
+        "label": [
+          "Restart",
+          "Recommencer",
+          "إعادة البدء"
+        ],
+        "requires": [],
+        "preview": "stage"
+      }
+    ],
+    "collections": [
+      "units",
+      "questions"
+    ],
+    "originalPage": 8
+  },
+  {
+    "family": "video",
+    "number": 5,
+    "name": [
+      "Video Learning & Tutorials",
+      "Vidéos & tutoriels",
+      "الفيديوهات التعليمية"
+    ],
+    "modes": [
+      {
+        "key": "Cinematic Player",
+        "family": "video",
+        "engine": "cinematic",
+        "controls": [
+          "subtype",
+          "captionAssetId",
+          "transcript",
+          "posterAssetId",
+          "experienceId",
+          "completionPolicy",
+          "completionPercent"
+        ],
+        "requiredCollections": [
+          "units"
+        ],
+        "description": [
+          "Cinematic Player authoring and inspection",
+          "Édition et inspection · Cinematic Player",
+          "التحرير والفحص · Cinematic Player"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Tutorial Player with Chapters",
+        "family": "video",
+        "engine": "chapters",
+        "controls": [
+          "chapters",
+          "captions"
+        ],
+        "requiredCollections": [
+          "units"
+        ],
+        "description": [
+          "Tutorial Player with Chapters authoring and inspection",
+          "Édition et inspection · Tutorial Player with Chapters",
+          "التحرير والفحص · Tutorial Player with Chapters"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Course-Linked Video",
+        "family": "video",
+        "engine": "course_link",
+        "controls": [
+          "experienceId"
+        ],
+        "requiredCollections": [
+          "units"
+        ],
+        "description": [
+          "Course-Linked Video authoring and inspection",
+          "Édition et inspection · Course-Linked Video",
+          "التحرير والفحص · Course-Linked Video"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Vertical / Mobile Video Viewer",
+        "family": "video",
+        "engine": "vertical",
+        "controls": [
+          "posterAssetId"
+        ],
+        "requiredCollections": [
+          "units"
+        ],
+        "description": [
+          "Vertical / Mobile Video Viewer authoring and inspection",
+          "Édition et inspection · Vertical / Mobile Video Viewer",
+          "التحرير والفحص · Vertical / Mobile Video Viewer"
+        ],
+        "version": 2
+      }
+    ],
+    "actions": [
+      {
+        "id": "play",
+        "label": [
+          "Play",
+          "Lire",
+          "تشغيل"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "seek",
+        "label": [
+          "Seek",
+          "Changer de position",
+          "تغيير الموضع"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "speed",
+        "label": [
+          "Playback speed",
+          "Vitesse de lecture",
+          "سرعة التشغيل"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "chapters",
+        "label": [
+          "Chapter navigation",
+          "Navigation par chapitre",
+          "تصفح الفصول"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "captions",
+        "label": [
+          "Captions",
+          "Sous-titres",
+          "الترجمة النصية"
+        ],
+        "requires": [
+          "caption_source_or_timed_cues"
+        ],
+        "preview": "stage"
+      },
+      {
+        "id": "pause",
+        "label": [
+          "Pause",
+          "Pause",
+          "إيقاف مؤقت"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "fullscreen",
+        "label": [
+          "Fullscreen",
+          "Plein écran",
+          "ملء الشاشة"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "share",
+        "label": [
+          "Share",
+          "Partager",
+          "مشاركة"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "save",
+        "label": [
+          "Bookmark",
+          "Marquer pour plus tard",
+          "إشارة مرجعية"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "review",
+        "label": [
+          "Review",
+          "Avis / revue",
+          "مراجعة"
+        ],
+        "requires": [
+          "eligibility",
+          "moderation_policy"
+        ],
+        "preview": "inspect"
+      }
+    ],
+    "collections": [
+      "units",
+      "chapters",
+      "captions"
+    ],
+    "originalPage": 7
+  },
+  {
+    "family": "audio",
+    "number": 6,
+    "name": [
+      "Audio, Podcasts & Narration",
+      "Audio, podcasts & narration",
+      "الصوت والسرد"
+    ],
+    "modes": [
+      {
+        "key": "Audio Player",
+        "family": "audio",
+        "engine": "single_audio",
+        "controls": [
+          "subtype",
+          "transcript",
+          "downloadAllowed",
+          "completionPolicy",
+          "seekSeconds"
+        ],
+        "requiredCollections": [
+          "units"
+        ],
+        "description": [
+          "Audio Player authoring and inspection",
+          "Édition et inspection · Audio Player",
+          "التحرير والفحص · Audio Player"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Playlist Mode",
+        "family": "audio",
+        "engine": "playlist",
+        "controls": [
+          "subtype",
+          "transcript",
+          "downloadAllowed",
+          "completionPolicy",
+          "seekSeconds"
+        ],
+        "requiredCollections": [
+          "units"
+        ],
+        "description": [
+          "Playlist Mode authoring and inspection",
+          "Édition et inspection · Playlist Mode",
+          "التحرير والفحص · Playlist Mode"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Chaptered Podcast",
+        "family": "audio",
+        "engine": "podcast",
+        "controls": [
+          "chapters"
+        ],
+        "requiredCollections": [
+          "units"
+        ],
+        "description": [
+          "Chaptered Podcast authoring and inspection",
+          "Édition et inspection · Chaptered Podcast",
+          "التحرير والفحص · Chaptered Podcast"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Narrated Story Mode",
+        "family": "audio",
+        "engine": "narrated",
+        "controls": [
+          "transcript"
+        ],
+        "requiredCollections": [
+          "units"
+        ],
+        "description": [
+          "Narrated Story Mode authoring and inspection",
+          "Édition et inspection · Narrated Story Mode",
+          "التحرير والفحص · Narrated Story Mode"
+        ],
+        "version": 2
+      }
+    ],
+    "actions": [
+      {
+        "id": "play",
+        "label": [
+          "Play",
+          "Lire",
+          "تشغيل"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "seek",
+        "label": [
+          "Seek",
+          "Changer de position",
+          "تغيير الموضع"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "speed",
+        "label": [
+          "Playback speed",
+          "Vitesse de lecture",
+          "سرعة التشغيل"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "queue",
+        "label": [
+          "Queue",
+          "File d’écoute",
+          "قائمة الاستماع"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "save",
+        "label": [
+          "Bookmark",
+          "Marquer pour plus tard",
+          "إشارة مرجعية"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "pause",
+        "label": [
+          "Pause",
+          "Pause",
+          "إيقاف مؤقت"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "download",
+        "label": [
+          "Download",
+          "Télécharger",
+          "تنزيل"
+        ],
+        "requires": [
+          "downloadAllowed",
+          "compatible_source"
+        ],
+        "preview": "source"
+      },
+      {
+        "id": "share",
+        "label": [
+          "Share",
+          "Partager",
+          "مشاركة"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "review",
+        "label": [
+          "Review",
+          "Avis / revue",
+          "مراجعة"
+        ],
+        "requires": [
+          "eligibility",
+          "moderation_policy"
+        ],
+        "preview": "inspect"
+      }
+    ],
+    "collections": [
+      "units",
+      "chapters"
+    ],
+    "originalPage": 7
+  },
+  {
+    "family": "visual-cards",
+    "number": 7,
+    "name": [
+      "Image Galleries & Visual Cards",
+      "Galeries & cartes visuelles",
+      "الصور والبطاقات"
+    ],
+    "modes": [
+      {
+        "key": "Image Gallery",
+        "family": "visual-cards",
+        "engine": "gallery",
+        "controls": [
+          "columns",
+          "imageFit"
+        ],
+        "requiredCollections": [
+          "cards"
+        ],
+        "description": [
+          "Image Gallery authoring and inspection",
+          "Édition et inspection · Image Gallery",
+          "التحرير والفحص · Image Gallery"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Card Swiper",
+        "family": "visual-cards",
+        "engine": "swipe",
+        "controls": [
+          "subtype",
+          "imageFit",
+          "columns",
+          "allowZoom",
+          "shuffle"
+        ],
+        "requiredCollections": [
+          "cards"
+        ],
+        "description": [
+          "Card Swiper authoring and inspection",
+          "Édition et inspection · Card Swiper",
+          "التحرير والفحص · Card Swiper"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Lightbox Mode",
+        "family": "visual-cards",
+        "engine": "lightbox",
+        "controls": [
+          "allowZoom"
+        ],
+        "requiredCollections": [
+          "cards"
+        ],
+        "description": [
+          "Lightbox Mode authoring and inspection",
+          "Édition et inspection · Lightbox Mode",
+          "التحرير والفحص · Lightbox Mode"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Flashcard Study Mode",
+        "family": "visual-cards",
+        "engine": "study",
+        "controls": [
+          "shuffle"
+        ],
+        "requiredCollections": [
+          "cards"
+        ],
+        "description": [
+          "Flashcard Study Mode authoring and inspection",
+          "Édition et inspection · Flashcard Study Mode",
+          "التحرير والفحص · Flashcard Study Mode"
+        ],
+        "version": 2
+      }
+    ],
+    "actions": [
+      {
+        "id": "zoom",
+        "label": [
+          "Zoom",
+          "Zoom",
+          "تكبير"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "swipe",
+        "label": [
+          "Swipe cards",
+          "Parcourir les cartes",
+          "تصفح البطاقات"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "study",
+        "label": [
+          "study",
+          "study",
+          "study"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "save",
+        "label": [
+          "Bookmark",
+          "Marquer pour plus tard",
+          "إشارة مرجعية"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "fullscreen",
+        "label": [
+          "Fullscreen",
+          "Plein écran",
+          "ملء الشاشة"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "share",
+        "label": [
+          "Share",
+          "Partager",
+          "مشاركة"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "favorite",
+        "label": [
+          "Favorite",
+          "Favori",
+          "مفضلة"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "download",
+        "label": [
+          "Download",
+          "Télécharger",
+          "تنزيل"
+        ],
+        "requires": [
+          "downloadAllowed",
+          "compatible_source"
+        ],
+        "preview": "source"
+      },
+      {
+        "id": "review",
+        "label": [
+          "Review",
+          "Avis / revue",
+          "مراجعة"
+        ],
+        "requires": [
+          "eligibility",
+          "moderation_policy"
+        ],
+        "preview": "inspect"
+      }
+    ],
+    "collections": [
+      "cards"
+    ],
+    "originalPage": 6
+  },
+  {
+    "family": "presentations",
+    "number": 8,
+    "name": [
+      "Presentations & FramePlay",
+      "Présentations & FramePlay",
+      "العروض والإطارات"
+    ],
+    "modes": [
+      {
+        "key": "Slide Player",
+        "family": "presentations",
+        "engine": "slides",
+        "controls": [
+          "subtype",
+          "loop",
+          "navigationAllowed",
+          "defaultSeconds"
+        ],
+        "requiredCollections": [
+          "frames"
+        ],
+        "description": [
+          "Slide Player authoring and inspection",
+          "Édition et inspection · Slide Player",
+          "التحرير والفحص · Slide Player"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Frame-by-Frame Mode",
+        "family": "presentations",
+        "engine": "frames",
+        "controls": [
+          "subtype",
+          "loop",
+          "navigationAllowed",
+          "defaultSeconds"
+        ],
+        "requiredCollections": [
+          "frames"
+        ],
+        "description": [
+          "Frame-by-Frame Mode authoring and inspection",
+          "Édition et inspection · Frame-by-Frame Mode",
+          "التحرير والفحص · Frame-by-Frame Mode"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Presenter Mode",
+        "family": "presentations",
+        "engine": "presenter",
+        "controls": [
+          "frames"
+        ],
+        "requiredCollections": [
+          "frames"
+        ],
+        "description": [
+          "Presenter Mode authoring and inspection",
+          "Édition et inspection · Presenter Mode",
+          "التحرير والفحص · Presenter Mode"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Autoplay Storytelling",
+        "family": "presentations",
+        "engine": "autoplay",
+        "controls": [
+          "loop",
+          "defaultSeconds"
+        ],
+        "requiredCollections": [
+          "frames"
+        ],
+        "description": [
+          "Autoplay Storytelling authoring and inspection",
+          "Édition et inspection · Autoplay Storytelling",
+          "التحرير والفحص · Autoplay Storytelling"
+        ],
+        "version": 2
+      }
+    ],
+    "actions": [
+      {
+        "id": "next",
+        "label": [
+          "Next",
+          "Suivant",
+          "التالي"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "previous",
+        "label": [
+          "Previous",
+          "Précédent",
+          "السابق"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "jump",
+        "label": [
+          "Jump to frame",
+          "Aller à une frame",
+          "الانتقال لإطار"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "notes",
+        "label": [
+          "Presenter notes",
+          "Notes du présentateur",
+          "ملاحظات المقدم"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "autoplay",
+        "label": [
+          "autoplay",
+          "autoplay",
+          "autoplay"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "fullscreen",
+        "label": [
+          "Fullscreen",
+          "Plein écran",
+          "ملء الشاشة"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "download",
+        "label": [
+          "Download",
+          "Télécharger",
+          "تنزيل"
+        ],
+        "requires": [
+          "downloadAllowed",
+          "compatible_source"
+        ],
+        "preview": "source"
+      },
+      {
+        "id": "save",
+        "label": [
+          "Bookmark",
+          "Marquer pour plus tard",
+          "إشارة مرجعية"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "share",
+        "label": [
+          "Share",
+          "Partager",
+          "مشاركة"
+        ],
+        "requires": [],
+        "preview": "stage"
+      }
+    ],
+    "collections": [
+      "frames"
+    ],
+    "originalPage": 6
+  },
+  {
+    "family": "assessments",
+    "number": 9,
+    "name": [
+      "Quizzes, Assessments & Exams",
+      "Quiz & évaluations",
+      "الاختبارات والتقييم"
+    ],
+    "modes": [
+      {
+        "key": "Quiz Player",
+        "family": "assessments",
+        "engine": "quiz",
+        "controls": [
+          "subtype",
+          "minutes",
+          "attemptLimit",
+          "passingScore",
+          "feedbackPolicy",
+          "retryPolicy",
+          "shuffle",
+          "successText"
+        ],
+        "requiredCollections": [
+          "questions"
+        ],
+        "description": [
+          "Quiz Player authoring and inspection",
+          "Édition et inspection · Quiz Player",
+          "التحرير والفحص · Quiz Player"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Timed Assessment Mode",
+        "family": "assessments",
+        "engine": "timed",
+        "controls": [
+          "minutes",
+          "attemptLimit",
+          "retryPolicy"
+        ],
+        "requiredCollections": [
+          "questions"
+        ],
+        "description": [
+          "Timed Assessment Mode authoring and inspection",
+          "Édition et inspection · Timed Assessment Mode",
+          "التحرير والفحص · Timed Assessment Mode"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Practice Test Mode",
+        "family": "assessments",
+        "engine": "practice",
+        "controls": [
+          "feedbackPolicy",
+          "retryPolicy"
+        ],
+        "requiredCollections": [
+          "questions"
+        ],
+        "description": [
+          "Practice Test Mode authoring and inspection",
+          "Édition et inspection · Practice Test Mode",
+          "التحرير والفحص · Practice Test Mode"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Result Dashboard",
+        "family": "assessments",
+        "engine": "results",
+        "controls": [
+          "passingScore",
+          "successText"
+        ],
+        "requiredCollections": [
+          "questions"
+        ],
+        "description": [
+          "Result Dashboard authoring and inspection",
+          "Édition et inspection · Result Dashboard",
+          "التحرير والفحص · Result Dashboard"
+        ],
+        "version": 2
+      }
+    ],
+    "actions": [
+      {
+        "id": "start",
+        "label": [
+          "Start",
+          "Commencer",
+          "بدء"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "answer",
+        "label": [
+          "Answer",
+          "Répondre",
+          "إجابة"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "submit",
+        "label": [
+          "Submit",
+          "Soumettre",
+          "إرسال"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "retry",
+        "label": [
+          "Retry",
+          "Réessayer",
+          "إعادة المحاولة"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "results",
+        "label": [
+          "results",
+          "results",
+          "results"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "next",
+        "label": [
+          "Next",
+          "Suivant",
+          "التالي"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "review",
+        "label": [
+          "Review",
+          "Avis / revue",
+          "مراجعة"
+        ],
+        "requires": [
+          "eligibility",
+          "moderation_policy"
+        ],
+        "preview": "inspect"
+      },
+      {
+        "id": "save_results",
+        "label": [
+          "Save results",
+          "Enregistrer les résultats",
+          "حفظ النتائج"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "share_results",
+        "label": [
+          "Share results",
+          "Partager les résultats",
+          "مشاركة النتائج"
+        ],
+        "requires": [],
+        "preview": "stage"
+      }
+    ],
+    "collections": [
+      "questions"
+    ],
+    "originalPage": 5
+  },
+  {
+    "family": "activities",
+    "number": 10,
+    "name": [
+      "Interactive Activities & Games",
+      "Activités & jeux",
+      "الأنشطة والألعاب"
+    ],
+    "modes": [
+      {
+        "key": "Game Canvas",
+        "family": "activities",
+        "engine": "canvas",
+        "controls": [
+          "subtype",
+          "engine",
+          "goal",
+          "accessibleText",
+          "attemptLimit",
+          "challengeSeconds",
+          "hintsEnabled"
+        ],
+        "requiredCollections": [
+          "tasks"
+        ],
+        "description": [
+          "Game Canvas authoring and inspection",
+          "Édition et inspection · Game Canvas",
+          "التحرير والفحص · Game Canvas"
+        ],
+        "version": 2,
+        "allowedEngines": [
+          "matching",
+          "memory",
+          "sequence",
+          "sorting",
+          "choice"
+        ]
+      },
+      {
+        "key": "Activity Stepper",
+        "family": "activities",
+        "engine": "stepper",
+        "controls": [
+          "subtype",
+          "engine",
+          "goal",
+          "accessibleText",
+          "attemptLimit",
+          "challengeSeconds",
+          "hintsEnabled"
+        ],
+        "requiredCollections": [
+          "tasks"
+        ],
+        "description": [
+          "Activity Stepper authoring and inspection",
+          "Édition et inspection · Activity Stepper",
+          "التحرير والفحص · Activity Stepper"
+        ],
+        "version": 2,
+        "allowedEngines": [
+          "matching",
+          "memory",
+          "sequence",
+          "sorting",
+          "choice"
+        ]
+      },
+      {
+        "key": "Simulation Mode",
+        "family": "activities",
+        "engine": "simulation",
+        "controls": [
+          "goal",
+          "tasks"
+        ],
+        "requiredCollections": [
+          "tasks"
+        ],
+        "description": [
+          "Simulation Mode authoring and inspection",
+          "Édition et inspection · Simulation Mode",
+          "التحرير والفحص · Simulation Mode"
+        ],
+        "version": 2,
+        "allowedEngines": [
+          "choice",
+          "sorting"
+        ]
+      },
+      {
+        "key": "Challenge Mode",
+        "family": "activities",
+        "engine": "challenge",
+        "controls": [
+          "challengeSeconds",
+          "attemptLimit"
+        ],
+        "requiredCollections": [
+          "tasks"
+        ],
+        "description": [
+          "Challenge Mode authoring and inspection",
+          "Édition et inspection · Challenge Mode",
+          "التحرير والفحص · Challenge Mode"
+        ],
+        "version": 2,
+        "allowedEngines": [
+          "matching",
+          "memory",
+          "sequence",
+          "sorting",
+          "choice"
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "id": "start",
+        "label": [
+          "Start",
+          "Commencer",
+          "بدء"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "interact",
+        "label": [
+          "Interact",
+          "Interagir",
+          "تفاعل"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "validate",
+        "label": [
+          "Validate",
+          "Valider",
+          "تحقق"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "retry",
+        "label": [
+          "Retry",
+          "Réessayer",
+          "إعادة المحاولة"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "checkpoint",
+        "label": [
+          "checkpoint",
+          "checkpoint",
+          "checkpoint"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "save_progress",
+        "label": [
+          "Save progress",
+          "Enregistrer la progression",
+          "حفظ التقدم"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "complete",
+        "label": [
+          "Complete",
+          "Terminer",
+          "إكمال"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "share_achievement",
+        "label": [
+          "Share achievement",
+          "Partager la réussite",
+          "مشاركة الإنجاز"
+        ],
+        "requires": [],
+        "preview": "stage"
+      }
+    ],
+    "collections": [
+      "tasks"
+    ],
+    "originalPage": 5
+  },
+  {
+    "family": "tools",
+    "number": 11,
+    "name": [
+      "Tools, Calculators & Simulators",
+      "Outils & simulateurs",
+      "الأدوات والمحاكاة"
+    ],
+    "modes": [
+      {
+        "key": "Interactive Tool Runtime",
+        "family": "tools",
+        "engine": "interactive",
+        "controls": [
+          "subtype",
+          "operation",
+          "outputUnit",
+          "methodology",
+          "model",
+          "modelVersion",
+          "assumptions",
+          "factor",
+          "precision",
+          "exportAllowed"
+        ],
+        "requiredCollections": [
+          "inputs"
+        ],
+        "description": [
+          "Interactive Tool Runtime authoring and inspection",
+          "Édition et inspection · Interactive Tool Runtime",
+          "التحرير والفحص · Interactive Tool Runtime"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Calculator Panel",
+        "family": "tools",
+        "engine": "calculator",
+        "controls": [
+          "subtype",
+          "operation",
+          "outputUnit",
+          "methodology",
+          "model",
+          "modelVersion",
+          "assumptions",
+          "factor",
+          "precision",
+          "exportAllowed"
+        ],
+        "requiredCollections": [
+          "inputs"
+        ],
+        "description": [
+          "Calculator Panel authoring and inspection",
+          "Édition et inspection · Calculator Panel",
+          "التحرير والفحص · Calculator Panel"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Simulation Dashboard",
+        "family": "tools",
+        "engine": "comparison",
+        "controls": [
+          "model",
+          "assumptions"
+        ],
+        "requiredCollections": [
+          "inputs"
+        ],
+        "description": [
+          "Simulation Dashboard authoring and inspection",
+          "Édition et inspection · Simulation Dashboard",
+          "التحرير والفحص · Simulation Dashboard"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Form-Result Interface",
+        "family": "tools",
+        "engine": "form_result",
+        "controls": [
+          "subtype",
+          "operation",
+          "outputUnit",
+          "methodology",
+          "model",
+          "modelVersion",
+          "assumptions",
+          "factor",
+          "precision",
+          "exportAllowed"
+        ],
+        "requiredCollections": [
+          "inputs"
+        ],
+        "description": [
+          "Form-Result Interface authoring and inspection",
+          "Édition et inspection · Form-Result Interface",
+          "التحرير والفحص · Form-Result Interface"
+        ],
+        "version": 2
+      }
+    ],
+    "actions": [
+      {
+        "id": "calculate",
+        "label": [
+          "Calculate",
+          "Calculer",
+          "حساب"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "compare",
+        "label": [
+          "Compare scenarios",
+          "Comparer les scénarios",
+          "مقارنة السيناريوهات"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "reset",
+        "label": [
+          "Reset",
+          "Réinitialiser",
+          "إعادة ضبط"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "export",
+        "label": [
+          "Export results",
+          "Exporter les résultats",
+          "تصدير النتائج"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "input",
+        "label": [
+          "Enter values",
+          "Saisir les valeurs",
+          "إدخال القيم"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "save_results",
+        "label": [
+          "Save results",
+          "Enregistrer les résultats",
+          "حفظ النتائج"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "share",
+        "label": [
+          "Share",
+          "Partager",
+          "مشاركة"
+        ],
+        "requires": [],
+        "preview": "stage"
+      }
+    ],
+    "collections": [
+      "inputs"
+    ],
+    "originalPage": 4
+  },
+  {
+    "family": "planners",
+    "number": 12,
+    "name": [
+      "Planners, Checklists & Templates",
+      "Plannings, listes & modèles",
+      "المخططات والقوائم"
+    ],
+    "modes": [
+      {
+        "key": "Printable Preview",
+        "family": "planners",
+        "engine": "print",
+        "controls": [
+          "paper",
+          "orientation",
+          "colourMode",
+          "minimumDpi",
+          "printAllowed"
+        ],
+        "requiredCollections": [
+          "items"
+        ],
+        "description": [
+          "Printable Preview authoring and inspection",
+          "Édition et inspection · Printable Preview",
+          "التحرير والفحص · Printable Preview"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Editable Planner View",
+        "family": "planners",
+        "engine": "editable",
+        "controls": [
+          "subtype",
+          "savingPolicy",
+          "exportAllowed",
+          "printAllowed"
+        ],
+        "requiredCollections": [
+          "items"
+        ],
+        "description": [
+          "Editable Planner View authoring and inspection",
+          "Édition et inspection · Editable Planner View",
+          "التحرير والفحص · Editable Planner View"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Template Gallery",
+        "family": "planners",
+        "engine": "template_gallery",
+        "controls": [
+          "subtype",
+          "savingPolicy",
+          "exportAllowed",
+          "printAllowed"
+        ],
+        "requiredCollections": [
+          "items"
+        ],
+        "description": [
+          "Template Gallery authoring and inspection",
+          "Édition et inspection · Template Gallery",
+          "التحرير والفحص · Template Gallery"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Checklist Mode",
+        "family": "planners",
+        "engine": "checklist",
+        "controls": [
+          "subtype",
+          "savingPolicy",
+          "exportAllowed",
+          "printAllowed"
+        ],
+        "requiredCollections": [
+          "items"
+        ],
+        "description": [
+          "Checklist Mode authoring and inspection",
+          "Édition et inspection · Checklist Mode",
+          "التحرير والفحص · Checklist Mode"
+        ],
+        "version": 2
+      }
+    ],
+    "actions": [
+      {
+        "id": "duplicate",
+        "label": [
+          "Make a personal copy",
+          "Créer une copie personnelle",
+          "إنشاء نسخة شخصية"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "edit",
+        "label": [
+          "Edit draft",
+          "Modifier le brouillon",
+          "تعديل المسودة"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "check",
+        "label": [
+          "Check off items",
+          "Cocher les éléments",
+          "تحديد العناصر المنجزة"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "save",
+        "label": [
+          "Bookmark",
+          "Marquer pour plus tard",
+          "إشارة مرجعية"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "print",
+        "label": [
+          "Print",
+          "Imprimer",
+          "طباعة"
+        ],
+        "requires": [
+          "printAllowed",
+          "print_source"
+        ],
+        "preview": "source"
+      },
+      {
+        "id": "preview",
+        "label": [
+          "Preview",
+          "Aperçu",
+          "معاينة"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "download",
+        "label": [
+          "Download",
+          "Télécharger",
+          "تنزيل"
+        ],
+        "requires": [
+          "downloadAllowed",
+          "compatible_source"
+        ],
+        "preview": "source"
+      },
+      {
+        "id": "share",
+        "label": [
+          "Share",
+          "Partager",
+          "مشاركة"
+        ],
+        "requires": [],
+        "preview": "stage"
+      }
+    ],
+    "collections": [
+      "items"
+    ],
+    "originalPage": 4
+  },
+  {
+    "family": "forms",
+    "number": 13,
+    "name": [
+      "Forms, Applications & Submissions",
+      "Formulaires & demandes",
+      "النماذج والطلبات"
+    ],
+    "modes": [
+      {
+        "key": "Form Flow",
+        "family": "forms",
+        "engine": "form",
+        "controls": [
+          "subtype",
+          "destination",
+          "consentLabel",
+          "responsibleStaffId",
+          "responsibleTeam",
+          "draftPolicy",
+          "privateReceiverId",
+          "attachmentTypes",
+          "attachmentMaxMb",
+          "statusWorkflow"
+        ],
+        "requiredCollections": [
+          "fields"
+        ],
+        "description": [
+          "Form Flow authoring and inspection",
+          "Édition et inspection · Form Flow",
+          "التحرير والفحص · Form Flow"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Multistep Application",
+        "family": "forms",
+        "engine": "multistep",
+        "controls": [
+          "fields",
+          "draftPolicy"
+        ],
+        "requiredCollections": [
+          "fields"
+        ],
+        "description": [
+          "Multistep Application authoring and inspection",
+          "Édition et inspection · Multistep Application",
+          "التحرير والفحص · Multistep Application"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Upload-Enabled Submission Page",
+        "family": "forms",
+        "engine": "upload",
+        "controls": [
+          "privateReceiverId",
+          "attachmentTypes",
+          "attachmentMaxMb"
+        ],
+        "requiredCollections": [
+          "fields"
+        ],
+        "description": [
+          "Upload-Enabled Submission Page authoring and inspection",
+          "Édition et inspection · Upload-Enabled Submission Page",
+          "التحرير والفحص · Upload-Enabled Submission Page"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Booking Request Flow",
+        "family": "forms",
+        "engine": "booking_request",
+        "controls": [
+          "destination",
+          "responsibleTeam"
+        ],
+        "requiredCollections": [
+          "fields"
+        ],
+        "description": [
+          "Booking Request Flow authoring and inspection",
+          "Édition et inspection · Booking Request Flow",
+          "التحرير والفحص · Booking Request Flow"
+        ],
+        "version": 2
+      }
+    ],
+    "actions": [
+      {
+        "id": "draft",
+        "label": [
+          "draft",
+          "draft",
+          "draft"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "upload",
+        "label": [
+          "Protected attachment",
+          "Pièce jointe protégée",
+          "مرفق محمي"
+        ],
+        "requires": [
+          "file_field",
+          "protected_native_receiver"
+        ],
+        "preview": "inspect"
+      },
+      {
+        "id": "submit",
+        "label": [
+          "Submit",
+          "Soumettre",
+          "إرسال"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "receipt",
+        "label": [
+          "receipt",
+          "receipt",
+          "receipt"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "status",
+        "label": [
+          "status",
+          "status",
+          "status"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "fill",
+        "label": [
+          "Fill form",
+          "Remplir le formulaire",
+          "تعبئة النموذج"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "save_draft",
+        "label": [
+          "Save draft",
+          "Enregistrer le brouillon",
+          "حفظ المسودة"
+        ],
+        "requires": [
+          "editable_draft_policy"
+        ],
+        "preview": "stage"
+      },
+      {
+        "id": "confirm",
+        "label": [
+          "Inspect confirmation",
+          "Inspecter la confirmation",
+          "فحص التأكيد"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "edit",
+        "label": [
+          "Edit draft",
+          "Modifier le brouillon",
+          "تعديل المسودة"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "track_status",
+        "label": [
+          "Track receiving status",
+          "Suivre la réception",
+          "متابعة حالة الاستقبال"
+        ],
+        "requires": [],
+        "preview": "inspect"
+      }
+    ],
+    "collections": [
+      "fields"
+    ],
+    "originalPage": 3
+  },
+  {
+    "family": "community",
+    "number": 14,
+    "name": [
+      "Community, Reviews & Social Proof",
+      "Communauté & avis",
+      "المجتمع والآراء"
+    ],
+    "modes": [
+      {
+        "key": "Review Feed",
+        "family": "community",
+        "engine": "review_feed",
+        "controls": [
+          "subtype",
+          "moderation",
+          "contributionPolicy",
+          "eligibility",
+          "ratingsEnabled",
+          "reportsEnabled",
+          "visibilityPolicy",
+          "reportReasons"
+        ],
+        "requiredCollections": [
+          "rules"
+        ],
+        "description": [
+          "Review Feed authoring and inspection",
+          "Édition et inspection · Review Feed",
+          "التحرير والفحص · Review Feed"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Social Proof Wall",
+        "family": "community",
+        "engine": "proof_wall",
+        "controls": [
+          "visibilityPolicy"
+        ],
+        "requiredCollections": [
+          "rules"
+        ],
+        "description": [
+          "Social Proof Wall authoring and inspection",
+          "Édition et inspection · Social Proof Wall",
+          "التحرير والفحص · Social Proof Wall"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Q&A Thread",
+        "family": "community",
+        "engine": "thread",
+        "controls": [
+          "eligibility",
+          "reportsEnabled"
+        ],
+        "requiredCollections": [
+          "rules"
+        ],
+        "description": [
+          "Q&A Thread authoring and inspection",
+          "Édition et inspection · Q&A Thread",
+          "التحرير والفحص · Q&A Thread"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Community Hub",
+        "family": "community",
+        "engine": "hub",
+        "controls": [
+          "subtype",
+          "moderation",
+          "contributionPolicy",
+          "eligibility",
+          "ratingsEnabled",
+          "reportsEnabled",
+          "visibilityPolicy",
+          "reportReasons"
+        ],
+        "requiredCollections": [
+          "rules"
+        ],
+        "description": [
+          "Community Hub authoring and inspection",
+          "Édition et inspection · Community Hub",
+          "التحرير والفحص · Community Hub"
+        ],
+        "version": 2
+      }
+    ],
+    "actions": [
+      {
+        "id": "review",
+        "label": [
+          "Review",
+          "Avis / revue",
+          "مراجعة"
+        ],
+        "requires": [
+          "eligibility",
+          "moderation_policy"
+        ],
+        "preview": "inspect"
+      },
+      {
+        "id": "rate",
+        "label": [
+          "Rate",
+          "Noter",
+          "تقييم"
+        ],
+        "requires": [
+          "eligibility",
+          "moderation_policy"
+        ],
+        "preview": "inspect"
+      },
+      {
+        "id": "comment",
+        "label": [
+          "Comment",
+          "Commenter",
+          "تعليق"
+        ],
+        "requires": [
+          "eligibility",
+          "moderation_policy"
+        ],
+        "preview": "inspect"
+      },
+      {
+        "id": "report",
+        "label": [
+          "Report",
+          "Signaler",
+          "إبلاغ"
+        ],
+        "requires": [
+          "eligibility",
+          "moderation_policy"
+        ],
+        "preview": "inspect"
+      },
+      {
+        "id": "like",
+        "label": [
+          "Like",
+          "Apprécier",
+          "إعجاب"
+        ],
+        "requires": [
+          "eligibility",
+          "moderation_policy"
+        ],
+        "preview": "inspect"
+      },
+      {
+        "id": "share",
+        "label": [
+          "Share",
+          "Partager",
+          "مشاركة"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "save",
+        "label": [
+          "Bookmark",
+          "Marquer pour plus tard",
+          "إشارة مرجعية"
+        ],
+        "requires": [],
+        "preview": "stage"
+      }
+    ],
+    "collections": [
+      "rules"
+    ],
+    "originalPage": 3
+  },
+  {
+    "family": "commerce",
+    "number": 15,
+    "name": [
+      "Commerce-Linked Resource Experiences",
+      "Ressources liées aux offres",
+      "الموارد المرتبطة بالعروض"
+    ],
+    "modes": [
+      {
+        "key": "Shoppable Article",
+        "family": "commerce",
+        "engine": "shoppable",
+        "controls": [
+          "subtype",
+          "contentId",
+          "experienceId",
+          "deliveryAuthority"
+        ],
+        "requiredCollections": [
+          "offers"
+        ],
+        "description": [
+          "Shoppable Article authoring and inspection",
+          "Édition et inspection · Shoppable Article",
+          "التحرير والفحص · Shoppable Article"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Buyable Resource Page",
+        "family": "commerce",
+        "engine": "resource",
+        "controls": [
+          "subtype",
+          "contentId",
+          "experienceId",
+          "deliveryAuthority"
+        ],
+        "requiredCollections": [
+          "offers"
+        ],
+        "description": [
+          "Buyable Resource Page authoring and inspection",
+          "Édition et inspection · Buyable Resource Page",
+          "التحرير والفحص · Buyable Resource Page"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Course + Product Page",
+        "family": "commerce",
+        "engine": "course_product",
+        "controls": [
+          "subtype",
+          "contentId",
+          "experienceId",
+          "deliveryAuthority"
+        ],
+        "requiredCollections": [
+          "offers"
+        ],
+        "description": [
+          "Course + Product Page authoring and inspection",
+          "Édition et inspection · Course + Product Page",
+          "التحرير والفحص · Course + Product Page"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Download Delivery Experience",
+        "family": "commerce",
+        "engine": "delivery",
+        "controls": [
+          "deliveryAuthority"
+        ],
+        "requiredCollections": [
+          "offers"
+        ],
+        "description": [
+          "Download Delivery Experience authoring and inspection",
+          "Édition et inspection · Download Delivery Experience",
+          "التحرير والفحص · Download Delivery Experience"
+        ],
+        "version": 2
+      }
+    ],
+    "actions": [
+      {
+        "id": "details",
+        "label": [
+          "details",
+          "details",
+          "details"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "configure",
+        "label": [
+          "configure",
+          "configure",
+          "configure"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "native_handoff",
+        "label": [
+          "native_handoff",
+          "native_handoff",
+          "native_handoff"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "view_details",
+        "label": [
+          "View native details",
+          "Voir les détails natifs",
+          "عرض التفاصيل الأصلية"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "add_to_cart",
+        "label": [
+          "Native basket continuation",
+          "Continuer vers le panier natif",
+          "المتابعة إلى السلة الأصلية"
+        ],
+        "requires": [
+          "canonical_native_offer"
+        ],
+        "preview": "native"
+      },
+      {
+        "id": "purchase",
+        "label": [
+          "Native purchase continuation",
+          "Continuer l’achat natif",
+          "متابعة الشراء الأصلي"
+        ],
+        "requires": [
+          "canonical_native_offer"
+        ],
+        "preview": "native"
+      },
+      {
+        "id": "enrolment",
+        "label": [
+          "Native enrolment continuation",
+          "Continuer l’inscription native",
+          "متابعة التسجيل الأصلي"
+        ],
+        "requires": [
+          "canonical_native_offer"
+        ],
+        "preview": "native"
+      },
+      {
+        "id": "booking",
+        "label": [
+          "Native booking continuation",
+          "Continuer la réservation native",
+          "متابعة الحجز الأصلي"
+        ],
+        "requires": [
+          "canonical_native_offer"
+        ],
+        "preview": "native"
+      },
+      {
+        "id": "enquiry",
+        "label": [
+          "Native enquiry continuation",
+          "Continuer la demande native",
+          "متابعة الاستفسار الأصلي"
+        ],
+        "requires": [
+          "canonical_native_offer"
+        ],
+        "preview": "native"
+      },
+      {
+        "id": "download",
+        "label": [
+          "Download",
+          "Télécharger",
+          "تنزيل"
+        ],
+        "requires": [
+          "downloadAllowed",
+          "compatible_source"
+        ],
+        "preview": "source"
+      },
+      {
+        "id": "save",
+        "label": [
+          "Bookmark",
+          "Marquer pour plus tard",
+          "إشارة مرجعية"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "share",
+        "label": [
+          "Share",
+          "Partager",
+          "مشاركة"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "review",
+        "label": [
+          "Review",
+          "Avis / revue",
+          "مراجعة"
+        ],
+        "requires": [
+          "eligibility",
+          "moderation_policy"
+        ],
+        "preview": "inspect"
+      }
+    ],
+    "collections": [
+      "offers"
+    ],
+    "originalPage": 2
+  },
+  {
+    "family": "bundles",
+    "number": 16,
+    "name": [
+      "Multi-Asset Journeys & Bundles",
+      "Parcours & collections",
+      "المسارات والمجموعات"
+    ],
+    "modes": [
+      {
+        "key": "Guided Bundle Path",
+        "family": "bundles",
+        "engine": "guided",
+        "controls": [
+          "steps",
+          "completion"
+        ],
+        "requiredCollections": [
+          "steps"
+        ],
+        "description": [
+          "Guided Bundle Path authoring and inspection",
+          "Édition et inspection · Guided Bundle Path",
+          "التحرير والفحص · Guided Bundle Path"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Bundle Dashboard",
+        "family": "bundles",
+        "engine": "dashboard",
+        "controls": [
+          "subtype",
+          "completion",
+          "restartScope",
+          "allowRestart"
+        ],
+        "requiredCollections": [
+          "steps"
+        ],
+        "description": [
+          "Bundle Dashboard authoring and inspection",
+          "Édition et inspection · Bundle Dashboard",
+          "التحرير والفحص · Bundle Dashboard"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Sequential Playlist",
+        "family": "bundles",
+        "engine": "sequential",
+        "controls": [
+          "steps"
+        ],
+        "requiredCollections": [
+          "steps"
+        ],
+        "description": [
+          "Sequential Playlist authoring and inspection",
+          "Édition et inspection · Sequential Playlist",
+          "التحرير والفحص · Sequential Playlist"
+        ],
+        "version": 2
+      },
+      {
+        "key": "Starter Kit Experience",
+        "family": "bundles",
+        "engine": "starter",
+        "controls": [
+          "steps"
+        ],
+        "requiredCollections": [
+          "steps"
+        ],
+        "description": [
+          "Starter Kit Experience authoring and inspection",
+          "Édition et inspection · Starter Kit Experience",
+          "التحرير والفحص · Starter Kit Experience"
+        ],
+        "version": 2
+      }
+    ],
+    "actions": [
+      {
+        "id": "start",
+        "label": [
+          "Start",
+          "Commencer",
+          "بدء"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "continue",
+        "label": [
+          "continue",
+          "continue",
+          "continue"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "open",
+        "label": [
+          "Open resource",
+          "Ouvrir une ressource",
+          "فتح مورد"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "complete",
+        "label": [
+          "Complete",
+          "Terminer",
+          "إكمال"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "restart",
+        "label": [
+          "Restart",
+          "Recommencer",
+          "إعادة البدء"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "resume",
+        "label": [
+          "Resume",
+          "Reprendre",
+          "استئناف"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "save_progress",
+        "label": [
+          "Save progress",
+          "Enregistrer la progression",
+          "حفظ التقدم"
+        ],
+        "requires": [],
+        "preview": "stage"
+      },
+      {
+        "id": "share",
+        "label": [
+          "Share",
+          "Partager",
+          "مشاركة"
+        ],
+        "requires": [],
+        "preview": "stage"
+      }
+    ],
+    "collections": [
+      "steps"
+    ],
+    "originalPage": 2
+  }
+]

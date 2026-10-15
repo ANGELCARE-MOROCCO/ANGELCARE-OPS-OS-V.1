@@ -1,3 +1,4 @@
+import { HEADER_BRAND_COPY } from '../public-universe/header-brand-copy'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { ReactNode } from 'react'
@@ -21,8 +22,8 @@ export function PublicShell({ children }: { children: ReactNode }) {
             />
             <span className={styles.brandDivider} aria-hidden="true" />
             <span className={styles.brandProduct}>
-              <strong>Marketplace 360</strong>
-              <span>Écosystème Kids 360 gouverné</span>
+              <strong>{HEADER_BRAND_COPY.audience}</strong>
+              <span>{HEADER_BRAND_COPY.promise}</span>
             </span>
           </Link>
           <nav className={styles.publicNav} aria-label="Navigation publique">

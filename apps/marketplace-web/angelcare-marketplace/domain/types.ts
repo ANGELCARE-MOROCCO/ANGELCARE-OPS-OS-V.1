@@ -24,6 +24,13 @@ export type MarketplaceReadinessStatus = 'not_started' | 'in_progress' | 'ready'
 export type MarketplaceAuditResult = 'success' | 'denied' | 'failed'
 
 export type MarketplacePermission =
+  | 'marketplace.digital_experience.view'
+  | 'marketplace.digital_experience.manage'
+  | 'marketplace.digital_experience.publish'
+  | 'marketplace.digital_experience.moderate'
+  | 'marketplace.digital_experience.monetize'
+  | 'marketplace.digital_experience.export'
+  | 'marketplace.digital_experience.purge'
   | 'marketplace.hotline.view'
   | 'marketplace.hotline.answer'
   | 'marketplace.hotline.manage'

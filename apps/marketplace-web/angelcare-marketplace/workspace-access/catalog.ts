@@ -9,6 +9,7 @@ export interface MarketplaceAccessWorkspace {
 }
 
 export const MARKETPLACE_ACCESS_WORKSPACES = [
+  {key:'workspace.digital_experience',label:'Digital Customer Experience',route:'/angelcare-marketplace/admin/digital-customer-experience',mission:'Expériences gratuites enfants/familles, studio, publication et monétisation.',domains:['digital_experience']},
   {key:'workspace.hotline',label:'HOTLINE',route:'/angelcare-marketplace/admin/hotline',mission:'Réception, conseillers, dossiers et parcours IVR.',domains:['hotline']},
   { key:'workspace.commerce_revenue', label:'Commerce & Revenue', route:'/angelcare-marketplace/admin/catalog', mission:'Catalogue, commerce, pipeline, conversion, commandes, paiements et Wallet.', domains:['catalog','commercial','conversion','orders','payments','wallet','commerce','crm','development','quote_basket'] },
   { key:'workspace.customers', label:'Customers', route:'/angelcare-marketplace/admin/customers', mission:'Dossiers clients, familles, service, historique et relation client.', domains:['family','customers','customer','backoffice'] },
@@ -33,6 +34,7 @@ for (const workspace of MARKETPLACE_ACCESS_WORKSPACES) {
 }
 
 const SENSITIVE_PERMISSION_MARKERS = [
+  'digital_experience.publish','digital_experience.moderate','digital_experience.monetize','digital_experience.export','digital_experience.purge',
   'hotline.publish','hotline.purge','hotline.settings','hotline.media','hotline.supervise',
   'certificates.revoke',
   'sensitive_approve',

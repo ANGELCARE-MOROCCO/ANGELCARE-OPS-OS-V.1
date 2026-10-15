@@ -255,8 +255,17 @@ function mediaFromRow(row: Row, item: DiscoveryItem, locale: CatalogLocale): Cat
       url: text(entry.asset_url), alt: localizedAlt(entry, locale, item.name), sortOrder: Number(entry.sort_order || 100),
     }))
     .sort((a, b) => a.sortOrder - b.sortOrder)
-  if (!media.length && item.media_url) return [{ id: 'primary', key: 'primary', type: 'image', url: item.media_url, alt: item.name, sortOrder: 0 }]
-  return media
+  const isImage = (entry: CategoryNativeMedia) => entry.type === 'image' || entry.type.startsWith('image/')
+  const cover = item.media_url?.trim()
+  const hasPrimaryImage = media.some(entry => isImage(entry) && entry.key === 'primary' && entry.url.trim())
+  if (cover && !hasPrimaryImage && !media.some(entry => isImage(entry) && entry.url === cover)) {
+    media.unshift({ id: 'primary', key: 'primary', type: 'image', url: cover, alt: item.name, sortOrder: 0 })
+  }
+  return media.sort((a, b) =>
+    Number(isImage(b)) - Number(isImage(a)) ||
+    Number(b.key === 'primary') - Number(a.key === 'primary') ||
+    a.sortOrder - b.sortOrder
+  )
 }
 
 function variantsFromRow(row: Row, locale: CatalogLocale): CategoryNativeVariant[] {

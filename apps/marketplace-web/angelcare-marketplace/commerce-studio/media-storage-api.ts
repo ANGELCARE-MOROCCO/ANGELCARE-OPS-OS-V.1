@@ -25,7 +25,7 @@ import {
 } from './repository'
 import { sanitizeFileName } from './validation'
 
-const ALLOWED_MIME = new Set(['image/jpeg','image/png','image/webp','image/avif','image/svg+xml','video/mp4','video/webm','application/pdf'])
+const ALLOWED_MIME = new Set(['image/jpeg','image/png','image/webp','image/avif','image/svg+xml','video/mp4','video/webm','application/pdf','audio/mpeg'])
 
 type MediaPreflightInput = { fileName?: unknown; mimeType?: unknown; sizeBytes?: unknown; checksumSha256?: unknown; folderId?: unknown }
 
@@ -141,7 +141,7 @@ export async function handleMarketplaceMediaUploadComplete(request: Request, med
         file_name: cleanText(body.fileName, 180) || gateway.safeFilename,
         folder_id: cleanOptionalText(body.folderId, 64),
         mime_type: gateway.mimeType,
-        media_type: gateway.mimeType.startsWith('video/') ? 'video' : gateway.mimeType === 'application/pdf' ? 'document' : 'image',
+        media_type: gateway.mimeType.startsWith('video/') ? 'video' : gateway.mimeType.startsWith('audio/') ? 'document' : gateway.mimeType === 'application/pdf' ? 'document' : 'image',
         size_bytes: gateway.sizeBytes,
         width,
         height,

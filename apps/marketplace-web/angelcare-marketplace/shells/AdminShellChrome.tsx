@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import { useEffect, useState, type ReactNode } from 'react'
+import { usePathname } from 'next/navigation'
 import { PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import styles from '../design-system/marketplace.module.css'
 import type { AdminShellSnapshot, AdminShellWorkspace } from '../admin-shell/types'
@@ -20,6 +21,7 @@ export function AdminShellChrome({
   territoryId,
   permissionCount,
   canHotline,
+  canDce,
   snapshot,
   workspaces,
   children,
@@ -30,11 +32,17 @@ export function AdminShellChrome({
   territoryId: string | null
   permissionCount: number
   canHotline?: boolean
+  canDce?: boolean
   snapshot: AdminShellSnapshot
   workspaces: AdminShellWorkspace[]
   children: ReactNode
 }) {
   const [collapsed, setCollapsed] = useState(false)
+  const pathname = usePathname() || ''
+  const dce = pathname === '/angelcare-marketplace/admin/digital-customer-experience' || pathname.startsWith('/angelcare-marketplace/admin/digital-customer-experience/')
+  const [dceExpanded, setDceExpanded] = useState(false)
+  const railCollapsed = dce ? !dceExpanded : collapsed
+  useEffect(() => { if (!dce) setDceExpanded(false) }, [dce])
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
@@ -48,6 +56,7 @@ export function AdminShellChrome({
   }, [])
 
   function toggleSidebar() {
+    if (dce) { setDceExpanded(current => !current); return }
     setCollapsed((current) => {
       const next = !current
       try {
@@ -60,7 +69,7 @@ export function AdminShellChrome({
   }
 
   return (
-    <div className={styles.workspaceFrame} data-sidebar-collapsed={collapsed}>
+    <div className={styles.workspaceFrame} data-sidebar-collapsed={railCollapsed} data-digital-experience={dce}>
       <aside className={styles.sidebar} aria-label="Navigation principale Marketplace Admin">
         <div className={styles.sidebarHeader}>
           <div className={styles.sidebarBrand}>
@@ -71,16 +80,16 @@ export function AdminShellChrome({
             type="button"
             className={styles.sidebarCollapseButton}
             onClick={toggleSidebar}
-            aria-label={collapsed ? 'Déployer la navigation Marketplace' : 'Réduire la navigation Marketplace'}
-            aria-expanded={!collapsed}
-            title={collapsed ? 'Déployer la navigation' : 'Réduire la navigation'}
+            aria-label={railCollapsed ? 'Déployer la navigation Marketplace' : 'Réduire la navigation Marketplace'}
+            aria-expanded={!railCollapsed}
+            title={railCollapsed ? 'Déployer la navigation' : 'Réduire la navigation'}
           >
-            {collapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
+            {railCollapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
           </button>
         </div>
-        <AdminNavigation collapsed={collapsed} canHotline={canHotline} />
+        <AdminNavigation collapsed={railCollapsed} canHotline={canHotline} canDce={canDce} />
         <div className={styles.sidebarFooter}>
-          <div className={styles.identityCard} title={collapsed ? `${actorDisplayName} · ${roleKeys.join(' · ') || 'Opérateur Marketplace'}` : undefined}>
+          <div className={styles.identityCard} title={railCollapsed ? `${actorDisplayName} · ${roleKeys.join(' · ') || 'Opérateur Marketplace'}` : undefined}>
             <div className={styles.identityAvatar} aria-hidden="true">{actorDisplayName.trim().charAt(0).toUpperCase() || 'A'}</div>
             <div className={styles.identityCopy}>
               <div className={styles.identityName}>{actorDisplayName}</div>
@@ -89,7 +98,7 @@ export function AdminShellChrome({
                 {actorEmail || 'Identité interne'}
               </div>
             </div>
-            <AdminLogoutButton compact={collapsed} />
+            <AdminLogoutButton compact={railCollapsed} />
           </div>
         </div>
       </aside>
@@ -101,7 +110,7 @@ export function AdminShellChrome({
           permissionCount={permissionCount}
         />
         <AdminWorkspaceContextNav />
-        <main className={`${styles.content} ${styles.adminContent}`}><GovernedActionProvider>{children}</GovernedActionProvider></main>
+        <main className={`${styles.content} ${styles.adminContent}`} style={dce ? {padding: 0} : undefined}><GovernedActionProvider>{children}</GovernedActionProvider></main>
       </section>
     </div>
   )

@@ -1,0 +1,579 @@
+{
+  "generatedAt": "2026-10-15T03:16:39.856Z",
+  "missionComplete": false,
+  "referenceUnchanged": true,
+  "preview": {
+    "server": "http://127.0.0.1:4186",
+    "database": "task-only PGlite",
+    "repositoryBundleMtime": "2026-10-15T02:38:14.354Z",
+    "latestSourceChangesCompiled": false,
+    "buildsSinceLatestInstruction": 0,
+    "restartsSinceLatestInstruction": 0,
+    "running": false,
+    "stoppedAt": "2026-10-15T03:17:27.987292+00:00",
+    "stopReason": "User requested closing the owned background terminal"
+  },
+  "results": {
+    "repository": {
+      "passed": 75
+    },
+    "uiModes": 64,
+    "lifecycle": {
+      "passed": 70
+    },
+    "uiOperations": [
+      {
+        "name": "Actual UI failed save retains entered values and retries successfully",
+        "status": "passed"
+      },
+      {
+        "name": "Actual UI stale revision requires an explicit overlapping-field choice",
+        "status": "passed"
+      },
+      {
+        "name": "Actual UI duplicate, reorder and remove preserve stable unit identity and persisted ordering",
+        "status": "passed"
+      },
+      {
+        "name": "Actual UI local recovery keeps its baseline and reconciles a later server revision",
+        "status": "failed",
+        "error": "Timed out: Enabled control: Recover edits"
+      }
+    ],
+    "blockerAudit": [
+      {
+        "name": "Existing preview server and canonical test database are available",
+        "status": "PASS"
+      },
+      {
+        "name": "DEPENDENCY_BLOCKED is the deliberate active-child archive rejection",
+        "status": "PASS",
+        "classification": "EXPECTED_NEGATIVE_TEST"
+      },
+      {
+        "name": "Topic hierarchy cycle is the deliberate rejected parent-to-child edit",
+        "status": "PASS",
+        "classification": "EXPECTED_NEGATIVE_TEST"
+      },
+      {
+        "name": "Record conflict is guarded import rollback after a later operator edit",
+        "status": "PASS",
+        "classification": "EXPECTED_NEGATIVE_TEST"
+      },
+      {
+        "name": "No failed, conflict, invalid or pending import operations remain outside deliberate test fixtures",
+        "status": "FAIL"
+      },
+      {
+        "name": "64 UI mode definitions have independently recorded release/revise/restore evidence",
+        "status": "PASS"
+      }
+    ]
+  },
+  "blocked": [
+    "Actual browser visual/media acceptance: macOS bootstrap error 141",
+    "Native protected attachment receipt authority: existing adapter contract not found"
+  ],
+  "remaining": [
+    {
+      "id": "F01-M1",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F01-M2",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F01-M3",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F01-M4",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F02-M1",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F02-M2",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F02-M3",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F02-M4",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F03-M1",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F03-M2",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F03-M3",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F03-M4",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F04-M1",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F04-M2",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F04-M3",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F04-M4",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F05-M1",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F05-M2",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F05-M3",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F05-M4",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F06-M1",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F06-M2",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F06-M3",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F06-M4",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F07-M1",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F07-M2",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F07-M3",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F07-M4",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F08-M1",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F08-M2",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F08-M3",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F08-M4",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F09-M1",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F09-M2",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F09-M3",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F09-M4",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F10-M1",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted. Exhaustive approved engine \u00d7 placement behaviour verification remains open."
+    },
+    {
+      "id": "F10-M2",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted. Exhaustive approved engine \u00d7 placement behaviour verification remains open."
+    },
+    {
+      "id": "F10-M3",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted. Exhaustive approved engine \u00d7 placement behaviour verification remains open."
+    },
+    {
+      "id": "F10-M4",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted. Exhaustive approved engine \u00d7 placement behaviour verification remains open."
+    },
+    {
+      "id": "F11-M1",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F11-M2",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F11-M3",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F11-M4",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F12-M1",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F12-M2",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F12-M3",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F12-M4",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F13-M1",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted. Protected attachment native receipt authority remains unidentified; configuration alone is not verified attachment handling."
+    },
+    {
+      "id": "F13-M2",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted. Protected attachment native receipt authority remains unidentified; configuration alone is not verified attachment handling."
+    },
+    {
+      "id": "F13-M3",
+      "status": "blocked",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted. Protected attachment native receipt authority remains unidentified; configuration alone is not verified attachment handling."
+    },
+    {
+      "id": "F13-M4",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted. Protected attachment native receipt authority remains unidentified; configuration alone is not verified attachment handling."
+    },
+    {
+      "id": "F14-M1",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F14-M2",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F14-M3",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F14-M4",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F15-M1",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F15-M2",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F15-M3",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F15-M4",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted."
+    },
+    {
+      "id": "F16-M1",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted. Verify access dependency and restart scope consequences across real child state."
+    },
+    {
+      "id": "F16-M2",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted. Verify access dependency and restart scope consequences across real child state."
+    },
+    {
+      "id": "F16-M3",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted. Verify access dependency and restart scope consequences across real child state."
+    },
+    {
+      "id": "F16-M4",
+      "status": "partial",
+      "remaining": "Real browser desktop/mobile/FR/EN/Arabic visual and media interaction acceptance; complete every mode-specific negative/correction/translation scenario. Latest source refinements after preview compilation need execution when isolated compilation is permitted. Verify access dependency and restart scope consequences across real child state."
+    },
+    {
+      "id": "W01",
+      "status": "partial",
+      "remaining": "Complete operator acceptance for this destination, relevant permission/negative/recovery cases and actual desktop/mobile/FR/EN/RTL visual review. A destination DOM is not task completion."
+    },
+    {
+      "id": "W02",
+      "status": "partial",
+      "remaining": "Complete operator acceptance for this destination, relevant permission/negative/recovery cases and actual desktop/mobile/FR/EN/RTL visual review. A destination DOM is not task completion."
+    },
+    {
+      "id": "W03",
+      "status": "partial",
+      "remaining": "Complete operator acceptance for this destination, relevant permission/negative/recovery cases and actual desktop/mobile/FR/EN/RTL visual review. A destination DOM is not task completion."
+    },
+    {
+      "id": "W04",
+      "status": "partial",
+      "remaining": "Complete operator acceptance for this destination, relevant permission/negative/recovery cases and actual desktop/mobile/FR/EN/RTL visual review. A destination DOM is not task completion."
+    },
+    {
+      "id": "W05",
+      "status": "partial",
+      "remaining": "Complete operator acceptance for this destination, relevant permission/negative/recovery cases and actual desktop/mobile/FR/EN/RTL visual review. A destination DOM is not task completion."
+    },
+    {
+      "id": "W06",
+      "status": "partial",
+      "remaining": "Complete operator acceptance for this destination, relevant permission/negative/recovery cases and actual desktop/mobile/FR/EN/RTL visual review. A destination DOM is not task completion."
+    },
+    {
+      "id": "W07",
+      "status": "partial",
+      "remaining": "Complete operator acceptance for this destination, relevant permission/negative/recovery cases and actual desktop/mobile/FR/EN/RTL visual review. A destination DOM is not task completion."
+    },
+    {
+      "id": "W08",
+      "status": "partial",
+      "remaining": "Complete operator acceptance for this destination, relevant permission/negative/recovery cases and actual desktop/mobile/FR/EN/RTL visual review. A destination DOM is not task completion."
+    },
+    {
+      "id": "W09",
+      "status": "partial",
+      "remaining": "Complete operator acceptance for this destination, relevant permission/negative/recovery cases and actual desktop/mobile/FR/EN/RTL visual review. A destination DOM is not task completion. Validate real native receiving/support provenance and protected attachment continuation."
+    },
+    {
+      "id": "W10",
+      "status": "partial",
+      "remaining": "Complete operator acceptance for this destination, relevant permission/negative/recovery cases and actual desktop/mobile/FR/EN/RTL visual review. A destination DOM is not task completion."
+    },
+    {
+      "id": "W11",
+      "status": "partial",
+      "remaining": "Complete operator acceptance for this destination, relevant permission/negative/recovery cases and actual desktop/mobile/FR/EN/RTL visual review. A destination DOM is not task completion. Validate real native receiving/support provenance and protected attachment continuation."
+    },
+    {
+      "id": "W12",
+      "status": "partial",
+      "remaining": "Complete operator acceptance for this destination, relevant permission/negative/recovery cases and actual desktop/mobile/FR/EN/RTL visual review. A destination DOM is not task completion. Exercise bulk policy review, full inheritance conflicts, unit suppression and readiness states without provider impressions."
+    },
+    {
+      "id": "W13",
+      "status": "partial",
+      "remaining": "Complete operator acceptance for this destination, relevant permission/negative/recovery cases and actual desktop/mobile/FR/EN/RTL visual review. A destination DOM is not task completion."
+    },
+    {
+      "id": "W14",
+      "status": "partial",
+      "remaining": "Complete operator acceptance for this destination, relevant permission/negative/recovery cases and actual desktop/mobile/FR/EN/RTL visual review. A destination DOM is not task completion."
+    },
+    {
+      "id": "W15",
+      "status": "partial",
+      "remaining": "Complete operator acceptance for this destination, relevant permission/negative/recovery cases and actual desktop/mobile/FR/EN/RTL visual review. A destination DOM is not task completion."
+    },
+    {
+      "id": "W16",
+      "status": "partial",
+      "remaining": "Complete operator acceptance for this destination, relevant permission/negative/recovery cases and actual desktop/mobile/FR/EN/RTL visual review. A destination DOM is not task completion."
+    },
+    {
+      "id": "W17",
+      "status": "partial",
+      "remaining": "Complete operator acceptance for this destination, relevant permission/negative/recovery cases and actual desktop/mobile/FR/EN/RTL visual review. A destination DOM is not task completion."
+    },
+    {
+      "id": "W18",
+      "status": "partial",
+      "remaining": "Complete operator acceptance for this destination, relevant permission/negative/recovery cases and actual desktop/mobile/FR/EN/RTL visual review. A destination DOM is not task completion."
+    },
+    {
+      "id": "W19",
+      "status": "partial",
+      "remaining": "Complete operator acceptance for this destination, relevant permission/negative/recovery cases and actual desktop/mobile/FR/EN/RTL visual review. A destination DOM is not task completion."
+    },
+    {
+      "id": "W20",
+      "status": "partial",
+      "remaining": "Complete operator acceptance for this destination, relevant permission/negative/recovery cases and actual desktop/mobile/FR/EN/RTL visual review. A destination DOM is not task completion. Explicitly retain or retire the historical invalid receipt without replaying stale data; verify import correction and bulk review UI."
+    },
+    {
+      "id": "W21",
+      "status": "partial",
+      "remaining": "Complete operator acceptance for this destination, relevant permission/negative/recovery cases and actual desktop/mobile/FR/EN/RTL visual review. A destination DOM is not task completion."
+    },
+    {
+      "id": "W22",
+      "status": "partial",
+      "remaining": "Complete operator acceptance for this destination, relevant permission/negative/recovery cases and actual desktop/mobile/FR/EN/RTL visual review. A destination DOM is not task completion."
+    },
+    {
+      "id": "W23",
+      "status": "partial",
+      "remaining": "Complete operator acceptance for this destination, relevant permission/negative/recovery cases and actual desktop/mobile/FR/EN/RTL visual review. A destination DOM is not task completion."
+    },
+    {
+      "id": "AUTH",
+      "status": "partial",
+      "remaining": "See current acceptance ledger and unresolved requirements; no blanket completion claim."
+    },
+    {
+      "id": "COMPAT",
+      "status": "partial",
+      "remaining": "See current acceptance ledger and unresolved requirements; no blanket completion claim."
+    },
+    {
+      "id": "PRIV",
+      "status": "partial",
+      "remaining": "See current acceptance ledger and unresolved requirements; no blanket completion claim."
+    },
+    {
+      "id": "MEDIA",
+      "status": "partial",
+      "remaining": "See current acceptance ledger and unresolved requirements; no blanket completion claim."
+    },
+    {
+      "id": "SCALE",
+      "status": "partial",
+      "remaining": "See current acceptance ledger and unresolved requirements; no blanket completion claim."
+    },
+    {
+      "id": "CONFLICT",
+      "status": "partial",
+      "remaining": "See current acceptance ledger and unresolved requirements; no blanket completion claim."
+    },
+    {
+      "id": "IMPORT",
+      "status": "partial",
+      "remaining": "See current acceptance ledger and unresolved requirements; no blanket completion claim."
+    },
+    {
+      "id": "ADS",
+      "status": "partial",
+      "remaining": "See current acceptance ledger and unresolved requirements; no blanket completion claim."
+    },
+    {
+      "id": "ACCESS",
+      "status": "partial",
+      "remaining": "See current acceptance ledger and unresolved requirements; no blanket completion claim."
+    },
+    {
+      "id": "VISUAL",
+      "status": "blocked",
+      "remaining": "Chrome/WebKit abort before navigation with macOS bootstrap error 141. No real browser screenshots or responsive/RTL pixel acceptance exists."
+    },
+    {
+      "id": "PRESERVE",
+      "status": "partial",
+      "remaining": "See current acceptance ledger and unresolved requirements; no blanket completion claim."
+    },
+    {
+      "id": "VERIFY",
+      "status": "partial",
+      "remaining": "See current acceptance ledger and unresolved requirements; no blanket completion claim."
+    },
+    {
+      "id": "DELIVER",
+      "status": "partial",
+      "remaining": "See current acceptance ledger and unresolved requirements; no blanket completion claim."
+    }
+  ]
+}

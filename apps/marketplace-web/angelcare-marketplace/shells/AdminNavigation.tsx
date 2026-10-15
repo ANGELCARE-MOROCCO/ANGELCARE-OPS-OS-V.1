@@ -25,11 +25,12 @@ const masters=[
  {id:'17',href:'/angelcare-marketplace/admin/sanila',label:'SANILA',icon:School},
  {id:'18',href:'/angelcare-marketplace/admin/imports',label:'Imports & ingestion',icon:UploadCloud},
  {id:'19',href:'/angelcare-marketplace/admin/hotline',label:'HOTLINE',icon:Headphones},
+ {id:'20',href:'/angelcare-marketplace/admin/digital-customer-experience',label:'Digital Customer Experience',icon:Sparkles},
 ] as const
 
-export function AdminNavigation({collapsed=false,canHotline=false}:{collapsed?:boolean;canHotline?:boolean}){
+export function AdminNavigation({collapsed=false,canHotline=false,canDce=false}:{collapsed?:boolean;canHotline?:boolean;canDce?:boolean}){
  const pathname=usePathname()
- const visible=masters.filter(m=>m.id!=='19'||canHotline)
+ const visible=masters.filter(m=>(m.id!=='19'||canHotline)&&(m.id!=='20'||canDce))
  return <nav className={styles.sidebarNav} aria-label="Marketplace Admin">
   <div className={styles.navGroup}><div className={styles.navGroupLabel}>ANGELCARE MARKETPLACE</div></div>
   <div className={styles.navGroup}><div className={styles.navGroupLabel}>{visible.length} WORKSPACES</div>{visible.map(({id,href,label,icon:Icon})=>{const active=pathname===href||(href!=='/angelcare-marketplace/admin'&&pathname.startsWith(`${href}/`));return <Link key={`${id}-${href}`} href={href} className={cx(styles.sideNavLink,active&&styles.sideNavLinkActive)} aria-current={active?'page':undefined} title={collapsed?`${id} · ${label}`:undefined}><span className={styles.sideNavIcon}><Icon size={17}/></span><span className={styles.sideNavLabel}>{id} · {label}</span></Link>})}</div>

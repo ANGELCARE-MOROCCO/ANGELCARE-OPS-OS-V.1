@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { runDuePublicationJobs } from '@/angelcare-marketplace/experience-builder/repository'
+import { runDceSchedules } from '@/angelcare-marketplace/digital-customer-experience/repository'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -17,7 +18,8 @@ export async function POST(request: NextRequest) {
     const limit = Math.min(Math.max(Number(body.limit || 20), 1), 100)
     const worker = String(body.worker || 'marketplace-experience-worker').slice(0, 120)
     const result = await runDuePublicationJobs(worker, limit)
-    return NextResponse.json({ ok: true, ...result }, { headers: { 'Cache-Control': 'no-store' } })
+    const dce = await runDceSchedules(20).catch(() => ({ state: 'DCE_SCHEDULER_UNAVAILABLE', processed: 0 }))
+    return NextResponse.json({ ok: true, ...result, dce }, { headers: { 'Cache-Control': 'no-store' } })
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Le worker Experience a échoué.'
     return NextResponse.json({ ok: false, error: message }, { status: 500, headers: { 'Cache-Control': 'no-store' } })
@@ -28,7 +30,8 @@ export async function GET(request: NextRequest) {
   if (!authorized(request)) return NextResponse.json({ ok: false, error: 'Scheduler Experience non autorisé.' }, { status: 401, headers: { 'Cache-Control': 'no-store' } })
   try {
     const result = await runDuePublicationJobs('scheduler:marketplace-experience', 50)
-    return NextResponse.json({ ok: true, ...result }, { headers: { 'Cache-Control': 'no-store' } })
+    const dce = await runDceSchedules(20).catch(() => ({ state: 'DCE_SCHEDULER_UNAVAILABLE', processed: 0 }))
+    return NextResponse.json({ ok: true, ...result, dce }, { headers: { 'Cache-Control': 'no-store' } })
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Le scheduler Experience a échoué.'
     return NextResponse.json({ ok: false, error: message }, { status: 500, headers: { 'Cache-Control': 'no-store' } })

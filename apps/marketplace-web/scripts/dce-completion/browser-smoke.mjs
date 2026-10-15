@@ -1,0 +1,7 @@
+import {createRequire} from 'node:module'
+import {mkdir,writeFile} from 'node:fs/promises'
+import path from 'node:path'
+const require=createRequire(import.meta.url),{chromium}=require('playwright'),evidence=path.resolve(import.meta.dirname,'../../angelcare-marketplace/documentation/dce-completion-20261014/evidence')
+await mkdir(evidence,{recursive:true})
+const browser=await chromium.launch({headless:true,executablePath:process.env.DCE_BROWSER_EXECUTABLE||'/private/tmp/angelcare-dce-20261014/browser-tool/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing',args:['--disable-gpu','--single-process','--no-zygote','--disable-breakpad','--disable-crash-reporter']}),page=await browser.newPage({viewport:{width:1536,height:1100}}),errors=[]
+page.on('pageerror',e=>errors.push(e.message));await page.goto('http://127.0.0.1:4186/angelcare-marketplace/admin/digital-customer-experience');await page.getByRole('heading',{name:/Welcome back/}).waitFor();await page.screenshot({path:path.join(evidence,'dashboard-initial-desktop.png'),fullPage:true});await page.getByRole('button',{name:'Create Experience',exact:true}).click();await page.getByRole('button',{name:/Forms/}).click();const dialog=page.locator('dialog').last();console.log((await dialog.innerText()).slice(0,2500));await dialog.getByRole('tab',{name:'Authoring',exact:true}).click();await page.screenshot({path:path.join(evidence,'forms-authoring-initial.png'),fullPage:true});console.log('ERRORS',errors);await browser.close()

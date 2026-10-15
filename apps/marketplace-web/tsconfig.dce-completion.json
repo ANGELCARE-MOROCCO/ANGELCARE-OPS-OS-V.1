@@ -1,0 +1,6 @@
+{
+ "extends":"./tsconfig.json",
+ "compilerOptions":{"noEmit":true,"skipLibCheck":true,"incremental":false},
+ "include":["angelcare-marketplace/digital-customer-experience/**/*.ts","angelcare-marketplace/digital-customer-experience/**/*.tsx","app/api/angelcare-marketplace/admin/digital-customer-experience/**/*.ts","components/angelcare360/transport/sovereign/transport-sovereign-css.d.ts"],
+ "exclude":["node_modules",".next"]
+}

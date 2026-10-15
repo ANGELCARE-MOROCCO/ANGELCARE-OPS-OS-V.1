@@ -48,7 +48,7 @@ export function marketplaceMediaStorageConfiguration() {
     publicServingPresent: Boolean(root && signingSecret()),
     logicalRoot: 'Marketplace/assets',
     maxUploadBytes: Number(process.env.MARKETPLACE_MEDIA_MAX_BYTES || DEFAULT_MAX_BYTES),
-    acceptedMimeFamilies: String(process.env.MARKETPLACE_MEDIA_ALLOWED_MIME || 'image/jpeg,image/png,image/webp,image/avif,image/svg+xml,video/mp4,video/webm,application/pdf').split(',').map(value => value.trim()).filter(Boolean),
+    acceptedMimeFamilies: String(process.env.MARKETPLACE_MEDIA_ALLOWED_MIME || 'image/jpeg,image/png,image/webp,image/avif,image/svg+xml,video/mp4,video/webm,application/pdf,audio/mpeg').split(',').map(value => value.trim()).filter(Boolean),
   }
 }
 

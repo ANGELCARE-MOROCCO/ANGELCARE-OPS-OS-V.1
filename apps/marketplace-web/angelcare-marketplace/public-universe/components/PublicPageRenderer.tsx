@@ -3,6 +3,7 @@ import type { CSSProperties, ReactNode } from 'react'
 import type { CmsBlock } from '../../experience-builder/types'
 import type { PublicPageExperience } from '../types'
 import { PublicInquiryForm } from './PublicInquiryForm'
+import {ContactEntry} from '../../public-discovery/ContactEntry'
 import styles from '../public.module.css'
 import { searchDiscovery } from '../../catalog-discovery/repository'
 import { CatalogCard } from '../../catalog-discovery/components/CatalogCard'
@@ -95,6 +96,7 @@ async function ExperienceBlock({ block, allBlocks, locale, route, depth = 0 }: {
 export async function PublicPageRenderer({ experience, locale }: { experience: PublicPageExperience; locale: 'fr' | 'en' | 'ar' }) {
   const route = `/angelcare-marketplace/${locale}/${experience.page.slug}`
   if (experience.blocks.some(isStudioCmsBlock)) return <StudioPublishedRenderer blocks={experience.blocks} locale={locale} territoryId={experience.page.published_territory_id||experience.page.territory_id||null} attribution={studioPageAttribution({locale,pageId:experience.page.id,pageRoute:route,pageRevisionId:experience.page.published_revision_id||null,territoryId:experience.page.published_territory_id||experience.page.territory_id||null})}/>
+  if(experience.page.slug==='contact')return <ContactEntry experience={experience} locale={locale}/>
   const roots = experience.blocks.filter(block => !block.parent_block_key || !experience.blocks.some(parent => parent.block_key === block.parent_block_key)).sort((a, b) => a.sort_order - b.sort_order)
   return <>{roots.map(block => <ExperienceBlock block={block} allBlocks={experience.blocks} locale={locale} route={route} key={block.id || block.block_key} />)}</>
 }

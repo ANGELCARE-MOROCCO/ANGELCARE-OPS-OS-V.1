@@ -195,5 +195,5 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
 
   const result = await getPublicPage({ locale, slug }).catch(() => null)
   if (!result) notFound()
-  return <GlobalPublicShell locale={locale} navigation={result.navigation}><PublicPageRenderer experience={result} locale={locale}/></GlobalPublicShell>
+  return <GlobalPublicShell locale={locale} navigation={result.navigation} variant={slug==='contact'?'marketplace':'standard'}><PublicPageRenderer experience={result} locale={locale}/></GlobalPublicShell>
 }

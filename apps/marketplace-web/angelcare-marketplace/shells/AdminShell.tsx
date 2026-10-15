@@ -37,15 +37,16 @@ const IMPORT_WORKSPACES: AdminShellWorkspace[] = [
   { href: '/angelcare-marketplace/admin/imports/expert-commerce', domain: 'imports', label: 'Imports · Commerce expert', dynamic: false },
 ]
 
-function workspaces(): AdminShellWorkspace[] {
+function workspaces(canDce: boolean): AdminShellWorkspace[] {
   const existing = [...ADMIN_WORKSPACE_REGISTRY,{href:'/angelcare-marketplace/admin/hotline',domain:'hotline',label:'HOTLINE · Réception',dynamic:false,source:'hotline-os-r1'},{href:'/angelcare-marketplace/admin/hotline/settings',domain:'hotline',label:'HOTLINE · Studio',dynamic:false,source:'hotline-os-r1'}].map(({ href, domain, label, dynamic }) => ({ href, domain, label, dynamic }))
   const seen = new Set(existing.map((item) => item.href))
   const withSanila = [...existing, ...SANILA_WORKSPACES.filter((item) => !seen.has(item.href))]
   const seenAll = new Set(withSanila.map((item) => item.href))
-  return [...withSanila, ...IMPORT_WORKSPACES.filter((item) => !seenAll.has(item.href))]
+  return [...withSanila, ...IMPORT_WORKSPACES.filter((item) => !seenAll.has(item.href)), ...(canDce ? [{href:'/angelcare-marketplace/admin/digital-customer-experience',domain:'digital_experience',label:'Digital Customer Experience',dynamic:false}] : [])]
 }
 
 export async function AdminShell({ context, children }: { context: MarketplaceRequestContext; children: ReactNode }) {
+  const canDce = hasMarketplacePermission(context,'marketplace.digital_experience.view')
   const snapshot = await getAdminShellSnapshot()
   return (
     <AdminShellChrome
@@ -55,8 +56,9 @@ export async function AdminShell({ context, children }: { context: MarketplaceRe
       territoryId={context.territoryId}
       permissionCount={context.permissions.length}
       canHotline={hasMarketplacePermission(context,'marketplace.hotline.view')}
+      canDce={canDce}
       snapshot={snapshot}
-      workspaces={workspaces()}
+      workspaces={workspaces(canDce)}
     >
       {children}
     </AdminShellChrome>
