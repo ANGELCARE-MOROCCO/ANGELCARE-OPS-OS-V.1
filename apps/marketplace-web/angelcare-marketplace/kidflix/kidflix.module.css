@@ -3870,6 +3870,9 @@
   }
 }
 @media print {
+  .root button {
+    display: none !important;
+  }
   .header,
   .footer,
   .navigationToast,

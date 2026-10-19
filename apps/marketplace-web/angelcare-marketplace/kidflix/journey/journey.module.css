@@ -351,7 +351,6 @@ html[data-kidflix-motion="no"] [data-kidflix-shell] * {
   }
   .actions,
   .tabs,
-  button,
   .ad {
     display: none !important;
   }
@@ -389,10 +388,6 @@ html[data-kidflix-motion="no"] [data-kidflix-shell] * {
 }
 @media print {
   .adReserve {
-    display: none !important;
-  }
-  [data-kidflix-shell] > header,
-  [data-kidflix-shell] > footer {
     display: none !important;
   }
 }

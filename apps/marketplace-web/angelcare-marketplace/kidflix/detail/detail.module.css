@@ -2472,5 +2472,4 @@
   }
 }
 
-[data-kidflix-reading] [class*="storyText"] p,[data-kidflix-reading] [class*="editorial"] p{font-size:calc(1.08rem * var(--reading-size,1));line-height:var(--reading-spacing,1.7)}
-@media print{[data-kidflix-shell]>header,[data-kidflix-shell]>footer{display:none!important}}
+[data-kidflix-reading] .storyText p,[data-kidflix-reading] .editorial p{font-size:calc(1.08rem * var(--reading-size,1));line-height:var(--reading-spacing,1.7)}
