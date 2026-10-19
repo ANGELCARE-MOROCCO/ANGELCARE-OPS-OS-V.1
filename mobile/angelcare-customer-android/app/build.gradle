@@ -1,0 +1,38 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.angelcare.marketplace'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId 'com.angelcare.marketplace'
+        minSdk 24
+        targetSdk 36
+        versionCode 1
+        versionName '0.1.0'
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix '.preview'
+            versionNameSuffix '-preview'
+            debuggable true
+        }
+        release {
+            minifyEnabled false
+            // Release signing intentionally NOT configured in R1.
+            // Play App Signing, official identity and DAL must be approved first.
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.7.4'
+}

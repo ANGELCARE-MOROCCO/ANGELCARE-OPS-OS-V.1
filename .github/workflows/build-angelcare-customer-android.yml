@@ -1,0 +1,63 @@
+name: AngelCare Customer Android — Isolated Preview APK
+
+on:
+  pull_request:
+    branches:
+      - upgrade/next-angelcare-upgrade
+    paths:
+      - 'mobile/angelcare-customer-android/**'
+      - '.github/workflows/build-angelcare-customer-android.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-customer-preview-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  apk-preview:
+    name: Android APK / unsigned AAB
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    defaults:
+      run:
+        working-directory: mobile/angelcare-customer-android
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Set up Gradle 8.13 (runner only)
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
+      - name: Install Android 36 SDK platform (runner only)
+        run: sdkmanager 'platforms;android-36' 'build-tools;35.0.0'
+      - name: Verify isolated source, no network required
+        run: python3 scripts/verify_source.py
+      - name: Compile preview Android APK and unsigned release AAB
+        run: gradle --no-daemon --stacktrace :app:assembleDebug :app:bundleRelease
+      - name: Package and checksum CI artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s app/build/outputs/apk/debug/app-debug.apk
+          test -s app/build/outputs/bundle/release/app-release.aab
+          mkdir -p dist
+          cp app/build/outputs/apk/debug/app-debug.apk "dist/angelcare-customer-preview-${GITHUB_SHA:0:12}.apk"
+          cp app/build/outputs/bundle/release/app-release.aab "dist/angelcare-customer-UNSIGNED-${GITHUB_SHA:0:12}.aab"
+          (cd dist && sha256sum * > SHA256SUMS.txt)
+          cat dist/SHA256SUMS.txt
+      - name: Upload artifact (NOT a production release)
+        uses: actions/upload-artifact@v4
+        with:
+          name: angelcare-customer-preview-${{ github.run_id }}
+          path: mobile/angelcare-customer-android/dist/*
+          retention-days: 14
+          if-no-files-found: error

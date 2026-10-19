@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AngelCare Marketplace</string>
+    <string name="launch_url" translatable="false">https://my.angelcarehub.com/angelcare-marketplace/fr</string>
+</resources>
