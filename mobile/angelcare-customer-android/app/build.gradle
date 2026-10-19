@@ -2,6 +2,11 @@ plugins {
     id 'com.android.application'
 }
 
+// A preview signing key is retained OFF-REPO and restored exclusively through
+// encrypted GitHub Actions secrets. This project must never embed its private key.
+def previewKeystorePath = System.getenv('ANGELCARE_PREVIEW_KEYSTORE_PATH')
+def previewKeystorePassword = System.getenv('ANGELCARE_PREVIEW_KEYSTORE_PASSWORD')
+
 android {
     namespace 'com.angelcare.marketplace'
     compileSdk 36
@@ -10,8 +15,21 @@ android {
         applicationId 'com.angelcare.marketplace'
         minSdk 24
         targetSdk 36
-        versionCode 1
-        versionName '0.1.0'
+        versionCode 3
+        versionName '0.3.0'
+    }
+
+    signingConfigs {
+        angelcarePreview {
+            if (!previewKeystorePath || !previewKeystorePassword) {
+                throw new GradleException('ANGELCARE_PREVIEW_SIGNING_MISSING: configure dedicated GitHub Actions secrets. Do not fall back to a runner debug key.')
+            }
+            storeFile file(previewKeystorePath)
+            storeType 'pkcs12'
+            storePassword previewKeystorePassword
+            keyAlias 'angelcare-preview'
+            keyPassword previewKeystorePassword
+        }
     }
 
     buildTypes {
@@ -19,11 +37,12 @@ android {
             applicationIdSuffix '.preview'
             versionNameSuffix '-preview'
             debuggable true
+            signingConfig signingConfigs.angelcarePreview
         }
         release {
             minifyEnabled false
-            // Release signing intentionally NOT configured in R1.
-            // Play App Signing, official identity and DAL must be approved first.
+            // Release bundle remains deliberately unsigned.
+            // Play App Signing / production identity are a separate approval gate.
         }
     }
 
