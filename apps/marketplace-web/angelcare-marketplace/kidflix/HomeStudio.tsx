@@ -27,6 +27,7 @@ import {
   Dialog,
 } from "../digital-customer-experience/components/ui";
 import s from "../digital-customer-experience/components/workspace.module.css";
+import { KidFlixDefaults } from "./journey/Operator";
 export function KidFlixHomeStudio() {
   const { locale, boot, notify } = useUI(),
     q = useQuery<any>({ op: "kidflix_home" }, null),
@@ -192,6 +193,11 @@ export function KidFlixHomeStudio() {
           ]}
         />
       </p>
+      <KidFlixDefaults
+        value={edition.familyTools || {}}
+        onChange={(v) => edit("familyTools", v)}
+        readOnly={busy || !boot.actor.rights.manage}
+      />
       <State {...q} retry={q.reload}>
         <div className={s.toolbar}>
           <label>
@@ -476,7 +482,10 @@ export function KidFlixHomeStudio() {
                     i >= edition.sections.length - 1
                   }
                   children={null}
-                  ariaLabel={tr(["Move down", "Descendre", "نقل لأسفل"], locale)}
+                  ariaLabel={tr(
+                    ["Move down", "Descendre", "نقل لأسفل"],
+                    locale,
+                  )}
                   icon="ArrowDown"
                   onClick={() => {
                     const order = [...edition.sections];
@@ -515,8 +524,8 @@ export function KidFlixHomeStudio() {
                       edit("familyOrder", order);
                     }}
                     children={null}
-                  ariaLabel={tr(["Move up", "Monter", "نقل لأعلى"], locale)}
-                  icon="ArrowUp"
+                    ariaLabel={tr(["Move up", "Monter", "نقل لأعلى"], locale)}
+                    icon="ArrowUp"
                     title={tr(["Move up", "Monter", "نقل لأعلى"], locale)}
                   />
                   <Button
@@ -527,8 +536,11 @@ export function KidFlixHomeStudio() {
                       edit("familyOrder", order);
                     }}
                     children={null}
-                  ariaLabel={tr(["Move down", "Descendre", "نقل لأسفل"], locale)}
-                  icon="ArrowDown"
+                    ariaLabel={tr(
+                      ["Move down", "Descendre", "نقل لأسفل"],
+                      locale,
+                    )}
+                    icon="ArrowDown"
                     title={tr(["Move down", "Descendre", "نقل لأسفل"], locale)}
                   />
                 </div>

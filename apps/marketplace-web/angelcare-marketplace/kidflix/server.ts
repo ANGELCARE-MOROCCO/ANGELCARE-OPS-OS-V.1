@@ -32,6 +32,7 @@ export function filters(input: Record<string, unknown>) {
   for (const k of [
     "q",
     "family",
+    "notFamily",
     "intent",
     "subject",
     "skill",
@@ -54,6 +55,7 @@ export function filters(input: Record<string, unknown>) {
   if (out.keys && out.keys.split(",").length > 100)
     throw Error("Too many saved discoveries");
   if (out.family && !world(out.family)) throw Error("Unknown family");
+  if(out.notFamily&&!world(out.notFamily))throw Error("Unknown family");
   if (
     out.age &&
     (!Number.isFinite(Number(out.age)) ||
@@ -92,6 +94,14 @@ export function card(
       ? Number(v)
       : null;
   return {
+    loveCount:
+      typeof row.love_total === "number"
+        ? Math.max(0, row.love_total)
+        : undefined,
+    recentStarts:
+      typeof row.recent_starts === "number"
+        ? Math.max(0, row.recent_starts)
+        : undefined,
     id: str(row.id),
     releaseId: str(row.release_id),
     key: str(row.key, 120),

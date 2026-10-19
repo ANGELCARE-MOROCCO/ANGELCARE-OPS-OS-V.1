@@ -65,7 +65,7 @@ export function ResourceCard({
           aria-pressed={saved}
           aria-label={copy(saved ? "unsave" : "save", locale)}
         >
-          <I name={saved ? "Bookmark" : "Heart"} size={17} />
+          <I name="Bookmark" size={17} />
         </button>
         {r.formats.length ? (
           <div className={s.formats}>
@@ -517,6 +517,19 @@ export function Explorer({
               onChange={(e) => update("sort", e.target.value)}
             >
               <option value="new">{copy("newest", locale)}</option>
+              <option value="loved">
+                {tr(["Most loved", "Les plus aimés", "الأكثر إعجاباً"], locale)}
+              </option>
+              <option value="popular">
+                {tr(
+                  [
+                    "Popular this week",
+                    "Populaires cette semaine",
+                    "الرائجة هذا الأسبوع",
+                  ],
+                  locale,
+                )}
+              </option>
               <option value="title">{copy("titleSort", locale)}</option>
             </select>
           </label>

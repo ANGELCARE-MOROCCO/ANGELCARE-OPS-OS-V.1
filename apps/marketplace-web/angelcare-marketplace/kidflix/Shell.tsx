@@ -6,6 +6,11 @@ import { copy } from "./copy";
 import { I } from "./Icons";
 import { GuestProvider, useGuest } from "./continuity";
 import s from "./kidflix.module.css";
+import { EditionLanguage, GuidedDiscovery } from "./journey/Discovery";
+import { interpretSearch } from "./journey/contract";
+import { j } from "./journey/copy";
+import { usePersonal } from "./journey/store";
+import js from "./journey/journey.module.css";
 export function SearchBox({
   locale,
   large = false,
@@ -20,6 +25,13 @@ export function SearchBox({
       className={`${s.search} ${large ? s.heroSearch : ""}`}
       action={path(locale, "/explore")}
       role="search"
+      onSubmit={(e) => {
+        e.preventDefault();
+        const q = String(new FormData(e.currentTarget).get("q") || "");
+        location.assign(
+          path(locale, "/explore?") + new URLSearchParams(interpretSearch(q)),
+        );
+      }}
     >
       <I name="Search" />
       <input
@@ -84,35 +96,13 @@ function Header({ locale }: { locale: Locale }) {
           <SearchBox locale={locale} />
         </div>
         <div className={s.headerActions}>
-          <label className={s.language}>
-            <I name="Globe" size={17} />
-            <span className={s.sr}>
-              {tr(["Language", "Langue", "اللغة"], locale)}
-            </span>
-            <select
-              aria-label={tr(["Language", "Langue", "اللغة"], locale)}
-              value={locale}
-              onChange={(e) => {
-                const tail = location.pathname.replace(
-                  /^\/kidflix\/(en|fr|ar)/,
-                  "",
-                );
-                location.assign(
-                  path(e.target.value as Locale, tail) + location.search,
-                );
-              }}
-            >
-              <option value="en">EN</option>
-              <option value="fr">FR</option>
-              <option value="ar">عربي</option>
-            </select>
-          </label>
+          <EditionLanguage locale={locale} />
           <Link
-            href={path(locale, "/saved")}
+            href={path(locale, "/my")}
             className={s.savedButton}
-            aria-label={copy("saved", locale)}
+            aria-label={j("my", locale)}
           >
-            <I name="Heart" />
+            <I name="Bookmark" />
             {guest.ready && guest.saved.length > 0 ? (
               <span>{guest.saved.length}</span>
             ) : null}
@@ -305,7 +295,8 @@ function Content({
   locale: Locale;
   children: ReactNode;
 }) {
-  const [pending, setPending] = useState(false);
+  const [pending, setPending] = useState(false),
+    personal = usePersonal();
   useEffect(() => {
     let t: ReturnType<typeof setTimeout>, stop: ReturnType<typeof setTimeout>;
     const click = (e: MouseEvent) => {
@@ -357,7 +348,15 @@ function Content({
         )}
       </a>
       <Header locale={locale} />
-      <main id="kidflix-content">{children}</main>
+      <main id="kidflix-content">
+        {personal.error ? (
+          <p className={js.notice} role="status">
+            {j("storage", locale)}
+          </p>
+        ) : null}
+        <GuidedDiscovery locale={locale} />
+        {children}
+      </main>
       <Footer locale={locale} />
       {pending ? (
         <div role="status" className={s.navigationToast}>

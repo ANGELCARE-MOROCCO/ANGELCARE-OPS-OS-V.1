@@ -48,6 +48,16 @@ const enabled = field("enabled", "Enabled", "Activé", "مفعل", "toggle", {
   defaultValue: false,
 });
 export const DEPTH_FIELDS: Field[] = [
+  field("kidflixSession", "Allow personal sessions", "Autoriser les séances personnelles", "السماح بالجلسات الشخصية", "toggle", {defaultValue:true}),
+  field("kidflixClassroom", "Allow classroom presentation", "Autoriser la présentation en classe", "السماح بالعرض في الفصل", "toggle", {defaultValue:true}),
+  field("kidflixOffline", "Permit offline file preparation", "Autoriser la préparation hors connexion", "السماح بتجهيز الملفات دون اتصال", "toggle", {defaultValue:false}),
+  field("kidflixPrintPack", "Permit combined print packs", "Autoriser les packs imprimables combinés", "السماح بحزم الطباعة المجمعة", "toggle", {defaultValue:false}),
+  field("kidflixComfort", "Reading comfort controls", "Contrôles de confort de lecture", "أدوات راحة القراءة", "toggle", {defaultValue:true}),
+  field("kidflixPractice", "Personal practice controls", "Contrôles de révision personnelle", "أدوات التدريب الشخصي", "toggle", {defaultValue:true}),
+  field("kidflixQueue", "Personal media queue", "File de lecture personnelle", "قائمة الوسائط الشخصية", "toggle", {defaultValue:true}),
+  local("kidflixAliases", "Search synonyms · one per line", "Synonymes de recherche · un par ligne", "مرادفات البحث · واحد لكل سطر"),
+  local("kidflixFacilitator", "Public facilitator guidance", "Conseils publics pour l’animateur", "إرشادات عامة للميسر"),
+
   field("subject", "Subject", "Matière", "المادة"),
   field(
     "skillTags",

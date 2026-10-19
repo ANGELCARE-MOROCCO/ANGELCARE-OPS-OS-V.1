@@ -390,6 +390,8 @@ export const INTENTS = [
   ["organise", "CalendarCheck", ["Organise", "Organiser", "نظّم"]],
 ] as const;
 export interface Resource {
+  loveCount?: number;
+  recentStarts?: number;
   id: string;
   releaseId: string;
   key: string;
@@ -431,6 +433,7 @@ export const emptyCatalogue: Catalogue = {
   skills: [],
 };
 export interface HomeEdition {
+  familyTools?: Record<string, Record<string, boolean>>;
   eyebrow: string;
   headline: string;
   description: string;
@@ -562,6 +565,31 @@ export function normalizeEdition(v: unknown, l: Locale): HomeEdition {
     }
   const e = {
     ...d,
+    familyTools: Object.fromEntries(
+      Object.entries(
+        x.familyTools && typeof x.familyTools === "object" ? x.familyTools : {},
+      )
+        .filter(([family]) => Boolean(world(family)))
+        .map(([family, value]) => [
+          family,
+          Object.fromEntries(
+            Object.entries(
+              value && typeof value === "object" ? value : {},
+            ).filter(
+              ([key, v]) =>
+                [
+                  "kidflixSession",
+                  "kidflixClassroom",
+                  "kidflixComfort",
+                  "kidflixPractice",
+                  "kidflixQueue",
+                  "kidflixOffline",
+                  "kidflixPrintPack",
+                ].includes(key) && typeof v === "boolean",
+            ),
+          ),
+        ]),
+    ) as Record<string, Record<string, boolean>>,
     eyebrow: s("eyebrow", 100),
     headline: s("headline", 160),
     description: s("description", 500),

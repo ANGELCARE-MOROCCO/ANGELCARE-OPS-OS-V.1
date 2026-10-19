@@ -37,8 +37,10 @@ export function InformationPage({
           <button
             className={s.outline}
             onClick={() => {
-              guest.clear();
-              setCleared(true);
+              void guest
+                .clear()
+                .then(() => setCleared(true))
+                .catch(() => setCleared(false));
             }}
           >
             {copy("erase", locale)}
@@ -153,7 +155,7 @@ export function ResourceOverview({
               aria-pressed={guest.saved.includes(m.key)}
               onClick={() => guest.toggle(m.key)}
             >
-              <I name="Heart" size={17} />
+              <I name="Bookmark" size={17} />
               {copy(guest.saved.includes(m.key) ? "unsave" : "save", locale)}
             </button>
             <Link

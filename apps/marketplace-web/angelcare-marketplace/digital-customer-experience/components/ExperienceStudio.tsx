@@ -30,6 +30,14 @@ type RenderField = (
 const groups = [
   ["brief", ["Educational brief", "Dossier pédagogique", "الملف التربوي"]],
   [
+    "kidflix",
+    [
+      "KidFlix visitor tools",
+      "Outils visiteurs KidFlix",
+      "أدوات زوار كيدفليكس",
+    ],
+  ],
+  [
     "results",
     [
       "Results & recommendations",
@@ -78,29 +86,32 @@ export function ExperienceStudio({
     ],
   };
   const fields = DEPTH_FIELDS.filter((f) =>
-    tab === "continuity"
-      ? [
-          "continuityPolicy",
-          "progressTtlDays",
-          "releaseChangePolicy",
-          "reducedMotion",
-        ].includes(f.key)
-      : tab === "discovery"
-        ? ["discoveryTitle", "seoDescription", "slug"].includes(f.key)
-        : tab === "results"
-          ? f.key === "resultsEnabled"
-          : tab === "brief"
-            ? ![
-                "continuityPolicy",
-                "progressTtlDays",
-                "releaseChangePolicy",
-                "reducedMotion",
-                "discoveryTitle",
-                "seoDescription",
-                "slug",
-                "resultsEnabled",
-              ].includes(f.key)
-            : false,
+    tab === "kidflix"
+      ? f.key.startsWith("kidflix")
+      : tab === "continuity"
+        ? [
+            "continuityPolicy",
+            "progressTtlDays",
+            "releaseChangePolicy",
+            "reducedMotion",
+          ].includes(f.key)
+        : tab === "discovery"
+          ? ["discoveryTitle", "seoDescription", "slug"].includes(f.key)
+          : tab === "results"
+            ? f.key === "resultsEnabled"
+            : tab === "brief"
+              ? !f.key.startsWith("kidflix") &&
+                ![
+                  "continuityPolicy",
+                  "progressTtlDays",
+                  "releaseChangePolicy",
+                  "reducedMotion",
+                  "discoveryTitle",
+                  "seoDescription",
+                  "slug",
+                  "resultsEnabled",
+                ].includes(f.key)
+              : false,
   );
   const issue = depthIssues(data, family),
     result = selectResult(data, score, complete);
@@ -149,6 +160,39 @@ export function ExperienceStudio({
           ]}
         />
       </div>
+      {tab === "kidflix" ? (
+        <div className={s.notice}>
+          <p>
+            <T
+              v={[
+                "Published family limits apply first. Resource settings then narrow the available tools; media, rights and output readiness determine what is usable.",
+                "Les limites publiées de l’univers s’appliquent d’abord. Le dossier précise les outils ; médias, droits et sorties disponibles déterminent les possibilités.",
+                "تطبق حدود العالم المنشورة أولاً ثم إعدادات المورد. تحدد الوسائط والحقوق وجاهزية المخرجات الأدوات المتاحة.",
+              ]}
+            />
+          </p>
+          <Button
+            disabled={readOnly}
+            onClick={() =>
+              onChange(
+                Object.fromEntries(
+                  DEPTH_FIELDS.filter(
+                    (f) => f.key.startsWith("kidflix") && f.type === "toggle",
+                  ).map((f) => [f.key, f.defaultValue ?? false]),
+                ),
+              )
+            }
+          >
+            <T
+              v={[
+                "Reset visitor tools to defaults",
+                "Rétablir les outils par défaut",
+                "استعادة أدوات الزائر الافتراضية",
+              ]}
+            />
+          </Button>
+        </div>
+      ) : null}
       <div className={s.formGrid}>
         {fields.map((def) => (
           <div key={def.key}>

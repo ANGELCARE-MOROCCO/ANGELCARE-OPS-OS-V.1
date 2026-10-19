@@ -1,4 +1,5 @@
 "use client";
+import { PageAd } from "./journey/Runtime";
 import Link from "next/link";
 import { useState, Children, isValidElement, type ReactNode } from "react";
 import {
@@ -63,18 +64,20 @@ function HomeSequence({
     </>
   );
 }
-function AdPosition({ slot, selected }: { slot: string; selected: string[] }) {
-  return selected.includes(slot) ? (
-    <div data-kidflix-ad-slot={slot} data-provider-state="inactive" hidden />
-  ) : null;
-}
-function FamilyFeature({
-  family,
+function AdPosition({
+  slot,
+  selected,
   locale,
 }: {
-  family: string;
+  slot: string;
+  selected: string[];
   locale: Locale;
 }) {
+  return selected.includes(slot) ? (
+    <PageAd locale={locale} slot={slot} />
+  ) : null;
+}
+function FamilyFeature({ family, locale }: { family: string; locale: Locale }) {
   const w = world(family)!;
   return (
     <Link
@@ -134,6 +137,7 @@ function ResourceSection({
       />
       <Shelf rows={rows.slice(0, 6)} locale={locale} />
       <AdPosition
+        locale={locale}
         slot={family === "bundles" ? "after-bundles" : "after-printables"}
         selected={adSlots}
       />
@@ -369,7 +373,11 @@ export function KidFlixHome({
               />
             ))}
           </div>
-          <AdPosition slot="after-worlds" selected={e.adSlots} />
+          <AdPosition
+            locale={locale}
+            slot="after-worlds"
+            selected={e.adSlots}
+          />
           <div className={s.worldsFoot}>
             <span>
               <I name="Sparkles" size={15} />
