@@ -1,0 +1,403 @@
+{
+  "generatedAt": "2026-10-15T03:16:39.607Z",
+  "changed": [
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/access.ts",
+      "sha256": "72bafad985239f0129b04416a50f8d380fff34db18e7b9df7499600cf2bc4295",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/action-contract.ts",
+      "sha256": "198859ee413692c352862f01a2e3edcf699309d7c60491a73d1c5e9a775c1810",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/administration.ts",
+      "sha256": "8a957ad0de51f99ec4b2194c2a228dc6492d1e3b52575ec2fdec593ee0ab38ff",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/capabilities.ts",
+      "sha256": "8f32c28128aaeee48323eb9b67419aa554a45dd76f76ebd3a3b8e77b71d33ef5",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/commerce.ts",
+      "sha256": "98fe6bfff7dfa6a1abfa6a16d6257be0bc4bf9ebb4e8c7bac509ffd36d83f816",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/Access.tsx",
+      "sha256": "92ec6571da9c792472228c918b2a07a0bd4617c23b2898719a0aa383677cdfdb",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/Analytics.tsx",
+      "sha256": "0029f156a9cd2ad5328b2736b0faa1ef17643268ecd4db1877c296aea5dce232",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/Construction.tsx",
+      "sha256": "10a349a7c6bb12000acda51595275f15f72ce029cf1506d86c18b9437386645b",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/Dashboard.tsx",
+      "sha256": "cf41077f2dd9405d3cb565a73ab7c3ef49d88e759f21703f5e91db86f2ef3833",
+      "baselineSha256": "87dafcf9e8884c381e9acad9ed441742f5e6dad95917c375d9e4c958fed12174",
+      "state": "modified"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/DesignRegistry.tsx",
+      "sha256": "243cd3499e0515579f82ca525d3ec83123155e076e16ae4244a44021245997cd",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/Editor.tsx",
+      "sha256": "d4c690fbf7728be437fa440bea693b1f39ecd7aa776606f7bc04a0087c8c96f0",
+      "baselineSha256": "d985fa13470df8db75fc4c3d56c3d590b2bc0fe4350c3dceb96ec49b13172d07",
+      "state": "modified"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/Editorial.tsx",
+      "sha256": "54fac9e67c8eb6bbd6c7cb8cae18d58199b1a25f41886d96ee489eb9fcab1c87",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/Engagement.tsx",
+      "sha256": "616f7cfca55ffe071302cd13b5a237b3a0227ea97c9c25b862db135b93313ae1",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/FamilyWorkbench.tsx",
+      "sha256": "88124e3be33ed05c53db5dbc665cdcfcbf2bed31634f120e934136b0700f88bf",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/Imports.tsx",
+      "sha256": "bf4c8ea20c9e7d0b14b984ea55507c0bdae3f62cfbe285fba38fad7ac36a2dbc",
+      "baselineSha256": "ac3734f680a81b25447e8600cca2152e8453dc734af93bd546e2eb1c3f4bc063",
+      "state": "modified"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/Insights.tsx",
+      "sha256": "21c69189703cffee75a59cc1b99821fe51ebce4985f63fd3e0ba880e2e9e45e7",
+      "baselineSha256": "9c9d9e467605f85924a52cb7f51d5b128aa54920d612992e078968b2a2b4b983",
+      "state": "modified"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/Media.tsx",
+      "sha256": "aca60213e71dfb395ff54dbc3d227097298ce821ccf34d219657434411428661",
+      "baselineSha256": "a963a3d4a0dc860b8796947bab14e50a4fad9c55a2081f0891cc85422ad907f7",
+      "state": "modified"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/Monetization.tsx",
+      "sha256": "94f3343d723225230754cf6ec2bea544ecff0dae134507813e3d641f52a634a8",
+      "baselineSha256": "278fb68281f3882de391c87c2043a82421c2c4e81f57a93ca9c7c045839d7211",
+      "state": "modified"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/Operations.tsx",
+      "sha256": "9b7fb651a2dd70a55cc594ac08f367bddc698e8747db69adf6d4e3ae1d9ceb9e",
+      "baselineSha256": "caf7b58fb5f56b8e6cd567da679dcf8907fdde826fb20a27ce2bb717723a9d71",
+      "state": "modified"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/PolicyBatch.tsx",
+      "sha256": "7a34e5ed68ac900baba5823d3a5a8068dfc7696e8b5ca2b68687333354139025",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/Preview.tsx",
+      "sha256": "6d3a70b5132c2c8c58a8b8d90afde320457eadb6c1cc3eded8bb8e32095f9cfb",
+      "baselineSha256": "37e0dd11c6fd7acccefde20ff5b2e9a5655b306213d636bb877855b7e608bfa4",
+      "state": "modified"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/Pricing.tsx",
+      "sha256": "5cd0573a23eff1142368924df26939eccd107c87014e8776002ad98d0a7a62e4",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/Registry.tsx",
+      "sha256": "dea1720d9822bc3140335635ff59b42996c7f8ef57b5c48fdce1ebdf6ff0433f",
+      "baselineSha256": "655e5b480246cba536dc04fd5ccd41452b9bac556d5ab9d0692e20894bf42797",
+      "state": "modified"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/Taxonomy.tsx",
+      "sha256": "6c8193d0ae7295dab3dead4996c94ed52def324c619cdcf19f530b382cdc5f60",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/Workspace.tsx",
+      "sha256": "d9a30e53546d3d3f5d5866d0d28fdad0777f51d59ebf765fc8a3c3e61ae926a4",
+      "baselineSha256": "24d370c306895e9bf2194cc37979e199b8494635d8030970c6c04a93c4f87055",
+      "state": "modified"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/previews/Flows.tsx",
+      "sha256": "3c5b3d07c4224a95fca82e4ad6b4b14f24c9304530069806bd658fd273f0ca73",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/previews/Interactive.tsx",
+      "sha256": "1c54c611ea2a330e3574ae5db7f481a6ad7f63db0e2f043bbc3cd5ba9de9f8d6",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/previews/Reading.tsx",
+      "sha256": "e01b2486ec1666dd3b33c49d3087246d84e683a34c51c76cdff80bb3de1e595f",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/previews/shared.tsx",
+      "sha256": "12cb426677ee831ba1f391cadb250e017f381c735c73c6d630bde3681b76d6b8",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/ui.tsx",
+      "sha256": "e1aa9891d25e558c0d2217dd9a13b0877d24e0be0e75ef857c0079e879ed4fc7",
+      "baselineSha256": "07ea405782d3997ab8304a0bd6ef92376b78259fbea4eb7e255af08d802c079b",
+      "state": "modified"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/components/workspace.module.css",
+      "sha256": "d3b8540a0f1adc52e2867b2f5c6d70b5b441667b0ef022c4414ac4a385e6c187",
+      "baselineSha256": "ffbcb32281636f5cb84a406bf8f96997a968782323686ea4ca20e5b559a0829b",
+      "state": "modified"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/composition.ts",
+      "sha256": "ea34dec8b1891e7a2c96a9dc6efa00f0d2c46612f9ca55e2d91daa69a4f5ddc3",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/database/04_DCE_ADMIN_R2_INTEGRITY.sql",
+      "sha256": "786e6d1436c9657e670de691fbbb93a1cca3c442d7b9943706caf9bad78639ec",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/database/05_VERIFY_DCE_ADMIN_R2.sql",
+      "sha256": "e7bcbdecbfbed517acc5633065552f91e3014b8f9677ab0dda3f78d620e0cd53",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/google.ts",
+      "sha256": "f38caf89ab401e84eb5dc265280bb0d2fde44c146e9c77eb6e7dc86eac9c26fb",
+      "baselineSha256": "7a84b39de0f9a3cd90f61d0be55dc5e7e08b3650180c738e355567b3e9539261",
+      "state": "modified"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/imports.ts",
+      "sha256": "3fc620517816db406f313f653c1cd7d4ea9b7a43956b9c3fa6e4e653e2c4f890",
+      "baselineSha256": "6af758688301514e7b30862bceca405790d4eb810e95a69d00b36016befe3ae3",
+      "state": "modified"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/model.ts",
+      "sha256": "3f1f28a44de1f6e1bddab7c2efb1a91fbb0ff6a35ad552a37d773c0a299eb3ac",
+      "baselineSha256": "ebdc828ea747672040b2012569dee71df853fc3f604f7c669049bce709c7dad8",
+      "state": "modified"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/reception.ts",
+      "sha256": "41523d281eb8f78413a759956e09e57546f1de0f704a3682078f6cfd752aa55c",
+      "baselineSha256": "eac19afd670d3d116d6e45c3b2bc8fb1d2d9cc8b119d7c2d8d4a37775aab1e88",
+      "state": "modified"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/reconciliation.ts",
+      "sha256": "9d16258c73e36e88ac14039e82599233d250f22c2e82d37a09f42c9bc579b80d",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/reference-model.ts",
+      "sha256": "310472534ffc31c9a7cbb2113108df3dfe9cf36a816e85c6b69df5a8ac77e028",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/registry.ts",
+      "sha256": "e0113a93c82e3b3034a17933c819eddd5e028dc901474ba6cea0b041aa5eddf5",
+      "baselineSha256": "e19ec6ad6c25c90faf95bafab9d59d3455c65a27df4b3f0d7e656e7a00c5a12f",
+      "state": "modified"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/repository.ts",
+      "sha256": "34b0923b2d66716a6217a6ca87be9a2163fbd8c0fb97c0d1a99e98944e917098",
+      "baselineSha256": "a35837ab90c68d8f39c9e79ba4305621784f455cdb8fb978ef54f4af95cf8ff2",
+      "state": "modified"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/types.ts",
+      "sha256": "c10ef0be47188f054d92e7798b8a7958dcb9506259b0410c5458585207509775",
+      "baselineSha256": "621f6bdcf5269610741756707467e27e209f66ff51629f1289af678b4e7bf366",
+      "state": "modified"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/validation.ts",
+      "sha256": "0952e735196457221f3f799d9e23f67d3832e3d9e4380ca1526438a9187e7182",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/scripts/dce-completion/authoring-plans.cjs",
+      "sha256": "4903971f98377721b544859ff356c360706085a9905dc1676e869e40f5215e59",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/scripts/dce-completion/browser-smoke.mjs",
+      "sha256": "65342364cca205f0d8e1f2202d98fb85afb7eb5eff131ea32e858a90b21274a3",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/scripts/dce-completion/build-preview.mjs",
+      "sha256": "6abebc6e2e29af270b21b04b4d2cdf1d02594c48235181ae86376614e47e04e4",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/scripts/dce-completion/client.tsx",
+      "sha256": "707fb5a942779dd0b526d8d441b06063cb8531c8b333c181a00d54d5217f12cf",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/scripts/dce-completion/dom-check.mjs",
+      "sha256": "07f04d127959dab7e889e62e53a74900eaf56dd9474e29f079d61e8366bc59f2",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/scripts/dce-completion/dom-operations.mjs",
+      "sha256": "a40f4c61b4f84cdbf1d9410c4a9025d17155b293e51f41091f4e0dc7148a1af0",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/scripts/dce-completion/inspect-blockers.mjs",
+      "sha256": "f98da39376e637865e84fcb841ce9096015819de22adc1c3e9cb799c728aa39a",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/scripts/dce-completion/pg-adapter.mjs",
+      "sha256": "1b5ad20203db0e6ecc00a706beb66223ff227464e1b367e3384bfa6baaede7cd",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/scripts/dce-completion/refresh-evidence.mjs",
+      "sha256": "61d6111ac322c247a3292aae7d2fd9642166a9c192de576493d7e0eac72cda8f",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/scripts/dce-completion/serve.mjs",
+      "sha256": "5a9304d6c9e312bce322047bab23a973c3021d953c91d8375d05dcc76e73e1ca",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/scripts/dce-completion/verify-lifecycle.mjs",
+      "sha256": "b7c14a89074cfabc3d746e9319e5f85789ba8a0655ec7a034fbb92c86279520d",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/scripts/dce-completion/verify.mjs",
+      "sha256": "f7355544374a998d0be577b609e66d30d36b946ea914fb938fff6725c4bd4304",
+      "baselineSha256": null,
+      "state": "added"
+    },
+    {
+      "path": "apps/marketplace-web/tsconfig.dce-completion.json",
+      "sha256": "95868d6c342df86809c5446ffddc64f1fc66096c5271e3380832837f84637fd0",
+      "baselineSha256": null,
+      "state": "added"
+    }
+  ],
+  "unchangedBaselineFiles": [
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/START_HERE.md",
+      "sha256": "88d8094510635c482fa5986c476ea3d6feee017ff41b2e2be151da583cfb5ced",
+      "baselineSha256": "88d8094510635c482fa5986c476ea3d6feee017ff41b2e2be151da583cfb5ced",
+      "state": "modified"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/continuity.ts",
+      "sha256": "f2d7ad1fa42aed3acfb66c5f8f0aa500cf9c2bd3ce324c8dfa80e8a9a0d0f258",
+      "baselineSha256": "f2d7ad1fa42aed3acfb66c5f8f0aa500cf9c2bd3ce324c8dfa80e8a9a0d0f258",
+      "state": "modified"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/database/01_DCE_ADMIN_R1.sql",
+      "sha256": "671c55acaf19e0001363993f79b42e37a3cf528c48b68acdf111251538b53ee9",
+      "baselineSha256": "671c55acaf19e0001363993f79b42e37a3cf528c48b68acdf111251538b53ee9",
+      "state": "modified"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/database/02_VERIFY_DCE_ADMIN_R1.sql",
+      "sha256": "8bddf4076c38af78ca98f5d59f3924aff7fb5e0a420d2e9bda6df3a38f2e6060",
+      "baselineSha256": "8bddf4076c38af78ca98f5d59f3924aff7fb5e0a420d2e9bda6df3a38f2e6060",
+      "state": "modified"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/database/03_DISABLE_DCE_ADMIN_R1.sql",
+      "sha256": "52c4d4a1543e88026a4c53d4cbc0b481e277eefa8ceac721a864bf43aafe4a9f",
+      "baselineSha256": "52c4d4a1543e88026a4c53d4cbc0b481e277eefa8ceac721a864bf43aafe4a9f",
+      "state": "modified"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/processing.ts",
+      "sha256": "51d42d9817f86a2516a9e229bac3eb37126635618244385a8e32ac8601380d6b",
+      "baselineSha256": "51d42d9817f86a2516a9e229bac3eb37126635618244385a8e32ac8601380d6b",
+      "state": "modified"
+    },
+    {
+      "path": "apps/marketplace-web/app/api/angelcare-marketplace/admin/digital-customer-experience/route.ts",
+      "sha256": "743fc7eadeba4cf97a409666151ba85653b51aeb5a0023538b0b0df0cb910102",
+      "baselineSha256": "743fc7eadeba4cf97a409666151ba85653b51aeb5a0023538b0b0df0cb910102",
+      "state": "modified"
+    },
+    {
+      "path": "apps/marketplace-web/app/angelcare-marketplace/(protected)/(digital-experience-admin)/admin/digital-customer-experience/[[...section]]/page.tsx",
+      "sha256": "118a4f66bbe099ca032421fa26e154162a251f1ff1ea116fb7440187bad2837c",
+      "baselineSha256": "118a4f66bbe099ca032421fa26e154162a251f1ff1ea116fb7440187bad2837c",
+      "state": "modified"
+    },
+    {
+      "path": "apps/marketplace-web/app/angelcare-marketplace/(protected)/(digital-experience-admin)/admin/digital-customer-experience/layout.tsx",
+      "sha256": "9d7abb3e685e0e6098a0b0d01c15801722290b3151f12790cd2102b891a7dbaf",
+      "baselineSha256": "9d7abb3e685e0e6098a0b0d01c15801722290b3151f12790cd2102b891a7dbaf",
+      "state": "modified"
+    }
+  ]
+}

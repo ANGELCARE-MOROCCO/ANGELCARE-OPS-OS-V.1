@@ -1,0 +1,672 @@
+{
+  "generatedAt": "2026-10-15T07:42:55.376Z",
+  "meaning": "UI-authored persisted definitions consumed by actual repository and real local SQL. Not a pixel, native session or production integration check.",
+  "results": [
+    {
+      "name": "documents / Article Reader UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "documents / PDF Reader UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "documents / Chaptered Guide UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "documents / Rich Article UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "printables / Printable Preview UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "printables / Page Carousel UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "printables / Flipbook Preview UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "printables / Download Gate UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "stories / Flipbook UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "stories / Read-aloud story mode UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "stories / Immersive reading mode UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "stories / Slideshow story mode UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "learning / Course player UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "learning / Mixed media lesson path UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "learning / Chaptered video course UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "learning / Assessment-linked learning path UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "video / Cinematic Player UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "video / Tutorial Player with Chapters UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "video / Course-Linked Video UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "video / Vertical / Mobile Video Viewer UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "audio / Audio Player UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "audio / Playlist Mode UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "audio / Chaptered Podcast UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "audio / Narrated Story Mode UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "visual-cards / Image Gallery UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "visual-cards / Card Swiper UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "visual-cards / Lightbox Mode UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "visual-cards / Flashcard Study Mode UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "presentations / Slide Player UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "presentations / Frame-by-Frame Mode UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "presentations / Presenter Mode UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "presentations / Autoplay Storytelling UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "assessments / Quiz Player UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "assessments / Timed Assessment Mode UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "assessments / Practice Test Mode UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "assessments / Result Dashboard UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "activities / Game Canvas UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "activities / Activity Stepper UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "activities / Simulation Mode UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "activities / Challenge Mode UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "tools / Interactive Tool Runtime UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "tools / Calculator Panel UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "tools / Simulation Dashboard UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "tools / Form-Result Interface UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "planners / Printable Preview UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "planners / Editable Planner View UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "planners / Template Gallery UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "planners / Checklist Mode UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "forms / Form Flow UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "forms / Multistep Application UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "forms / Upload-Enabled Submission Page UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "forms / Booking Request Flow UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "community / Review Feed UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "community / Social Proof Wall UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "community / Q&A Thread UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "community / Community Hub UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "commerce / Shoppable Article UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "commerce / Buyable Resource Page UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "commerce / Course + Product Page UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "commerce / Download Delivery Experience UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "bundles / Guided Bundle Path UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "bundles / Bundle Dashboard UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "bundles / Sequential Playlist UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "bundles / Starter Kit Experience UI definition -> release -> revise -> release -> restore",
+      "status": "passed"
+    },
+    {
+      "name": "Actual UI definition import preparation is idempotent; interrupted apply resumes; unchanged draft rolls back",
+      "status": "passed"
+    },
+    {
+      "name": "Import rollback preserves an unchanged live release; later edits block rollback",
+      "status": "passed"
+    },
+    {
+      "name": "Scheduling, rescheduling, cancellation and immutable definition inspection",
+      "status": "passed"
+    },
+    {
+      "name": "Active dependencies block archive; category cycles are rejected at save",
+      "status": "passed"
+    },
+    {
+      "name": "Additive SQL reapplies; anonymous clients cannot execute privileged R2 operations",
+      "status": "passed"
+    },
+    {
+      "name": "Dashboard pipeline and schedule counters use the full inventory",
+      "status": "passed"
+    }
+  ],
+  "finished": [
+    {
+      "name": "documents / Article Reader",
+      "id": "dde32a6e-c588-40f1-bba7-d54e828b9c5f",
+      "first": "ac0ada7a-e47b-4693-9cdc-efc8bb14becb",
+      "revised": "8b469335-fa0b-44b2-b19e-0e6184fb3828"
+    },
+    {
+      "name": "documents / PDF Reader",
+      "id": "4d579740-f789-479f-932a-5240adc5edb7",
+      "first": "f2020369-b1b2-414c-955f-a2ab2dce30ed",
+      "revised": "a2f91144-dfa7-4da6-bbc4-78191aaa38c9"
+    },
+    {
+      "name": "documents / Chaptered Guide",
+      "id": "343cf823-d4d5-4e66-b2a2-fe7a593fbb6b",
+      "first": "fb03f74e-8014-41e1-a158-71001bff50af",
+      "revised": "310b4b8e-872a-4f40-aa2b-1ed8401060aa"
+    },
+    {
+      "name": "documents / Rich Article",
+      "id": "926ea02d-06fd-4bb1-9653-62017f44dd70",
+      "first": "58d39530-52da-45ef-b0e5-297bf1733776",
+      "revised": "9101dc9e-7ace-4dae-be91-dab5f6ac6b74"
+    },
+    {
+      "name": "printables / Printable Preview",
+      "id": "6c3b3c85-137e-463e-b736-3146c3463c15",
+      "first": "898fc0dd-c74e-4cfa-9dff-a6345f44a26c",
+      "revised": "7bd9b7ea-d2d0-4e07-9786-a1dfd83d0be2"
+    },
+    {
+      "name": "printables / Page Carousel",
+      "id": "acff7a19-b735-48f4-ae6c-27c1dbc23860",
+      "first": "6e845973-125e-4b86-9ebe-1b8876160222",
+      "revised": "ca5f3f90-2cf6-419e-ba05-d167d166f75e"
+    },
+    {
+      "name": "printables / Flipbook Preview",
+      "id": "41caa793-6fc1-43fd-990c-1694a6916173",
+      "first": "9a1fa53b-8974-4fb2-be56-cec60f221b40",
+      "revised": "bb1b6b65-1318-474c-96d4-a587fe650cbc"
+    },
+    {
+      "name": "printables / Download Gate",
+      "id": "df3ff405-800f-462f-abc6-74a32f9868a1",
+      "first": "17880486-24cb-48e7-a5d8-c7a35246743a",
+      "revised": "342ef7f9-9c35-4cab-9379-e50a8d810a07"
+    },
+    {
+      "name": "stories / Flipbook",
+      "id": "7b475014-3228-48a4-9774-f0ec9d10c585",
+      "first": "8a8a18f2-784a-4d2e-b1fa-88931e6c8072",
+      "revised": "d311221a-800c-427a-a4a2-8cae91b4f4b1"
+    },
+    {
+      "name": "stories / Read-aloud story mode",
+      "id": "137e7592-7543-40ad-90ec-dd57afebefaf",
+      "first": "382bf57e-c425-461b-af27-d2ba3431eadc",
+      "revised": "f6e57f7a-86ed-4589-9996-71d1d43adadc"
+    },
+    {
+      "name": "stories / Immersive reading mode",
+      "id": "21164bee-a281-49e6-9aa3-1f525a6fd77b",
+      "first": "01929587-033e-4d8c-b3a9-3ddfb96af87b",
+      "revised": "bdd5cc1d-f451-4d82-9c00-4fadaf994a48"
+    },
+    {
+      "name": "stories / Slideshow story mode",
+      "id": "0e8525a2-9ad7-4dbb-8ec2-6cc5bc20c0ff",
+      "first": "00369c7c-0a4b-477c-a6aa-c6424a7d39c8",
+      "revised": "107ba807-9ad0-4ff1-8edd-7961771158b7"
+    },
+    {
+      "name": "learning / Course player",
+      "id": "93ef1075-fd2d-4a83-95db-bc91f6fc4216",
+      "first": "f6b47913-0b1b-47f3-9eb7-9d4288a3712d",
+      "revised": "2e43f996-55da-4903-b895-7ad47186670c"
+    },
+    {
+      "name": "learning / Mixed media lesson path",
+      "id": "41951279-cc47-4256-81ff-250f0ff5dc5c",
+      "first": "2fe1c6e9-7364-4d1e-bf82-06f6523e5b3e",
+      "revised": "5798ba9a-f609-4bd5-a5fd-acb0dd69337c"
+    },
+    {
+      "name": "learning / Chaptered video course",
+      "id": "a0e3d8d0-b5c5-46c1-8f3d-13a1c3600ba9",
+      "first": "c6b041de-4f3d-409c-8d67-d07b15bca2c1",
+      "revised": "ec9813e5-64ed-488d-bf04-52909695c97e"
+    },
+    {
+      "name": "learning / Assessment-linked learning path",
+      "id": "cef85a8a-a383-40ab-806d-e65cd993b129",
+      "first": "8b3e2500-bb23-4a94-8821-818eabede35f",
+      "revised": "b8a28fed-5285-4ba9-b2db-8f6f97530346"
+    },
+    {
+      "name": "video / Cinematic Player",
+      "id": "690fb423-2cc0-4796-809c-0540cfd2372f",
+      "first": "e6d090e8-3ca1-41e9-8eb4-a36de7f7d848",
+      "revised": "6bbaf45c-aecf-42ea-9337-e4f01878e616"
+    },
+    {
+      "name": "video / Tutorial Player with Chapters",
+      "id": "c17ce1d1-6406-4a1c-8a10-bee5695534d6",
+      "first": "dbe3b616-b792-453f-ba3b-b71702a9bfdc",
+      "revised": "7af01b7a-0806-485c-9a85-1d17aa7def29"
+    },
+    {
+      "name": "video / Course-Linked Video",
+      "id": "97b99d01-4e7a-4e6d-bcf2-c0078fdd734e",
+      "first": "766679d2-bc18-4913-a555-1c517f302de0",
+      "revised": "19df1ca8-301c-4f63-ac87-817374f7cba0"
+    },
+    {
+      "name": "video / Vertical / Mobile Video Viewer",
+      "id": "244c972a-f79e-47ad-a5e7-2f9e17d06217",
+      "first": "55ddfdb6-1153-4ad8-8770-cd13b5a15071",
+      "revised": "805415a4-cf5e-4187-93d4-6105839b6185"
+    },
+    {
+      "name": "audio / Audio Player",
+      "id": "7ede6499-2fbf-4528-93f4-338010059f54",
+      "first": "966d14a6-fd58-468d-b2f3-f070c1b6671f",
+      "revised": "57a60a0b-2834-489d-9766-92cf6e7642f8"
+    },
+    {
+      "name": "audio / Playlist Mode",
+      "id": "739c9700-565a-4e77-8588-8c783326fb7d",
+      "first": "05a30357-49ef-424b-8a9e-3d0272bd8762",
+      "revised": "1de6dae2-18ec-4a27-a430-26415566ce97"
+    },
+    {
+      "name": "audio / Chaptered Podcast",
+      "id": "7b344e10-fc03-402a-9828-601b9af77216",
+      "first": "193293aa-a4f5-48b7-a00c-6e9c4ce9d5f3",
+      "revised": "44263f5d-03a8-4fe0-a386-f3281c193da1"
+    },
+    {
+      "name": "audio / Narrated Story Mode",
+      "id": "4316a5ea-c2c6-4d8c-b21c-a49134c6eb0c",
+      "first": "54b85548-7e37-4b7e-80b5-08f13718670d",
+      "revised": "cf486572-b914-4a73-bce6-c89c02930300"
+    },
+    {
+      "name": "visual-cards / Image Gallery",
+      "id": "900a3364-b4fc-48ac-9fcb-8837f6c15f25",
+      "first": "9ae53dc4-51fd-436b-901b-94f8c75d214a",
+      "revised": "92ad260d-e540-4669-8aa5-33956fcc6c81"
+    },
+    {
+      "name": "visual-cards / Card Swiper",
+      "id": "e5db637a-037c-4a2c-ba31-b9d9f727e3f0",
+      "first": "07775490-1bd1-43d4-a8ff-db4b42b913ba",
+      "revised": "21830190-71dc-4e99-879b-c5f2f3ad5013"
+    },
+    {
+      "name": "visual-cards / Lightbox Mode",
+      "id": "d95742ef-59a9-4e3c-8418-dd93ae30b4c2",
+      "first": "2892a4af-f1d2-4b14-bfaf-518c257ebe69",
+      "revised": "95080409-f54e-44d9-8f9d-a0958903dab4"
+    },
+    {
+      "name": "visual-cards / Flashcard Study Mode",
+      "id": "08d95702-6b8f-467b-9797-15a13578f7f0",
+      "first": "88256e3c-9000-4bd3-be78-854aec32e710",
+      "revised": "db45b60d-550d-4638-8d14-4cf107aa4cfe"
+    },
+    {
+      "name": "presentations / Slide Player",
+      "id": "4b5d56a9-3356-45d3-aba8-706546357165",
+      "first": "3cdf7782-ce77-46a8-b1dc-9e655bf13ef3",
+      "revised": "0fc3f0f8-81a9-4afb-bfc3-0f7cdb8fc77a"
+    },
+    {
+      "name": "presentations / Frame-by-Frame Mode",
+      "id": "c49f30b7-8326-422f-9108-3b8d2a964d9d",
+      "first": "3239fa84-357e-46d3-bbf2-cc1f78e125bd",
+      "revised": "221223cc-08eb-4184-b5db-9a023d33c813"
+    },
+    {
+      "name": "presentations / Presenter Mode",
+      "id": "b95fb2d1-e53d-4e62-af99-06f8063245c3",
+      "first": "37f7a638-4651-47f1-8224-3e6da5d6c85a",
+      "revised": "06bc74d4-35da-4b63-acf8-9f55309eed19"
+    },
+    {
+      "name": "presentations / Autoplay Storytelling",
+      "id": "b646f640-c3b2-4a6e-a52b-a61b746b7978",
+      "first": "b7190bef-0719-4784-ba71-cd1614bfec10",
+      "revised": "221f5bb1-ac1f-43b6-994e-4b3d216f216e"
+    },
+    {
+      "name": "assessments / Quiz Player",
+      "id": "e4deeb92-309d-4fe9-b30e-66094136ad75",
+      "first": "f2c3f94a-bbdd-4b08-9d0e-0fa6da3af83c",
+      "revised": "a7c92ddc-b02c-4671-8299-8e0d9bc6d585"
+    },
+    {
+      "name": "assessments / Timed Assessment Mode",
+      "id": "6f2fca6a-3257-47d6-8dbc-a53d894cffd3",
+      "first": "6fd9705e-130c-4223-b325-5e5ac2116097",
+      "revised": "16a48376-8006-4af5-b155-c05dbe6176d8"
+    },
+    {
+      "name": "assessments / Practice Test Mode",
+      "id": "f5ffad41-020d-4915-b381-89e21af7aa90",
+      "first": "a9e66d99-1617-404c-bbd0-9cc977079822",
+      "revised": "2d01534d-608a-4698-9d65-7345b8046b6b"
+    },
+    {
+      "name": "assessments / Result Dashboard",
+      "id": "757a6dc3-2366-45e0-bb7c-f64569adff9f",
+      "first": "a22806dd-5d18-42b8-97e9-ae3a9e5ded44",
+      "revised": "74ff38ea-59b1-4a1e-93a7-4ec34513676b"
+    },
+    {
+      "name": "activities / Game Canvas",
+      "id": "5782fd06-727e-46ea-bfd8-8ce172d201d7",
+      "first": "543010c2-543c-4953-95ff-5741660a3b5f",
+      "revised": "59ac8a17-fdc4-45b3-b161-cb1d344d354c"
+    },
+    {
+      "name": "activities / Activity Stepper",
+      "id": "5963ce07-a619-416f-acc9-2005a9921ab2",
+      "first": "10f5c4ce-0f61-45be-b825-b7e9eb8449d2",
+      "revised": "494ceaf7-cdcd-4f8f-97ff-4b5b0af24bb3"
+    },
+    {
+      "name": "activities / Simulation Mode",
+      "id": "45dfe91f-decd-43fa-bde0-1c8fbff6cd5c",
+      "first": "8123b54e-5436-4f6a-8463-a13adf22a30e",
+      "revised": "b7addb17-2939-4c40-ab83-1d651ab3f021"
+    },
+    {
+      "name": "activities / Challenge Mode",
+      "id": "1cbc26fa-7b18-409c-ae66-8e023b1b4531",
+      "first": "cfac9909-489c-4eac-9502-e1c8810572d5",
+      "revised": "f1e26c19-a6c8-46c0-85a6-9f96aba025d8"
+    },
+    {
+      "name": "tools / Interactive Tool Runtime",
+      "id": "3dc67b36-8bcc-43d4-adcb-42a3b2abf8e6",
+      "first": "2af76fac-df6b-4c0c-aea3-77f125eef885",
+      "revised": "134c99d9-86f5-48cc-9b5e-9240ad164b2c"
+    },
+    {
+      "name": "tools / Calculator Panel",
+      "id": "d34f0559-1fdb-48b9-ad1a-3d7a0cbdf939",
+      "first": "56719590-b469-435b-8b5c-111da1359afc",
+      "revised": "b586ff8c-eb53-43a6-a253-4475dc4db402"
+    },
+    {
+      "name": "tools / Simulation Dashboard",
+      "id": "ec4736e5-e247-47e1-9658-19eb13153ab2",
+      "first": "456f51ee-42e4-4c41-a685-da5f78390001",
+      "revised": "523a908a-a784-4c83-853d-c3691f482d4e"
+    },
+    {
+      "name": "tools / Form-Result Interface",
+      "id": "8f6c2b98-36ff-4a2a-a473-b31675ba124a",
+      "first": "b5539e77-97c2-46bc-bb9c-435e9dafa5ed",
+      "revised": "d3f14085-659d-4375-a8b4-d245229d3409"
+    },
+    {
+      "name": "planners / Printable Preview",
+      "id": "9409078d-b08b-4a0b-9a01-fa08b9237a0d",
+      "first": "a44cb0f7-8600-4c27-8e66-2b0f833db57f",
+      "revised": "625f0955-e279-413f-aa28-3ce116f57cf9"
+    },
+    {
+      "name": "planners / Editable Planner View",
+      "id": "71ee4f04-fcff-4477-9e5c-ee06f81d2544",
+      "first": "345e3941-b4c3-4e0a-983b-d427667b2f61",
+      "revised": "38b3cc68-50dc-4d96-b335-e7b15a38cb7d"
+    },
+    {
+      "name": "planners / Template Gallery",
+      "id": "ed652131-a2c3-46bb-bbda-f2008aebc83b",
+      "first": "dde6dab1-d02c-48c1-b40f-c92948802fd2",
+      "revised": "f0cf1f04-6f88-4544-baee-88367221bf3f"
+    },
+    {
+      "name": "planners / Checklist Mode",
+      "id": "9362f08d-45f4-4eb7-abe1-89c91e7d15e5",
+      "first": "75aeba95-fc0f-4efb-bcc8-03ff9d10abbb",
+      "revised": "d5e0cf2a-46e2-474a-9400-ca20fd6d43eb"
+    },
+    {
+      "name": "forms / Form Flow",
+      "id": "30a09404-6c55-40d1-ada0-5b2b6df9c405",
+      "first": "15f3fdc5-a80a-434b-8b75-4a1b8b1692a6",
+      "revised": "c6aca3a7-ece3-436b-9971-5150af70e637"
+    },
+    {
+      "name": "forms / Multistep Application",
+      "id": "639b5a46-3f20-4405-9ce8-f20a62808f94",
+      "first": "c28f49fb-eb2a-45d8-9d0c-67209cb2708f",
+      "revised": "f05ff450-7aca-4af5-8c05-d86394bc71e5"
+    },
+    {
+      "name": "forms / Upload-Enabled Submission Page",
+      "id": "d941abad-a8fb-4af6-9cf1-a59e151b5ab6",
+      "first": "df47c371-441b-40ce-b3ca-b999edab7d22",
+      "revised": "27b96b34-95c1-4745-a5e7-15274141886f"
+    },
+    {
+      "name": "forms / Booking Request Flow",
+      "id": "3a047156-bc41-45f9-ace8-0c8cdcaa48a8",
+      "first": "a7af9fdb-d1df-4474-880d-546fe8ad0006",
+      "revised": "7e32a9d5-6780-403a-bf26-046389aae252"
+    },
+    {
+      "name": "community / Review Feed",
+      "id": "70479e41-58dc-431a-9cf4-1069478332f4",
+      "first": "5961dbaa-37e6-4aeb-add4-d429d6b8bc84",
+      "revised": "414bba61-143c-4dd4-a5aa-39893d41fd49"
+    },
+    {
+      "name": "community / Social Proof Wall",
+      "id": "d3b5ab9a-84d8-4e8c-81bf-5f7eddc24084",
+      "first": "99addab4-a0bb-40d6-bd8e-53eb67ded503",
+      "revised": "42d852f7-9503-4eb7-acaa-38c0f82c9c81"
+    },
+    {
+      "name": "community / Q&A Thread",
+      "id": "290f4f9d-dfe9-48e5-9c67-aabb67903ae0",
+      "first": "23f3b80f-0151-4e24-8e65-41c445243d15",
+      "revised": "e86941fd-1018-4007-823f-fd6c9e163ebc"
+    },
+    {
+      "name": "community / Community Hub",
+      "id": "1441211c-88c4-4cac-b8e1-10b8d645de9a",
+      "first": "d6aeed64-8bed-4f50-b0ea-3f2ae9de1fbf",
+      "revised": "c5ab7053-3c28-4698-9fa2-d373413d2426"
+    },
+    {
+      "name": "commerce / Shoppable Article",
+      "id": "ae2ac2fb-0d33-4ada-8d2a-84ce1baf2513",
+      "first": "289bfa82-777f-4c30-9fc8-eb37b69db932",
+      "revised": "3fdbf4fc-4445-4218-9506-dce144ad050e"
+    },
+    {
+      "name": "commerce / Buyable Resource Page",
+      "id": "e153b35f-e5ba-421a-98bb-ca945d834d77",
+      "first": "54e3f3d7-16f9-4fcb-9455-15696f60a615",
+      "revised": "ffd8adc0-ec3b-49bb-b333-28096bdbb067"
+    },
+    {
+      "name": "commerce / Course + Product Page",
+      "id": "68924c90-c7e1-48db-bfc0-5e52f9cfba51",
+      "first": "5801757f-b710-4438-8a00-c4653309e2f3",
+      "revised": "4ad60972-6a84-4ffe-a337-218de6b31fc2"
+    },
+    {
+      "name": "commerce / Download Delivery Experience",
+      "id": "dc5734c3-8d89-4d5f-b1e2-be21f2252046",
+      "first": "0e351ece-7237-4020-8a82-fc5c5fd2d632",
+      "revised": "56a7d6d7-bb4d-4a36-8d71-08017fd69cf5"
+    },
+    {
+      "name": "bundles / Guided Bundle Path",
+      "id": "d731fe82-e079-4ec8-a9bd-47aa47bfd697",
+      "first": "8064e7d7-855d-4d48-8b16-a6569d9f9eee",
+      "revised": "e56a247e-3785-4646-90c3-c52b7dce7705"
+    },
+    {
+      "name": "bundles / Bundle Dashboard",
+      "id": "28edc71a-cb53-44c6-aa2a-aa86d2b0d878",
+      "first": "52eece15-df86-4c37-a69f-4ca2d8721736",
+      "revised": "0658051b-be89-4dbf-9d56-f5b2753d3d91"
+    },
+    {
+      "name": "bundles / Sequential Playlist",
+      "id": "97aa87dd-776e-4b4e-ab94-7965c2dbddf3",
+      "first": "28e06149-d37c-4f31-b8dd-225fae8d37cc",
+      "revised": "fac0da4c-dad6-4771-9048-cd6452c58392"
+    },
+    {
+      "name": "bundles / Starter Kit Experience",
+      "id": "8e7d8d3c-26c3-4807-839e-6d0a4f0c453a",
+      "first": "16fea9e6-b5b5-41ca-9f81-6bbeb8b6011b",
+      "revised": "1cd58696-5082-4e61-aa41-7129fa93c27e"
+    }
+  ]
+}

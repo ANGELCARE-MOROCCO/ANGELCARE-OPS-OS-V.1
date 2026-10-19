@@ -1,25 +1,1164 @@
-'use client'
-import { useState } from 'react'
-import { AD_FORMATS, FAMILIES } from '../registry'
-import { effectiveAdPolicy } from '../model'
-import { object, text, tr, type DceRecord, type Page, type Locale } from '../types'
-import { Badge, Button, Empty, Field, Icon, Panel, State, T, useUI, useQuery, mutate, download } from './ui'
-import { Picker } from './Editor'
-import { PolicyBatch } from './PolicyBatch'
-import { Registry } from './Registry'
-import s from './workspace.module.css'
-export function Monetization(){const {locale,boot,create,notify}=useUI(),[tab,setTab]=useState('atlas');return <><div className={s.toolbar}><Button kind="danger" icon="Square" disabled={!boot.actor.rights.monetize} onClick={async()=>{const reason=prompt(tr(['Reason for world advertising stop','Motif de l’arrêt publicitaire global','سبب إيقاف إعلانات العالم'],locale));if(!reason)return;try{await mutate({action:'emergency_stop',reason});notify(tr(['World suppression saved. Inspect or revise the emergency-stop policy to resume.','Suppression globale enregistrée. Inspectez la politique emergency-stop pour reprendre.','تم حفظ الإيقاف العام. افحص سياسة emergency-stop لاستئناف العرض.'],locale))}catch(e){notify((e as Error).message,true)}}}><T v={['Stop DCE advertising','Arrêter la publicité DCE','إيقاف إعلانات DCE']}/></Button></div><div className={s.notice}><Icon name="ShieldCheck"/><T v={['Admin preparation only. No ads run in previews or existing Marketplace pages. Eligibility is inherited; provider readiness is verified separately.','Préparation admin uniquement. Aucune publicité dans les aperçus ou pages Marketplace. Éligibilité héritée ; état fournisseur distinct.','إعداد الإدارة فقط. لا تعرض الإعلانات في المعاينات أو صفحات السوق الحالية. الأهلية موروثة وجاهزية المزوّد مستقلة.']}/></div><div className={s.tabs} role="tablist">{[['atlas',['15 formats','15 formats','15 صيغة']],['connection',['Connection','Connexion','الاتصال']],['units',['Units','Unités','الوحدات']],['rules',['Placement rules','Règles de placement','قواعد المواضع']],['inspector',['Eligibility inspector','Inspecteur d’éligibilité','فحص الأهلية']],['reports',['Provider reports','Rapports fournisseur','تقارير المزوّد']]].map(([key,label])=><button key={key as string} role="tab" aria-selected={tab===key} className={s.tab} onClick={()=>setTab(key as string)}>{tr(label as any,locale)}</button>)}</div>{tab==='atlas'&&<div className={s.adGrid}>{AD_FORMATS.map(f=><Panel key={f.id} className={s.adFormat}><header><b>{f.id}</b><div><h3>{f.name}</h3><Badge tone={f.owner==='angelcare'?'blue':f.owner==='google-console'?'purple':'orange'}>{f.owner}</Badge></div></header><div className={s.adSketch} data-mode={f.family} data-format={f.id}><span/>{f.family==='manual'&&f.id!=='01'&&<span/>}{f.id==='04'&&<span/>}</div><p>{tr(f.description,locale)}</p><div className={s.modePills}>{f.zones.map(z=><Badge key={z}>{z}</Badge>)}</div><small>{f.requires} · {f.owner==='google-console'?tr(['Google controls delivery; local exclusions remain mandatory.','Google contrôle la diffusion ; exclusions locales obligatoires.','يتحكم Google في العرض. الاستبعادات المحلية إلزامية.'],locale):f.owner==='specialist'?tr(['Dedicated provider/runtime eligibility required.','Éligibilité fournisseur/runtime dédiée requise.','يتطلب أهلية المزوّد والتشغيل المتخصص.'],locale):tr(['Bind a real eligible provider unit.','Liez une unité fournisseur éligible.','اربط وحدة مزوّد مؤهلة.'],locale)}</small><div className={s.actions} style={{marginTop:12}}><Button icon="Settings2" disabled={!boot.actor.rights.monetize} onClick={()=>create('ad_policy')}><T v={['Configure rule','Configurer la règle','تهيئة قاعدة']}/></Button><a className={`${s.button} ${s.ghost}`} href="https://www.google.com/adsense/" target="_blank" rel="noopener noreferrer"><T v={['Provider console','Console fournisseur','لوحة المزوّد']}/></a></div></Panel>)}</div>}{tab==='connection'&&<><ConnectionVerifier/><GoogleConsole/><div style={{marginTop:16}}><Registry kind="ad_connection"/></div></>}{tab==='units'&&<><GoogleConsole units/><div style={{marginTop:16}}><Registry kind="ad_unit"/></div></>}{tab==='rules'&&<><Registry kind="ad_policy"/><div style={{marginTop:20}}><PolicyBatch/></div></>}{tab==='inspector'&&<Eligibility/>}{tab==='reports'&&<ProviderReport/>}</>}
-function GoogleConsole({units=false}:{units?:boolean}){const {locale,boot,notify}=useUI(),[account,setAccount]=useState(''),[client,setClient]=useState(''),[unit,setUnit]=useState(''),[displayName,setName]=useState(''),[rows,setRows]=useState<any[]>([]),[code,setCode]=useState(''),[busy,setBusy]=useState(false),[error,setError]=useState(''),[operation,setOperation]=useState('');const ready=object(boot.health.google).configured===true;
- async function call(op:string){setBusy(true);setError('');setOperation(op);try{const result=await mutate({action:'google',operation:op,input:{account,client,unit,displayName,formatId:'01'}});if(op==='code')setCode(text(result.adCode));else setRows(result.rows||[result]);notify(tr(['Provider response received.','Réponse fournisseur reçue.','تم استلام رد المزوّد.'],locale))}catch(e){setError((e as Error).message)}finally{setBusy(false)}}return <Panel title={<T v={['Native Google administration adapter','Adaptateur Google natif','محوّل إدارة Google الأصلي']}/>} subtitle={<T v={['Server OAuth credentials; no secrets in browser or experience records.','OAuth côté serveur ; aucun secret navigateur ou dossier.','OAuth على الخادم. لا أسرار في المتصفح أو سجلات التجارب.']}/>}><div className={s.modePills}>{[['OAuth client',object(boot.health.google).clientIdConfigured],['OAuth secret',object(boot.health.google).clientSecretConfigured],['Refresh grant',object(boot.health.google).refreshTokenConfigured]].map(([name,value])=><Badge key={name as string} tone={value?'green':'orange'}>{name as string} · {value?'configured':'missing'}</Badge>)}</div><div className={s.formGrid}><Field label="Google account · accounts/pub-…"><input value={account} onChange={e=>setAccount(e.target.value)}/></Field><Field label="Ad client · accounts/pub-…/adclients/ca-pub-…"><input value={client} onChange={e=>setClient(e.target.value)}/></Field>{units&&<><Field label="Ad unit · …/adunits/ID"><input value={unit} onChange={e=>setUnit(e.target.value)}/></Field><Field label={<T v={['Unit display name','Nom de l’unité','اسم الوحدة']}/>}><input value={displayName} onChange={e=>setName(e.target.value)}/></Field></>}</div><div className={s.actions} style={{marginTop:14}}>{(units?['units','code','patch_unit']:['accounts','sites','clients']).map(op=><Button key={op} onClick={()=>call(op)} disabled={busy||!ready||!boot.actor.rights.monetize} icon={op==='code'?'Code':'RefreshCw'}>{op}</Button>)}{units&&<Button disabled={!ready||busy||!boot.actor.rights.monetize||!displayName} onClick={()=>{if(confirm(tr(['Create a real Display unit? Google API creation requires an eligible Platforms project.','Créer une unité Display réelle ? Le projet doit être éligible à l’API Platforms.','إنشاء وحدة Display حقيقية؟ يتطلب مشروعاً مؤهلاً في Platforms.'],locale)))call('create_unit')}} icon="Plus"><T v={['Create supported Display unit','Créer une unité Display supportée','إنشاء وحدة Display مدعومة']}/></Button>}</div>{!ready&&<div className={s.notice} style={{marginTop:14}}><T v={['Configure DCE_GOOGLE_CLIENT_ID, DCE_GOOGLE_CLIENT_SECRET and DCE_GOOGLE_REFRESH_TOKEN in the existing Marketplace runtime. Google site and program approval remain provider-owned.','Configurez les trois variables DCE_GOOGLE_* dans le runtime Marketplace existant. L’approbation Google reste distincte.','هيّئ متغيرات DCE_GOOGLE_* الثلاثة في تشغيل السوق الحالي. تبقى موافقة Google مستقلة.']}/></div>}{error&&<div className={`${s.notice} ${s.alertError}`} role="alert">{error}</div>}{rows.length>0&&<div className={s.tableScroll}><table className={s.table}><thead><tr><th>Provider resource</th><th>State</th><th/></tr></thead><tbody>{rows.map((r,i)=><tr key={r.name||i}><td>{r.displayName||r.domain||r.name}<small>{r.name}</small></td><td><Badge>{r.state||'observed'}</Badge></td><td><Button onClick={()=>{if(operation==='accounts')setAccount(r.name);if(operation==='clients')setClient(r.name);if(operation==='units'||operation==='create_unit')setUnit(r.name)}}><T v={['Use reference','Utiliser la référence','استخدم المرجع']}/></Button>{units&&r.name&&<Button disabled={busy} onClick={async()=>{try{await mutate({action:'register_google_unit',account,unit:r.name});notify(tr(['Observed native unit registered.','Unité native observée enregistrée.','تم تسجيل الوحدة الأصلية المرصودة.'],locale))}catch(e){setError((e as Error).message)}}}><T v={['Register verified unit','Enregistrer l’unité vérifiée','تسجيل الوحدة المتحقق منها']}/></Button>}</td></tr>)}</tbody></table></div>}{code&&<><pre className={s.mono}>{code}</pre><Button icon="Copy" onClick={()=>navigator.clipboard.writeText(code)}><T v={['Copy provider code','Copier le code fournisseur','نسخ شفرة المزوّد']}/></Button><small><T v={['Code is displayed, never injected by the admin preview.','Code affiché, jamais injecté dans l’aperçu.','تُعرض الشفرة دون حقنها في المعاينة.']}/></small></>}</Panel>}
-function Eligibility(){
- const {locale,boot,open}=useUI(),[family,setFamily]=useState('documents'),[audience,setAudience]=useState('parent'),[device,setDevice]=useState('desktop'),[consent,setConsent]=useState('unknown'),[zone,setZone]=useState('after_intro'),[topic,setTopic]=useState(''),[experience,setExperience]=useState(''),[templateId,setTemplate]=useState(''),[region,setRegion]=useState('MA'),[contentLocale,setContentLocale]=useState(locale),[picker,setPicker]=useState<'topic'|'experience'|'template'|null>(null)
- const q=useQuery<any>({op:'ad_inspect',family,audience,device,consent,zone,topic,experienceId:experience,templateId,region,locale:contentLocale},{decision:null,rules:[],total:0}),result=q.value.decision
- return <div className={s.twoColumns}><Panel title={<T v={['Inspect an exact context','Inspecter un contexte exact','فحص سياق محدد']}/>}><div className={s.formGrid}>
-  <Field label={<T v={['Family','Famille','العائلة']}/>}><select value={family} onChange={e=>setFamily(e.target.value)}>{FAMILIES.map(f=><option key={f.key} value={f.key}>{tr(f.name,locale)}</option>)}</select></Field><Field label={<T v={['Audience','Public','الجمهور']}/>}><select value={audience} onChange={e=>setAudience(e.target.value)}>{['child','parent','educator','professional','school'].map(v=><option key={v}>{v}</option>)}</select></Field>
-  {(['topic','experience','template'] as const).map(key=><Field key={key} label={tr(key==='topic'?['Topic','Thème','الموضوع']:key==='template'?['Template context','Contexte du modèle','سياق القالب']:['Experience','Expérience','التجربة'],locale)}><div className={s.actions}><input readOnly value={key==='topic'?topic:key==='experience'?experience:templateId}/><Button icon="Search" onClick={()=>setPicker(key)}><T v={['Choose','Choisir','اختر']}/></Button><Button onClick={()=>key==='topic'?setTopic(''):key==='experience'?setExperience(''):setTemplate('')}>×</Button></div></Field>)}
-  <Field label={<T v={['Placement zone','Zone de placement','موضع الإعلان']}/>}><select value={zone} onChange={e=>setZone(e.target.value)}>{[...new Set([...AD_FORMATS.flatMap(f=>[...f.zones]),'assessment','submission','private_upload','consent'])].map(v=><option key={v}>{v}</option>)}</select></Field><Field label={<T v={['Consent','Consentement','الموافقة']}/>}><select value={consent} onChange={e=>setConsent(e.target.value)}>{['unknown','denied','limited','granted'].map(v=><option key={v}>{v}</option>)}</select></Field><Field label={<T v={['Device','Appareil','الجهاز']}/>}><select value={device} onChange={e=>setDevice(e.target.value)}><option>desktop</option><option>mobile</option></select></Field><Field label={<T v={['Content language','Langue du contenu','لغة المحتوى']}/>}><select value={contentLocale} onChange={e=>setContentLocale(e.target.value as Locale)}>{['fr','en','ar'].map(l=><option key={l}>{l}</option>)}</select></Field><Field label={<T v={['Region code','Code de région','رمز المنطقة']}/>}><input value={region} maxLength={3} onChange={e=>setRegion(e.target.value.toUpperCase())}/></Field>
- </div></Panel><Panel title={<T v={['Effective rule and inheritance','Règle effective et héritage','القاعدة الفعالة والتوارث']}/>}><State {...q} retry={q.reload}>{result&&<><Badge tone={result.eligible?'green':'orange'}>{result.eligible?'ELIGIBLE':'NOT_ELIGIBLE'}</Badge><h3>{result.reason}</h3><p>{result.rule?.title}</p><Badge tone="teal">{q.value.total} <T v={['rules inspected across the complete inventory','règles inspectées sur tout le registre','قاعدة تم فحصها عبر المخزون الكامل']}/></Badge><div className={s.timeline}>{['world','family','topic','template','experience','zone'].map(scope=><div key={scope}><strong>{scope}</strong>{q.value.rules.filter((r:any)=>r.matched&&r.data.scope===scope).map((r:any)=><button className={s.link} key={r.id} onClick={()=>open(r.id)}>{r.title} · r{r.revision} · {r.data.enabled?'allow':'exclude'}</button>)}</div>)}</div>{q.value.unit&&<Button onClick={()=>open(q.value.unit.id)}>{q.value.unit.title} · {q.value.unit.enabled?'locally enabled':'locally suppressed'}</Button>}<div className={s.adSketch} data-mode="manual"><span/><b>{zone} · {result.eligible?'eligible placeholder':'suppressed'}</b><span/></div></>}</State><div className={s.notice}><T v={['Draft-policy inspection. No provider script, impression or reward request is issued.','Inspection des brouillons. Aucun script, impression ou demande de récompense.','فحص لمسودات السياسات. لا يتم تشغيل شفرة المزوّد أو طلب ظهور أو مكافأة.']}/></div></Panel>{picker&&<Picker type="record" kind={picker} onSelect={id=>picker==='topic'?setTopic(id):picker==='experience'?setExperience(id):setTemplate(id)} onClose={()=>setPicker(null)}/>}</div>
+"use client";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { AD_FORMATS, FAMILIES } from "../registry";
+import { effectiveAdPolicy } from "../model";
+import {
+  object,
+  text,
+  tr,
+  type DceRecord,
+  type Page,
+  type Locale,
+} from "../types";
+import {
+  Badge,
+  Button,
+  Empty,
+  Field,
+  Icon,
+  Panel,
+  State,
+  T,
+  useUI,
+  useWorkingState,
+  useQuery,
+  mutate,
+  download,
+} from "./ui";
+import { Picker } from "./Editor";
+import { PolicyBatch } from "./PolicyBatch";
+import { Registry } from "./Registry";
+import s from "./workspace.module.css";
+export function Monetization() {
+  const { locale, boot, create, notify } = useUI(),
+    [tab, setTab] = useWorkingState(
+      "ads.tab",
+      useSearchParams()?.get("context") ? "inspector" : "atlas",
+    );
+  return (
+    <>
+      <div className={s.toolbar}>
+        <Button
+          kind="danger"
+          icon="Square"
+          disabled={!boot.actor.rights.monetize}
+          onClick={async () => {
+            const reason = prompt(
+              tr(
+                [
+                  "Reason for world advertising stop",
+                  "Motif de l’arrêt publicitaire global",
+                  "سبب إيقاف إعلانات العالم",
+                ],
+                locale,
+              ),
+            );
+            if (!reason) return;
+            try {
+              await mutate({ action: "emergency_stop", reason });
+              notify(
+                tr(
+                  [
+                    "World suppression saved. Inspect or revise the emergency-stop policy to resume.",
+                    "Suppression globale enregistrée. Inspectez la politique emergency-stop pour reprendre.",
+                    "تم حفظ الإيقاف العام. افحص سياسة emergency-stop لاستئناف العرض.",
+                  ],
+                  locale,
+                ),
+              );
+            } catch (e) {
+              notify((e as Error).message, true);
+            }
+          }}
+        >
+          <T
+            v={[
+              "Stop DCE advertising",
+              "Arrêter la publicité DCE",
+              "إيقاف إعلانات DCE",
+            ]}
+          />
+        </Button>
+      </div>
+      <div className={s.notice}>
+        <Icon name="ShieldCheck" />
+        <T
+          v={[
+            "Admin preparation only. No ads run in previews or existing Marketplace pages. Eligibility is inherited; provider readiness is verified separately.",
+            "Préparation admin uniquement. Aucune publicité dans les aperçus ou pages Marketplace. Éligibilité héritée ; état fournisseur distinct.",
+            "إعداد الإدارة فقط. لا تعرض الإعلانات في المعاينات أو صفحات السوق الحالية. الأهلية موروثة وجاهزية المزوّد مستقلة.",
+          ]}
+        />
+      </div>
+      <div className={s.tabs} role="tablist">
+        {[
+          ["atlas", ["15 formats", "15 formats", "15 صيغة"]],
+          ["connection", ["Connection", "Connexion", "الاتصال"]],
+          ["units", ["Units", "Unités", "الوحدات"]],
+          [
+            "rules",
+            ["Placement rules", "Règles de placement", "قواعد المواضع"],
+          ],
+          [
+            "inspector",
+            [
+              "Eligibility inspector",
+              "Inspecteur d’éligibilité",
+              "فحص الأهلية",
+            ],
+          ],
+          [
+            "reports",
+            ["Provider reports", "Rapports fournisseur", "تقارير المزوّد"],
+          ],
+        ].map(([key, label]) => (
+          <button
+            key={key as string}
+            role="tab"
+            aria-selected={tab === key}
+            className={s.tab}
+            onClick={() => setTab(key as string)}
+          >
+            {tr(label as any, locale)}
+          </button>
+        ))}
+      </div>
+      {tab === "atlas" && (
+        <div className={s.adGrid}>
+          {AD_FORMATS.map((f) => (
+            <Panel key={f.id} className={s.adFormat}>
+              <header>
+                <b>{f.id}</b>
+                <div>
+                  <h3>{f.name}</h3>
+                  <Badge
+                    tone={
+                      f.owner === "angelcare"
+                        ? "blue"
+                        : f.owner === "google-console"
+                          ? "purple"
+                          : "orange"
+                    }
+                  >
+                    {f.owner}
+                  </Badge>
+                </div>
+              </header>
+              <div
+                className={s.adSketch}
+                data-mode={f.family}
+                data-format={f.id}
+              >
+                <span />
+                {f.family === "manual" && f.id !== "01" && <span />}
+                {f.id === "04" && <span />}
+              </div>
+              <p>{tr(f.description, locale)}</p>
+              <div className={s.modePills}>
+                {f.zones.map((z) => (
+                  <Badge key={z}>{z}</Badge>
+                ))}
+              </div>
+              <small>
+                {f.requires} ·{" "}
+                {f.owner === "google-console"
+                  ? tr(
+                      [
+                        "Google controls delivery; local exclusions remain mandatory.",
+                        "Google contrôle la diffusion ; exclusions locales obligatoires.",
+                        "يتحكم Google في العرض. الاستبعادات المحلية إلزامية.",
+                      ],
+                      locale,
+                    )
+                  : f.owner === "specialist"
+                    ? tr(
+                        [
+                          "Dedicated provider/runtime eligibility required.",
+                          "Éligibilité fournisseur/runtime dédiée requise.",
+                          "يتطلب أهلية المزوّد والتشغيل المتخصص.",
+                        ],
+                        locale,
+                      )
+                    : tr(
+                        [
+                          "Bind a real eligible provider unit.",
+                          "Liez une unité fournisseur éligible.",
+                          "اربط وحدة مزوّد مؤهلة.",
+                        ],
+                        locale,
+                      )}
+              </small>
+              <div className={s.actions} style={{ marginTop: 12 }}>
+                <Button
+                  icon="Settings2"
+                  disabled={!boot.actor.rights.monetize}
+                  onClick={() =>
+                    create("ad_policy", undefined, {
+                      data: {
+                        formatId: f.id,
+                        zone: f.zones[0],
+                        scope: "world",
+                        enabled: false,
+                      },
+                    })
+                  }
+                >
+                  <T
+                    v={["Configure rule", "Configurer la règle", "تهيئة قاعدة"]}
+                  />
+                </Button>
+                <a
+                  className={`${s.button} ${s.ghost}`}
+                  href="https://www.google.com/adsense/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <T
+                    v={[
+                      "Provider console",
+                      "Console fournisseur",
+                      "لوحة المزوّد",
+                    ]}
+                  />
+                </a>
+              </div>
+            </Panel>
+          ))}
+        </div>
+      )}
+      {tab === "connection" && (
+        <>
+          <ConnectionVerifier />
+          <GoogleConsole />
+          <div style={{ marginTop: 16 }}>
+            <Registry kind="ad_connection" />
+          </div>
+        </>
+      )}
+      {tab === "units" && (
+        <>
+          <GoogleConsole units />
+          <div style={{ marginTop: 16 }}>
+            <Registry kind="ad_unit" />
+          </div>
+        </>
+      )}
+      {tab === "rules" && (
+        <>
+          <Registry kind="ad_policy" />
+          <div style={{ marginTop: 20 }}>
+            <PolicyBatch />
+          </div>
+        </>
+      )}
+      {tab === "inspector" && <Eligibility />}
+      {tab === "reports" && <ProviderReport />}
+    </>
+  );
 }
-export function ProviderReport(){const {locale,boot,notify}=useUI(),[account,setAccount]=useState(''),[start,setStart]=useState(new Date(Date.now()-30*86400000).toISOString().slice(0,10)),[end,setEnd]=useState(new Date().toISOString().slice(0,10)),[dimensions,setDimensions]=useState<string[]>(['DATE','AD_UNIT_ID']),[timezone,setTimezone]=useState('ACCOUNT_TIME_ZONE'),[currency,setCurrency]=useState(''),[report,setReport]=useState<any>(null),[error,setError]=useState(''),[busy,setBusy]=useState(false);async function generate(){setBusy(true);setError('');try{setReport(await mutate({action:'google',operation:'report',input:{account,start,end,dimensions,timezone,currency,locale}}))}catch(e){setError((e as Error).message)}finally{setBusy(false)}}return <Panel title={<T v={['Provider revenue evidence','Preuves de revenu fournisseur','دليل إيراد المزوّد']}/>} subtitle={<T v={['Estimated earnings remain separate from recognized native Finance funds.','Les revenus estimés restent distincts des fonds reconnus par Finance.','تبقى الإيرادات التقديرية مستقلة عن الأموال المعترف بها في المالية.']}/>}><div className={s.toolbar}><input aria-label="Provider account" value={account} onChange={e=>setAccount(e.target.value)} placeholder="accounts/pub-…"/><input aria-label="Start date" type="date" value={start} onChange={e=>setStart(e.target.value)}/><input aria-label="End date" type="date" value={end} onChange={e=>setEnd(e.target.value)}/><Button disabled={busy||!boot.actor.rights.monetize} kind="primary" icon="ChartNoAxesCombined" onClick={generate}><T v={['Generate provider report','Générer le rapport fournisseur','إنشاء تقرير المزوّد']}/></Button></div><div className={s.checkOptions}>{['DATE','AD_UNIT_NAME','AD_UNIT_ID','COUNTRY_CODE','PLATFORM_TYPE_CODE','DOMAIN_CODE','AD_FORMAT_CODE'].map(value=><label key={value}><input type="checkbox" checked={dimensions.includes(value)} onChange={e=>setDimensions(old=>e.target.checked?[...old,value]:old.filter(v=>v!==value))}/>{value}</label>)}</div><div className={s.toolbar}><Field label={<T v={['Reporting timezone','Fuseau de rapport','منطقة التقرير الزمنية']}/>}><select value={timezone} onChange={e=>setTimezone(e.target.value)}><option>ACCOUNT_TIME_ZONE</option><option>GOOGLE_TIME_ZONE</option></select></Field><Field label={<T v={['Currency · optional ISO code','Devise · code ISO facultatif','العملة · رمز ISO اختياري']}/>}><input value={currency} maxLength={3} onChange={e=>setCurrency(e.target.value.toUpperCase())}/></Field></div>{error&&<div className={s.notice} role="alert">{error}</div>}{report?<><Badge tone={report.complete?'green':'orange'}>{report.complete?'COMPLETE':'TRUNCATED · refine date/dimensions'}</Badge><p className={s.subtitle}>{report.freshness} · {report.timezone}</p><div className={s.tableScroll}><table className={s.table}><thead><tr>{report.headers?.map((h:any,i:number)=><th key={i}>{h.name} {h.currencyCode&&'· '+h.currencyCode}</th>)}</tr></thead><tbody>{report.rows?.map((r:any,i:number)=><tr key={i}>{r.cells?.map((c:any,n:number)=><td key={n}>{c.value}</td>)}</tr>)}</tbody></table></div><Button disabled={!boot.actor.rights.export} icon="Download" onClick={()=>download('dce-provider-report.json',JSON.stringify(report,null,2),'application/json')}><T v={['Export evidence','Exporter les preuves','تصدير الدليل']}/></Button></>:<Empty icon="ChartColumn" title={<T v={['No provider evidence loaded','Aucune preuve fournisseur chargée','لم يتم تحميل دليل المزوّد']}/>} detail={<T v={['Connect an authorized account and choose the report period.','Connectez un compte autorisé et choisissez la période.','اربط حساباً معتمداً واختر فترة التقرير.']}/>}/>}</Panel>}
+function GoogleConsole({ units = false }: { units?: boolean }) {
+  const { locale, boot, notify } = useUI(),
+    [account, setAccount] = useWorkingState("ads.account", ""),
+    [client, setClient] = useWorkingState("ads.client", ""),
+    [unit, setUnit] = useWorkingState("ads.unit", ""),
+    [displayName, setName] = useState(""),
+    [rows, setRows] = useState<any[]>([]),
+    [code, setCode] = useState(""),
+    [busy, setBusy] = useState(false),
+    [error, setError] = useState(""),
+    [operation, setOperation] = useState("");
+  const ready = object(boot.health.google).configured === true;
+  async function call(op: string) {
+    setBusy(true);
+    setError("");
+    setOperation(op);
+    try {
+      const result = await mutate({
+        action: "google",
+        operation: op,
+        input: { account, client, unit, displayName, formatId: "01" },
+      });
+      if (op === "code") setCode(text(result.adCode));
+      else setRows(result.rows || [result]);
+      notify(
+        tr(
+          [
+            "Provider response received.",
+            "Réponse fournisseur reçue.",
+            "تم استلام رد المزوّد.",
+          ],
+          locale,
+        ),
+      );
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <Panel
+      title={
+        <T
+          v={[
+            "Native Google administration adapter",
+            "Adaptateur Google natif",
+            "محوّل إدارة Google الأصلي",
+          ]}
+        />
+      }
+      subtitle={
+        <T
+          v={[
+            "Server OAuth credentials; no secrets in browser or experience records.",
+            "OAuth côté serveur ; aucun secret navigateur ou dossier.",
+            "OAuth على الخادم. لا أسرار في المتصفح أو سجلات التجارب.",
+          ]}
+        />
+      }
+    >
+      <div className={s.modePills}>
+        {[
+          ["OAuth client", object(boot.health.google).clientIdConfigured],
+          ["OAuth secret", object(boot.health.google).clientSecretConfigured],
+          ["Refresh grant", object(boot.health.google).refreshTokenConfigured],
+        ].map(([name, value]) => (
+          <Badge key={name as string} tone={value ? "green" : "orange"}>
+            {name as string} · {value ? "configured" : "missing"}
+          </Badge>
+        ))}
+      </div>
+      <div className={s.formGrid}>
+        <Field label="Google account · accounts/pub-…">
+          <input value={account} onChange={(e) => setAccount(e.target.value)} />
+        </Field>
+        <Field label="Ad client · accounts/pub-…/adclients/ca-pub-…">
+          <input value={client} onChange={(e) => setClient(e.target.value)} />
+        </Field>
+        {units && (
+          <>
+            <Field label="Ad unit · …/adunits/ID">
+              <input value={unit} onChange={(e) => setUnit(e.target.value)} />
+            </Field>
+            <Field
+              label={
+                <T v={["Unit display name", "Nom de l’unité", "اسم الوحدة"]} />
+              }
+            >
+              <input
+                value={displayName}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </Field>
+          </>
+        )}
+      </div>
+      <div className={s.actions} style={{ marginTop: 14 }}>
+        {(units
+          ? ["units", "code", "patch_unit"]
+          : ["accounts", "sites", "clients"]
+        ).map((op) => (
+          <Button
+            key={op}
+            onClick={() => call(op)}
+            disabled={busy || !ready || !boot.actor.rights.monetize}
+            icon={op === "code" ? "Code" : "RefreshCw"}
+          >
+            {tr(
+              (
+                {
+                  accounts: [
+                    "List authorised accounts",
+                    "Lister les comptes autorisés",
+                    "عرض الحسابات المصرح بها",
+                  ],
+                  sites: [
+                    "Inspect approved sites",
+                    "Examiner les sites approuvés",
+                    "فحص المواقع المعتمدة",
+                  ],
+                  clients: [
+                    "List advertising clients",
+                    "Lister les clients publicitaires",
+                    "عرض عملاء الإعلانات",
+                  ],
+                  units: [
+                    "List provider units",
+                    "Lister les unités fournisseur",
+                    "عرض وحدات المزوّد",
+                  ],
+                  code: [
+                    "Read provider ad code",
+                    "Lire le code publicitaire fournisseur",
+                    "قراءة شيفرة إعلان المزوّد",
+                  ],
+                  patch_unit: [
+                    "Update selected unit name",
+                    "Modifier le nom de l’unité choisie",
+                    "تحديث اسم الوحدة المختارة",
+                  ],
+                } as Record<string, any>
+              )[op] || [op, op, op],
+              locale,
+            )}
+          </Button>
+        ))}
+        {units && (
+          <Button
+            disabled={
+              !ready || busy || !boot.actor.rights.monetize || !displayName
+            }
+            onClick={() => {
+              if (
+                confirm(
+                  tr(
+                    [
+                      "Create a real Display unit? Google API creation requires an eligible Platforms project.",
+                      "Créer une unité Display réelle ? Le projet doit être éligible à l’API Platforms.",
+                      "إنشاء وحدة Display حقيقية؟ يتطلب مشروعاً مؤهلاً في Platforms.",
+                    ],
+                    locale,
+                  ),
+                )
+              )
+                call("create_unit");
+            }}
+            icon="Plus"
+          >
+            <T
+              v={[
+                "Create supported Display unit",
+                "Créer une unité Display supportée",
+                "إنشاء وحدة Display مدعومة",
+              ]}
+            />
+          </Button>
+        )}
+      </div>
+      {!ready && (
+        <div className={s.notice} style={{ marginTop: 14 }}>
+          <T
+            v={[
+              "Configure DCE_GOOGLE_CLIENT_ID, DCE_GOOGLE_CLIENT_SECRET and DCE_GOOGLE_REFRESH_TOKEN in the existing Marketplace runtime. Google site and program approval remain provider-owned.",
+              "Configurez les trois variables DCE_GOOGLE_* dans le runtime Marketplace existant. L’approbation Google reste distincte.",
+              "هيّئ متغيرات DCE_GOOGLE_* الثلاثة في تشغيل السوق الحالي. تبقى موافقة Google مستقلة.",
+            ]}
+          />
+        </div>
+      )}
+      {error && (
+        <div className={`${s.notice} ${s.alertError}`} role="alert">
+          {error}
+        </div>
+      )}
+      {rows.length > 0 && (
+        <div className={s.tableScroll}>
+          <table className={s.table}>
+            <thead>
+              <tr>
+                <th>Provider resource</th>
+                <th>State</th>
+                <th />
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((r, i) => (
+                <tr key={r.name || i}>
+                  <td>
+                    {r.displayName || r.domain || r.name}
+                    <small>{r.name}</small>
+                  </td>
+                  <td>
+                    <Badge>{r.state || "observed"}</Badge>
+                  </td>
+                  <td>
+                    <Button
+                      onClick={() => {
+                        if (operation === "accounts") setAccount(r.name);
+                        if (operation === "clients") setClient(r.name);
+                        if (
+                          operation === "units" ||
+                          operation === "create_unit"
+                        )
+                          setUnit(r.name);
+                      }}
+                    >
+                      <T
+                        v={[
+                          "Use reference",
+                          "Utiliser la référence",
+                          "استخدم المرجع",
+                        ]}
+                      />
+                    </Button>
+                    {units && r.name && (
+                      <Button
+                        disabled={busy}
+                        onClick={async () => {
+                          try {
+                            await mutate({
+                              action: "register_google_unit",
+                              account,
+                              unit: r.name,
+                            });
+                            notify(
+                              tr(
+                                [
+                                  "Observed native unit registered.",
+                                  "Unité native observée enregistrée.",
+                                  "تم تسجيل الوحدة الأصلية المرصودة.",
+                                ],
+                                locale,
+                              ),
+                            );
+                          } catch (e) {
+                            setError((e as Error).message);
+                          }
+                        }}
+                      >
+                        <T
+                          v={[
+                            "Register verified unit",
+                            "Enregistrer l’unité vérifiée",
+                            "تسجيل الوحدة المتحقق منها",
+                          ]}
+                        />
+                      </Button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {code && (
+        <>
+          <pre className={s.mono}>{code}</pre>
+          <Button
+            icon="Copy"
+            onClick={() => navigator.clipboard.writeText(code)}
+          >
+            <T
+              v={[
+                "Copy provider code",
+                "Copier le code fournisseur",
+                "نسخ شفرة المزوّد",
+              ]}
+            />
+          </Button>
+          <small>
+            <T
+              v={[
+                "Code is displayed, never injected by the admin preview.",
+                "Code affiché, jamais injecté dans l’aperçu.",
+                "تُعرض الشفرة دون حقنها في المعاينة.",
+              ]}
+            />
+          </small>
+        </>
+      )}
+    </Panel>
+  );
+}
+function Eligibility() {
+  const { locale, boot, open } = useUI(),
+    [family, setFamily] = useState("documents"),
+    [audience, setAudience] = useState("parent"),
+    [device, setDevice] = useState("desktop"),
+    [consent, setConsent] = useState("unknown"),
+    [zone, setZone] = useWorkingState("ads.zone", "after_intro"),
+    [topic, setTopic] = useState(""),
+    [experience, setExperience] = useState(""),
+    [templateId, setTemplate] = useState(""),
+    [region, setRegion] = useState("MA"),
+    [contentLocale, setContentLocale] = useState(locale),
+    [picker, setPicker] = useState<"topic" | "experience" | "template" | null>(
+      null,
+    );
+  const sourceId = useSearchParams()?.get("context") || "",
+    source = useQuery<DceRecord | null>(
+      sourceId
+        ? { op: "record", id: sourceId }
+        : { op: "reference", type: "record" },
+      null,
+    );
+  useEffect(() => {
+    const r = source.value;
+    if (!r || r.id !== sourceId) return;
+    setFamily(r.family || "documents");
+    setTopic(r.topic || "");
+    setExperience(r.kind === "experience" ? r.id : "");
+    setTemplate(r.kind === "template" ? r.id : text(r.data.templateId));
+    setAudience(r.audience || "parent");
+  }, [sourceId, source.value]);
+  const q = useQuery<any>(
+      {
+        op: "ad_inspect",
+        family,
+        audience,
+        device,
+        consent,
+        zone,
+        topic,
+        experienceId: experience,
+        templateId,
+        region,
+        locale: contentLocale,
+      },
+      { decision: null, rules: [], total: 0 },
+    ),
+    result = q.value.decision;
+  return (
+    <div className={s.twoColumns}>
+      <Panel
+        title={
+          <T
+            v={[
+              "Inspect an exact context",
+              "Inspecter un contexte exact",
+              "فحص سياق محدد",
+            ]}
+          />
+        }
+      >
+        <div className={s.formGrid}>
+          <Field label={<T v={["Family", "Famille", "العائلة"]} />}>
+            <select value={family} onChange={(e) => setFamily(e.target.value)}>
+              {FAMILIES.map((f) => (
+                <option key={f.key} value={f.key}>
+                  {tr(f.name, locale)}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field label={<T v={["Audience", "Public", "الجمهور"]} />}>
+            <select
+              value={audience}
+              onChange={(e) => setAudience(e.target.value)}
+            >
+              {["child", "parent", "educator", "professional", "school"].map(
+                (v) => (
+                  <option key={v}>{v}</option>
+                ),
+              )}
+            </select>
+          </Field>
+          {(["topic", "experience", "template"] as const).map((key) => (
+            <Field
+              key={key}
+              label={tr(
+                key === "topic"
+                  ? ["Topic", "Thème", "الموضوع"]
+                  : key === "template"
+                    ? ["Template context", "Contexte du modèle", "سياق القالب"]
+                    : ["Experience", "Expérience", "التجربة"],
+                locale,
+              )}
+            >
+              <div className={s.actions}>
+                <input
+                  readOnly
+                  value={
+                    key === "topic"
+                      ? topic
+                      : key === "experience"
+                        ? experience
+                        : templateId
+                  }
+                />
+                <Button icon="Search" onClick={() => setPicker(key)}>
+                  <T v={["Choose", "Choisir", "اختر"]} />
+                </Button>
+                <Button
+                  onClick={() =>
+                    key === "topic"
+                      ? setTopic("")
+                      : key === "experience"
+                        ? setExperience("")
+                        : setTemplate("")
+                  }
+                >
+                  ×
+                </Button>
+              </div>
+            </Field>
+          ))}
+          <Field
+            label={
+              <T v={["Placement zone", "Zone de placement", "موضع الإعلان"]} />
+            }
+          >
+            <select value={zone} onChange={(e) => setZone(e.target.value)}>
+              {[
+                ...new Set([
+                  ...AD_FORMATS.flatMap((f) => [...f.zones]),
+                  "assessment",
+                  "submission",
+                  "private_upload",
+                  "consent",
+                ]),
+              ].map((v) => (
+                <option key={v}>{v}</option>
+              ))}
+            </select>
+          </Field>
+          <Field label={<T v={["Consent", "Consentement", "الموافقة"]} />}>
+            <select
+              value={consent}
+              onChange={(e) => setConsent(e.target.value)}
+            >
+              {["unknown", "denied", "limited", "granted"].map((v) => (
+                <option key={v}>{v}</option>
+              ))}
+            </select>
+          </Field>
+          <Field label={<T v={["Device", "Appareil", "الجهاز"]} />}>
+            <select value={device} onChange={(e) => setDevice(e.target.value)}>
+              <option>desktop</option>
+              <option>mobile</option>
+            </select>
+          </Field>
+          <Field
+            label={
+              <T v={["Content language", "Langue du contenu", "لغة المحتوى"]} />
+            }
+          >
+            <select
+              value={contentLocale}
+              onChange={(e) => setContentLocale(e.target.value as Locale)}
+            >
+              {["fr", "en", "ar"].map((l) => (
+                <option key={l}>{l}</option>
+              ))}
+            </select>
+          </Field>
+          <Field
+            label={<T v={["Region code", "Code de région", "رمز المنطقة"]} />}
+          >
+            <input
+              value={region}
+              maxLength={3}
+              onChange={(e) => setRegion(e.target.value.toUpperCase())}
+            />
+          </Field>
+        </div>
+      </Panel>
+      <Panel
+        title={
+          <T
+            v={[
+              "Effective rule and inheritance",
+              "Règle effective et héritage",
+              "القاعدة الفعالة والتوارث",
+            ]}
+          />
+        }
+      >
+        <State {...q} retry={q.reload}>
+          {result && (
+            <>
+              <Badge tone={result.eligible ? "green" : "orange"}>
+                {result.eligible ? "ELIGIBLE" : "NOT_ELIGIBLE"}
+              </Badge>
+              <h3>{result.reason}</h3>
+              <p>{result.rule?.title}</p>
+              <Badge tone="teal">
+                {q.value.total}{" "}
+                <T
+                  v={[
+                    "rules inspected across the complete inventory",
+                    "règles inspectées sur tout le registre",
+                    "قاعدة تم فحصها عبر المخزون الكامل",
+                  ]}
+                />
+              </Badge>
+              <div className={s.timeline}>
+                {[
+                  "world",
+                  "family",
+                  "topic",
+                  "template",
+                  "experience",
+                  "zone",
+                ].map((scope) => (
+                  <div key={scope}>
+                    <strong>{scope}</strong>
+                    {q.value.rules
+                      .filter((r: any) => r.matched && r.data.scope === scope)
+                      .map((r: any) => (
+                        <button
+                          className={s.link}
+                          key={r.id}
+                          onClick={() => open(r.id)}
+                        >
+                          {r.title} · r{r.revision} ·{" "}
+                          {r.data.enabled ? "allow" : "exclude"}
+                        </button>
+                      ))}
+                  </div>
+                ))}
+              </div>
+              {q.value.unit && (
+                <Button onClick={() => open(q.value.unit.id)}>
+                  {q.value.unit.title} ·{" "}
+                  {q.value.unit.enabled
+                    ? "locally enabled"
+                    : "locally suppressed"}
+                </Button>
+              )}
+              <div className={s.notice}>
+                <T
+                  v={[
+                    "1 · Local rule saved → 2 · Provider evidence observed (24h) → 3 · Placement published → 4 · Serving evidence. This inspector covers draft eligibility only; Chapter 2 public serving is not active.",
+                    "1 · Règle locale → 2 · Preuve fournisseur (24h) → 3 · Emplacement publié → 4 · Preuve de diffusion. Cet inspecteur évalue le brouillon ; la diffusion publique du chapitre 2 n’est pas active.",
+                    "1 · قاعدة محلية ثم 2 · دليل المزوّد (24 ساعة) ثم 3 · موضع منشور ثم 4 · دليل العرض. يفحص هذا العرض المسودة فقط ولا يعمل النشر العام للفصل الثاني.",
+                  ]}
+                />
+              </div>
+              <div className={s.adSketch} data-mode="manual">
+                <span />
+                <b>
+                  {zone} ·{" "}
+                  {result.eligible ? "eligible placeholder" : "suppressed"}
+                </b>
+                <span />
+              </div>
+            </>
+          )}
+        </State>
+        <div className={s.notice}>
+          <T
+            v={[
+              "Draft-policy inspection. No provider script, impression or reward request is issued.",
+              "Inspection des brouillons. Aucun script, impression ou demande de récompense.",
+              "فحص لمسودات السياسات. لا يتم تشغيل شفرة المزوّد أو طلب ظهور أو مكافأة.",
+            ]}
+          />
+        </div>
+      </Panel>
+      {picker && (
+        <Picker
+          type="record"
+          kind={picker}
+          onSelect={(id) =>
+            picker === "topic"
+              ? setTopic(id)
+              : picker === "experience"
+                ? setExperience(id)
+                : setTemplate(id)
+          }
+          onClose={() => setPicker(null)}
+        />
+      )}
+    </div>
+  );
+}
+export function ProviderReport() {
+  const { locale, boot, notify } = useUI(),
+    [account, setAccount] = useWorkingState("ads.account", ""),
+    [start, setStart] = useState(
+      new Date(Date.now() - 30 * 86400000).toISOString().slice(0, 10),
+    ),
+    [end, setEnd] = useState(new Date().toISOString().slice(0, 10)),
+    [dimensions, setDimensions] = useState<string[]>(["DATE", "AD_UNIT_ID"]),
+    [timezone, setTimezone] = useState("ACCOUNT_TIME_ZONE"),
+    [currency, setCurrency] = useState(""),
+    [report, setReport] = useState<any>(null),
+    [error, setError] = useState(""),
+    [busy, setBusy] = useState(false);
+  async function generate() {
+    setBusy(true);
+    setError("");
+    try {
+      setReport(
+        await mutate({
+          action: "google",
+          operation: "report",
+          input: {
+            account,
+            start,
+            end,
+            dimensions,
+            timezone,
+            currency,
+            locale,
+          },
+        }),
+      );
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <Panel
+      title={
+        <T
+          v={[
+            "Provider revenue evidence",
+            "Preuves de revenu fournisseur",
+            "دليل إيراد المزوّد",
+          ]}
+        />
+      }
+      subtitle={
+        <T
+          v={[
+            "Estimated earnings remain separate from recognized native Finance funds.",
+            "Les revenus estimés restent distincts des fonds reconnus par Finance.",
+            "تبقى الإيرادات التقديرية مستقلة عن الأموال المعترف بها في المالية.",
+          ]}
+        />
+      }
+    >
+      <div className={s.toolbar}>
+        <input
+          aria-label="Provider account"
+          value={account}
+          onChange={(e) => setAccount(e.target.value)}
+          placeholder="accounts/pub-…"
+        />
+        <input
+          aria-label="Start date"
+          type="date"
+          value={start}
+          onChange={(e) => setStart(e.target.value)}
+        />
+        <input
+          aria-label="End date"
+          type="date"
+          value={end}
+          onChange={(e) => setEnd(e.target.value)}
+        />
+        <Button
+          disabled={busy || !boot.actor.rights.monetize}
+          kind="primary"
+          icon="ChartNoAxesCombined"
+          onClick={generate}
+        >
+          <T
+            v={[
+              "Generate provider report",
+              "Générer le rapport fournisseur",
+              "إنشاء تقرير المزوّد",
+            ]}
+          />
+        </Button>
+      </div>
+      <div className={s.checkOptions}>
+        {[
+          "DATE",
+          "AD_UNIT_NAME",
+          "AD_UNIT_ID",
+          "COUNTRY_CODE",
+          "PLATFORM_TYPE_CODE",
+          "DOMAIN_CODE",
+          "AD_FORMAT_CODE",
+        ].map((value) => (
+          <label key={value}>
+            <input
+              type="checkbox"
+              checked={dimensions.includes(value)}
+              onChange={(e) =>
+                setDimensions((old) =>
+                  e.target.checked
+                    ? [...old, value]
+                    : old.filter((v) => v !== value),
+                )
+              }
+            />
+            {value}
+          </label>
+        ))}
+      </div>
+      <div className={s.toolbar}>
+        <Field
+          label={
+            <T
+              v={[
+                "Reporting timezone",
+                "Fuseau de rapport",
+                "منطقة التقرير الزمنية",
+              ]}
+            />
+          }
+        >
+          <select
+            value={timezone}
+            onChange={(e) => setTimezone(e.target.value)}
+          >
+            <option>ACCOUNT_TIME_ZONE</option>
+            <option>GOOGLE_TIME_ZONE</option>
+          </select>
+        </Field>
+        <Field
+          label={
+            <T
+              v={[
+                "Currency · optional ISO code",
+                "Devise · code ISO facultatif",
+                "العملة · رمز ISO اختياري",
+              ]}
+            />
+          }
+        >
+          <input
+            value={currency}
+            maxLength={3}
+            onChange={(e) => setCurrency(e.target.value.toUpperCase())}
+          />
+        </Field>
+      </div>
+      {error && (
+        <div className={s.notice} role="alert">
+          {error}
+        </div>
+      )}
+      {report ? (
+        <>
+          <Badge tone={report.complete ? "green" : "orange"}>
+            {report.complete
+              ? "COMPLETE"
+              : "TRUNCATED · refine date/dimensions"}
+          </Badge>
+          <p className={s.subtitle}>
+            {report.freshness} · {report.timezone}
+          </p>
+          <div className={s.tableScroll}>
+            <table className={s.table}>
+              <thead>
+                <tr>
+                  {report.headers?.map((h: any, i: number) => (
+                    <th key={i}>
+                      {h.name} {h.currencyCode && "· " + h.currencyCode}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {report.rows?.map((r: any, i: number) => (
+                  <tr key={i}>
+                    {r.cells?.map((c: any, n: number) => (
+                      <td key={n}>{c.value}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <Button
+            disabled={!boot.actor.rights.export}
+            icon="Download"
+            onClick={() =>
+              download(
+                "dce-provider-report.json",
+                JSON.stringify(report, null, 2),
+                "application/json",
+              )
+            }
+          >
+            <T
+              v={["Export evidence", "Exporter les preuves", "تصدير الدليل"]}
+            />
+          </Button>
+        </>
+      ) : (
+        <Empty
+          icon="ChartColumn"
+          title={
+            <T
+              v={[
+                "No provider evidence loaded",
+                "Aucune preuve fournisseur chargée",
+                "لم يتم تحميل دليل المزوّد",
+              ]}
+            />
+          }
+          detail={
+            <T
+              v={[
+                "Connect an authorized account and choose the report period.",
+                "Connectez un compte autorisé et choisissez la période.",
+                "اربط حساباً معتمداً واختر فترة التقرير.",
+              ]}
+            />
+          }
+        />
+      )}
+    </Panel>
+  );
+}
 
-function ConnectionVerifier(){const {boot,locale,notify,refresh}=useUI();const q=useQuery<Page<DceRecord>>({op:'inventory',kind:'ad_connection'},{rows:[],total:0,page:1,pageSize:100});const[busy,setBusy]=useState('');async function verify(r:DceRecord){setBusy(r.id);try{await mutate({action:'verify_google',id:r.id,revision:r.revision});q.reload();await refresh();notify(tr(['Provider evidence saved.','Preuve fournisseur enregistrée.','تم حفظ دليل المزوّد.'],locale))}catch(e){notify((e as Error).message,true)}finally{setBusy('')}}return <Panel title={<T v={['Observed provider readiness','État fournisseur observé','جاهزية المزوّد المرصودة']}/>}>{q.value.rows.map(r=><div className={s.journeyStep} key={r.id}><div style={{flex:1}}><strong>{r.title}</strong><p>{text(r.data.site)} · {text(object(r.data.providerEvidence).siteState)||'not observed'}</p><small>{text(object(r.data.providerEvidence).observedAt)}</small></div><Button icon="ShieldCheck" disabled={busy===r.id||!boot.actor.rights.monetize} onClick={()=>verify(r)}><T v={['Verify with Google','Vérifier auprès de Google','تحقق لدى Google']}/></Button></div>)}</Panel>}
+function ConnectionVerifier() {
+  const { boot, locale, notify, refresh } = useUI();
+  const q = useQuery<Page<DceRecord>>(
+    { op: "inventory", kind: "ad_connection" },
+    { rows: [], total: 0, page: 1, pageSize: 100 },
+  );
+  const [busy, setBusy] = useState("");
+  async function verify(r: DceRecord) {
+    setBusy(r.id);
+    try {
+      await mutate({ action: "verify_google", id: r.id, revision: r.revision });
+      q.reload();
+      await refresh();
+      notify(
+        tr(
+          [
+            "Provider evidence saved.",
+            "Preuve fournisseur enregistrée.",
+            "تم حفظ دليل المزوّد.",
+          ],
+          locale,
+        ),
+      );
+    } catch (e) {
+      notify((e as Error).message, true);
+    } finally {
+      setBusy("");
+    }
+  }
+  return (
+    <Panel
+      title={
+        <T
+          v={[
+            "Observed provider readiness",
+            "État fournisseur observé",
+            "جاهزية المزوّد المرصودة",
+          ]}
+        />
+      }
+    >
+      {q.value.rows.map((r) => (
+        <div className={s.journeyStep} key={r.id}>
+          <div style={{ flex: 1 }}>
+            <strong>{r.title}</strong>
+            <p>
+              {text(r.data.site)} ·{" "}
+              {text(object(r.data.providerEvidence).siteState) ||
+                "not observed"}
+            </p>
+            <small>{text(object(r.data.providerEvidence).observedAt)}</small>
+          </div>
+          <Button
+            icon="ShieldCheck"
+            disabled={busy === r.id || !boot.actor.rights.monetize}
+            onClick={() => verify(r)}
+          >
+            <T
+              v={[
+                "Verify with Google",
+                "Vérifier auprès de Google",
+                "تحقق لدى Google",
+              ]}
+            />
+          </Button>
+        </div>
+      ))}
+    </Panel>
+  );
+}

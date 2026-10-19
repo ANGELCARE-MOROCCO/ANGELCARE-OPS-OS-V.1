@@ -1,0 +1,310 @@
+{
+  "generatedAt": "2026-10-15T07:42:07.459Z",
+  "meaning": "Actual repository and SQL against task-only native transport. Shared editor mutations and import paths; browser UI is separately verified.",
+  "results": [
+    {
+      "name": "Actual editor mutations produce a validated document; SQL save/reopen/review/approve/release",
+      "status": "passed"
+    },
+    {
+      "name": "documents / Article Reader canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "documents / PDF Reader canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "documents / Chaptered Guide canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "documents / Rich Article canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "printables / Printable Preview canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "printables / Page Carousel canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "printables / Flipbook Preview canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "printables / Download Gate canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "stories / Flipbook canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "stories / Read-aloud story mode canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "stories / Immersive reading mode canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "stories / Slideshow story mode canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "learning / Course player canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "learning / Mixed media lesson path canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "learning / Chaptered video course canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "learning / Assessment-linked learning path canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "video / Cinematic Player canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "video / Tutorial Player with Chapters canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "video / Course-Linked Video canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "video / Vertical / Mobile Video Viewer canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "audio / Audio Player canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "audio / Playlist Mode canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "audio / Chaptered Podcast canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "audio / Narrated Story Mode canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "visual-cards / Image Gallery canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "visual-cards / Card Swiper canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "visual-cards / Lightbox Mode canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "visual-cards / Flashcard Study Mode canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "presentations / Slide Player canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "presentations / Frame-by-Frame Mode canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "presentations / Presenter Mode canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "presentations / Autoplay Storytelling canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "assessments / Quiz Player canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "assessments / Timed Assessment Mode canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "assessments / Practice Test Mode canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "assessments / Result Dashboard canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "activities / Game Canvas canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "activities / Activity Stepper canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "activities / Simulation Mode canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "activities / Challenge Mode canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "tools / Interactive Tool Runtime canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "tools / Calculator Panel canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "tools / Simulation Dashboard canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "tools / Form-Result Interface canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "planners / Printable Preview canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "planners / Editable Planner View canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "planners / Template Gallery canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "planners / Checklist Mode canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "forms / Form Flow canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "forms / Multistep Application canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "forms / Upload-Enabled Submission Page canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "forms / Booking Request Flow canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "community / Review Feed canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "community / Social Proof Wall canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "community / Q&A Thread canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "community / Community Hub canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "commerce / Shoppable Article canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "commerce / Buyable Resource Page canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "commerce / Course + Product Page canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "commerce / Download Delivery Experience canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "bundles / Guided Bundle Path canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "bundles / Bundle Dashboard canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "bundles / Sequential Playlist canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "bundles / Starter Kit Experience canonical editor/import round-trip and saved preview dependencies",
+      "status": "passed"
+    },
+    {
+      "name": "Nonlocalized unit configuration remains editable while authoring another language",
+      "status": "passed"
+    },
+    {
+      "name": "Forms canonical fields validate and legacy formFields adapt without mutating the source",
+      "status": "passed"
+    },
+    {
+      "name": "Activity prompt, community title/text and planner typed value survive the actual save path",
+      "status": "passed"
+    },
+    {
+      "name": "Protected answers, presenter notes and unknown nested metadata stay out of manifests",
+      "status": "passed"
+    },
+    {
+      "name": "Wrong media types block source binding at the exact collection slot",
+      "status": "passed"
+    },
+    {
+      "name": "Missing translation, invalid answers, bounds and dependency cycles have actionable validation paths",
+      "status": "passed"
+    },
+    {
+      "name": "Revision conflict and replayed command identity use the actual SQL receipts",
+      "status": "passed"
+    },
+    {
+      "name": "Withdrawal and restoration preserve immutable snapshot and manifest hashes in actual SQL",
+      "status": "passed"
+    },
+    {
+      "name": "Native reference search finds records beyond the first page before pagination",
+      "status": "passed"
+    },
+    {
+      "name": "All advertising rules, template context and protected-area exclusions are inspected",
+      "status": "passed"
+    },
+    {
+      "name": "Permission differences enforce server commands and private grant visibility",
+      "status": "passed"
+    }
+  ]
+}

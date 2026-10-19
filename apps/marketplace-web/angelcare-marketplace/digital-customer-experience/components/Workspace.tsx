@@ -1,54 +1,918 @@
-'use client'
-import { lazy, Suspense, useEffect, useRef, useState, type KeyboardEvent } from 'react'
-import Link from 'next/link'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { BASE, tr, text, type Bootstrap, type Kind, type Locale } from '../types'
-import { MODULES, GROUPS, FAMILIES } from '../registry'
-import { UI, Badge, Button, Dialog, Empty, Icon, Panel, query, mutate, T, useQuery } from './ui'
-import { Dashboard } from './Dashboard'
-import { Registry } from './Registry'
-const MediaLibrary=lazy(()=>import('./Media').then(m=>({default:m.MediaLibrary}))),Imports=lazy(()=>import('./Imports').then(m=>({default:m.Imports}))),Monetization=lazy(()=>import('./Monetization').then(m=>({default:m.Monetization})))
-import { DesignRegistry } from './DesignRegistry'
-import { PricingWorkspace } from './Pricing'
-import { Taxonomy } from './Taxonomy'
-import { AnalyticsWorkspace } from './Analytics'
-import { EngagementWorkspace } from './Engagement'
-import { AccessWorkspace } from './Access'
-import { Publication, Inbox, Users } from './Operations'
-import { Insights, Logs, Utilities, Settings } from './Insights'
-import s from './workspace.module.css'
-const Editor=lazy(()=>import('./Editor').then(m=>({default:m.Editor}))),NewExperience=lazy(()=>import('./Editor').then(m=>({default:m.NewExperience}))),PreviewWindow=lazy(()=>import('./Preview').then(m=>({default:m.PreviewWindow})))
-function navigateTabs(event:KeyboardEvent<HTMLElement>){const target=event.target as HTMLElement,tab=target.closest<HTMLElement>('[role=tab]'),list=tab?.closest('[role=tablist]');if(!tab||!list||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;const tabs=Array.from(list.querySelectorAll<HTMLButtonElement>('[role=tab]')).filter(t=>!t.disabled),index=tabs.indexOf(tab as HTMLButtonElement),rtl=Boolean(tab.closest('[dir=rtl]')),direction=(event.key==='ArrowRight'?1:-1)*(rtl?-1:1),next=event.key==='Home'?0:event.key==='End'?tabs.length-1:(index+direction+tabs.length)%tabs.length;event.preventDefault();tabs[next]?.focus();tabs[next]?.click()}
-export function Workspace({initial,module='dashboard'}:{initial:Bootstrap;module?:string}){
- const router=useRouter(),params=useSearchParams(),[boot,setBoot]=useState(initial),[locale,setLocale]=useState<Locale>(initial.actor.locale),[days,setDays]=useState(30),[search,setSearch]=useState(''),[searchQ,setSearchQ]=useState(''),[nav,setNav]=useState(false),[editor,setEditor]=useState<{id?:string;kind?:Kind;family?:string;initialTab?:string}|null>(null),[choose,setChoose]=useState(false),[previewId,setPreview]=useState(''),[previewRelease,setPreviewRelease]=useState(''),[help,setHelp]=useState(false),[site,setSite]=useState(false),[toast,setToast]=useState<{message:string;error:boolean}|null>(null),[initializing,setInitializing]=useState(false),[openNotifications,setNotifications]=useState(false);const latest=useRef(0);const title=MODULES.find(m=>m.key===module)||MODULES[0];
- useEffect(()=>{setBoot(initial)},[initial]);useEffect(()=>{setNav(false)},[module]);const recordParam=params?.get('record')||'';useEffect(()=>{if(recordParam)setEditor(current=>current?.id===recordParam?current:{id:recordParam})},[recordParam]);useEffect(()=>{const timer=setTimeout(()=>setSearchQ(search.trim()),250);return()=>clearTimeout(timer)},[search]);useEffect(()=>{if(!toast)return;const timer=setTimeout(()=>setToast(null),8000);return()=>clearTimeout(timer)},[toast]);
- async function refresh(){const version=++latest.current;const next=await query<Bootstrap>({op:'bootstrap',days});if(version===latest.current)setBoot(next)}
- const firstPeriod=useRef(true);useEffect(()=>{if(firstPeriod.current){firstPeriod.current=false;return}refresh().catch(e=>notify(e.message,true))},[days]);
- function notify(message:string,error=false){setToast({message,error})}function open(id:string,initialTab?:string){setEditor({id,initialTab})}function create(kind='experience',family?:string){if(kind==='experience'&&!family){setChoose(true);return}setEditor({kind:kind as Kind,family})}function preview(id:string,releaseId?:string){setPreview(id);setPreviewRelease(releaseId||'')}
- async function initialize(){setInitializing(true);try{const r=await mutate({action:'initialize'});await refresh();notify(`${r.created} ${tr(['editable defaults created','valeurs éditables créées','إعداد قابل للتعديل أُنشئ'],locale)}`)}catch(e){notify((e as Error).message,true)}finally{setInitializing(false)}}
- const ui={locale,boot,refresh,notify,open,create,preview};const denied=['adsense','revenue'].includes(module)&&!boot.actor.rights.monetize||['messages','community','users'].includes(module)&&!boot.actor.rights.moderate&&!boot.actor.rights.customers;let body:React.ReactNode;
- if(denied)body=<Empty icon="LockKeyhole" title={tr(['This destination requires an explicit native permission','Cette destination nécessite une permission native explicite','تتطلب هذه الوجهة صلاحية أصلية محددة'],locale)} detail={tr(['Ask the existing administrator to assign the relevant workspace power.','L’administrateur natif doit assigner le pouvoir approprié.','يعيّن المسؤول الأصلي الصلاحية المناسبة.'],locale)}/>;
- else if(module==='dashboard')body=<Dashboard days={days} onDays={setDays}/>;
- else if(module==='experiences')body=<Registry initialFamily={params?.get('family')||undefined}/>;
- else if(module==='categories')body=<Taxonomy/>;
- else if(module==='content')body=<Registry kind="content"/>;
- else if(module==='media')body=<MediaLibrary/>;
- else if(module==='templates')body=<DesignRegistry/>;
- else if(module==='journeys')body=<DesignRegistry journey/>;
- else if(module==='bundles')body=<Registry kind="bundle"/>;
- else if(module==='publication')body=<Publication/>;
- else if(module==='community')body=<Inbox community/>;
- else if(module==='messages')body=<Inbox/>;
- else if(module==='users')body=<EngagementWorkspace/>;
- else if(module==='adsense')body=<Monetization/>;
- else if(module==='access')body=<AccessWorkspace/>;
- else if(module==='pricing')body=<PricingWorkspace/>;
- else if(['performance','audience'].includes(module))body=<AnalyticsWorkspace audience={module==='audience'}/>;
- else if(['reports','revenue'].includes(module))body=<Insights section={module}/>;
- else if(module==='imports')body=<Imports/>;
- else if(module==='utilities')body=<Utilities/>;
- else if(module==='settings')body=<Settings/>;
- else if(module==='logs')body=<Logs/>;
- return <UI.Provider value={ui}><div className={s.root} onKeyDown={navigateTabs} dir={locale==='ar'?'rtl':'ltr'} lang={locale}><aside id="angelcare-dce-navigation" className={s.nav} data-open={nav} aria-label={tr(['Digital Customer Experience navigation','Navigation de l’expérience client numérique','تنقل تجربة العميل الرقمية'],locale)}><Link href={BASE}><img className={s.navLogo} src="/brand/angelcare-pearl-rim-colour-r1.png" alt="AngelCare"/></Link><button className={`${s.iconButton} ${s.mobileNavButton}`} onClick={()=>setNav(false)} aria-label={tr(['Close DCE navigation','Fermer la navigation DCE','إغلاق قائمة التنقل'],locale)}><Icon name="X"/></button><Link href={BASE} aria-current={module==='dashboard'?'page':undefined} className={s.navItem} onClick={()=>setNav(false)}><Icon name="LayoutDashboard"/><span>{tr(MODULES[0].label,locale)}</span></Link>{Object.entries(GROUPS).map(([key,group])=><div key={key}>{key!=='dashboard'&&<h3 className={s.navGroup}>{tr(group,locale)}</h3>}{MODULES.filter(m=>m.group===key).map(m=><Link key={m.key} href={BASE+(m.key==='dashboard'?'':'/'+m.key)} aria-current={module===m.key?'page':undefined} className={s.navItem} title={tr(m.label,locale)} onClick={()=>setNav(false)}><Icon name={m.icon}/><span>{tr(m.label,locale)}</span></Link>)}</div>)}<div className={s.navFooter}><Icon name="Sparkles" size={24}/><div><strong>AngelCare Studio</strong><small>Free Experience OS · R1</small><small>{boot.activated?tr(['Database active','Base active','قاعدة البيانات فعالة'],locale):tr(['Awaiting activation','Activation requise','بانتظار التفعيل'],locale)}</small></div><span className={`${s.dot} ${boot.activated?'':s.dotAmber}`}/></div><Link href="/angelcare-marketplace/admin" className={s.navItem}><Icon name="ArrowLeft"/><T v={['Back to Marketplace','Retour Marketplace','العودة للسوق']}/></Link></aside><div className={s.main}><header className={s.bar}><button className={`${s.iconButton} ${s.mobileNavButton}`} onClick={()=>setNav(v=>!v)} aria-expanded={nav} aria-controls="angelcare-dce-navigation" aria-label={tr(nav?['Close DCE navigation','Fermer la navigation DCE','إغلاق قائمة التنقل']:['Open DCE navigation','Ouvrir la navigation DCE','فتح قائمة التنقل'],locale)}><Icon name="Menu"/></button><div className={s.barBrand}><h2>Free Experience Studios</h2><small>Create · Manage · Publish · Grow</small></div><div className={s.barSearch}><Icon name="Search" size={16}/><input aria-label={tr(['Search DCE','Rechercher dans DCE','البحث في تجربة العميل الرقمية'],locale)} placeholder={tr(['Search experiences, content, categories…','Chercher expériences, contenus, thèmes…','بحث عن التجارب والمحتوى والمواضيع…'],locale)} value={search} onChange={e=>setSearch(e.target.value)}/>{searchQ&&<SearchResults q={searchQ} onOpen={id=>{open(id);setSearch('');setSearchQ('')}}/>}</div><div className={s.barActions}><button className={s.toolButton} onClick={()=>{const r=boot.recent[0];if(r)preview(r.id);else notify(tr(['Create a dossier to preview.','Créez un dossier à prévisualiser.','أنشئ ملفاً لمعاينته.'],locale))}}><Icon name="Eye"/><T v={['Preview','Aperçu','معاينة']}/></button><button className={s.toolButton} onClick={()=>setSite(true)}><Icon name="Globe"/><T v={['Visit Site','Voir le site','زيارة الموقع']}/></button><button className={s.toolButton} onClick={()=>setHelp(true)}><Icon name="CircleHelp"/><T v={['Help','Aide','مساعدة']}/></button><button className={s.toolButton} onClick={()=>setNotifications(v=>!v)} aria-expanded={openNotifications}><Icon name="Bell"/><T v={['Notifications','Notifications','إشعارات']}/></button><select className={s.localeSelect} aria-label={tr(['Staff language','Langue de l’opérateur','لغة الموظف'],locale)} value={locale} onChange={e=>setLocale(e.target.value as Locale)}><option value="fr">FR</option><option value="en">EN</option><option value="ar">ع</option></select><div className={s.operator}><span className={s.avatar}>{boot.actor.name.slice(0,1)}</span><div><strong>{boot.actor.name}</strong><small><T v={['Studio Operator','Opérateur Studio','مشغّل الاستوديو']}/></small></div></div></div></header><main className={s.content} aria-label={tr(title.label,locale)}>{module!=='dashboard'&&<div className={s.heading}><div><h1>{tr(title.label,locale)}</h1><p>{tr(title.description,locale)}</p></div><Badge><T v={['Native governed workspace','Workspace natif gouverné','مساحة عمل أصلية معتمدة']}/></Badge></div>}{openNotifications&&<Panel title={<T v={['Scoped operational notifications','Notifications opérationnelles','الإشعارات التشغيلية']}/>} actions={<Button onClick={()=>setNotifications(false)} icon="X"><T v={['Close','Fermer','إغلاق']}/></Button>}>{boot.releases.filter(r=>r.state==='failed').map(r=><button className={s.rowCard} key={r.id} onClick={()=>open(r.record_id)}>{r.snapshot.title} · {r.error}</button>)}{!boot.releases.some(r=>r.state==='failed')&&<p className={s.subtitle}><T v={['No release failures in the loaded scope.','Aucun échec de release dans le périmètre chargé.','لا توجد إخفاقات إصدار في النطاق المحمل.']}/></p>}</Panel>}{!boot.activated&&<div className={s.notice}><Icon name="Database"/><div><strong><T v={['Separate database activation required','Activation SQL séparée requise','يتطلب تفعيل قاعدة البيانات منفصلاً']}/></strong><p>{boot.databaseError}</p><code>01_DCE_ADMIN_R1.sql → 02_VERIFY_DCE_ADMIN_R1.sql</code><Button onClick={()=>refresh().catch(e=>notify(e.message,true))} icon="RefreshCw"><T v={['Check activation','Vérifier l’activation','تحقق من التفعيل']}/></Button></div></div>}{boot.activated&&!boot.topics.length&&<div className={s.notice}><Icon name="WandSparkles"/><div><strong><T v={['Initialize editable studio defaults','Initialiser les valeurs éditables','تهيئة إعدادات الاستوديو القابلة للتعديل']}/></strong><p><T v={['Creates 8 child/family topics, 16 starter templates and world defaults. Nothing is published or monetized.','Crée 8 thèmes, 16 modèles et les valeurs du monde. Aucun contenu publié ni monétisé.','ينشئ 8 مواضيع و16 قالباً وإعدادات العالم. دون نشر أو تحقيق دخل.']}/></p><Button disabled={!boot.actor.rights.manage||initializing} onClick={initialize} kind="primary"><T v={['Initialize','Initialiser','تهيئة']}/></Button></div></div>}<Suspense fallback={<div className={s.loading} role="status"><span className={s.spinner}/><T v={['Opening workspace…','Ouverture du workspace…','فتح مساحة العمل…']}/></div>}>{body}</Suspense></main></div>{toast&&<div className={`${s.toast} ${toast.error?s.alertError:''}`} role={toast.error?'alert':'status'}><Icon name={toast.error?'TriangleAlert':'CircleCheck'}/><span>{toast.message}</span><button aria-label={tr(['Dismiss notice','Fermer la notification','إغلاق الإشعار'],locale)} className={s.iconButton} onClick={()=>setToast(null)}><Icon name="X" size={14}/></button></div>}<Suspense fallback={<div className={s.toast} role="status"><span className={s.spinner}/><T v={['Opening editor…','Ouverture de l’éditeur…','فتح المحرر…']}/></div>}>{choose&&<NewExperience onClose={()=>setChoose(false)} onChoose={family=>{setChoose(false);setEditor({kind:'experience',family})}}/>}{editor&&<Editor key={editor.id||editor.kind+'.'+editor.family} {...editor} onClose={()=>{setEditor(null);if(params?.has('record'))router.replace(BASE+(module==='dashboard'?'':'/'+module))}} onSaved={()=>{}}/>}{previewId&&<PreviewWindow id={previewId} releaseId={previewRelease||undefined} onClose={()=>setPreview('')}/>}</Suspense>{help&&<Dialog title={<T v={['Studio operating guide','Guide opérateur Studio','دليل تشغيل الاستوديو']}/>} onClose={()=>setHelp(false)}><div className={s.helpList}>{[['1 · Choose a family','1 · Choisir une famille','1 · اختر عائلة'],['2 · Author multilingual units & bind native sources','2 · Éditer les unités traduites et lier les sources','2 · حرّر الوحدات المترجمة واربط المصادر'],['3 · Validate the preview and actual dependencies','3 · Valider l’aperçu et les dépendances','3 · تحقق من المعاينة والاعتماديات'],['4 · Review, approve and release the exact revision','4 · Revue, approbation et release exacte','4 · راجع واعتمد وانشر النسخة المحددة']].map((v,i)=><div key={i}><h3>{tr(v as any,locale)}</h3></div>)}<p><T v={['Public runtime is Chapter 2. This workspace prepares complete authored definitions, releases and operating contracts. Native identity, S: media, commerce, Finance and Hotline remain their authorities.','Le runtime public est le chapitre 2. Ce workspace prépare les définitions, releases et contrats. Identité, médias S:, commerce, Finance et Hotline restent natifs.','العرض العام هو الفصل الثاني. تجهز هذه المساحة التعريفات والإصدارات وعقود التشغيل. تبقى الهوية والوسائط والتجارة والمالية والخط الساخن أصلية.']}/></p></div></Dialog>}{site&&<Dialog title={<T v={['Public distribution readiness','Préparation de la distribution publique','جاهزية التوزيع العام']}/>} onClose={()=>setSite(false)}><Empty icon="Globe" title={<T v={['Public experience world activates in Chapter 2','Le monde public est activé au chapitre 2','يتم تفعيل العالم العام في الفصل الثاني']}/>} detail={<T v={['Validated immutable manifests are prepared here. This button does not point customers to an unimplemented route.','Les manifestes validés sont préparés ici. Aucun lien vers une route non construite.','تجهز البيانات المعتمدة هنا. لا يشير الزر إلى مسار غير منفذ.']}/>}/></Dialog>}</div></UI.Provider>
+"use client";
+import { DiscoveryStudio } from "./DiscoveryStudio";
+import { CoverageCockpit, FeatureReadiness } from "./OperatorDesk";
+
+import { EditorialNotices } from "./ProfessionalTeam";
+import { ProfessionalWorkspace } from "./ProfessionalWorkspace";
+import { WorkspaceDossierContext } from "./DossierConnections";
+import { OperationsHealth } from "./OperationsHealth";
+import {
+  lazy,
+  Suspense,
+  useEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+} from "react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+  BASE,
+  tr,
+  text,
+  type Bootstrap,
+  type Kind,
+  type Locale,
+} from "../types";
+import { MODULES, GROUPS, FAMILIES } from "../registry";
+import {
+  UI,
+  Badge,
+  Button,
+  Dialog,
+  Empty,
+  Icon,
+  Panel,
+  query,
+  mutate,
+  T,
+  useQuery,
+} from "./ui";
+import { Dashboard } from "./Dashboard";
+import { CertificateRequests } from "./CertificateRequests";
+import { EditionInventory } from "./EditionInventory";
+import { Registry } from "./Registry";
+const MediaLibrary = lazy(() =>
+    import("./Media").then((m) => ({ default: m.MediaLibrary })),
+  ),
+  Imports = lazy(() =>
+    import("./Imports").then((m) => ({ default: m.Imports })),
+  ),
+  Monetization = lazy(() =>
+    import("./Monetization").then((m) => ({ default: m.Monetization })),
+  );
+import { DesignRegistry } from "./DesignRegistry";
+import { PricingWorkspace } from "./Pricing";
+import { Taxonomy } from "./Taxonomy";
+import { AnalyticsWorkspace } from "./Analytics";
+import { EngagementWorkspace } from "./Engagement";
+import { AccessWorkspace } from "./Access";
+import { Publication, Inbox, Users } from "./Operations";
+import { Insights, Logs, Utilities, Settings } from "./Insights";
+import s from "./workspace.module.css";
+const Editor = lazy(() =>
+    import("./Editor").then((m) => ({ default: m.Editor })),
+  ),
+  NewExperience = lazy(() =>
+    import("./Editor").then((m) => ({ default: m.NewExperience })),
+  ),
+  PreviewWindow = lazy(() =>
+    import("./Preview").then((m) => ({ default: m.PreviewWindow })),
+  );
+function navigateTabs(event: KeyboardEvent<HTMLElement>) {
+  const target = event.target as HTMLElement,
+    tab = target.closest<HTMLElement>("[role=tab]"),
+    list = tab?.closest("[role=tablist]");
+  if (
+    !tab ||
+    !list ||
+    !["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)
+  )
+    return;
+  const tabs = Array.from(
+      list.querySelectorAll<HTMLButtonElement>("[role=tab]"),
+    ).filter((t) => !t.disabled),
+    index = tabs.indexOf(tab as HTMLButtonElement),
+    rtl = Boolean(tab.closest("[dir=rtl]")),
+    direction = (event.key === "ArrowRight" ? 1 : -1) * (rtl ? -1 : 1),
+    next =
+      event.key === "Home"
+        ? 0
+        : event.key === "End"
+          ? tabs.length - 1
+          : (index + direction + tabs.length) % tabs.length;
+  event.preventDefault();
+  tabs[next]?.focus();
+  tabs[next]?.click();
 }
-function SearchResults({q,onOpen}:{q:string;onOpen:(id:string)=>void}){const r=useQuery<any>({q,pageSize:12},{rows:[]});return <div className={s.searchResults}>{r.loading?<p><T v={['Searching…','Recherche…','جار البحث…']}/></p>:r.error?<p role="alert">{r.error}</p>:r.value.rows.length?r.value.rows.map((record:any)=><button onClick={()=>onOpen(record.id)} key={record.id}><Icon name={record.kind==='asset'?'Image':'Layers'} size={16}/><span>{record.title}<small style={{display:'block',color:'#7086a3'}}>{record.kind} · {record.key}</small></span></button>):<p><T v={['No matching authorized records','Aucun dossier autorisé correspondant','لا توجد سجلات مصرح بها مطابقة']}/></p>}</div>}
+export function Workspace({
+  initial,
+  module = "dashboard",
+}: {
+  initial: Bootstrap;
+  module?: string;
+}) {
+  const router = useRouter(),
+    params = useSearchParams(),
+    [boot, setBoot] = useState(initial),
+    [locale, setLocale] = useState<Locale>(initial.actor.locale),
+    [days, setDays] = useState(30),
+    [search, setSearch] = useState(""),
+    [searchQ, setSearchQ] = useState(""),
+    [nav, setNav] = useState(false),
+    [editor, setEditor] = useState<{
+      id?: string;
+      kind?: Kind;
+      family?: string;
+      initialTab?: string;
+      language?: Locale;
+      prepared?: Partial<import("../types").DceRecord>;
+    } | null>(null),
+    [previewPicker, setPreviewPicker] = useState(false),
+    [choose, setChoose] = useState(false),
+    [previewId, setPreview] = useState(""),
+    [previewRelease, setPreviewRelease] = useState(""),
+    [previewLanguage, setPreviewLanguage] = useState<Locale | undefined>(),
+    [help, setHelp] = useState(false),
+    [site, setSite] = useState(false),
+    [toast, setToast] = useState<{ message: string; error: boolean } | null>(
+      null,
+    ),
+    [initializing, setInitializing] = useState(false),
+    [openNotifications, setNotifications] = useState(false);
+  const latest = useRef(0);
+  const title = MODULES.find((m) => m.key === module) || MODULES[0];
+  useEffect(() => {
+    setBoot(initial);
+  }, [initial]);
+  useEffect(() => {
+    setNav(false);
+  }, [module]);
+  const recordParam = params?.get("record") || "";
+  useEffect(() => {
+    if (recordParam)
+      setEditor((current) =>
+        current?.id === recordParam
+          ? current
+          : {
+              id: recordParam,
+              language: (["ar", "fr", "en"].includes(
+                params?.get("edition") || "",
+              )
+                ? params?.get("edition")
+                : undefined) as Locale | undefined,
+              initialTab: params?.get("tab") || undefined,
+            },
+      );
+  }, [recordParam]);
+  useEffect(() => {
+    const timer = setTimeout(() => setSearchQ(search.trim()), 250);
+    return () => clearTimeout(timer);
+  }, [search]);
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => setToast(null), 8000);
+    return () => clearTimeout(timer);
+  }, [toast]);
+  async function refresh() {
+    const version = ++latest.current;
+    const next = await query<Bootstrap>({ op: "bootstrap", days });
+    if (version === latest.current) setBoot(next);
+  }
+  const firstPeriod = useRef(true);
+  useEffect(() => {
+    if (firstPeriod.current) {
+      firstPeriod.current = false;
+      return;
+    }
+    refresh().catch((e) => notify(e.message, true));
+  }, [days]);
+  function notify(message: string, error = false) {
+    setToast({ message, error });
+  }
+  function open(id: string, initialTab?: string, language?: Locale) {
+    setEditor({ id, initialTab, language });
+    const url = new URL(location.href);
+    url.searchParams.set("record", id);
+    if (language) url.searchParams.set("edition", language);
+    else url.searchParams.delete("edition");
+    if (initialTab) url.searchParams.set("tab", initialTab);
+    else url.searchParams.delete("tab");
+    history.replaceState(null, "", url);
+  }
+  function create(
+    kind = "experience",
+    family?: string,
+    prepared?: Partial<import("../types").DceRecord>,
+  ) {
+    if (kind === "experience" && !family) {
+      setChoose(true);
+      return;
+    }
+    setEditor({
+      kind: kind as Kind,
+      family,
+      prepared,
+      language: (["ar", "fr", "en"].includes(
+        String(prepared?.data?.defaultLocale),
+      )
+        ? prepared?.data?.defaultLocale
+        : undefined) as Locale | undefined,
+    });
+  }
+  function preview(id: string, releaseId?: string, language?: Locale) {
+    setPreviewLanguage(language);
+    setPreview(id);
+    setPreviewRelease(releaseId || "");
+  }
+  async function initialize() {
+    setInitializing(true);
+    try {
+      const r = await mutate({ action: "initialize" });
+      await refresh();
+      notify(
+        `${r.created} ${tr(["editable defaults created", "valeurs éditables créées", "إعداد قابل للتعديل أُنشئ"], locale)}`,
+      );
+    } catch (e) {
+      notify((e as Error).message, true);
+    } finally {
+      setInitializing(false);
+    }
+  }
+  const ui = { locale, boot, refresh, notify, open, create, preview };
+  const denied =
+    (["adsense", "revenue"].includes(module) && !boot.actor.rights.monetize) ||
+    (["messages", "community", "users"].includes(module) &&
+      !boot.actor.rights.moderate &&
+      !boot.actor.rights.customers);
+  const certificateDenied =
+    module === "certificates" && !boot.actor.rights.moderate;
+  let body: React.ReactNode;
+  if (denied || certificateDenied)
+    body = (
+      <Empty
+        icon="LockKeyhole"
+        title={tr(
+          [
+            "This destination requires an explicit native permission",
+            "Cette destination nécessite une permission native explicite",
+            "تتطلب هذه الوجهة صلاحية أصلية محددة",
+          ],
+          locale,
+        )}
+        detail={tr(
+          [
+            "Ask the existing administrator to assign the relevant workspace power.",
+            "L’administrateur natif doit assigner le pouvoir approprié.",
+            "يعيّن المسؤول الأصلي الصلاحية المناسبة.",
+          ],
+          locale,
+        )}
+      />
+    );
+  else if (module === "dashboard")
+    body = (
+      <>
+        <Dashboard days={days} onDays={setDays} />
+        <FeatureReadiness />
+      </>
+    );
+  else if (module === "experiences")
+    body = (
+      <EditionInventory>
+        <Registry initialFamily={params?.get("family") || undefined} />
+      </EditionInventory>
+    );
+  else if (module === "certificates") body = <CertificateRequests />;
+  else if (module === "categories")
+    body = (
+      <>
+        <DiscoveryStudio />
+        <CoverageCockpit />
+        <Taxonomy />
+      </>
+    );
+  else if (module === "content") body = <Registry kind="content" />;
+  else if (module === "media") body = <MediaLibrary />;
+  else if (module === "templates") body = <DesignRegistry />;
+  else if (module === "journeys") body = <DesignRegistry journey />;
+  else if (module === "bundles") body = <Registry kind="bundle" />;
+  else if (module === "publication") body = <Publication />;
+  else if (module === "community") body = <Inbox community />;
+  else if (module === "messages") body = <Inbox />;
+  else if (module === "users") body = <EngagementWorkspace />;
+  else if (module === "adsense") body = <Monetization />;
+  else if (module === "access") body = <AccessWorkspace />;
+  else if (module === "pricing") body = <PricingWorkspace />;
+  else if (["performance", "audience"].includes(module))
+    body = <AnalyticsWorkspace audience={module === "audience"} />;
+  else if (["reports", "revenue"].includes(module))
+    body = <Insights section={module} />;
+  else if (module === "imports") body = <Imports />;
+  else if (module === "utilities") body = <Utilities />;
+  else if (module === "settings") body = <Settings />;
+  else if (module === "logs") body = <Logs />;
+  return (
+    <UI.Provider value={ui}>
+      <div
+        className={s.root}
+        onKeyDown={navigateTabs}
+        dir={locale === "ar" ? "rtl" : "ltr"}
+        lang={locale}
+      >
+        <aside
+          id="angelcare-dce-navigation"
+          className={s.nav}
+          data-open={nav}
+          aria-label={tr(
+            [
+              "Digital Customer Experience navigation",
+              "Navigation de l’expérience client numérique",
+              "تنقل تجربة العميل الرقمية",
+            ],
+            locale,
+          )}
+        >
+          <Link href={BASE}>
+            <img
+              className={s.navLogo}
+              src="/brand/angelcare-pearl-rim-colour-r1.png"
+              alt="AngelCare"
+            />
+          </Link>
+          <button
+            className={`${s.iconButton} ${s.mobileNavButton}`}
+            onClick={() => setNav(false)}
+            aria-label={tr(
+              [
+                "Close DCE navigation",
+                "Fermer la navigation DCE",
+                "إغلاق قائمة التنقل",
+              ],
+              locale,
+            )}
+          >
+            <Icon name="X" />
+          </button>
+          <Link
+            href={BASE}
+            aria-current={module === "dashboard" ? "page" : undefined}
+            className={s.navItem}
+            onClick={() => setNav(false)}
+          >
+            <Icon name="LayoutDashboard" />
+            <span>{tr(MODULES[0].label, locale)}</span>
+          </Link>
+          {Object.entries(GROUPS).map(([key, group]) => (
+            <div key={key}>
+              {key !== "dashboard" && (
+                <h3 className={s.navGroup}>{tr(group, locale)}</h3>
+              )}
+              {MODULES.filter((m) => m.group === key).map((m) => (
+                <Link
+                  key={m.key}
+                  href={BASE + (m.key === "dashboard" ? "" : "/" + m.key)}
+                  aria-current={module === m.key ? "page" : undefined}
+                  className={s.navItem}
+                  title={tr(m.label, locale)}
+                  onClick={() => setNav(false)}
+                >
+                  <Icon name={m.icon} />
+                  <span>{tr(m.label, locale)}</span>
+                </Link>
+              ))}
+            </div>
+          ))}
+          <div className={s.navFooter}>
+            <Icon name="Sparkles" size={24} />
+            <div>
+              <strong>
+                {text(boot.settings.brandSignature) || "AngelCare Studio"}
+              </strong>
+              <small>Free Experience OS · R6</small>
+              <small>
+                {boot.activated
+                  ? tr(
+                      [
+                        "Database active",
+                        "Base active",
+                        "قاعدة البيانات فعالة",
+                      ],
+                      locale,
+                    )
+                  : tr(
+                      [
+                        "Awaiting activation",
+                        "Activation requise",
+                        "بانتظار التفعيل",
+                      ],
+                      locale,
+                    )}
+              </small>
+            </div>
+            <span className={`${s.dot} ${boot.activated ? "" : s.dotAmber}`} />
+          </div>
+          <Link href="/angelcare-marketplace/admin" className={s.navItem}>
+            <Icon name="ArrowLeft" />
+            <T
+              v={["Back to Marketplace", "Retour Marketplace", "العودة للسوق"]}
+            />
+          </Link>
+        </aside>
+        <div className={s.main}>
+          <header className={s.bar}>
+            <button
+              className={`${s.iconButton} ${s.mobileNavButton}`}
+              onClick={() => setNav((v) => !v)}
+              aria-expanded={nav}
+              aria-controls="angelcare-dce-navigation"
+              aria-label={tr(
+                nav
+                  ? [
+                      "Close DCE navigation",
+                      "Fermer la navigation DCE",
+                      "إغلاق قائمة التنقل",
+                    ]
+                  : [
+                      "Open DCE navigation",
+                      "Ouvrir la navigation DCE",
+                      "فتح قائمة التنقل",
+                    ],
+                locale,
+              )}
+            >
+              <Icon name="Menu" />
+            </button>
+            <div className={s.barBrand}>
+              <h2>Free Experience Studios</h2>
+              <small>Create · Manage · Publish · Grow</small>
+            </div>
+            <div className={s.barSearch}>
+              <Icon name="Search" size={16} />
+              <input
+                aria-label={tr(
+                  [
+                    "Search DCE",
+                    "Rechercher dans DCE",
+                    "البحث في تجربة العميل الرقمية",
+                  ],
+                  locale,
+                )}
+                placeholder={tr(
+                  [
+                    "Search experiences, content, categories…",
+                    "Chercher expériences, contenus, thèmes…",
+                    "بحث عن التجارب والمحتوى والمواضيع…",
+                  ],
+                  locale,
+                )}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              {searchQ && (
+                <SearchResults
+                  q={searchQ}
+                  onOpen={(id) => {
+                    open(id);
+                    setSearch("");
+                    setSearchQ("");
+                  }}
+                />
+              )}
+            </div>
+            <div className={s.barActions}>
+              <button
+                className={s.toolButton}
+                onClick={() => {
+                  const id = editor?.id || params?.get("context");
+                  if (id) preview(id);
+                  else setPreviewPicker(true);
+                }}
+              >
+                <Icon name="Eye" />
+                <T v={["Preview", "Aperçu", "معاينة"]} />
+              </button>
+              <button className={s.toolButton} onClick={() => setSite(true)}>
+                <Icon name="Globe" />
+                <T v={["Visit Site", "Voir le site", "زيارة الموقع"]} />
+              </button>
+              <button className={s.toolButton} onClick={() => setHelp(true)}>
+                <Icon name="CircleHelp" />
+                <T v={["Help", "Aide", "مساعدة"]} />
+              </button>
+              <button
+                className={s.toolButton}
+                onClick={() => setNotifications((v) => !v)}
+                aria-expanded={openNotifications}
+              >
+                <Icon name="Bell" />
+                <T v={["Notifications", "Notifications", "إشعارات"]} />
+              </button>
+              <select
+                className={s.localeSelect}
+                aria-label={tr(
+                  ["Staff language", "Langue de l’opérateur", "لغة الموظف"],
+                  locale,
+                )}
+                value={locale}
+                onChange={(e) => setLocale(e.target.value as Locale)}
+              >
+                <option value="fr">FR</option>
+                <option value="en">EN</option>
+                <option value="ar">ع</option>
+              </select>
+              <div className={s.operator}>
+                <span className={s.avatar}>{boot.actor.name.slice(0, 1)}</span>
+                <div>
+                  <strong>{boot.actor.name}</strong>
+                  <small>
+                    <T
+                      v={[
+                        "Studio Operator",
+                        "Opérateur Studio",
+                        "مشغّل الاستوديو",
+                      ]}
+                    />
+                  </small>
+                </div>
+              </div>
+            </div>
+          </header>
+          <section className={s.content} aria-label={tr(title.label, locale)}>
+            {module !== "dashboard" && (
+              <div className={s.heading}>
+                <div>
+                  <h1>{tr(title.label, locale)}</h1>
+                  <p>{tr(title.description, locale)}</p>
+                </div>
+                <Badge>
+                  <T
+                    v={[
+                      "Native governed workspace",
+                      "Workspace natif gouverné",
+                      "مساحة عمل أصلية معتمدة",
+                    ]}
+                  />
+                </Badge>
+              </div>
+            )}
+            {openNotifications && (
+              <Panel
+                title={
+                  <T
+                    v={[
+                      "Scoped operational notifications",
+                      "Notifications opérationnelles",
+                      "الإشعارات التشغيلية",
+                    ]}
+                  />
+                }
+                actions={
+                  <Button onClick={() => setNotifications(false)} icon="X">
+                    <T v={["Close", "Fermer", "إغلاق"]} />
+                  </Button>
+                }
+              >
+                <EditorialNotices />
+                <OperationsHealth />
+              </Panel>
+            )}
+            {!boot.activated && (
+              <div className={s.notice}>
+                <Icon name="Database" />
+                <div>
+                  <strong>
+                    <T
+                      v={[
+                        "Separate database activation required",
+                        "Activation SQL séparée requise",
+                        "يتطلب تفعيل قاعدة البيانات منفصلاً",
+                      ]}
+                    />
+                  </strong>
+                  <p>{boot.databaseError}</p>
+                  <code>
+                    R1 → R2 → 06_DCE_MATURITY_R3.sql →
+                    07_VERIFY_DCE_MATURITY_R3.sql
+                  </code>
+                  <Button
+                    onClick={() =>
+                      refresh().catch((e) => notify(e.message, true))
+                    }
+                    icon="RefreshCw"
+                  >
+                    <T
+                      v={[
+                        "Check activation",
+                        "Vérifier l’activation",
+                        "تحقق من التفعيل",
+                      ]}
+                    />
+                  </Button>
+                </div>
+              </div>
+            )}
+            {boot.activated && !boot.topics.length && (
+              <div className={s.notice}>
+                <Icon name="WandSparkles" />
+                <div>
+                  <strong>
+                    <T
+                      v={[
+                        "Initialize editable studio defaults",
+                        "Initialiser les valeurs éditables",
+                        "تهيئة إعدادات الاستوديو القابلة للتعديل",
+                      ]}
+                    />
+                  </strong>
+                  <p>
+                    <T
+                      v={[
+                        "Creates 8 child/family topics, 16 starter templates and world defaults. Nothing is published or monetized.",
+                        "Crée 8 thèmes, 16 modèles et les valeurs du monde. Aucun contenu publié ni monétisé.",
+                        "ينشئ 8 مواضيع و16 قالباً وإعدادات العالم. دون نشر أو تحقيق دخل.",
+                      ]}
+                    />
+                  </p>
+                  <Button
+                    disabled={!boot.actor.rights.manage || initializing}
+                    onClick={initialize}
+                    kind="primary"
+                  >
+                    <T v={["Initialize", "Initialiser", "تهيئة"]} />
+                  </Button>
+                </div>
+              </div>
+            )}
+            {params?.get("context") && <WorkspaceDossierContext />}
+            <Suspense
+              fallback={
+                <div className={s.loading} role="status">
+                  <span className={s.spinner} />
+                  <T
+                    v={[
+                      "Opening workspace…",
+                      "Ouverture du workspace…",
+                      "فتح مساحة العمل…",
+                    ]}
+                  />
+                </div>
+              }
+            >
+              <ProfessionalWorkspace key={module} module={module}>
+                {body}
+              </ProfessionalWorkspace>
+            </Suspense>
+          </section>
+        </div>
+        {toast && (
+          <div
+            className={`${s.toast} ${toast.error ? s.alertError : ""}`}
+            role={toast.error ? "alert" : "status"}
+          >
+            <Icon name={toast.error ? "TriangleAlert" : "CircleCheck"} />
+            <span>{toast.message}</span>
+            <button
+              aria-label={tr(
+                ["Dismiss notice", "Fermer la notification", "إغلاق الإشعار"],
+                locale,
+              )}
+              className={s.iconButton}
+              onClick={() => setToast(null)}
+            >
+              <Icon name="X" size={14} />
+            </button>
+          </div>
+        )}
+        <Suspense
+          fallback={
+            <div className={s.toast} role="status">
+              <span className={s.spinner} />
+              <T
+                v={[
+                  "Opening editor…",
+                  "Ouverture de l’éditeur…",
+                  "فتح المحرر…",
+                ]}
+              />
+            </div>
+          }
+        >
+          {previewPicker && (
+            <PreviewSelector
+              onClose={() => setPreviewPicker(false)}
+              onSelect={(id) => {
+                setPreviewPicker(false);
+                preview(id);
+              }}
+            />
+          )}
+          {choose && (
+            <NewExperience
+              onClose={() => setChoose(false)}
+              onChoose={(family) => {
+                setChoose(false);
+                setEditor({ kind: "experience", family });
+              }}
+            />
+          )}
+          {editor && (
+            <Editor
+              prepared={editor.prepared}
+              key={editor.id || editor.kind + "." + editor.family}
+              {...editor}
+              onClose={() => {
+                setEditor(null);
+                if (params?.has("record"))
+                  router.replace(
+                    BASE + (module === "dashboard" ? "" : "/" + module),
+                  );
+              }}
+              onSaved={() => {}}
+            />
+          )}
+          {previewId && (
+            <PreviewWindow
+              id={previewId}
+              releaseId={previewRelease || undefined}
+              initialLanguage={previewLanguage}
+              onClose={() => setPreview("")}
+            />
+          )}
+        </Suspense>
+        {help && (
+          <Dialog
+            title={
+              <T
+                v={[
+                  "Studio operating guide",
+                  "Guide opérateur Studio",
+                  "دليل تشغيل الاستوديو",
+                ]}
+              />
+            }
+            onClose={() => setHelp(false)}
+          >
+            <div className={s.helpList}>
+              {[
+                [
+                  "1 · Choose a family",
+                  "1 · Choisir une famille",
+                  "1 · اختر عائلة",
+                ],
+                [
+                  "2 · Author multilingual units & bind native sources",
+                  "2 · Éditer les unités traduites et lier les sources",
+                  "2 · حرّر الوحدات المترجمة واربط المصادر",
+                ],
+                [
+                  "3 · Validate the preview and actual dependencies",
+                  "3 · Valider l’aperçu et les dépendances",
+                  "3 · تحقق من المعاينة والاعتماديات",
+                ],
+                [
+                  "4 · Review, approve and release the exact revision",
+                  "4 · Revue, approbation et release exacte",
+                  "4 · راجع واعتمد وانشر النسخة المحددة",
+                ],
+              ].map((v, i) => (
+                <div key={i}>
+                  <h3>{tr(v as any, locale)}</h3>
+                </div>
+              ))}
+              <p>
+                <T
+                  v={[
+                    "Public runtime is Chapter 2. This workspace prepares complete authored definitions, releases and operating contracts. Native identity, S: media, commerce, Finance and Hotline remain their authorities.",
+                    "Le runtime public est le chapitre 2. Ce workspace prépare les définitions, releases et contrats. Identité, médias S:, commerce, Finance et Hotline restent natifs.",
+                    "العرض العام هو الفصل الثاني. تجهز هذه المساحة التعريفات والإصدارات وعقود التشغيل. تبقى الهوية والوسائط والتجارة والمالية والخط الساخن أصلية.",
+                  ]}
+                />
+              </p>
+            </div>
+          </Dialog>
+        )}
+        {site && (
+          <Dialog
+            title={
+              <T
+                v={[
+                  "Public distribution readiness",
+                  "Préparation de la distribution publique",
+                  "جاهزية التوزيع العام",
+                ]}
+              />
+            }
+            onClose={() => setSite(false)}
+          >
+            <Empty
+              icon="Globe"
+              title={
+                <T
+                  v={[
+                    "Public experience world activates in Chapter 2",
+                    "Le monde public est activé au chapitre 2",
+                    "يتم تفعيل العالم العام في الفصل الثاني",
+                  ]}
+                />
+              }
+              detail={
+                <T
+                  v={[
+                    "Validated immutable manifests are prepared here. This button does not point customers to an unimplemented route.",
+                    "Les manifestes validés sont préparés ici. Aucun lien vers une route non construite.",
+                    "تجهز البيانات المعتمدة هنا. لا يشير الزر إلى مسار غير منفذ.",
+                  ]}
+                />
+              }
+            />
+          </Dialog>
+        )}
+      </div>
+    </UI.Provider>
+  );
+}
+function SearchResults({
+  q,
+  onOpen,
+}: {
+  q: string;
+  onOpen: (id: string) => void;
+}) {
+  const r = useQuery<any>({ q, pageSize: 12 }, { rows: [] });
+  return (
+    <div className={s.searchResults}>
+      {r.loading ? (
+        <p>
+          <T v={["Searching…", "Recherche…", "جار البحث…"]} />
+        </p>
+      ) : r.error ? (
+        <p role="alert">{r.error}</p>
+      ) : r.value.rows.length ? (
+        r.value.rows.map((record: any) => (
+          <button onClick={() => onOpen(record.id)} key={record.id}>
+            <Icon
+              name={record.kind === "asset" ? "Image" : "Layers"}
+              size={16}
+            />
+            <span>
+              {record.title}
+              <small style={{ display: "block", color: "#7086a3" }}>
+                {record.kind} · {record.key}
+              </small>
+            </span>
+          </button>
+        ))
+      ) : (
+        <p>
+          <T
+            v={[
+              "No matching authorized records",
+              "Aucun dossier autorisé correspondant",
+              "لا توجد سجلات مصرح بها مطابقة",
+            ]}
+          />
+        </p>
+      )}
+    </div>
+  );
+}
+
+function PreviewSelector({
+  onClose,
+  onSelect,
+}: {
+  onClose: () => void;
+  onSelect: (id: string) => void;
+}) {
+  const [search, setSearch] = useState(""),
+    q = useQuery<any>(
+      { kind: "experience", q: search, pageSize: 30 },
+      { rows: [] },
+    );
+  return (
+    <Dialog
+      title={
+        <T
+          v={[
+            "Choose the dossier to preview",
+            "Choisir le dossier à prévisualiser",
+            "اختر الملف للمعاينة",
+          ]}
+        />
+      }
+      onClose={onClose}
+    >
+      <input
+        aria-label="Preview dossier search"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+      {q.error ? (
+        <p role="alert">{q.error}</p>
+      ) : q.loading ? (
+        <p role="status">…</p>
+      ) : (
+        q.value.rows.map((r: any) => (
+          <button
+            className={s.outlineItem}
+            key={r.id}
+            onClick={() => onSelect(r.id)}
+          >
+            {r.title} · r{r.revision}
+          </button>
+        ))
+      )}
+    </Dialog>
+  );
+}

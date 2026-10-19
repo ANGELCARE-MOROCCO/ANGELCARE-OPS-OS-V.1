@@ -1,0 +1,24 @@
+'use client';
+import {useEffect,useId,useRef,type ReactNode}from 'react';
+import Link from 'next/link';
+import {path,world,tr,type Locale}from '../catalogue';
+import {I}from '../Icons';
+import {useGuest}from '../continuity';
+import {L,type Item,type Facts}from './model';
+import s from './storefronts.module.css';
+export function FactsView({item:r,locale}:{item:Item;locale:Locale}){
+ const keys=Object.entries(r.facts.counts).filter(([,n])=>n>0),mapping:Record<string,string>={'documents':'units','printables':'units','stories':'units','learning':'units','video':'units','audio':'units','visual-cards':'cards','presentations':'frames','assessments':'questions','activities':'steps','tools':'steps','planners':'items','forms':'questions','community':'items','commerce':'items','bundles':'items'},selected=keys.find(([k])=>k===mapping[r.family])||keys[0];
+ return <div className={s.facts}>{selected?<span><I name={world(r.family)!.icon} size={14}/>{selected[1]} {L((selected[0]==='units'?({printables:'pages',stories:'pages',learning:'lessons',audio:'episodes',video:'segments'}as Record<string,string>)[r.family]||'units':selected[0]) as keyof typeof import('./model').labels,locale)}</span>:null}{r.ageMin!==null&&r.ageMax!==null?<span><I name="Smile" size={14}/>{r.ageMin}–{r.ageMax} {L('years',locale)}</span>:null}{r.duration?<span><I name="Clock" size={14}/>{r.duration} {L('minutes',locale)}</span>:null}{r.facts.formats.map(f=><span key={f}><I name="Download" size={14}/>{f}</span>)}{(['narration','captions','transcript','editable','certificate']as const).filter(k=>r.facts[k]).map(k=><span key={k}><I name={k==='narration'?'Headphones':k==='certificate'?'BadgeCheck':'CircleCheck'} size={14}/>{L(k,locale)}</span>)}</div>;
+}
+export function Card({item:r,locale,onPreview,index=0}:{item:Item;locale:Locale;onPreview:(item:Item)=>void;index?:number}){
+ const w=world(r.family)!,guest=useGuest(),saved=guest.saved.includes(r.key);
+ return <article className={`${s.resource} ${s['resource_'+r.family]}`} style={{'--card-accent':w.color}as React.CSSProperties} data-resource-key={r.key}>
+  <div className={s.resourceMedia}><Link href={path(locale,'/experience/'+r.key)} aria-label={r.title}>{r.image?<img src={r.image} alt={r.imageAlt} width={600} height={440} loading="lazy"/>:<span className={s.noImage}><I name={w.icon} size={60}/></span>}</Link><span className={s.resourceTag}><I name={w.icon} size={14}/>{tr(w.short,locale)}</span><button className={s.save} aria-pressed={saved} aria-label={L(saved?'saved':'save',locale)+' · '+r.title} onClick={()=>guest.toggle(r.key)}><I name={saved?'Bookmark':'Heart'} size={19}/></button>{r.family==='bundles'?<span className={s.journeyNumber}>{String(index+1).padStart(2,'0')}</span>:null}</div>
+  <div className={s.resourceBody}>{r.subject?<span className={s.resourceSubject}>{r.subject}</span>:null}<Link className={s.resourceTitle} href={path(locale,'/experience/'+r.key)}>{r.title}</Link>{r.summary?<p>{r.summary}</p>:null}<FactsView item={r} locale={locale}/><div className={s.cardActions}><button onClick={()=>onPreview(r)}><I name="Eye" size={17}/>{L('preview',locale)}</button><Link href={path(locale,'/experience/'+r.key)} aria-label={L('open',locale)+' · '+r.title}><I name="ArrowRight" size={19}/></Link></div></div>
+ </article>;
+}
+export function Modal({title,locale,onClose,children}:{title:string;locale:Locale;onClose:()=>void;children:ReactNode}){
+ const ref=useRef<HTMLDivElement>(null),id=useId(),close=useRef(onClose);close.current=onClose;
+ useEffect(()=>{const prior=document.activeElement as HTMLElement,style=document.body.style.overflow;document.body.style.overflow='hidden';ref.current?.focus();const key=(e:KeyboardEvent)=>{if(e.key==='Escape')close.current();if(e.key==='Tab'){const all=Array.from(ref.current?.querySelectorAll<HTMLElement>('button:not(:disabled),a[href],input,select,textarea,[tabindex="0"]')||[]).filter(el=>el.getClientRects().length);if(!all.length){e.preventDefault();return;}const first=all[0],last=all[all.length-1];if(e.shiftKey&&(document.activeElement===first||document.activeElement===ref.current)){e.preventDefault();last.focus();}else if(!e.shiftKey&&(document.activeElement===last||document.activeElement===ref.current)){e.preventDefault();first.focus();}}};document.addEventListener('keydown',key);return()=>{document.body.style.overflow=style;document.removeEventListener('keydown',key);prior?.focus();};},[]);
+ return <div className={s.modalBackdrop} onClick={e=>{if(e.target===e.currentTarget)onClose();}}><div ref={ref} role="dialog" aria-modal="true" aria-labelledby={id} tabIndex={-1} className={s.modal} dir={locale==='ar'?'rtl':'ltr'}><div className={s.modalHeading}><h2 id={id}>{title}</h2><button onClick={onClose} aria-label={L('close',locale)}><I name="X"/></button></div>{children}</div></div>;
+}

@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { useRef, useState } from 'react'
 import { text, tr, type Data, type DceRecord, type Page } from '../types'
 import { Badge, Button, Dialog, Empty, Field, Pager, Panel, State, T, useUI, useQuery, mutate } from './ui'

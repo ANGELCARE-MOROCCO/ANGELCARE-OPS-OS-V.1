@@ -1,0 +1,390 @@
+{
+  "generatedAt": "2026-10-15T07:42:48.948Z",
+  "results": [
+    {
+      "name": "documents / Article Reader",
+      "status": "passed",
+      "recordId": "dde32a6e-c588-40f1-bba7-d54e828b9c5f",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "documents / PDF Reader",
+      "status": "passed",
+      "recordId": "4d579740-f789-479f-932a-5240adc5edb7",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "documents / Chaptered Guide",
+      "status": "passed",
+      "recordId": "343cf823-d4d5-4e66-b2a2-fe7a593fbb6b",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "documents / Rich Article",
+      "status": "passed",
+      "recordId": "926ea02d-06fd-4bb1-9653-62017f44dd70",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "printables / Printable Preview",
+      "status": "passed",
+      "recordId": "6c3b3c85-137e-463e-b736-3146c3463c15",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "printables / Page Carousel",
+      "status": "passed",
+      "recordId": "acff7a19-b735-48f4-ae6c-27c1dbc23860",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "printables / Flipbook Preview",
+      "status": "passed",
+      "recordId": "41caa793-6fc1-43fd-990c-1694a6916173",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "printables / Download Gate",
+      "status": "passed",
+      "recordId": "df3ff405-800f-462f-abc6-74a32f9868a1",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "stories / Flipbook",
+      "status": "passed",
+      "recordId": "7b475014-3228-48a4-9774-f0ec9d10c585",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "stories / Read-aloud story mode",
+      "status": "passed",
+      "recordId": "137e7592-7543-40ad-90ec-dd57afebefaf",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "stories / Immersive reading mode",
+      "status": "passed",
+      "recordId": "21164bee-a281-49e6-9aa3-1f525a6fd77b",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "stories / Slideshow story mode",
+      "status": "passed",
+      "recordId": "0e8525a2-9ad7-4dbb-8ec2-6cc5bc20c0ff",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "learning / Course player",
+      "status": "passed",
+      "recordId": "93ef1075-fd2d-4a83-95db-bc91f6fc4216",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "learning / Mixed media lesson path",
+      "status": "passed",
+      "recordId": "41951279-cc47-4256-81ff-250f0ff5dc5c",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "learning / Chaptered video course",
+      "status": "passed",
+      "recordId": "a0e3d8d0-b5c5-46c1-8f3d-13a1c3600ba9",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "learning / Assessment-linked learning path",
+      "status": "passed",
+      "recordId": "cef85a8a-a383-40ab-806d-e65cd993b129",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "video / Cinematic Player",
+      "status": "passed",
+      "recordId": "690fb423-2cc0-4796-809c-0540cfd2372f",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "video / Tutorial Player with Chapters",
+      "status": "passed",
+      "recordId": "c17ce1d1-6406-4a1c-8a10-bee5695534d6",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "video / Course-Linked Video",
+      "status": "passed",
+      "recordId": "97b99d01-4e7a-4e6d-bcf2-c0078fdd734e",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "video / Vertical / Mobile Video Viewer",
+      "status": "passed",
+      "recordId": "244c972a-f79e-47ad-a5e7-2f9e17d06217",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "audio / Audio Player",
+      "status": "passed",
+      "recordId": "7ede6499-2fbf-4528-93f4-338010059f54",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "audio / Playlist Mode",
+      "status": "passed",
+      "recordId": "739c9700-565a-4e77-8588-8c783326fb7d",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "audio / Chaptered Podcast",
+      "status": "passed",
+      "recordId": "7b344e10-fc03-402a-9828-601b9af77216",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "audio / Narrated Story Mode",
+      "status": "passed",
+      "recordId": "4316a5ea-c2c6-4d8c-b21c-a49134c6eb0c",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "visual-cards / Image Gallery",
+      "status": "passed",
+      "recordId": "900a3364-b4fc-48ac-9fcb-8837f6c15f25",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "visual-cards / Card Swiper",
+      "status": "passed",
+      "recordId": "e5db637a-037c-4a2c-ba31-b9d9f727e3f0",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "visual-cards / Lightbox Mode",
+      "status": "passed",
+      "recordId": "d95742ef-59a9-4e3c-8418-dd93ae30b4c2",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "visual-cards / Flashcard Study Mode",
+      "status": "passed",
+      "recordId": "08d95702-6b8f-467b-9797-15a13578f7f0",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "presentations / Slide Player",
+      "status": "passed",
+      "recordId": "4b5d56a9-3356-45d3-aba8-706546357165",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "presentations / Frame-by-Frame Mode",
+      "status": "passed",
+      "recordId": "c49f30b7-8326-422f-9108-3b8d2a964d9d",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "presentations / Presenter Mode",
+      "status": "passed",
+      "recordId": "b95fb2d1-e53d-4e62-af99-06f8063245c3",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "presentations / Autoplay Storytelling",
+      "status": "passed",
+      "recordId": "b646f640-c3b2-4a6e-a52b-a61b746b7978",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "assessments / Quiz Player",
+      "status": "passed",
+      "recordId": "e4deeb92-309d-4fe9-b30e-66094136ad75",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "assessments / Timed Assessment Mode",
+      "status": "passed",
+      "recordId": "6f2fca6a-3257-47d6-8dbc-a53d894cffd3",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "assessments / Practice Test Mode",
+      "status": "passed",
+      "recordId": "f5ffad41-020d-4915-b381-89e21af7aa90",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "assessments / Result Dashboard",
+      "status": "passed",
+      "recordId": "757a6dc3-2366-45e0-bb7c-f64569adff9f",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "activities / Game Canvas",
+      "status": "passed",
+      "recordId": "5782fd06-727e-46ea-bfd8-8ce172d201d7",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "activities / Activity Stepper",
+      "status": "passed",
+      "recordId": "5963ce07-a619-416f-acc9-2005a9921ab2",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "activities / Simulation Mode",
+      "status": "passed",
+      "recordId": "45dfe91f-decd-43fa-bde0-1c8fbff6cd5c",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "activities / Challenge Mode",
+      "status": "passed",
+      "recordId": "1cbc26fa-7b18-409c-ae66-8e023b1b4531",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "tools / Interactive Tool Runtime",
+      "status": "passed",
+      "recordId": "3dc67b36-8bcc-43d4-adcb-42a3b2abf8e6",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "tools / Calculator Panel",
+      "status": "passed",
+      "recordId": "d34f0559-1fdb-48b9-ad1a-3d7a0cbdf939",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "tools / Simulation Dashboard",
+      "status": "passed",
+      "recordId": "ec4736e5-e247-47e1-9658-19eb13153ab2",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "tools / Form-Result Interface",
+      "status": "passed",
+      "recordId": "8f6c2b98-36ff-4a2a-a473-b31675ba124a",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "planners / Printable Preview",
+      "status": "passed",
+      "recordId": "9409078d-b08b-4a0b-9a01-fa08b9237a0d",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "planners / Editable Planner View",
+      "status": "passed",
+      "recordId": "71ee4f04-fcff-4477-9e5c-ee06f81d2544",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "planners / Template Gallery",
+      "status": "passed",
+      "recordId": "ed652131-a2c3-46bb-bbda-f2008aebc83b",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "planners / Checklist Mode",
+      "status": "passed",
+      "recordId": "9362f08d-45f4-4eb7-abe1-89c91e7d15e5",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "forms / Form Flow",
+      "status": "passed",
+      "recordId": "30a09404-6c55-40d1-ada0-5b2b6df9c405",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "forms / Multistep Application",
+      "status": "passed",
+      "recordId": "639b5a46-3f20-4405-9ce8-f20a62808f94",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "forms / Upload-Enabled Submission Page",
+      "status": "passed",
+      "recordId": "d941abad-a8fb-4af6-9cf1-a59e151b5ab6",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "forms / Booking Request Flow",
+      "status": "passed",
+      "recordId": "3a047156-bc41-45f9-ace8-0c8cdcaa48a8",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "community / Review Feed",
+      "status": "passed",
+      "recordId": "70479e41-58dc-431a-9cf4-1069478332f4",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "community / Social Proof Wall",
+      "status": "passed",
+      "recordId": "d3b5ab9a-84d8-4e8c-81bf-5f7eddc24084",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "community / Q&A Thread",
+      "status": "passed",
+      "recordId": "290f4f9d-dfe9-48e5-9c67-aabb67903ae0",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "community / Community Hub",
+      "status": "passed",
+      "recordId": "1441211c-88c4-4cac-b8e1-10b8d645de9a",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "commerce / Shoppable Article",
+      "status": "passed",
+      "recordId": "ae2ac2fb-0d33-4ada-8d2a-84ce1baf2513",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "commerce / Buyable Resource Page",
+      "status": "passed",
+      "recordId": "e153b35f-e5ba-421a-98bb-ca945d834d77",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "commerce / Course + Product Page",
+      "status": "passed",
+      "recordId": "68924c90-c7e1-48db-bfc0-5e52f9cfba51",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "commerce / Download Delivery Experience",
+      "status": "passed",
+      "recordId": "dc5734c3-8d89-4d5f-b1e2-be21f2252046",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "bundles / Guided Bundle Path",
+      "status": "passed",
+      "recordId": "d731fe82-e079-4ec8-a9bd-47aa47bfd697",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "bundles / Bundle Dashboard",
+      "status": "passed",
+      "recordId": "28edc71a-cb53-44c6-aa2a-aa86d2b0d878",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "bundles / Sequential Playlist",
+      "status": "passed",
+      "recordId": "97aa87dd-776e-4b4e-ab94-7965c2dbddf3",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    },
+    {
+      "name": "bundles / Starter Kit Experience",
+      "status": "passed",
+      "recordId": "8e7d8d3c-26c3-4807-839e-6d0a4f0c453a",
+      "meaning": "Actual React control events -> repository -> SQL -> reopen/validation -> specialist DOM. Pixel layout and media playback are not verified."
+    }
+  ],
+  "console": "AbortError: The operation was aborted.\n    at Fetch.onAsyncTaskManagerAbort (file:///Users/user/Desktop/angelcare-platform/apps/marketplace-web/node_modules/happy-dom/lib/fetch/Fetch.js:546:23)\n    at Object.<anonymous> (file:///Users/user/Desktop/angelcare-platform/apps/marketplace-web/node_modules/happy-dom/lib/fetch/Fetch.js:416:101)\n    at AsyncTaskManager.abortAll (file:///Users/user/Desktop/angelcare-platform/apps/marketplace-web/node_modules/happy-dom/lib/async-task-manager/AsyncTaskManager.js:292:30)\n    at AsyncTaskManager.destroy (file:///Users/user/Desktop/angelcare-platform/apps/marketplace-web/node_modules/happy-dom/lib/async-task-manager/AsyncTaskManager.js:64:21)\n    at file:///Users/user/Desktop/angelcare-platform/apps/marketplace-web/node_modules/happy-dom/lib/browser/utilities/BrowserFrameFactory.js:43:22\n    at new Promise (<anonymous>)\n    at BrowserFrameFactory.destroyFrame (file:///Users/user/Desktop/angelcare-platform/apps/marketplace-web/node_modules/happy-dom/lib/browser/utilities/BrowserFrameFactory.js:30:16)\n    at #unloadPage (file:///Users/user/Desktop/angelcare-platform/apps/marketplace-web/node_modules/happy-dom/lib/nodes/html-iframe-element/HTMLIFrameElement.js:363:33)\n    at [disconnectedFromDocument] (file:///Users/user/Desktop/angelcare-platform/apps/marketplace-web/node_modules/happy-dom/lib/nodes/html-iframe-element/HTMLIFrameElement.js:238:25)\n    at [connectedToNode] (file:///Users/user/Desktop/angelcare-platform/apps/marketplace-web/node_modules/happy-dom/lib/nodes/node/Node.js:804:58)\nNetworkError: Failed to execute \"fetch()\" on \"Window\" with URL \"http://127.0.0.1:4186/sources/worksheet.pdf#toolbar=0\": The operation was aborted.\n    at Fetch.onError (file:///Users/user/Desktop/angelcare-platform/apps/marketplace-web/node_modules/happy-dom/lib/fetch/Fetch.js:540:21)\n    at ClientRequest.emit (node:events:509:28)\n    at emitErrorEvent (node:_http_client:109:11)\n    at Socket.socketErrorListener (node:_http_client:593:5)\n    at Socket.emit (node:events:509:28)\n    at emitErrorNT (node:internal/streams/destroy:170:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:129:3)\n    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)\nError: socket hang up\n    at Socket.socketCloseListener (node:_http_client:566:27)\n    at Socket.emit (node:events:521:24)\n    at TCP.<anonymous> (node:net:351:12)\nError: socket hang up\n    at Socket.socketCloseListener (node:_http_client:566:27)\n    at Socket.emit (node:events:521:24)\n    at TCP.<anonymous> (node:net:351:12)\n"
+}

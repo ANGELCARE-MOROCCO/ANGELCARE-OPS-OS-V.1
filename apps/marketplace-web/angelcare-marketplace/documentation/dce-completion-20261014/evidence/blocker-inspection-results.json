@@ -1,0 +1,203 @@
+{
+  "generatedAt": "2026-10-15T03:09:57.135Z",
+  "server": "http://127.0.0.1:4186",
+  "buildRun": false,
+  "serviceRestarted": false,
+  "productionTouched": false,
+  "results": [
+    {
+      "name": "Existing preview server and canonical test database are available",
+      "status": "PASS",
+      "server": "http://127.0.0.1:4186",
+      "scope": "isolated PGlite test data; no production session",
+      "database": {
+        "database": "postgres",
+        "timezone": "UTC",
+        "records": 398,
+        "import_jobs": 4
+      },
+      "actor": "DCE Test Operator"
+    },
+    {
+      "name": "DEPENDENCY_BLOCKED is the deliberate active-child archive rejection",
+      "status": "PASS",
+      "classification": "EXPECTED_NEGATIVE_TEST",
+      "record": {
+        "id": "d1e2c6aa-373c-4368-ab64-ee2b0dba3560",
+        "key": "sql-child-cf8dd414",
+        "revision": 5,
+        "lifecycle": "approved",
+        "publishedReleaseId": "959ee4f0-3fa7-4700-8dcd-26ebe47b1a24"
+      },
+      "prerequisites": {
+        "archiveRequires": "No current release and no draft, scheduled, published or restorable dependencies",
+        "referencedBy": [
+          {
+            "id": "15366e7c-bd22-4197-9be3-e24f37fc8e30",
+            "key": "test-bundles-1-66b8d5",
+            "kind": "experience",
+            "revision": 1
+          },
+          {
+            "id": "e9233ae9-f4c5-4211-972e-0332e0812a6b",
+            "key": "test-bundles-2-566f37",
+            "kind": "experience",
+            "revision": 1
+          },
+          {
+            "id": "542f007b-acd6-4f58-9097-a7fde1ae95d9",
+            "key": "test-bundles-3-5aba51",
+            "kind": "experience",
+            "revision": 1
+          },
+          {
+            "id": "f7ecf5fd-0908-41da-9fa8-aed5a4705b9f",
+            "key": "test-bundles-4-020d73",
+            "kind": "experience",
+            "revision": 1
+          },
+          {
+            "id": "332d6c74-1caa-4254-a647-c4375b138d42",
+            "key": "test-video-3-0ea9ed",
+            "kind": "experience",
+            "revision": 1
+          },
+          {
+            "id": "3af000a3-271a-4ead-a9a2-5e8af42c52bc",
+            "key": "ui-bundles-mv8wa2fh",
+            "kind": "experience",
+            "revision": 7
+          },
+          {
+            "id": "0181bdac-be9a-4fc1-b7b5-1da75fb9c80c",
+            "key": "ui-bundles-mv8wa3o3",
+            "kind": "experience",
+            "revision": 7
+          },
+          {
+            "id": "792fd45e-9af4-4d92-9f15-48207efd14aa",
+            "key": "ui-bundles-mv8wa464",
+            "kind": "experience",
+            "revision": 7
+          },
+          {
+            "id": "6965515e-2e90-4e0e-ac1b-4841964d1088",
+            "key": "ui-bundles-mv8wa4jl",
+            "kind": "experience",
+            "revision": 7
+          },
+          {
+            "id": "02dd597a-9f23-4aa0-a035-1efa29a12330",
+            "key": "ui-video-mv8v8igk",
+            "kind": "experience",
+            "revision": 7
+          }
+        ],
+        "expectedTest": "Active dependencies block archive; category cycles are rejected at save"
+      },
+      "response": {
+        "message": "DEPENDENCY_BLOCKED",
+        "code": "DEPENDENCY_BLOCKED"
+      },
+      "recordUnchanged": true
+    },
+    {
+      "name": "Topic hierarchy cycle is the deliberate rejected parent-to-child edit",
+      "status": "PASS",
+      "classification": "EXPECTED_NEGATIVE_TEST",
+      "records": [
+        {
+          "id": "0c26368f-48d7-4824-bdcd-947348c1d0d5",
+          "key": "cycle-parent-e4e25c0c",
+          "title": "Category parent",
+          "revision": 1,
+          "lifecycle": "draft",
+          "parent": null
+        },
+        {
+          "id": "b98338b7-6955-441d-9ff3-a9535e374035",
+          "key": "cycle-child-08ac3255",
+          "title": "Category child",
+          "revision": 1,
+          "lifecycle": "draft",
+          "parent": "0c26368f-48d7-4824-bdcd-947348c1d0d5"
+        }
+      ],
+      "attemptedEdge": {
+        "from": "0c26368f-48d7-4824-bdcd-947348c1d0d5",
+        "to": "b98338b7-6955-441d-9ff3-a9535e374035"
+      },
+      "existingEdge": {
+        "from": "b98338b7-6955-441d-9ff3-a9535e374035",
+        "to": "0c26368f-48d7-4824-bdcd-947348c1d0d5"
+      },
+      "prerequisite": "A parent must not be the record itself or a descendant; stored root -> child remains valid",
+      "response": {
+        "message": "Topic hierarchy would create a cycle.",
+        "code": "VALIDATION_ERROR"
+      },
+      "recordUnchanged": true
+    },
+    {
+      "name": "Record conflict is guarded import rollback after a later operator edit",
+      "status": "PASS",
+      "classification": "EXPECTED_NEGATIVE_TEST",
+      "line": {
+        "line_id": "cccefcad-5404-4218-be85-c0d50b993fbd",
+        "job_id": "a2ba6bee-bd3e-4da9-8f5b-14edae5858bd",
+        "state": "applied",
+        "record_id": "2abf823d-1037-473c-a973-352149ab1898",
+        "applied_revision": 10,
+        "before_title": "UI documents Article Reader · revised",
+        "applied_title": "UI documents Article Reader · revised imported",
+        "key": "ui-documents-mv8v890d",
+        "title": "Later operator change",
+        "current_revision": 11,
+        "lifecycle": "draft",
+        "published_release_id": "078fab21-8a04-489b-800b-623755c81079",
+        "applied_release_id": "078fab21-8a04-489b-800b-623755c81079",
+        "source_name": "Live revision rollback.csv"
+      },
+      "history": [
+        {
+          "revision": 9,
+          "title": "UI documents Article Reader · revised",
+          "created_at": "2026-10-15T02:16:05.206Z"
+        },
+        {
+          "revision": 10,
+          "title": "UI documents Article Reader · revised imported",
+          "created_at": "2026-10-15T02:16:05.249Z"
+        },
+        {
+          "revision": 11,
+          "title": "Later operator change",
+          "created_at": "2026-10-15T02:16:05.259Z"
+        }
+      ],
+      "prerequisite": "Rollback requires the exact applied revision/data/release pointer; later changes require explicit reconciliation, never forced rollback",
+      "expectedTest": "Import rollback preserves an unchanged live release; later edits block rollback",
+      "response": {
+        "message": "The record changed or this command conflicts with an existing receipt. Refresh and reconcile your draft.",
+        "code": "CONFLICT"
+      },
+      "recordUnchanged": true
+    },
+    {
+      "name": "No failed, conflict, invalid or pending import operations remain outside deliberate test fixtures",
+      "status": "FAIL",
+      "error": "Expected values to be strictly equal:\n\n1 !== 0\n"
+    },
+    {
+      "name": "64 UI mode definitions have independently recorded release/revise/restore evidence",
+      "status": "PASS",
+      "uiModeCount": 64,
+      "lifecycleModeCount": 64,
+      "evidence": [
+        "dom-authoring-results.json",
+        "lifecycle-import-results.json"
+      ],
+      "scope": "Does not establish pixel quality, media playback or production-native integration."
+    }
+  ]
+}

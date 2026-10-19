@@ -1,0 +1,24 @@
+{
+  "generatedAt": "2026-10-15T07:43:15.775Z",
+  "meaning": "Actual React DOM events and actual repository/SQL. No pixel, viewport layout or real media playback evidence.",
+  "results": [
+    {
+      "name": "Actual UI failed save retains entered values and retries successfully",
+      "status": "passed"
+    },
+    {
+      "name": "Actual UI stale revision requires an explicit overlapping-field choice",
+      "status": "passed"
+    },
+    {
+      "name": "Actual UI duplicate, reorder and remove preserve stable unit identity and persisted ordering",
+      "status": "passed"
+    },
+    {
+      "name": "Actual UI local recovery keeps its baseline and reconciles a later server revision",
+      "status": "failed",
+      "error": "Timed out: Enabled control: Recover edits"
+    }
+  ],
+  "console": "POST http://127.0.0.1:4186/api/angelcare-marketplace/admin/digital-customer-experience 503 (Service Unavailable)\nPOST http://127.0.0.1:4186/api/angelcare-marketplace/admin/digital-customer-experience 409 (Conflict)\n"
+}

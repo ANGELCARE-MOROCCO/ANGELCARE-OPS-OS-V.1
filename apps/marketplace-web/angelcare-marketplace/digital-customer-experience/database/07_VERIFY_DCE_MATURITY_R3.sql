@@ -1,0 +1,3 @@
+-- Read only. Expected: 1 owned RLS table, 8 owned functions; anon/customer false, service true.
+select c.relname,c.relrowsecurity,obj_description(c.oid,'pg_class')ownership from pg_class c where c.oid=to_regclass('public.ac_dce_attachment_receipts');
+select p.oid::regprocedure as function,obj_description(p.oid,'pg_proc')ownership,has_function_privilege('anon',p.oid,'execute')anon_execution,has_function_privilege('authenticated',p.oid,'execute')customer_execution,has_function_privilege('service_role',p.oid,'execute')service_execution from pg_proc p where obj_description(p.oid,'pg_proc')='ANGELCARE_DCE_MATURITY_R3'order by p.proname;

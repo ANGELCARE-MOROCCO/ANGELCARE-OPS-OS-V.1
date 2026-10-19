@@ -1,0 +1,5808 @@
+[
+  {
+    "id": "5231c7cf-cf18-47ba-bbba-f7f008aaaf2e",
+    "key": "test-documents-1-dc8177",
+    "data": {
+      "mode": "Article Reader",
+      "units": [
+        {
+          "id": "units-1",
+          "kind": "article",
+          "text": "Read and learn together.",
+          "title": "School unit 1",
+          "assetId": null,
+          "locales": {
+            "en": {
+              "text": "Read and learn together.",
+              "title": "School unit 1"
+            }
+          },
+          "duration": 5,
+          "required": true,
+          "condition": "always",
+          "completion": "manual"
+        }
+      ],
+      "ageMax": 18,
+      "ageMin": 0,
+      "blocks": [
+        {
+          "id": "blocks-1",
+          "text": "Read and learn together.",
+          "type": "paragraph",
+          "title": "School unit 1",
+          "locales": {
+            "en": {
+              "text": "Read and learn together.",
+              "title": "School unit 1"
+            }
+          }
+        }
+      ],
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#0084ff",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "read",
+        "chapters",
+        "save",
+        "share",
+        "download",
+        "print",
+        "preview",
+        "search",
+        "zoom",
+        "review"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test documents Article Reader",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "visibility": "free",
+      "dependencies": [],
+      "readingWidth": "comfortable",
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "searchEnabled": true,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test documents Article Reader",
+    "topic": null,
+    "family": "documents",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.514+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.514+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "885ef051-27d0-4c61-bf4d-c7bc7ebcb977",
+    "key": "test-documents-2-9b3dbb",
+    "data": {
+      "mode": "PDF Reader",
+      "units": [
+        {
+          "id": "units-1",
+          "kind": "pdf",
+          "text": "Read and learn together.",
+          "title": "School unit 1",
+          "assetId": "20000000-0000-4000-8000-000000000002",
+          "locales": {
+            "en": {
+              "text": "Read and learn together.",
+              "title": "School unit 1"
+            }
+          },
+          "duration": 5,
+          "required": true,
+          "condition": "always",
+          "completion": "manual"
+        }
+      ],
+      "ageMax": 18,
+      "ageMin": 0,
+      "blocks": [
+        {
+          "id": "blocks-1",
+          "text": "Read and learn together.",
+          "type": "paragraph",
+          "title": "School unit 1",
+          "locales": {
+            "en": {
+              "text": "Read and learn together.",
+              "title": "School unit 1"
+            }
+          }
+        }
+      ],
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#0084ff",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "read",
+        "chapters",
+        "save",
+        "share",
+        "download",
+        "print",
+        "preview",
+        "search",
+        "zoom",
+        "review"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test documents PDF Reader",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "visibility": "free",
+      "dependencies": [],
+      "readingWidth": "comfortable",
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "searchEnabled": true,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test documents PDF Reader",
+    "topic": null,
+    "family": "documents",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.535+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.535+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "5bc633e6-6348-4571-890a-1ab03d86b355",
+    "key": "test-documents-3-973512",
+    "data": {
+      "mode": "Chaptered Guide",
+      "units": [
+        {
+          "id": "units-1",
+          "kind": "article",
+          "text": "Read and learn together.",
+          "title": "School unit 1",
+          "assetId": null,
+          "locales": {
+            "en": {
+              "text": "Read and learn together.",
+              "title": "School unit 1"
+            }
+          },
+          "duration": 5,
+          "required": true,
+          "condition": "always",
+          "completion": "manual"
+        }
+      ],
+      "ageMax": 18,
+      "ageMin": 0,
+      "blocks": [
+        {
+          "id": "blocks-1",
+          "text": "Read and learn together.",
+          "type": "paragraph",
+          "title": "School unit 1",
+          "locales": {
+            "en": {
+              "text": "Read and learn together.",
+              "title": "School unit 1"
+            }
+          }
+        }
+      ],
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#0084ff",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "read",
+        "chapters",
+        "save",
+        "share",
+        "download",
+        "print",
+        "preview",
+        "search",
+        "zoom",
+        "review"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test documents Chaptered Guide",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "visibility": "free",
+      "dependencies": [],
+      "readingWidth": "comfortable",
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "searchEnabled": true,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test documents Chaptered Guide",
+    "topic": null,
+    "family": "documents",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.553+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.553+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "6cb434b9-2d32-4286-bb8e-1d317020f010",
+    "key": "test-documents-4-d92040",
+    "data": {
+      "mode": "Rich Article",
+      "units": [
+        {
+          "id": "units-1",
+          "kind": "article",
+          "text": "Read and learn together.",
+          "title": "School unit 1",
+          "assetId": null,
+          "locales": {
+            "en": {
+              "text": "Read and learn together.",
+              "title": "School unit 1"
+            }
+          },
+          "duration": 5,
+          "required": true,
+          "condition": "always",
+          "completion": "manual"
+        }
+      ],
+      "ageMax": 18,
+      "ageMin": 0,
+      "blocks": [
+        {
+          "id": "blocks-1",
+          "text": "Read and learn together.",
+          "type": "paragraph",
+          "title": "School unit 1",
+          "locales": {
+            "en": {
+              "text": "Read and learn together.",
+              "title": "School unit 1"
+            }
+          }
+        }
+      ],
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#0084ff",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "read",
+        "chapters",
+        "save",
+        "share",
+        "download",
+        "print",
+        "preview",
+        "search",
+        "zoom",
+        "review"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test documents Rich Article",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "visibility": "free",
+      "dependencies": [],
+      "readingWidth": "comfortable",
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "searchEnabled": true,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test documents Rich Article",
+    "topic": null,
+    "family": "documents",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.568+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.568+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "3bdd0731-8753-4d25-9ce4-dab4994c4dfe",
+    "key": "test-printables-1-721d71",
+    "data": {
+      "mode": "Printable Preview",
+      "paper": "A4",
+      "units": [
+        {
+          "id": "units-1",
+          "kind": "pdf",
+          "text": "Read and learn together.",
+          "title": "School unit 1",
+          "assetId": "20000000-0000-4000-8000-000000000002",
+          "locales": {
+            "en": {
+              "text": "Read and learn together.",
+              "title": "School unit 1"
+            }
+          },
+          "widthMm": 210,
+          "duration": 5,
+          "heightMm": 297,
+          "required": true,
+          "condition": "always",
+          "completion": "manual"
+        }
+      ],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#ff8b00",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "preview",
+        "zoom",
+        "download",
+        "print",
+        "save",
+        "rate",
+        "share"
+      ],
+      "edition": "School edition 1",
+      "locales": {
+        "en": {
+          "title": "Test printables Printable Preview",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "colourMode": "colour",
+      "minimumDpi": 300,
+      "visibility": "free",
+      "orientation": "portrait",
+      "dependencies": [],
+      "printAllowed": false,
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test printables Printable Preview",
+    "topic": null,
+    "family": "printables",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.582+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.582+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "04cd128a-f19a-478a-ba9f-9edba90ce09a",
+    "key": "test-printables-2-a42b79",
+    "data": {
+      "mode": "Page Carousel",
+      "paper": "A4",
+      "units": [
+        {
+          "id": "units-1",
+          "kind": "pdf",
+          "text": "Read and learn together.",
+          "title": "School unit 1",
+          "assetId": "20000000-0000-4000-8000-000000000002",
+          "locales": {
+            "en": {
+              "text": "Read and learn together.",
+              "title": "School unit 1"
+            }
+          },
+          "widthMm": 210,
+          "duration": 5,
+          "heightMm": 297,
+          "required": true,
+          "condition": "always",
+          "completion": "manual"
+        }
+      ],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#ff8b00",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "preview",
+        "zoom",
+        "download",
+        "print",
+        "save",
+        "rate",
+        "share"
+      ],
+      "edition": "School edition 1",
+      "locales": {
+        "en": {
+          "title": "Test printables Page Carousel",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "colourMode": "colour",
+      "minimumDpi": 300,
+      "visibility": "free",
+      "orientation": "portrait",
+      "dependencies": [],
+      "printAllowed": false,
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test printables Page Carousel",
+    "topic": null,
+    "family": "printables",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.598+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.598+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "5dfe8989-ebe1-4f6d-a990-ce9fb608ffa5",
+    "key": "test-printables-3-c9a93d",
+    "data": {
+      "mode": "Flipbook Preview",
+      "paper": "A4",
+      "units": [
+        {
+          "id": "units-1",
+          "kind": "pdf",
+          "text": "Read and learn together.",
+          "title": "School unit 1",
+          "assetId": "20000000-0000-4000-8000-000000000002",
+          "locales": {
+            "en": {
+              "text": "Read and learn together.",
+              "title": "School unit 1"
+            }
+          },
+          "widthMm": 210,
+          "duration": 5,
+          "heightMm": 297,
+          "required": true,
+          "condition": "always",
+          "completion": "manual"
+        }
+      ],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#ff8b00",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "preview",
+        "zoom",
+        "download",
+        "print",
+        "save",
+        "rate",
+        "share"
+      ],
+      "edition": "School edition 1",
+      "locales": {
+        "en": {
+          "title": "Test printables Flipbook Preview",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "colourMode": "colour",
+      "minimumDpi": 300,
+      "visibility": "free",
+      "orientation": "portrait",
+      "dependencies": [],
+      "printAllowed": false,
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test printables Flipbook Preview",
+    "topic": null,
+    "family": "printables",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.612+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.612+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "4d307972-8dd2-44dc-b9fb-51b6795bc3ad",
+    "key": "test-printables-4-788776",
+    "data": {
+      "mode": "Download Gate",
+      "paper": "A4",
+      "units": [
+        {
+          "id": "units-1",
+          "kind": "pdf",
+          "text": "Read and learn together.",
+          "title": "School unit 1",
+          "assetId": "20000000-0000-4000-8000-000000000002",
+          "locales": {
+            "en": {
+              "text": "Read and learn together.",
+              "title": "School unit 1"
+            }
+          },
+          "widthMm": 210,
+          "duration": 5,
+          "heightMm": 297,
+          "required": true,
+          "condition": "always",
+          "completion": "manual"
+        }
+      ],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#ff8b00",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "preview",
+        "zoom",
+        "download",
+        "print",
+        "save",
+        "rate",
+        "share"
+      ],
+      "edition": "School edition 1",
+      "locales": {
+        "en": {
+          "title": "Test printables Download Gate",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "colourMode": "colour",
+      "minimumDpi": 300,
+      "visibility": "free",
+      "orientation": "portrait",
+      "dependencies": [],
+      "printAllowed": false,
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test printables Download Gate",
+    "topic": null,
+    "family": "printables",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.626+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.626+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "2555d8e0-5147-432c-ab9f-a15dbfb36b52",
+    "key": "test-stories-1-f542d1",
+    "data": {
+      "cues": [
+        {
+          "id": "cues-1",
+          "text": "Read and learn together.",
+          "unitId": "units-1",
+          "locales": {
+            "en": {
+              "text": "Read and learn together."
+            }
+          },
+          "endSeconds": 3,
+          "startSeconds": 0
+        }
+      ],
+      "mode": "Flipbook",
+      "units": [
+        {
+          "id": "units-1",
+          "alt": "Classroom learning illustration",
+          "kind": "image",
+          "text": "Read and learn together.",
+          "title": "School unit 1",
+          "assetId": "20000000-0000-4000-8000-000000000001",
+          "locales": {
+            "en": {
+              "alt": "Classroom learning illustration",
+              "text": "Read and learn together.",
+              "title": "School unit 1",
+              "narrationAssetId": "20000000-0000-4000-8000-000000000003"
+            }
+          },
+          "duration": 5,
+          "required": true,
+          "condition": "always",
+          "completion": "manual",
+          "endSeconds": 3,
+          "startSeconds": 0,
+          "narrationAssetId": "20000000-0000-4000-8000-000000000003"
+        }
+      ],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#9b4de5",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "read",
+        "next",
+        "narration",
+        "bookmark",
+        "previous",
+        "fullscreen",
+        "save",
+        "share",
+        "rate",
+        "download"
+      ],
+      "edition": "School edition 1",
+      "locales": {
+        "en": {
+          "title": "Test stories Flipbook",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "pageLayout": "side_by_side",
+      "visibility": "free",
+      "pageSeconds": 2,
+      "dependencies": [],
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "narrationAssetId": "20000000-0000-4000-8000-000000000003",
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test stories Flipbook",
+    "topic": null,
+    "family": "stories",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.639+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.639+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "1187e8cf-dc70-4a00-80c5-8efa2c52de78",
+    "key": "test-stories-2-904a6c",
+    "data": {
+      "cues": [
+        {
+          "id": "cues-1",
+          "text": "Read and learn together.",
+          "unitId": "units-1",
+          "locales": {
+            "en": {
+              "text": "Read and learn together."
+            }
+          },
+          "endSeconds": 3,
+          "startSeconds": 0
+        }
+      ],
+      "mode": "Read-aloud story mode",
+      "units": [
+        {
+          "id": "units-1",
+          "alt": "Classroom learning illustration",
+          "kind": "image",
+          "text": "Read and learn together.",
+          "title": "School unit 1",
+          "assetId": "20000000-0000-4000-8000-000000000001",
+          "locales": {
+            "en": {
+              "alt": "Classroom learning illustration",
+              "text": "Read and learn together.",
+              "title": "School unit 1",
+              "narrationAssetId": "20000000-0000-4000-8000-000000000003"
+            }
+          },
+          "duration": 5,
+          "required": true,
+          "condition": "always",
+          "completion": "manual",
+          "endSeconds": 3,
+          "startSeconds": 0,
+          "narrationAssetId": "20000000-0000-4000-8000-000000000003"
+        }
+      ],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#9b4de5",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "read",
+        "next",
+        "narration",
+        "bookmark",
+        "previous",
+        "fullscreen",
+        "save",
+        "share",
+        "rate",
+        "download"
+      ],
+      "edition": "School edition 1",
+      "locales": {
+        "en": {
+          "title": "Test stories Read-aloud story mode",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "pageLayout": "side_by_side",
+      "visibility": "free",
+      "pageSeconds": 2,
+      "dependencies": [],
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "narrationAssetId": "20000000-0000-4000-8000-000000000003",
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test stories Read-aloud story mode",
+    "topic": null,
+    "family": "stories",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.654+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.654+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "698f6a1e-6e1c-4fe0-88bb-d151de638d12",
+    "key": "test-stories-3-2e34ea",
+    "data": {
+      "cues": [
+        {
+          "id": "cues-1",
+          "text": "Read and learn together.",
+          "unitId": "units-1",
+          "locales": {
+            "en": {
+              "text": "Read and learn together."
+            }
+          },
+          "endSeconds": 3,
+          "startSeconds": 0
+        }
+      ],
+      "mode": "Immersive reading mode",
+      "units": [
+        {
+          "id": "units-1",
+          "alt": "Classroom learning illustration",
+          "kind": "image",
+          "text": "Read and learn together.",
+          "title": "School unit 1",
+          "assetId": "20000000-0000-4000-8000-000000000001",
+          "locales": {
+            "en": {
+              "alt": "Classroom learning illustration",
+              "text": "Read and learn together.",
+              "title": "School unit 1",
+              "narrationAssetId": "20000000-0000-4000-8000-000000000003"
+            }
+          },
+          "duration": 5,
+          "required": true,
+          "condition": "always",
+          "completion": "manual",
+          "endSeconds": 3,
+          "startSeconds": 0,
+          "narrationAssetId": "20000000-0000-4000-8000-000000000003"
+        }
+      ],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#9b4de5",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "read",
+        "next",
+        "narration",
+        "bookmark",
+        "previous",
+        "fullscreen",
+        "save",
+        "share",
+        "rate",
+        "download"
+      ],
+      "edition": "School edition 1",
+      "locales": {
+        "en": {
+          "title": "Test stories Immersive reading mode",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "pageLayout": "side_by_side",
+      "visibility": "free",
+      "pageSeconds": 2,
+      "dependencies": [],
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "narrationAssetId": "20000000-0000-4000-8000-000000000003",
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test stories Immersive reading mode",
+    "topic": null,
+    "family": "stories",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.668+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.668+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "aa7affeb-b191-46cd-926e-e56780629faa",
+    "key": "test-stories-4-d8c104",
+    "data": {
+      "cues": [
+        {
+          "id": "cues-1",
+          "text": "Read and learn together.",
+          "unitId": "units-1",
+          "locales": {
+            "en": {
+              "text": "Read and learn together."
+            }
+          },
+          "endSeconds": 3,
+          "startSeconds": 0
+        }
+      ],
+      "mode": "Slideshow story mode",
+      "units": [
+        {
+          "id": "units-1",
+          "alt": "Classroom learning illustration",
+          "kind": "image",
+          "text": "Read and learn together.",
+          "title": "School unit 1",
+          "assetId": "20000000-0000-4000-8000-000000000001",
+          "locales": {
+            "en": {
+              "alt": "Classroom learning illustration",
+              "text": "Read and learn together.",
+              "title": "School unit 1",
+              "narrationAssetId": "20000000-0000-4000-8000-000000000003"
+            }
+          },
+          "duration": 5,
+          "required": true,
+          "condition": "always",
+          "completion": "manual",
+          "endSeconds": 3,
+          "startSeconds": 0,
+          "narrationAssetId": "20000000-0000-4000-8000-000000000003"
+        }
+      ],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#9b4de5",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "read",
+        "next",
+        "narration",
+        "bookmark",
+        "previous",
+        "fullscreen",
+        "save",
+        "share",
+        "rate",
+        "download"
+      ],
+      "edition": "School edition 1",
+      "locales": {
+        "en": {
+          "title": "Test stories Slideshow story mode",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "pageLayout": "side_by_side",
+      "visibility": "free",
+      "pageSeconds": 2,
+      "dependencies": [],
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "narrationAssetId": "20000000-0000-4000-8000-000000000003",
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test stories Slideshow story mode",
+    "topic": null,
+    "family": "stories",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.682+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.682+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "a924281f-e980-42cb-8ed1-ba699b5e8972",
+    "key": "test-learning-1-c8a7f6",
+    "data": {
+      "mode": "Course player",
+      "units": [
+        {
+          "id": "units-1",
+          "kind": "video",
+          "text": "Read and learn together.",
+          "title": "School unit 1",
+          "module": "School curriculum",
+          "assetId": "20000000-0000-4000-8000-000000000005",
+          "locales": {
+            "en": {
+              "text": "Read and learn together.",
+              "title": "School unit 1"
+            }
+          },
+          "duration": 5,
+          "required": true,
+          "condition": "always",
+          "completion": "manual"
+        }
+      ],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#7251f5",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "start",
+        "resume",
+        "complete",
+        "practice",
+        "resources",
+        "next",
+        "quiz",
+        "download",
+        "review",
+        "restart"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test learning Course player",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "questions": [
+        {
+          "id": "questions-1",
+          "type": "choice",
+          "answer": "0",
+          "points": 1,
+          "prompt": "Choose the first option",
+          "choices": "Circle\nSquare",
+          "locales": {
+            "en": {
+              "answer": "0",
+              "prompt": "Choose the first option",
+              "choices": "Circle\nSquare"
+            }
+          }
+        }
+      ],
+      "completion": "required_steps",
+      "visibility": "free",
+      "allowRestart": true,
+      "dependencies": [],
+      "passingScore": 70,
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test learning Course player",
+    "topic": null,
+    "family": "learning",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.696+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.696+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "e17889e0-ef2e-48b8-a0bc-3eec208248be",
+    "key": "test-learning-2-2dd23b",
+    "data": {
+      "mode": "Mixed media lesson path",
+      "units": [
+        {
+          "id": "units-1",
+          "kind": "article",
+          "text": "Read and learn together.",
+          "title": "School unit 1",
+          "module": "School curriculum",
+          "assetId": null,
+          "locales": {
+            "en": {
+              "text": "Read and learn together.",
+              "title": "School unit 1"
+            }
+          },
+          "duration": 5,
+          "required": true,
+          "condition": "always",
+          "completion": "manual"
+        },
+        {
+          "id": "units-2",
+          "kind": "image",
+          "text": "Read and learn together.",
+          "title": "School unit 2",
+          "module": "School curriculum",
+          "assetId": "20000000-0000-4000-8000-000000000001",
+          "locales": {
+            "en": {
+              "text": "Read and learn together.",
+              "title": "School unit 2"
+            }
+          },
+          "duration": 5,
+          "required": true,
+          "condition": "always",
+          "completion": "manual"
+        }
+      ],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#7251f5",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "start",
+        "resume",
+        "complete",
+        "practice",
+        "resources",
+        "next",
+        "quiz",
+        "download",
+        "review",
+        "restart"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test learning Mixed media lesson path",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "questions": [
+        {
+          "id": "questions-1",
+          "type": "choice",
+          "answer": "0",
+          "points": 1,
+          "prompt": "Choose the first option",
+          "choices": "Circle\nSquare",
+          "locales": {
+            "en": {
+              "answer": "0",
+              "prompt": "Choose the first option",
+              "choices": "Circle\nSquare"
+            }
+          }
+        }
+      ],
+      "completion": "required_steps",
+      "visibility": "free",
+      "allowRestart": true,
+      "dependencies": [],
+      "passingScore": 70,
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test learning Mixed media lesson path",
+    "topic": null,
+    "family": "learning",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.711+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.711+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "31c3e098-8279-471a-8ad6-b766d4b26d0a",
+    "key": "test-learning-3-6e337d",
+    "data": {
+      "mode": "Chaptered video course",
+      "units": [
+        {
+          "id": "units-1",
+          "kind": "video",
+          "text": "Read and learn together.",
+          "title": "School unit 1",
+          "module": "School curriculum",
+          "assetId": "20000000-0000-4000-8000-000000000005",
+          "locales": {
+            "en": {
+              "text": "Read and learn together.",
+              "title": "School unit 1"
+            }
+          },
+          "duration": 5,
+          "required": true,
+          "condition": "always",
+          "completion": "manual"
+        }
+      ],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#7251f5",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "start",
+        "resume",
+        "complete",
+        "practice",
+        "resources",
+        "next",
+        "quiz",
+        "download",
+        "review",
+        "restart"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test learning Chaptered video course",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "questions": [
+        {
+          "id": "questions-1",
+          "type": "choice",
+          "answer": "0",
+          "points": 1,
+          "prompt": "Choose the first option",
+          "choices": "Circle\nSquare",
+          "locales": {
+            "en": {
+              "answer": "0",
+              "prompt": "Choose the first option",
+              "choices": "Circle\nSquare"
+            }
+          }
+        }
+      ],
+      "completion": "required_steps",
+      "visibility": "free",
+      "allowRestart": true,
+      "dependencies": [],
+      "passingScore": 70,
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test learning Chaptered video course",
+    "topic": null,
+    "family": "learning",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.724+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.724+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "00d9e0c0-4307-44b3-8d32-a2848fafe3fb",
+    "key": "test-learning-4-b4d8d6",
+    "data": {
+      "mode": "Assessment-linked learning path",
+      "units": [
+        {
+          "id": "units-1",
+          "kind": "article",
+          "text": "Read and learn together.",
+          "title": "School unit 1",
+          "module": "School curriculum",
+          "assetId": null,
+          "locales": {
+            "en": {
+              "text": "Read and learn together.",
+              "title": "School unit 1"
+            }
+          },
+          "duration": 5,
+          "required": true,
+          "condition": "always",
+          "completion": "manual"
+        }
+      ],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#7251f5",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "start",
+        "resume",
+        "complete",
+        "practice",
+        "resources",
+        "next",
+        "quiz",
+        "download",
+        "review",
+        "restart"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test learning Assessment-linked learning path",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "questions": [
+        {
+          "id": "questions-1",
+          "type": "choice",
+          "answer": "0",
+          "points": 1,
+          "prompt": "Choose the first option",
+          "choices": "Circle\nSquare",
+          "locales": {
+            "en": {
+              "answer": "0",
+              "prompt": "Choose the first option",
+              "choices": "Circle\nSquare"
+            }
+          }
+        }
+      ],
+      "completion": "assessment_pass",
+      "visibility": "free",
+      "allowRestart": true,
+      "dependencies": [],
+      "passingScore": 70,
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test learning Assessment-linked learning path",
+    "topic": null,
+    "family": "learning",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.735+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.735+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "ce8f4ce7-0b19-422e-ab47-e5d6e6777504",
+    "key": "test-video-1-723ef1",
+    "data": {
+      "mode": "Cinematic Player",
+      "units": [
+        {
+          "id": "units-1",
+          "kind": "video",
+          "text": "Read and learn together.",
+          "title": "School unit 1",
+          "assetId": "20000000-0000-4000-8000-000000000005",
+          "locales": {
+            "en": {
+              "text": "Read and learn together.",
+              "title": "School unit 1"
+            }
+          },
+          "duration": 5,
+          "required": true,
+          "condition": "always",
+          "completion": "manual"
+        }
+      ],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#007bff",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "play",
+        "seek",
+        "speed",
+        "chapters",
+        "captions",
+        "pause",
+        "fullscreen",
+        "share",
+        "save",
+        "review"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test video Cinematic Player",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "captions": [
+        {
+          "id": "captions-1",
+          "text": "Read together.",
+          "locale": "en",
+          "unitId": "units-1",
+          "locales": {
+            "en": {
+              "text": "Read together."
+            }
+          },
+          "endSeconds": 3,
+          "startSeconds": 0
+        }
+      ],
+      "chapters": [
+        {
+          "id": "chapters-1",
+          "title": "School unit 1",
+          "unitId": "units-1",
+          "locales": {
+            "en": {
+              "title": "School unit 1"
+            }
+          },
+          "startSeconds": 0
+        }
+      ],
+      "visibility": "free",
+      "dependencies": [],
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "completionPolicy": "ended",
+      "completionPercent": 90,
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test video Cinematic Player",
+    "topic": null,
+    "family": "video",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.748+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.748+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "d23ebc7e-1709-4707-951d-a40b803ca147",
+    "key": "test-video-2-06b5e1",
+    "data": {
+      "mode": "Tutorial Player with Chapters",
+      "units": [
+        {
+          "id": "units-1",
+          "kind": "video",
+          "text": "Read and learn together.",
+          "title": "School unit 1",
+          "assetId": "20000000-0000-4000-8000-000000000005",
+          "locales": {
+            "en": {
+              "text": "Read and learn together.",
+              "title": "School unit 1"
+            }
+          },
+          "duration": 5,
+          "required": true,
+          "condition": "always",
+          "completion": "manual"
+        }
+      ],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#007bff",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "play",
+        "seek",
+        "speed",
+        "chapters",
+        "captions",
+        "pause",
+        "fullscreen",
+        "share",
+        "save",
+        "review"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test video Tutorial Player with Chapters",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "captions": [
+        {
+          "id": "captions-1",
+          "text": "Read together.",
+          "locale": "en",
+          "unitId": "units-1",
+          "locales": {
+            "en": {
+              "text": "Read together."
+            }
+          },
+          "endSeconds": 3,
+          "startSeconds": 0
+        }
+      ],
+      "chapters": [
+        {
+          "id": "chapters-1",
+          "title": "School unit 1",
+          "unitId": "units-1",
+          "locales": {
+            "en": {
+              "title": "School unit 1"
+            }
+          },
+          "startSeconds": 0
+        }
+      ],
+      "visibility": "free",
+      "dependencies": [],
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "completionPolicy": "ended",
+      "completionPercent": 90,
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test video Tutorial Player with Chapters",
+    "topic": null,
+    "family": "video",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.762+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.762+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "14cb2236-5a8c-4c2b-a216-68f095815307",
+    "key": "test-video-3-5a60c9",
+    "data": {
+      "mode": "Course-Linked Video",
+      "units": [
+        {
+          "id": "units-1",
+          "kind": "video",
+          "text": "Read and learn together.",
+          "title": "School unit 1",
+          "assetId": "20000000-0000-4000-8000-000000000005",
+          "locales": {
+            "en": {
+              "text": "Read and learn together.",
+              "title": "School unit 1"
+            }
+          },
+          "duration": 5,
+          "required": true,
+          "condition": "always",
+          "completion": "manual"
+        }
+      ],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#007bff",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "play",
+        "seek",
+        "speed",
+        "chapters",
+        "captions",
+        "pause",
+        "fullscreen",
+        "share",
+        "save",
+        "review"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test video Course-Linked Video",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "captions": [
+        {
+          "id": "captions-1",
+          "text": "Read together.",
+          "locale": "en",
+          "unitId": "units-1",
+          "locales": {
+            "en": {
+              "text": "Read together."
+            }
+          },
+          "endSeconds": 3,
+          "startSeconds": 0
+        }
+      ],
+      "chapters": [
+        {
+          "id": "chapters-1",
+          "title": "School unit 1",
+          "unitId": "units-1",
+          "locales": {
+            "en": {
+              "title": "School unit 1"
+            }
+          },
+          "startSeconds": 0
+        }
+      ],
+      "visibility": "free",
+      "dependencies": [],
+      "experienceId": "e8276ccc-786c-45b1-87c4-3df1c2d3c1e6",
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "completionPolicy": "ended",
+      "completionPercent": 90,
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test video Course-Linked Video",
+    "topic": null,
+    "family": "video",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.775+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.775+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "4b6bab94-8e9c-4d15-9639-020f105ecb6e",
+    "key": "test-video-4-8ee8d9",
+    "data": {
+      "mode": "Vertical / Mobile Video Viewer",
+      "units": [
+        {
+          "id": "units-1",
+          "kind": "video",
+          "text": "Read and learn together.",
+          "title": "School unit 1",
+          "assetId": "20000000-0000-4000-8000-000000000005",
+          "locales": {
+            "en": {
+              "text": "Read and learn together.",
+              "title": "School unit 1"
+            }
+          },
+          "duration": 5,
+          "required": true,
+          "condition": "always",
+          "completion": "manual"
+        }
+      ],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#007bff",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "play",
+        "seek",
+        "speed",
+        "chapters",
+        "captions",
+        "pause",
+        "fullscreen",
+        "share",
+        "save",
+        "review"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test video Vertical / Mobile Video Viewer",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "captions": [
+        {
+          "id": "captions-1",
+          "text": "Read together.",
+          "locale": "en",
+          "unitId": "units-1",
+          "locales": {
+            "en": {
+              "text": "Read together."
+            }
+          },
+          "endSeconds": 3,
+          "startSeconds": 0
+        }
+      ],
+      "chapters": [
+        {
+          "id": "chapters-1",
+          "title": "School unit 1",
+          "unitId": "units-1",
+          "locales": {
+            "en": {
+              "title": "School unit 1"
+            }
+          },
+          "startSeconds": 0
+        }
+      ],
+      "visibility": "free",
+      "dependencies": [],
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "completionPolicy": "ended",
+      "completionPercent": 90,
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test video Vertical / Mobile Video Viewer",
+    "topic": null,
+    "family": "video",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.791+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.791+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "0260aece-c05d-4d98-99da-5ca038dad913",
+    "key": "test-audio-1-52915a",
+    "data": {
+      "mode": "Audio Player",
+      "units": [
+        {
+          "id": "units-1",
+          "kind": "audio",
+          "text": "Read and learn together.",
+          "title": "School unit 1",
+          "assetId": "20000000-0000-4000-8000-000000000003",
+          "locales": {
+            "en": {
+              "text": "Read and learn together.",
+              "title": "School unit 1"
+            }
+          },
+          "duration": 5,
+          "required": true,
+          "condition": "always",
+          "completion": "manual",
+          "endSeconds": 3,
+          "startSeconds": 0
+        }
+      ],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#06a5a5",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "play",
+        "seek",
+        "speed",
+        "queue",
+        "save",
+        "pause",
+        "download",
+        "share",
+        "review"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test audio Audio Player",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "chapters": [
+        {
+          "id": "chapters-1",
+          "title": "School unit 1",
+          "unitId": "units-1",
+          "locales": {
+            "en": {
+              "title": "School unit 1"
+            }
+          },
+          "startSeconds": 0
+        }
+      ],
+      "visibility": "free",
+      "seekSeconds": 15,
+      "dependencies": [],
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "completionPolicy": "ended",
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test audio Audio Player",
+    "topic": null,
+    "family": "audio",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.805+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.805+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "147fa65e-7b3c-46a8-be23-0e9e6c78236b",
+    "key": "test-audio-2-c7a9b5",
+    "data": {
+      "mode": "Playlist Mode",
+      "units": [
+        {
+          "id": "units-1",
+          "kind": "audio",
+          "text": "Read and learn together.",
+          "title": "School unit 1",
+          "assetId": "20000000-0000-4000-8000-000000000003",
+          "locales": {
+            "en": {
+              "text": "Read and learn together.",
+              "title": "School unit 1"
+            }
+          },
+          "duration": 5,
+          "required": true,
+          "condition": "always",
+          "completion": "manual",
+          "endSeconds": 3,
+          "startSeconds": 0
+        }
+      ],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#06a5a5",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "play",
+        "seek",
+        "speed",
+        "queue",
+        "save",
+        "pause",
+        "download",
+        "share",
+        "review"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test audio Playlist Mode",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "chapters": [
+        {
+          "id": "chapters-1",
+          "title": "School unit 1",
+          "unitId": "units-1",
+          "locales": {
+            "en": {
+              "title": "School unit 1"
+            }
+          },
+          "startSeconds": 0
+        }
+      ],
+      "visibility": "free",
+      "seekSeconds": 15,
+      "dependencies": [],
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "completionPolicy": "ended",
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test audio Playlist Mode",
+    "topic": null,
+    "family": "audio",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.818+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.818+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "f04f1f6b-d581-4c3a-8a12-2e4ce8b7732d",
+    "key": "test-audio-3-b55388",
+    "data": {
+      "mode": "Chaptered Podcast",
+      "units": [
+        {
+          "id": "units-1",
+          "kind": "audio",
+          "text": "Read and learn together.",
+          "title": "School unit 1",
+          "assetId": "20000000-0000-4000-8000-000000000003",
+          "locales": {
+            "en": {
+              "text": "Read and learn together.",
+              "title": "School unit 1"
+            }
+          },
+          "duration": 5,
+          "required": true,
+          "condition": "always",
+          "completion": "manual",
+          "endSeconds": 3,
+          "startSeconds": 0
+        }
+      ],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#06a5a5",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "play",
+        "seek",
+        "speed",
+        "queue",
+        "save",
+        "pause",
+        "download",
+        "share",
+        "review"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test audio Chaptered Podcast",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "chapters": [
+        {
+          "id": "chapters-1",
+          "title": "School unit 1",
+          "unitId": "units-1",
+          "locales": {
+            "en": {
+              "title": "School unit 1"
+            }
+          },
+          "startSeconds": 0
+        }
+      ],
+      "visibility": "free",
+      "seekSeconds": 15,
+      "dependencies": [],
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "completionPolicy": "ended",
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test audio Chaptered Podcast",
+    "topic": null,
+    "family": "audio",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.831+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.831+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "4ee68757-09d3-4e6c-b262-e6e22ee58adc",
+    "key": "test-audio-4-67ead1",
+    "data": {
+      "mode": "Narrated Story Mode",
+      "units": [
+        {
+          "id": "units-1",
+          "kind": "audio",
+          "text": "Read and learn together.",
+          "title": "School unit 1",
+          "assetId": "20000000-0000-4000-8000-000000000003",
+          "locales": {
+            "en": {
+              "text": "Read and learn together.",
+              "title": "School unit 1"
+            }
+          },
+          "duration": 5,
+          "required": true,
+          "condition": "always",
+          "completion": "manual",
+          "endSeconds": 3,
+          "startSeconds": 0
+        }
+      ],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#06a5a5",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "play",
+        "seek",
+        "speed",
+        "queue",
+        "save",
+        "pause",
+        "download",
+        "share",
+        "review"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test audio Narrated Story Mode",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "chapters": [
+        {
+          "id": "chapters-1",
+          "title": "School unit 1",
+          "unitId": "units-1",
+          "locales": {
+            "en": {
+              "title": "School unit 1"
+            }
+          },
+          "startSeconds": 0
+        }
+      ],
+      "visibility": "free",
+      "seekSeconds": 15,
+      "dependencies": [],
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "completionPolicy": "ended",
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test audio Narrated Story Mode",
+    "topic": null,
+    "family": "audio",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.844+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.844+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "26372e80-187f-46e2-ba53-d9660c1063bd",
+    "key": "test-visual-cards-1-411a68",
+    "data": {
+      "mode": "Image Gallery",
+      "cards": [
+        {
+          "id": "cards-1",
+          "alt": "Classroom learning illustration",
+          "back": "A circle.",
+          "front": "Which shape?",
+          "title": "School unit 1",
+          "assetId": "20000000-0000-4000-8000-000000000001",
+          "locales": {
+            "en": {
+              "alt": "Classroom learning illustration",
+              "back": "A circle.",
+              "front": "Which shape?",
+              "title": "School unit 1"
+            }
+          }
+        }
+      ],
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#e94da0",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "zoom",
+        "swipe",
+        "study",
+        "save",
+        "fullscreen",
+        "share",
+        "favorite",
+        "download",
+        "review"
+      ],
+      "columns": 3,
+      "locales": {
+        "en": {
+          "title": "Test visual-cards Image Gallery",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "shuffle": false,
+      "imageFit": "contain",
+      "allowZoom": true,
+      "visibility": "free",
+      "dependencies": [],
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test visual-cards Image Gallery",
+    "topic": null,
+    "family": "visual-cards",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.857+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.857+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "6d6bd653-4025-4613-a5f3-d8f7c1efb2f0",
+    "key": "test-visual-cards-2-f2c10c",
+    "data": {
+      "mode": "Card Swiper",
+      "cards": [
+        {
+          "id": "cards-1",
+          "alt": "Classroom learning illustration",
+          "back": "A circle.",
+          "front": "Which shape?",
+          "title": "School unit 1",
+          "assetId": "20000000-0000-4000-8000-000000000001",
+          "locales": {
+            "en": {
+              "alt": "Classroom learning illustration",
+              "back": "A circle.",
+              "front": "Which shape?",
+              "title": "School unit 1"
+            }
+          }
+        }
+      ],
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#e94da0",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "zoom",
+        "swipe",
+        "study",
+        "save",
+        "fullscreen",
+        "share",
+        "favorite",
+        "download",
+        "review"
+      ],
+      "columns": 3,
+      "locales": {
+        "en": {
+          "title": "Test visual-cards Card Swiper",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "shuffle": false,
+      "imageFit": "contain",
+      "allowZoom": true,
+      "visibility": "free",
+      "dependencies": [],
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test visual-cards Card Swiper",
+    "topic": null,
+    "family": "visual-cards",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.87+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.87+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "4f63d098-e9c6-4cdc-9e20-f501b1669f40",
+    "key": "test-visual-cards-3-cec4ac",
+    "data": {
+      "mode": "Lightbox Mode",
+      "cards": [
+        {
+          "id": "cards-1",
+          "alt": "Classroom learning illustration",
+          "back": "A circle.",
+          "front": "Which shape?",
+          "title": "School unit 1",
+          "assetId": "20000000-0000-4000-8000-000000000001",
+          "locales": {
+            "en": {
+              "alt": "Classroom learning illustration",
+              "back": "A circle.",
+              "front": "Which shape?",
+              "title": "School unit 1"
+            }
+          }
+        }
+      ],
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#e94da0",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "zoom",
+        "swipe",
+        "study",
+        "save",
+        "fullscreen",
+        "share",
+        "favorite",
+        "download",
+        "review"
+      ],
+      "columns": 3,
+      "locales": {
+        "en": {
+          "title": "Test visual-cards Lightbox Mode",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "shuffle": false,
+      "imageFit": "contain",
+      "allowZoom": true,
+      "visibility": "free",
+      "dependencies": [],
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test visual-cards Lightbox Mode",
+    "topic": null,
+    "family": "visual-cards",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.883+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.883+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "1e2602d6-1ae0-498e-8896-cdd05b5a1f2e",
+    "key": "test-visual-cards-4-692316",
+    "data": {
+      "mode": "Flashcard Study Mode",
+      "cards": [
+        {
+          "id": "cards-1",
+          "alt": "Classroom learning illustration",
+          "back": "A circle.",
+          "front": "Which shape?",
+          "title": "School unit 1",
+          "assetId": "20000000-0000-4000-8000-000000000001",
+          "locales": {
+            "en": {
+              "alt": "Classroom learning illustration",
+              "back": "A circle.",
+              "front": "Which shape?",
+              "title": "School unit 1"
+            }
+          }
+        }
+      ],
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#e94da0",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "zoom",
+        "swipe",
+        "study",
+        "save",
+        "fullscreen",
+        "share",
+        "favorite",
+        "download",
+        "review"
+      ],
+      "columns": 3,
+      "locales": {
+        "en": {
+          "title": "Test visual-cards Flashcard Study Mode",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "shuffle": false,
+      "imageFit": "contain",
+      "allowZoom": true,
+      "visibility": "free",
+      "dependencies": [],
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test visual-cards Flashcard Study Mode",
+    "topic": null,
+    "family": "visual-cards",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.894+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.894+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "ed830c7b-b82d-4091-8757-38c9bb187fbf",
+    "key": "test-presentations-1-b05aa1",
+    "data": {
+      "loop": false,
+      "mode": "Slide Player",
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "frames": [
+        {
+          "id": "frames-1",
+          "text": "Read and learn together.",
+          "title": "School unit 1",
+          "assetId": "20000000-0000-4000-8000-000000000001",
+          "locales": {
+            "en": {
+              "text": "Read and learn together.",
+              "title": "School unit 1"
+            }
+          },
+          "seconds": 2,
+          "publicNotes": false
+        }
+      ],
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#e6a400",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "next",
+        "previous",
+        "jump",
+        "notes",
+        "autoplay",
+        "fullscreen",
+        "download",
+        "save",
+        "share"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test presentations Slide Player",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "visibility": "free",
+      "dependencies": [],
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "defaultSeconds": 6,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2,
+      "navigationAllowed": true
+    },
+    "kind": "experience",
+    "title": "Test presentations Slide Player",
+    "topic": null,
+    "family": "presentations",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.906+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.906+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "7bd721dc-0010-4d5b-b771-5f0174aa6ddc",
+    "key": "test-presentations-2-9f0100",
+    "data": {
+      "loop": false,
+      "mode": "Frame-by-Frame Mode",
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "frames": [
+        {
+          "id": "frames-1",
+          "text": "Read and learn together.",
+          "title": "School unit 1",
+          "assetId": "20000000-0000-4000-8000-000000000001",
+          "locales": {
+            "en": {
+              "text": "Read and learn together.",
+              "title": "School unit 1"
+            }
+          },
+          "seconds": 2,
+          "publicNotes": false
+        }
+      ],
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#e6a400",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "next",
+        "previous",
+        "jump",
+        "notes",
+        "autoplay",
+        "fullscreen",
+        "download",
+        "save",
+        "share"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test presentations Frame-by-Frame Mode",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "visibility": "free",
+      "dependencies": [],
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "defaultSeconds": 6,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2,
+      "navigationAllowed": true
+    },
+    "kind": "experience",
+    "title": "Test presentations Frame-by-Frame Mode",
+    "topic": null,
+    "family": "presentations",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.917+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.917+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "bf3d7a52-7339-4c48-b980-dc22c9f4baa2",
+    "key": "test-presentations-3-8f92e2",
+    "data": {
+      "loop": false,
+      "mode": "Presenter Mode",
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "frames": [
+        {
+          "id": "frames-1",
+          "text": "Read and learn together.",
+          "title": "School unit 1",
+          "assetId": "20000000-0000-4000-8000-000000000001",
+          "locales": {
+            "en": {
+              "text": "Read and learn together.",
+              "title": "School unit 1"
+            }
+          },
+          "seconds": 2,
+          "publicNotes": false
+        }
+      ],
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#e6a400",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "next",
+        "previous",
+        "jump",
+        "notes",
+        "autoplay",
+        "fullscreen",
+        "download",
+        "save",
+        "share"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test presentations Presenter Mode",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "visibility": "free",
+      "dependencies": [],
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "defaultSeconds": 6,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2,
+      "navigationAllowed": true
+    },
+    "kind": "experience",
+    "title": "Test presentations Presenter Mode",
+    "topic": null,
+    "family": "presentations",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.928+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.928+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "6c4e4081-6f90-4b75-9553-158fff302634",
+    "key": "test-presentations-4-7fbd6f",
+    "data": {
+      "loop": false,
+      "mode": "Autoplay Storytelling",
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "frames": [
+        {
+          "id": "frames-1",
+          "text": "Read and learn together.",
+          "title": "School unit 1",
+          "assetId": "20000000-0000-4000-8000-000000000001",
+          "locales": {
+            "en": {
+              "text": "Read and learn together.",
+              "title": "School unit 1"
+            }
+          },
+          "seconds": 2,
+          "publicNotes": false
+        }
+      ],
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#e6a400",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "next",
+        "previous",
+        "jump",
+        "notes",
+        "autoplay",
+        "fullscreen",
+        "download",
+        "save",
+        "share"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test presentations Autoplay Storytelling",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "visibility": "free",
+      "dependencies": [],
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "defaultSeconds": 6,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2,
+      "navigationAllowed": true
+    },
+    "kind": "experience",
+    "title": "Test presentations Autoplay Storytelling",
+    "topic": null,
+    "family": "presentations",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.937+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.937+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "601501fc-0755-4875-82f0-a2bef5f2b21a",
+    "key": "test-assessments-1-9c6bf5",
+    "data": {
+      "mode": "Quiz Player",
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#7b4de9",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "start",
+        "answer",
+        "submit",
+        "retry",
+        "results",
+        "next",
+        "review",
+        "save_results",
+        "share_results"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test assessments Quiz Player",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "minutes": 1,
+      "shuffle": false,
+      "questions": [
+        {
+          "id": "questions-1",
+          "type": "choice",
+          "answer": "0",
+          "points": 1,
+          "prompt": "Choose the first option",
+          "choices": "Circle\nSquare",
+          "locales": {
+            "en": {
+              "answer": "0",
+              "prompt": "Choose the first option",
+              "choices": "Circle\nSquare"
+            }
+          }
+        }
+      ],
+      "visibility": "free",
+      "retryPolicy": "allowed",
+      "attemptLimit": 3,
+      "dependencies": [],
+      "passingScore": 70,
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "feedbackPolicy": "after_submit",
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test assessments Quiz Player",
+    "topic": null,
+    "family": "assessments",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.95+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.95+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "7d3ca921-4fd5-4b0b-ae81-7239707c4575",
+    "key": "test-assessments-2-be0272",
+    "data": {
+      "mode": "Timed Assessment Mode",
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#7b4de9",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "start",
+        "answer",
+        "submit",
+        "retry",
+        "results",
+        "next",
+        "review",
+        "save_results",
+        "share_results"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test assessments Timed Assessment Mode",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "minutes": 1,
+      "shuffle": false,
+      "questions": [
+        {
+          "id": "questions-1",
+          "type": "choice",
+          "answer": "0",
+          "points": 1,
+          "prompt": "Choose the first option",
+          "choices": "Circle\nSquare",
+          "locales": {
+            "en": {
+              "answer": "0",
+              "prompt": "Choose the first option",
+              "choices": "Circle\nSquare"
+            }
+          }
+        }
+      ],
+      "visibility": "free",
+      "retryPolicy": "allowed",
+      "attemptLimit": 3,
+      "dependencies": [],
+      "passingScore": 70,
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "feedbackPolicy": "after_submit",
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test assessments Timed Assessment Mode",
+    "topic": null,
+    "family": "assessments",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.96+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.96+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "769617c6-d4eb-42d2-ad36-0cdab7f998f3",
+    "key": "test-assessments-3-3ebd35",
+    "data": {
+      "mode": "Practice Test Mode",
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#7b4de9",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "start",
+        "answer",
+        "submit",
+        "retry",
+        "results",
+        "next",
+        "review",
+        "save_results",
+        "share_results"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test assessments Practice Test Mode",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "minutes": 1,
+      "shuffle": false,
+      "questions": [
+        {
+          "id": "questions-1",
+          "type": "choice",
+          "answer": "0",
+          "points": 1,
+          "prompt": "Choose the first option",
+          "choices": "Circle\nSquare",
+          "locales": {
+            "en": {
+              "answer": "0",
+              "prompt": "Choose the first option",
+              "choices": "Circle\nSquare"
+            }
+          }
+        }
+      ],
+      "visibility": "free",
+      "retryPolicy": "allowed",
+      "attemptLimit": 3,
+      "dependencies": [],
+      "passingScore": 70,
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "feedbackPolicy": "after_submit",
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test assessments Practice Test Mode",
+    "topic": null,
+    "family": "assessments",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.971+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.971+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "f630ea71-0012-4f78-97f8-a2c7c4e9a000",
+    "key": "test-assessments-4-f16aab",
+    "data": {
+      "mode": "Result Dashboard",
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#7b4de9",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "start",
+        "answer",
+        "submit",
+        "retry",
+        "results",
+        "next",
+        "review",
+        "save_results",
+        "share_results"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test assessments Result Dashboard",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "minutes": 1,
+      "shuffle": false,
+      "questions": [
+        {
+          "id": "questions-1",
+          "type": "choice",
+          "answer": "0",
+          "points": 1,
+          "prompt": "Choose the first option",
+          "choices": "Circle\nSquare",
+          "locales": {
+            "en": {
+              "answer": "0",
+              "prompt": "Choose the first option",
+              "choices": "Circle\nSquare"
+            }
+          }
+        }
+      ],
+      "visibility": "free",
+      "retryPolicy": "allowed",
+      "attemptLimit": 3,
+      "dependencies": [],
+      "passingScore": 70,
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "feedbackPolicy": "after_submit",
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test assessments Result Dashboard",
+    "topic": null,
+    "family": "assessments",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.986+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.986+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "f6e69c8b-3d20-4ce2-bdc2-fddf28ce8110",
+    "key": "test-activities-1-7d912d",
+    "data": {
+      "goal": "Match school activity pairs",
+      "mode": "Game Canvas",
+      "tasks": [
+        {
+          "id": "tasks-1",
+          "answer": "pair-one",
+          "prompt": "School pair 1",
+          "choices": "Circle\nSquare",
+          "locales": {
+            "en": {
+              "prompt": "School pair 1",
+              "choices": "Circle\nSquare"
+            }
+          }
+        },
+        {
+          "id": "tasks-2",
+          "answer": "pair-one",
+          "prompt": "School pair 2",
+          "choices": "Circle\nSquare",
+          "locales": {
+            "en": {
+              "prompt": "School pair 2",
+              "choices": "Circle\nSquare"
+            }
+          }
+        }
+      ],
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "engine": "matching",
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#14b66e",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "start",
+        "interact",
+        "validate",
+        "retry",
+        "checkpoint",
+        "save_progress",
+        "complete",
+        "share_achievement"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test activities Game Canvas",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "visibility": "free",
+      "attemptLimit": 3,
+      "dependencies": [],
+      "hintsEnabled": true,
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "accessibleText": "Use the labelled keyboard controls.",
+      "requiredLocales": [
+        "en"
+      ],
+      "challengeSeconds": 120,
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test activities Game Canvas",
+    "topic": null,
+    "family": "activities",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:06.997+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:06.997+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "efe29ef3-5281-4367-8c07-9f671058229a",
+    "key": "test-activities-2-c30029",
+    "data": {
+      "goal": "Match school activity pairs",
+      "mode": "Activity Stepper",
+      "tasks": [
+        {
+          "id": "tasks-1",
+          "answer": "pair-one",
+          "prompt": "School pair 1",
+          "choices": "Circle\nSquare",
+          "locales": {
+            "en": {
+              "prompt": "School pair 1",
+              "choices": "Circle\nSquare"
+            }
+          }
+        },
+        {
+          "id": "tasks-2",
+          "answer": "pair-one",
+          "prompt": "School pair 2",
+          "choices": "Circle\nSquare",
+          "locales": {
+            "en": {
+              "prompt": "School pair 2",
+              "choices": "Circle\nSquare"
+            }
+          }
+        }
+      ],
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "engine": "matching",
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#14b66e",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "start",
+        "interact",
+        "validate",
+        "retry",
+        "checkpoint",
+        "save_progress",
+        "complete",
+        "share_achievement"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test activities Activity Stepper",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "visibility": "free",
+      "attemptLimit": 3,
+      "dependencies": [],
+      "hintsEnabled": true,
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "accessibleText": "Use the labelled keyboard controls.",
+      "requiredLocales": [
+        "en"
+      ],
+      "challengeSeconds": 120,
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test activities Activity Stepper",
+    "topic": null,
+    "family": "activities",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:07.01+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:07.01+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "f00b7526-93d0-4351-965f-0d141f67d2f4",
+    "key": "test-activities-3-ab5ee0",
+    "data": {
+      "goal": "Explore a classroom decision scenario",
+      "mode": "Simulation Mode",
+      "tasks": [
+        {
+          "id": "tasks-1",
+          "answer": "0",
+          "prompt": "School pair 1",
+          "choices": "Circle\nSquare",
+          "locales": {
+            "en": {
+              "prompt": "School pair 1",
+              "choices": "Circle\nSquare"
+            }
+          }
+        },
+        {
+          "id": "tasks-2",
+          "answer": "0",
+          "prompt": "School pair 2",
+          "choices": "Circle\nSquare",
+          "locales": {
+            "en": {
+              "prompt": "School pair 2",
+              "choices": "Circle\nSquare"
+            }
+          }
+        }
+      ],
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "engine": "choice",
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#14b66e",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "start",
+        "interact",
+        "validate",
+        "retry",
+        "checkpoint",
+        "save_progress",
+        "complete",
+        "share_achievement"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test activities Simulation Mode",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "visibility": "free",
+      "attemptLimit": 3,
+      "dependencies": [],
+      "hintsEnabled": true,
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "accessibleText": "Use the labelled keyboard controls.",
+      "requiredLocales": [
+        "en"
+      ],
+      "challengeSeconds": 120,
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test activities Simulation Mode",
+    "topic": null,
+    "family": "activities",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:07.022+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:07.022+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "66e85a59-c6fd-4029-94fa-753e5e6c47cf",
+    "key": "test-activities-4-504940",
+    "data": {
+      "goal": "Match school activity pairs",
+      "mode": "Challenge Mode",
+      "tasks": [
+        {
+          "id": "tasks-1",
+          "answer": "pair-one",
+          "prompt": "School pair 1",
+          "choices": "Circle\nSquare",
+          "locales": {
+            "en": {
+              "prompt": "School pair 1",
+              "choices": "Circle\nSquare"
+            }
+          }
+        },
+        {
+          "id": "tasks-2",
+          "answer": "pair-one",
+          "prompt": "School pair 2",
+          "choices": "Circle\nSquare",
+          "locales": {
+            "en": {
+              "prompt": "School pair 2",
+              "choices": "Circle\nSquare"
+            }
+          }
+        }
+      ],
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "engine": "matching",
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#14b66e",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "start",
+        "interact",
+        "validate",
+        "retry",
+        "checkpoint",
+        "save_progress",
+        "complete",
+        "share_achievement"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test activities Challenge Mode",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "visibility": "free",
+      "attemptLimit": 3,
+      "dependencies": [],
+      "hintsEnabled": true,
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "accessibleText": "Use the labelled keyboard controls.",
+      "requiredLocales": [
+        "en"
+      ],
+      "challengeSeconds": 120,
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test activities Challenge Mode",
+    "topic": null,
+    "family": "activities",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:07.034+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:07.034+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "21913ca0-849f-4ecd-a083-0f2945abde0e",
+    "key": "test-tools-1-f38375",
+    "data": {
+      "mode": "Interactive Tool Runtime",
+      "model": "custom_arithmetic",
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "factor": 1,
+      "inputs": [
+        {
+          "id": "inputs-1",
+          "max": 100,
+          "min": 0,
+          "step": 1,
+          "type": "number",
+          "label": "School field 1",
+          "value": 10,
+          "locales": {
+            "en": {
+              "label": "School field 1"
+            }
+          }
+        }
+      ],
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#09a9c0",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "calculate",
+        "compare",
+        "reset",
+        "export",
+        "input",
+        "save_results",
+        "share"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test tools Interactive Tool Runtime",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "operation": "sum",
+      "precision": 2,
+      "outputUnit": "items",
+      "visibility": "free",
+      "assumptions": "Educational practice quantities only.",
+      "methodology": "Add the declared quantities.",
+      "dependencies": [],
+      "modelVersion": 1,
+      "defaultLocale": "en",
+      "exportAllowed": true,
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test tools Interactive Tool Runtime",
+    "topic": null,
+    "family": "tools",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:07.046+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:07.046+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "0841de73-5656-4d9b-92c9-d18cd70def54",
+    "key": "test-tools-2-c7bc0f",
+    "data": {
+      "mode": "Calculator Panel",
+      "model": "custom_arithmetic",
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "factor": 1,
+      "inputs": [
+        {
+          "id": "inputs-1",
+          "max": 100,
+          "min": 0,
+          "step": 1,
+          "type": "number",
+          "label": "School field 1",
+          "value": 10,
+          "locales": {
+            "en": {
+              "label": "School field 1"
+            }
+          }
+        }
+      ],
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#09a9c0",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "calculate",
+        "compare",
+        "reset",
+        "export",
+        "input",
+        "save_results",
+        "share"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test tools Calculator Panel",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "operation": "sum",
+      "precision": 2,
+      "outputUnit": "items",
+      "visibility": "free",
+      "assumptions": "Educational practice quantities only.",
+      "methodology": "Add the declared quantities.",
+      "dependencies": [],
+      "modelVersion": 1,
+      "defaultLocale": "en",
+      "exportAllowed": true,
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test tools Calculator Panel",
+    "topic": null,
+    "family": "tools",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:07.056+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:07.056+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "e51743c1-b157-41b4-8afc-5ecfc8d9120a",
+    "key": "test-tools-3-566513",
+    "data": {
+      "mode": "Simulation Dashboard",
+      "model": "custom_arithmetic",
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "factor": 1,
+      "inputs": [
+        {
+          "id": "inputs-1",
+          "max": 100,
+          "min": 0,
+          "step": 1,
+          "type": "number",
+          "label": "School field 1",
+          "value": 10,
+          "locales": {
+            "en": {
+              "label": "School field 1"
+            }
+          }
+        }
+      ],
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#09a9c0",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "calculate",
+        "compare",
+        "reset",
+        "export",
+        "input",
+        "save_results",
+        "share"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test tools Simulation Dashboard",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "operation": "sum",
+      "precision": 2,
+      "outputUnit": "items",
+      "visibility": "free",
+      "assumptions": "Educational practice quantities only.",
+      "methodology": "Add the declared quantities.",
+      "dependencies": [],
+      "modelVersion": 1,
+      "defaultLocale": "en",
+      "exportAllowed": true,
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test tools Simulation Dashboard",
+    "topic": null,
+    "family": "tools",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:07.067+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:07.067+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "2a181b8d-bf36-42f9-8165-2068cba726c9",
+    "key": "test-tools-4-ab2beb",
+    "data": {
+      "mode": "Form-Result Interface",
+      "model": "custom_arithmetic",
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "factor": 1,
+      "inputs": [
+        {
+          "id": "inputs-1",
+          "max": 100,
+          "min": 0,
+          "step": 1,
+          "type": "number",
+          "label": "School field 1",
+          "value": 10,
+          "locales": {
+            "en": {
+              "label": "School field 1"
+            }
+          }
+        }
+      ],
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#09a9c0",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "calculate",
+        "compare",
+        "reset",
+        "export",
+        "input",
+        "save_results",
+        "share"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test tools Form-Result Interface",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "operation": "sum",
+      "precision": 2,
+      "outputUnit": "items",
+      "visibility": "free",
+      "assumptions": "Educational practice quantities only.",
+      "methodology": "Add the declared quantities.",
+      "dependencies": [],
+      "modelVersion": 1,
+      "defaultLocale": "en",
+      "exportAllowed": true,
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test tools Form-Result Interface",
+    "topic": null,
+    "family": "tools",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:07.08+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:07.08+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "8724891e-d6e2-4512-8c04-0b80d2cd5067",
+    "key": "test-planners-1-aa54ba",
+    "data": {
+      "mode": "Printable Preview",
+      "items": [
+        {
+          "id": "items-1",
+          "max": 100,
+          "min": 0,
+          "type": "textarea",
+          "label": "School field 1",
+          "value": "Family reading",
+          "locales": {
+            "en": {
+              "label": "School field 1",
+              "options": "Morning\nAfternoon"
+            }
+          },
+          "options": "Morning\nAfternoon",
+          "required": true
+        }
+      ],
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#f17742",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "duplicate",
+        "edit",
+        "check",
+        "save",
+        "print",
+        "preview",
+        "download",
+        "share"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test planners Printable Preview",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "visibility": "free",
+      "dependencies": [],
+      "printAllowed": false,
+      "savingPolicy": "local_copy",
+      "defaultLocale": "en",
+      "exportAllowed": true,
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test planners Printable Preview",
+    "topic": null,
+    "family": "planners",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:07.091+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:07.091+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "4cb56ee2-3059-497f-ab25-e77c995f4ace",
+    "key": "test-planners-2-c2d612",
+    "data": {
+      "mode": "Editable Planner View",
+      "items": [
+        {
+          "id": "items-1",
+          "max": 100,
+          "min": 0,
+          "type": "textarea",
+          "label": "School field 1",
+          "value": "Family reading",
+          "locales": {
+            "en": {
+              "label": "School field 1",
+              "options": "Morning\nAfternoon"
+            }
+          },
+          "options": "Morning\nAfternoon",
+          "required": true
+        }
+      ],
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#f17742",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "duplicate",
+        "edit",
+        "check",
+        "save",
+        "print",
+        "preview",
+        "download",
+        "share"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test planners Editable Planner View",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "visibility": "free",
+      "dependencies": [],
+      "printAllowed": false,
+      "savingPolicy": "local_copy",
+      "defaultLocale": "en",
+      "exportAllowed": true,
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test planners Editable Planner View",
+    "topic": null,
+    "family": "planners",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:07.101+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:07.101+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "13ffab4c-bde0-467d-ae50-af7a386c9427",
+    "key": "test-planners-3-2434b7",
+    "data": {
+      "mode": "Template Gallery",
+      "items": [
+        {
+          "id": "items-1",
+          "max": 100,
+          "min": 0,
+          "type": "textarea",
+          "label": "School field 1",
+          "value": "Family reading",
+          "locales": {
+            "en": {
+              "label": "School field 1",
+              "options": "Morning\nAfternoon"
+            }
+          },
+          "options": "Morning\nAfternoon",
+          "required": true
+        }
+      ],
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#f17742",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "duplicate",
+        "edit",
+        "check",
+        "save",
+        "print",
+        "preview",
+        "download",
+        "share"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test planners Template Gallery",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "visibility": "free",
+      "dependencies": [],
+      "printAllowed": false,
+      "savingPolicy": "local_copy",
+      "defaultLocale": "en",
+      "exportAllowed": true,
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test planners Template Gallery",
+    "topic": null,
+    "family": "planners",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:07.113+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:07.113+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "5a9f1aff-ae68-48b0-8676-f9e591667ed0",
+    "key": "test-planners-4-bdeeed",
+    "data": {
+      "mode": "Checklist Mode",
+      "items": [
+        {
+          "id": "items-1",
+          "max": 100,
+          "min": 0,
+          "type": "textarea",
+          "label": "School field 1",
+          "value": "Family reading",
+          "locales": {
+            "en": {
+              "label": "School field 1",
+              "options": "Morning\nAfternoon"
+            }
+          },
+          "options": "Morning\nAfternoon",
+          "required": true
+        }
+      ],
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#f17742",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "duplicate",
+        "edit",
+        "check",
+        "save",
+        "print",
+        "preview",
+        "download",
+        "share"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test planners Checklist Mode",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "visibility": "free",
+      "dependencies": [],
+      "printAllowed": false,
+      "savingPolicy": "local_copy",
+      "defaultLocale": "en",
+      "exportAllowed": true,
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test planners Checklist Mode",
+    "topic": null,
+    "family": "planners",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:07.124+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:07.124+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "fd2ca65c-8f7c-4c06-a775-3ae37ba21edc",
+    "key": "test-forms-1-034dff",
+    "data": {
+      "mode": "Form Flow",
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "fields": [
+        {
+          "id": "fields-1",
+          "max": 100,
+          "min": 0,
+          "help": "Complete this field.",
+          "step": 1,
+          "type": "text",
+          "label": "School field 1",
+          "locales": {
+            "en": {
+              "help": "Complete this field.",
+              "label": "School field 1",
+              "options": "Morning\nAfternoon"
+            }
+          },
+          "options": "Morning\nAfternoon",
+          "required": true,
+          "condition": "always"
+        }
+      ],
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#4975e9",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "draft",
+        "upload",
+        "submit",
+        "receipt",
+        "status",
+        "fill",
+        "save_draft",
+        "confirm",
+        "edit",
+        "track_status"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test forms Form Flow",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "visibility": "free",
+      "destination": "dce",
+      "draftPolicy": "until_submit",
+      "consentLabel": "I agree to submit this request.",
+      "dependencies": [],
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "statusWorkflow": "open,assigned,waiting_customer,resolved,closed",
+      "attachmentMaxMb": 10,
+      "attachmentTypes": "application/pdf",
+      "requiredLocales": [
+        "en"
+      ],
+      "responsibleTeam": "School support",
+      "definitionVersion": 2,
+      "privateReceiverId": "40000000-0000-4000-8000-000000000001"
+    },
+    "kind": "experience",
+    "title": "Test forms Form Flow",
+    "topic": null,
+    "family": "forms",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:07.136+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:07.136+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "621edd03-f010-4fd0-942a-7a970d986808",
+    "key": "test-forms-2-f455dd",
+    "data": {
+      "mode": "Multistep Application",
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "fields": [
+        {
+          "id": "fields-1",
+          "max": 100,
+          "min": 0,
+          "help": "Complete this field.",
+          "step": 1,
+          "type": "text",
+          "label": "School field 1",
+          "locales": {
+            "en": {
+              "help": "Complete this field.",
+              "label": "School field 1",
+              "options": "Morning\nAfternoon"
+            }
+          },
+          "options": "Morning\nAfternoon",
+          "required": true,
+          "condition": "always"
+        },
+        {
+          "id": "fields-2",
+          "max": 100,
+          "min": 0,
+          "help": "Complete this field.",
+          "step": 2,
+          "type": "text",
+          "label": "School field 2",
+          "locales": {
+            "en": {
+              "help": "Complete this field.",
+              "label": "School field 2",
+              "options": "Morning\nAfternoon"
+            }
+          },
+          "options": "Morning\nAfternoon",
+          "required": true,
+          "condition": "always"
+        }
+      ],
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#4975e9",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "draft",
+        "upload",
+        "submit",
+        "receipt",
+        "status",
+        "fill",
+        "save_draft",
+        "confirm",
+        "edit",
+        "track_status"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test forms Multistep Application",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "visibility": "free",
+      "destination": "dce",
+      "draftPolicy": "until_submit",
+      "consentLabel": "I agree to submit this request.",
+      "dependencies": [],
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "statusWorkflow": "open,assigned,waiting_customer,resolved,closed",
+      "attachmentMaxMb": 10,
+      "attachmentTypes": "application/pdf",
+      "requiredLocales": [
+        "en"
+      ],
+      "responsibleTeam": "School support",
+      "definitionVersion": 2,
+      "privateReceiverId": "40000000-0000-4000-8000-000000000001"
+    },
+    "kind": "experience",
+    "title": "Test forms Multistep Application",
+    "topic": null,
+    "family": "forms",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:07.147+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:07.147+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "ba6cb182-7f53-45ad-9678-55309a029687",
+    "key": "test-forms-3-b96060",
+    "data": {
+      "mode": "Upload-Enabled Submission Page",
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "fields": [
+        {
+          "id": "fields-1",
+          "max": 100,
+          "min": 0,
+          "help": "Complete this field.",
+          "step": 1,
+          "type": "file",
+          "label": "School field 1",
+          "locales": {
+            "en": {
+              "help": "Complete this field.",
+              "label": "School field 1",
+              "options": "Morning\nAfternoon"
+            }
+          },
+          "options": "Morning\nAfternoon",
+          "required": true,
+          "condition": "always"
+        }
+      ],
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#4975e9",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "draft",
+        "upload",
+        "submit",
+        "receipt",
+        "status",
+        "fill",
+        "save_draft",
+        "confirm",
+        "edit",
+        "track_status"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test forms Upload-Enabled Submission Page",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "visibility": "free",
+      "destination": "dce",
+      "draftPolicy": "until_submit",
+      "consentLabel": "I agree to submit this request.",
+      "dependencies": [],
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "statusWorkflow": "open,assigned,waiting_customer,resolved,closed",
+      "attachmentMaxMb": 10,
+      "attachmentTypes": "application/pdf",
+      "requiredLocales": [
+        "en"
+      ],
+      "responsibleTeam": "School support",
+      "definitionVersion": 2,
+      "privateReceiverId": "40000000-0000-4000-8000-000000000001"
+    },
+    "kind": "experience",
+    "title": "Test forms Upload-Enabled Submission Page",
+    "topic": null,
+    "family": "forms",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:07.159+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:07.159+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "77224e94-14e5-4c8a-9e8d-4d5424d84a43",
+    "key": "test-forms-4-9765db",
+    "data": {
+      "mode": "Booking Request Flow",
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "fields": [
+        {
+          "id": "fields-1",
+          "max": 100,
+          "min": 0,
+          "help": "Complete this field.",
+          "step": 1,
+          "type": "text",
+          "label": "School field 1",
+          "locales": {
+            "en": {
+              "help": "Complete this field.",
+              "label": "School field 1",
+              "options": "Morning\nAfternoon"
+            }
+          },
+          "options": "Morning\nAfternoon",
+          "required": true,
+          "condition": "always"
+        }
+      ],
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#4975e9",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "draft",
+        "upload",
+        "submit",
+        "receipt",
+        "status",
+        "fill",
+        "save_draft",
+        "confirm",
+        "edit",
+        "track_status"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test forms Booking Request Flow",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "visibility": "free",
+      "destination": "hotline",
+      "draftPolicy": "until_submit",
+      "consentLabel": "I agree to submit this request.",
+      "dependencies": [],
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "statusWorkflow": "open,assigned,waiting_customer,resolved,closed",
+      "attachmentMaxMb": 10,
+      "attachmentTypes": "application/pdf",
+      "requiredLocales": [
+        "en"
+      ],
+      "responsibleTeam": "School support",
+      "definitionVersion": 2,
+      "privateReceiverId": "40000000-0000-4000-8000-000000000001"
+    },
+    "kind": "experience",
+    "title": "Test forms Booking Request Flow",
+    "topic": null,
+    "family": "forms",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:07.171+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:07.171+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "db2a0c1e-39ca-4cb7-967d-fdbf3c75fc88",
+    "key": "test-community-1-df620b",
+    "data": {
+      "mode": "Review Feed",
+      "rules": [
+        {
+          "id": "rules-1",
+          "text": "Keep personal information private.",
+          "title": "Respect family privacy",
+          "locales": {
+            "en": {
+              "text": "Keep personal information private.",
+              "title": "Respect family privacy"
+            }
+          }
+        }
+      ],
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#ed4b83",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "review",
+        "rate",
+        "comment",
+        "report",
+        "like",
+        "share",
+        "save"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test community Review Feed",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "moderation": "pre_moderated",
+      "visibility": "free",
+      "eligibility": "native_account",
+      "dependencies": [],
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "reportReasons": "Privacy concern\nInappropriate content",
+      "ratingsEnabled": true,
+      "reportsEnabled": true,
+      "requiredLocales": [
+        "en"
+      ],
+      "visibilityPolicy": "public",
+      "definitionVersion": 2,
+      "contributionPolicy": "Respect family privacy."
+    },
+    "kind": "experience",
+    "title": "Test community Review Feed",
+    "topic": null,
+    "family": "community",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:07.184+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:07.184+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "59ab9bc7-0c41-4b7f-9c37-4a7558cd56a2",
+    "key": "test-community-2-5873fc",
+    "data": {
+      "mode": "Social Proof Wall",
+      "rules": [
+        {
+          "id": "rules-1",
+          "text": "Keep personal information private.",
+          "title": "Respect family privacy",
+          "locales": {
+            "en": {
+              "text": "Keep personal information private.",
+              "title": "Respect family privacy"
+            }
+          }
+        }
+      ],
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#ed4b83",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "review",
+        "rate",
+        "comment",
+        "report",
+        "like",
+        "share",
+        "save"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test community Social Proof Wall",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "moderation": "pre_moderated",
+      "visibility": "free",
+      "eligibility": "native_account",
+      "dependencies": [],
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "reportReasons": "Privacy concern\nInappropriate content",
+      "ratingsEnabled": true,
+      "reportsEnabled": true,
+      "requiredLocales": [
+        "en"
+      ],
+      "visibilityPolicy": "public",
+      "definitionVersion": 2,
+      "contributionPolicy": "Respect family privacy."
+    },
+    "kind": "experience",
+    "title": "Test community Social Proof Wall",
+    "topic": null,
+    "family": "community",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:07.196+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:07.196+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "76f21ca2-21c0-4529-9f60-93848468aac4",
+    "key": "test-community-3-67f0b9",
+    "data": {
+      "mode": "Q&A Thread",
+      "rules": [
+        {
+          "id": "rules-1",
+          "text": "Keep personal information private.",
+          "title": "Respect family privacy",
+          "locales": {
+            "en": {
+              "text": "Keep personal information private.",
+              "title": "Respect family privacy"
+            }
+          }
+        }
+      ],
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#ed4b83",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "review",
+        "rate",
+        "comment",
+        "report",
+        "like",
+        "share",
+        "save"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test community Q&A Thread",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "moderation": "pre_moderated",
+      "visibility": "free",
+      "eligibility": "native_account",
+      "dependencies": [],
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "reportReasons": "Privacy concern\nInappropriate content",
+      "ratingsEnabled": true,
+      "reportsEnabled": true,
+      "requiredLocales": [
+        "en"
+      ],
+      "visibilityPolicy": "public",
+      "definitionVersion": 2,
+      "contributionPolicy": "Respect family privacy."
+    },
+    "kind": "experience",
+    "title": "Test community Q&A Thread",
+    "topic": null,
+    "family": "community",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:07.205+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:07.205+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "85eb49c6-d52f-4c9c-b118-b5f207a5152e",
+    "key": "test-community-4-3f57cc",
+    "data": {
+      "mode": "Community Hub",
+      "rules": [
+        {
+          "id": "rules-1",
+          "text": "Keep personal information private.",
+          "title": "Respect family privacy",
+          "locales": {
+            "en": {
+              "text": "Keep personal information private.",
+              "title": "Respect family privacy"
+            }
+          }
+        }
+      ],
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#ed4b83",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "review",
+        "rate",
+        "comment",
+        "report",
+        "like",
+        "share",
+        "save"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test community Community Hub",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "moderation": "pre_moderated",
+      "visibility": "free",
+      "eligibility": "native_account",
+      "dependencies": [],
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "reportReasons": "Privacy concern\nInappropriate content",
+      "ratingsEnabled": true,
+      "reportsEnabled": true,
+      "requiredLocales": [
+        "en"
+      ],
+      "visibilityPolicy": "public",
+      "definitionVersion": 2,
+      "contributionPolicy": "Respect family privacy."
+    },
+    "kind": "experience",
+    "title": "Test community Community Hub",
+    "topic": null,
+    "family": "community",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:07.217+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:07.217+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "a8551e17-e20a-413c-bb3f-e1186027b20c",
+    "key": "test-commerce-1-abe5c4",
+    "data": {
+      "mode": "Shoppable Article",
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#12b788",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "offers": [
+        {
+          "id": "offers-1",
+          "role": "related",
+          "label": "School field 1",
+          "action": "purchase",
+          "locales": {
+            "en": {
+              "label": "School field 1"
+            }
+          },
+          "nativeId": "30000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "actions": [
+        "details",
+        "configure",
+        "native_handoff",
+        "view_details",
+        "add_to_cart",
+        "purchase",
+        "enrolment",
+        "booking",
+        "enquiry",
+        "download",
+        "save",
+        "share",
+        "review"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test commerce Shoppable Article",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "visibility": "free",
+      "dependencies": [],
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2,
+      "deliveryAuthority": "native_order"
+    },
+    "kind": "experience",
+    "title": "Test commerce Shoppable Article",
+    "topic": null,
+    "family": "commerce",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:07.228+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:07.228+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "d7b95a92-484b-4e24-9b6f-541cb27643dd",
+    "key": "test-commerce-2-c2dadd",
+    "data": {
+      "mode": "Buyable Resource Page",
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#12b788",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "offers": [
+        {
+          "id": "offers-1",
+          "role": "related",
+          "label": "School field 1",
+          "action": "purchase",
+          "locales": {
+            "en": {
+              "label": "School field 1"
+            }
+          },
+          "nativeId": "30000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "actions": [
+        "details",
+        "configure",
+        "native_handoff",
+        "view_details",
+        "add_to_cart",
+        "purchase",
+        "enrolment",
+        "booking",
+        "enquiry",
+        "download",
+        "save",
+        "share",
+        "review"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test commerce Buyable Resource Page",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "visibility": "free",
+      "dependencies": [],
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2,
+      "deliveryAuthority": "native_order"
+    },
+    "kind": "experience",
+    "title": "Test commerce Buyable Resource Page",
+    "topic": null,
+    "family": "commerce",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:07.244+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:07.244+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "1acc3710-7540-48b1-9432-e0002ebff081",
+    "key": "test-commerce-3-0f7c09",
+    "data": {
+      "mode": "Course + Product Page",
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#12b788",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "offers": [
+        {
+          "id": "offers-1",
+          "role": "related",
+          "label": "School field 1",
+          "action": "purchase",
+          "locales": {
+            "en": {
+              "label": "School field 1"
+            }
+          },
+          "nativeId": "30000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "actions": [
+        "details",
+        "configure",
+        "native_handoff",
+        "view_details",
+        "add_to_cart",
+        "purchase",
+        "enrolment",
+        "booking",
+        "enquiry",
+        "download",
+        "save",
+        "share",
+        "review"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test commerce Course + Product Page",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "visibility": "free",
+      "dependencies": [],
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2,
+      "deliveryAuthority": "native_order"
+    },
+    "kind": "experience",
+    "title": "Test commerce Course + Product Page",
+    "topic": null,
+    "family": "commerce",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:07.256+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:07.256+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "789473ee-e0e4-429f-8cf3-25d0b385362a",
+    "key": "test-commerce-4-439099",
+    "data": {
+      "mode": "Download Delivery Experience",
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#12b788",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "offers": [
+        {
+          "id": "offers-1",
+          "role": "related",
+          "label": "School field 1",
+          "action": "purchase",
+          "locales": {
+            "en": {
+              "label": "School field 1"
+            }
+          },
+          "nativeId": "30000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "actions": [
+        "details",
+        "configure",
+        "native_handoff",
+        "view_details",
+        "add_to_cart",
+        "purchase",
+        "enrolment",
+        "booking",
+        "enquiry",
+        "download",
+        "save",
+        "share",
+        "review"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test commerce Download Delivery Experience",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "visibility": "free",
+      "dependencies": [],
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2,
+      "deliveryAuthority": "native_order"
+    },
+    "kind": "experience",
+    "title": "Test commerce Download Delivery Experience",
+    "topic": null,
+    "family": "commerce",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:07.268+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:07.268+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "027a7b8a-2b3c-4ab8-a50b-8aa8c3a33da6",
+    "key": "test-bundles-1-c15206",
+    "data": {
+      "mode": "Guided Bundle Path",
+      "steps": [
+        {
+          "id": "steps-1",
+          "title": "Read the school guide",
+          "weight": 1,
+          "locales": {
+            "en": {
+              "title": "Read the school guide"
+            }
+          },
+          "required": true,
+          "condition": "always",
+          "releaseId": "62b05b59-c648-48d1-a662-ab987beb98b7",
+          "experienceId": "e8276ccc-786c-45b1-87c4-3df1c2d3c1e6",
+          "accessDependency": "inherit"
+        }
+      ],
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#7958df",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "start",
+        "continue",
+        "open",
+        "complete",
+        "restart",
+        "resume",
+        "save_progress",
+        "share"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test bundles Guided Bundle Path",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "completion": "required_steps",
+      "visibility": "free",
+      "allowRestart": true,
+      "dependencies": [],
+      "restartScope": "journey_only",
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test bundles Guided Bundle Path",
+    "topic": null,
+    "family": "bundles",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:07.28+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:07.28+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "dad0385d-ae01-4557-9d28-b501c5795c30",
+    "key": "test-bundles-2-36f86a",
+    "data": {
+      "mode": "Bundle Dashboard",
+      "steps": [
+        {
+          "id": "steps-1",
+          "title": "Read the school guide",
+          "weight": 1,
+          "locales": {
+            "en": {
+              "title": "Read the school guide"
+            }
+          },
+          "required": true,
+          "condition": "always",
+          "releaseId": "62b05b59-c648-48d1-a662-ab987beb98b7",
+          "experienceId": "e8276ccc-786c-45b1-87c4-3df1c2d3c1e6",
+          "accessDependency": "inherit"
+        }
+      ],
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#7958df",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "start",
+        "continue",
+        "open",
+        "complete",
+        "restart",
+        "resume",
+        "save_progress",
+        "share"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test bundles Bundle Dashboard",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "completion": "required_steps",
+      "visibility": "free",
+      "allowRestart": true,
+      "dependencies": [],
+      "restartScope": "journey_only",
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test bundles Bundle Dashboard",
+    "topic": null,
+    "family": "bundles",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:07.293+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:07.293+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "47e5547e-bbfa-4df3-a1c3-c08449548edd",
+    "key": "test-bundles-3-f24e12",
+    "data": {
+      "mode": "Sequential Playlist",
+      "steps": [
+        {
+          "id": "steps-1",
+          "title": "Read the school guide",
+          "weight": 1,
+          "locales": {
+            "en": {
+              "title": "Read the school guide"
+            }
+          },
+          "required": true,
+          "condition": "always",
+          "releaseId": "62b05b59-c648-48d1-a662-ab987beb98b7",
+          "experienceId": "e8276ccc-786c-45b1-87c4-3df1c2d3c1e6",
+          "accessDependency": "inherit"
+        }
+      ],
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#7958df",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "start",
+        "continue",
+        "open",
+        "complete",
+        "restart",
+        "resume",
+        "save_progress",
+        "share"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test bundles Sequential Playlist",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "completion": "required_steps",
+      "visibility": "free",
+      "allowRestart": true,
+      "dependencies": [],
+      "restartScope": "journey_only",
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test bundles Sequential Playlist",
+    "topic": null,
+    "family": "bundles",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:07.306+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:07.306+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  },
+  {
+    "id": "91ac4c2c-5563-4597-9ef3-b90b5bd1d479",
+    "key": "test-bundles-4-297156",
+    "data": {
+      "mode": "Starter Kit Experience",
+      "steps": [
+        {
+          "id": "steps-1",
+          "title": "Read the school guide",
+          "weight": 1,
+          "locales": {
+            "en": {
+              "title": "Read the school guide"
+            }
+          },
+          "required": true,
+          "condition": "always",
+          "releaseId": "62b05b59-c648-48d1-a662-ab987beb98b7",
+          "experienceId": "e8276ccc-786c-45b1-87c4-3df1c2d3c1e6",
+          "accessDependency": "inherit"
+        }
+      ],
+      "units": [],
+      "ageMax": 18,
+      "ageMin": 0,
+      "layout": {
+        "theme": "reference-light",
+        "accent": "#7958df",
+        "regions": [
+          "stage",
+          "details",
+          "panels",
+          "actions",
+          "continuity",
+          "monetization"
+        ]
+      },
+      "actions": [
+        "start",
+        "continue",
+        "open",
+        "complete",
+        "restart",
+        "resume",
+        "save_progress",
+        "share"
+      ],
+      "locales": {
+        "en": {
+          "title": "Test bundles Starter Kit Experience",
+          "summary": "Isolated authored definition"
+        }
+      },
+      "completion": "required_steps",
+      "visibility": "free",
+      "allowRestart": true,
+      "dependencies": [],
+      "restartScope": "journey_only",
+      "defaultLocale": "en",
+      "publicEnabled": false,
+      "requiredLocales": [
+        "en"
+      ],
+      "definitionVersion": 2
+    },
+    "kind": "experience",
+    "title": "Test bundles Starter Kit Experience",
+    "topic": null,
+    "family": "bundles",
+    "audience": "parent",
+    "revision": 1,
+    "lifecycle": "draft",
+    "scope_key": "~|~",
+    "tenant_id": null,
+    "created_at": "2026-10-15T07:42:07.319+00:00",
+    "created_by": "10000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-15T07:42:07.319+00:00",
+    "updated_by": "10000000-0000-4000-8000-000000000001",
+    "territory_id": null,
+    "published_release_id": null
+  }
+]

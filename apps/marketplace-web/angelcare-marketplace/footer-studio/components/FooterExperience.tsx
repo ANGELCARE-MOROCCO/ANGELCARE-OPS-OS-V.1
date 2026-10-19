@@ -1,4 +1,5 @@
 "use client"
+import {KidFlixMarketplaceEntry} from '../../kidflix/MarketplaceEntry'
 
 import Image from 'next/image'
 import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink'
@@ -74,6 +75,7 @@ export function FooterExperience({experience,marketplace=true,preview=false}:Pro
         <Link href={`/angelcare-marketplace/${locale}`} className={styles.whiteLogo} aria-label="ANGELCARE Global Marketplace" onClick={click('link_click','brand-logo')}>
           <Image src={resolveOfficialLogo(profile)} alt="ANGELCARE" width={720} height={240}/>
         </Link>
+        <div data-kidflix-marketplace-entry="footer"><KidFlixMarketplaceEntry placement="footer"/></div>
         {profile.settings.show_brand_eyebrow!==false?<span className={styles.brandEyebrow}>{localized(brand.eyebrow,locale,'ANGELCARE GLOBAL MARKETPLACE')}</span>:null}
         <h2 id={brandId} hidden={profile.settings.show_brand_title===false}>{localized(brand.title,locale)}</h2>
         {profile.settings.show_brand_description!==false?<><p>{localized(brand.description,locale)}</p>{localText(brand.description_secondary,locale)?<p className={styles.brandSecondaryCopy}>{localText(brand.description_secondary,locale)}</p>:null}</>:null}

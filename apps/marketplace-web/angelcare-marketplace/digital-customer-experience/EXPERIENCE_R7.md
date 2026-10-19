@@ -1,0 +1,31 @@
+# DCE R7 — Experience authoring and operational completion
+
+This extends the installed DCE world. The sixteen families, sixty-four canonical modes, existing navigation, stylesheet, publication authority, media gateway and operator permissions remain the foundation. Public routes and real ad serving belong to Chapter 2.
+
+## Operator route
+
+1. **Experiences → create → family and mode.** Choose the audience and author the source language. A template can be used as a governed start. The template bank can append independent copies of questions; originals are retained.
+2. **Dossier / Authoring.** Write content, instructions and language-specific labels. Answer choices have persistent identities; moving a choice preserves its correct answer and translated position. Numeric questions support a tolerance; multi-answer questions can award partial credit with a penalty for incorrect choices.
+3. **Experience designer → Educational brief.** Set subject, skills, difficulty, educational level, duration, objectives, required materials and adult guidance. These are public, explicit fields, not private editorial notes.
+4. **Results & recommendations.** Author score bands, completion conditions, guidance, optional badge text and next actions. Test score selection. Higher priority wins overlapping ranges. An enabled scored result definition must cover 0–100. Related, next, alternative and remedial resources remain explicit native links; their language editions must be released.
+5. **Personal outputs.** Create enabled PDF/PNG layouts for a result, planner, private questionnaire, cards, pages or a tool result. Set paper, orientation, margins, resolution, page limits and a filename. Also enable native download permission in Actions & outputs. Existing source-file downloads remain there, separately.
+6. **Discovery.** Classify the resource and configure featured/collection/topic/skill/seasonal placements. Optional start/end dates control placement eligibility. Categories → Published discovery collections reads current released language snapshots, never unsaved edits.
+7. **Advertising map.** Mark natural opportunities and select their native governing policies. Inspect eligibility in the protected preview. The existing AdSense workspace owns provider configuration, audience restrictions and unit governance. Advertising cannot gate a free result or file. Staff previews never request Google impressions.
+8. **Continuity.** Choose none/session/device, expiry and what to do after an edition changes. A changed compatible edition keeps only recognised identities and clears stale grades. Ask requires explicit restoration; restart discards the old copy. Saved items, shares, outputs and completion remain separate concepts.
+9. **Language structure.** Keep AR/FR/EN independently publishable. Exclude or reorder individual native units for one language without changing the other editions. Translation coverage ignores intentionally excluded or disabled units. Supply localised media through the existing media controls.
+10. **Composition / Journey.** Use the inherited section and journey controls. Story choices reference real pages. Prerequisites and score-based entry conditions are validated, including combined dependency cycles. Bundles can run a released child inline; its real score/completion feeds branching. Manual staff scenarios remain labelled scenarios.
+11. **Editions, actions & outputs.** Save, inspect each language, review, approve and release through the native authority. Approval remains tied to its exact language definition hash. R7 does not introduce a second publication system.
+12. **Certificate Requests.** Only an explicit per-course certificate option creates a reception request. Operators can inspect course/result evidence, assign, follow up, issue a private PDF and manage retention through the existing workspace. The new correspondence panel prepares a reviewed message, then requires explicit dispatch through Email OS. Names and contacts are taken from the authorised request, not a customer-account requirement.
+
+## Operational safety
+
+- Private server recovery is actor/scope/key isolated, version checked and distinct from saving a dossier. It activates only after SQL15. Local draft recovery remains available. Server recovery has a 30-day availability window; source drafts and releases have their existing retention rules.
+- Batch Run advances bounded, saved checkpoints while the page remains open. Stop takes effect after the current request. Leaving the page stops further requests; saved work can resume. This is not a new background worker.
+- Certificate message preparation is transactional and idempotent. Dispatch rechecks the current guest contact and uses the existing supports mailbox/Email OS. `provider_accepted` is not an inbox-delivery claim. `sending` and `delivery_unknown` cannot silently resend. Pending/ambiguous communication blocks contact anonymisation. Hold release requires a reason and is audited.
+- Original native PDF pages retain their original formatting when assembled. Native images are contained on the selected paper. Personal text results/planners use browser text shaping, including Arabic, rendered into PDF/PNG. PNG exports one page; use PDF for multiple pages. Sources: 25 MB each, 100 MB cumulative, at most 40 output pages, image sources below 50 megapixels. These limits prevent a large export freezing a browser.
+- Restricted HTML supports native choice buttons and bound image placeholders. Authored scripts, arbitrary URLs, network requests and submissions do not run. This is a controlled experience layout, not an arbitrary application-hosting engine.
+- Preview attempt counters demonstrate authored policies. Browser progress is not certified exam evidence. Certificate evidence and attempt ownership stay under the existing server authority.
+
+## Activation remains pending
+
+All production SQL remains pending. SQL15 follows the existing additive history 01 → 04 → 06 → 08 → 11 → 13. SQL16 is read-only verification after separate activation. Never run an old migration after15 as a substitute for rollback: older function definitions can replace newer authorities. The source installer executes no SQL or environment changes.

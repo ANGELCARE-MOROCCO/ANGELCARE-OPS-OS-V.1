@@ -1,47 +1,610 @@
-'use client'
-import { useState } from 'react'
-import { formValueErrors, visibleFormFields } from '../../capabilities'
-import { availableNodes, blankContinuity, completedJourney } from '../../continuity'
-import { safeHref } from '../../model'
-import { array, localized, number, object, text, type Data } from '../../types'
-import { Badge, Button, Empty, Field, Icon, Switch, T, download, useUI } from '../ui'
-import { StageProps, unitText } from './shared'
-import s from '../workspace.module.css'
+"use client";
+import { useState, useEffect } from "react";
+import { formValueErrors, visibleFormFields } from "../../capabilities";
+import {
+  availableNodes,
+  blankContinuity,
+  completedJourney,
+  journeyProgress,
+} from "../../continuity";
+import { safeHref } from "../../model";
+import { array, localized, number, object, text, type Data } from "../../types";
+import {
+  Badge,
+  Button,
+  Empty,
+  Field,
+  Icon,
+  Switch,
+  T,
+  download,
+  useUI,
+} from "../ui";
+import { RuntimePreview } from "../Preview";
+import { StageProps, unitText } from "./shared";
+import s from "../workspace.module.css";
 
-export function FormStage({data:d,locale,engine}:StageProps){
- const fields=array(d.fields),steps=[...new Set(fields.map(f=>number(f.step,1)))].sort((a,b)=>a-b),[stepIndex,setStep]=useState(0),[values,setValues]=useState<Data>(Object.fromEntries(fields.filter(f=>f.defaultValue!==undefined).map(f=>[text(f.id),f.defaultValue]))),[consent,setConsent]=useState(false),[errors,setErrors]=useState<ReturnType<typeof formValueErrors>>([]),[saved,setSaved]=useState<Data|null>(null),[inspected,setInspected]=useState(false),[files,setFiles]=useState<Record<string,{name:string;bytes:number;type:string}>>({})
- const visible=visibleFormFields(fields,values,engine==='multistep'?steps[stepIndex]:undefined)
- function validate(all=false){const issues=formValueErrors(all?fields:visible,values);setErrors(issues);return !issues.length}
- return <div data-engine={engine}>
-  {engine==='multistep'&&<div className={s.stepPills}>{steps.map((step,i)=><button key={step} aria-current={stepIndex===i?'step':undefined} onClick={()=>{if(i<stepIndex||validate())setStep(i)}}><T v={['Step','Étape','مرحلة']}/> {step}</button>)}</div>}
-  <form onSubmit={e=>{e.preventDefault();if(validate(true)&&consent)setInspected(true);else if(!consent)setErrors(old=>[...old,{path:'consent',message:'Consent is required / Consentement requis / الموافقة مطلوبة'}])}}>
-   {visible.map(f=>{const id=text(f.id),value=values[id],label=unitText(f,'label',locale)+(f.required?' *':'');return <div key={id}><Field label={label} hint={unitText(f,'help',locale)}>{f.type==='textarea'?<textarea value={text(value)} onChange={e=>setValues(old=>({...old,[id]:e.target.value}))}/>:f.type==='select'?<select value={text(value)} onChange={e=>setValues(old=>({...old,[id]:e.target.value}))}><option value="">—</option>{unitText(f,'options',locale).split('\n').filter(Boolean).map(v=><option key={v}>{v}</option>)}</select>:f.type==='checkbox'?<input type="checkbox" checked={value===true} onChange={e=>setValues(old=>({...old,[id]:e.target.checked}))}/>:f.type==='file'?<><input type="file" accept={text(d.attachmentTypes)} onChange={e=>{const file=e.target.files?.[0];if(!file)return;const types=text(d.attachmentTypes).split(',').map(t=>t.trim());if(file.size>number(d.attachmentMaxMb,10)*1024*1024||!types.some(t=>t===file.type||t.endsWith('/*')&&file.type.startsWith(t.slice(0,-1)))){setErrors([{path:'fields.'+id,message:'File type or size is outside the configured policy.'}]);return}setFiles(old=>({...old,[id]:{name:file.name,bytes:file.size,type:file.type}}));setValues(old=>({...old,[id]:'staff-preview-file-metadata'}));setErrors([])}}/><small><T v={['File remains on this device; staff preview inspects metadata only.','Le fichier reste sur cet appareil ; l’aperçu inspecte uniquement ses métadonnées.','يبقى الملف على هذا الجهاز؛ تفحص المعاينة بياناته فقط.']}/></small>{files[id]&&<p>{files[id].name} · {files[id].bytes} bytes</p>}</>:<input type={['email','number','date','tel'].includes(text(f.type))?text(f.type):'text'} min={f.type==='number'?number(f.min):undefined} max={f.type==='number'?number(f.max,100000):undefined} value={typeof value==='number'?value:text(value)} onChange={e=>setValues(old=>({...old,[id]:e.target.value}))}/>}</Field>{errors.filter(e=>e.path==='fields.'+id).map((e,i)=><p role="alert" className={s.notice} key={i}>{e.message}</p>)}</div>})}
-   <div className={s.previewActions}>{engine==='multistep'&&stepIndex<steps.length-1?<Button kind="primary" onClick={()=>{if(validate())setStep(v=>v+1)}}><T v={['Continue to next step','Passer à l’étape suivante','متابعة إلى المرحلة التالية']}/></Button>:<><Switch label={localized(d,'consentLabel',locale)||text(d.consentLabel)} value={consent} onChange={setConsent}/><Button type="submit" kind="primary"><T v={['Validate receiving scenario','Valider le scénario de réception','التحقق من سيناريو الاستقبال']}/></Button></>}{d.draftPolicy!=='disabled'&&<Button icon="Save" onClick={()=>setSaved(structuredClone(values))}><T v={['Save preview draft','Enregistrer le brouillon d’aperçu','حفظ مسودة المعاينة']}/></Button>}{saved&&<Button onClick={()=>{setValues(structuredClone(saved));setInspected(false)}}><T v={['Restore preview draft','Restaurer le brouillon d’aperçu','استعادة مسودة المعاينة']}/></Button>}</div>
-  </form>
-  {errors.filter(e=>e.path==='consent').map((e,i)=><p role="alert" key={i} className={s.notice}>{e.message}</p>)}
-  {inspected&&<div className={s.previewResult}><h3><T v={['Definition passes this receiving scenario','La définition valide ce scénario de réception','نجح التعريف في سيناريو الاستقبال هذا']}/></h3><p>{text(d.destination)} · {text(d.responsibleTeam)} · {text(d.draftPolicy)}</p><div className={s.stepPills}>{text(d.statusWorkflow).split(',').map(status=><Badge key={status}>{status}</Badge>)}</div><p><T v={['No customer submission, booking or attachment upload was sent.','Aucun envoi client, réservation ou téléversement n’a été effectué.','لم يتم إرسال طلب عميل أو حجز أو رفع مرفق.']}/></p></div>}
-  {engine==='booking_request'&&<div className={s.notice}><Icon name="CalendarDays"/><div><T v={['Booking requests require the native receiving authority to issue a booking reference.','La réception native doit émettre la référence de réservation.','تتطلب طلبات الحجز إصدار مرجع من جهة الاستقبال الأصلية.']}/><p>{text(d.destination)} · {text(d.responsibleTeam)}</p></div></div>}
- </div>
+export function FormStage({
+  data: d,
+  locale,
+  engine,
+  onPersonal,
+  initialPersonal = {},
+}: StageProps) {
+  const fields = array(d.fields).filter(
+      (f) => !["file", "email", "tel"].includes(text(f.type)),
+    ),
+    steps = [...new Set(fields.map((f) => number(f.step, 1)))].sort(
+      (a, b) => a - b,
+    ),
+    [index, setIndex] = useState(0),
+    [values, setValues] = useState<Data>(object(initialPersonal.values)),
+    [errors, setErrors] = useState<ReturnType<typeof formValueErrors>>([]),
+    [result, setResult] = useState(false),
+    visible = visibleFormFields(
+      fields,
+      values,
+      engine === "multistep" ? steps[index] : undefined,
+    );
+  useEffect(
+    () => onPersonal?.({ values, complete: result }),
+    [values, result, onPersonal],
+  );
+  function valid(all = false) {
+    const v = formValueErrors(all ? fields : visible, values);
+    setErrors(v);
+    return !v.length;
+  }
+  return (
+    <div data-engine={engine}>
+      <div className={s.notice}>
+        <Icon name="ShieldCheck" />
+        <T
+          v={[
+            "Private questionnaire · no operator submission",
+            "Questionnaire privé · aucun envoi à un opérateur",
+            "استبيان خاص · دون إرسال لموظف",
+          ]}
+        />
+      </div>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (valid(true)) setResult(true);
+        }}
+      >
+        {visible.map((f) => {
+          const id = text(f.id);
+          return (
+            <div key={id}>
+              <Field
+                label={unitText(f, "label", locale) + (f.required ? " *" : "")}
+                hint={unitText(f, "help", locale)}
+              >
+                {f.type === "textarea" ? (
+                  <textarea
+                    value={text(values[id])}
+                    onChange={(e) =>
+                      setValues((old) => ({ ...old, [id]: e.target.value }))
+                    }
+                  />
+                ) : f.type === "select" ? (
+                  <select
+                    value={text(values[id])}
+                    onChange={(e) =>
+                      setValues((old) => ({ ...old, [id]: e.target.value }))
+                    }
+                  >
+                    <option value="">—</option>
+                    {unitText(f, "options", locale)
+                      .split("\n")
+                      .filter(Boolean)
+                      .map((v) => (
+                        <option key={v}>{v}</option>
+                      ))}
+                  </select>
+                ) : f.type === "checkbox" ? (
+                  <input
+                    type="checkbox"
+                    checked={values[id] === true}
+                    onChange={(e) =>
+                      setValues((old) => ({ ...old, [id]: e.target.checked }))
+                    }
+                  />
+                ) : (
+                  <input
+                    type={
+                      ["number", "date"].includes(text(f.type))
+                        ? text(f.type)
+                        : "text"
+                    }
+                    value={text(values[id])}
+                    onChange={(e) =>
+                      setValues((old) => ({ ...old, [id]: e.target.value }))
+                    }
+                  />
+                )}
+              </Field>
+              {errors
+                .filter((x) => x.path === "fields." + id)
+                .map((x, i) => (
+                  <p role="alert" key={i}>
+                    {x.message}
+                  </p>
+                ))}
+            </div>
+          );
+        })}
+        <div className={s.previewActions}>
+          {engine === "multistep" && index < steps.length - 1 ? (
+            <Button
+              kind="primary"
+              onClick={() => {
+                if (valid()) setIndex((n) => n + 1);
+              }}
+            >
+              <T v={["Continue", "Continuer", "متابعة"]} />
+            </Button>
+          ) : (
+            <Button type="submit" kind="primary">
+              <T v={["Get my result", "Voir mon résultat", "عرض نتيجتي"]} />
+            </Button>
+          )}
+          <Button
+            onClick={() => {
+              setValues({});
+              setResult(false);
+              setErrors([]);
+              setIndex(0);
+            }}
+          >
+            <T v={["Start again", "Recommencer", "ابدأ مجدداً"]} />
+          </Button>
+        </div>
+      </form>
+      {result && (
+        <div className={s.previewResult} role="status">
+          <h3>
+            <T
+              v={["Your private summary", "Votre résumé privé", "ملخصك الخاص"]}
+            />
+          </h3>
+          {fields
+            .filter((f) => values[text(f.id)] !== undefined)
+            .map((f) => (
+              <p key={text(f.id)}>
+                <strong>{unitText(f, "label", locale)}</strong>:{" "}
+                {String(values[text(f.id)])}
+              </p>
+            ))}
+          <T
+            v={[
+              "No request, account or message created.",
+              "Aucune demande, aucun compte ni message créé.",
+              "لم يتم إنشاء طلب أو حساب أو رسالة.",
+            ]}
+          />
+        </div>
+      )}
+    </div>
+  );
 }
-export function CommunityStage({data:d,locale,engine}:StageProps){
- const [body,setBody]=useState(''),[rating,setRating]=useState(0),[decision,setDecision]=useState('pending'),[reason,setReason]=useState(''),[report,setReport]=useState(''),[history,setHistory]=useState<{decision:string;reason:string}[]>([])
- return <div data-engine={engine}><div className={s.notice}><Icon name="ShieldCheck"/><div><strong>{text(d.moderation)} · {text(d.eligibility)}</strong><p>{text(d.visibilityPolicy)} · {text(d.contributionPolicy)}</p></div></div>
-  <div className={engine==='proof_wall'?s.previewGallery:undefined}>{array(d.rules).map(rule=><div className={s.rowCard} key={text(rule.id)}><strong>{unitText(rule,'title',locale)}</strong><p className={s.previewText}>{unitText(rule,'text',locale)}</p></div>)}</div>
-  <section className={s.scenarioCard}><Badge tone="orange"><T v={['Staff-authored contribution scenario','Scénario de contribution rédigé par le staff','سيناريو مساهمة يحرره الموظف']}/></Badge><Field label={<T v={engine==='thread'?['Question or reply','Question ou réponse','سؤال أو إجابة']:['Contribution text','Texte de contribution','نص المساهمة']}/>}><textarea value={body} maxLength={4000} onChange={e=>setBody(e.target.value)}/></Field>{d.ratingsEnabled!==false&&engine!=='thread'&&<Field label={<T v={['Rating','Note','التقييم']}/>}><select value={rating} onChange={e=>setRating(Number(e.target.value))}><option value={0}>—</option>{[1,2,3,4,5].map(n=><option key={n}>{n}</option>)}</select></Field>}
-   {body&&<div className={s.rowCard}><Badge tone={decision==='approved'?'green':'orange'}>{decision}</Badge><p>{body}</p>{rating>0&&<span>{'★'.repeat(rating)}</span>}<p>{decision==='approved'&&d.visibilityPolicy!=='private_team'?'Visible under configured audience policy':'Hidden from public manifest'}</p></div>}
-   <Field label={<T v={['Moderation reason','Motif de modération','سبب الإشراف']}/>}><input value={reason} onChange={e=>setReason(e.target.value)}/></Field><div className={s.previewActions}>{['approved','hidden','rejected'].map(action=><Button key={action} disabled={!body||!reason} onClick={()=>{setDecision(action);setHistory(old=>[...old,{decision:action,reason}])}}>{action}</Button>)}</div>{d.reportsEnabled!==false&&<Field label={<T v={['Reporting scenario','Scénario de signalement','سيناريو الإبلاغ']}/>}><select value={report} onChange={e=>setReport(e.target.value)}><option value="">—</option>{(text(d.reportReasons)||'Inappropriate content\nPrivacy concern\nIncorrect information').split('\n').map(r=><option key={r}>{r}</option>)}</select></Field>}{report&&<div className={s.notice}>{report} · <T v={['Would enter the report queue for review.','Entrerait dans la file de signalement pour revue.','سيدخل قائمة البلاغات للمراجعة.']}/></div>}<details className={s.advanced}><summary><T v={['Scenario decision history','Historique des décisions du scénario','سجل قرارات السيناريو']}/></summary>{history.map((h,i)=><p key={i}>{h.decision} · {h.reason}</p>)}</details>
-  </section>
- </div>
+export function CommunityStage({ data: d, locale, engine }: StageProps) {
+  return (
+    <div data-engine={engine}>
+      <div className={s.notice}>
+        <Icon name="BookOpen" />
+        <T
+          v={[
+            "Read-only collection. Public posting is inactive; existing history stays retained.",
+            "Collection en lecture seule. Publication publique désactivée ; historique conservé.",
+            "مجموعة للقراءة فقط. النشر العام غير مفعل؛ السجل محفوظ.",
+          ]}
+        />
+      </div>
+      {array(d.rules).map((r) => (
+        <article className={s.rowCard} key={text(r.id)}>
+          <h3>{unitText(r, "title", locale)}</h3>
+          <p className={s.previewText}>{unitText(r, "text", locale)}</p>
+        </article>
+      ))}
+    </div>
+  );
 }
-export function CommerceStage({data:d,bindings,locale,engine}:StageProps){const [selected,setSelected]=useState(''),records=object(bindings.records),content=object(records[text(d.contentId)]),offers=object(bindings.offers);return <div data-engine={engine}>
- {(engine==='shoppable'||engine==='course_product')&&<article className={s.readingPage}><h3>{text(content.key)}</h3><p>{text(object(content.definition).body)||text(content.body)}</p>{engine==='course_product'&&<p><T v={['Linked course','Cours lié','الدورة المرتبطة']}/>: {text(object(records[text(d.experienceId)]).key)}</p>}</article>}
- {array(d.offers).map(o=>{const offer=object(offers[text(o.nativeId)]),nativeAction=text(o.action)||text(offer.continuation)||'details';return <div key={text(o.id)} className={s.rowCard}><Badge>{text(offer.kind)||'unresolved'}</Badge><h3>{text(offer.title)||unitText(o,'label',locale)}</h3><p>{offer.price==null?'Price evidence unavailable':number(offer.price).toLocaleString(locale)+' '+text(offer.currency)} · {text(offer.availability)}</p><small>{text(o.role)} · {text(d.deliveryAuthority)}</small><div className={s.previewActions}><Button disabled={!offer.id} onClick={()=>setSelected(text(o.id))}><T v={['Inspect native continuation','Inspecter la suite native','فحص المتابعة الأصلية']}/></Button>{safeHref(offer.url)&&<a className={s.button} href={text(offer.url)} target="_blank" rel="noopener noreferrer"><T v={['Open canonical offer','Ouvrir l’offre canonique','فتح العرض الأصلي']}/></a>}</div>{selected===o.id&&<div className={s.notice}><Icon name="ArrowUpRight"/><div><strong>{nativeAction}</strong><p>{text(offer.url)}</p><p><T v={['The native authority owns availability, access, payment and delivery. Inspection creates no commercial outcome.','L’autorité native gère disponibilité, accès, paiement et livraison. L’inspection ne crée aucun résultat commercial.','تملك الجهة الأصلية التوفر والوصول والدفع والتسليم. لا ينشئ الفحص نتيجة تجارية.']}/></p></div></div>}</div>})}
- {engine==='delivery'&&<div className={s.notice}><Icon name="LockKeyhole"/><div><strong>{text(d.deliveryAuthority)}</strong><p><T v={['Delivery requires a recognized native order or entitlement receipt.','La livraison exige un reçu de commande ou droit natif reconnu.','يتطلب التسليم إيصال طلب أو أهلية أصلية معترفاً بها.']}/></p></div></div>}
- </div>}
-export function BundleStage({data:d,bindings,locale,engine}:StageProps){const steps=array(d.steps),[completed,setCompleted]=useState<string[]>([]),[values,setValues]=useState<Data>({}),[restarted,setRestarted]=useState(false),state={...blankContinuity(),completed},available=new Set(availableNodes(steps,state,values).map(s=>text(s.id))),{preview}=useUI(),records=object(bindings.records),required=steps.filter(s=>d.completion==='all_steps'||s.required!==false),done=required.length>0&&required.every(s=>completed.includes(text(s.id))),current=steps.find(s=>!completed.includes(text(s.id))&&available.has(text(s.id)))
- return <div data-engine={engine}>{engine==='dashboard'&&<div className={s.previewResult}><strong>{steps.length?Math.round(completed.length/steps.length*100):0}%</strong><p>{completed.length}/{steps.length} · {done?'complete':'in progress'}</p><div className={s.progressTrack}><span style={{width:steps.length?completed.length/steps.length*100+'%':'0%'}}/></div></div>}
-  {steps.some(s=>s.condition&&s.condition!=='always')&&<details className={s.advanced}><summary><T v={['Branch scenario inputs','Valeurs du scénario de branche','قيم سيناريو التفرع']}/></summary>{[...new Set(steps.map(s=>text(s.conditionTarget)).filter(Boolean))].map(key=><Field label={key} key={key}><input value={text(values[key])} onChange={e=>setValues(old=>({...old,[key]:e.target.value}))}/></Field>)}</details>}
-  <div className={engine==='starter'?s.definitionBoard:s.journey}>{(engine==='sequential'?current?[current]:[]:steps).map((step,i)=>{const id=text(step.id),bound=object(records[text(step.experienceId)]),ready=available.has(id)&&Boolean(bound.id);return <div className={s.journeyStep} key={id}><span className={s.stepNumber}>{steps.indexOf(step)+1}</span><div style={{flex:1}}><strong>{unitText(step,'title',locale)||text(bound.key)}</strong><p>{step.required===false?'optional':'required'} · {text(step.accessDependency)}</p><small>{text(step.prerequisites)} · {text(step.releaseId)||'current released child'}</small></div><div className={s.actions}><Button disabled={!bound.id} onClick={()=>preview(text(step.experienceId),text(step.releaseId)||undefined)} icon="Eye"><T v={['Inspect child','Inspecter l’enfant','فحص التجربة الفرعية']}/></Button><Button disabled={!ready} onClick={()=>setCompleted(old=>[...new Set([...old,id])])}>{completed.includes(id)?'✓':<T v={['Complete scenario step','Terminer l’étape du scénario','إكمال مرحلة السيناريو']}/>}</Button></div></div>})}</div>
-  {done&&<Badge tone="green"><T v={['Aggregate completion reached','Complétion agrégée atteinte','تم الوصول للإكمال الإجمالي']}/></Badge>}<div className={s.previewActions}><Button disabled={d.allowRestart===false} icon="RotateCcw" onClick={()=>{setCompleted([]);setValues({});setRestarted(true)}}><T v={['Restart scenario','Recommencer le scénario','إعادة بدء السيناريو']}/></Button><Button icon="Download" onClick={()=>download('journey-preview-state.json',JSON.stringify({preview:true,completed,values},null,2),'application/json')}><T v={['Save scenario progress','Enregistrer la progression du scénario','حفظ تقدم السيناريو']}/></Button></div>{restarted&&<p className={s.subtitle}>{text(d.restartScope)||'journey_only'}</p>}
- </div>
+export function CommerceStage({
+  data: d,
+  bindings,
+  locale,
+  engine,
+}: StageProps) {
+  const [selected, setSelected] = useState(""),
+    records = object(bindings.records),
+    content = object(records[text(d.contentId)]),
+    offers = object(bindings.offers);
+  return (
+    <div data-engine={engine}>
+      {(engine === "shoppable" || engine === "course_product") && (
+        <article className={s.readingPage}>
+          <h3>{text(content.key)}</h3>
+          <p>{text(object(content.definition).body) || text(content.body)}</p>
+          {engine === "course_product" && (
+            <p>
+              <T v={["Linked course", "Cours lié", "الدورة المرتبطة"]} />:{" "}
+              {text(object(records[text(d.experienceId)]).key)}
+            </p>
+          )}
+        </article>
+      )}
+      {array(d.offers).map((o) => {
+        const offer = object(offers[text(o.nativeId)]),
+          nativeAction =
+            text(o.action) || text(offer.continuation) || "details";
+        return (
+          <div key={text(o.id)} className={s.rowCard}>
+            <Badge>{text(offer.kind) || "unresolved"}</Badge>
+            <h3>{text(offer.title) || unitText(o, "label", locale)}</h3>
+            <p>
+              {offer.price == null
+                ? "Price evidence unavailable"
+                : number(offer.price).toLocaleString(locale) +
+                  " " +
+                  text(offer.currency)}{" "}
+              · {text(offer.availability)}
+            </p>
+            <small>
+              {text(o.role)} · {text(d.deliveryAuthority)}
+            </small>
+            <div className={s.previewActions}>
+              <Button
+                disabled={!offer.id}
+                onClick={() => setSelected(text(o.id))}
+              >
+                <T
+                  v={[
+                    "Inspect native continuation",
+                    "Inspecter la suite native",
+                    "فحص المتابعة الأصلية",
+                  ]}
+                />
+              </Button>
+              {safeHref(offer.url) && (
+                <a
+                  className={s.button}
+                  href={text(offer.url)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <T
+                    v={[
+                      "Open canonical offer",
+                      "Ouvrir l’offre canonique",
+                      "فتح العرض الأصلي",
+                    ]}
+                  />
+                </a>
+              )}
+            </div>
+            {selected === o.id && (
+              <div className={s.notice}>
+                <Icon name="ArrowUpRight" />
+                <div>
+                  <strong>{nativeAction}</strong>
+                  <p>{text(offer.url)}</p>
+                  <p>
+                    <T
+                      v={[
+                        "The native authority owns availability, access, payment and delivery. Inspection creates no commercial outcome.",
+                        "L’autorité native gère disponibilité, accès, paiement et livraison. L’inspection ne crée aucun résultat commercial.",
+                        "تملك الجهة الأصلية التوفر والوصول والدفع والتسليم. لا ينشئ الفحص نتيجة تجارية.",
+                      ]}
+                    />
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+      {engine === "delivery" && (
+        <div className={s.notice}>
+          <Icon name="LockKeyhole" />
+          <div>
+            <strong>{text(d.deliveryAuthority)}</strong>
+            <p>
+              <T
+                v={[
+                  "Delivery requires a recognized native order or entitlement receipt.",
+                  "La livraison exige un reçu de commande ou droit natif reconnu.",
+                  "يتطلب التسليم إيصال طلب أو أهلية أصلية معترفاً بها.",
+                ]}
+              />
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+export function BundleStage({
+  data: d,
+  bindings,
+  locale,
+  engine,
+  onPersonal,
+  initialPersonal = {},
+}: StageProps) {
+  const steps = array(d.steps),
+    [active, setActive] = useState(""),
+    [childStates, setChildStates] = useState<Data>(
+      object(initialPersonal.childStates),
+    ),
+    [completed, setCompleted] = useState<string[]>(
+      Array.isArray(initialPersonal.completed)
+        ? initialPersonal.completed.map(String)
+        : [],
+    ),
+    [values, setValues] = useState<Data>({}),
+    [restarted, setRestarted] = useState(false),
+    state = {
+      ...blankContinuity(),
+      completed,
+      results: Object.entries(childStates).map(([id, value]) => ({
+        ...object(value),
+        id,
+      })),
+    },
+    available = new Set(
+      availableNodes(steps, state, values).map((s) => text(s.id)),
+    ),
+    { preview } = useUI(),
+    records = object(bindings.records),
+    required = steps.filter(
+      (s) => d.completion === "all_steps" || s.required !== false,
+    ),
+    progress = journeyProgress(steps, state, values),
+    done = progress.complete,
+    current = steps.find(
+      (s) => !completed.includes(text(s.id)) && available.has(text(s.id)),
+    );
+  useEffect(
+    () => onPersonal?.({ completed, childStates, values, complete: done }),
+    [completed, childStates, values, done, onPersonal],
+  );
+  const selected = steps.find((s) => s.id === active),
+    bound = object(records[text(selected?.experienceId)]);
+  return (
+    <div data-engine={engine}>
+      {selected && bound.id && (
+        <div className={s.rowCard}>
+          <Button onClick={() => setActive("")}>
+            <T v={["Back to journey", "Retour au parcours", "العودة للمسار"]} />
+          </Button>
+          <RuntimePreview
+            key={active}
+            record={
+              {
+                id: text(bound.id),
+                kind: "experience",
+                key: text(bound.key),
+                title: text(bound.title),
+                family: text(bound.family) || null,
+                revision: 1,
+                data: object(bound.definition),
+                tenant_id: null,
+                territory_id: null,
+              } as any
+            }
+            bindings={object(bound.bindings)}
+            locale={locale}
+            onExperienceState={(value) => {
+              setChildStates((old) => ({ ...old, [active]: value }));
+              if (value.complete === true)
+                setCompleted((old) =>
+                  old.includes(active) ? old : [...old, active],
+                );
+            }}
+            onGrade={
+              bound.releaseId
+                ? (answers) =>
+                    import("../ui").then(({ mutate }) =>
+                      mutate({
+                        action: "master_preview_grade",
+                        releaseId: bound.releaseId,
+                        answers,
+                      }),
+                    )
+                : undefined
+            }
+            onActivity={
+              bound.releaseId
+                ? (input) =>
+                    import("../ui").then(({ mutate }) =>
+                      mutate({
+                        action: "master_preview_activity",
+                        releaseId: bound.releaseId,
+                        input,
+                      }),
+                    )
+                : undefined
+            }
+          />
+        </div>
+      )}
+      {engine === "dashboard" && (
+        <div className={s.previewResult}>
+          <strong>
+            {steps.length
+              ? Math.round((completed.length / steps.length) * 100)
+              : 0}
+            %
+          </strong>
+          <p>
+            {completed.length}/{steps.length} ·{" "}
+            {done ? "complete" : "in progress"}
+          </p>
+          <div className={s.progressTrack}>
+            <span
+              style={{
+                width: steps.length
+                  ? (completed.length / steps.length) * 100 + "%"
+                  : "0%",
+              }}
+            />
+          </div>
+        </div>
+      )}
+      {steps.some((s) => s.condition && s.condition !== "always") && (
+        <details className={s.advanced}>
+          <summary>
+            <T
+              v={[
+                "Branch scenario inputs",
+                "Valeurs du scénario de branche",
+                "قيم سيناريو التفرع",
+              ]}
+            />
+          </summary>
+          {[
+            ...new Set(
+              steps.map((s) => text(s.conditionTarget)).filter(Boolean),
+            ),
+          ].map((key) => (
+            <Field label={key} key={key}>
+              <input
+                value={text(values[key])}
+                onChange={(e) =>
+                  setValues((old) => ({ ...old, [key]: e.target.value }))
+                }
+              />
+            </Field>
+          ))}
+        </details>
+      )}
+      <div className={engine === "starter" ? s.definitionBoard : s.journey}>
+        {(engine === "sequential" ? (current ? [current] : []) : steps).map(
+          (step, i) => {
+            const id = text(step.id),
+              bound = object(records[text(step.experienceId)]),
+              ready = available.has(id) && Boolean(bound.id);
+            return (
+              <div className={s.journeyStep} key={id}>
+                <span className={s.stepNumber}>{steps.indexOf(step) + 1}</span>
+                <div style={{ flex: 1 }}>
+                  <strong>
+                    {unitText(step, "title", locale) || text(bound.key)}
+                  </strong>
+                  <p>
+                    {step.required === false ? "optional" : "required"} ·{" "}
+                    {text(step.accessDependency)}
+                  </p>
+                  <small>
+                    {text(step.prerequisites)} ·{" "}
+                    {text(step.releaseId) || "current released child"}
+                  </small>
+                </div>
+                <div className={s.actions}>
+                  <Button disabled={!ready} onClick={() => setActive(id)}>
+                    <T
+                      v={[
+                        "Try child in this journey",
+                        "Essayer l’étape dans ce parcours",
+                        "تجربة الخطوة في هذا المسار",
+                      ]}
+                    />
+                  </Button>
+                  <Button
+                    disabled={!bound.id}
+                    onClick={() =>
+                      preview(
+                        text(step.experienceId),
+                        text(step.releaseId) || undefined,
+                      )
+                    }
+                    icon="Eye"
+                  >
+                    <T
+                      v={[
+                        "Inspect child",
+                        "Inspecter l’enfant",
+                        "فحص التجربة الفرعية",
+                      ]}
+                    />
+                  </Button>
+                  <Button
+                    disabled={!ready}
+                    onClick={() =>
+                      setCompleted((old) => [...new Set([...old, id])])
+                    }
+                  >
+                    {completed.includes(id) ? (
+                      "✓"
+                    ) : (
+                      <T
+                        v={[
+                          "Complete scenario step",
+                          "Terminer l’étape du scénario",
+                          "إكمال مرحلة السيناريو",
+                        ]}
+                      />
+                    )}
+                  </Button>
+                </div>
+              </div>
+            );
+          },
+        )}
+      </div>
+      {done && (
+        <Badge tone="green">
+          <T
+            v={[
+              "Aggregate completion reached",
+              "Complétion agrégée atteinte",
+              "تم الوصول للإكمال الإجمالي",
+            ]}
+          />
+        </Badge>
+      )}
+      <div className={s.previewActions}>
+        <Button
+          disabled={d.allowRestart === false}
+          icon="RotateCcw"
+          onClick={() => {
+            setCompleted([]);
+            setValues({});
+            setRestarted(true);
+          }}
+        >
+          <T
+            v={[
+              "Restart scenario",
+              "Recommencer le scénario",
+              "إعادة بدء السيناريو",
+            ]}
+          />
+        </Button>
+        <Button
+          icon="Download"
+          onClick={() =>
+            download(
+              "journey-preview-state.json",
+              JSON.stringify({ preview: true, completed, values }, null, 2),
+              "application/json",
+            )
+          }
+        >
+          <T
+            v={[
+              "Save scenario progress",
+              "Enregistrer la progression du scénario",
+              "حفظ تقدم السيناريو",
+            ]}
+          />
+        </Button>
+      </div>
+      {restarted && (
+        <p className={s.subtitle}>{text(d.restartScope) || "journey_only"}</p>
+      )}
+    </div>
+  );
 }

@@ -1,26 +1,410 @@
-'use client'
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { safeHref } from '../../model'
-import { array, number, object, text, tr, type Data, type DceRecord, type Locale } from '../../types'
-import { Badge, Button, Empty, Field, T } from '../ui'
-import s from '../workspace.module.css'
-export interface StageProps {record:DceRecord;data:Data;bindings:Data;locale:Locale;engine:string;onOutcome?:(percent:number)=>void}
-export function unitText(unit:Data,field:string,locale:Locale){return text(object(object(unit.locales)[locale])[field])||text(unit[field])}
-export function Nav({index,count,onIndex}:{index:number;count:number;onIndex:(index:number)=>void}){return <div className={s.previewActions}><Button disabled={index<=0} onClick={()=>onIndex(index-1)} icon="ChevronLeft"><T v={['Previous','Précédent','السابق']}/></Button><Badge>{count?index+1:0}/{count}</Badge><Button disabled={index>=count-1} onClick={()=>onIndex(index+1)} icon="ChevronRight"><T v={['Next','Suivant','التالي']}/></Button></div>}
-export function Source({id,bindings,alt='',pdf=false}:{id:unknown;bindings:Data;alt?:string;pdf?:boolean}){const binding=object(object(bindings.media)[text(id)]),url=text(binding.url),mime=text(binding.mime);if(!safeHref(url))return <Empty icon="FileWarning" title={<T v={['Bind a compatible source','Liez une source compatible','اربط مصدراً متوافقاً']}/>}/>;if(mime.startsWith('image/'))return <img src={url} alt={alt} loading="lazy"/>;if(pdf&&mime==='application/pdf')return <iframe src={url+'#toolbar=0'} title={alt||'PDF'} style={{width:'100%',height:520,border:0}}/>;return <div className={s.notice}><T v={['Source type is incompatible with this composition.','Le type source est incompatible avec cette composition.','نوع المصدر غير متوافق مع هذا التصميم.']}/></div>}
-export function TimedSource({unit,data,bindings,locale,engine,onPosition,onComplete}:{unit:Data;data:Data;bindings:Data;locale:Locale;engine:string;onPosition?:(seconds:number)=>void;onComplete?:()=>void}){
- const ref=useRef<HTMLMediaElement|null>(null),watched=useRef(0),lastPosition=useRef(0),[position,setPosition]=useState(0),[playing,setPlaying]=useState(false)
- const source=object(object(bindings.media)[text(object(object(unit.locales)[locale]).assetId)||text(unit.assetId)]),url=text(source.url),mime=text(source.mime),chapters=array(data.chapters).filter(c=>!c.unitId||c.unitId===unit.id),captions=array(data.captions).filter(c=>!c.unitId||c.unitId===unit.id),poster=object(object(bindings.media)[text(unit.posterAssetId||data.posterAssetId)]),start=number(unit.startSeconds),end=number(unit.endSeconds)
- const captionKey=JSON.stringify(captions),tracks=useMemo(()=>{const rows=JSON.parse(captionKey) as Data[],languages=[...new Set(rows.map(c=>text(c.locale)||locale))];const timestamp=(s:number)=>{const ms=Math.round(s*1000);return String(Math.floor(ms/3600000)).padStart(2,'0')+':'+String(Math.floor(ms/60000)%60).padStart(2,'0')+':'+String(Math.floor(ms/1000)%60).padStart(2,'0')+'.'+String(ms%1000).padStart(3,'0')};return languages.map(language=>{const cues=rows.filter(c=>(text(c.locale)||locale)===language&&!c.captionAssetId),body='WEBVTT\n\n'+cues.map(c=>timestamp(number(c.startSeconds))+' --> '+timestamp(number(c.endSeconds))+'\n'+text(c.text).replaceAll('<','').replaceAll('>','')+'\n').join('\n');return{language,url:cues.length?URL.createObjectURL(new Blob([body],{type:'text/vtt'})):''}})},[captionKey,locale]);
- useEffect(()=>()=>{for(const track of tracks)if(track.url)URL.revokeObjectURL(track.url)},[tracks]);
- useEffect(()=>{setPosition(start);setPlaying(false);watched.current=0;lastPosition.current=start;if(ref.current)ref.current.currentTime=start},[unit.id,url,start])
- function seek(value:number){const node=ref.current;if(!node)return;node.currentTime=Math.max(start,Math.min(value,end||number(unit.duration,node.duration)||Infinity));setPosition(node.currentTime);onPosition?.(node.currentTime)}
- const common={src:url,controls:true,preload:'metadata' as const,onPlay:()=>setPlaying(true),onPause:()=>setPlaying(false),onLoadedMetadata:()=>seek(start),onEnded:()=>{setPlaying(false);if(data.completionPolicy!=='explicit'&&(data.completionPolicy!=='threshold'||number(unit.duration)>0&&watched.current/number(unit.duration)*100>=number(data.completionPercent,90)))onComplete?.()},onTimeUpdate:()=>{const node=ref.current;if(!node)return;const t=node.currentTime,delta=t-lastPosition.current;if(!node.paused&&delta>0&&delta<2)watched.current+=delta;lastPosition.current=t;setPosition(t);onPosition?.(t);if(end&&t>=end){node.pause();if(data.completionPolicy!=='explicit'&&(data.completionPolicy!=='threshold'||watched.current/Math.max(1,end-start)*100>=number(data.completionPercent,90)))onComplete?.()}else if(data.completionPolicy==='threshold'&&number(unit.duration)>0&&watched.current/number(unit.duration)*100>=number(data.completionPercent,90))onComplete?.()}}
- if(!safeHref(url)||!['audio/','video/'].some(prefix=>mime.startsWith(prefix)))return <Empty icon="FileWarning" title={<T v={['No compatible timed source bound','Aucune source temporelle compatible liée','لا يوجد مصدر زمني متوافق']}/>}/>
- return <div className={s.previewMedia} data-vertical={engine==='vertical'}>
-  {mime.startsWith('video/')?<video {...common} ref={node=>{ref.current=node}} playsInline poster={safeHref(poster.url)?text(poster.url):undefined}>{tracks.filter(t=>t.url).map(t=><track key={t.language} kind="captions" src={t.url} srcLang={t.language} label={t.language.toUpperCase()} default={t.language===locale}/>)}{captions.filter(c=>c.captionAssetId).map(c=>{const bound=object(object(bindings.media)[text(c.captionAssetId)]);return safeHref(bound.url)?<track key={text(c.id)} kind="captions" src={text(bound.url)} srcLang={text(c.locale)} label={text(c.locale).toUpperCase()} default={c.locale===locale}/>:null})}</video>:<audio {...common} ref={node=>{ref.current=node}}/>}
-  <div className={s.previewActions}><Button onClick={()=>{if(playing)ref.current?.pause();else ref.current?.play().catch(()=>setPlaying(false))}} icon={playing?'Square':'Play'}><T v={playing?['Pause','Pause','إيقاف مؤقت']:['Play','Lire','تشغيل']}/></Button><Button onClick={()=>seek(position-number(data.seekSeconds,15))}>−{number(data.seekSeconds,15)}s</Button><Button onClick={()=>seek(position+number(data.seekSeconds,15))}>+{number(data.seekSeconds,15)}s</Button><Field label={<T v={['Playback speed','Vitesse','سرعة التشغيل']}/>}><select defaultValue="1" onChange={e=>{if(ref.current)ref.current.playbackRate=Number(e.target.value)}}>{[.5,.75,1,1.25,1.5,2].map(n=><option key={n}>{n}</option>)}</select></Field><Badge>{Math.floor(position)} / {number(unit.duration)}s</Badge></div>
-  {['chapters','podcast','video_course'].includes(engine)&&<div className={s.chapterTimeline}>{chapters.map(c=><button key={text(c.id)} onClick={()=>seek(number(c.startSeconds))}>{number(c.startSeconds)}s · {unitText(c,'title',locale)}</button>)}</div>}
- </div>
+"use client";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { safeHref } from "../../model";
+import {
+  array,
+  number,
+  object,
+  text,
+  tr,
+  type Data,
+  type DceRecord,
+  type Locale,
+} from "../../types";
+import { Badge, Button, Empty, Field, T } from "../ui";
+import s from "../workspace.module.css";
+export interface StageProps {
+  record: DceRecord;
+  data: Data;
+  bindings: Data;
+  locale: Locale;
+  engine: string;
+  initialPersonal?: Data;
+  onPersonal?: (patch: Data) => void;
+  onOutcome?: (percent: number) => void;
+  onActivity?: (input: Data) => Promise<{ correct: boolean }>;
+  onGrade?: (
+    answers: Record<string, string>,
+  ) => Promise<ReturnType<typeof import("../../model").scoreQuestions>>;
 }
-export function useAutoplay(enabled:boolean,seconds:number,index:number,count:number,setIndex:(n:number)=>void,loop=false){const [playing,setPlaying]=useState(false);useEffect(()=>{setPlaying(false)},[enabled]);useEffect(()=>{if(!enabled||!playing||count<2)return;const timer=setTimeout(()=>{if(index+1<count)setIndex(index+1);else if(loop)setIndex(0);else setPlaying(false)},Math.max(1,seconds)*1000);return()=>clearTimeout(timer)},[enabled,playing,seconds,index,count,setIndex,loop]);return {playing,toggle:()=>setPlaying(v=>!v)}}
+export function unitText(unit: Data, field: string, locale: Locale) {
+  return text(object(object(unit.locales)[locale])[field]) || text(unit[field]);
+}
+export function Nav({
+  index,
+  count,
+  onIndex,
+}: {
+  index: number;
+  count: number;
+  onIndex: (index: number) => void;
+}) {
+  return (
+    <div className={s.previewActions}>
+      <Button
+        disabled={index <= 0}
+        onClick={() => onIndex(index - 1)}
+        icon="ChevronLeft"
+      >
+        <T v={["Previous", "Précédent", "السابق"]} />
+      </Button>
+      <Badge>
+        {count ? index + 1 : 0}/{count}
+      </Badge>
+      <Button
+        disabled={index >= count - 1}
+        onClick={() => onIndex(index + 1)}
+        icon="ChevronRight"
+      >
+        <T v={["Next", "Suivant", "التالي"]} />
+      </Button>
+    </div>
+  );
+}
+export function Source({
+  id,
+  bindings,
+  alt = "",
+  pdf = false,
+}: {
+  id: unknown;
+  bindings: Data;
+  alt?: string;
+  pdf?: boolean;
+}) {
+  const binding = object(object(bindings.media)[text(id)]),
+    url = text(binding.url),
+    mime = text(binding.mime);
+  if (!safeHref(url))
+    return (
+      <Empty
+        icon="FileWarning"
+        title={
+          <T
+            v={[
+              "Bind a compatible source",
+              "Liez une source compatible",
+              "اربط مصدراً متوافقاً",
+            ]}
+          />
+        }
+      />
+    );
+  if (mime.startsWith("image/"))
+    return <img src={url} alt={alt} loading="lazy" />;
+  if (pdf && mime === "application/pdf")
+    return (
+      <iframe
+        src={url + "#toolbar=0"}
+        title={alt || "PDF"}
+        style={{ width: "100%", height: 520, border: 0 }}
+      />
+    );
+  return (
+    <div className={s.notice}>
+      <T
+        v={[
+          "Source type is incompatible with this composition.",
+          "Le type source est incompatible avec cette composition.",
+          "نوع المصدر غير متوافق مع هذا التصميم.",
+        ]}
+      />
+    </div>
+  );
+}
+export function TimedSource({
+  unit,
+  data,
+  bindings,
+  locale,
+  engine,
+  onPosition,
+  onComplete,
+}: {
+  unit: Data;
+  data: Data;
+  bindings: Data;
+  locale: Locale;
+  engine: string;
+  onPosition?: (seconds: number) => void;
+  onComplete?: () => void;
+}) {
+  const ref = useRef<HTMLMediaElement | null>(null),
+    watched = useRef(0),
+    lastPosition = useRef(0),
+    [position, setPosition] = useState(0),
+    [playing, setPlaying] = useState(false);
+  const source = object(
+      object(bindings.media)[
+        text(object(object(unit.locales)[locale]).assetId) || text(unit.assetId)
+      ],
+    ),
+    url = text(source.url),
+    mime = text(source.mime),
+    chapters = array(data.chapters).filter(
+      (c) => !c.unitId || c.unitId === unit.id,
+    ),
+    captions = array(data.captions).filter(
+      (c) => !c.unitId || c.unitId === unit.id,
+    ),
+    poster = object(
+      object(bindings.media)[text(unit.posterAssetId || data.posterAssetId)],
+    ),
+    start = number(unit.startSeconds),
+    end = number(unit.endSeconds);
+  const captionKey = JSON.stringify(captions),
+    tracks = useMemo(() => {
+      const rows = JSON.parse(captionKey) as Data[],
+        languages = [...new Set(rows.map((c) => text(c.locale) || locale))];
+      const timestamp = (s: number) => {
+        const ms = Math.round(s * 1000);
+        return (
+          String(Math.floor(ms / 3600000)).padStart(2, "0") +
+          ":" +
+          String(Math.floor(ms / 60000) % 60).padStart(2, "0") +
+          ":" +
+          String(Math.floor(ms / 1000) % 60).padStart(2, "0") +
+          "." +
+          String(ms % 1000).padStart(3, "0")
+        );
+      };
+      return languages.map((language) => {
+        const cues = rows.filter(
+            (c) => (text(c.locale) || locale) === language && !c.captionAssetId,
+          ),
+          body =
+            "WEBVTT\n\n" +
+            cues
+              .map(
+                (c) =>
+                  timestamp(number(c.startSeconds)) +
+                  " --> " +
+                  timestamp(number(c.endSeconds)) +
+                  "\n" +
+                  text(c.text).replaceAll("<", "").replaceAll(">", "") +
+                  "\n",
+              )
+              .join("\n");
+        return {
+          language,
+          url: cues.length
+            ? URL.createObjectURL(new Blob([body], { type: "text/vtt" }))
+            : "",
+        };
+      });
+    }, [captionKey, locale]);
+  useEffect(
+    () => () => {
+      for (const track of tracks) if (track.url) URL.revokeObjectURL(track.url);
+    },
+    [tracks],
+  );
+  useEffect(() => {
+    setPosition(start);
+    setPlaying(false);
+    watched.current = 0;
+    lastPosition.current = start;
+    if (ref.current) ref.current.currentTime = start;
+  }, [unit.id, url, start]);
+  function seek(value: number) {
+    const node = ref.current;
+    if (!node) return;
+    node.currentTime = Math.max(
+      start,
+      Math.min(value, end || number(unit.duration, node.duration) || Infinity),
+    );
+    setPosition(node.currentTime);
+    onPosition?.(node.currentTime);
+  }
+  const common = {
+    src: url,
+    controls: true,
+    preload: "metadata" as const,
+    onPlay: () => setPlaying(true),
+    onPause: () => setPlaying(false),
+    onLoadedMetadata: () => seek(start),
+    onEnded: () => {
+      setPlaying(false);
+      if (
+        data.completionPolicy !== "explicit" &&
+        (data.completionPolicy !== "threshold" ||
+          (number(unit.duration) > 0 &&
+            (watched.current / number(unit.duration)) * 100 >=
+              number(data.completionPercent, 90)))
+      )
+        onComplete?.();
+    },
+    onTimeUpdate: () => {
+      const node = ref.current;
+      if (!node) return;
+      const t = node.currentTime,
+        delta = t - lastPosition.current;
+      if (!node.paused && delta > 0 && delta < 2) watched.current += delta;
+      lastPosition.current = t;
+      setPosition(t);
+      onPosition?.(t);
+      if (end && t >= end) {
+        node.pause();
+        if (
+          data.completionPolicy !== "explicit" &&
+          (data.completionPolicy !== "threshold" ||
+            (watched.current / Math.max(1, end - start)) * 100 >=
+              number(data.completionPercent, 90))
+        )
+          onComplete?.();
+      } else if (
+        data.completionPolicy === "threshold" &&
+        number(unit.duration) > 0 &&
+        (watched.current / number(unit.duration)) * 100 >=
+          number(data.completionPercent, 90)
+      )
+        onComplete?.();
+    },
+  };
+  if (
+    !safeHref(url) ||
+    !["audio/", "video/"].some((prefix) => mime.startsWith(prefix))
+  )
+    return (
+      <Empty
+        icon="FileWarning"
+        title={
+          <T
+            v={[
+              "No compatible timed source bound",
+              "Aucune source temporelle compatible liée",
+              "لا يوجد مصدر زمني متوافق",
+            ]}
+          />
+        }
+      />
+    );
+  return (
+    <div className={s.previewMedia} data-vertical={engine === "vertical"}>
+      {mime.startsWith("video/") ? (
+        <video
+          {...common}
+          ref={(node) => {
+            ref.current = node;
+          }}
+          playsInline
+          poster={safeHref(poster.url) ? text(poster.url) : undefined}
+        >
+          {tracks
+            .filter((t) => t.url)
+            .map((t) => (
+              <track
+                key={t.language}
+                kind="captions"
+                src={t.url}
+                srcLang={t.language}
+                label={t.language.toUpperCase()}
+                default={t.language === locale}
+              />
+            ))}
+          {captions
+            .filter((c) => c.captionAssetId)
+            .map((c) => {
+              const bound = object(
+                object(bindings.media)[text(c.captionAssetId)],
+              );
+              return safeHref(bound.url) ? (
+                <track
+                  key={text(c.id)}
+                  kind="captions"
+                  src={text(bound.url)}
+                  srcLang={text(c.locale)}
+                  label={text(c.locale).toUpperCase()}
+                  default={c.locale === locale}
+                />
+              ) : null;
+            })}
+        </video>
+      ) : (
+        <audio
+          {...common}
+          ref={(node) => {
+            ref.current = node;
+          }}
+        />
+      )}
+      <div className={s.previewActions}>
+        <Button
+          onClick={() => {
+            if (playing) ref.current?.pause();
+            else ref.current?.play().catch(() => setPlaying(false));
+          }}
+          icon={playing ? "Square" : "Play"}
+        >
+          <T
+            v={
+              playing
+                ? ["Pause", "Pause", "إيقاف مؤقت"]
+                : ["Play", "Lire", "تشغيل"]
+            }
+          />
+        </Button>
+        <Button onClick={() => seek(position - number(data.seekSeconds, 15))}>
+          −{number(data.seekSeconds, 15)}s
+        </Button>
+        <Button onClick={() => seek(position + number(data.seekSeconds, 15))}>
+          +{number(data.seekSeconds, 15)}s
+        </Button>
+        <Field label={<T v={["Playback speed", "Vitesse", "سرعة التشغيل"]} />}>
+          <select
+            defaultValue="1"
+            onChange={(e) => {
+              if (ref.current)
+                ref.current.playbackRate = Number(e.target.value);
+            }}
+          >
+            {[0.5, 0.75, 1, 1.25, 1.5, 2].map((n) => (
+              <option key={n}>{n}</option>
+            ))}
+          </select>
+        </Field>
+        <Badge>
+          {Math.floor(position)} / {number(unit.duration)}s
+        </Badge>
+      </div>
+      {["chapters", "podcast", "video_course"].includes(engine) && (
+        <div className={s.chapterTimeline}>
+          {chapters.map((c) => (
+            <button
+              key={text(c.id)}
+              onClick={() => seek(number(c.startSeconds))}
+            >
+              {number(c.startSeconds)}s · {unitText(c, "title", locale)}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+export function useAutoplay(
+  enabled: boolean,
+  seconds: number,
+  index: number,
+  count: number,
+  setIndex: (n: number) => void,
+  loop = false,
+) {
+  const [playing, setPlaying] = useState(false);
+  useEffect(() => {
+    setPlaying(false);
+  }, [enabled]);
+  useEffect(() => {
+    if (!enabled || !playing || count < 2) return;
+    const timer = setTimeout(
+      () => {
+        if (index + 1 < count) setIndex(index + 1);
+        else if (loop) setIndex(0);
+        else setPlaying(false);
+      },
+      Math.max(1, seconds) * 1000,
+    );
+    return () => clearTimeout(timer);
+  }, [enabled, playing, seconds, index, count, setIndex, loop]);
+  return { playing, toggle: () => setPlaying((v) => !v) };
+}

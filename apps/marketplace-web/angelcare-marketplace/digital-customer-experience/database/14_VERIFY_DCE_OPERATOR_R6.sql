@@ -1,0 +1,1 @@
+begin;select ac_dce_r6_features();select relname,relrowsecurity from pg_class where oid in('public.ac_dce_operator_batches'::regclass,'public.ac_dce_certificate_retention'::regclass);select proname,has_function_privilege('anon',oid,'execute') as anon_can_execute from pg_proc where proname like 'ac_dce_r6_%';rollback;

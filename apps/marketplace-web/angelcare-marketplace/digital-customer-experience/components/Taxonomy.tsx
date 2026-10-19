@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { useMemo, useState } from 'react'
 import { array, localized, number, object, text, tr, type DceRecord, type Page } from '../types'
 import { Badge, Button, Empty, Icon, Panel, State, T, useUI, useQuery, mutate } from './ui'

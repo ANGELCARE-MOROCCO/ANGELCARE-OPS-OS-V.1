@@ -1,165 +1,3254 @@
-import { worldIssues } from './administration'
-import { nativeContinuation } from './commerce'
-import { effectiveAccess, inspectAccess } from './access'
-import { createHash, randomUUID } from 'node:crypto'
-import { createServiceClient } from '@/lib/supabase/server'
-import { hasMarketplacePermission } from '../auth/context'
-import type { MarketplaceRequestContext, MarketplacePermission } from '../domain/types'
-import { MarketplaceError } from '../server/errors'
-import { compatibleDefinition } from './capabilities'
-import { mediaSlots } from './validation'
-import { FAMILIES, TOPIC_SEEDS } from './registry'
-import { blankRecord, isId, normalizeRecord as normalizeDefinition, publicManifest, effectiveAdPolicy, references, validateRecord, graphErrors } from './model'
-import { planImport, exportRecords, templatePack, TASKS, assertTaskCorrection, importBlockingIssues, type ImportTask } from './imports'
-import { marketplaceMediaStorageConfiguration } from '../commerce-studio/media-storage'
-import { googleOperation, googleReadiness } from './google'
-import { CONTRACT, KINDS, array, object, text, number, type Bootstrap, type Data, type DceRecord, type Kind, type Page, type Release, type Rights, type Command, type Validation } from './types'
-function normalizeRecord(input:Partial<DceRecord>,existing?:DceRecord){try{return normalizeDefinition(input,existing)}catch(e){throw new MarketplaceError('VALIDATION_ERROR',e instanceof Error?e.message:'Invalid dossier definition.')}}
-type Context=MarketplaceRequestContext
-type Db=Awaited<ReturnType<typeof createServiceClient>>
-const permission=(key:string)=>('marketplace.digital_experience.'+key) as MarketplacePermission
-export function rights(c:Context):Rights {const p=(key:string)=>hasMarketplacePermission(c,permission(key));return{view:p('view'),manage:p('manage'),publish:p('publish'),moderate:p('moderate'),monetize:p('monetize'),export:p('export'),purge:p('purge'),media:hasMarketplacePermission(c,'marketplace.media.manage'),customers:hasMarketplacePermission(c,'marketplace.crm.view')}}
-export function authorize(c:Context,right:keyof Rights){if(!rights(c)[right])throw new MarketplaceError('PERMISSION_DENIED','This DCE operation requires '+right+' permission.')}
-export const scopeKey=(c:Pick<Context,'tenantId'|'territoryId'>)=>(c.tenantId||'~')+'|'+(c.territoryId||'~')
-function scoped(q:any,c:Pick<Context,'tenantId'|'territoryId'>){return (c.tenantId?q.eq('tenant_id',c.tenantId):q.is('tenant_id',null))[c.territoryId?'eq':'is']('territory_id',c.territoryId||null)}
-function fail(e:any):never{const m=String(e?.message||'DCE data operation failed.');if(/does not exist|schema cache|PGRST205|PGRST202/.test(m)||['42P01','42883'].includes(e?.code))throw new MarketplaceError('CONFIGURATION_ERROR','DCE database activation is required. Apply the separate owned R1 and R2 DCE SQL files, then reload schema.');if(/CONFLICT|LATER_EDIT|duplicate key/.test(m))throw new MarketplaceError('CONFLICT','The record changed or this command conflicts with an existing receipt. Refresh and reconcile your draft.');if(/NOT_FOUND/.test(m))throw new MarketplaceError('NOT_FOUND','Record not found in this workspace scope.');if(/BLOCKED|REQUIRED|NOT_DUE|NOT_READY|UNKNOWN|NOT_SCHEDULED|IMMUTABLE/.test(m))throw new MarketplaceError('DEPENDENCY_BLOCKED',m.replace(/\s+/g,' ').slice(0,250));throw new MarketplaceError('INTERNAL_ERROR','DCE data operation failed; entered information is retained.',{cause:e})}
-async function checked<T>(promise:PromiseLike<{data:T|null;error:any}>):Promise<T>{const r=await promise;if(r.error)fail(r.error);return r.data as T}
-function safeEvent(event:any){if(event.channel!=='experience')return event;const keys=new Set(['action','status','audience','source','locale','device','region','family','topic','assetId','durationSeconds','errorCode','outcome','revision']);return{...event,actor_id:null,data:Object.fromEntries(Object.entries(object(event.data)).filter(([key,value])=>keys.has(key)&&['string','number','boolean'].includes(typeof value)))}}
-function readable(c:Context,kind:Kind){if(['case','contribution','run','grant'].includes(kind)&&!rights(c).moderate&&!rights(c).customers)throw new MarketplaceError('PERMISSION_DENIED','Private customer activity requires moderation or customer registry permission.');if(['ad_connection','ad_unit'].includes(kind))authorize(c,'monetize')}
-function writable(c:Context,kind:Kind){authorize(c,['ad_policy','ad_connection','ad_unit'].includes(kind)?'monetize':['case','contribution'].includes(kind)?'moderate':'manage');if(['run','grant'].includes(kind))throw new MarketplaceError('FORBIDDEN','Customer progress and grants come from recognized runtime issuers; they cannot be fabricated by this editor.')}
-function args(c:Context,cmd:Command){if(!isId(cmd.requestId))throw new MarketplaceError('VALIDATION_ERROR','A UUID command receipt is required.');return{p_actor:c.actor.id,p_tenant:c.tenantId,p_territory:c.territoryId,p_request:cmd.requestId,p_hash:createHash('sha256').update(JSON.stringify(cmd)).digest('hex')}}
-export async function record(c:Context,id:string):Promise<DceRecord>{authorize(c,'view');if(!isId(id))throw new MarketplaceError('VALIDATION_ERROR','Invalid record reference.');const db=await createServiceClient();const r=await checked<DceRecord|null>(db.from('ac_dce_records').select('*').eq('scope_key',scopeKey(c)).eq('id',id).maybeSingle());if(!r)throw new MarketplaceError('NOT_FOUND','DCE record not found.');readable(c,r.kind);return r}
-export async function list(c:Context,input:Record<string,unknown>={}):Promise<Page<DceRecord>>{
- authorize(c,'view');const db=await createServiceClient();const page=Math.max(1,Math.min(100000,number(input.page,1))),pageSize=Math.max(1,Math.min(100,number(input.pageSize,24)));let q=db.from('ac_dce_records').select('*',{count:'exact'}).eq('scope_key',scopeKey(c));const kind=text(input.kind) as Kind;
- if(kind){if(!KINDS.includes(kind))throw new MarketplaceError('VALIDATION_ERROR','Unknown record kind.');readable(c,kind);q=q.eq('kind',kind)}else{if(!rights(c).moderate&&!rights(c).customers)q=q.not('kind','in','(case,contribution,run,grant)');if(!rights(c).monetize)q=q.not('kind','in','(ad_connection,ad_unit)')}
- if(input.customerId){if(!isId(input.customerId))throw new MarketplaceError('VALIDATION_ERROR','Invalid customer filter.');if(!rights(c).moderate&&!rights(c).customers)throw new MarketplaceError('PERMISSION_DENIED','Private activity permission is required.');q=q.eq('data->>customerId',input.customerId)}if(input.family)q=q.eq('family',text(input.family));if(input.topic)q=q.eq('topic',text(input.topic));if(input.lifecycle)q=q.eq('lifecycle',text(input.lifecycle));if(input.published==='true')q=q.not('published_release_id','is',null);const search=text(input.q).replace(/[%_,()]/g,' ').slice(0,120);if(search)q=q.or(`title.ilike.%${search}%,key.ilike.%${search}%`);
- if(input.afterId){if(!isId(input.afterId))throw new MarketplaceError('VALIDATION_ERROR','Invalid cursor.');q=q.gt('id',input.afterId)}if(input.beforeDate)q=q.lte('created_at',text(input.beforeDate));if(input.stable!=='true')q=q.order('updated_at',{ascending:false});const r=await q.order('id').range((page-1)*pageSize,page*pageSize-1);if(r.error)fail(r.error);return{rows:r.data as DceRecord[]||[],total:r.count||0,page,pageSize}
+import { parseCsv } from "./imports";
+import {
+  authoringFamilies,
+  authoringLocales,
+  translationCoverage,
+} from "./management";
+import { worldIssues } from "./administration";
+import { nativeContinuation } from "./commerce";
+import { effectiveAccess, inspectAccess } from "./access";
+import { createHash, randomUUID } from "node:crypto";
+import { createServiceClient } from "@/lib/supabase/server";
+import { hasMarketplacePermission } from "../auth/context";
+import type {
+  MarketplaceRequestContext,
+  MarketplacePermission,
+} from "../domain/types";
+import { MarketplaceError } from "../server/errors";
+import { compatibleDefinition } from "./capabilities";
+import { mediaSlots } from "./validation";
+import { FAMILIES, TOPIC_SEEDS } from "./registry";
+import {
+  blankRecord,
+  isId,
+  normalizeRecord as normalizeDefinition,
+  publicManifest,
+  effectiveAdPolicy,
+  references,
+  validateRecord,
+  graphErrors,
+} from "./model";
+import {
+  planImport,
+  exportRecords,
+  templatePack,
+  TASKS,
+  assertTaskCorrection,
+  importBlockingIssues,
+  type ImportTask,
+} from "./imports";
+import { marketplaceMediaStorageConfiguration } from "../commerce-studio/media-storage";
+import { googleOperation, googleReadiness } from "./google";
+import {
+  CONTRACT,
+  KINDS,
+  array,
+  object,
+  text,
+  number,
+  type Bootstrap,
+  type Data,
+  type DceRecord,
+  type Kind,
+  type Page,
+  type Release,
+  type Rights,
+  type Command,
+  type Validation,
+} from "./types";
+function normalizeRecord(input: Partial<DceRecord>, existing?: DceRecord) {
+  try {
+    return normalizeDefinition(input, existing);
+  } catch (e) {
+    throw new MarketplaceError(
+      "VALIDATION_ERROR",
+      e instanceof Error ? e.message : "Invalid dossier definition.",
+    );
+  }
 }
-export async function all(c:Context,kind?:Kind){const rows:DceRecord[]=[];let cursor:string|undefined;const beforeDate=new Date().toISOString();let partitions=0;while(true){const p=await list(c,{kind,page:1,pageSize:100,stable:'true',afterId:cursor,beforeDate});rows.push(...p.rows);if(p.rows.length<100)break;cursor=p.rows.at(-1)?.id;if(++partitions>5000)throw new MarketplaceError('NOT_READY','Dataset exceeds bounded export partition; narrow the family scope.')}return rows}
+type Context = MarketplaceRequestContext;
+type Db = Awaited<ReturnType<typeof createServiceClient>>;
+const permission = (key: string) =>
+  ("marketplace.digital_experience." + key) as MarketplacePermission;
+export function rights(c: Context): Rights {
+  const p = (key: string) => hasMarketplacePermission(c, permission(key));
+  return {
+    view: p("view"),
+    manage: p("manage"),
+    publish: p("publish"),
+    moderate: p("moderate"),
+    monetize: p("monetize"),
+    export: p("export"),
+    purge: p("purge"),
+    media: hasMarketplacePermission(c, "marketplace.media.manage"),
+    customers: hasMarketplacePermission(c, "marketplace.crm.view"),
+  };
+}
+export function authorize(c: Context, right: keyof Rights) {
+  if (!rights(c)[right])
+    throw new MarketplaceError(
+      "PERMISSION_DENIED",
+      "This DCE operation requires " + right + " permission.",
+    );
+}
+export const scopeKey = (c: Pick<Context, "tenantId" | "territoryId">) =>
+  (c.tenantId || "~") + "|" + (c.territoryId || "~");
+function scoped(q: any, c: Pick<Context, "tenantId" | "territoryId">) {
+  return (c.tenantId ? q.eq("tenant_id", c.tenantId) : q.is("tenant_id", null))[
+    c.territoryId ? "eq" : "is"
+  ]("territory_id", c.territoryId || null);
+}
+function fail(e: any): never {
+  const m = String(e?.message || "DCE data operation failed.");
+  if (
+    /does not exist|schema cache|PGRST205|PGRST202/.test(m) ||
+    ["42P01", "42883"].includes(e?.code)
+  )
+    throw new MarketplaceError(
+      "CONFIGURATION_ERROR",
+      "DCE database activation is required. Apply the separate owned R1 and R2 DCE SQL files, then reload schema.",
+    );
+  if (/CONFLICT|LATER_EDIT|duplicate key/.test(m))
+    throw new MarketplaceError(
+      "CONFLICT",
+      "The record changed or this command conflicts with an existing receipt. Refresh and reconcile your draft.",
+    );
+  if (/NOT_FOUND/.test(m))
+    throw new MarketplaceError(
+      "NOT_FOUND",
+      "Record not found in this workspace scope.",
+    );
+  if (
+    /BLOCKED|REQUIRED|NOT_DUE|NOT_READY|UNKNOWN|NOT_SCHEDULED|IMMUTABLE/.test(m)
+  )
+    throw new MarketplaceError(
+      "DEPENDENCY_BLOCKED",
+      m.replace(/\s+/g, " ").slice(0, 250),
+    );
+  throw new MarketplaceError(
+    "INTERNAL_ERROR",
+    "DCE data operation failed; entered information is retained.",
+    { cause: e },
+  );
+}
+async function checked<T>(
+  promise: PromiseLike<{ data: T | null; error: any }>,
+): Promise<T> {
+  const r = await promise;
+  if (r.error) fail(r.error);
+  return r.data as T;
+}
+function safeEvent(event: any) {
+  if (event.channel !== "experience") return event;
+  const keys = new Set([
+    "action",
+    "status",
+    "audience",
+    "source",
+    "locale",
+    "device",
+    "region",
+    "family",
+    "topic",
+    "assetId",
+    "durationSeconds",
+    "errorCode",
+    "outcome",
+    "revision",
+  ]);
+  return {
+    ...event,
+    actor_id: null,
+    data: Object.fromEntries(
+      Object.entries(object(event.data)).filter(
+        ([key, value]) =>
+          keys.has(key) &&
+          ["string", "number", "boolean"].includes(typeof value),
+      ),
+    ),
+  };
+}
+function readable(c: Context, kind: Kind) {
+  if (
+    ["case", "contribution", "run", "grant"].includes(kind) &&
+    !rights(c).moderate &&
+    !rights(c).customers
+  )
+    throw new MarketplaceError(
+      "PERMISSION_DENIED",
+      "Private customer activity requires moderation or customer registry permission.",
+    );
+  if (["ad_connection", "ad_unit"].includes(kind)) authorize(c, "monetize");
+}
+function writable(c: Context, kind: Kind) {
+  authorize(
+    c,
+    ["ad_policy", "ad_connection", "ad_unit"].includes(kind)
+      ? "monetize"
+      : ["case", "contribution"].includes(kind)
+        ? "moderate"
+        : "manage",
+  );
+  if (["run", "grant"].includes(kind))
+    throw new MarketplaceError(
+      "FORBIDDEN",
+      "Customer progress and grants come from recognized runtime issuers; they cannot be fabricated by this editor.",
+    );
+}
+function args(c: Context, cmd: Command) {
+  if (!isId(cmd.requestId))
+    throw new MarketplaceError(
+      "VALIDATION_ERROR",
+      "A UUID command receipt is required.",
+    );
+  return {
+    p_actor: c.actor.id,
+    p_tenant: c.tenantId,
+    p_territory: c.territoryId,
+    p_request: cmd.requestId,
+    p_hash: createHash("sha256").update(JSON.stringify(cmd)).digest("hex"),
+  };
+}
+export async function record(c: Context, id: string): Promise<DceRecord> {
+  authorize(c, "view");
+  if (!isId(id))
+    throw new MarketplaceError("VALIDATION_ERROR", "Invalid record reference.");
+  const db = await createServiceClient();
+  const r = await checked<DceRecord | null>(
+    db
+      .from("ac_dce_records")
+      .select("*")
+      .eq("scope_key", scopeKey(c))
+      .eq("id", id)
+      .maybeSingle(),
+  );
+  if (!r) throw new MarketplaceError("NOT_FOUND", "DCE record not found.");
+  readable(c, r.kind);
+  return r;
+}
+export async function list(
+  c: Context,
+  input: Record<string, unknown> = {},
+): Promise<Page<DceRecord>> {
+  authorize(c, "view");
+  const db = await createServiceClient();
+  const page = Math.max(1, Math.min(100000, number(input.page, 1))),
+    pageSize = Math.max(1, Math.min(100, number(input.pageSize, 24)));
+  let q = db
+    .from("ac_dce_records")
+    .select("*", { count: "exact" })
+    .eq("scope_key", scopeKey(c));
+  const kind = text(input.kind) as Kind;
+  if (kind) {
+    if (!KINDS.includes(kind))
+      throw new MarketplaceError("VALIDATION_ERROR", "Unknown record kind.");
+    readable(c, kind);
+    q = q.eq("kind", kind);
+  } else {
+    if (!rights(c).moderate && !rights(c).customers)
+      q = q.not("kind", "in", "(case,contribution,run,grant)");
+    if (!rights(c).monetize) q = q.not("kind", "in", "(ad_connection,ad_unit)");
+  }
+  if (input.context) {
+    await record(c, text(input.context));
+    if (!kind)
+      throw new MarketplaceError(
+        "VALIDATION_ERROR",
+        "A kind is required for connected inventory.",
+      );
+    return checked(
+      db.rpc("ac_dce_context_page", {
+        p_tenant: c.tenantId,
+        p_territory: c.territoryId,
+        p_context: text(input.context),
+        p_kind: kind,
+        p_filters: {
+          family: text(input.family),
+          lifecycle: text(input.lifecycle),
+          q: text(input.q),
+        },
+        p_page: page,
+        p_size: pageSize,
+      }),
+    );
+  }
+  if (
+    kind === "experience" &&
+    input.view &&
+    ![
+      "all",
+      "released",
+      "draft",
+      "review",
+      "approved",
+      "scheduled",
+      "archived",
+    ].includes(text(input.view))
+  )
+    throw new MarketplaceError(
+      "VALIDATION_ERROR",
+      "Choose a state available in this inventory.",
+    );
+  if (kind === "experience" && input.view)
+    return checked(
+      db.rpc("ac_dce_experience_page", {
+        p_tenant: c.tenantId,
+        p_territory: c.territoryId,
+        p_view: text(input.view),
+        p_family: text(input.family),
+        p_topic: text(input.topic),
+        p_search: text(input.q),
+        p_page: page,
+        p_size: pageSize,
+      }),
+    );
+  if (input.customerId) {
+    if (!isId(input.customerId))
+      throw new MarketplaceError(
+        "VALIDATION_ERROR",
+        "Invalid customer filter.",
+      );
+    if (!rights(c).moderate && !rights(c).customers)
+      throw new MarketplaceError(
+        "PERMISSION_DENIED",
+        "Private activity permission is required.",
+      );
+    q = q.eq("data->>customerId", input.customerId);
+  }
+  if (input.family) q = q.eq("family", text(input.family));
+  if (input.topic) q = q.eq("topic", text(input.topic));
+  if (input.lifecycle) q = q.eq("lifecycle", text(input.lifecycle));
+  if (input.published === "true") q = q.not("published_release_id", "is", null);
+  const search = text(input.q)
+    .replace(/[%_,()]/g, " ")
+    .slice(0, 120);
+  if (search) q = q.or(`title.ilike.%${search}%,key.ilike.%${search}%`);
+  if (input.afterId) {
+    if (!isId(input.afterId))
+      throw new MarketplaceError("VALIDATION_ERROR", "Invalid cursor.");
+    q = q.gt("id", input.afterId);
+  }
+  if (input.beforeDate) q = q.lte("created_at", text(input.beforeDate));
+  if (input.stable !== "true") q = q.order("updated_at", { ascending: false });
+  const r = await q
+    .order("id")
+    .range((page - 1) * pageSize, page * pageSize - 1);
+  if (r.error) fail(r.error);
+  return {
+    rows: (r.data as DceRecord[]) || [],
+    total: r.count || 0,
+    page,
+    pageSize,
+  };
+}
+async function byKey(c: Context, kind: Kind, key: string) {
+  const db = await createServiceClient();
+  return checked<DceRecord | null>(
+    scoped(db.from("ac_dce_records").select("*"), c)
+      .eq("kind", kind)
+      .eq("key", key)
+      .maybeSingle(),
+  );
+}
+async function policyCandidates(c: Context, kind: Kind, targets: string[]) {
+  const db = await createServiceClient(),
+    safe = targets
+      .filter(Boolean)
+      .map((v) => v.replace(/[^a-zA-Z0-9_-]/g, ""))
+      .filter(Boolean),
+    rows = await checked<DceRecord[]>(
+      scoped(db.from("ac_dce_records").select("*"), c)
+        .eq("kind", kind)
+        .neq("lifecycle", "archived")
+        .or(
+          "data->>scope.eq.world" +
+            (safe.length ? ",data->>targetId.in.(" + safe.join(",") + ")" : ""),
+        )
+        .limit(2001),
+    );
+  if (rows.length > 2000)
+    throw new MarketplaceError(
+      "DEPENDENCY_BLOCKED",
+      "More than 2,000 rules target this exact context. Consolidate overlapping rules before inspection.",
+    );
+  return rows;
+}
+export async function all(c: Context, kind?: Kind) {
+  const rows: DceRecord[] = [];
+  let cursor: string | undefined;
+  const beforeDate = new Date().toISOString();
+  let partitions = 0;
+  while (true) {
+    const p = await list(c, {
+      kind,
+      page: 1,
+      pageSize: 100,
+      stable: "true",
+      afterId: cursor,
+      beforeDate,
+    });
+    rows.push(...p.rows);
+    if (p.rows.length < 100) break;
+    cursor = p.rows.at(-1)?.id;
+    if (++partitions > 5000)
+      throw new MarketplaceError(
+        "NOT_READY",
+        "Dataset exceeds bounded export partition; narrow the family scope.",
+      );
+  }
+  return rows;
+}
 
-function sharedNativeScope(q:any,c:Pick<Context,'tenantId'|'territoryId'>){if(c.tenantId)q=q.or(`tenant_id.is.null,tenant_id.eq.${c.tenantId}`);if(c.territoryId)q=q.or(`territory_id.is.null,territory_id.eq.${c.territoryId}`);return q}
-export async function native(c:Context,type:string,input:Record<string,unknown>={}){
- authorize(c,'view');const db=await createServiceClient(),page=Math.max(1,Math.floor(number(input.page,1))),size=Math.min(100,Math.max(1,Math.floor(number(input.pageSize,30))));
- if(type==='staff')return eligibleStaff(c,input)
- const table=type==='media'?'angelcare_marketplace_media_assets':type==='offers'?'angelcare_marketplace_catalog_discovery_v':type==='customers'?'angelcare_marketplace_customer_accounts':''
- if(!table)throw new MarketplaceError('VALIDATION_ERROR','Unsupported native registry.')
- if(type==='media'&&!hasMarketplacePermission(c,'marketplace.media.view'))throw new MarketplaceError('PERMISSION_DENIED','Native media view permission is required.')
- if(type==='customers')authorize(c,'customers')
- let q=db.from(table).select('*',{count:'exact'})
- // Media vault is shared by the installed authority; canonical offers carry territory scope.
- if(type==='offers'){q=q.eq('status','published');if(c.territoryId)q=q.or(`territory_id.is.null,territory_id.eq.${c.territoryId}`)}
- if(type==='media')q=q.eq('status','active');if(input.id){if(!isId(input.id))throw new MarketplaceError('VALIDATION_ERROR','Invalid native reference.');q=q.eq('id',input.id)}
- if(type==='customers'&&!c.assignments.some(a=>a.scopeType==='global')&&!['ceo','admin','super_admin'].includes(c.actor.sourceRole))q=scoped(q,c)
- const search=text(input.q).replace(/[^\p{L}\p{N} .@-]/gu,' ').slice(0,120)
- if(search)q=type==='media'?q.ilike('file_name','%'+search+'%'):type==='offers'?q.or(`name_fr.ilike.%${search}%,name_en.ilike.%${search}%,item_key.ilike.%${search}%`):q.or(`full_name.ilike.%${search}%,email.ilike.%${search}%`)
- const mimes=text(input.mime).split(',').filter(x=>/^[a-z]+\/[a-z0-9.+-]*$/i.test(x))
- if(type==='media'&&mimes.length)q=q.or(mimes.map(m=>m.endsWith('/')?'mime_type.like.'+m+'*':'mime_type.eq.'+m).join(','))
- const result=await q.order('id').range((page-1)*size,page*size-1);if(result.error)fail(result.error)
- const rows=(result.data||[]).map((r:any)=>type==='customers'?{id:r.id,title:r.full_name||r.email,status:r.status,email:r.email}:type==='media'?{id:r.id,title:r.file_name||r.asset_key,mime:r.mime_type,url:r.public_url||r.desktop_url,size:r.size_bytes,status:r.status,rights:r.rights_status||r.license_type,expiresAt:r.rights_expires_at,metadata:{sha256:r.metadata?.sha256,width:r.metadata?.width,height:r.metadata?.height,duration:r.duration_seconds||r.metadata?.duration,pages:r.metadata?.pages}}:{id:r.id,title:r.name_fr||r.name_en||r.item_key,kind:r.kind,continuation:nativeContinuation(r),url:'/angelcare-marketplace/'+c.locale+'/marketplace/item/'+r.slug,price:r.price_amount,priceMode:r.price_mode,currency:r.currency_label,availability:r.availability_status})
- return{rows,total:result.count||0,page,pageSize:size,scopeNote:'Search and compatible source filtering apply before pagination in the native authority.'}
+function sharedNativeScope(
+  q: any,
+  c: Pick<Context, "tenantId" | "territoryId">,
+) {
+  if (c.tenantId) q = q.or(`tenant_id.is.null,tenant_id.eq.${c.tenantId}`);
+  if (c.territoryId)
+    q = q.or(`territory_id.is.null,territory_id.eq.${c.territoryId}`);
+  return q;
 }
-async function eligibleStaff(c:Context,input:Record<string,unknown>={}){
- authorize(c,'view');if(!rights(c).moderate&&!rights(c).manage)throw new MarketplaceError('PERMISSION_DENIED','Staff selection requires authoring or moderation permission.')
- const db=await createServiceClient(),page=Math.max(1,Math.floor(number(input.page,1))),size=30,now=new Date().toISOString(),assignments:any[]=[];let offset=0
- // Resolve eligible identities from the existing role/workspace authority, then search the full set.
- while(true){const batch=await checked<any[]>(db.from('angelcare_marketplace_workspace_access').select('app_user_id,starts_at,expires_at').eq('workspace_key','workspace.digital_experience').eq('enabled',true).order('app_user_id').range(offset,offset+999));assignments.push(...batch.filter(a=>(!a.starts_at||a.starts_at<=now)&&(!a.expires_at||a.expires_at>=now)));if(batch.length<1000)break;offset+=1000}
- const ids=[...new Set(assignments.map(a=>String(a.app_user_id)))];let q=sharedNativeScope(db.from('app_users').select('id,full_name,email,role,status,tenant_id,territory_id',{count:'exact'}).eq('status','active'),c)
- q=q.or(['role.in.(ceo,admin,super_admin)',...(ids.length?['id.in.('+ids.join(',')+')']:[])].join(','))
- if(input.id)q=q.eq('id',text(input.id))
- const search=text(input.q).replace(/[^\p{L}\p{N} .@-]/gu,' ').slice(0,120);if(search)q=q.or(`full_name.ilike.%${search}%,email.ilike.%${search}%`)
- const r=await q.order('full_name').order('id').range((page-1)*size,page*size-1);if(r.error)fail(r.error)
- return{rows:(r.data||[]).map((u:any)=>({id:u.id,title:u.full_name||u.email,email:u.email,status:u.status})),total:r.count||0,page,pageSize:size}
+export async function native(
+  c: Context,
+  type: string,
+  input: Record<string, unknown> = {},
+) {
+  authorize(c, "view");
+  const db = await createServiceClient(),
+    page = Math.max(1, Math.floor(number(input.page, 1))),
+    size = Math.min(100, Math.max(1, Math.floor(number(input.pageSize, 30))));
+  if (type === "staff") return eligibleStaff(c, input);
+  const table =
+    type === "media"
+      ? "angelcare_marketplace_media_assets"
+      : type === "offers"
+        ? "angelcare_marketplace_catalog_discovery_v"
+        : type === "customers"
+          ? "angelcare_marketplace_customer_accounts"
+          : "";
+  if (!table)
+    throw new MarketplaceError(
+      "VALIDATION_ERROR",
+      "Unsupported native registry.",
+    );
+  if (
+    type === "media" &&
+    !hasMarketplacePermission(c, "marketplace.media.view")
+  )
+    throw new MarketplaceError(
+      "PERMISSION_DENIED",
+      "Native media view permission is required.",
+    );
+  if (type === "customers") authorize(c, "customers");
+  let q = db.from(table).select("*", { count: "exact" });
+  // Media vault is shared by the installed authority; canonical offers carry territory scope.
+  if (type === "offers") {
+    q = q.eq("status", "published");
+    if (c.territoryId)
+      q = q.or(`territory_id.is.null,territory_id.eq.${c.territoryId}`);
+  }
+  if (type === "media") q = q.eq("status", "active");
+  if (input.id) {
+    if (!isId(input.id))
+      throw new MarketplaceError(
+        "VALIDATION_ERROR",
+        "Invalid native reference.",
+      );
+    q = q.eq("id", input.id);
+  }
+  if (
+    type === "customers" &&
+    !c.assignments.some((a) => a.scopeType === "global") &&
+    !["ceo", "admin", "super_admin"].includes(c.actor.sourceRole)
+  )
+    q = scoped(q, c);
+  const search = text(input.q)
+    .replace(/[^\p{L}\p{N} .@-]/gu, " ")
+    .slice(0, 120);
+  if (search)
+    q =
+      type === "media"
+        ? q.ilike("file_name", "%" + search + "%")
+        : type === "offers"
+          ? q.or(
+              `name_fr.ilike.%${search}%,name_en.ilike.%${search}%,item_key.ilike.%${search}%`,
+            )
+          : q.or(`full_name.ilike.%${search}%,email.ilike.%${search}%`);
+  const mimes = text(input.mime)
+    .split(",")
+    .filter((x) => /^[a-z]+\/[a-z0-9.+-]*$/i.test(x));
+  if (type === "media" && mimes.length)
+    q = q.or(
+      mimes
+        .map((m) =>
+          m.endsWith("/") ? "mime_type.like." + m + "*" : "mime_type.eq." + m,
+        )
+        .join(","),
+    );
+  const result = await q.order("id").range((page - 1) * size, page * size - 1);
+  if (result.error) fail(result.error);
+  const rows = (result.data || []).map((r: any) =>
+    type === "customers"
+      ? {
+          id: r.id,
+          title: r.full_name || r.email,
+          status: r.status,
+          email: r.email,
+        }
+      : type === "media"
+        ? {
+            id: r.id,
+            title: r.file_name || r.asset_key,
+            mime: r.mime_type,
+            url: r.public_url || r.desktop_url,
+            size: r.size_bytes,
+            status: r.status,
+            rights: r.rights_status || r.license_type,
+            expiresAt: r.rights_expires_at,
+            metadata: {
+              sha256: r.metadata?.sha256,
+              width: r.metadata?.width,
+              height: r.metadata?.height,
+              duration: r.duration_seconds || r.metadata?.duration,
+              pages: r.metadata?.pages,
+            },
+          }
+        : {
+            id: r.id,
+            title: r.name_fr || r.name_en || r.item_key,
+            kind: r.kind,
+            continuation: nativeContinuation(r),
+            url:
+              "/angelcare-marketplace/" +
+              c.locale +
+              "/marketplace/item/" +
+              r.slug,
+            price: r.price_amount,
+            priceMode: r.price_mode,
+            currency: r.currency_label,
+            availability: r.availability_status,
+          },
+  );
+  return {
+    rows,
+    total: result.count || 0,
+    page,
+    pageSize: size,
+    scopeNote:
+      "Search and compatible source filtering apply before pagination in the native authority.",
+  };
+}
+async function eligibleStaff(c: Context, input: Record<string, unknown> = {}) {
+  authorize(c, "view");
+  if (!rights(c).moderate && !rights(c).manage)
+    throw new MarketplaceError(
+      "PERMISSION_DENIED",
+      "Staff selection requires authoring or moderation permission.",
+    );
+  const db = await createServiceClient(),
+    page = Math.max(1, Math.floor(number(input.page, 1))),
+    size = 30,
+    now = new Date().toISOString(),
+    assignments: any[] = [];
+  let offset = 0;
+  // Resolve eligible identities from the existing role/workspace authority, then search the full set.
+  while (true) {
+    const batch = await checked<any[]>(
+      db
+        .from("angelcare_marketplace_workspace_access")
+        .select("app_user_id,starts_at,expires_at")
+        .eq("workspace_key", "workspace.digital_experience")
+        .eq("enabled", true)
+        .order("app_user_id")
+        .range(offset, offset + 999),
+    );
+    assignments.push(
+      ...batch.filter(
+        (a) =>
+          (!a.starts_at || a.starts_at <= now) &&
+          (!a.expires_at || a.expires_at >= now),
+      ),
+    );
+    if (batch.length < 1000) break;
+    offset += 1000;
+  }
+  const ids = [...new Set(assignments.map((a) => String(a.app_user_id)))];
+  let q = sharedNativeScope(
+    db
+      .from("app_users")
+      .select("id,full_name,email,role,status,tenant_id,territory_id", {
+        count: "exact",
+      })
+      .eq("status", "active"),
+    c,
+  );
+  q = q.or(
+    [
+      "role.in.(ceo,admin,super_admin)",
+      ...(ids.length ? ["id.in.(" + ids.join(",") + ")"] : []),
+    ].join(","),
+  );
+  if (input.id) q = q.eq("id", text(input.id));
+  const search = text(input.q)
+    .replace(/[^\p{L}\p{N} .@-]/gu, " ")
+    .slice(0, 120);
+  if (search) q = q.or(`full_name.ilike.%${search}%,email.ilike.%${search}%`);
+  const r = await q
+    .order("full_name")
+    .order("id")
+    .range((page - 1) * size, page * size - 1);
+  if (r.error) fail(r.error);
+  return {
+    rows: (r.data || []).map((u: any) => ({
+      id: u.id,
+      title: u.full_name || u.email,
+      email: u.email,
+      status: u.status,
+    })),
+    total: r.count || 0,
+    page,
+    pageSize: size,
+  };
 }
 
-async function nativeByIds(db:Db,c:Pick<Context,'tenantId'|'territoryId'>,table:string,ids:string[]){const rows:Record<string,any>[]=[];for(let i=0;i<ids.length;i+=100){const data=await checked<any[]>(db.from(table).select('*').in('id',ids.slice(i,i+100)));rows.push(...(data||[]).filter(r=>!((c.tenantId&&r.tenant_id&&c.tenantId!==r.tenant_id)||(c.territoryId&&r.territory_id&&c.territoryId!==r.territory_id))))}return rows}
-export async function validate(c:Context,r:DceRecord):Promise<{validation:Validation;bindings:Data}>{
- const definition=compatibleDefinition(r.family,r.data).data;const validation=validateRecord(r),ref=references({...definition,parentId:r.topic||null}),db=await createServiceClient();const add=(path:string,code:string,msg:string)=>validation.errors.push({path,code,message:[msg,msg,msg],severity:'error'});const bindings:Data={media:{},records:{},offers:{}};
- const [media,offers]=await Promise.all([nativeByIds(db,c,'angelcare_marketplace_media_assets',ref.media),nativeByIds(db,c,'angelcare_marketplace_catalog_discovery_v',ref.offers)]);
- for(const id of ref.media){const m=media.find(x=>x.id===id);if(!m){add('media','MISSING_MEDIA','Native media not found or outside scope: '+id);continue}if(m.status!=='active'||m.metadata?.status==='failed'||m.rights_expires_at&&Date.parse(m.rights_expires_at)<=Date.now())add('media','MEDIA_UNAVAILABLE','Media is archived, failed or expired: '+id);const url=m.public_url||m.desktop_url;if(!url)add('media','MEDIA_URL','Media delivery URL missing: '+id);object(bindings.media)[id]={id,url:url||'',mime:m.mime_type||'',title:m.file_name||'',bytes:m.size_bytes||0,width:m.width||m.metadata?.width||null,height:m.height||m.metadata?.height||null,duration:m.duration_seconds||m.metadata?.duration||null,pages:m.metadata?.pages||null,rights:m.rights_status||m.license_type||'unverified'};if(!m.rights_status&&!m.license_type)validation.warnings.push({path:'media',code:'RIGHTS_REVIEW',message:['Review source media rights.','Vérifiez les droits du média.','راجع حقوق الوسائط.'],severity:'warning'})}
- const settings=(await all(c,'setting')).find(s=>s.key==='world-defaults')?.data||{};if(['experience','bundle'].includes(r.kind)){if(settings.allowDownloads===false&&definition.downloadAllowed===true)add('downloadAllowed','WORLD_OUTPUT','World policy disables downloadable outputs.');if(settings.allowPrint===false&&definition.printAllowed===true)add('printAllowed','WORLD_OUTPUT','World policy disables printable outputs.');if(settings.requireAltText===true)for(const slot of mediaSlots(FAMILIES.find(f=>f.key===r.family),definition).filter(slot=>media.find(m=>m.id===slot.id)?.mime_type?.startsWith('image/'))){const unit=slot.path.split('.')[0]==='units'?array(definition.units).find(u=>u.id===slot.path.split('.')[1]):undefined;if(unit&&!text(unit.alt))add(slot.path.replace(/assetId$/,'alt'),'ACCESSIBILITY','Provide an accessible image alternative.')}if(settings.requireCaptions===true&&r.family==='video'&&!array(definition.captions).length&&!array(definition.units).some(u=>u.captionAssetId))add('captions','ACCESSIBILITY','World policy requires captions for video.')}
- for(const slot of mediaSlots(FAMILIES.find(f=>f.key===r.family),definition)){const bound=media.find(m=>m.id===slot.id);if(bound&&!slot.mime.some(m=>m.endsWith('/')?String(bound.mime_type).startsWith(m):bound.mime_type===m))add(slot.path,'MEDIA_TYPE','Choose a source compatible with this media slot.')}
- if(r.family==='printables')for(const unit of array(definition.units)){const source=media.find(m=>m.id===unit.assetId);if(source&&String(source.mime_type).startsWith('image/')){const width=number(source.width||source.metadata?.width),height=number(source.height||source.metadata?.height),dpi=width&&height?Math.min(width/(number(unit.widthMm,210)/25.4),height/(number(unit.heightMm,297)/25.4)):null;if(dpi!==null&&dpi<number(definition.minimumDpi,300))add('units.'+text(unit.id)+'.assetId','PRINT_DPI','Image resolution is below the declared print-quality requirement: '+Math.round(dpi)+' DPI.');else if(dpi===null)validation.warnings.push({path:'units.'+text(unit.id)+'.assetId',code:'PRINT_DIMENSIONS',severity:'warning',message:['Inspect source dimensions before print approval.','Inspectez les dimensions avant l’approbation d’impression.','افحص أبعاد المصدر قبل اعتماد الطباعة.']})}}
- for(const unit of array(definition.units)){const m=media.find(x=>x.id===unit.assetId);if(m&&['video','audio','image','pdf'].includes(text(unit.kind))&&!((unit.kind==='pdf'&&m.mime_type==='application/pdf')||String(m.mime_type||'').startsWith(text(unit.kind)+'/')))add('units.'+text(unit.id),'MEDIA_TYPE','The source MIME type does not match this unit.')}
- for(const id of ref.offers){const o=offers.find(x=>x.id===id&&x.status==='published');if(!o){add('offers','NATIVE_OFFER','Canonical published offer not found: '+id);continue}object(bindings.offers)[id]={id,slug:o.slug,title:o.name_fr||o.name_en||o.item_key,kind:o.kind,continuation:nativeContinuation(o),currency:o.currency_label||'Dh',price:o.price_amount??null,priceMode:o.price_mode,availability:o.availability_status,url:'/angelcare-marketplace/'+c.locale+'/marketplace/item/'+o.slug};}
- for(const link of array(definition.offers)){const offer=offers.find(o=>o.id===link.nativeId);if(offer&&link.action&&link.action!=='details'&&link.action!==nativeContinuation(offer))add('offers.'+text(link.id)+'.action','NATIVE_CONTINUATION','The selected action is incompatible with this native offer.')}
- if(r.family==='learning'&&definition.nativeId){const course=offers.find(o=>o.id===definition.nativeId);if(course&&course.kind!=='training')add('nativeId','ACADEMY','Choose a canonical Academy training offer.')}
- for(const id of ref.records){const q=await db.from('ac_dce_records').select('*').eq('scope_key',scopeKey(c)).eq('id',id).maybeSingle();if(q.error)fail(q.error);const dep=q.data as DceRecord|null;if(!dep||dep.lifecycle==='archived'){add('dependencies','MISSING_RECORD','Experience dependency missing: '+id);continue}if(!dep.published_release_id&&r.kind!=='template'&&dep.kind!=='topic'){add('dependencies','UNPUBLISHED_DEPENDENCY','Release this dependency first: '+dep.title)}else if(dep.kind==='topic'){object(bindings.records)[id]={id,key:dep.key,title:dep.title,definition:dep.data}}else if(dep.published_release_id){const pinned=array(definition.steps).find(step=>step.experienceId===id&&step.releaseId);const z=await checked<any>(scoped(db.from('ac_dce_releases').select('manifest,state,record_id'),c).eq('id',text(pinned?.releaseId)||dep.published_release_id).maybeSingle());if(z&&z.record_id!==dep.id){add('steps','MEMBERSHIP','Pinned release belongs to another child.');continue};if(z?.state!=='published')add('dependencies','INACTIVE_DEPENDENCY','Dependency has no active release.');else object(bindings.records)[id]={...z.manifest,releaseId:text(pinned?.releaseId)||dep.published_release_id}}}
- // Cross-record graph closure is bounded, scope enforced and cycles rejected.
- const seen=new Set<string>(),active=new Set<string>();async function walk(id:string,depth:number){if(active.has(id)){add('dependencies','CYCLE','Cross-experience dependency cycle.');return}if(seen.has(id))return;if(depth>32||seen.size>500){add('dependencies','GRAPH_LIMIT','Dependency graph exceeds the supported bound.');return}active.add(id);let d=r;if(id!==r.id){const q=await db.from('ac_dce_records').select('*').eq('id',id).eq('scope_key',scopeKey(c)).maybeSingle();if(q.error)fail(q.error);if(!q.data){active.delete(id);return}d=q.data as DceRecord}for(const child of references(d.data).records)await walk(child,depth+1);active.delete(id);seen.add(id)}await walk(r.id,0);
- if(r.kind==='ad_policy'&&r.data.enabled===true){const connectionRows=await checked<DceRecord[]>(scoped(db.from('ac_dce_records').select('*'),c).eq('kind','ad_connection'));const ready=connectionRows.some(x=>object(x.data.providerEvidence).ready===true&&Date.now()-Date.parse(text(object(x.data.providerEvidence).observedAt))<86400000);if(!ready)add('ad_policy','PROVIDER_NOT_READY','Verify an approved account and site with Google before enabling this rule.');if(['01','02','03','04','14'].includes(text(r.data.formatId))){const units=await checked<DceRecord[]>(scoped(db.from('ac_dce_records').select('*'),c).eq('kind','ad_unit').eq('data->>unitId',text(r.data.unitId)));if(!units.some(u=>u.data.localEnabled===true&&object(u.data.providerEvidence).state==='ACTIVE'&&Date.now()-Date.parse(text(object(u.data.providerEvidence).observedAt))<86400000))add('unitId','UNIT_NOT_VERIFIED','Register and verify an active native Google unit before enabling this placement.')}}
- validation.valid=validation.errors.length===0;return{validation,bindings}
+async function nativeByIds(
+  db: Db,
+  c: Pick<Context, "tenantId" | "territoryId">,
+  table: string,
+  ids: string[],
+) {
+  const rows: Record<string, any>[] = [];
+  for (let i = 0; i < ids.length; i += 100) {
+    const data = await checked<any[]>(
+      sharedNativeScope(db.from(table).select("*"), c).in(
+        "id",
+        ids.slice(i, i + 100),
+      ),
+    );
+    rows.push(
+      ...(data || []).filter(
+        (r) =>
+          !(
+            (c.tenantId && r.tenant_id && c.tenantId !== r.tenant_id) ||
+            (c.territoryId &&
+              r.territory_id &&
+              c.territoryId !== r.territory_id)
+          ),
+      ),
+    );
+  }
+  return rows;
 }
-async function save(c:Context,cmd:Command,trustedProvider=false){const old=cmd.id?await record(c,cmd.id):undefined,kind=(old?.kind||cmd.record?.kind) as Kind;writable(c,kind);const normalized=normalizeRecord({...old,...cmd.record},old);if(kind==='setting'){const issues=worldIssues(object(normalized.data));if(issues.length)throw new MarketplaceError('VALIDATION_ERROR',issues.map(i=>i.path+': '+i.message[0]).join(' '))}if(kind==='topic'){const parent=text(normalized.data?.parentId);if(parent){if(!isId(parent))throw new MarketplaceError('VALIDATION_ERROR','Choose a real parent topic.');const visited=new Set<string>(old?[old.id]:[]);let next:string=parent;while(next){if(visited.has(next))throw new MarketplaceError('VALIDATION_ERROR','Topic hierarchy would create a cycle.');visited.add(next);const topic=await record(c,next);if(topic.kind!=='topic'||topic.lifecycle==='archived')throw new MarketplaceError('DEPENDENCY_BLOCKED','Choose an active topic parent.');next=text(topic.data.parentId);if(visited.size>100)throw new MarketplaceError('VALIDATION_ERROR','Topic hierarchy exceeds 100 levels.')}}if(!Number.isInteger(normalized.data?.sortOrder)||number(normalized.data?.sortOrder)<0||number(normalized.data?.sortOrder)>9999)throw new MarketplaceError('VALIDATION_ERROR','Topic order must be a whole number from 0 to 9999.')}if(kind==='asset'&&!trustedProvider&&normalized.data){const same=old?.data.nativeAssetId===normalized.data.nativeAssetId;for(const key of ['processingMetadata','processingError','processingStartedAt']){if(same&&old?.data[key]!==undefined)normalized.data[key]=old.data[key];else delete normalized.data[key]}normalized.data.processingState=same?old?.data.processingState||'not_inspected':'not_inspected'}if(['ad_connection','ad_unit'].includes(kind)&&!trustedProvider&&normalized.data&&JSON.stringify(normalized.data.providerEvidence)!==JSON.stringify(old?.data.providerEvidence)){if(old?.data.providerEvidence)normalized.data.providerEvidence=old.data.providerEvidence;else delete normalized.data.providerEvidence;}if(old&&kind==='case'){const allowed=['assignedTo','priority','resolution','notes'];for(const k of Object.keys(old.data))if(!allowed.includes(k)&&JSON.stringify(normalized.data?.[k])!==JSON.stringify(old.data[k]))throw new MarketplaceError('FORBIDDEN','Customer source fields are immutable.');const notes=array(object(normalized.data).notes),prior=array(old.data.notes);if(notes.length<prior.length||JSON.stringify(notes.slice(0,prior.length))!==JSON.stringify(prior))throw new MarketplaceError('CONFLICT','Existing private notes cannot be changed.');normalized.data!.notes=[...prior,...notes.slice(prior.length).map(n=>({body:text(n.body).slice(0,4000),actorId:c.actor.id,createdAt:new Date().toISOString()}))];const assigned=text(normalized.data?.assignedTo);if(assigned&&assigned!==old.data.assignedTo){if(!isId(assigned))throw new MarketplaceError('VALIDATION_ERROR','Use a native staff UUID.');const staff=await checked<any>((await createServiceClient()).from('app_users').select('*').eq('id',assigned).eq('status','active').maybeSingle());if(!(await eligibleStaff(c,{id:assigned})).rows.some((u:{id:string})=>u.id===assigned))throw new MarketplaceError('NOT_FOUND','Staff member is not eligible in this DCE workspace.');if(!staff||c.tenantId&&staff.tenant_id&&staff.tenant_id!==c.tenantId||c.territoryId&&staff.territory_id&&staff.territory_id!==c.territoryId)throw new MarketplaceError('NOT_FOUND','Eligible active native staff not found.')}}if(old&&kind==='contribution'){for(const k of Object.keys(old.data))if(k!=='moderationReason'&&JSON.stringify(normalized.data?.[k])!==JSON.stringify(old.data[k]))throw new MarketplaceError('FORBIDDEN','Contribution source fields are immutable.');}if(kind==='setting'&&((old&&normalized.data?.monetizationEnabled!==old.data.monetizationEnabled)||normalized.data?.monetizationEnabled===true||normalized.data?.publicRuntimeReady===true))authorize(c,'monetize');if(normalized.data?.publicRuntimeReady===true)throw new MarketplaceError('FEATURE_DISABLED','Public distribution is Chapter 2; this admin package cannot activate it.');if(['case','contribution'].includes(kind)&&!old)throw new MarketplaceError('FORBIDDEN','The editor cannot fabricate customer submissions.');const refs=references({...object(normalized.data),parentId:normalized.topic||null});const db=await createServiceClient();return checked(db.rpc('ac_dce_write',{...args(c,cmd),p_action:'save',p_id:old?.id||null,p_revision:cmd.revision||0,p_record:normalized,p_refs:{record:refs.records,media:refs.media,offer:refs.offers}}))}
-export async function revisions(c:Context,id:string,input:Record<string,unknown>={}){
- await record(c,id);const db=await createServiceClient(),page=Math.max(1,Math.floor(number(input.page,1))),releasePage=Math.max(1,Math.floor(number(input.releasePage,1)))
- const [versions,releases,links]=await Promise.all([db.from('ac_dce_versions').select('*',{count:'exact'}).eq('record_id',id).order('revision',{ascending:false}).range((page-1)*50,page*50-1),scoped(db.from('ac_dce_releases').select('*',{count:'exact'}),c).eq('record_id',id).order('created_at',{ascending:false}).order('id').range((releasePage-1)*30,releasePage*30-1),checked<any[]>(db.from('ac_dce_links').select('record_id,target_type').eq('target_id',id))])
- if(versions.error)fail(versions.error);if(releases.error)fail(releases.error)
- const authorized=await all(c),by=new Map(authorized.map(r=>[r.id,r])),usage=links.filter(l=>by.has(l.record_id)).map(l=>({record_id:l.record_id,title:by.get(l.record_id)!.title,kind:by.get(l.record_id)!.kind,target_type:l.target_type}))
- for(const r of authorized)if(r.data.targetId===id&&!usage.some(u=>u.record_id===r.id))usage.push({record_id:r.id,title:r.title,kind:r.kind,target_type:'policy_target'})
- return{versions:versions.data||[],versionTotal:versions.count||0,page,releases:releases.data||[],releaseTotal:releases.count||0,releasePage,usage}
+export async function validate(
+  c: Context,
+  r: DceRecord,
+): Promise<{ validation: Validation; bindings: Data }> {
+  authorize(c, "view");
+  return validateScoped(c, r);
+}
+export async function validateScoped(
+  c: Pick<Context, "tenantId" | "territoryId" | "locale">,
+  r: DceRecord,
+): Promise<{ validation: Validation; bindings: Data }> {
+  const definition = compatibleDefinition(r.family, r.data).data;
+  const validation = validateRecord(r),
+    ref = references({ ...definition, parentId: r.topic || null }),
+    db = await createServiceClient();
+  const add = (path: string, code: string, msg: string) =>
+    validation.errors.push({
+      path,
+      code,
+      message: [msg, msg, msg],
+      severity: "error",
+    });
+  const bindings: Data = { media: {}, records: {}, offers: {} };
+  const [media, offers] = await Promise.all([
+    nativeByIds(db, c, "angelcare_marketplace_media_assets", ref.media),
+    nativeByIds(db, c, "angelcare_marketplace_catalog_discovery_v", ref.offers),
+  ]);
+  for (const id of ref.media) {
+    const m = media.find((x) => x.id === id);
+    if (!m) {
+      add(
+        "media",
+        "MISSING_MEDIA",
+        "Native media not found or outside scope: " + id,
+      );
+      continue;
+    }
+    if (
+      m.status !== "active" ||
+      m.metadata?.status === "failed" ||
+      (m.rights_expires_at && Date.parse(m.rights_expires_at) <= Date.now())
+    )
+      add(
+        "media",
+        "MEDIA_UNAVAILABLE",
+        "Media is archived, failed or expired: " + id,
+      );
+    const url = m.public_url || m.desktop_url;
+    if (!url) add("media", "MEDIA_URL", "Media delivery URL missing: " + id);
+    object(bindings.media)[id] = {
+      id,
+      url: url || "",
+      mime: m.mime_type || "",
+      title: m.file_name || "",
+      bytes: m.size_bytes || 0,
+      width: m.width || m.metadata?.width || null,
+      height: m.height || m.metadata?.height || null,
+      duration: m.duration_seconds || m.metadata?.duration || null,
+      pages: m.metadata?.pages || null,
+      rights: m.rights_status || m.license_type || "unverified",
+    };
+    if (!m.rights_status && !m.license_type)
+      validation.warnings.push({
+        path: "media",
+        code: "RIGHTS_REVIEW",
+        message: [
+          "Review source media rights.",
+          "Vérifiez les droits du média.",
+          "راجع حقوق الوسائط.",
+        ],
+        severity: "warning",
+      });
+  }
+  const setting = await checked<DceRecord | null>(
+    scoped(db.from("ac_dce_records").select("*"), c)
+      .eq("kind", "setting")
+      .eq("key", "world-defaults")
+      .maybeSingle(),
+  );
+  const settings = setting?.data || {};
+  for (const locale of Array.isArray(definition.requiredLocales)
+    ? definition.requiredLocales
+    : [])
+    for (const path of translationCoverage(r, String(locale)).missing)
+      add(
+        "locales." + locale + "." + path,
+        "TRANSLATION_REQUIRED",
+        "Complete this published language field.",
+      );
+  if (
+    r.family === "forms" &&
+    array(definition.fields).some((f) => f.type === "file")
+  ) {
+    const receiver = isId(definition.privateReceiverId)
+      ? await checked<DceRecord | null>(
+          scoped(db.from("ac_dce_records").select("*"), c)
+            .eq("id", definition.privateReceiverId)
+            .eq("kind", "setting")
+            .eq("key", "dce-protected-receiver")
+            .maybeSingle(),
+        )
+      : null;
+    if (
+      receiver?.data.enabled !== true ||
+      receiver?.data.authority !== "dce_private_v1"
+    )
+      add(
+        "privateReceiverId",
+        "PRIVATE_RECEIVER",
+        "Initialize and select the protected DCE receiver.",
+      );
+    if (!marketplaceMediaStorageConfiguration().configured)
+      add(
+        "privateReceiverId",
+        "MEDIA_CONFIGURATION",
+        "The existing signed media gateway must be configured.",
+      );
+    const types = text(definition.attachmentTypes)
+      .split(/[\s,]+/)
+      .filter(Boolean);
+    if (
+      !types.length ||
+      types.some(
+        (t) =>
+          ![
+            "application/pdf",
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+          ].includes(t),
+      )
+    )
+      add(
+        "attachmentTypes",
+        "ATTACHMENT_TYPES",
+        "Use PDF/JPEG/PNG/WebP for protected attachments.",
+      );
+    if (number(definition.attachmentMaxMb, 10) > 20)
+      add(
+        "attachmentMaxMb",
+        "ATTACHMENT_SIZE",
+        "Protected files cannot exceed 20 MiB.",
+      );
+  }
+  if (["experience", "bundle"].includes(r.kind)) {
+    if (
+      settings.allowDownloads === false &&
+      definition.downloadAllowed === true
+    )
+      add(
+        "downloadAllowed",
+        "WORLD_OUTPUT",
+        "World policy disables downloadable outputs.",
+      );
+    if (settings.allowPrint === false && definition.printAllowed === true)
+      add(
+        "printAllowed",
+        "WORLD_OUTPUT",
+        "World policy disables printable outputs.",
+      );
+    if (settings.requireAltText === true)
+      for (const slot of mediaSlots(
+        FAMILIES.find((f) => f.key === r.family),
+        definition,
+      ).filter((slot) =>
+        media.find((m) => m.id === slot.id)?.mime_type?.startsWith("image/"),
+      )) {
+        const unit =
+          slot.path.split(".")[0] === "units"
+            ? array(definition.units).find(
+                (u) => u.id === slot.path.split(".")[1],
+              )
+            : undefined;
+        if (unit && !text(unit.alt))
+          add(
+            slot.path.replace(/assetId$/, "alt"),
+            "ACCESSIBILITY",
+            "Provide an accessible image alternative.",
+          );
+      }
+    if (
+      settings.requireCaptions === true &&
+      r.family === "video" &&
+      !array(definition.captions).length &&
+      !array(definition.units).some((u) => u.captionAssetId)
+    )
+      add(
+        "captions",
+        "ACCESSIBILITY",
+        "World policy requires captions for video.",
+      );
+  }
+  for (const slot of mediaSlots(
+    FAMILIES.find((f) => f.key === r.family),
+    definition,
+  )) {
+    const bound = media.find((m) => m.id === slot.id);
+    if (
+      bound &&
+      !slot.mime.some((m) =>
+        m.endsWith("/")
+          ? String(bound.mime_type).startsWith(m)
+          : bound.mime_type === m,
+      )
+    )
+      add(
+        slot.path,
+        "MEDIA_TYPE",
+        "Choose a source compatible with this media slot.",
+      );
+  }
+  if (r.family === "printables")
+    for (const unit of array(definition.units)) {
+      const source = media.find((m) => m.id === unit.assetId);
+      if (source && String(source.mime_type).startsWith("image/")) {
+        const width = number(source.width || source.metadata?.width),
+          height = number(source.height || source.metadata?.height),
+          dpi =
+            width && height
+              ? Math.min(
+                  width / (number(unit.widthMm, 210) / 25.4),
+                  height / (number(unit.heightMm, 297) / 25.4),
+                )
+              : null;
+        if (dpi !== null && dpi < number(definition.minimumDpi, 300))
+          add(
+            "units." + text(unit.id) + ".assetId",
+            "PRINT_DPI",
+            "Image resolution is below the declared print-quality requirement: " +
+              Math.round(dpi) +
+              " DPI.",
+          );
+        else if (dpi === null)
+          validation.warnings.push({
+            path: "units." + text(unit.id) + ".assetId",
+            code: "PRINT_DIMENSIONS",
+            severity: "warning",
+            message: [
+              "Inspect source dimensions before print approval.",
+              "Inspectez les dimensions avant l’approbation d’impression.",
+              "افحص أبعاد المصدر قبل اعتماد الطباعة.",
+            ],
+          });
+      }
+    }
+  for (const unit of array(definition.units)) {
+    const m = media.find((x) => x.id === unit.assetId);
+    if (
+      m &&
+      ["video", "audio", "image", "pdf"].includes(text(unit.kind)) &&
+      !(
+        (unit.kind === "pdf" && m.mime_type === "application/pdf") ||
+        String(m.mime_type || "").startsWith(text(unit.kind) + "/")
+      )
+    )
+      add(
+        "units." + text(unit.id),
+        "MEDIA_TYPE",
+        "The source MIME type does not match this unit.",
+      );
+  }
+  for (const id of ref.offers) {
+    const o = offers.find((x) => x.id === id && x.status === "published");
+    if (!o) {
+      add(
+        "offers",
+        "NATIVE_OFFER",
+        "Canonical published offer not found: " + id,
+      );
+      continue;
+    }
+    object(bindings.offers)[id] = {
+      id,
+      slug: o.slug,
+      title: o.name_fr || o.name_en || o.item_key,
+      kind: o.kind,
+      continuation: nativeContinuation(o),
+      currency: o.currency_label || "Dh",
+      price: o.price_amount ?? null,
+      priceMode: o.price_mode,
+      availability: o.availability_status,
+      url: "/angelcare-marketplace/" + c.locale + "/marketplace/item/" + o.slug,
+    };
+  }
+  for (const link of array(definition.offers)) {
+    const offer = offers.find((o) => o.id === link.nativeId);
+    if (
+      offer &&
+      link.action &&
+      link.action !== "details" &&
+      link.action !== nativeContinuation(offer)
+    )
+      add(
+        "offers." + text(link.id) + ".action",
+        "NATIVE_CONTINUATION",
+        "The selected action is incompatible with this native offer.",
+      );
+  }
+  if (r.family === "learning" && definition.nativeId) {
+    const course = offers.find((o) => o.id === definition.nativeId);
+    if (course && course.kind !== "training")
+      add("nativeId", "ACADEMY", "Choose a canonical Academy training offer.");
+  }
+  for (const id of ref.records) {
+    const q = await db
+      .from("ac_dce_records")
+      .select("*")
+      .eq("scope_key", scopeKey(c))
+      .eq("id", id)
+      .maybeSingle();
+    if (q.error) fail(q.error);
+    const dep = q.data as DceRecord | null;
+    if (!dep || dep.lifecycle === "archived") {
+      add(
+        "dependencies",
+        "MISSING_RECORD",
+        "Experience dependency missing: " + id,
+      );
+      continue;
+    }
+    if (["ad_policy", "access_policy"].includes(dep.kind)) {
+      object(bindings.records)[id] = {
+        id,
+        key: dep.key,
+        definition: publicManifest(dep, {}).definition || {},
+      };
+      continue;
+    }
+    if (dep.kind === "topic") {
+      object(bindings.records)[id] = {
+        id,
+        key: dep.key,
+        title: dep.title,
+        definition: dep.data,
+      };
+      continue;
+    }
+    const selectedLocale = text(definition.defaultLocale) || c.locale || "en";
+    const edition = await db
+      .from("ac_dce_editions")
+      .select("active_release_id")
+      .eq("record_id", id)
+      .eq("locale", selectedLocale)
+      .maybeSingle();
+    if (edition.error) fail(edition.error);
+    const pinned = array(definition.steps).find(
+        (step) => step.experienceId === id && step.releaseId,
+      ),
+      releaseId =
+        text(pinned?.releaseId) ||
+        edition.data?.active_release_id ||
+        dep.published_release_id;
+    if (!releaseId) {
+      if (r.kind !== "template")
+        add(
+          "dependencies",
+          "UNPUBLISHED_DEPENDENCY",
+          "Release the " + selectedLocale + " edition first: " + dep.title,
+        );
+      continue;
+    }
+    const z = await checked<any>(
+      scoped(
+        db.from("ac_dce_releases").select("id,manifest,state,record_id"),
+        c,
+      )
+        .eq("id", releaseId)
+        .maybeSingle(),
+    );
+    if (z?.record_id !== dep.id) {
+      add("steps", "MEMBERSHIP", "Pinned release belongs to another child.");
+      continue;
+    }
+    if (
+      z.state !== "published" ||
+      (z.manifest.editionLocale || z.manifest.definition?.defaultLocale) !==
+        selectedLocale
+    ) {
+      add(
+        "dependencies",
+        "EDITION_DEPENDENCY",
+        "A published " + selectedLocale + " edition is required: " + dep.title,
+      );
+      continue;
+    }
+    object(bindings.records)[id] = { ...z.manifest, releaseId: z.id };
+  }
+
+  // Cross-record graph closure is bounded, scope enforced and cycles rejected.
+  const seen = new Set<string>(),
+    active = new Set<string>();
+  async function walk(id: string, depth: number) {
+    if (active.has(id)) {
+      add("dependencies", "CYCLE", "Cross-experience dependency cycle.");
+      return;
+    }
+    if (seen.has(id)) return;
+    if (depth > 32 || seen.size > 500) {
+      add(
+        "dependencies",
+        "GRAPH_LIMIT",
+        "Dependency graph exceeds the supported bound.",
+      );
+      return;
+    }
+    active.add(id);
+    let d = r;
+    if (id !== r.id) {
+      const q = await db
+        .from("ac_dce_records")
+        .select("*")
+        .eq("id", id)
+        .eq("scope_key", scopeKey(c))
+        .maybeSingle();
+      if (q.error) fail(q.error);
+      if (!q.data) {
+        active.delete(id);
+        return;
+      }
+      d = q.data as DceRecord;
+    }
+    for (const child of references(d.data).records)
+      await walk(child, depth + 1);
+    active.delete(id);
+    seen.add(id);
+  }
+  await walk(r.id, 0);
+  if (r.kind === "ad_policy" && r.data.enabled === true) {
+    const connectionRows = await checked<DceRecord[]>(
+      scoped(db.from("ac_dce_records").select("*"), c).eq(
+        "kind",
+        "ad_connection",
+      ),
+    );
+    const ready = connectionRows.some(
+      (x) =>
+        object(x.data.providerEvidence).ready === true &&
+        Date.now() -
+          Date.parse(text(object(x.data.providerEvidence).observedAt)) <
+          86400000,
+    );
+    if (!ready)
+      add(
+        "ad_policy",
+        "PROVIDER_NOT_READY",
+        "Verify an approved account and site with Google before enabling this rule.",
+      );
+    if (["01", "02", "03", "04", "14"].includes(text(r.data.formatId))) {
+      const units = await checked<DceRecord[]>(
+        scoped(db.from("ac_dce_records").select("*"), c)
+          .eq("kind", "ad_unit")
+          .eq("data->>unitId", text(r.data.unitId)),
+      );
+      if (
+        !units.some(
+          (u) =>
+            u.data.localEnabled === true &&
+            object(u.data.providerEvidence).state === "ACTIVE" &&
+            Date.now() -
+              Date.parse(text(object(u.data.providerEvidence).observedAt)) <
+              86400000,
+        )
+      )
+        add(
+          "unitId",
+          "UNIT_NOT_VERIFIED",
+          "Register and verify an active native Google unit before enabling this placement.",
+        );
+    }
+  }
+  validation.valid = validation.errors.length === 0;
+  return { validation, bindings };
+}
+async function save(c: Context, cmd: Command, trustedProvider = false) {
+  const old = cmd.id ? await record(c, cmd.id) : undefined,
+    kind = (old?.kind || cmd.record?.kind) as Kind;
+  if (old?.key === "kidflix-homepage" || cmd.record?.key === "kidflix-homepage" || String(old?.key||" ").startsWith("kidflix-storefront-") || String(cmd.record?.key||" ").startsWith("kidflix-storefront-"))
+    throw new MarketplaceError(
+      "PERMISSION_DENIED",
+      "Use the KidFlix homepage controls so drafts cannot overwrite live editions.",
+    );
+  writable(c, kind);
+  const normalized = normalizeRecord({ ...old, ...cmd.record }, old);
+  if (kind === "setting" && normalized.key === "world-defaults") {
+    const issues = worldIssues(object(normalized.data));
+    if (issues.length)
+      throw new MarketplaceError(
+        "VALIDATION_ERROR",
+        issues.map((i) => i.path + ": " + i.message[0]).join(" "),
+      );
+  }
+  if (!old && ["experience", "template"].includes(kind)) {
+    const world = (await byKey(c, "setting", "world-defaults"))?.data || {};
+    if (!authoringFamilies(world).some((f) => f.key === normalized.family))
+      throw new MarketplaceError(
+        "PERMISSION_DENIED",
+        "This family is disabled for new authoring.",
+      );
+    if (
+      Array.isArray(normalized.data?.requiredLocales) &&
+      normalized.data!.requiredLocales.some(
+        (l) => !authoringLocales(world).includes(l as any),
+      )
+    )
+      throw new MarketplaceError(
+        "VALIDATION_ERROR",
+        "A required authoring language is disabled.",
+      );
+    normalized.data = {
+      ...normalized.data,
+      layout: {
+        accent: text(world.brandAccent) || "#066bff",
+        ...object(normalized.data?.layout),
+      },
+      brandSignature: text(world.brandSignature),
+    };
+  }
+  if (kind === "topic") {
+    const parent = text(normalized.data?.parentId);
+    if (parent) {
+      if (!isId(parent))
+        throw new MarketplaceError(
+          "VALIDATION_ERROR",
+          "Choose a real parent topic.",
+        );
+      const visited = new Set<string>(old ? [old.id] : []);
+      let next: string = parent;
+      while (next) {
+        if (visited.has(next))
+          throw new MarketplaceError(
+            "VALIDATION_ERROR",
+            "Topic hierarchy would create a cycle.",
+          );
+        visited.add(next);
+        const topic = await record(c, next);
+        if (topic.kind !== "topic" || topic.lifecycle === "archived")
+          throw new MarketplaceError(
+            "DEPENDENCY_BLOCKED",
+            "Choose an active topic parent.",
+          );
+        next = text(topic.data.parentId);
+        if (visited.size > 100)
+          throw new MarketplaceError(
+            "VALIDATION_ERROR",
+            "Topic hierarchy exceeds 100 levels.",
+          );
+      }
+    }
+    if (
+      !Number.isInteger(normalized.data?.sortOrder) ||
+      number(normalized.data?.sortOrder) < 0 ||
+      number(normalized.data?.sortOrder) > 9999
+    )
+      throw new MarketplaceError(
+        "VALIDATION_ERROR",
+        "Topic order must be a whole number from 0 to 9999.",
+      );
+  }
+  if (kind === "asset" && !trustedProvider && normalized.data) {
+    const same = old?.data.nativeAssetId === normalized.data.nativeAssetId;
+    for (const key of [
+      "processingMetadata",
+      "processingError",
+      "processingStartedAt",
+    ]) {
+      if (same && old?.data[key] !== undefined)
+        normalized.data[key] = old.data[key];
+      else delete normalized.data[key];
+    }
+    normalized.data.processingState = same
+      ? old?.data.processingState || "not_inspected"
+      : "not_inspected";
+  }
+  if (
+    ["ad_connection", "ad_unit"].includes(kind) &&
+    !trustedProvider &&
+    normalized.data &&
+    JSON.stringify(normalized.data.providerEvidence) !==
+      JSON.stringify(old?.data.providerEvidence)
+  ) {
+    if (old?.data.providerEvidence)
+      normalized.data.providerEvidence = old.data.providerEvidence;
+    else delete normalized.data.providerEvidence;
+  }
+  if (old && kind === "case") {
+    const allowed = ["assignedTo", "priority", "resolution", "notes"];
+    for (const k of Object.keys(old.data))
+      if (
+        !allowed.includes(k) &&
+        JSON.stringify(normalized.data?.[k]) !== JSON.stringify(old.data[k])
+      )
+        throw new MarketplaceError(
+          "FORBIDDEN",
+          "Customer source fields are immutable.",
+        );
+    const notes = array(object(normalized.data).notes),
+      prior = array(old.data.notes);
+    if (
+      notes.length < prior.length ||
+      JSON.stringify(notes.slice(0, prior.length)) !== JSON.stringify(prior)
+    )
+      throw new MarketplaceError(
+        "CONFLICT",
+        "Existing private notes cannot be changed.",
+      );
+    normalized.data!.notes = [
+      ...prior,
+      ...notes.slice(prior.length).map((n) => ({
+        body: text(n.body).slice(0, 4000),
+        actorId: c.actor.id,
+        createdAt: new Date().toISOString(),
+      })),
+    ];
+    const assigned = text(normalized.data?.assignedTo);
+    if (assigned && assigned !== old.data.assignedTo) {
+      if (!isId(assigned))
+        throw new MarketplaceError(
+          "VALIDATION_ERROR",
+          "Use a native staff UUID.",
+        );
+      const staff = await checked<any>(
+        (await createServiceClient())
+          .from("app_users")
+          .select("*")
+          .eq("id", assigned)
+          .eq("status", "active")
+          .maybeSingle(),
+      );
+      if (
+        !(await eligibleStaff(c, { id: assigned })).rows.some(
+          (u: { id: string }) => u.id === assigned,
+        )
+      )
+        throw new MarketplaceError(
+          "NOT_FOUND",
+          "Staff member is not eligible in this DCE workspace.",
+        );
+      if (
+        !staff ||
+        (c.tenantId && staff.tenant_id && staff.tenant_id !== c.tenantId) ||
+        (c.territoryId &&
+          staff.territory_id &&
+          staff.territory_id !== c.territoryId)
+      )
+        throw new MarketplaceError(
+          "NOT_FOUND",
+          "Eligible active native staff not found.",
+        );
+    }
+  }
+  if (old && kind === "contribution") {
+    for (const k of Object.keys(old.data))
+      if (
+        k !== "moderationReason" &&
+        JSON.stringify(normalized.data?.[k]) !== JSON.stringify(old.data[k])
+      )
+        throw new MarketplaceError(
+          "FORBIDDEN",
+          "Contribution source fields are immutable.",
+        );
+  }
+  if (
+    kind === "setting" &&
+    normalized.key === "world-defaults" &&
+    ((old &&
+      normalized.data?.monetizationEnabled !== old.data.monetizationEnabled) ||
+      normalized.data?.monetizationEnabled === true ||
+      normalized.data?.publicRuntimeReady === true)
+  )
+    authorize(c, "monetize");
+  if (normalized.data?.publicRuntimeReady === true)
+    throw new MarketplaceError(
+      "FEATURE_DISABLED",
+      "Public distribution is Chapter 2; this admin package cannot activate it.",
+    );
+  if (["case", "contribution"].includes(kind) && !old)
+    throw new MarketplaceError(
+      "FORBIDDEN",
+      "The editor cannot fabricate customer submissions.",
+    );
+  const refs = references({
+    ...object(normalized.data),
+    parentId: normalized.topic || null,
+  });
+  const db = await createServiceClient();
+  return checked(
+    db.rpc("ac_dce_write", {
+      ...args(c, cmd),
+      p_action: "save",
+      p_id: old?.id || null,
+      p_revision: cmd.revision || 0,
+      p_record: normalized,
+      p_refs: { record: refs.records, media: refs.media, offer: refs.offers },
+    }),
+  );
+}
+export async function revisions(
+  c: Context,
+  id: string,
+  input: Record<string, unknown> = {},
+) {
+  await record(c, id);
+  const db = await createServiceClient(),
+    page = Math.max(1, Math.floor(number(input.page, 1))),
+    releasePage = Math.max(1, Math.floor(number(input.releasePage, 1)));
+  const [versions, releases, links] = await Promise.all([
+    db
+      .from("ac_dce_versions")
+      .select("*", { count: "exact" })
+      .eq("record_id", id)
+      .order("revision", { ascending: false })
+      .range((page - 1) * 50, page * 50 - 1),
+    scoped(db.from("ac_dce_releases").select("*", { count: "exact" }), c)
+      .eq("record_id", id)
+      .order("created_at", { ascending: false })
+      .order("id")
+      .range((releasePage - 1) * 30, releasePage * 30 - 1),
+    checked<any[]>(
+      db
+        .from("ac_dce_links")
+        .select("record_id,target_type")
+        .eq("target_id", id),
+    ),
+  ]);
+  if (versions.error) fail(versions.error);
+  if (releases.error) fail(releases.error);
+  const linkedIds = [...new Set(links.map((l: any) => text(l.record_id)))];
+  const authorized: DceRecord[] = [];
+  for (let i = 0; i < linkedIds.length; i += 100)
+    authorized.push(
+      ...(await checked<DceRecord[]>(
+        scoped(db.from("ac_dce_records").select("id,title,kind,data"), c).in(
+          "id",
+          linkedIds.slice(i, i + 100),
+        ),
+      )),
+    );
+  const policies = await checked<DceRecord[]>(
+    scoped(db.from("ac_dce_records").select("id,title,kind,data"), c).eq(
+      "data->>targetId",
+      id,
+    ),
+  );
+  for (const p of policies)
+    if (!authorized.some((r) => r.id === p.id)) authorized.push(p);
+  const by = new Map(authorized.map((r) => [r.id, r])),
+    usage = links
+      .filter((l: Data) => by.has(text(l.record_id)))
+      .map((l: Data) => ({
+        record_id: text(l.record_id),
+        title: by.get(text(l.record_id))!.title,
+        kind: by.get(text(l.record_id))!.kind,
+        target_type: l.target_type,
+      }));
+  for (const r of authorized)
+    if (
+      r.data.targetId === id &&
+      !usage.some((u: { record_id: string }) => u.record_id === r.id)
+    )
+      usage.push({
+        record_id: r.id,
+        title: r.title,
+        kind: r.kind,
+        target_type: "policy_target",
+      });
+  return {
+    versions: versions.data || [],
+    versionTotal: versions.count || 0,
+    page,
+    releases: releases.data || [],
+    releaseTotal: releases.count || 0,
+    releasePage,
+    usage,
+  };
 }
 
-export async function bootstrap(c:Context,days=30):Promise<Bootstrap>{authorize(c,'view');const actor={id:c.actor.id,name:c.actor.displayName,email:c.actor.email,locale:c.locale,rights:rights(c)};const db=await createServiceClient();const base={actor,contract:CONTRACT,activated:false,summary:{},recent:[],topics:[],releases:[],health:{database:false,publicRuntime:false,google:googleReadiness()},settings:{}} as Bootstrap;
- const probe=await db.from('ac_dce_records').select('id').eq('scope_key',scopeKey(c)).limit(1);if(probe.error){base.databaseError='Apply the separate DCE SQL activation file. Existing Marketplace modules continue to operate.';return base}
- const since=new Date(Date.now()-Math.min(366,Math.max(1,days))*86400000).toISOString();const [summary,recent,topics,settings,events,releases,inventory]=await Promise.all([checked<Data>(db.rpc('ac_dce_overview',{p_tenant:c.tenantId,p_territory:c.territoryId,p_since:since})),list(c,{kind:'experience',pageSize:12}),all(c,'topic').then(rows=>({rows})),checked<any>(db.from('ac_dce_records').select('data').eq('scope_key',scopeKey(c)).eq('kind','setting').eq('key','world-defaults').maybeSingle()),checked<any[]>(scoped(db.from('ac_dce_events').select('id,channel,action,record_id,data,created_at'),c).gte('created_at',since).order('created_at',{ascending:false}).limit(10000)),checked<Release[]>(scoped(db.from('ac_dce_releases').select('*'),c).order('created_at',{ascending:false}).limit(100)),checked<Data>(db.rpc('ac_dce_dashboard_counts',{p_tenant:c.tenantId,p_territory:c.territoryId}))]);
- const observedConnections=rights(c).monetize?{rows:await all(c,'ad_connection')}:{rows:[]};const evidence=observedConnections.rows.map(r=>object(r.data.providerEvidence)).filter(e=>e.ready===true&&Date.now()-Date.parse(text(e.observedAt))<86400000);const approvedPrograms=[...new Set(evidence.flatMap(e=>Array.isArray(e.approvedPrograms)?e.approvedPrograms.map(String):[]))];const coverMedia=await nativeByIds(db,c,'angelcare_marketplace_media_assets',recent.rows.map(r=>text(r.data.coverAssetId)).filter(isId));const mediaBindings=Object.fromEntries(coverMedia.map(m=>[m.id,m.public_url||m.desktop_url]));
- return{...base,activated:true,recent:recent.rows,topics:topics.rows,releases,settings:settings?.data||{},summary:{...summary,...inventory,events:events.map(safeEvent) as unknown as Data[],metricsComplete:events.length<10000,days,timeZone:'UTC',providerRevenue:null},health:{database:true,publicRuntime:false,mediaBindings,mediaConfigured:marketplaceMediaStorageConfiguration().configured,schedulerConfigured:Boolean(process.env.MARKETPLACE_EXPERIENCE_WORKER_TOKEN||process.env.CRON_SECRET),google:{...googleReadiness(),approvedPrograms,lastVerifiedAt:evidence[0]?.observedAt||null},media:'native_gateway_reused',scheduler:'existing_publication_worker',sources:'scoped_native_identity_and_canonical_offers'}}
-
+export async function bootstrap(c: Context, days = 30): Promise<Bootstrap> {
+  authorize(c, "view");
+  const actor = {
+    id: c.actor.id,
+    name: c.actor.displayName,
+    email: c.actor.email,
+    locale: c.locale,
+    rights: rights(c),
+  };
+  const db = await createServiceClient();
+  const base = {
+    actor,
+    contract: CONTRACT,
+    activated: false,
+    summary: {},
+    recent: [],
+    topics: [],
+    releases: [],
+    health: {
+      database: false,
+      publicRuntime: false,
+      google: googleReadiness(),
+    },
+    settings: {},
+  } as Bootstrap;
+  const probe = await db
+    .from("ac_dce_records")
+    .select("id")
+    .eq("scope_key", scopeKey(c))
+    .limit(1);
+  if (probe.error) {
+    base.databaseError =
+      "Apply the separate DCE SQL activation file. Existing Marketplace modules continue to operate.";
+    return base;
+  }
+  const activation = await db.rpc("ac_dce_health", {
+    p_tenant: c.tenantId,
+    p_territory: c.territoryId,
+    p_private: false,
+  });
+  if (activation.error) {
+    base.databaseError =
+      "Apply 06_DCE_MATURITY_R3.sql then 07_VERIFY_DCE_MATURITY_R3.sql in the Marketplace SQL Editor.";
+    return base;
+  }
+  const since = new Date(
+    Date.now() - Math.min(366, Math.max(1, days)) * 86400000,
+  ).toISOString();
+  const [summary, recent, topics, settings, events, releases, inventory] =
+    await Promise.all([
+      checked<Data>(
+        db.rpc("ac_dce_overview", {
+          p_tenant: c.tenantId,
+          p_territory: c.territoryId,
+          p_since: since,
+        }),
+      ),
+      list(c, { kind: "experience", pageSize: 12 }),
+      all(c, "topic").then((rows) => ({ rows })),
+      checked<any>(
+        db
+          .from("ac_dce_records")
+          .select("data")
+          .eq("scope_key", scopeKey(c))
+          .eq("kind", "setting")
+          .eq("key", "world-defaults")
+          .maybeSingle(),
+      ),
+      db
+        .rpc("ac_dce_r6_metrics", {
+          p_tenant: c.tenantId,
+          p_territory: c.territoryId,
+          p_since: since,
+          p_until: new Date().toISOString(),
+          p_dimension: "action",
+          p_filters: {},
+          p_page: 1,
+        })
+        .then((r: any) => (r.error ? null : r.data)),
+      checked<Release[]>(
+        scoped(
+          db
+            .from("ac_dce_releases")
+            .select(
+              "id,record_id,revision,state,scheduled_at,published_at,created_at,actor_id",
+            ),
+          c,
+        )
+          .order("created_at", { ascending: false })
+          .limit(12),
+      ),
+      checked<Data>(
+        db.rpc("ac_dce_dashboard_counts", {
+          p_tenant: c.tenantId,
+          p_territory: c.territoryId,
+        }),
+      ),
+    ]);
+  const observedConnections = rights(c).monetize
+    ? { rows: await all(c, "ad_connection") }
+    : { rows: [] };
+  const evidence = observedConnections.rows
+    .map((r) => object(r.data.providerEvidence))
+    .filter(
+      (e) =>
+        e.ready === true &&
+        Date.now() - Date.parse(text(e.observedAt)) < 86400000,
+    );
+  const approvedPrograms = [
+    ...new Set(
+      evidence.flatMap((e) =>
+        Array.isArray(e.approvedPrograms) ? e.approvedPrograms.map(String) : [],
+      ),
+    ),
+  ];
+  const coverMedia = await nativeByIds(
+    db,
+    c,
+    "angelcare_marketplace_media_assets",
+    recent.rows.map((r: DceRecord) => text(r.data.coverAssetId)).filter(isId),
+  );
+  const mediaBindings = Object.fromEntries(
+    coverMedia.map((m) => [m.id, m.public_url || m.desktop_url]),
+  );
+  const readiness = await db.rpc("ac_dce_r6_features", {});
+  let features = readiness.data;
+  if (readiness.error) {
+    const names = [
+      "ac_dce_work_items",
+      "ac_dce_editions",
+      "ac_dce_certificate_requests",
+    ];
+    const probes = await Promise.all(
+      names.map((table) =>
+        db
+          .from(table)
+          .select(table === "ac_dce_editions" ? "record_id" : "id")
+          .limit(1),
+      ),
+    );
+    features = {
+      core: true,
+      production: !probes[0].error,
+      editions: !probes[1].error,
+      certificates: !probes[2].error,
+      operatorBatches: false,
+      publicServing: false,
+    };
+  }
+  return {
+    ...base,
+    activated: true,
+    recent: recent.rows,
+    topics: topics.rows,
+    releases,
+    settings: settings?.data || {},
+    summary: {
+      ...summary,
+      ...inventory,
+      events: events?.series || [],
+      visitors: events?.visitors ?? null,
+      byAction: events?.byAction || {},
+      metricsComplete: events?.complete === true,
+      metricsSource: "ac_dce_activity_v2",
+      days,
+      timeZone: "UTC",
+      providerRevenue: null,
+    },
+    health: {
+      database: true,
+      scopeKey: scopeKey(c),
+      features,
+      publicRuntime: false,
+      mediaBindings,
+      mediaConfigured: marketplaceMediaStorageConfiguration().configured,
+      schedulerConfigured: Boolean(
+        process.env.MARKETPLACE_EXPERIENCE_WORKER_TOKEN ||
+        process.env.CRON_SECRET,
+      ),
+      google: {
+        ...googleReadiness(),
+        approvedPrograms,
+        lastVerifiedAt: evidence[0]?.observedAt || null,
+      },
+      media: "native_gateway_reused",
+      scheduler: "existing_publication_worker",
+      sources: "scoped_native_identity_and_canonical_offers",
+    },
+  };
 }
-export async function command(c:Context,cmd:Command):Promise<any>{authorize(c,'view');const db=await createServiceClient();
- if(cmd.action==='emergency_stop'){authorize(c,'monetize');const prior=(await all(c,'ad_policy')).find(r=>r.key==='emergency-stop');const draft=prior||{...blankRecord('ad_policy',undefined,c.locale),key:'emergency-stop',title:'DCE emergency suppression'};return save(c,{action:'save',requestId:cmd.requestId,id:prior?.id,revision:prior?.revision||0,record:{...draft,data:{...draft.data,enabled:false,scope:'world',targetId:'',suppressionReason:text(cmd.reason),locales:{en:{title:'DCE emergency suppression'},fr:{title:'Arrêt publicitaire DCE'},ar:{title:'إيقاف إعلانات DCE'}}}}})}
- if(cmd.action==='save')return save(c,cmd);
- if(cmd.action==='process_due'){authorize(c,'publish');return runDceSchedules(20,c)}
- if(cmd.action==='register_media'){authorize(c,'manage');if(!hasMarketplacePermission(c,'marketplace.media.view'))throw new MarketplaceError('PERMISSION_DENIED','Native media view permission is required.');const id=text(cmd.nativeId);if(!isId(id))throw new MarketplaceError('VALIDATION_ERROR','Native media UUID required.');const source=(await nativeByIds(db,c,'angelcare_marketplace_media_assets',[id]))[0];if(!source||source.status!=='active')throw new MarketplaceError('NOT_READY','Native source is not active.');const existing=await checked<any>(db.from('ac_dce_records').select('*').eq('scope_key',scopeKey(c)).eq('kind','asset').eq('key','asset-'+id).maybeSingle());if(existing)return{record:existing,reused:true};const draft=blankRecord('asset',undefined,c.locale);draft.key='asset-'+id;draft.title=source.file_name;draft.data={...draft.data,nativeAssetId:id,rights:source.rights_status||'unverified',processingState:'not_inspected',locales:{[c.locale]:{title:source.file_name,summary:''}}};return save(c,{action:'save',requestId:cmd.requestId,record:draft})}
- if(cmd.action==='process_media'){authorize(c,'media');authorize(c,'manage');const original=await record(c,text(cmd.id));if(original.kind!=='asset'||!isId(original.data.nativeAssetId))throw new MarketplaceError('VALIDATION_ERROR','Select a DCE asset with a native source.');const start=await save(c,{action:'save',requestId:randomUUID(),id:original.id,revision:original.revision,record:{...original,data:{...original.data,processingState:'running',processingStartedAt:new Date().toISOString()}}},true) as any;try{const{inspectMediaSource}=await import('./processing');const metadata=await inspectMediaSource(text(original.data.nativeAssetId));return save(c,{action:'save',requestId:randomUUID(),id:original.id,revision:start.record.revision,record:{...start.record,data:{...start.record.data,processingState:'ready',processingMetadata:metadata}}},true)}catch(e){try{await save(c,{action:'save',requestId:randomUUID(),id:original.id,revision:start.record.revision,record:{...start.record,data:{...start.record.data,processingState:'failed',processingError:e instanceof MarketplaceError?e.message:'Native metadata inspection failed. Retry after inspecting source delivery.'}}},true)}catch{}throw e}}
- if(cmd.action==='initialize'){authorize(c,'manage');const existing=await all(c);const out=[];for(const seed of TOPIC_SEEDS){if(existing.some(r=>r.kind==='topic'&&r.key===seed.key))continue;const draft=blankRecord('topic',undefined,c.locale);draft.key=seed.key;draft.title=seed.label[1];draft.data={...draft.data,icon:seed.icon,color:seed.color,locales:Object.fromEntries(['en','fr','ar'].map((l,i)=>[l,{title:seed.label[i],summary:''}]))};out.push(await save(c,{action:'save',requestId:randomUUID(),record:draft}))}for(const f of FAMILIES){const key='template-'+f.key;if(existing.some(r=>r.kind==='template'&&r.key===key))continue;const draft=blankRecord('template',f.key,c.locale);draft.key=key;draft.title=f.name[1];draft.data={...draft.data,locales:Object.fromEntries(['en','fr','ar'].map((l,i)=>[l,{title:f.name[i],summary:f.description[i]}]))};out.push(await save(c,{action:'save',requestId:randomUUID(),record:draft}))}if(!existing.some(r=>r.kind==='setting'&&r.key==='world-defaults')){const draft=blankRecord('setting',undefined,c.locale);draft.key='world-defaults';draft.title='Digital Experience · World defaults';draft.data!.locales={fr:{title:draft.title},en:{title:draft.title},ar:{title:'إعدادات عالم التجربة الرقمية'}};out.push(await save(c,{action:'save',requestId:randomUUID(),record:draft}))}return{created:out.length,publicEnabled:false,adServingEnabled:false}}
- if(cmd.action==='duplicate'){const r=await record(c,text(cmd.id));writable(c,r.kind);const draft={...r,id:undefined,revision:0,key:(r.key.slice(0,95)+'-copy-'+randomUUID().slice(0,8)),title:r.title+' · copy',lifecycle:'draft' as const,published_release_id:null};return save(c,{action:'save',requestId:cmd.requestId,record:draft})}
- if(['validate','preview'].includes(cmd.action)){const r=await record(c,text(cmd.id));const result=await validate(c,r);return{record:r,...result,manifest:publicManifest(r,result.bindings)}}
- if(['review','approve','accept','archive','delete','open','assigned','waiting_customer','resolved','closed','hidden','rejected'].includes(cmd.action)){const r=await record(c,text(cmd.id));if(['archive','delete'].includes(cmd.action)){const associations=(await all(c)).filter(source=>source.id!==r.id&&source.lifecycle!=='archived'&&source.data.targetId===r.id);if(associations.length)throw new MarketplaceError('DEPENDENCY_BLOCKED','Revise or archive the policies targeting this dossier first: '+associations.slice(0,3).map(a=>a.title).join(', '))}if(cmd.action==='delete')authorize(c,'purge');else if(cmd.action==='approve')authorize(c,'publish');else writable(c,r.kind);if(['review','approve'].includes(cmd.action)){const v=await validate(c,r);if(!v.validation.valid)throw new MarketplaceError('PUBLICATION_BLOCKED','Resolve validation problems before review/approval.',{fieldErrors:Object.fromEntries(v.validation.errors.map(e=>[e.path,[e.message[0]]]))})}if(['resolved','closed','hidden','rejected','accept'].includes(cmd.action)&&!text(cmd.reason))throw new MarketplaceError('VALIDATION_ERROR','A reason or resolution summary is required.');return checked(db.rpc('ac_dce_write',{...args(c,cmd),p_action:cmd.action,p_id:r.id,p_revision:cmd.revision||0,p_record:{reason:text(cmd.reason),actorId:c.actor.id},p_refs:{}}))}
- if(['release','schedule'].includes(cmd.action)){authorize(c,'publish');const r=await record(c,text(cmd.id));if(r.kind==='ad_policy')authorize(c,'monetize');const v=await validate(c,r);if(!v.validation.valid)throw new MarketplaceError('PUBLICATION_BLOCKED','Release blocked by unresolved dependencies.');const scheduled=cmd.action==='schedule'?text(cmd.scheduledAt):null;if(scheduled&&!Number.isFinite(Date.parse(scheduled)))throw new MarketplaceError('VALIDATION_ERROR','A valid future timestamp is required.');return checked(db.rpc('ac_dce_release',{...args(c,cmd),p_id:r.id,p_revision:cmd.revision||0,p_manifest:publicManifest(r,v.bindings),p_validation:v.validation,p_schedule:scheduled}))}
- if(cmd.action==='reschedule_release'){authorize(c,'publish');const release=await checked<Release|null>(scoped(db.from('ac_dce_releases').select('*'),c).eq('id',cmd.id).maybeSingle());if(!release)throw new MarketplaceError('NOT_FOUND','Release not found.');const date=text(cmd.scheduledAt);if(!Number.isFinite(Date.parse(date))||Date.parse(date)<=Date.now())throw new MarketplaceError('VALIDATION_ERROR','Choose a future reschedule time.');const validation=await validate(c,release.snapshot);if(!validation.validation.valid)throw new MarketplaceError('DEPENDENCY_BLOCKED','Resolve current release dependency problems before rescheduling.');return checked(db.rpc('ac_dce_reschedule',{...args(c,cmd),p_id:release.id,p_schedule:date}))}
- if(['cancel_release','withdraw_release','restore_release'].includes(cmd.action)){authorize(c,'publish');const release=await checked<Release|null>(scoped(db.from('ac_dce_releases').select('*'),c).eq('id',cmd.id).maybeSingle());if(!release)throw new MarketplaceError('NOT_FOUND','Release not found.');let manifest=null;if(cmd.action==='restore_release'){const v=await validate(c,release.snapshot);if(!v.validation.valid)throw new MarketplaceError('DEPENDENCY_BLOCKED','Old release dependencies are no longer valid.');manifest=publicManifest(release.snapshot,v.bindings)}return checked(db.rpc('ac_dce_release_action',{...args(c,cmd),p_id:release.id,p_action:cmd.action.split('_')[0],p_manifest:manifest,p_error:null}))}
- if(cmd.action==='register_google_unit'){authorize(c,'monetize');const resource=text(cmd.unit);const observed=await googleOperation('get_unit',{account:text(cmd.account),unit:resource});const unitId=resource.split('/').at(-1)!;const existing=await checked<DceRecord|null>(scoped(db.from('ac_dce_records').select('*'),c).eq('kind','ad_unit').eq('key','google-unit-'+unitId).maybeSingle());const d=existing||blankRecord('ad_unit',undefined,c.locale);const type=text(object(observed.contentAdsSettings).type);const formatId=type==='FEED'?'02':type==='ARTICLE'?'03':type==='MATCHED_CONTENT'?'04':'01';const draft={...d,kind:'ad_unit' as const,key:'google-unit-'+unitId,title:text(observed.displayName)||unitId,data:{...d.data,providerName:resource,unitId,formatId,providerState:observed.state||'unknown',localEnabled:existing?.data.localEnabled||false,providerEvidence:{state:observed.state||'unknown',observedAt:new Date().toISOString(),source:'Google AdSense Management API'},locales:{[c.locale]:{title:text(observed.displayName)||unitId}}}};return save(c,{action:'save',id:existing?.id,revision:existing?.revision||0,requestId:cmd.requestId,record:draft},true)}
- if(cmd.action==='verify_google'){authorize(c,'monetize');const r=await record(c,text(cmd.id));if(r.kind!=='ad_connection')throw new MarketplaceError('VALIDATION_ERROR','Choose a Google connection dossier.');const evidence=await googleOperation('connection_status',{account:r.data.account||'',site:r.data.site||''});return save(c,{action:'save',id:r.id,revision:cmd.revision,requestId:cmd.requestId,record:{...r,data:{...r.data,providerEvidence:evidence,verification:evidence.ready?'verified':'not_verified'}}},true)}
- if(cmd.action==='google'){authorize(c,'monetize');const action=text(cmd.operation);const result=await googleOperation(action,object(cmd.input));await checked(db.from('ac_dce_events').insert({channel:'provider',action:'google_'+action,actor_id:c.actor.id,request_id:isId(cmd.requestId)?cmd.requestId:null,data:{complete:result.complete??null,operation:action},tenant_id:c.tenantId,territory_id:c.territoryId}));return result}
- if(cmd.action==='prepare_import'){authorize(c,'manage');const task=text(cmd.task) as ImportTask,family=text(cmd.family);const source=text(cmd.source);const existing=await all(c,'experience');const planned=planImport(source,family,task,existing,c.locale);const aliases=new Map<string,string>();for(const line of planned){const definition=object(object(line.prepared.record).data),mappings:Data[]=[];const bind=async(v:any,path=''):Promise<any>=>{if(Array.isArray(v))return Promise.all(v.map((x,i)=>bind(x,path+'.'+i)));if(v&&typeof v==='object'){const out={...v};for(const [key,value]of Object.entries(v)){const mediaKey=['assetId','nativeAssetId','backAssetId','narrationAssetId','captionAssetId','coverAssetId','posterAssetId'].includes(key),recordKind:Record<string,Kind>={experienceId:'experience',assessmentId:'experience',contentId:'content',templateId:'template',accessPolicyId:'access_policy',adPolicyId:'ad_policy',parentId:'topic'};if((mediaKey||key==='nativeId'||recordKind[key])&&typeof value==='string'&&value&&!isId(value)){const aliasKey=(mediaKey?'media':key==='nativeId'?'offer':recordKind[key])+':'+value;if(!aliases.has(aliasKey)){let lookup;if(mediaKey)lookup=value.startsWith('sha256:')?db.from('angelcare_marketplace_media_assets').select('id,file_name').eq('status','active').contains('metadata',{sha256:value.slice(7)}):db.from('angelcare_marketplace_media_assets').select('id,file_name').eq('status','active').eq('file_name',value);else if(key==='nativeId'){lookup=db.from('angelcare_marketplace_catalog_discovery_v').select('id,item_key').eq('status','published').eq('item_key',value);if(c.territoryId)lookup=lookup.or(`territory_id.is.null,territory_id.eq.${c.territoryId}`)}else lookup=db.from('ac_dce_records').select('id,title').eq('scope_key',scopeKey(c)).eq('kind',recordKind[key]).eq('key',value);const found=await checked<any[]>(lookup.limit(2));if(found.length!==1)throw new MarketplaceError('VALIDATION_ERROR','Reference alias must match exactly one eligible existing record: '+value);aliases.set(aliasKey,found[0].id)}out[key]=aliases.get(aliasKey);mappings.push({path:path+'.'+key,source:value,id:out[key],authority:mediaKey?'native_media':key==='nativeId'?'native_offer':'dce_record'})}else out[key]=await bind(value,path+'.'+key)}return out}return v};try{const resolved=await bind(definition);if(line.prepared.record){const target=object(line.prepared.record);target.data=resolved;if(target.topic&&!isId(target.topic)){const mapped=await bind({parentId:target.topic});target.topic=mapped.parentId}const refs=references({...resolved,parentId:target.topic||null});line.prepared.refs={record:refs.records,media:refs.media,offer:refs.offers};line.prepared.mediaAliases=Object.fromEntries(aliases);line.prepared.referenceMappings=mappings;const inspected=await validate(c,{...target,id:line.prepared.id||'00000000-0000-4000-8000-000000000001',revision:line.prepared.revision||0} as unknown as DceRecord);line.prepared.publishReadiness=inspected.validation as unknown as Data;for(const issue of inspected.validation.errors.filter(i=>['MEDIA_TYPE','MISSING_MEDIA','MEDIA_UNAVAILABLE','NATIVE_OFFER','MISSING_RECORD'].includes(i.code)))line.issues.push(issue.path+': '+issue.message[0])}}catch(e){line.issues.push((e as Error).message)}}const j=await checked<any>(db.rpc('ac_dce_prepare_import',{...args(c,cmd),p_task:task,p_family:family,p_name:text(cmd.sourceName).slice(0,160),p_source_hash:createHash('sha256').update(source).digest('hex'),p_lines:planned}));return{job:j,rows:planned.length,invalid:planned.filter(x=>x.issues.length).length}}
- if(['apply_import','rollback_import'].includes(cmd.action)){authorize(c,'manage');const line=await checked<any>(db.from('ac_dce_job_lines').select('job_id,prepared').eq('id',cmd.id).maybeSingle());if(!line)throw new MarketplaceError('NOT_FOUND','Line not found.');const job=await checked<any>(scoped(db.from('ac_dce_jobs').select('*'),c).eq('id',line.job_id).maybeSingle());if(!job)throw new MarketplaceError('NOT_FOUND','Job outside scope.');if(cmd.action==='apply_import'){const old=line.prepared.id?await record(c,line.prepared.id):undefined;normalizeRecord(line.prepared.record,old)}const result=await db.rpc('ac_dce_import_line',{p_actor:c.actor.id,p_tenant:c.tenantId,p_territory:c.territoryId,p_id:cmd.id,p_action:cmd.action==='apply_import'?'apply':'rollback'});if(result.error){if(cmd.action==='apply_import')await checked(db.from('ac_dce_job_lines').update({state:/CONFLICT/.test(result.error.message)?'conflict':'failed',error:'Apply stopped: '+String(result.error.message).slice(0,200)}).eq('id',cmd.id).eq('state','ready'));fail(result.error)}return result.data}
- if(cmd.action==='correct_import'){
-  authorize(c,'manage');
-  const line=await checked<any>(db.from('ac_dce_job_lines').select('*').eq('id',cmd.id).maybeSingle());
-  if(!line||!['ready','invalid','failed','conflict'].includes(line.state))throw new MarketplaceError('CONFLICT','Only unapplied import lines can be corrected.');
-  const job=await checked<any>(scoped(db.from('ac_dce_jobs').select('*'),c).eq('id',line.job_id).maybeSingle());
-  if(!job)throw new MarketplaceError('NOT_FOUND','Job outside scope.');
-  const stored=object(line.prepared),submitted=object(cmd.prepared),proposed=object(submitted.record);
-  // Always use the server's immutable target/revision; the browser supplies only
-  // an edited record, never its import identity, receipts, state or reference map.
-  if(proposed.kind!=='experience'||proposed.family!==job.family||submitted.id!==stored.id)
-    throw new MarketplaceError('FORBIDDEN','Correction must preserve the targeted experience, family and record identity.');
-  const old=stored.id?await record(c,text(stored.id)):undefined;
-  if(old&&old.revision!==stored.revision)throw new MarketplaceError('CONFLICT','The target changed after import preparation. Prepare a new receipt.');
-  let normalized:Partial<DceRecord>;
-  try{
-    normalized=normalizeRecord(proposed as Partial<DceRecord>,old);
-    assertTaskCorrection(object(stored.record) as Partial<DceRecord>,normalized,job.task);
-  }catch(e){throw new MarketplaceError('VALIDATION_ERROR',(e as Error).message)}
-  const candidate={...old,...normalized,id:old?.id||'00000000-0000-4000-8000-000000000001',revision:stored.revision||0} as DceRecord;
-  const inspected=await validate(c,candidate);
-  const issues=importBlockingIssues(inspected.validation);
-  const refs=references({...object(normalized.data),parentId:normalized.topic||null});
-  // Retain only mappings that still refer to the exact corrected canonical refs.
-  const known=new Set([...refs.records,...refs.media,...refs.offers]);
-  const mappings=Array.isArray(stored.referenceMappings)?stored.referenceMappings.filter((m:any)=>known.has(text(m.id))):[];
-  const prepared={...stored,record:normalized,refs:{record:refs.records,media:refs.media,offer:refs.offers},publishReadiness:inspected.validation,referenceMappings:mappings};
-  // Compare-and-swap prevents two editors from silently overwriting one another's
-  // corrections. The line is never promoted to ready when blocking issues remain.
-  const updated=await checked<any>(db.from('ac_dce_job_lines')
-    .update({prepared,state:issues.length?'invalid':'ready',issues,error:null,updated_at:new Date().toISOString()})
-    .eq('id',cmd.id).eq('state',line.state).eq('updated_at',line.updated_at)
-    .select('*').maybeSingle());
-  if(!updated)throw new MarketplaceError('CONFLICT','Import line changed while correcting it. Reload its latest receipt.');
-  return updated;
- }
- throw new MarketplaceError('VALIDATION_ERROR','Unsupported DCE command.')
+export async function command(c: Context, cmd: Command): Promise<any> {
+  if (cmd.action.startsWith("kidflix_storefront_"))
+    return (await import("../kidflix/storefronts/admin-service")).kidflixStorefrontCommand(c,cmd);
+  if (cmd.action.startsWith("kidflix_"))
+    return (await import("../kidflix/admin-service")).kidflixCommand(c, cmd);
+  if (cmd.action.startsWith("depth_"))
+    return (await import("./depth-service")).depthCommand(c, cmd);
+  authorize(c, "view");
+  if (cmd.action.startsWith("operator_"))
+    return (await import("./operator-service")).operatorCommand(c, cmd);
+  if (cmd.action.startsWith("master_"))
+    return (await import("./master-service")).masterCommand(c, cmd);
+  if (cmd.action.startsWith("pro_"))
+    return (await import("./professional")).professionalCommand(c, cmd);
+  const db = await createServiceClient();
+  if (cmd.action === "emergency_stop") {
+    authorize(c, "monetize");
+    const prior = (await all(c, "ad_policy")).find(
+      (r) => r.key === "emergency-stop",
+    );
+    const draft = prior || {
+      ...blankRecord("ad_policy", undefined, c.locale),
+      key: "emergency-stop",
+      title: "DCE emergency suppression",
+    };
+    return save(c, {
+      action: "save",
+      requestId: cmd.requestId,
+      id: prior?.id,
+      revision: prior?.revision || 0,
+      record: {
+        ...draft,
+        data: {
+          ...draft.data,
+          enabled: false,
+          scope: "world",
+          targetId: "",
+          suppressionReason: text(cmd.reason),
+          locales: {
+            en: { title: "DCE emergency suppression" },
+            fr: { title: "Arrêt publicitaire DCE" },
+            ar: { title: "إيقاف إعلانات DCE" },
+          },
+        },
+      },
+    });
+  }
+  if (cmd.action === "save") return save(c, cmd);
+  if (cmd.action === "process_due") {
+    authorize(c, "publish");
+    return runDceSchedules(20, c);
+  }
+  if (cmd.action === "register_media") {
+    authorize(c, "manage");
+    if (!hasMarketplacePermission(c, "marketplace.media.view"))
+      throw new MarketplaceError(
+        "PERMISSION_DENIED",
+        "Native media view permission is required.",
+      );
+    const id = text(cmd.nativeId);
+    if (!isId(id))
+      throw new MarketplaceError(
+        "VALIDATION_ERROR",
+        "Native media UUID required.",
+      );
+    const source = (
+      await nativeByIds(db, c, "angelcare_marketplace_media_assets", [id])
+    )[0];
+    if (!source || source.status !== "active")
+      throw new MarketplaceError("NOT_READY", "Native source is not active.");
+    const existing = await checked<any>(
+      db
+        .from("ac_dce_records")
+        .select("*")
+        .eq("scope_key", scopeKey(c))
+        .eq("kind", "asset")
+        .eq("key", "asset-" + id)
+        .maybeSingle(),
+    );
+    if (existing) return { record: existing, reused: true };
+    const draft = blankRecord("asset", undefined, c.locale);
+    draft.key = "asset-" + id;
+    draft.title = source.file_name;
+    draft.data = {
+      ...draft.data,
+      nativeAssetId: id,
+      rights: source.rights_status || "unverified",
+      processingState: "not_inspected",
+      locales: { [c.locale]: { title: source.file_name, summary: "" } },
+    };
+    return save(c, { action: "save", requestId: cmd.requestId, record: draft });
+  }
+  if (cmd.action === "process_media") {
+    authorize(c, "media");
+    authorize(c, "manage");
+    const original = await record(c, text(cmd.id));
+    if (original.kind !== "asset" || !isId(original.data.nativeAssetId))
+      throw new MarketplaceError(
+        "VALIDATION_ERROR",
+        "Select a DCE asset with a native source.",
+      );
+    const start = (await save(
+      c,
+      {
+        action: "save",
+        requestId: randomUUID(),
+        id: original.id,
+        revision: original.revision,
+        record: {
+          ...original,
+          data: {
+            ...original.data,
+            processingState: "running",
+            processingStartedAt: new Date().toISOString(),
+          },
+        },
+      },
+      true,
+    )) as any;
+    try {
+      const { inspectMediaSource } = await import("./processing");
+      const metadata = await inspectMediaSource(
+        text(original.data.nativeAssetId),
+      );
+      return save(
+        c,
+        {
+          action: "save",
+          requestId: randomUUID(),
+          id: original.id,
+          revision: start.record.revision,
+          record: {
+            ...start.record,
+            data: {
+              ...start.record.data,
+              processingState: "ready",
+              processingMetadata: metadata,
+            },
+          },
+        },
+        true,
+      );
+    } catch (e) {
+      try {
+        await save(
+          c,
+          {
+            action: "save",
+            requestId: randomUUID(),
+            id: original.id,
+            revision: start.record.revision,
+            record: {
+              ...start.record,
+              data: {
+                ...start.record.data,
+                processingState: "failed",
+                processingError:
+                  e instanceof MarketplaceError
+                    ? e.message
+                    : "Native metadata inspection failed. Retry after inspecting source delivery.",
+              },
+            },
+          },
+          true,
+        );
+      } catch {}
+      throw e;
+    }
+  }
+  if (
+    cmd.action === "attachment_prepare" ||
+    cmd.action === "attachment_complete"
+  ) {
+    authorize(c, "moderate");
+    const a = await import("./attachments");
+    return cmd.action === "attachment_prepare"
+      ? a.prepareAdminAttachment(c, object(cmd.input))
+      : a.completeAdminAttachment(c, object(cmd.input));
+  }
+  if (cmd.action === "initialize_receiver") {
+    authorize(c, "manage");
+    const old = (await all(c, "setting")).find(
+      (r) => r.key === "dce-protected-receiver",
+    );
+    if (old) return { record: old, reused: true };
+    const d = blankRecord("setting", undefined, c.locale);
+    d.key = "dce-protected-receiver";
+    d.title = "DCE · Protected case reception";
+    d.data = {
+      authority: "dce_private_v1",
+      enabled: true,
+      requiredLocales: [],
+      locales: {},
+    };
+    return save(c, { action: "save", requestId: cmd.requestId, record: d });
+  }
+  if (cmd.action === "initialize") {
+    authorize(c, "manage");
+    const existing = await all(c);
+    const out = [];
+    for (const seed of TOPIC_SEEDS) {
+      if (existing.some((r) => r.kind === "topic" && r.key === seed.key))
+        continue;
+      const draft = blankRecord("topic", undefined, c.locale);
+      draft.key = seed.key;
+      draft.title = seed.label[1];
+      draft.data = {
+        ...draft.data,
+        icon: seed.icon,
+        color: seed.color,
+        locales: Object.fromEntries(
+          ["en", "fr", "ar"].map((l, i) => [
+            l,
+            { title: seed.label[i], summary: "" },
+          ]),
+        ),
+      };
+      out.push(
+        await save(c, {
+          action: "save",
+          requestId: randomUUID(),
+          record: draft,
+        }),
+      );
+    }
+    for (const f of authoringFamilies(
+      existing.find((r) => r.kind === "setting" && r.key === "world-defaults")
+        ?.data || {},
+    )) {
+      const key = "template-" + f.key;
+      if (existing.some((r) => r.kind === "template" && r.key === key))
+        continue;
+      const draft = blankRecord("template", f.key, c.locale);
+      draft.key = key;
+      draft.title = f.name[1];
+      draft.data = {
+        ...draft.data,
+        locales: Object.fromEntries(
+          ["en", "fr", "ar"].map((l, i) => [
+            l,
+            { title: f.name[i], summary: f.description[i] },
+          ]),
+        ),
+      };
+      out.push(
+        await save(c, {
+          action: "save",
+          requestId: randomUUID(),
+          record: draft,
+        }),
+      );
+    }
+    if (
+      !existing.some((r) => r.kind === "setting" && r.key === "world-defaults")
+    ) {
+      const draft = blankRecord("setting", undefined, c.locale);
+      draft.key = "world-defaults";
+      draft.title = "Digital Experience · World defaults";
+      draft.data!.locales = {
+        fr: { title: draft.title },
+        en: { title: draft.title },
+        ar: { title: "إعدادات عالم التجربة الرقمية" },
+      };
+      out.push(
+        await save(c, {
+          action: "save",
+          requestId: randomUUID(),
+          record: draft,
+        }),
+      );
+    }
+    return {
+      created: out.length,
+      publicEnabled: false,
+      adServingEnabled: false,
+    };
+  }
+  if (cmd.action === "duplicate") {
+    const r = await record(c, text(cmd.id));
+    writable(c, r.kind);
+    const draft = {
+      ...r,
+      id: undefined,
+      revision: 0,
+      key: r.key.slice(0, 95) + "-copy-" + randomUUID().slice(0, 8),
+      title: r.title + " · copy",
+      lifecycle: "draft" as const,
+      published_release_id: null,
+    };
+    return save(c, { action: "save", requestId: cmd.requestId, record: draft });
+  }
+  if (["validate", "preview"].includes(cmd.action)) {
+    const r = await record(c, text(cmd.id));
+    const result =
+      ["ar", "fr", "en"].includes(text(cmd.locale)) &&
+      ["experience", "content", "template", "bundle"].includes(r.kind)
+        ? await (
+            await import("./master-service")
+          ).inspectEdition(c, r, cmd.locale as any)
+        : await validate(c, r);
+    return {
+      record: r,
+      ...result,
+      manifest: publicManifest(r, result.bindings),
+    };
+  }
+  if (
+    [
+      "review",
+      "approve",
+      "accept",
+      "archive",
+      "delete",
+      "open",
+      "assigned",
+      "waiting_customer",
+      "resolved",
+      "closed",
+      "hidden",
+      "rejected",
+    ].includes(cmd.action)
+  ) {
+    const r = await record(c, text(cmd.id));
+    if (["archive", "delete"].includes(cmd.action)) {
+      const associations = (await all(c)).filter(
+        (source) =>
+          source.id !== r.id &&
+          source.lifecycle !== "archived" &&
+          source.data.targetId === r.id,
+      );
+      if (associations.length)
+        throw new MarketplaceError(
+          "DEPENDENCY_BLOCKED",
+          "Revise or archive the policies targeting this dossier first: " +
+            associations
+              .slice(0, 3)
+              .map((a) => a.title)
+              .join(", "),
+        );
+    }
+    if (cmd.action === "delete") authorize(c, "purge");
+    else if (cmd.action === "approve") authorize(c, "publish");
+    else writable(c, r.kind);
+    if (["review", "approve"].includes(cmd.action)) {
+      const v = await validate(c, r);
+      if (!v.validation.valid)
+        throw new MarketplaceError(
+          "PUBLICATION_BLOCKED",
+          "Resolve validation problems before review/approval.",
+          {
+            fieldErrors: Object.fromEntries(
+              v.validation.errors.map((e) => [e.path, [e.message[0]]]),
+            ),
+          },
+        );
+    }
+    if (
+      ["resolved", "closed", "hidden", "rejected", "accept"].includes(
+        cmd.action,
+      ) &&
+      !text(cmd.reason)
+    )
+      throw new MarketplaceError(
+        "VALIDATION_ERROR",
+        "A reason or resolution summary is required.",
+      );
+    return checked(
+      db.rpc("ac_dce_write", {
+        ...args(c, cmd),
+        p_action: cmd.action,
+        p_id: r.id,
+        p_revision: cmd.revision || 0,
+        p_record: { reason: text(cmd.reason), actorId: c.actor.id },
+        p_refs: {},
+      }),
+    );
+  }
+  if (["release", "schedule"].includes(cmd.action)) {
+    authorize(c, "publish");
+    const r = await record(c, text(cmd.id));
+    if (["experience", "content", "template", "bundle"].includes(r.kind))
+      return (await import("./master-service")).editionCommand(c, {
+        ...cmd,
+        action: "master_edition_" + cmd.action,
+        locale: cmd.locale || r.data.defaultLocale || c.locale,
+      });
+    if (r.kind === "ad_policy") authorize(c, "monetize");
+    const v = await validate(c, r);
+    if (!v.validation.valid)
+      throw new MarketplaceError(
+        "PUBLICATION_BLOCKED",
+        "Release blocked by unresolved dependencies.",
+      );
+    const scheduled = cmd.action === "schedule" ? text(cmd.scheduledAt) : null;
+    if (scheduled && !Number.isFinite(Date.parse(scheduled)))
+      throw new MarketplaceError(
+        "VALIDATION_ERROR",
+        "A valid future timestamp is required.",
+      );
+    return checked(
+      db.rpc("ac_dce_release", {
+        ...args(c, cmd),
+        p_id: r.id,
+        p_revision: cmd.revision || 0,
+        p_manifest: publicManifest(r, v.bindings),
+        p_validation: v.validation,
+        p_schedule: scheduled,
+      }),
+    );
+  }
+  if (cmd.action === "reschedule_release") {
+    authorize(c, "publish");
+    const release = await checked<Release | null>(
+      scoped(db.from("ac_dce_releases").select("*"), c)
+        .eq("id", cmd.id)
+        .maybeSingle(),
+    );
+    if (!release) throw new MarketplaceError("NOT_FOUND", "Release not found.");
+    if (release.manifest?.editionLocale) {
+      const source = await record(c, release.record_id);
+      return (await import("./master-service")).editionCommand(c, {
+        ...cmd,
+        id: source.id,
+        revision: source.revision,
+        releaseId: release.id,
+        locale: release.manifest.editionLocale,
+        action: "master_edition_" + cmd.action.split("_")[0],
+      });
+    }
+    const date = text(cmd.scheduledAt);
+    if (!Number.isFinite(Date.parse(date)) || Date.parse(date) <= Date.now())
+      throw new MarketplaceError(
+        "VALIDATION_ERROR",
+        "Choose a future reschedule time.",
+      );
+    const validation = await validate(c, release.snapshot);
+    if (!validation.validation.valid)
+      throw new MarketplaceError(
+        "DEPENDENCY_BLOCKED",
+        "Resolve current release dependency problems before rescheduling.",
+      );
+    return checked(
+      db.rpc("ac_dce_reschedule", {
+        ...args(c, cmd),
+        p_id: release.id,
+        p_schedule: date,
+      }),
+    );
+  }
+  if (
+    ["cancel_release", "withdraw_release", "restore_release"].includes(
+      cmd.action,
+    )
+  ) {
+    authorize(c, "publish");
+    const release = await checked<Release | null>(
+      scoped(db.from("ac_dce_releases").select("*"), c)
+        .eq("id", cmd.id)
+        .maybeSingle(),
+    );
+    if (!release) throw new MarketplaceError("NOT_FOUND", "Release not found.");
+    if (release.manifest?.editionLocale) {
+      const source = await record(c, release.record_id);
+      return (await import("./master-service")).editionCommand(c, {
+        ...cmd,
+        id: source.id,
+        revision: source.revision,
+        releaseId: release.id,
+        locale: release.manifest.editionLocale,
+        action: "master_edition_" + cmd.action.split("_")[0],
+      });
+    }
+    let manifest = null;
+    if (cmd.action === "restore_release") {
+      const v = await validate(c, release.snapshot);
+      if (!v.validation.valid)
+        throw new MarketplaceError(
+          "DEPENDENCY_BLOCKED",
+          "Old release dependencies are no longer valid.",
+        );
+      manifest = publicManifest(release.snapshot, v.bindings);
+    }
+    return checked(
+      db.rpc("ac_dce_release_action", {
+        ...args(c, cmd),
+        p_id: release.id,
+        p_action: cmd.action.split("_")[0],
+        p_manifest: manifest,
+        p_error: null,
+      }),
+    );
+  }
+  if (cmd.action === "register_google_unit") {
+    authorize(c, "monetize");
+    const resource = text(cmd.unit);
+    const observed = await googleOperation("get_unit", {
+      account: text(cmd.account),
+      unit: resource,
+    });
+    const unitId = resource.split("/").at(-1)!;
+    const existing = await checked<DceRecord | null>(
+      scoped(db.from("ac_dce_records").select("*"), c)
+        .eq("kind", "ad_unit")
+        .eq("key", "google-unit-" + unitId)
+        .maybeSingle(),
+    );
+    const d = existing || blankRecord("ad_unit", undefined, c.locale);
+    const type = text(object(observed.contentAdsSettings).type);
+    const formatId =
+      type === "FEED"
+        ? "02"
+        : type === "ARTICLE"
+          ? "03"
+          : type === "MATCHED_CONTENT"
+            ? "04"
+            : "01";
+    const draft = {
+      ...d,
+      kind: "ad_unit" as const,
+      key: "google-unit-" + unitId,
+      title: text(observed.displayName) || unitId,
+      data: {
+        ...d.data,
+        providerName: resource,
+        unitId,
+        formatId,
+        providerState: observed.state || "unknown",
+        localEnabled: existing?.data.localEnabled || false,
+        providerEvidence: {
+          state: observed.state || "unknown",
+          observedAt: new Date().toISOString(),
+          source: "Google AdSense Management API",
+        },
+        locales: {
+          [c.locale]: { title: text(observed.displayName) || unitId },
+        },
+      },
+    };
+    return save(
+      c,
+      {
+        action: "save",
+        id: existing?.id,
+        revision: existing?.revision || 0,
+        requestId: cmd.requestId,
+        record: draft,
+      },
+      true,
+    );
+  }
+  if (cmd.action === "verify_google") {
+    authorize(c, "monetize");
+    const r = await record(c, text(cmd.id));
+    if (r.kind !== "ad_connection")
+      throw new MarketplaceError(
+        "VALIDATION_ERROR",
+        "Choose a Google connection dossier.",
+      );
+    const evidence = await googleOperation("connection_status", {
+      account: r.data.account || "",
+      site: r.data.site || "",
+    });
+    return save(
+      c,
+      {
+        action: "save",
+        id: r.id,
+        revision: cmd.revision,
+        requestId: cmd.requestId,
+        record: {
+          ...r,
+          data: {
+            ...r.data,
+            providerEvidence: evidence,
+            verification: evidence.ready ? "verified" : "not_verified",
+          },
+        },
+      },
+      true,
+    );
+  }
+  if (cmd.action === "google") {
+    authorize(c, "monetize");
+    const action = text(cmd.operation);
+    const result = await googleOperation(action, object(cmd.input));
+    await checked(
+      db.from("ac_dce_events").insert({
+        channel: "provider",
+        action: "google_" + action,
+        actor_id: c.actor.id,
+        request_id: isId(cmd.requestId) ? cmd.requestId : null,
+        data: { complete: result.complete ?? null, operation: action },
+        tenant_id: c.tenantId,
+        territory_id: c.territoryId,
+      }),
+    );
+    return result;
+  }
+  if (cmd.action === "prepare_import") {
+    authorize(c, "manage");
+    const task = text(cmd.task) as ImportTask,
+      family = text(cmd.family);
+    const source = text(cmd.source);
+    if (
+      task === "create" &&
+      !authoringFamilies(
+        (await byKey(c, "setting", "world-defaults"))?.data || {},
+      ).some((f) => f.key === family)
+    )
+      throw new MarketplaceError(
+        "PERMISSION_DENIED",
+        "This family is disabled for new imports.",
+      );
+    const csvRows = parseCsv(source),
+      incomingKeys = [
+        ...new Set(
+          csvRows
+            .slice(1)
+            .map((r) => r[csvRows[0].indexOf("key")])
+            .filter(Boolean),
+        ),
+      ];
+    const existing: DceRecord[] = [];
+    for (let start = 0; start < incomingKeys.length; start += 100)
+      existing.push(
+        ...(await checked<DceRecord[]>(
+          scoped(db.from("ac_dce_records").select("*"), c)
+            .eq("kind", "experience")
+            .eq("family", family)
+            .in("key", incomingKeys.slice(start, start + 100)),
+        )),
+      );
+    const planned = planImport(source, family, task, existing, c.locale);
+    const aliases = new Map<string, string>();
+    for (const line of planned) {
+      const definition = object(object(line.prepared.record).data),
+        mappings: Data[] = [];
+      const bind = async (v: any, path = ""): Promise<any> => {
+        if (Array.isArray(v))
+          return Promise.all(v.map((x, i) => bind(x, path + "." + i)));
+        if (v && typeof v === "object") {
+          const out = { ...v };
+          for (const [key, value] of Object.entries(v)) {
+            const mediaKey = [
+                "assetId",
+                "nativeAssetId",
+                "backAssetId",
+                "narrationAssetId",
+                "captionAssetId",
+                "coverAssetId",
+                "posterAssetId",
+              ].includes(key),
+              recordKind: Record<string, Kind> = {
+                experienceId: "experience",
+                assessmentId: "experience",
+                contentId: "content",
+                templateId: "template",
+                accessPolicyId: "access_policy",
+                adPolicyId: "ad_policy",
+                parentId: "topic",
+              };
+            if (
+              (mediaKey || key === "nativeId" || recordKind[key]) &&
+              typeof value === "string" &&
+              value &&
+              !isId(value)
+            ) {
+              const aliasKey =
+                (mediaKey
+                  ? "media"
+                  : key === "nativeId"
+                    ? "offer"
+                    : recordKind[key]) +
+                ":" +
+                value;
+              if (!aliases.has(aliasKey)) {
+                let lookup;
+                if (mediaKey)
+                  lookup = value.startsWith("sha256:")
+                    ? db
+                        .from("angelcare_marketplace_media_assets")
+                        .select("id,file_name")
+                        .eq("status", "active")
+                        .contains("metadata", { sha256: value.slice(7) })
+                    : db
+                        .from("angelcare_marketplace_media_assets")
+                        .select("id,file_name")
+                        .eq("status", "active")
+                        .eq("file_name", value);
+                else if (key === "nativeId") {
+                  lookup = db
+                    .from("angelcare_marketplace_catalog_discovery_v")
+                    .select("id,item_key")
+                    .eq("status", "published")
+                    .eq("item_key", value);
+                  if (c.territoryId)
+                    lookup = lookup.or(
+                      `territory_id.is.null,territory_id.eq.${c.territoryId}`,
+                    );
+                } else
+                  lookup = db
+                    .from("ac_dce_records")
+                    .select("id,title")
+                    .eq("scope_key", scopeKey(c))
+                    .eq("kind", recordKind[key])
+                    .eq("key", value);
+                const found = await checked<any[]>(
+                  (mediaKey || key === "nativeId"
+                    ? sharedNativeScope(lookup, c)
+                    : lookup
+                  ).limit(2),
+                );
+                if (found.length !== 1) {
+                  line.prepared.dependencyPlan = [
+                    ...array(line.prepared.dependencyPlan),
+                    {
+                      path: path + "." + key,
+                      source: value,
+                      authority: mediaKey
+                        ? "native_media"
+                        : key === "nativeId"
+                          ? "native_offer"
+                          : recordKind[key],
+                      status: found.length ? "ambiguous" : "missing",
+                      nextAction: found.length
+                        ? "Select the exact eligible native identifier."
+                        : "Create or apply this prerequisite first, then reprepare or correct this dependent draft.",
+                    },
+                  ];
+                  throw new MarketplaceError(
+                    "VALIDATION_ERROR",
+                    "Reference " +
+                      value +
+                      " must resolve to exactly one eligible source in this scope. Create/apply missing prerequisites first; then reprepare this dependent resource.",
+                  );
+                }
+                aliases.set(aliasKey, found[0].id);
+              }
+              out[key] = aliases.get(aliasKey);
+              mappings.push({
+                path: path + "." + key,
+                source: value,
+                id: out[key],
+                authority: mediaKey
+                  ? "native_media"
+                  : key === "nativeId"
+                    ? "native_offer"
+                    : "dce_record",
+              });
+            } else out[key] = await bind(value, path + "." + key);
+          }
+          return out;
+        }
+        return v;
+      };
+      try {
+        const resolved = await bind(definition);
+        if (line.prepared.record) {
+          const target = object(line.prepared.record);
+          target.data = resolved;
+          if (target.topic && !isId(target.topic)) {
+            const mapped = await bind({ parentId: target.topic });
+            target.topic = mapped.parentId;
+          }
+          const refs = references({
+            ...resolved,
+            parentId: target.topic || null,
+          });
+          line.prepared.refs = {
+            record: refs.records,
+            media: refs.media,
+            offer: refs.offers,
+          };
+          line.prepared.mediaAliases = Object.fromEntries(aliases);
+          line.prepared.referenceMappings = mappings;
+          const inspected = await validate(c, {
+            ...target,
+            id: line.prepared.id || "00000000-0000-4000-8000-000000000001",
+            revision: line.prepared.revision || 0,
+          } as unknown as DceRecord);
+          line.prepared.publishReadiness =
+            inspected.validation as unknown as Data;
+          for (const issue of inspected.validation.errors.filter((i) =>
+            [
+              "MEDIA_TYPE",
+              "MISSING_MEDIA",
+              "MEDIA_UNAVAILABLE",
+              "NATIVE_OFFER",
+              "MISSING_RECORD",
+            ].includes(i.code),
+          ))
+            line.issues.push(issue.path + ": " + issue.message[0]);
+        }
+      } catch (e) {
+        line.issues.push((e as Error).message);
+      }
+    }
+    const j = await checked<any>(
+      db.rpc("ac_dce_prepare_import", {
+        ...args(c, cmd),
+        p_task: task,
+        p_family: family,
+        p_name: text(cmd.sourceName).slice(0, 160),
+        p_source_hash: createHash("sha256").update(source).digest("hex"),
+        p_lines: planned,
+      }),
+    );
+    return {
+      job: j,
+      rows: planned.length,
+      invalid: planned.filter((x) => x.issues.length).length,
+    };
+  }
+  if (["apply_import", "rollback_import"].includes(cmd.action)) {
+    authorize(c, "manage");
+    const line = await checked<any>(
+      db
+        .from("ac_dce_job_lines")
+        .select("job_id,prepared")
+        .eq("id", cmd.id)
+        .maybeSingle(),
+    );
+    if (!line) throw new MarketplaceError("NOT_FOUND", "Line not found.");
+    const job = await checked<any>(
+      scoped(db.from("ac_dce_jobs").select("*"), c)
+        .eq("id", line.job_id)
+        .maybeSingle(),
+    );
+    if (!job) throw new MarketplaceError("NOT_FOUND", "Job outside scope.");
+    if (cmd.action === "apply_import") {
+      const old = line.prepared.id
+        ? await record(c, line.prepared.id)
+        : undefined;
+      normalizeRecord(line.prepared.record, old);
+    }
+    const result = await db.rpc("ac_dce_import_line", {
+      p_actor: c.actor.id,
+      p_tenant: c.tenantId,
+      p_territory: c.territoryId,
+      p_id: cmd.id,
+      p_action: cmd.action === "apply_import" ? "apply" : "rollback",
+    });
+    if (result.error) {
+      if (cmd.action === "apply_import")
+        await checked(
+          db
+            .from("ac_dce_job_lines")
+            .update({
+              state: /CONFLICT/.test(result.error.message)
+                ? "conflict"
+                : "failed",
+              error:
+                "Apply stopped: " + String(result.error.message).slice(0, 200),
+            })
+            .eq("id", cmd.id)
+            .eq("state", "ready"),
+        );
+      fail(result.error);
+    }
+    return result.data;
+  }
+  if (cmd.action === "correct_import") {
+    authorize(c, "manage");
+    const line = await checked<any>(
+      db.from("ac_dce_job_lines").select("*").eq("id", cmd.id).maybeSingle(),
+    );
+    if (
+      !line ||
+      !["ready", "invalid", "failed", "conflict"].includes(line.state)
+    )
+      throw new MarketplaceError(
+        "CONFLICT",
+        "Only unapplied import lines can be corrected.",
+      );
+    const job = await checked<any>(
+      scoped(db.from("ac_dce_jobs").select("*"), c)
+        .eq("id", line.job_id)
+        .maybeSingle(),
+    );
+    if (!job) throw new MarketplaceError("NOT_FOUND", "Job outside scope.");
+    const stored = object(line.prepared),
+      submitted = object(cmd.prepared),
+      proposed = object(submitted.record);
+    // Always use the server's immutable target/revision; the browser supplies only
+    // an edited record, never its import identity, receipts, state or reference map.
+    if (
+      proposed.kind !== "experience" ||
+      proposed.family !== job.family ||
+      submitted.id !== stored.id
+    )
+      throw new MarketplaceError(
+        "FORBIDDEN",
+        "Correction must preserve the targeted experience, family and record identity.",
+      );
+    const old = stored.id ? await record(c, text(stored.id)) : undefined;
+    if (old && old.revision !== stored.revision)
+      throw new MarketplaceError(
+        "CONFLICT",
+        "The target changed after import preparation. Prepare a new receipt.",
+      );
+    let normalized: Partial<DceRecord>;
+    try {
+      normalized = normalizeRecord(proposed as Partial<DceRecord>, old);
+      assertTaskCorrection(
+        object(stored.record) as Partial<DceRecord>,
+        normalized,
+        job.task,
+      );
+    } catch (e) {
+      throw new MarketplaceError("VALIDATION_ERROR", (e as Error).message);
+    }
+    const candidate = {
+      ...old,
+      ...normalized,
+      id: old?.id || "00000000-0000-4000-8000-000000000001",
+      revision: stored.revision || 0,
+    } as DceRecord;
+    const inspected = await validate(c, candidate);
+    const issues = importBlockingIssues(inspected.validation);
+    const refs = references({
+      ...object(normalized.data),
+      parentId: normalized.topic || null,
+    });
+    // Retain only mappings that still refer to the exact corrected canonical refs.
+    const known = new Set([...refs.records, ...refs.media, ...refs.offers]);
+    const mappings = Array.isArray(stored.referenceMappings)
+      ? stored.referenceMappings.filter((m: any) => known.has(text(m.id)))
+      : [];
+    const prepared = {
+      ...stored,
+      record: normalized,
+      refs: { record: refs.records, media: refs.media, offer: refs.offers },
+      publishReadiness: inspected.validation,
+      referenceMappings: mappings,
+    };
+    // Compare-and-swap prevents two editors from silently overwriting one another's
+    // corrections. The line is never promoted to ready when blocking issues remain.
+    const updated = await checked<any>(
+      db
+        .from("ac_dce_job_lines")
+        .update({
+          prepared,
+          state: issues.length ? "invalid" : "ready",
+          issues,
+          error: null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", cmd.id)
+        .eq("state", line.state)
+        .eq("updated_at", line.updated_at)
+        .select("*")
+        .maybeSingle(),
+    );
+    if (!updated)
+      throw new MarketplaceError(
+        "CONFLICT",
+        "Import line changed while correcting it. Reload its latest receipt.",
+      );
+    return updated;
+  }
+  throw new MarketplaceError("VALIDATION_ERROR", "Unsupported DCE command.");
 }
-export async function read(c:Context,input:Record<string,unknown>){const op=text(input.op)||'list';if(op==='analytics'){authorize(c,'view');const since=text(input.since)||new Date(Date.now()-30*86400000).toISOString(),until=text(input.until)||new Date().toISOString();if(!Number.isFinite(Date.parse(since))||!Number.isFinite(Date.parse(until))||Date.parse(until)<=Date.parse(since)||Date.parse(until)-Date.parse(since)>366*86400000)throw new MarketplaceError('VALIDATION_ERROR','Choose a valid report window up to 366 days.');const filters=Object.fromEntries(['audience','source','locale','device','region','family','topic','assetId'].filter(k=>input[k]).map(k=>[k,text(input[k])]));const client=await createServiceClient();return checked(client.rpc('ac_dce_analytics',{p_tenant:c.tenantId,p_territory:c.territoryId,p_since:since,p_until:until,p_dimension:text(input.dimension)||'action',p_filters:filters,p_page:Math.max(1,Math.floor(number(input.page,1)))}))}if(op==='reference'){if(!input.id)return{};const type=text(input.type);if(type==='record'){const r=await record(c,text(input.id));return{id:r.id,title:r.title,kind:r.kind,lifecycle:r.lifecycle}}const page=await native(c,type,{id:input.id,pageSize:1});return page.rows[0]||{}}if(op==='access_inspect'){if(!input.id)return{resource:null,policy:null,decision:null};const resource=await record(c,text(input.id));const policy=isId(resource.data.accessPolicyId)?await record(c,text(resource.data.accessPolicyId)):undefined;const action=['use','download','print','contribute'].includes(text(input.action))?text(input.action):'use';let grants:DceRecord[]=[];if(input.customerId){authorize(c,'customers');const customer=(await native(c,'customers',{id:input.customerId})).rows[0];if(!customer)throw new MarketplaceError('NOT_FOUND','Customer outside native scope.');grants=(await all(c,'grant')).filter(g=>g.data.customerId===customer.id&&g.data.resourceId===resource.id)}return{grants:grants.map(g=>({id:g.id,title:g.title,issuer:g.data.issuer||null,nativeReceiptId:g.data.nativeReceiptId||null,expiresAt:g.data.expiresAt||null,revoked:g.data.revoked||false})),resource:{id:resource.id,title:resource.title,revision:resource.revision},policy:policy?{id:policy.id,title:policy.title,revision:policy.revision}:null,decision:effectiveAccess(resource,await all(c,'access_policy'),{action:action as 'use'|'download'|'print'|'contribute',audience:text(input.audience),authenticated:Boolean(input.customerId)||String(input.authenticated)==='true',customerId:input.customerId?text(input.customerId):undefined,grants}),contextMeaning:'Staff scenario; no customer grant is assumed.'}}if(op==='ad_inspect'){authorize(c,'monetize');const policies=await all(c,'ad_policy');const settings=(await all(c,'setting')).find(r=>r.key==='world-defaults');const connections=await all(c,'ad_connection');const programs=[...new Set(connections.filter(r=>object(r.data.providerEvidence).ready===true&&Date.now()-Date.parse(text(object(r.data.providerEvidence).observedAt))<86400000).flatMap(r=>Array.isArray(object(r.data.providerEvidence).approvedPrograms)?object(r.data.providerEvidence).approvedPrograms as string[]:[]))];const context={family:text(input.family),topic:text(input.topic),templateId:text(input.templateId),experienceId:text(input.experienceId),zone:text(input.zone),audience:text(input.audience),locale:(['fr','en','ar'].includes(text(input.locale))?text(input.locale):c.locale) as import('./types').Locale,device:text(input.device),region:text(input.region),consent:text(input.consent) as 'unknown'|'denied'|'limited'|'granted',programs,monetizationEnabled:settings?.data.monetizationEnabled===true};let decision=effectiveAdPolicy(policies,context);const units=await all(c,'ad_unit');const effectiveUnit=decision.rule?units.find(u=>u.data.unitId===decision.rule?.data.unitId&&u.lifecycle!=='archived'):undefined;if(decision.eligible&&['01','02','03','04','14'].includes(text(decision.rule?.data.formatId))&&(!effectiveUnit||effectiveUnit.data.localEnabled!==true||effectiveUnit.data.providerState!=='ACTIVE'))decision={eligible:false,reason:'LOCAL_UNIT_SUPPRESSED_OR_UNOBSERVED',rule:decision.rule};const target:Record<string,string>={world:'',family:context.family,topic:context.topic,template:context.templateId,experience:context.experienceId,zone:context.zone};return{decision,context,unit:effectiveUnit?{id:effectiveUnit.id,title:effectiveUnit.title,enabled:effectiveUnit.data.localEnabled,state:effectiveUnit.data.providerState}:null,complete:true,total:policies.length,rules:policies.map(p=>({id:p.id,title:p.title,data:p.data,revision:p.revision,matched:p.lifecycle!=='archived'&&Object.hasOwn(target,text(p.data.scope))&&(p.data.scope==='world'||p.data.targetId===target[text(p.data.scope)])})),checkedAt:new Date().toISOString()}}if(op==='inventory'){const kind=text(input.kind) as Kind;if(!KINDS.includes(kind))throw new MarketplaceError('VALIDATION_ERROR','Inventory kind required.');return{rows:await all(c,kind),complete:true}}if(op==='bootstrap')return bootstrap(c,number(input.days,30));if(op==='record')return record(c,text(input.id));if(op==='history')return revisions(c,text(input.id),input);if(op==='native')return native(c,text(input.type),input);if(op==='template'){authorize(c,'view');return templatePack(text(input.family),text(input.task) as ImportTask)}if(op==='export'){authorize(c,'export');return{csv:exportRecords(await all(c,'experience'),text(input.family),text(input.task) as ImportTask)}}const db=await createServiceClient();authorize(c,'view');if(op==='release'){const z=await checked<Release|null>(scoped(db.from('ac_dce_releases').select('*'),c).eq('id',input.id).maybeSingle());if(!z)throw new MarketplaceError('NOT_FOUND','Release not found.');readable(c,z.snapshot.kind);return z}if(op==='releases'){const page=Math.max(1,number(input.page,1));let q=scoped(db.from('ac_dce_releases').select('*',{count:'exact'}),c);if(input.state&&input.state!=='all')q=q.eq('state',input.state);if(input.recordId){if(!isId(input.recordId))return{rows:[],total:0,page,pageSize:30};q=q.eq('record_id',input.recordId)}const r=await q.order('created_at',{ascending:false}).order('id').range((page-1)*30,page*30-1);if(r.error)fail(r.error);return{rows:r.data,total:r.count,page,pageSize:30}}if(op==='jobs'){const page=Math.max(1,Math.floor(number(input.page,1)));let q=scoped(db.from('ac_dce_jobs').select('*',{count:'exact'}),c);if(input.q)q=q.ilike('source_name','%'+text(input.q).replace(/[%_,()]/g,'')+'%');const result=await q.order('created_at',{ascending:false}).order('id').range((page-1)*30,page*30-1);if(result.error)fail(result.error);return{rows:result.data||[],total:result.count||0,page,pageSize:30}}if(op==='job'){const job=await checked<any>(scoped(db.from('ac_dce_jobs').select('*'),c).eq('id',input.id).maybeSingle());if(!job)throw new MarketplaceError('NOT_FOUND','Job not found.');const page=Math.max(1,number(input.page,1)),result=await db.from('ac_dce_job_lines').select('*',{count:'exact'}).eq('job_id',job.id).order('row_number').range((page-1)*100,page*100-1);if(result.error)fail(result.error);return{job,rows:result.data,total:result.count,page,pageSize:100}}if(op==='logs'||op==='events'){const page=Math.max(1,number(input.page,1));let eventQuery=scoped(db.from('ac_dce_events').select('*',{count:'exact'}),c);if(op==='events')eventQuery=eventQuery.eq('channel','experience');if(input.since)eventQuery=eventQuery.gte('created_at',text(input.since));if(input.until)eventQuery=eventQuery.lte('created_at',text(input.until));for(const key of ['audience','source','locale','device','region','family','topic','assetId'])if(input[key])eventQuery=eventQuery.eq('data->>'+key,text(input[key]));if(input.channel)eventQuery=eventQuery.eq('channel',text(input.channel));if(input.action)eventQuery=eventQuery.ilike('action','%'+text(input.action).replace(/[%_,()]/g,'')+'%');if(input.correlation&&isId(input.correlation))eventQuery=eventQuery.eq('request_id',input.correlation);if(input.recordId&&isId(input.recordId))eventQuery=eventQuery.eq('record_id',input.recordId);const result=await eventQuery.order('id',{ascending:false}).range((page-1)*100,page*100-1);if(result.error)fail(result.error);return{rows:(result.data||[]).map(safeEvent),total:result.count,page,pageSize:100}}return list(c,input)}
-export async function runDceSchedules(limit=20,context?:Context){const db=await createServiceClient();let query=db.from('ac_dce_releases').select('*');if(context)query=scoped(query,context);const q=await query.eq('state','scheduled').lte('scheduled_at',new Date().toISOString()).order('scheduled_at').limit(Math.max(1,Math.min(limit,50)));if(q.error){if(['42P01','PGRST205'].includes(q.error.code))return{state:'not_activated',processed:0};fail(q.error)}const results=[];for(const z of q.data||[]){const c={actor:{id:'worker:dce'},tenantId:z.tenant_id,territoryId:z.territory_id} as Context;const v=await validate(c,z.snapshot);const r=await db.rpc('ac_dce_release_action',{p_actor:'worker:dce',p_tenant:z.tenant_id,p_territory:z.territory_id,p_request:randomUUID(),p_hash:createHash('sha256').update(JSON.stringify(z)).digest('hex'),p_id:z.id,p_action:v.validation.valid?'due':'fail',p_manifest:v.validation.valid?publicManifest(z.snapshot,v.bindings):null,p_error:v.validation.valid?null:'Dependency validation failed'});results.push({id:z.id,ok:!r.error,error:r.error?'Activation stopped; prior live release preserved.':null})}return{state:'processed',processed:results.length,results}}
+export async function read(c: Context, input: Record<string, unknown>) {
+  if (input.op === "kidflix_storefront_selection")
+    return (await import("../kidflix/storefronts/admin-service")).kidflixStorefrontSelection(c,String(input.family||""),input.locale as any,String(input.keys||""));
+  if (input.op === "kidflix_storefront_preview")
+    return (await import("../kidflix/storefronts/admin-service")).kidflixStorefrontPreview(c,String(input.family||""),input.locale as any);
+  if (input.op === "kidflix_storefront")
+    return (await import("../kidflix/storefronts/admin-service")).kidflixStorefrontRead(c,String(input.family||""));
+  if (input.op === "kidflix_home")
+    return (await import("../kidflix/admin-service")).kidflixRead(c);
+  if (text(input.op).startsWith("depth_"))
+    return (await import("./depth-service")).depthRead(c, input);
+  const op = text(input.op) || "list";
+  if (op.startsWith("operator_"))
+    return (await import("./operator-service")).operatorRead(c, input);
+  if (op.startsWith("master_"))
+    return (await import("./master-service")).masterRead(c, input);
+  if (op.startsWith("pro_"))
+    return (await import("./professional")).professionalRead(c, input);
+  if (op === "attachments") {
+    authorize(c, "moderate");
+    return (await import("./attachments")).listCaseAttachments(
+      c,
+      text(input.caseId),
+    );
+  }
+  if (op === "dashboard_cards") {
+    authorize(c, "view");
+    const page = await list(c, {
+      kind: "experience",
+      view: text(input.view) || "all",
+      page: 1,
+      pageSize: 4,
+    });
+    const ids = page.rows.map((r) => text(r.data.coverAssetId)).filter(isId),
+      db = await createServiceClient(),
+      media = ids.length
+        ? await nativeByIds(db, c, "angelcare_marketplace_media_assets", ids)
+        : [];
+    return {
+      ...page,
+      mediaBindings: Object.fromEntries(
+        media.map((m) => [m.id, m.public_url || m.desktop_url]),
+      ),
+    };
+  }
+  if (op === "ranking") {
+    authorize(c, "view");
+    const db = await createServiceClient();
+    return checked(
+      db.rpc("ac_dce_ranked_content", {
+        p_tenant: c.tenantId,
+        p_territory: c.territoryId,
+        p_days: Math.min(366, Math.max(1, number(input.days, 30))),
+        p_metric: text(input.metric) || "complete",
+      }),
+    );
+  }
+  if (op === "connections") {
+    const r = await record(c, text(input.id)),
+      db = await createServiceClient(),
+      graph = await checked<any>(
+        db.rpc("ac_dce_connections", {
+          p_tenant: c.tenantId,
+          p_territory: c.territoryId,
+          p_id: r.id,
+          p_private: rights(c).moderate || rights(c).customers,
+          p_ads: rights(c).monetize,
+        }),
+      );
+    return {
+      ...graph,
+      record: r,
+      translations: Object.fromEntries(
+        ["fr", "en", "ar"].map((l) => [l, translationCoverage(r, l)]),
+      ),
+    };
+  }
+  if (op === "health") {
+    authorize(c, "view");
+    const db = await createServiceClient();
+    return checked(
+      db.rpc("ac_dce_health", {
+        p_tenant: c.tenantId,
+        p_territory: c.territoryId,
+        p_private: rights(c).moderate,
+      }),
+    );
+  }
+  if (op === "analytics") {
+    authorize(c, "view");
+    const since =
+        text(input.since) || new Date(Date.now() - 30 * 86400000).toISOString(),
+      until = text(input.until) || new Date().toISOString();
+    if (
+      !Number.isFinite(Date.parse(since)) ||
+      !Number.isFinite(Date.parse(until)) ||
+      Date.parse(until) <= Date.parse(since) ||
+      Date.parse(until) - Date.parse(since) > 366 * 86400000
+    )
+      throw new MarketplaceError(
+        "VALIDATION_ERROR",
+        "Choose a valid report window up to 366 days.",
+      );
+    const filters = Object.fromEntries(
+      [
+        "audience",
+        "source",
+        "locale",
+        "device",
+        "region",
+        "family",
+        "topic",
+        "assetId",
+        "recordId",
+      ]
+        .filter((k) => input[k])
+        .map((k) => [k, text(input[k])]),
+    );
+    if (input.recordId) await record(c, text(input.recordId));
+    const client = await createServiceClient();
+    return checked(
+      client.rpc("ac_dce_r6_metrics", {
+        p_tenant: c.tenantId,
+        p_territory: c.territoryId,
+        p_since: since,
+        p_until: until,
+        p_dimension: text(input.dimension) || "action",
+        p_filters: filters,
+        p_page: Math.max(1, Math.floor(number(input.page, 1))),
+      }),
+    );
+  }
+  if (op === "reference") {
+    if (!input.id) return {};
+    const type = text(input.type);
+    if (type === "record") {
+      const r = await record(c, text(input.id));
+      return { id: r.id, title: r.title, kind: r.kind, lifecycle: r.lifecycle };
+    }
+    const page = await native(c, type, { id: input.id, pageSize: 1 });
+    return page.rows[0] || {};
+  }
+  if (op === "access_inspect") {
+    if (!input.id) return { resource: null, policy: null, decision: null };
+    const resource = await record(c, text(input.id));
+    const policy = isId(resource.data.accessPolicyId)
+      ? await record(c, text(resource.data.accessPolicyId))
+      : undefined;
+    const action = ["use", "download", "print", "contribute"].includes(
+      text(input.action),
+    )
+      ? text(input.action)
+      : "use";
+    let grants: DceRecord[] = [];
+    if (input.customerId) {
+      authorize(c, "customers");
+      const customer = (await native(c, "customers", { id: input.customerId }))
+        .rows[0];
+      if (!customer)
+        throw new MarketplaceError(
+          "NOT_FOUND",
+          "Customer outside native scope.",
+        );
+      grants = (await all(c, "grant")).filter(
+        (g) =>
+          g.data.customerId === customer.id &&
+          g.data.resourceId === resource.id,
+      );
+    }
+    return {
+      grants: grants.map((g) => ({
+        id: g.id,
+        title: g.title,
+        issuer: g.data.issuer || null,
+        nativeReceiptId: g.data.nativeReceiptId || null,
+        expiresAt: g.data.expiresAt || null,
+        revoked: g.data.revoked || false,
+      })),
+      resource: {
+        id: resource.id,
+        title: resource.title,
+        revision: resource.revision,
+      },
+      policy: policy
+        ? { id: policy.id, title: policy.title, revision: policy.revision }
+        : null,
+      decision: effectiveAccess(resource, await all(c, "access_policy"), {
+        action: action as "use" | "download" | "print" | "contribute",
+        audience: text(input.audience),
+        authenticated:
+          Boolean(input.customerId) || String(input.authenticated) === "true",
+        customerId: input.customerId ? text(input.customerId) : undefined,
+        grants,
+      }),
+      contextMeaning: "Staff scenario; no customer grant is assumed.",
+    };
+  }
+  if (op === "ad_inspect") {
+    authorize(c, "monetize");
+    const db = await createServiceClient();
+    let policies = await policyCandidates(c, "ad_policy", [
+      text(input.family),
+      text(input.topic),
+      text(input.templateId),
+      text(input.experienceId),
+      text(input.zone),
+    ]);
+    if (input.policyId) {
+      const selected = await record(c, text(input.policyId));
+      if (selected.kind !== "ad_policy")
+        throw new MarketplaceError(
+          "VALIDATION_ERROR",
+          "Choose a native advertising policy.",
+        );
+      policies = policies.filter((p) => p.id === selected.id);
+    }
+    const settings = await byKey(c, "setting", "world-defaults");
+    const connections = await all(c, "ad_connection");
+    const programs = [
+      ...new Set(
+        connections
+          .filter(
+            (r) =>
+              object(r.data.providerEvidence).ready === true &&
+              Date.now() -
+                Date.parse(text(object(r.data.providerEvidence).observedAt)) <
+                86400000,
+          )
+          .flatMap((r) =>
+            Array.isArray(object(r.data.providerEvidence).approvedPrograms)
+              ? (object(r.data.providerEvidence).approvedPrograms as string[])
+              : [],
+          ),
+      ),
+    ];
+    const context = {
+      family: text(input.family),
+      topic: text(input.topic),
+      templateId: text(input.templateId),
+      experienceId: text(input.experienceId),
+      releaseId: text(input.releaseId),
+      journeyId: text(input.journeyId),
+      zone: text(input.zone),
+      audience: text(input.audience),
+      locale: (["fr", "en", "ar"].includes(text(input.locale))
+        ? text(input.locale)
+        : c.locale) as import("./types").Locale,
+      device: text(input.device),
+      region: text(input.region),
+      consent: text(input.consent) as
+        "unknown" | "denied" | "limited" | "granted",
+      programs,
+      monetizationEnabled: settings?.data.monetizationEnabled === true,
+    };
+    let decision = effectiveAdPolicy(policies, context);
+    const units = decision.rule?.data.unitId
+      ? await checked<DceRecord[]>(
+          scoped(db.from("ac_dce_records").select("*"), c)
+            .eq("kind", "ad_unit")
+            .eq("data->>unitId", text(decision.rule.data.unitId))
+            .neq("lifecycle", "archived")
+            .limit(2),
+        )
+      : [];
+    const effectiveUnit = decision.rule
+      ? units.find(
+          (u) =>
+            u.data.unitId === decision.rule?.data.unitId &&
+            u.lifecycle !== "archived",
+        )
+      : undefined;
+    if (
+      decision.eligible &&
+      ["01", "02", "03", "04", "14"].includes(
+        text(decision.rule?.data.formatId),
+      ) &&
+      (!effectiveUnit ||
+        effectiveUnit.data.localEnabled !== true ||
+        object(effectiveUnit.data.providerEvidence).state !== "ACTIVE" ||
+        !Number.isFinite(
+          Date.parse(
+            text(object(effectiveUnit.data.providerEvidence).observedAt),
+          ),
+        ) ||
+        Date.now() -
+          Date.parse(
+            text(object(effectiveUnit.data.providerEvidence).observedAt),
+          ) >=
+          86400000)
+    )
+      decision = {
+        eligible: false,
+        reason: "LOCAL_UNIT_SUPPRESSED_OR_UNOBSERVED",
+        rule: decision.rule,
+      };
+    const target: Record<string, string> = {
+      world: "",
+      family: context.family,
+      topic: context.topic,
+      template: context.templateId,
+      experience: context.experienceId,
+      zone: context.zone,
+    };
+    return {
+      decision,
+      context,
+      unit: effectiveUnit
+        ? {
+            id: effectiveUnit.id,
+            title: effectiveUnit.title,
+            enabled: effectiveUnit.data.localEnabled,
+            state: effectiveUnit.data.providerState,
+          }
+        : null,
+      complete: true,
+      total: policies.length,
+      rules: policies.map((p) => ({
+        id: p.id,
+        title: p.title,
+        data: p.data,
+        revision: p.revision,
+        matched:
+          p.lifecycle !== "archived" &&
+          Object.hasOwn(target, text(p.data.scope)) &&
+          (p.data.scope === "world" ||
+            p.data.targetId === target[text(p.data.scope)]),
+      })),
+      checkedAt: new Date().toISOString(),
+    };
+  }
+  if (op === "inventory") {
+    const kind = text(input.kind) as Kind;
+    if (!KINDS.includes(kind))
+      throw new MarketplaceError(
+        "VALIDATION_ERROR",
+        "Inventory kind required.",
+      );
+    return { rows: await all(c, kind), complete: true };
+  }
+  if (op === "bootstrap") return bootstrap(c, number(input.days, 30));
+  if (op === "record") return record(c, text(input.id));
+  if (op === "history") return revisions(c, text(input.id), input);
+  if (op === "native") return native(c, text(input.type), input);
+  if (op === "template") {
+    authorize(c, "view");
+    return templatePack(
+      text(input.family),
+      text(input.task) as ImportTask,
+      text(input.collection) || undefined,
+    );
+  }
+  if (op === "export") {
+    authorize(c, "export");
+    const family = text(input.family),
+      task = text(input.task) as ImportTask,
+      collection = text(input.collection) || undefined,
+      rows: DceRecord[] = [],
+      boundary = text(input.beforeDate) || new Date().toISOString();
+    let cursor = text(input.afterId) || undefined,
+      complete = false;
+    if (input.recordId) {
+      const r = await record(c, text(input.recordId));
+      if (r.family !== family)
+        throw new MarketplaceError(
+          "VALIDATION_ERROR",
+          "The selected worksheet must match the dossier family.",
+        );
+      rows.push(r);
+      complete = true;
+    } else {
+      const size = ["translations", "content", "media", "journeys"].includes(
+        task,
+      )
+        ? 20
+        : 100;
+      const page = await list(c, {
+        kind: "experience",
+        family,
+        stable: "true",
+        page: 1,
+        pageSize: size,
+        afterId: cursor,
+        beforeDate: boundary,
+      });
+      rows.push(...page.rows);
+      complete = page.rows.length < size;
+      cursor = page.rows.at(-1)?.id;
+    }
+    const source = exportRecords(rows, family, task, collection);
+    if (Buffer.byteLength(source) > 4 * 1024 * 1024)
+      throw new MarketplaceError(
+        "DEPENDENCY_BLOCKED",
+        "This worksheet part exceeds 4 MiB. Open one dossier context or choose a narrower collection before exporting.",
+      );
+    return {
+      csv: source,
+      resources: rows.length,
+      complete,
+      nextCursor: complete ? null : cursor,
+      beforeDate: boundary,
+      scope:
+        "selected family; stable identifier order; each row carries its current revision",
+    };
+  }
+  const db = await createServiceClient();
+  authorize(c, "view");
+  if (op === "release") {
+    const z = await checked<Release | null>(
+      scoped(db.from("ac_dce_releases").select("*"), c)
+        .eq("id", input.id)
+        .maybeSingle(),
+    );
+    if (!z) throw new MarketplaceError("NOT_FOUND", "Release not found.");
+    readable(c, z.snapshot.kind);
+    return z;
+  }
+  if (op === "releases") {
+    const page = Math.max(1, number(input.page, 1));
+    let q = scoped(
+      db.from("ac_dce_releases").select("*", { count: "exact" }),
+      c,
+    );
+    if (input.state && input.state !== "all") q = q.eq("state", input.state);
+    if (input.recordId) {
+      await record(c, text(input.recordId));
+      q = q.eq("record_id", input.recordId);
+    }
+    const r = await q
+      .order("created_at", { ascending: false })
+      .order("id")
+      .range((page - 1) * 30, page * 30 - 1);
+    if (r.error) fail(r.error);
+    const editionIds = [
+      ...new Set(
+        (r.data || [])
+          .filter((z: any) => z.manifest?.editionLocale)
+          .map((z: any) => z.record_id),
+      ),
+    ];
+    const editions = editionIds.length
+      ? await checked<any[]>(
+          scoped(
+            db
+              .from("ac_dce_editions")
+              .select("record_id,locale,active_release_id"),
+            c,
+          ).in("record_id", editionIds),
+        )
+      : [];
+    return {
+      rows: (r.data || []).map((z: any) => ({
+        ...z,
+        ...(z.manifest?.editionLocale
+          ? {
+              activeEdition: editions.some(
+                (e) =>
+                  e.record_id === z.record_id &&
+                  e.locale === z.manifest.editionLocale &&
+                  e.active_release_id === z.id,
+              ),
+            }
+          : {}),
+      })),
+      total: r.count,
+      page,
+      pageSize: 30,
+    };
+  }
+  if (op === "jobs") {
+    const page = Math.max(1, Math.floor(number(input.page, 1)));
+    let q = scoped(db.from("ac_dce_jobs").select("*", { count: "exact" }), c);
+    if (input.q)
+      q = q.ilike(
+        "source_name",
+        "%" + text(input.q).replace(/[%_,()]/g, "") + "%",
+      );
+    const result = await q
+      .order("created_at", { ascending: false })
+      .order("id")
+      .range((page - 1) * 30, page * 30 - 1);
+    if (result.error) fail(result.error);
+    return {
+      rows: result.data || [],
+      total: result.count || 0,
+      page,
+      pageSize: 30,
+    };
+  }
+  if (op === "job") {
+    const job = await checked<any>(
+      scoped(db.from("ac_dce_jobs").select("*"), c)
+        .eq("id", input.id)
+        .maybeSingle(),
+    );
+    if (!job) throw new MarketplaceError("NOT_FOUND", "Job not found.");
+    const page = Math.max(1, number(input.page, 1)),
+      result = await db
+        .from("ac_dce_job_lines")
+        .select("*", { count: "exact" })
+        .eq("job_id", job.id)
+        .order("row_number")
+        .range((page - 1) * 100, page * 100 - 1);
+    if (result.error) fail(result.error);
+    return { job, rows: result.data, total: result.count, page, pageSize: 100 };
+  }
+  if (op === "events") {
+    const page = Math.max(1, number(input.page, 1));
+    let q = scoped(
+      db.from("ac_dce_activity_v2").select("*", { count: "exact" }),
+      c,
+    ).eq("environment", "production");
+    if (input.since) q = q.gte("occurred_at", text(input.since));
+    if (input.until) q = q.lt("occurred_at", text(input.until));
+    if (input.recordId) {
+      await record(c, text(input.recordId));
+      q = q.eq("record_id", input.recordId);
+    }
+    if (input.action) q = q.eq("action", input.action);
+    for (const k of [
+      "audience",
+      "source",
+      "locale",
+      "device",
+      "region",
+      "family",
+      "topic",
+      "assetId",
+    ])
+      if (input[k]) q = q.eq("dimensions->>" + k, text(input[k]));
+    const result = await q
+      .order("occurred_at", { ascending: false })
+      .order("id")
+      .range((page - 1) * 100, page * 100 - 1);
+    if (result.error) fail(result.error);
+    return {
+      rows: (result.data || []).map((e: any) => ({
+        id: e.id,
+        channel: "experience",
+        action: e.action,
+        record_id: e.record_id,
+        created_at: e.occurred_at,
+        data: e.dimensions,
+      })),
+      total: result.count,
+      page,
+      pageSize: 100,
+      source: "ac_dce_activity_v2",
+      environment: "production",
+    };
+  }
+  if (op === "logs" || op === "events") {
+    const page = Math.max(1, number(input.page, 1));
+    let eventQuery = scoped(
+      db.from("ac_dce_events").select("*", { count: "exact" }),
+      c,
+    );
+    if (op === "events") eventQuery = eventQuery.eq("channel", "experience");
+    if (input.since)
+      eventQuery = eventQuery.gte("created_at", text(input.since));
+    if (input.until)
+      eventQuery = eventQuery.lte("created_at", text(input.until));
+    for (const key of [
+      "audience",
+      "source",
+      "locale",
+      "device",
+      "region",
+      "family",
+      "topic",
+      "assetId",
+    ])
+      if (input[key])
+        eventQuery = eventQuery.eq("data->>" + key, text(input[key]));
+    if (input.channel)
+      eventQuery = eventQuery.eq("channel", text(input.channel));
+    if (input.action)
+      eventQuery = eventQuery.ilike(
+        "action",
+        "%" + text(input.action).replace(/[%_,()]/g, "") + "%",
+      );
+    if (input.correlation && isId(input.correlation))
+      eventQuery = eventQuery.eq("request_id", input.correlation);
+    if (input.recordId) {
+      await record(c, text(input.recordId));
+      eventQuery = eventQuery.eq("record_id", input.recordId);
+    }
+    const result = await eventQuery
+      .order("id", { ascending: false })
+      .range((page - 1) * 100, page * 100 - 1);
+    if (result.error) fail(result.error);
+    return {
+      rows: (result.data || []).map(safeEvent),
+      total: result.count,
+      page,
+      pageSize: 100,
+    };
+  }
+  return list(c, input);
+}
+export async function runDceSchedules(limit = 20, context?: Context) {
+  const editionSchedules = await (
+    await import("./master-service")
+  ).runEditionSchedules(limit, context);
+  if (context) authorize(context, "publish");
+  const db = await createServiceClient();
+  let query = db.from("ac_dce_releases").select("*");
+  if (context) query = scoped(query, context);
+  const q = await query
+    .eq("state", "scheduled")
+    .is("manifest->>editionLocale", null)
+    .lte("scheduled_at", new Date().toISOString())
+    .order("scheduled_at")
+    .limit(Math.max(1, Math.min(limit, 50)));
+  if (q.error) {
+    if (["42P01", "PGRST205"].includes(q.error.code))
+      return { state: "not_activated", processed: 0 };
+    fail(q.error);
+  }
+  const results: Data[] = [];
+  for (const z of q.data || [])
+    try {
+      const snapshot = z.snapshot as DceRecord;
+      if (
+        snapshot.id !== z.record_id ||
+        snapshot.tenant_id !== z.tenant_id ||
+        snapshot.territory_id !== z.territory_id
+      )
+        throw Error("Release scope mismatch");
+      const v = await validateScoped(
+        {
+          tenantId: z.tenant_id,
+          territoryId: z.territory_id,
+          locale: (["fr", "en", "ar"].includes(
+            text(snapshot.data.defaultLocale),
+          )
+            ? text(snapshot.data.defaultLocale)
+            : "en") as any,
+        },
+        snapshot,
+      );
+      const r = await db.rpc("ac_dce_release_action", {
+        p_actor: "worker:dce",
+        p_tenant: z.tenant_id,
+        p_territory: z.territory_id,
+        p_request: randomUUID(),
+        p_hash: createHash("sha256").update(JSON.stringify(z)).digest("hex"),
+        p_id: z.id,
+        p_action: v.validation.valid ? "due" : "fail",
+        p_manifest: v.validation.valid
+          ? publicManifest(snapshot, v.bindings)
+          : null,
+        p_error: v.validation.valid
+          ? null
+          : JSON.stringify(
+              v.validation.errors.map((e) => ({ path: e.path, code: e.code })),
+            ).slice(0, 2000),
+      });
+      results.push({
+        id: z.id,
+        state: r.error
+          ? "retry_pending"
+          : v.validation.valid
+            ? "published"
+            : "blocked",
+      });
+    } catch {
+      results.push({ id: z.id, state: "retry_pending" });
+    }
+  const operations = await (
+    await import("./professional")
+  )
+    .runProfessionalSchedules(Math.min(limit, 10))
+    .catch(() => ({ state: "retry_pending" }));
+  const combined = [...results, ...array(object(editionSchedules).results)];
+  return {
+    editions: editionSchedules,
+    operations,
+    state: "processed",
+    processed: combined.length,
+    published: combined.filter((r) => r.state === "published").length,
+    blocked: combined.filter((r) => r.state === "blocked").length,
+    retryPending: combined.filter((r) => r.state === "retry_pending").length,
+    results: combined,
+  };
+}

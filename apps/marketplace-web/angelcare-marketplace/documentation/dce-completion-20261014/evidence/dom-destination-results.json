@@ -1,0 +1,20 @@
+{
+  "generatedAt": "2026-10-15T03:12:11.689Z",
+  "meaning": "Actual React DOM events and actual repository/SQL. No pixel, viewport layout or real media playback evidence.",
+  "results": [
+    {
+      "name": "All 23 destination DOMs load with en interface context",
+      "status": "passed"
+    },
+    {
+      "name": "All 23 destination DOMs load with fr interface context",
+      "status": "passed"
+    },
+    {
+      "name": "All 23 destination DOMs load with ar interface context",
+      "status": "failed",
+      "error": "Expected values to be strictly equal:\n\n'ltr' !== 'rtl'\n"
+    }
+  ],
+  "console": ""
+}
