@@ -46,6 +46,19 @@ jobs:
         run: python3 scripts/verify_source.py
       - name: Compile preview Android APK and unsigned release AAB
         run: gradle --no-daemon --stacktrace :app:assembleDebug :app:bundleRelease
+      - name: Confirm compiled APK contains required TWA launcher components
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="app/build/outputs/apk/debug/app-debug.apk"
+          test -s "$APK"
+          AAPT="$ANDROID_SDK_ROOT/build-tools/35.0.0/aapt"
+          test -x "$AAPT"
+          "$AAPT" dump xmltree "$APK" AndroidManifest.xml > "$RUNNER_TEMP/angelcare-android-manifest.txt"
+          grep -Fq 'com.google.androidbrowserhelper.trusted.LauncherActivity' "$RUNNER_TEMP/angelcare-android-manifest.txt"
+          grep -Fq 'com.google.androidbrowserhelper.trusted.ManageDataLauncherActivity' "$RUNNER_TEMP/angelcare-android-manifest.txt"
+          grep -Fq 'manageSpaceActivity' "$RUNNER_TEMP/angelcare-android-manifest.txt"
+          echo 'COMPILED_TWA_COMPONENTS=PASS'
       - name: Package and checksum CI artifacts
         shell: bash
         run: |

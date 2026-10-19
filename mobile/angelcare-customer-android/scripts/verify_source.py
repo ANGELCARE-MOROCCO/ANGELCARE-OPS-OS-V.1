@@ -12,11 +12,20 @@ for path in required:
     assert path.is_file(),f'MISSING={path}'
 android='http://schemas.android.com/apk/res/android'
 xml=ET.parse(manifest).getroot()
-activity=xml.find('.//activity')
+activity=next((a for a in xml.findall('.//activity') if a.attrib.get('{'+android+'}name')=='com.google.androidbrowserhelper.trusted.LauncherActivity'),None)
 assert activity is not None
 assert activity.attrib.get('{'+android+'}name')=='com.google.androidbrowserhelper.trusted.LauncherActivity'
 assert activity.attrib.get('{'+android+'}exported')=='true'
 assert any(x.attrib.get('{'+android+'}name')=='android.support.customtabs.trusted.DEFAULT_URL' for x in activity.findall('meta-data'))
+# Regression gate: class is referenced by ABH LauncherActivity on Android 7.1+.
+application=xml.find('application')
+assert application is not None
+manage_class='com.google.androidbrowserhelper.trusted.ManageDataLauncherActivity'
+assert application.attrib.get('{'+android+'}manageSpaceActivity')==manage_class
+manage=next((a for a in application.findall('activity') if a.attrib.get('{'+android+'}name')==manage_class),None)
+assert manage is not None, 'Missing ManageDataLauncherActivity in manifest'
+assert manage.attrib.get('{'+android+'}exported')=='false'
+assert any(n.attrib.get('{'+android+'}name')=='android.support.customtabs.trusted.MANAGE_SPACE_URL' and n.attrib.get('{'+android+'}value')=='@string/launch_url' for n in manage.findall('meta-data'))
 ss={x.attrib.get('name'):x.text for x in ET.parse(strings).getroot().findall('string')}
 assert ss['launch_url']=='https://my.angelcarehub.com/angelcare-marketplace/fr'
 gradle=build.read_text()
