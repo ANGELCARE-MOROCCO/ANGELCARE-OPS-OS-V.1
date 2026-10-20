@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""R5 Android-only direct TWA / existing IVR preservation / no native voice-search source gate."""
+"""R5.1 TWA startup splash + R5 IVR and signing preservation. Static checks only."""
 from pathlib import Path
 from xml.etree import ElementTree as ET
 import re
@@ -42,7 +42,7 @@ assert 'angelcare_official_wordmark' in source
 assert (main/'res/drawable-nodpi/angelcare_official_wordmark.png').is_file()
 assert 'https://my.angelcarehub.com/angelcare-marketplace/fr' in (main/'res/values/strings.xml').read_text()
 s=(root/'app/build.gradle').read_text()
-assert re.search(r'versionCode\s+5',s) and re.search(r"versionName\s+'0.5.0'",s)
+assert re.search(r'versionCode\s+6',s) and re.search(r"versionName\s+'0.5.1'",s)
 assert "keyAlias 'angelcare-preview'" in s
 assert "applicationIdSuffix '.preview'" in s
 assert 'signingConfig signingConfigs.angelcarePreview' in s
@@ -50,6 +50,31 @@ assert re.fullmatch(r'[0-9A-F]{2}(?::[0-9A-F]{2}){31}',(root/'trust/preview_cert
 for q in ['mdpi','hdpi','xhdpi','xxhdpi','xxxhdpi']:
  p=main/f'res/mipmap-{q}/ic_launcher.png';assert p.is_file() and p.stat().st_size>0
 assert not any(root.rglob('*.keystore')) and not any(root.rglob('*.p12'))
+
+# Google Android Browser Helper transfers native splash to the browser while loading.
+# Must preserve TWA/web microphone authority, not fake full-screen via WebView.
+metadata={m.get(android+'name'):m for m in launcher.findall('meta-data')}
+assert metadata['android.support.customtabs.trusted.SPLASH_IMAGE_DRAWABLE'].get(android+'resource')=='@drawable/angelcare_official_wordmark'
+assert metadata['android.support.customtabs.trusted.SPLASH_SCREEN_BACKGROUND_COLOR'].get(android+'resource')=='@color/angelcare_splash_white'
+assert metadata['android.support.customtabs.trusted.FILE_PROVIDER_AUTHORITY'].get(android+'value')=='${applicationId}.twa_splash_fileprovider'
+assert metadata['android.support.customtabs.trusted.SPLASH_SCREEN_FADE_OUT_DURATION'].get(android+'value')=='220'
+providers=[a for a in application.findall('provider') if a.get(android+'name')=='androidx.core.content.FileProvider']
+assert len(providers)==1
+provider=providers[0]
+assert provider.get(android+'authorities')=='${applicationId}.twa_splash_fileprovider'
+assert provider.get(android+'exported')=='false' and provider.get(android+'grantUriPermissions')=='true'
+assert any(m.get(android+'name')=='android.support.FILE_PROVIDER_PATHS' and m.get(android+'resource')=='@xml/angelcare_twa_splash_paths' for m in provider.findall('meta-data'))
+paths_xml=ET.parse(main/'res/xml/angelcare_twa_splash_paths.xml').getroot()
+assert len(list(paths_xml))==1 and list(paths_xml)[0].tag=='files-path'
+assert list(paths_xml)[0].get('name')=='twa_splash' and list(paths_xml)[0].get('path')=='twa_splash/'
+colors_xml=ET.parse(main/'res/values/colors.xml').getroot()
+assert any(x.get('name')=='angelcare_splash_white' and x.text=='#FFFFFF' for x in colors_xml)
+assert 'ScaleType.CENTER_INSIDE' in source and 'extends LauncherActivity' in source
+assert (main/'res/drawable-nodpi/angelcare_official_wordmark.png').is_file()
+print('R5_1_TWA_NATIVE_TO_CHROME_SPLASH=PASS')
+print('R5_1_FILE_PROVIDER_AUTHORITY=APPLICATION_ID_SPECIFIC')
+print('R5_1_SPLASH_WHITE_OFFICIAL_LOGO=PASS')
+
 print('R5_DIRECT_FULLSCREEN_MARKETPLACE=PASS')
 print('R5_NATIVE_VOICE_SEARCH_REMOVED=PASS')
 print('R5_HOTLINE_MICROPHONE=MARKETPLACE_WEB_LIVEKIT_AUTHORITY_ONLY')

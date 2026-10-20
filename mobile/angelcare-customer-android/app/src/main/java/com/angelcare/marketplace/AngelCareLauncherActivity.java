@@ -26,6 +26,11 @@ import java.util.Locale;
  *  after an eligible agent picks up; Chrome requests the site's permission at that moment.
  */
 public final class AngelCareLauncherActivity extends LauncherActivity {
+    // Browser Helper transfers our branded splash into the trusted Chrome session.
+    // This retains the direct TWA launch. It does not introduce a native landing page.
+    @Override protected android.widget.ImageView.ScaleType getSplashImageScaleType(){
+        return android.widget.ImageView.ScaleType.CENTER_INSIDE;
+    }
     private static final String PREFS="angelcare_r5_notification_consent";
     private static final int PUSH_PERMISSION=1505;
     private boolean launched=false;
