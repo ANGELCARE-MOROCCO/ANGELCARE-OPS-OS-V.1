@@ -1,4 +1,4 @@
-name: AngelCare Customer Android — Isolated Preview APK
+name: AngelCare Customer Android — Native Companion R4
 
 on:
   pull_request:
@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   apk-preview:
-    name: Android APK / unsigned AAB (stable signing)
+    name: R4 native APK + FCM opt-in + voice + trust
     runs-on: ubuntu-latest
     timeout-minutes: 40
     defaults:
@@ -44,6 +44,13 @@ jobs:
         run: sdkmanager 'platforms;android-36' 'build-tools;35.0.0'
       - name: Verify isolated source and pinned certificate
         run: python3 scripts/verify_source.py
+      - name: Validate isolated R4 sender syntax and dry-run contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check push-sender/send.mjs
+          node push-sender/send.mjs --title 'Test' --body 'Dry run only' --kind announcement --url 'https://my.angelcarehub.com/angelcare-marketplace/fr' | grep -F 'FCM_DELIVERY=DRY_RUN_ONLY'
+          echo 'R4_PUBLIC_PUSH_SENDER_STATIC=PASS'
       - name: Restore persistent preview signing identity from encrypted secrets
         shell: bash
         env:
@@ -56,12 +63,16 @@ jobs:
           chmod 600 "$RUNNER_TEMP/angelcare-preview.p12"
           test -s "$RUNNER_TEMP/angelcare-preview.p12"
           echo 'STABLE_PREVIEW_KEYSTORE_RESTORED=YES'
-      - name: Compile stable-signed APK and unsigned release AAB
+      - name: Compile stable-signed R4 APK and unsigned release AAB
         env:
+          ANGELCARE_FCM_PROJECT_ID: ${{ secrets.ANGELCARE_FCM_PROJECT_ID }}
+          ANGELCARE_FCM_APP_ID: ${{ secrets.ANGELCARE_FCM_APP_ID }}
+          ANGELCARE_FCM_API_KEY: ${{ secrets.ANGELCARE_FCM_API_KEY }}
+          ANGELCARE_FCM_SENDER_ID: ${{ secrets.ANGELCARE_FCM_SENDER_ID }}
           ANGELCARE_PREVIEW_KEYSTORE_PATH: ${{ runner.temp }}/angelcare-preview.p12
           ANGELCARE_PREVIEW_KEYSTORE_PASSWORD: ${{ secrets.ANGELCARE_TWA_PREVIEW_KEYSTORE_PASS }}
         run: gradle --no-daemon --stacktrace :app:assembleDebug :app:bundleRelease
-      - name: Certify compiled launcher and actual APK signing fingerprint
+      - name: Certify compiled TWA launcher, native components and actual APK signing fingerprint
         shell: bash
         run: |
           set -euo pipefail
@@ -72,11 +83,17 @@ jobs:
           grep -Fq 'com.google.androidbrowserhelper.trusted.LauncherActivity' "$RUNNER_TEMP/angelcare-android-manifest.txt"
           grep -Fq 'com.google.androidbrowserhelper.trusted.ManageDataLauncherActivity' "$RUNNER_TEMP/angelcare-android-manifest.txt"
           grep -Fq 'manageSpaceActivity' "$RUNNER_TEMP/angelcare-android-manifest.txt"
+          grep -Fq 'com.angelcare.marketplace.HomeActivity' "$RUNNER_TEMP/angelcare-android-manifest.txt"
+          grep -Fq 'com.angelcare.marketplace.VoiceActivity' "$RUNNER_TEMP/angelcare-android-manifest.txt"
+          grep -Fq 'com.angelcare.marketplace.InboxActivity' "$RUNNER_TEMP/angelcare-android-manifest.txt"
+          grep -Fq 'com.angelcare.marketplace.AngelCareMessagingService' "$RUNNER_TEMP/angelcare-android-manifest.txt"
+          grep -Fq 'android.permission.POST_NOTIFICATIONS' "$RUNNER_TEMP/angelcare-android-manifest.txt"
           "$SDK_BUILD_TOOLS/apksigner" verify --verbose --print-certs "$APK" > "$RUNNER_TEMP/angelcare-apksigner.txt"
           expected="$(tr -d ':\r\n' < trust/preview_cert_sha256.txt | tr '[:upper:]' '[:lower:]')"
           actual="$(sed -n 's/^Signer #1 certificate SHA-256 digest: //p' "$RUNNER_TEMP/angelcare-apksigner.txt" | head -1 | tr -d '\r\n' | tr '[:upper:]' '[:lower:]')"
           test "${#expected}" -eq 64 && test "$actual" = "$expected" || { echo 'STOP: APK signing certificate does not match domain-association contract'; exit 1; }
           echo 'COMPILED_TWA_COMPONENTS=PASS'
+          echo 'R4_NATIVE_COMPONENTS=PASS'
           echo 'SIGNED_PREVIEW_FINGERPRINT=PASS'
       - name: Package APK, unsigned AAB and checksums
         shell: bash
@@ -85,14 +102,14 @@ jobs:
           test -s app/build/outputs/apk/debug/app-debug.apk
           test -s app/build/outputs/bundle/release/app-release.aab
           mkdir -p dist
-          cp app/build/outputs/apk/debug/app-debug.apk "dist/angelcare-customer-R3-stable-preview-${GITHUB_SHA:0:12}.apk"
-          cp app/build/outputs/bundle/release/app-release.aab "dist/angelcare-customer-R3-UNSIGNED-${GITHUB_SHA:0:12}.aab"
+          cp app/build/outputs/apk/debug/app-debug.apk "dist/angelcare-customer-R4-native-preview-${GITHUB_SHA:0:12}.apk"
+          cp app/build/outputs/bundle/release/app-release.aab "dist/angelcare-customer-R4-UNSIGNED-${GITHUB_SHA:0:12}.aab"
           (cd dist && sha256sum * > SHA256SUMS.txt)
           cat dist/SHA256SUMS.txt
       - name: Upload unmerged preview artifacts only
         uses: actions/upload-artifact@v4
         with:
-          name: angelcare-customer-R3-stable-preview-${{ github.run_id }}
+          name: angelcare-customer-R4-native-preview-${{ github.run_id }}
           path: mobile/angelcare-customer-android/dist/*
           retention-days: 14
           if-no-files-found: error

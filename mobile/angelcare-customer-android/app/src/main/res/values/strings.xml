@@ -2,4 +2,6 @@
 <resources>
     <string name="app_name">AngelCare Marketplace</string>
     <string name="launch_url" translatable="false">https://my.angelcarehub.com/angelcare-marketplace/fr</string>
+    <string name="notifications_channel_name">AngelCare Updates</string>
+    <string name="notifications_channel_description">Opt-in general offers, activities, and announcements from AngelCare</string>
 </resources>
