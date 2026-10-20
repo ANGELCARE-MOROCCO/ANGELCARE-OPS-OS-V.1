@@ -85,7 +85,7 @@ jobs:
           grep -Fq 'twa_splash_fileprovider' "$RUNNER_TEMP/angelcare-android-manifest.txt"
           grep -Fq 'android.support.customtabs.trusted.SPLASH_IMAGE_DRAWABLE' "$RUNNER_TEMP/angelcare-android-manifest.txt"
           grep -Fq 'android.support.customtabs.trusted.SPLASH_SCREEN_BACKGROUND_COLOR' "$RUNNER_TEMP/angelcare-android-manifest.txt"
-          grep -Fq 'android.support.customtabs.trusted.FILE_PROVIDER_AUTHORITY' "$RUNNER_TEMP/angelcare-android-manifest.txt
+          grep -Fq 'android.support.customtabs.trusted.FILE_PROVIDER_AUTHORITY' "$RUNNER_TEMP/angelcare-android-manifest.txt"
           grep -Fq 'com.google.androidbrowserhelper.trusted.ManageDataLauncherActivity' "$RUNNER_TEMP/angelcare-android-manifest.txt"
           grep -Fq 'manageSpaceActivity' "$RUNNER_TEMP/angelcare-android-manifest.txt"
           ! grep -Fq 'com.angelcare.marketplace.HomeActivity' "$RUNNER_TEMP/angelcare-android-manifest.txt"
