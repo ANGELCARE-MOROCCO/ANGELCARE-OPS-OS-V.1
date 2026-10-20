@@ -1,4 +1,6 @@
 "use client";
+import { Gallery } from "./Gallery";
+import { GuidedDiscovery } from "./journey/Discovery";
 import { PageAd } from "./journey/Runtime";
 import Link from "next/link";
 import { useState, Children, isValidElement, type ReactNode } from "react";
@@ -182,18 +184,7 @@ export function KidFlixHome({
     <HomeSequence order={e.sections}>
       <section className={s.hero} aria-labelledby="kidflix-hero-heading">
         <div className={s.heroImage}>
-          <picture>
-            {e.heroMobile ? (
-              <source media="(max-width: 650px)" srcSet={e.heroMobile} />
-            ) : null}
-            <img
-              src={e.hero}
-              alt={e.heroAlt}
-              width={1100}
-              height={760}
-              fetchPriority="high"
-            />
-          </picture>
+          <Gallery scenes={e.gallery} locale={locale} label={e.headline} />
           <div className={s.heroPhotoBadge}>
             <span>
               <I name="Heart" size={19} />
@@ -318,6 +309,7 @@ export function KidFlixHome({
           </Link>
         </aside>
       </section>
+      <GuidedDiscovery locale={locale} />
       <div className={s.intentDock}>
         {INTENTS.map(([key, icon, label], i) => (
           <Link
@@ -875,7 +867,7 @@ export function KidFlixHome({
         >
           <div className={s.closingImage}>
             <img
-              src="/kidflix/closing.jpg"
+              src="/kidflix/international-20261020/home-2.webp"
               alt=""
               loading="lazy"
               width={600}

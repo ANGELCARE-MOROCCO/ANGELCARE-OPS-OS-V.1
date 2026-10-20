@@ -1,3 +1,4 @@
+import {bindingURL} from "./gallery-contract";
 import { createHash } from "node:crypto";
 import { createServiceClient } from "@/lib/supabase/server";
 import type { MarketplaceRequestContext as Context } from "../domain/types";
@@ -11,7 +12,8 @@ import {
   normalizeEdition,
   type Locale,
 } from "./catalogue";
-import { publicHost } from "./server";
+import { publicHost, getCatalogue } from "./server";
+import { emptyCatalogue } from "./catalogue";
 export const HOME_KEY = "kidflix-homepage";
 const obj = (v: any) =>
   v && typeof v === "object" && !Array.isArray(v) ? v : {};
@@ -168,6 +170,7 @@ export async function kidflixCommand(c: Context, cmd: any) {
       const result = await native(c, "media", { id });
       const asset = result.rows?.find((v: any) => v.id === id),
         url =
+          slot.startsWith("scene:") ? bindingURL(selected,slot) :
           slot === "hero" || slot === "heroMobile"
             ? selected[slot]
             : obj(selected.familyImages)[slot.slice(7)];
@@ -212,4 +215,11 @@ export async function kidflixCommand(c: Context, cmd: any) {
       "KidFlix settings were not changed. Reconcile the retained draft and retry.",
     );
   return { ...r.data, draftHash: homeHash(obj(draft[locale]).edition || {}) };
+}
+
+export async function kidflixHomePreview(c:Context,locale:unknown){
+  authorize(c,"view");
+  if(typeof locale!=="string"||!isLocale(locale))throw new MarketplaceError("VALIDATION_ERROR","Choose an edition language.");
+  const home=await current(c),host=obj(home?.data).liveHost;
+  return host?getCatalogue(publicHost(String(host)),locale,{},true):{...emptyCatalogue};
 }

@@ -225,30 +225,17 @@ export async function getExperience(host: string, locale: Locale, key: string) {
   };
 }
 export async function loadHome(host: string, locale: Locale) {
-  try {
-    const [config, catalogue] = await Promise.all([
-      getHome(host, locale),
-      getCatalogue(host, locale, {}, true),
-    ]);
-    if (config.edition.featured.length) {
-      const keys = config.edition.featured.join(","),
-        pages = await Promise.all(
-          Array.from(
-            { length: Math.ceil(config.edition.featured.length / 24) },
-            (_, i) => getCatalogue(host, locale, { keys, page: String(i + 1) }),
-          ),
-        );
-      const by = new Map(catalogue.rows.map((r) => [r.id, r]));
-      for (const page of pages) for (const r of page.rows) by.set(r.id, r);
-      catalogue.rows = [...by.values()];
-    }
-    return { config, catalogue };
-  } catch {
-    return {
-      config: defaultHome(locale),
-      catalogue: { ...emptyCatalogue, error: true },
-    };
+  const [homeResult,catalogueResult] = await Promise.allSettled([getHome(host,locale),getCatalogue(host,locale,{},true)]);
+  const config=homeResult.status==="fulfilled"?homeResult.value:defaultHome(locale);
+  const catalogue:Catalogue=catalogueResult.status==="fulfilled"?catalogueResult.value:{...emptyCatalogue,error:true};
+  if(homeResult.status==="rejected")catalogue.error=true;
+  if(config.edition.featured.length){
+    const keys=config.edition.featured.join(","), pages=await Promise.allSettled(Array.from({length:Math.ceil(config.edition.featured.length/24)},(_,i)=>getCatalogue(host,locale,{keys,page:String(i+1)})));
+    const by=new Map(catalogue.rows.map(r=>[r.id,r]));
+    for(const page of pages){if(page.status==="fulfilled")for(const row of page.value.rows)by.set(row.id,row);else catalogue.error=true;}
+    catalogue.rows=[...by.values()];
   }
+  return {config,catalogue};
 }
 
 export function publicDetail(m: Record<string, any>) {

@@ -1,4 +1,5 @@
 "use client";
+import { GalleryEditor } from "./GalleryEditor";
 import { useEffect, useRef, useState } from "react";
 import {
   defaultHome,
@@ -10,6 +11,7 @@ import {
   type Locale,
   type HomeEdition,
   emptyCatalogue,
+  type Catalogue,
 } from "./catalogue";
 import { NativeImagePicker, FeaturedResourcePicker } from "./StudioPickers";
 import { KidFlixHome } from "./Home";
@@ -17,6 +19,7 @@ import { KidFlixShell } from "./Shell";
 import {
   useUI,
   useQuery,
+  query,
   mutate,
   Panel,
   Button,
@@ -39,6 +42,9 @@ export function KidFlixHomeStudio() {
     [dirty, setDirty] = useState(false),
     [busy, setBusy] = useState(false),
     [preview, setPreview] = useState(false),
+    [previewCatalogue,setPreviewCatalogue]=useState<Catalogue>(emptyCatalogue),
+    [previewError,setPreviewError]=useState(""),
+    [previewBusy,setPreviewBusy]=useState(false),
     receipt = useRef<{ key: string; id: string } | null>(null),
     loaded = useRef("");
   useEffect(() => {
@@ -54,7 +60,7 @@ export function KidFlixHomeStudio() {
     const r = q.value.record;
     setRecord(r);
     setEdition(
-      r?.data?.draft?.[language]?.edition || defaultHome(language).edition,
+      normalizeEdition(r?.data?.draft?.[language]?.edition || defaultHome(language).edition, language),
     );
     setHost(r?.data?.draftHost || r?.data?.liveHost || "my.angelcarehub.com");
     setHash(q.value.draftHashes?.[language] || "");
@@ -160,6 +166,7 @@ export function KidFlixHomeStudio() {
     setLanguage(next);
     loaded.current = "";
   }
+  async function showPreview(){setPreview(true);setPreviewBusy(true);setPreviewError("");try{setPreviewCatalogue(await query<Catalogue>({op:"kidflix_home_preview",locale:language}));}catch(e){setPreviewError((e as Error).message);}finally{setPreviewBusy(false);}}
   const live = record?.data?.live?.[language];
   return (
     <Panel
@@ -173,7 +180,7 @@ export function KidFlixHomeStudio() {
         />
       }
       actions={
-        <Button icon="Eye" onClick={() => setPreview(true)}>
+        <Button icon="Eye" onClick={()=>void showPreview()}>
           <T
             v={[
               "Review draft composition",
@@ -301,57 +308,6 @@ export function KidFlixHomeStudio() {
             label={
               <T
                 v={[
-                  "Desktop hero image · existing Media Library URL",
-                  "Image principale ordinateur · URL de la médiathèque",
-                  "صورة الواجهة للحاسوب · رابط من مكتبة الوسائط",
-                ]}
-              />
-            }
-          >
-            <input
-              value={edition.hero}
-              onChange={(e) => edit("hero", e.target.value)}
-            />
-            <NativeImagePicker onSelect={(a) => selectImage("hero", a)} />
-          </Field>
-          <Field
-            label={
-              <T
-                v={[
-                  "Optional mobile hero image",
-                  "Image principale mobile optionnelle",
-                  "صورة اختيارية للهاتف",
-                ]}
-              />
-            }
-          >
-            <input
-              value={edition.heroMobile}
-              onChange={(e) => edit("heroMobile", e.target.value)}
-            />
-            <NativeImagePicker onSelect={(a) => selectImage("heroMobile", a)} />
-          </Field>
-          <Field
-            label={
-              <T
-                v={[
-                  "Hero image alternative text",
-                  "Texte alternatif de l’image",
-                  "الوصف البديل للصورة",
-                ]}
-              />
-            }
-          >
-            <input
-              value={edition.heroAlt}
-              maxLength={300}
-              onChange={(e) => edit("heroAlt", e.target.value)}
-            />
-          </Field>
-          <Field
-            label={
-              <T
-                v={[
                   "Featured resource keys · one per line",
                   "Clés des ressources à la une · une par ligne",
                   "مفاتيح الموارد المميزة · واحد في كل سطر",
@@ -364,7 +320,8 @@ export function KidFlixHomeStudio() {
               selected={edition.featured}
               onChange={(v) => edit("featured", v)}
             />
-            <details className={s.advanced}>
+            <GalleryEditor world="home" scenes={edition.gallery} bindings={edition.mediaBindings} disabled={busy || !boot.actor.rights.manage} onChange={(gallery,mediaBindings)=>{setEdition(v=>({...v,gallery,mediaBindings,hero:gallery[0].desktop,heroMobile:gallery[0].mobile,heroAlt:gallery[0].descriptions[language]}));setDirty(true);}} />
+        <details className={s.advanced}>
               <summary>
                 <T
                   v={[
@@ -705,12 +662,14 @@ export function KidFlixHomeStudio() {
           <p className={s.subtitle}>
             <T
               v={[
-                "This preview reviews your draft with an empty catalogue. Published-resource rails are verified separately.",
-                "Cet aperçu montre votre brouillon avec un catalogue vide. Les rails publiés sont vérifiés séparément.",
-                "تراجع هذه المعاينة المسودة بكتالوج فارغ. تُفحص صفوف الموارد المنشورة على حدة.",
+                "This preview uses the current draft and the existing published catalogue.",
+                "Cet aperçu utilise le brouillon et le catalogue publié existant.",
+                "تستخدم هذه المعاينة المسودة والكتالوج المنشور الحالي.",
               ]}
             />
           </p>
+          {previewError?<div role="alert">{previewError}<Button onClick={()=>void showPreview()}><T v={["Retry","Réessayer","حاول مجدداً"]}/></Button></div>:null}
+          {previewBusy?<p role="status">KidFlix…</p>:null}
           <KidFlixShell locale={language}>
             <KidFlixHome
               locale={language}
@@ -720,7 +679,7 @@ export function KidFlixHomeStudio() {
                 published: false,
                 revision: record?.revision || 0,
               }}
-              catalogue={emptyCatalogue}
+              catalogue={previewCatalogue}
             />
           </KidFlixShell>
         </Dialog>

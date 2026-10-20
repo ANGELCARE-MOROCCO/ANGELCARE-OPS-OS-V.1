@@ -58,6 +58,7 @@ export function MediaPlayer({
     [position, setPosition] = useState(0),
     [duration, setDuration] = useState(num(unit.duration)),
     [failed, setFailed] = useState(false),
+    [buffering, setBuffering] = useState(false),
     [speed, setSpeed] = useState(1),
     [volume, setVolume] = useState(1),
     last = useRef(0),
@@ -96,6 +97,7 @@ export function MediaPlayer({
   function finish() {
     remember();
     setPlaying(false);
+    setBuffering(false);
     latest.current.onComplete?.(true);
   }
   const common = {
@@ -107,12 +109,21 @@ export function MediaPlayer({
       setPlaying(true);
       setFailed(false);
     },
+    onWaiting: () => setBuffering(true),
+    onStalled: () => { if(ref.current && !ref.current.paused && !ref.current.ended) setBuffering(true); },
+    onSeeking: () => setBuffering(true),
+    onSeeked: () => setBuffering(false),
+    onCanPlay: () => setBuffering(false),
+    onPlaying: () => setBuffering(false),
+    onEmptied: () => setBuffering(false),
     onPause: () => {
+      setBuffering(false);
       setPlaying(false);
       remember();
     },
     onEnded: finish,
     onError: () => {
+      setBuffering(false);
       setFailed(true);
       setPlaying(false);
     },
@@ -284,6 +295,7 @@ export function MediaPlayer({
           </select>
         </label>
       </div>
+      {buffering && !failed ? <p role="status" data-kidflix-buffering><span aria-hidden="true">◌</span> {locale === "ar" ? "جارٍ تجهيز الوسائط…" : locale === "fr" ? "Préparation du média…" : "Preparing your media…"}</p> : null}
       {failed ? (
         <ErrorNote
           message={t("mediaError", locale)}

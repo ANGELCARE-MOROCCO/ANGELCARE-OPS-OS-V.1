@@ -1,7 +1,10 @@
+import { defaultGallery, legacyWorldImages, legacyGuidanceImages, worldTile } from "../editorial";
+import { normalizeGallery, galleryBindings, type Scene } from "../gallery-contract";
 import { WORLDS, tr, world, safeImage, type Locale, type Tri, type Resource, type Catalogue } from '../catalogue';
 export const SECTIONS = ['collections','subjects','catalogue','guide','related'] as const;
 export type Section = typeof SECTIONS[number];
 export interface Edition {
+  gallery:Scene[];
   eyebrow:string; headline:string; description:string; hero:string; heroAlt:string;
   guidance:string; guidanceAlt:string; guidanceTitle:string; guidanceBody:string;
   sections:Section[]; density:'comfortable'|'compact'; preview:'cover'|'images';
@@ -36,12 +39,15 @@ export function normalize(v:unknown,locale:Locale,family:string):Edition {
  const x=v&&typeof v==='object'&&!Array.isArray(v)?v as Record<string,any>:{};
  const text=(k:string,max:number,d='')=>typeof x[k]==='string'?x[k].trim().slice(0,max):d;
  const list=(value:unknown,max=96)=>Array.isArray(value)?[...new Set(value.filter((s):s is string=>typeof s==='string'&&keyOK(s)))].slice(0,max):[];
- const edition:Edition={eyebrow:text('eyebrow',100,'KidFlix · '+tr(w.short,locale)),headline:text('headline',180,tr(w.title,locale)),description:text('description',600,tr(w.invitation,locale)),hero:text('hero',2048,w.image),heroAlt:text('heroAlt',300),guidance:text('guidance',2048,w.image),guidanceAlt:text('guidanceAlt',300),guidanceTitle:text('guidanceTitle',180,tr(titles.guide,locale)),guidanceBody:text('guidanceBody',700,tr(w.description,locale)),sections:Array.isArray(x.sections)?[...new Set(x.sections.filter((k:any)=>SECTIONS.includes(k))) ] as Section[]:[...SECTIONS],density:x.density==='compact'?'compact':'comfortable',preview:x.preview==='images'?'images':'cover',featured:list(x.featured),collections:[],startsAt:text('startsAt',40),endsAt:text('endsAt',40),mediaBindings:{},adSlots:Array.isArray(x.adSlots)?[...new Set(x.adSlots.filter((s:any)=>['after-opening','after-catalogue','before-guidance'].includes(s))) ] as string[]:[]};
+ const gallery=normalizeGallery(x.gallery,family,{hero:text("hero",2048,legacyWorldImages[family]),alt:text("heroAlt",300),bound:Boolean(x.mediaBindings?.hero)});
+ const edition:Edition={gallery,eyebrow:text('eyebrow',100,'KidFlix · '+tr(w.short,locale)),headline:text('headline',180,tr(w.title,locale)),description:text('description',600,tr(w.invitation,locale)),hero:text('hero',2048,w.image),heroAlt:text('heroAlt',300),guidance:text('guidance',2048,w.image),guidanceAlt:text('guidanceAlt',300),guidanceTitle:text('guidanceTitle',180,tr(titles.guide,locale)),guidanceBody:text('guidanceBody',700,tr(w.description,locale)),sections:Array.isArray(x.sections)?[...new Set(x.sections.filter((k:any)=>SECTIONS.includes(k))) ] as Section[]:[...SECTIONS],density:x.density==='compact'?'compact':'comfortable',preview:x.preview==='images'?'images':'cover',featured:list(x.featured),collections:[],startsAt:text('startsAt',40),endsAt:text('endsAt',40),mediaBindings:{},adSlots:Array.isArray(x.adSlots)?[...new Set(x.adSlots.filter((s:any)=>['after-opening','after-catalogue','before-guidance'].includes(s))) ] as string[]:[]};
  for(const k of ['hero','guidance'] as const)if(!safeImage(edition[k]))throw Error('Choose a valid image URL');
  for(const k of ['startsAt','endsAt'] as const)if(edition[k]&&!Number.isFinite(Date.parse(edition[k])))throw Error('Use a valid publication time');
  if(edition.startsAt&&edition.endsAt&&Date.parse(edition.endsAt)<=Date.parse(edition.startsAt))throw Error('End must follow start');
- for(const [k,id]of Object.entries(x.mediaBindings||{}))if(['hero','guidance'].includes(k)&&typeof id==='string'&&/^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(id))edition.mediaBindings[k]=id;
+ for(const [k,id]of Object.entries(x.mediaBindings||{}))if((k.startsWith('scene:')||['hero','guidance'].includes(k))&&typeof id==='string'&&/^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(id))edition.mediaBindings[k]=id;
  for(const c of Array.isArray(x.collections)?x.collections.slice(0,8):[])if(c&&typeof c.title==='string'&&c.title.trim()&&keyOK(String(c.id||'')))edition.collections.push({id:c.id,title:c.title.trim().slice(0,120),description:String(c.description||'').slice(0,350),keys:list(c.keys)});
+ edition.mediaBindings=galleryBindings(edition.mediaBindings,gallery,x.gallery===undefined);edition.hero=gallery[0].desktop;edition.heroAlt=gallery[0].descriptions[locale];
+ if(!edition.mediaBindings.guidance && (edition.guidance===legacyWorldImages[family] || edition.guidance===legacyGuidanceImages[family]))edition.guidance=worldTile(family);
  if(!edition.headline)throw Error('Name this storefront');
  const used=new Set(edition.featured);for(const c of edition.collections)c.keys=c.keys.filter(k=>{if(used.has(k))return true;if(used.size>=96)return false;used.add(k);return true;});
  if(!edition.sections.includes('catalogue'))throw Error('The resource catalogue is required.');

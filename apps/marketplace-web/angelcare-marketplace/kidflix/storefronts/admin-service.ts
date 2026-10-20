@@ -1,3 +1,4 @@
+import {bindingURL} from "../gallery-contract";
 import { createHash } from "node:crypto";
 import { createServiceClient } from "@/lib/supabase/server";
 import type { MarketplaceRequestContext as Context } from "../../domain/types";
@@ -179,7 +180,7 @@ export async function kidflixStorefrontCommand(c: Context, cmd: any) {
       const result = await native(c, "media", { id });
       const asset = result.rows?.find((v: any) => v.id === id),
         url =
-          selected[slot];
+          slot.startsWith("scene:") ? bindingURL(selected,slot) : selected[slot];
       if (
         !asset ||
         !asset.mime?.startsWith("image/") ||

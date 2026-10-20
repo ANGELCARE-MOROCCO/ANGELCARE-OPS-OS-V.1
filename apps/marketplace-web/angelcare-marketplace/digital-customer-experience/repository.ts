@@ -2574,6 +2574,8 @@ export async function read(c: Context, input: Record<string, unknown>) {
     return (await import("../kidflix/storefronts/admin-service")).kidflixStorefrontPreview(c,String(input.family||""),input.locale as any);
   if (input.op === "kidflix_storefront")
     return (await import("../kidflix/storefronts/admin-service")).kidflixStorefrontRead(c,String(input.family||""));
+  if (input.op === "kidflix_home_preview")
+    return (await import("../kidflix/admin-service")).kidflixHomePreview(c,input.locale);
   if (input.op === "kidflix_home")
     return (await import("../kidflix/admin-service")).kidflixRead(c);
   if (text(input.op).startsWith("depth_"))

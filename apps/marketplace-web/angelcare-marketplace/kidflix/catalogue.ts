@@ -1,3 +1,5 @@
+import { defaultGallery, worldTile, legacyWorldImages } from "./editorial";
+import { normalizeGallery, galleryBindings, type Scene } from "./gallery-contract";
 /** Public KidFlix vocabulary. Keys remain the native DCE family keys. */
 export type Locale = "en" | "fr" | "ar";
 export type Tri = readonly [string, string, string];
@@ -379,6 +381,7 @@ export const WORLDS: World[] = [
     intent: ["learn", "create", "grownups"],
   },
 ];
+for (const w of WORLDS) w.image = worldTile(w.key);
 export const world = (key: string) => WORLDS.find((w) => w.key === key);
 export const INTENTS = [
   ["read", "BookOpen", ["Read", "Lire", "اقرأ"]],
@@ -433,6 +436,7 @@ export const emptyCatalogue: Catalogue = {
   skills: [],
 };
 export interface HomeEdition {
+  gallery: Scene[];
   familyTools?: Record<string, Record<string, boolean>>;
   eyebrow: string;
   headline: string;
@@ -480,6 +484,7 @@ export const defaultHome = (locale: Locale): HomeConfig => ({
   published: false,
   revision: 0,
   edition: {
+    gallery: defaultGallery("home"),
     eyebrow: tr(
       [
         "A little curiosity. Endless possibilities.",
@@ -504,8 +509,8 @@ export const defaultHome = (locale: Locale): HomeConfig => ({
       ],
       locale,
     ),
-    hero: "/kidflix/hero.jpg",
-    heroMobile: "",
+    hero: defaultGallery("home")[0].desktop,
+    heroMobile: defaultGallery("home")[0].mobile,
     heroAlt: tr(
       [
         "A mother and child exploring a creative activity together.",
@@ -563,8 +568,10 @@ export function normalizeEdition(v: unknown, l: Locale): HomeEdition {
     for (const [k, u] of Object.entries(x.familyImages)) {
       if (world(k) && safeImage(u)) images[k] = u;
     }
+  const gallery = normalizeGallery(x.gallery, "home", {hero: typeof x.hero === "string" ? x.hero : d.hero, mobile: typeof x.heroMobile === "string" ? x.heroMobile : "", alt: typeof x.heroAlt === "string" ? x.heroAlt : "", bound: Boolean((x.mediaBindings as Record<string,unknown> | undefined)?.hero)});
   const e = {
     ...d,
+    gallery,
     familyTools: Object.fromEntries(
       Object.entries(
         x.familyTools && typeof x.familyTools === "object" ? x.familyTools : {},
@@ -613,7 +620,8 @@ export function normalizeEdition(v: unknown, l: Locale): HomeEdition {
           : {},
       ).filter(
         ([slot, id]) =>
-          (slot === "hero" ||
+          (slot.startsWith("scene:") ||
+            slot === "hero" ||
             slot === "heroMobile" ||
             (slot.startsWith("family:") && world(slot.slice(7)))) &&
           typeof id === "string" &&
@@ -629,6 +637,11 @@ export function normalizeEdition(v: unknown, l: Locale): HomeEdition {
     startsAt: s("startsAt", 40),
     endsAt: s("endsAt", 40),
   };
+  e.mediaBindings = galleryBindings(e.mediaBindings, gallery, x.gallery === undefined);
+  e.hero = gallery[0].desktop;
+  e.heroMobile = gallery[0].mobile;
+  e.heroAlt = gallery[0].descriptions[l];
+  for (const [key,url] of Object.entries(e.familyImages)) if (!e.mediaBindings["family:"+key] && url === legacyWorldImages[key]) e.familyImages[key] = worldTile(key);
   if (
     !e.headline ||
     !e.description ||

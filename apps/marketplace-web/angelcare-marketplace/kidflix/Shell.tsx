@@ -1,4 +1,5 @@
 "use client";
+import {usePathname,useSearchParams} from "next/navigation";
 import Link from "next/link";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { WORLDS, INTENTS, path, tr, type Locale } from "./catalogue";
@@ -6,7 +7,9 @@ import { copy } from "./copy";
 import { I } from "./Icons";
 import { GuestProvider, useGuest } from "./continuity";
 import s from "./kidflix.module.css";
-import { EditionLanguage, GuidedDiscovery } from "./journey/Discovery";
+import { Navigation } from "./Navigation";
+import { navigateKidFlix } from "./navigation-events";
+import { EditionLanguage } from "./journey/Discovery";
 import { interpretSearch } from "./journey/contract";
 import { j } from "./journey/copy";
 import { usePersonal } from "./journey/store";
@@ -28,8 +31,8 @@ export function SearchBox({
       onSubmit={(e) => {
         e.preventDefault();
         const q = String(new FormData(e.currentTarget).get("q") || "");
-        location.assign(
-          path(locale, "/explore?") + new URLSearchParams(interpretSearch(q)),
+        navigateKidFlix(
+          path(locale, "/explore?") + (()=>{const params=new URLSearchParams(location.search);for(const key of ["q","intent","age","duration","page"])params.delete(key);for(const [key,value] of Object.entries(interpretSearch(q)))params.set(key,value);return params;})(),
         );
       }}
     >
@@ -49,6 +52,7 @@ export function SearchBox({
   );
 }
 function Header({ locale }: { locale: Locale }) {
+  const pathname=usePathname(), query=useSearchParams();
   const [menu, setMenu] = useState(false),
     ref = useRef<HTMLDivElement>(null),
     button = useRef<HTMLButtonElement>(null),
@@ -85,7 +89,7 @@ function Header({ locale }: { locale: Locale }) {
           aria-label={`KidFlix · ${copy("home", locale)}`}
         >
           <img
-            src="/kidflix/kidflix-official.png"
+            src="/kidflix/kidflix-official-optimized.webp"
             width={174}
             height={70}
             alt="KidFlix"
@@ -129,12 +133,12 @@ function Header({ locale }: { locale: Locale }) {
           locale,
         )}
       >
-        <Link href={path(locale)}>
+        <Link href={path(locale)} aria-current={pathname===path(locale)?"page":undefined}>
           <I name="Sun" />
           <span>{copy("home", locale)}</span>
         </Link>
         {INTENTS.map(([key, icon, label]) => (
-          <Link key={key} href={path(locale, "/explore?intent=" + key)}>
+          <Link key={key} href={path(locale, "/explore?intent=" + key)} aria-current={query.get("intent")===key?"page":undefined}>
             <I name={icon} />
             <span>{tr(label, locale)}</span>
           </Link>
@@ -216,7 +220,7 @@ function Footer({ locale }: { locale: Locale }) {
         <div className={s.footerBrand}>
           <Link href={path(locale)}>
             <img
-              src="/kidflix/kidflix-official.png"
+              src="/kidflix/kidflix-official-optimized.webp"
               width={195}
               height={78}
               alt="KidFlix"
@@ -295,45 +299,7 @@ function Content({
   locale: Locale;
   children: ReactNode;
 }) {
-  const [pending, setPending] = useState(false),
-    personal = usePersonal();
-  useEffect(() => {
-    let t: ReturnType<typeof setTimeout>, stop: ReturnType<typeof setTimeout>;
-    const click = (e: MouseEvent) => {
-      if (
-        e.defaultPrevented ||
-        e.ctrlKey ||
-        e.metaKey ||
-        e.shiftKey ||
-        e.altKey ||
-        e.button !== 0
-      )
-        return;
-      const a = (e.target as Element).closest?.("a");
-      if (!a || a.target === "_blank" || a.hasAttribute("download")) return;
-      const url = new URL(a.href, location.href);
-      if (
-        url.origin !== location.origin ||
-        (url.pathname === location.pathname && url.search === location.search)
-      )
-        return;
-      t = setTimeout(() => setPending(true), 160);
-      stop = setTimeout(() => setPending(false), 15000);
-    };
-    document.addEventListener("click", click);
-    const clear = () => {
-      clearTimeout(t);
-      clearTimeout(stop);
-      setPending(false);
-    };
-    window.addEventListener("pageshow", clear);
-    return () => {
-      document.removeEventListener("click", click);
-      window.removeEventListener("pageshow", clear);
-      clearTimeout(t);
-      clearTimeout(stop);
-    };
-  }, []);
+  const personal = usePersonal();
   return (
     <div
       className={s.root}
@@ -354,22 +320,10 @@ function Content({
             {j("storage", locale)}
           </p>
         ) : null}
-        <GuidedDiscovery locale={locale} />
         {children}
       </main>
       <Footer locale={locale} />
-      {pending ? (
-        <div role="status" className={s.navigationToast}>
-          <span className={s.loadingRing} />
-          <img
-            src="/kidflix/kidflix-official.png"
-            width={94}
-            height={38}
-            alt="KidFlix"
-          />
-          <small>{copy("loading", locale)}</small>
-        </div>
-      ) : null}
+      <Navigation locale={locale} />
     </div>
   );
 }

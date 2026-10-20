@@ -1,3 +1,4 @@
+import {defaultGallery,worldTile}from "../editorial";
 import {tr,world,type Locale,type Tri}from '../catalogue';
 import {normalize,type Edition}from './model';
 /** Editorial invitations are separate from published resource facts. No catalogue is seeded here. */
@@ -21,4 +22,4 @@ const THEMES:Record<string,{layout:string;tag:Tri;title:Tri;body:Tri;tips:Tri[]}
 };
 export function theme(family:string){return THEMES[family]||THEMES.documents;}
 const GUIDANCE={"documents": "/kidflix/storefronts-r2/documents.webp", "printables": "/kidflix/storefronts-r2/printables.jpg", "stories": "/kidflix/storefronts-r2/stories.webp", "learning": "/kidflix/storefronts-r2/learning.webp", "video": "/kidflix/storefronts-r2/video.jpg", "audio": "/kidflix/storefronts-r2/audio.webp", "visual-cards": "/kidflix/storefronts-r2/visual-cards.jpg", "presentations": "/kidflix/storefronts-r2/presentations.webp", "assessments": "/kidflix/storefronts-r2/assessments.webp", "activities": "/kidflix/storefronts-r2/activities.webp", "tools": "/kidflix/storefronts-r2/tools.webp", "planners": "/kidflix/storefronts-r2/planners.webp", "forms": "/kidflix/storefronts-r2/forms.webp", "community": "/kidflix/storefronts-r2/community.webp", "commerce": "/kidflix/storefronts-r2/commerce.webp", "bundles": "/kidflix/storefronts-r2/bundles.webp"};
-export function defaults(family:string,locale:Locale):Edition{const w=world(family)!,t=theme(family);return normalize({eyebrow:tr(t.tag,locale),headline:tr(t.title,locale),description:tr(t.body,locale),hero:w.image,guidance:(GUIDANCE as Record<string,string>)[family]||w.image,guidanceTitle:tr(t.tips[0],locale),guidanceBody:tr(t.body,locale)},locale,family);}
+export function defaults(family:string,locale:Locale):Edition{const w=world(family)!,t=theme(family);return normalize({eyebrow:tr(t.tag,locale),headline:tr(t.title,locale),description:tr(t.body,locale),gallery:defaultGallery(family),hero:defaultGallery(family)[0].desktop,guidance:worldTile(family),guidanceTitle:tr(t.tips[0],locale),guidanceBody:tr(t.body,locale)},locale,family);}

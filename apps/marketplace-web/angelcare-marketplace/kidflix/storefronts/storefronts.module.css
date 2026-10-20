@@ -13,3 +13,13 @@
 @media(max-width:440px){.facts>span{font-size:10px}.cardActions button{font-size:10px}.cardActions>a{min-width:34px}.resourceTag{font-size:9px;max-width:calc(100% - 55px)}.resourceBody{padding:10px}.save{min-width:44px;min-height:44px}}
 
 .topics{grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr))}@media(max-width:760px){.topics{grid-template-columns:repeat(auto-fit,minmax(min(100%,145px),1fr))}}
+
+/* Shared international gallery keeps the full illustration and accessible controls. */
+.world .opening{background:radial-gradient(ellipse at 10% 40%,var(--tint),transparent 65%),#fffdf9;padding-block:30px 46px}
+.world .heroGrid,.world.screen .heroGrid{grid-template-columns:.9fr 1.25fr;max-width:1608px;gap:44px}
+.internationalArtwork{position:relative;min-width:0;width:100%;padding-block:14px 0}
+.internationalCaption{display:flex;align-items:center;gap:9px;margin:16px 8px 0;color:var(--ink);font-size:12px;font-weight:800;letter-spacing:.04em;line-height:1.6}
+.world .heroCopy h1{font-size:clamp(36px,4vw,64px);line-height:1.12}.world .heroCopy p{font-size:17px}.world .heroPromise{font-size:13px}.world .eyebrow{color:#354b62;font-size:12px}
+@media(max-width:1024px){.world .heroGrid,.world.screen .heroGrid{gap:25px}.world .heroCopy h1{font-size:40px}.world .heroCopy p{font-size:15px}}
+@media(max-width:760px){.world .heroGrid,.world.screen .heroGrid{grid-template-columns:1fr;gap:16px}.world .opening{padding:20px 18px 30px}.world .heroCopy h1{font-size:40px}.world .heroCopy p{font-size:16px}.internationalArtwork{max-width:680px;margin:auto}.world .primary,.world .secondary{min-height:48px;font-size:14px}.world[dir=rtl] .heroCopy h1{line-height:1.35}}
+.world .actions .primary,.world .guideCopy .primary{background:color-mix(in srgb,var(--accent) 76%,#142643);color:#fff}
