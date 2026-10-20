@@ -3,14 +3,13 @@ package com.angelcare.marketplace;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import com.google.androidbrowserhelper.trusted.LauncherActivity;
 
-/** Strictly same-origin AngelCare targets: no untrusted links in notifications or voice. */
+
+/** Strictly same-origin AngelCare targets: no untrusted links in push notifications. */
 public final class MarketplaceLinks {
     private MarketplaceLinks() {}
     public static final String ORIGIN = "https://my.angelcarehub.com";
     public static final String ROOT = ORIGIN + "/angelcare-marketplace/fr";
-    public static final String SEARCH = ROOT + "/marketplace/search";
     public static final String FAMILIES = ROOT + "/families";
 
     public static Uri verified(String incoming) {
@@ -29,15 +28,8 @@ public final class MarketplaceLinks {
             return u;
         } catch (Exception ignored) { return Uri.parse(ROOT); }
     }
-    public static Uri search(String text, String locale) {
-        String lang = ("ar".equals(locale) || "en".equals(locale)) ? locale : "fr";
-        String cleaned = text == null ? "" : text.trim();
-        if (cleaned.length() > 180) cleaned = cleaned.substring(0,180);
-        return Uri.parse(ORIGIN + "/angelcare-marketplace/" + lang + "/marketplace/search")
-            .buildUpon().appendQueryParameter("q",cleaned).build();
-    }
     public static void open(Activity host, Uri target) {
-        Intent intent = new Intent(host, LauncherActivity.class);
+        Intent intent = new Intent(host, AngelCareLauncherActivity.class);
         intent.setAction(Intent.ACTION_VIEW);
         intent.setData(verified(target.toString()));
         host.startActivity(intent);

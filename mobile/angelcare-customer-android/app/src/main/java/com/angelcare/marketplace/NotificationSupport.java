@@ -27,8 +27,9 @@ public final class NotificationSupport {
         if(Build.VERSION.SDK_INT>=33 && c.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)!=PackageManager.PERMISSION_GRANTED)return;
         channels(c);
         Uri safe=MarketplaceLinks.verified(uri);
-        Intent open=new Intent(c,com.google.androidbrowserhelper.trusted.LauncherActivity.class);
-        open.setAction(Intent.ACTION_VIEW);open.setData(safe);
+        Intent open=new Intent(c,AngelCareLauncherActivity.class);
+        open.setAction(Intent.ACTION_VIEW);
+        open.setData(safe);
         open.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pending=PendingIntent.getActivity(c,Math.abs((int)System.nanoTime()),open,PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
         Notification.Builder builder=Build.VERSION.SDK_INT>=26?new Notification.Builder(c,CHANNEL):new Notification.Builder(c);

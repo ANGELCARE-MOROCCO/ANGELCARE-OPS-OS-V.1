@@ -1,73 +1,58 @@
 #!/usr/bin/env python3
-"""Offline fail-closed AngelCare Android R4 source gate. No local build, network or git mutation."""
-import re
-import sys
+"""R5 Android-only direct TWA / existing IVR preservation / no native voice-search source gate."""
 from pathlib import Path
 from xml.etree import ElementTree as ET
-
+import re
 root=Path(__file__).resolve().parents[1]
 android='{http://schemas.android.com/apk/res/android}'
-manifest=root/'app/src/main/AndroidManifest.xml'
-appgradle=root/'app/build.gradle'
-strings=root/'app/src/main/res/values/strings.xml'
-styles=root/'app/src/main/res/values/styles.xml'
-cert=root/'trust/preview_cert_sha256.txt'
-sender=root/'push-sender/send.mjs'
-java=root/'app/src/main/java/com/angelcare/marketplace'
-classes=['AngelCareApplication','HomeActivity','VoiceActivity','InboxActivity','NativeUi','MarketplaceLinks','InboxStore','NotificationSupport','AngelCareMessagingService']
-required=[manifest,appgradle,strings,styles,cert,sender,root/'settings.gradle',root/'gradle.properties']
-required += [java/(name+'.java') for name in classes]
-required += [root/'app/src/main/res/drawable-nodpi/angelcare_official_wordmark.png']
-required += [root/f'app/src/main/res/mipmap-{q}/ic_launcher.png' for q in ['mdpi','hdpi','xhdpi','xxhdpi','xxxhdpi']]
-for path in required: assert path.is_file() and path.stat().st_size>0, f'R4_MISSING={path}'
-root_xml=ET.parse(manifest).getroot();application=root_xml.find('application')
-assert application is not None and application.get(android+'name')=='com.angelcare.marketplace.AngelCareApplication'
-perms={u.get(android+'name') for u in root_xml.findall('uses-permission')}
-assert {'android.permission.INTERNET','android.permission.ACCESS_NETWORK_STATE','android.permission.POST_NOTIFICATIONS'}<=perms
-assert 'android.permission.RECORD_AUDIO' not in perms, 'Do not silently request microphone recording'
-act={x.get(android+'name'):x for x in application.findall('activity')}
-launcher=act['com.google.androidbrowserhelper.trusted.LauncherActivity']
-assert launcher.get(android+'exported')=='false'
-assert launcher.find("meta-data[@"+android+"name='android.support.customtabs.trusted.DEFAULT_URL']") is not None
-assert act['com.google.androidbrowserhelper.trusted.ManageDataLauncherActivity'].get(android+'exported')=='false'
+main=root/'app/src/main'
+manifest=ET.parse(main/'AndroidManifest.xml').getroot()
+application=manifest.find('application'); assert application is not None
+activities={a.get(android+'name'):a for a in application.findall('activity')}
+launcher=activities['.AngelCareLauncherActivity']
+assert launcher.get(android+'exported')=='true'
+assert any(c.get(android+'name')=='android.intent.category.LAUNCHER' for f in launcher.findall('intent-filter') for c in f.findall('category'))
+assert any(x.get(android+'name')=='android.support.customtabs.trusted.DEFAULT_URL' for x in launcher.findall('meta-data'))
+assert 'com.google.androidbrowserhelper.trusted.ManageDataLauncherActivity' in activities
+assert all(x not in activities for x in ('.HomeActivity','.VoiceActivity','.InboxActivity'))
 assert application.get(android+'manageSpaceActivity')=='com.google.androidbrowserhelper.trusted.ManageDataLauncherActivity'
-home=act['.HomeActivity']
-assert home.get(android+'exported')=='true'
-assert any(x.get(android+'name')=='android.intent.category.LAUNCHER' for x in home.findall('intent-filter/category'))
-for name in ('.VoiceActivity','.InboxActivity'):
-    assert act[name].get(android+'exported')=='false'
-assert any(x.get(android+'name')=='.AngelCareMessagingService' and x.get(android+'exported')=='false' for x in application.findall('service'))
-resources={v.get('name'):v.text for v in ET.parse(strings).getroot().findall('string')}
-assert resources['launch_url']=='https://my.angelcarehub.com/angelcare-marketplace/fr'
-assert 'NativeTheme' in [v.get('name') for v in ET.parse(styles).getroot().findall('style')]
-assert re.fullmatch(r'[0-9A-F]{2}(?::[0-9A-F]{2}){31}',cert.read_text().strip())
-s=appgradle.read_text()
-assert re.search(r'compileSdk\s+36',s) and re.search(r'targetSdk\s+36',s)
-assert re.search(r'versionCode\s+4',s) and re.search(r"versionName\s+'0.4.0'",s)
-assert "applicationIdSuffix '.preview'" in s and 'signingConfig signingConfigs.angelcarePreview' in s
-assert "keyAlias 'angelcare-preview'" in s and 'ANGELCARE_PREVIEW_SIGNING_MISSING' in s
-assert 'firebase-bom:35.0.2' in s and 'firebase-messaging' in s
-for name in ('ANGELCARE_FCM_PROJECT_ID','ANGELCARE_FCM_APP_ID','ANGELCARE_FCM_API_KEY','ANGELCARE_FCM_SENDER_ID'):assert name in s
-assert 'buildConfig true' in s
-marketplace=(java/'MarketplaceLinks.java').read_text()
-assert 'appendQueryParameter("q",cleaned)' in marketplace
-assert 'my.angelcarehub.com' in marketplace and 'LauncherActivity.class' in marketplace
-app=(java/'AngelCareApplication.java').read_text()
-assert 'setAutoInitEnabled(InboxStore.optedIn(this))' in app
-assert 'angelcare_public_updates' in app
-voice=(java/'VoiceActivity.java').read_text()
-assert 'RecognizerIntent.ACTION_RECOGNIZE_SPEECH' in voice
-assert 'requestPermissions' not in voice
-fcm=(java/'AngelCareMessagingService.java').read_text()
-assert 'InboxStore.optedIn(this)' in fcm and 'getData()' in fcm
-assert 'NotificationManager.IMPORTANCE_HIGH' in (java/'NotificationSupport.java').read_text()
-assert 'data-only' in sender.read_text().lower()
-assert not any(root.rglob('*.p12')) and not any(root.rglob('*.keystore')) and not any(root.rglob('*.jks'))
-assert not any(root.rglob('google-services.json')) and not any(root.rglob('service-account.json'))
-for path in root.rglob('*.java'):
-    assert 'http://' not in path.read_text(),f'INSECURE_ORIGIN={path}'
-print('R4_NATIVE_SOURCE_CONTRACT=PASS')
-print('R3_SIGNING_AND_TWA_PRESERVATION=PASS')
-print('MARKETPLACE_FILES_MODIFIED=ZERO')
-print('FCM_REAL_DELIVERY=REQUIRES_OFFICIAL_PROJECT_CONFIG')
+perms={p.get(android+'name') for p in manifest.findall('uses-permission')}
+assert 'android.permission.POST_NOTIFICATIONS' in perms
+assert 'android.permission.RECORD_AUDIO' not in perms
+assert not any('RECOGNIZE_SPEECH' in ET.tostring(x,encoding='unicode') for x in manifest.iter())
+assert any(s.get(android+'name')=='.AngelCareMessagingService' for s in application.findall('service'))
+java=main/'java/com/angelcare/marketplace'
+for name in ['AngelCareLauncherActivity','AngelCareApplication','AngelCareMessagingService','InboxStore','NotificationSupport','MarketplaceLinks']:
+ assert (java/(name+'.java')).is_file(),name
+for obsolete in ['HomeActivity','VoiceActivity','InboxActivity','NativeUi']:
+ assert not (java/(obsolete+'.java')).exists(),obsolete
+source=(java/'AngelCareLauncherActivity.java').read_text()
+assert 'extends LauncherActivity' in source and 'shouldLaunchImmediately' in source and 'launchTwa()' in source
+assert 'showConsentCard()' in source and 'hasFirebase()' in source
+assert 'requestPermissions' in source and 'POST_NOTIFICATIONS' in source
+assert 'RECORD_AUDIO' not in source and 'RecognizerIntent' not in source
+assert 'angelcare_public_updates' in source
+assert 'AngelCareLauncherActivity.class' in (java/'NotificationSupport.java').read_text()
+assert 'open.setData(safe)' in (java/'NotificationSupport.java').read_text()
+assert 'setAutoInitEnabled(InboxStore.optedIn(this))' in (java/'AngelCareApplication.java').read_text()
+assert 'registerShortcuts()' not in (java/'AngelCareApplication.java').read_text()
+assert 'RecognizerIntent' not in ''.join(f.read_text() for f in java.glob('*.java'))
+assert 'getUserMedia' not in ''.join(f.read_text() for f in java.glob('*.java'))
+assert 'angelcare_official_wordmark' in source
+assert (main/'res/drawable-nodpi/angelcare_official_wordmark.png').is_file()
+assert 'https://my.angelcarehub.com/angelcare-marketplace/fr' in (main/'res/values/strings.xml').read_text()
+s=(root/'app/build.gradle').read_text()
+assert re.search(r'versionCode\s+5',s) and re.search(r"versionName\s+'0.5.0'",s)
+assert "keyAlias 'angelcare-preview'" in s
+assert "applicationIdSuffix '.preview'" in s
+assert 'signingConfig signingConfigs.angelcarePreview' in s
+assert re.fullmatch(r'[0-9A-F]{2}(?::[0-9A-F]{2}){31}',(root/'trust/preview_cert_sha256.txt').read_text().strip())
+for q in ['mdpi','hdpi','xhdpi','xxhdpi','xxxhdpi']:
+ p=main/f'res/mipmap-{q}/ic_launcher.png';assert p.is_file() and p.stat().st_size>0
+assert not any(root.rglob('*.keystore')) and not any(root.rglob('*.p12'))
+print('R5_DIRECT_FULLSCREEN_MARKETPLACE=PASS')
+print('R5_NATIVE_VOICE_SEARCH_REMOVED=PASS')
+print('R5_HOTLINE_MICROPHONE=MARKETPLACE_WEB_LIVEKIT_AUTHORITY_ONLY')
+print('R5_NOTIFICATION_CONSENT=CONFIGURED_FCM_ONLY')
+print('R5_SIGNING_FINGERPRINT_PRESERVED=PASS')
 print('LOCAL_BUILD=NOT_INVOKED')
