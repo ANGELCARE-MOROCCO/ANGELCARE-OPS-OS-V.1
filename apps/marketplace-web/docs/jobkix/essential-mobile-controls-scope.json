@@ -1,0 +1,33 @@
+{
+  "dependency": "Read-only inspection app/globals.css:269; inherited @media max-width 1100px aside display:none!important. No shared CSS edit.",
+  "files": [
+    {
+      "path": "angelcare-marketplace/jobkix/jobkix.module.css",
+      "sha256Before": "5eababfb5e8554e7151aecf89d18a6a1b67ace0fc4e4f99c23955e7eb45aa0e8",
+      "requirements": [
+        9,
+        16,
+        17,
+        26,
+        28,
+        29
+      ],
+      "intendedChange": "Override inherited global aside hiding only within JOBKIX, preserving native owned stack/navigation layouts.",
+      "protectedBehavior": "Global CSS and all other product layouts remain unchanged. Existing application eligibility, authentication, URLs and filters are preserved."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/pages/JobDetail.tsx",
+      "sha256Before": "a8fbf4093622b49d0562deb8e1afc631d453e22065b12dad49fb0fe726d664af",
+      "requirements": [
+        9,
+        16,
+        17,
+        26,
+        28,
+        29
+      ],
+      "intendedChange": "Expose the canonical apply destination beside vacancy terms at narrow widths; preserve closed state and application context.",
+      "protectedBehavior": "Global CSS and all other product layouts remain unchanged. Existing application eligibility, authentication, URLs and filters are preserved."
+    }
+  ]
+}

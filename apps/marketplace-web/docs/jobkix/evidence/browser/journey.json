@@ -1,0 +1,160 @@
+{
+  "recordedAt": "2026-10-21T22:25:19.450Z",
+  "sourceAtStart": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 327,
+    "digest": "dc99e043b06135880c4f99e75eaa8ab7f0a2b950d3d12dcfb46163b52ea87e3d"
+  },
+  "sourceAtEnd": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 327,
+    "digest": "dc99e043b06135880c4f99e75eaa8ab7f0a2b950d3d12dcfb46163b52ea87e3d"
+  },
+  "scope": "Actual UI/API/isolated SQL recruitment flow; synthetic local GoTrue and storage fixtures",
+  "checks": [
+    {
+      "name": "fresh isolated vacancy via canonical review/publication commands",
+      "status": "PASS",
+      "vacancyId": "05da63a3-2a8b-42e2-8bca-44de09609d67"
+    },
+    {
+      "name": "candidate native sign-in API/cookie/session",
+      "status": "PASS"
+    },
+    {
+      "name": "application.submit",
+      "status": "PASS",
+      "httpStatus": 200,
+      "result": {
+        "id": "d2b59299-6bf5-4982-9ff2-c966491859cd",
+        "state": "submitted",
+        "receipt": "JK-847C711F79C64BDAA7C9C531D8EE5639",
+        "version": 1,
+        "replayed": false
+      }
+    },
+    {
+      "name": "message.send",
+      "status": "PASS",
+      "httpStatus": 200,
+      "result": {
+        "id": "68895683-fe82-4b60-99e9-bbdf227c6f9d",
+        "state": "recorded",
+        "version": 1,
+        "replayed": false
+      }
+    },
+    {
+      "name": "hirer native sign-in API/cookie/session",
+      "status": "PASS"
+    },
+    {
+      "name": "application.stage",
+      "status": "PASS",
+      "httpStatus": 200,
+      "result": {
+        "id": "d2b59299-6bf5-4982-9ff2-c966491859cd",
+        "state": "under_review",
+        "version": 2,
+        "replayed": false
+      }
+    },
+    {
+      "name": "application.stage",
+      "status": "PASS",
+      "httpStatus": 200,
+      "result": {
+        "id": "d2b59299-6bf5-4982-9ff2-c966491859cd",
+        "state": "shortlisted",
+        "version": 3,
+        "replayed": false
+      }
+    },
+    {
+      "name": "application.stage",
+      "status": "PASS",
+      "httpStatus": 200,
+      "result": {
+        "id": "d2b59299-6bf5-4982-9ff2-c966491859cd",
+        "state": "interview",
+        "version": 4,
+        "replayed": false
+      }
+    },
+    {
+      "name": "interview.propose",
+      "status": "PASS",
+      "httpStatus": 200,
+      "result": {
+        "id": "97439079-60cf-4a2e-8aed-ecfcd2ba1200",
+        "state": "proposed",
+        "version": 1,
+        "replayed": false
+      }
+    },
+    {
+      "name": "interview.respond",
+      "status": "PASS",
+      "httpStatus": 200,
+      "result": {
+        "id": "97439079-60cf-4a2e-8aed-ecfcd2ba1200",
+        "state": "scheduled",
+        "version": 2,
+        "replayed": false
+      }
+    },
+    {
+      "name": "offer stage reserved for the canonical send command",
+      "status": "PASS"
+    },
+    {
+      "name": "offer.create",
+      "status": "PASS",
+      "httpStatus": 200,
+      "result": {
+        "id": "f3beb5f9-b39e-4eb5-ae5d-487f7b8b833d",
+        "state": "draft",
+        "version": 1,
+        "replayed": false
+      }
+    },
+    {
+      "name": "offer.send",
+      "status": "PASS",
+      "httpStatus": 200,
+      "result": {
+        "id": "f3beb5f9-b39e-4eb5-ae5d-487f7b8b833d",
+        "state": "sent",
+        "version": 2,
+        "replayed": false
+      }
+    },
+    {
+      "name": "offer.respond",
+      "status": "PASS",
+      "httpStatus": 200,
+      "result": {
+        "id": "f3beb5f9-b39e-4eb5-ae5d-487f7b8b833d",
+        "state": "accepted",
+        "version": 3,
+        "replayed": false
+      }
+    },
+    {
+      "name": "canonical candidate acceptance persisted",
+      "status": "PASS",
+      "applicationId": "d2b59299-6bf5-4982-9ff2-c966491859cd",
+      "state": "hired",
+      "interviewId": "97439079-60cf-4a2e-8aed-ecfcd2ba1200",
+      "offerId": "f3beb5f9-b39e-4eb5-ae5d-487f7b8b833d"
+    }
+  ],
+  "consoleErrors": [],
+  "failure": null,
+  "limitations": [
+    "Not hosted Auth, email delivery, independent multi-session DB concurrency or production certification.",
+    "Individual workflow and family acceptance remains separate."
+  ]
+}

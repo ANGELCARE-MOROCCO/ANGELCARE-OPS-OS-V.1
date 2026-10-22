@@ -1,0 +1,18 @@
+2026-10-21 — The user explicitly authorized overriding the local-development restriction: “it's ok i allow u to override the contract restrictions and do you local dev tests”.
+
+Interpretation: the existing Next.js application may run locally in development mode for browser and connected integration tests. Test-only compilation, isolated database fixtures and disposable local adapters remain permitted. Production application builds, production SQL/storage/configuration changes, release workflows, Git writes and deployment remain outside this amendment.
+
+The local verification runtime must bind to loopback and use explicitly supplied synthetic local Supabase adapter values. It must not use production database credentials or send external email. Fixtures stay in verification utilities; they are not production route branches, catalogue records or operational content. Report rendered evidence and actual SQL-command evidence separately from hosted Auth/storage/email certification.
+
+The earlier request for a remote preview URL is no longer a prerequisite for local development checks. An existing designated isolated hosted environment is still needed to certify hosted service boundaries.
+
+2026-10-21 — Public P26 amendment: “you should not use any legal mentions except jobkix built and operated by ANGELCARE. and that's it should be global fit standards nothing should mention morocco or specific country in legal page”.
+
+The explicit amendment supersedes the P26 reference's document directory, policy reader, country/jurisdiction wording and unsubstantiated compliance statements. The public legal page and its existing document aliases show only the approved operator attribution, localized in the seven JOBKIX languages. Public P26 metadata uses the same attribution and cannot draw policy text from an edition. Original references remain unchanged. The existing administration's permission-gated private editorial preview and reviewed publication protections are preserved.
+
+The attribution does not establish worldwide compliance or replace account-consent records. Registration still requires current reviewed terms and privacy revisions at the existing server/database boundary. The public attribution page does not display those documents. Therefore the connected registration consent journey remains a release blocker until that disclosure mismatch is resolved under an explicit product decision; no validation is bypassed and no production edition is published.
+
+2026-10-22 — The user approved the prepared two-file KidFlix CSS compilation repair: “yes apply it all and finish it for final production ready”. The pending request identified the exact selector move and protected paths. Only the motion rule moved from `kidflix/journey/journey.module.css` into the module owning the actual `.root` class. Original declarations, bytes and expected hashes are preserved under `amendments/kidflix-motion-before/` and the shared-file register. Installed Next pure-mode compilation and native English/French/Arabic render/motion probes passed. This approval does not authorize unrelated KidFlix changes, production SQL, production builds or release actions.
+
+
+2026-10-22 — User reprioritized basic necessary source release preparation and placed email/external-service work on standby. This authorizes packaging and verification of the existing source candidate. It does not establish production readiness, waive core privacy/consent/authorization defects, authorize a build or release action, or convert unaccepted full-contract items to PASS. See release-candidate.json and RELEASE_CANDIDATE.md.

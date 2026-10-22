@@ -1,0 +1,6 @@
+import { settingExists,SETTINGS } from './taxonomy';
+export const EDITORIAL_SCENES:readonly string[]=['home-hero','search-hero','profession-cook','destination-toronto','destination-london',...SETTINGS.map(([id])=>'setting-'+id)];
+export function isEditorialScene(id:string):boolean{return EDITORIAL_SCENES.includes(id);}
+/** Editorial placement choices only. These do not define vacancy eligibility or taxonomy records. */
+const PROFESSION_SCENES:Readonly<Record<string,string>>={nanny:'households','family-assistant':'households','early-childhood-educator':'nurseries','montessori-guide':'preschool',teacher:'primary-schools','teaching-assistant':'international-schools',nurse:'pediatrics',pediatrician:'pediatrics','therapy-specialist':'therapy-development','school-administrator':'secondary-colleges',counselor:'ngo-child-welfare',driver:'school-operations',cook:'profession-cook','activity-leader':'camps-sports','learning-designer':'digital-learning','safeguarding-officer':'public-specialist'};
+export function taxonomyScene(kind:'setting'|'occupation',key:string):string|null{const setting=kind==='setting'?key:PROFESSION_SCENES[key];return kind==='occupation'&&setting&&isEditorialScene(setting)?setting:setting&&settingExists(setting)?'setting-'+setting:null;}

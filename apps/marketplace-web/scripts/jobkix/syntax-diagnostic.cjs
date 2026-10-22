@@ -1,0 +1,11 @@
+/** Local Chromium parser diagnosis; captures no external or production data. */
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),{chromium}=require('playwright');
+const fixture=JSON.parse(fs.readFileSync('/private/tmp/jobkix-source-20261020/runtime/fixture-session.json')),directory=path.resolve(__dirname,'../../docs/jobkix/evidence/browser');
+(async()=>{const browser=await chromium.launch({headless:true}),events=[],tasks=[];try{const context=await browser.newContext({extraHTTPHeaders:{'x-real-ip':'127.0.0.1'}}),page=await context.newPage(),cdp=await context.newCDPSession(page);let current='';function persist(){fs.writeFileSync(path.join(directory,'syntax-diagnostic-live.json'),JSON.stringify({recordedAt:new Date().toISOString(),events},null,2)+'\n');}
+ await cdp.send('Runtime.enable');await cdp.send('Debugger.enable');
+ cdp.on('Runtime.exceptionThrown',event=>{events.push({screen:current,kind:'exception',...event.exceptionDetails});persist();});
+ cdp.on('Debugger.scriptFailedToParse',event=>{const task=(async()=>{const source=await cdp.send('Debugger.getScriptSource',{scriptId:event.scriptId}).catch(()=>({scriptSource:''}));events.push({screen:current,kind:'parse-failure',...event,sha256:crypto.createHash('sha256').update(source.scriptSource).digest('hex'),source:source.scriptSource});persist();})();tasks.push(task);});
+ page.on('pageerror',error=>events.push({screen:current,kind:'pageerror',message:error.message,stack:error.stack}));
+ for(let round=0;round<4;round++)for(const name of ['jobs','professions','countries','countries/gb','about','report','legal']){current=name;await page.goto(fixture.origin+'/jobkix/en/'+name,{waitUntil:'networkidle',timeout:300000});await page.screenshot({path:path.join('/private/tmp/jobkix-source-20261020/runtime','parser-view.png'),fullPage:true});console.log('INSPECTED='+round+' '+name);}
+ await Promise.all(tasks);
+ }finally{fs.writeFileSync(path.join(directory,'syntax-diagnostic.json'),JSON.stringify({recordedAt:new Date().toISOString(),scope:'Local source runtime only',events},null,2)+'\n');console.log('PARSER_EVENTS='+events.length);await browser.close();}})().catch(error=>{console.error(error);process.exitCode=1;});

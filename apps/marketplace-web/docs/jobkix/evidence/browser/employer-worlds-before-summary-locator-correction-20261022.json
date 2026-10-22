@@ -1,0 +1,53 @@
+{
+  "recordedAt": "2026-10-22T01:16:57.378Z",
+  "sourceAtStart": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 352,
+    "digest": "b9228842ed1389be4a93dd531b984d38aa4ed98ab15d08993ce4245a960fa324"
+  },
+  "sourceAtEnd": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 352,
+    "digest": "b9228842ed1389be4a93dd531b984d38aa4ed98ab15d08993ce4245a960fa324"
+  },
+  "checks": [
+    {
+      "name": "all six native employer filters precede type discovery and real approved results",
+      "status": "PASS"
+    },
+    {
+      "name": "actual native GET combines employer filters while retaining origin destination and reach",
+      "status": "PASS"
+    },
+    {
+      "name": "employer-type discovery preserves independent context and selected native filters",
+      "status": "PASS"
+    },
+    {
+      "name": "clear removes native employer filters while retaining discovery country context",
+      "status": "PASS"
+    },
+    {
+      "name": "real zero-result state retains the query and a functional clear action",
+      "status": "PASS"
+    },
+    {
+      "name": "native directory dependency failure retains controls and independent discovery; explicit retry recovers",
+      "status": "PASS"
+    },
+    {
+      "name": "factual employer profile omits private fields and unrelated imagery and uses a genuine moderated-review empty state",
+      "status": "PASS"
+    }
+  ],
+  "renders": [],
+  "errors": [],
+  "expectedNetworkErrors": [],
+  "failure": {
+    "message": "locator.focus: Error: strict mode violation: locator('#positions details').first().locator('summary') resolved to 9 elements:\n    1) <summary>…</summary> aka getByText('Filters', { exact: true })\n    2) <summary>Choose your country</summary> aka getByText('Choose your country')\n    3) <summary>Employment settings</summary> aka locator('summary').filter({ hasText: 'Employment settings' })\n    4) <summary>Professions</summary> aka locator('summary').filter({ hasText: 'Professions' })\n    5) <summary>Age groups supported by this role</summary> aka getByText('Age groups supported by this role', { exact: true })\n    6) <summary>Work schedule</summary> aka getByText('Work schedule', { exact: true })\n    7) <summary>Language</summary> aka locator('#results').getByText('Language', { exact: true })\n    8) <summary>Careers abroad</summary> aka locator('#results').getByText('Careers abroad')\n    9) <summary>Minimum declared pay</summary> aka locator('summary').filter({ hasText: 'Minimum declared pay' })\n\nCall log:\n\u001b[2m  - waiting for locator('#positions details').first().locator('summary')\u001b[22m\n",
+    "stack": "locator.focus: Error: strict mode violation: locator('#positions details').first().locator('summary') resolved to 9 elements:\n    1) <summary>…</summary> aka getByText('Filters', { exact: true })\n    2) <summary>Choose your country</summary> aka getByText('Choose your country')\n    3) <summary>Employment settings</summary> aka locator('summary').filter({ hasText: 'Employment settings' })\n    4) <summary>Professions</summary> aka locator('summary').filter({ hasText: 'Professions' })\n    5) <summary>Age groups supported by this role</summary> aka getByText('Age groups supported by this role', { exact: true })\n    6) <summary>Work schedule</summary> aka getByText('Work schedule', { exact: true })\n    7) <summary>Language</summary> aka locator('#results').getByText('Language', { exact: true })\n    8) <summary>Careers abroad</summary> aka locator('#results').getByText('Careers abroad')\n    9) <summary>Minimum declared pay</summary> aka locator('summary').filter({ hasText: 'Minimum declared pay' })\n\nCall log:\n\u001b[2m  - waiting for locator('#positions details').first().locator('summary')\u001b[22m\n\n    at /Users/user/Desktop/angelcare-platform/apps/marketplace-web/scripts/jobkix/employer-worlds.cjs:19:255"
+  },
+  "scope": "Actual authorized local Next routes, existing SQL public projections/eligibility and native private save commands. Synthetic Auth/storage/trust/editorial fixtures; deliberate RPC interruption. No hosted-service, approved real employer media/content, full family-language acceptance or production certification."
+}

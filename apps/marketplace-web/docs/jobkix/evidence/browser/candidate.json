@@ -1,0 +1,56 @@
+{
+  "recordedAt": "2026-10-21T12:55:23.605Z",
+  "runtime": "Actual Next.js development app",
+  "data": "Isolated PGlite with actual JOBKIX migrations/commands/RLS; synthetic Auth/storage/initial trust/content fixtures",
+  "mode": "candidate",
+  "results": [
+    {
+      "screen": "C01",
+      "title": "Career dashboard · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "heading": "Career dashboard",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        }
+      ],
+      "overflow": []
+    }
+  ],
+  "errors": [],
+  "limitation": "No hosted Auth/storage/email or production certification. Screenshot existence does not mean per-front visual acceptance."
+}

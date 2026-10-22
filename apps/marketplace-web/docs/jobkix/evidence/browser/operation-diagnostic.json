@@ -1,0 +1,20 @@
+{
+  "status": 200,
+  "url": "http://localhost:3180/jobkix/en/hiring/offers?organization=30000000-0000-4000-8000-000000000004&application=8b14b7c3-e83c-4fb9-95ec-4c3b83a9a734&offer=5a5a1294-fece-44fb-b405-0fa2d1a77ec6",
+  "errors": [],
+  "headings": [
+    "Candidate",
+    "Employers",
+    "Countries",
+    "Help & support",
+    "Hiring Studio",
+    "Offers & hiring decisions"
+  ],
+  "forms": [
+    {
+      "text": "Who is hiring?ISOLATED household hiring fixtureISOLATED international early years institutionContinue",
+      "checkboxes": 0,
+      "html": "<form class=\"jobkix_organizationSelector__yjsXz\" action=\"/jobkix/en/hiring/offers\" method=\"get\"><label>Who is hiring?<select name=\"organization\"><option value=\"30000000-0000-4000-8000-000000000004\" selected=\"\">ISOLATED household hiring fixture</option><option value=\"30000000-0000-4000-8000-000000000005\">ISOLATED international early years institution</option></select></label><button class=\"jobkix_button__6Eaaq jobkix_secondary__mv1aQ\" type=\"submit\">Continue</button></form>"
+    }
+  ]
+}

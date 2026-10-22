@@ -1,0 +1,17 @@
+/** Actual editorial paint/crop inspection. Synthetic local data only. */
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{chromium}=require('playwright');
+const {sourceFingerprint,evidenceDirectory}=require('./source-fingerprint.cjs'),sourceAtStart=sourceFingerprint(),directory=evidenceDirectory();
+const fixture=JSON.parse(fs.readFileSync('/private/tmp/jobkix-source-20261020/runtime/fixture-session.json'));
+(async()=>{const browser=await chromium.launch({headless:true}),results=[],errors=[];let failure=null;try{
+ const page=await browser.newPage({viewport:{width:1440,height:1000},reducedMotion:'reduce'});page.setDefaultNavigationTimeout(300000);page.on('pageerror',error=>errors.push(error.message));page.on('console',message=>{if(message.type()==='error')errors.push(message.text());});
+ for(const [locale,width] of [['en',1440],['en',390],['ar',1440],['ar',390]]){
+  await page.setViewportSize({width,height:1000});await page.goto(fixture.origin+'/jobkix/'+locale+'/sectors/households',{waitUntil:'networkidle'});await page.locator('h1').waitFor();await page.waitForFunction(()=>!document.querySelector('form[inert]'));
+  const result=await page.evaluate(async()=>{await document.fonts.ready;const image=[...document.images].find(img=>img.getAttribute('src')==='/jobkix/editorial/setting-households.webp');if(!image)throw Error('Editorial image missing');await image.decode();const parent=image.closest('picture'),section=parent.parentElement;const value=element=>({rect:element.getBoundingClientRect().toJSON(),display:getComputedStyle(element).display,visibility:getComputedStyle(element).visibility,opacity:getComputedStyle(element).opacity,zIndex:getComputedStyle(element).zIndex,position:getComputedStyle(element).position,objectPosition:getComputedStyle(element).objectPosition});window.scrollTo({top:0,behavior:'instant'});await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));return {width:innerWidth,scrollWidth:document.documentElement.scrollWidth,image:value(image),picture:value(parent),section:value(section),source:image.currentSrc,scrollY};});
+  assert.ok(result.image.rect.height>100);assert.ok(result.image.rect.width>100);assert.equal(result.scrollY,0);assert.equal(result.picture.display,'block');assert.equal(result.image.opacity,'1');assert.ok(result.scrollWidth<=width+1);
+  await page.screenshot({path:path.join(directory,'P04-'+locale+'-'+width+'-opening.png'),fullPage:false,animations:'disabled',caret:'initial'});
+  await page.screenshot({path:path.join(directory,'P04-'+locale+'-'+width+'-review.png'),fullPage:true,animations:'disabled',caret:'initial'});
+  results.push({locale,width,status:'PASS',...result});console.log('EDITORIAL_OPENING='+JSON.stringify({locale,...result}));
+ }
+ assert.deepEqual(errors,[]);assert.deepEqual(sourceFingerprint(),sourceAtStart);
+ }catch(error){failure={message:error.message,stack:error.stack};throw error;}finally{fs.writeFileSync(path.join(directory,'editorial-opening.json'),JSON.stringify({recordedAt:new Date().toISOString(),sourceAtStart,sourceAtEnd:sourceFingerprint(),results,errors,failure,scope:'Actual viewport rendering, loaded image and geometry. Screenshots require individual visual inspection; geometry alone is not visual acceptance.'},null,2)+'\n');await browser.close();}
+})().catch(error=>{console.error(error);process.exitCode=1;});

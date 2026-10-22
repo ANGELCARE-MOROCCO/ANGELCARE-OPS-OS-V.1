@@ -1,5 +1,7 @@
-import { NextResponse, type NextRequest } from 'next/server'
+import { NextResponse, NextRequest } from 'next/server'
 import { refreshCustomerSession } from '@/angelcare-marketplace/customer-commerce/customer-session-proxy'
+import { refreshJobkixSession } from '@/angelcare-marketplace/jobkix/session-proxy'
+import { withoutJobkixPresentation } from '@/angelcare-marketplace/jobkix/presentation-context'
 
 function hasCookie(request: NextRequest, names: string[]) {
   return names.some((name) => Boolean(request.cookies.get(name)?.value))
@@ -81,14 +83,22 @@ function buildCareLinkMobileLoginRequiredResponse(request: NextRequest) {
 
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname
-  if (/^\/angelcare-marketplace\/(fr|en|ar)\/(account|auth|family)(?:\/|$)/.test(pathname) || pathname.startsWith('/angelcare-marketplace/family/')) return refreshCustomerSession(request)
+  if (/^\/jobkix(?:\/|$)/.test(pathname) || /^\/api\/jobkix(?:\/|$)/.test(pathname)) return refreshJobkixSession(request)
+  const hasJobkixHints = request.headers.has('x-jobkix-path') || request.headers.has('x-jobkix-locale')
+  const forwardedHeaders = hasJobkixHints ? withoutJobkixPresentation(request.headers) : null
+  const forward = () => forwardedHeaders ? NextResponse.next({ request: { headers: forwardedHeaders } }) : NextResponse.next()
+  if (/^\/angelcare-marketplace\/(fr|en|ar)\/(account|auth|family)(?:\/|$)/.test(pathname) || pathname.startsWith('/angelcare-marketplace/family/')) return refreshCustomerSession(forwardedHeaders ? new NextRequest(request, { headers: forwardedHeaders }) : request)
+
+  // Hint sanitation also covers public documents. Legacy session prechecks
+  // retain the exact route-prefix perimeter of their original matchers.
+  if (!/^\/(?:carelink(?:-ops)?|api\/carelink|api\/connect)(?:\/|$)/.test(pathname)) return forward()
 
   if (isCareLinkOpsProtectedPath(pathname)) {
     if (!isCareLinkOpsAuthorizedActor(request)) {
       return redirectWithNext(request, '/login')
     }
 
-    return NextResponse.next()
+    return forward()
   }
 
   if (isCareLinkMobilePublicPath(pathname)) {
@@ -102,7 +112,7 @@ export async function proxy(request: NextRequest) {
       return NextResponse.redirect(new URL('/carelink', request.url))
     }
 
-    return NextResponse.next()
+    return forward()
   }
 
   if (isCareLinkMobileProtectedPath(pathname)) {
@@ -110,14 +120,18 @@ export async function proxy(request: NextRequest) {
       return buildCareLinkMobileLoginRequiredResponse(request)
     }
 
-    return NextResponse.next()
+    return forward()
   }
 
-  return NextResponse.next()
+  return forward()
 }
 
 export const config = {
   matcher: [
+    // Root documents outside JOBKIX must never inherit caller-supplied hints.
+    '/((?!_next/static/|_next/image$).*)',
+    '/jobkix/:path*',
+    '/api/jobkix/:path*',
     '/angelcare-marketplace/:locale/account/:path*',
     '/angelcare-marketplace/:locale/auth/:path*',
     '/angelcare-marketplace/:locale/family/:path*',

@@ -1,0 +1,6169 @@
+{
+  "recordedAt": "2026-10-21T13:53:27.747Z",
+  "runtime": "Actual Next.js development app",
+  "data": "Isolated PGlite with actual JOBKIX migrations/commands/RLS; synthetic Auth/storage/initial trust/content fixtures",
+  "mode": "public",
+  "results": [
+    {
+      "screen": "P00",
+      "locale": "en",
+      "width": 1440,
+      "path": "",
+      "status": 200,
+      "title": "Global careers for a brighter tomorrow. · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 1440,
+      "heading": "Global careers for a brighter tomorrow.",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/home-hero.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-nurseries.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-preschool.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-primary-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-secondary-colleges.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-international-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-education.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-pediatrics.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-maternity-neonatal.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-therapy-development.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-hospitality.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-camps-sports.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-ngo-child-welfare.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-school-operations.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-digital-learning.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-specialist.webp",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/fr.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/ca.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/gb.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/ae.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/ph.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/id.svg",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        }
+      ],
+      "overflow": [
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Pediatric clinics & hospitals"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Pediatric clinics & hospitals"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Maternity & neonatal settings"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Maternity & neonatal settings"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Therapy & developmental centers"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Therapy & developmental centers"
+        }
+      ]
+    },
+    {
+      "screen": "P00",
+      "locale": "en",
+      "width": 390,
+      "path": "",
+      "status": 200,
+      "title": "Global careers for a brighter tomorrow. · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 390,
+      "heading": "Global careers for a brighter tomorrow.",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/home-hero.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-nurseries.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-preschool.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-primary-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-secondary-colleges.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-international-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-education.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-pediatrics.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-maternity-neonatal.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-therapy-development.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-hospitality.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-camps-sports.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-ngo-child-welfare.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-school-operations.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-digital-learning.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-specialist.webp",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/fr.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/ca.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/gb.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/ae.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/ph.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/id.svg",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        }
+      ],
+      "overflow": [
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Kindergarten & preschool"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Kindergarten & preschool"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Primary schools"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Primary schools"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Secondary schools & colleges"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Secondary schools & colleges"
+        }
+      ]
+    },
+    {
+      "screen": "P01",
+      "locale": "en",
+      "width": 1440,
+      "path": "jobs",
+      "status": 200,
+      "title": "Find jobs · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 1440,
+      "heading": "Find meaningful work. Make your next move.",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/search-hero.webp",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/gb.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/ca.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/ae.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/sg.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/au.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/fr.svg",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": []
+    },
+    {
+      "screen": "P01",
+      "locale": "en",
+      "width": 390,
+      "path": "jobs",
+      "status": 200,
+      "title": "Find jobs · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 390,
+      "heading": "Find meaningful work. Make your next move.",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/search-hero.webp",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/gb.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/ca.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/ae.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/sg.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/au.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/fr.svg",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        }
+      ],
+      "overflow": []
+    },
+    {
+      "screen": "P02",
+      "locale": "en",
+      "width": 1440,
+      "path": "jobs/81ad95ae-3845-4f44-adba-6335ee955bc5",
+      "status": 200,
+      "title": "ISOLATED Early years caregiver · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 1440,
+      "heading": "ISOLATED Early years caregiver",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": []
+    },
+    {
+      "screen": "P02",
+      "locale": "en",
+      "width": 390,
+      "path": "jobs/81ad95ae-3845-4f44-adba-6335ee955bc5",
+      "status": 200,
+      "title": "ISOLATED Early years caregiver · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 390,
+      "heading": "ISOLATED Early years caregiver",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": [
+        {
+          "tag": "A",
+          "class": "",
+          "text": "Benefits"
+        },
+        {
+          "tag": "A",
+          "class": "",
+          "text": "International declarations"
+        }
+      ]
+    },
+    {
+      "screen": "P03",
+      "locale": "en",
+      "width": 1440,
+      "path": "sectors",
+      "status": 200,
+      "title": "Employment settings · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 1440,
+      "heading": "A world of meaningful work.",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-primary-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-nurseries.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-preschool.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-primary-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-secondary-colleges.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-international-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-education.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-pediatrics.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-maternity-neonatal.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-therapy-development.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-hospitality.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-camps-sports.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-ngo-child-welfare.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-school-operations.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-digital-learning.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-specialist.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        }
+      ],
+      "overflow": []
+    },
+    {
+      "screen": "P03",
+      "locale": "en",
+      "width": 390,
+      "path": "sectors",
+      "status": 200,
+      "title": "Employment settings · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 390,
+      "heading": "A world of meaningful work.",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-primary-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-nurseries.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-preschool.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-primary-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-secondary-colleges.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-international-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-education.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-pediatrics.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-maternity-neonatal.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-therapy-development.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-hospitality.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-camps-sports.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-ngo-child-welfare.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-school-operations.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-digital-learning.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-specialist.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": []
+    },
+    {
+      "screen": "P04",
+      "locale": "en",
+      "width": 1440,
+      "path": "sectors/households",
+      "status": 200,
+      "title": "Private households & domestic care · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 1440,
+      "heading": "Private households & domestic care",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": []
+    },
+    {
+      "screen": "P04",
+      "locale": "en",
+      "width": 390,
+      "path": "sectors/households",
+      "status": 200,
+      "title": "Private households & domestic care · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 390,
+      "heading": "Private households & domestic care",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": [
+        {
+          "tag": "A",
+          "class": "",
+          "text": "Qualifications and requirements"
+        },
+        {
+          "tag": "A",
+          "class": "",
+          "text": "Professions in this setting"
+        }
+      ]
+    },
+    {
+      "screen": "P05",
+      "locale": "en",
+      "width": 1440,
+      "path": "professions",
+      "status": 200,
+      "title": "Professions · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 1440,
+      "heading": "Different talents. Meaningful careers.",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-preschool.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-nurseries.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-preschool.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-primary-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-secondary-colleges.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-international-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-education.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-pediatrics.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-maternity-neonatal.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-therapy-development.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-hospitality.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-camps-sports.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-ngo-child-welfare.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-school-operations.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-digital-learning.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-specialist.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-camps-sports.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-school-operations.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-ngo-child-welfare.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-school-operations.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-nurseries.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-digital-learning.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-preschool.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-pediatrics.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-pediatrics.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-specialist.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-secondary-colleges.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-primary-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-international-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-therapy-development.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": [
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Pediatric clinics & hospitals"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Pediatric clinics & hospitals"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Maternity & neonatal settings"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Maternity & neonatal settings"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Therapy & developmental centers"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Therapy & developmental centers"
+        }
+      ]
+    },
+    {
+      "screen": "P05",
+      "locale": "en",
+      "width": 390,
+      "path": "professions",
+      "status": 200,
+      "title": "Professions · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 390,
+      "heading": "Different talents. Meaningful careers.",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-preschool.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-nurseries.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-preschool.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-primary-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-secondary-colleges.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-international-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-education.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-pediatrics.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-maternity-neonatal.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-therapy-development.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-hospitality.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-camps-sports.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-ngo-child-welfare.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-school-operations.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-digital-learning.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-specialist.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-camps-sports.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-school-operations.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-ngo-child-welfare.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-school-operations.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-nurseries.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-digital-learning.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-preschool.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-pediatrics.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-pediatrics.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-specialist.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-secondary-colleges.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-primary-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-international-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-therapy-development.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": [
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Kindergarten & preschool"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Kindergarten & preschool"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Primary schools"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Primary schools"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Secondary schools & colleges"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Secondary schools & colleges"
+        }
+      ]
+    },
+    {
+      "screen": "P06",
+      "locale": "en",
+      "width": 1440,
+      "path": "professions/nanny",
+      "status": 200,
+      "title": "Nanny · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 1440,
+      "heading": "Nanny",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-nurseries.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": []
+    },
+    {
+      "screen": "P06",
+      "locale": "en",
+      "width": 390,
+      "path": "professions/nanny",
+      "status": 200,
+      "title": "Nanny · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 390,
+      "heading": "Nanny",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-nurseries.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": [
+        {
+          "tag": "A",
+          "class": "",
+          "text": "Qualifications and requirements"
+        },
+        {
+          "tag": "A",
+          "class": "",
+          "text": "Work environments"
+        }
+      ]
+    },
+    {
+      "screen": "P07",
+      "locale": "en",
+      "width": 1440,
+      "path": "countries",
+      "status": 200,
+      "title": "Countries · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 1440,
+      "heading": "Countries",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/search-hero.webp",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/af.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/ax.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/al.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/dz.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/as.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/ad.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/ao.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/ai.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/aq.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/ag.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/ar.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/am.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/aw.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/au.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/at.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/az.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/bs.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/bh.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/bd.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/bb.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/by.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/be.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/bz.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/bj.svg",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": []
+    },
+    {
+      "screen": "P07",
+      "locale": "en",
+      "width": 390,
+      "path": "countries",
+      "status": 200,
+      "title": "Countries · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 390,
+      "heading": "Countries",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/search-hero.webp",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/af.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/ax.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/al.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/dz.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/as.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/ad.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/ao.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/ai.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/aq.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/ag.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/ar.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/am.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/aw.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/au.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/at.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/az.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/bs.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/bh.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/bd.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/bb.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/by.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/be.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/bz.svg",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/bj.svg",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": [
+        {
+          "tag": "A",
+          "class": "",
+          "text": "Northern America"
+        },
+        {
+          "tag": "A",
+          "class": "",
+          "text": "Latin America"
+        },
+        {
+          "tag": "A",
+          "class": "",
+          "text": "Oceania"
+        },
+        {
+          "tag": "A",
+          "class": "",
+          "text": "Other areas"
+        }
+      ]
+    },
+    {
+      "screen": "P08",
+      "locale": "en",
+      "width": 1440,
+      "path": "countries/gb",
+      "status": 200,
+      "title": "United Kingdom · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 1440,
+      "heading": "United Kingdom",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/gb.svg",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-nurseries.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-preschool.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-primary-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-secondary-colleges.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-international-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-education.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-pediatrics.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-maternity-neonatal.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-therapy-development.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-hospitality.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-camps-sports.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-ngo-child-welfare.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-school-operations.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-digital-learning.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-specialist.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": [
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Pediatric clinics & hospitals"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Pediatric clinics & hospitals"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Maternity & neonatal settings"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Maternity & neonatal settings"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Therapy & developmental centers"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Therapy & developmental centers"
+        }
+      ]
+    },
+    {
+      "screen": "P08",
+      "locale": "en",
+      "width": 390,
+      "path": "countries/gb",
+      "status": 200,
+      "title": "United Kingdom · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 390,
+      "heading": "United Kingdom",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/gb.svg",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-nurseries.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-preschool.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-primary-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-secondary-colleges.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-international-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-education.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-pediatrics.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-maternity-neonatal.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-therapy-development.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-hospitality.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-camps-sports.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-ngo-child-welfare.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-school-operations.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-digital-learning.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-specialist.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": [
+        {
+          "tag": "A",
+          "class": "",
+          "text": "Current opportunities"
+        },
+        {
+          "tag": "A",
+          "class": "",
+          "text": "Cities and regions in published opportunities"
+        },
+        {
+          "tag": "A",
+          "class": "",
+          "text": "Employers"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Kindergarten & preschool"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Kindergarten & preschool"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Primary schools"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Primary schools"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Secondary schools & colleges"
+        }
+      ]
+    },
+    {
+      "screen": "P09",
+      "locale": "en",
+      "width": 1440,
+      "path": "countries/gb/92c1b638fbcdd8ce",
+      "status": 200,
+      "title": "London · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 1440,
+      "heading": "London",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/gb.svg",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-nurseries.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-preschool.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-primary-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-secondary-colleges.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-international-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-education.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-pediatrics.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-maternity-neonatal.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-therapy-development.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-hospitality.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-camps-sports.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-ngo-child-welfare.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-school-operations.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-digital-learning.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-specialist.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": [
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Pediatric clinics & hospitals"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Pediatric clinics & hospitals"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Maternity & neonatal settings"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Maternity & neonatal settings"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Therapy & developmental centers"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Therapy & developmental centers"
+        }
+      ]
+    },
+    {
+      "screen": "P09",
+      "locale": "en",
+      "width": 390,
+      "path": "countries/gb/92c1b638fbcdd8ce",
+      "status": 200,
+      "title": "London · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 390,
+      "heading": "London",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/gb.svg",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-nurseries.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-preschool.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-primary-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-secondary-colleges.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-international-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-education.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-pediatrics.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-maternity-neonatal.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-therapy-development.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-hospitality.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-camps-sports.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-ngo-child-welfare.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-school-operations.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-digital-learning.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-specialist.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": [
+        {
+          "tag": "A",
+          "class": "",
+          "text": "Current opportunities"
+        },
+        {
+          "tag": "A",
+          "class": "",
+          "text": "Cities and regions in published opportunities"
+        },
+        {
+          "tag": "A",
+          "class": "",
+          "text": "Employers"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Kindergarten & preschool"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Kindergarten & preschool"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Primary schools"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Primary schools"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Secondary schools & colleges"
+        }
+      ]
+    },
+    {
+      "screen": "P10",
+      "locale": "en",
+      "width": 1440,
+      "path": "abroad",
+      "status": 200,
+      "title": "Careers abroad · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 1440,
+      "heading": "Careers abroad",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/search-hero.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-nurseries.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-preschool.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-primary-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-secondary-colleges.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-international-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-education.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-pediatrics.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-maternity-neonatal.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-therapy-development.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-hospitality.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-camps-sports.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-ngo-child-welfare.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-school-operations.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-digital-learning.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-specialist.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        }
+      ],
+      "overflow": [
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Pediatric clinics & hospitals"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Pediatric clinics & hospitals"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Maternity & neonatal settings"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Maternity & neonatal settings"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Therapy & developmental centers"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Therapy & developmental centers"
+        }
+      ]
+    },
+    {
+      "screen": "P10",
+      "locale": "en",
+      "width": 390,
+      "path": "abroad",
+      "status": 200,
+      "title": "Careers abroad · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 390,
+      "heading": "Careers abroad",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/search-hero.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-nurseries.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-preschool.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-primary-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-secondary-colleges.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-international-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-education.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-pediatrics.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-maternity-neonatal.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-therapy-development.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-hospitality.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-camps-sports.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-ngo-child-welfare.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-school-operations.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-digital-learning.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-specialist.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": [
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Kindergarten & preschool"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Kindergarten & preschool"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Primary schools"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Primary schools"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Secondary schools & colleges"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Secondary schools & colleges"
+        }
+      ]
+    },
+    {
+      "screen": "P11",
+      "locale": "en",
+      "width": 1440,
+      "path": "employers",
+      "status": 200,
+      "title": "Employers · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 1440,
+      "heading": "Employers",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-international-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-primary-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-pediatrics.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-hospitality.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-ngo-child-welfare.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-education.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-international-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": []
+    },
+    {
+      "screen": "P11",
+      "locale": "en",
+      "width": 390,
+      "path": "employers",
+      "status": 200,
+      "title": "Employers · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 390,
+      "heading": "Employers",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-international-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-primary-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-pediatrics.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-hospitality.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-ngo-child-welfare.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-education.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-international-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": []
+    },
+    {
+      "screen": "P12",
+      "locale": "en",
+      "width": 1440,
+      "path": "employers/30000000-0000-4000-8000-000000000005",
+      "status": 200,
+      "title": "ISOLATED international early years institution · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 1440,
+      "heading": "ISOLATED international early years institution",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/ca.svg",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": []
+    },
+    {
+      "screen": "P12",
+      "locale": "en",
+      "width": 390,
+      "path": "employers/30000000-0000-4000-8000-000000000005",
+      "status": 200,
+      "title": "ISOLATED international early years institution · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 390,
+      "heading": "ISOLATED international early years institution",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/angelcare-marketplace/visitor-country/flags/ca.svg",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": [
+        {
+          "tag": "A",
+          "class": "",
+          "text": "Published hiring locations"
+        }
+      ]
+    },
+    {
+      "screen": "P13",
+      "locale": "en",
+      "width": 1440,
+      "path": "salaries",
+      "status": 200,
+      "title": "Compensation · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 1440,
+      "heading": "Compensation",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-secondary-colleges.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": []
+    },
+    {
+      "screen": "P13",
+      "locale": "en",
+      "width": 390,
+      "path": "salaries",
+      "status": 200,
+      "title": "Compensation · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 390,
+      "heading": "Compensation",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-secondary-colleges.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": []
+    },
+    {
+      "screen": "P14",
+      "locale": "en",
+      "width": 1440,
+      "path": "reviews",
+      "status": 200,
+      "title": "Workplace reviews · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 1440,
+      "heading": "Workplace reviews",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-preschool.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": []
+    },
+    {
+      "screen": "P14",
+      "locale": "en",
+      "width": 390,
+      "path": "reviews",
+      "status": 200,
+      "title": "Workplace reviews · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 390,
+      "heading": "Workplace reviews",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-preschool.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        }
+      ],
+      "overflow": []
+    },
+    {
+      "screen": "P15",
+      "locale": "en",
+      "width": 1440,
+      "path": "resources",
+      "status": 200,
+      "title": "Career resources · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 1440,
+      "heading": "Learn with purpose. Move with confidence.",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-digital-learning.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-nurseries.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-preschool.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-primary-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-secondary-colleges.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-international-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-education.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-pediatrics.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-maternity-neonatal.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-therapy-development.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-hospitality.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-camps-sports.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-ngo-child-welfare.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-school-operations.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-digital-learning.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-specialist.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": [
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Pediatric clinics & hospitals"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Pediatric clinics & hospitals"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Maternity & neonatal settings"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Maternity & neonatal settings"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Therapy & developmental centers"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Therapy & developmental centers"
+        }
+      ]
+    },
+    {
+      "screen": "P15",
+      "locale": "en",
+      "width": 390,
+      "path": "resources",
+      "status": 200,
+      "title": "Career resources · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 390,
+      "heading": "Learn with purpose. Move with confidence.",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-digital-learning.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-nurseries.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-preschool.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-primary-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-secondary-colleges.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-international-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-education.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-pediatrics.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-maternity-neonatal.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-therapy-development.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-hospitality.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-camps-sports.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-ngo-child-welfare.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-school-operations.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-digital-learning.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-specialist.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": [
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Kindergarten & preschool"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Kindergarten & preschool"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Primary schools"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Primary schools"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Secondary schools & colleges"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Secondary schools & colleges"
+        }
+      ]
+    },
+    {
+      "screen": "P16",
+      "locale": "en",
+      "width": 1440,
+      "path": "resources/prepare-for-your-interview",
+      "status": 200,
+      "title": "Prepare for your next professional interview · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 1440,
+      "heading": "Prepare for your next professional interview",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": []
+    },
+    {
+      "screen": "P16",
+      "locale": "en",
+      "width": 390,
+      "path": "resources/prepare-for-your-interview",
+      "status": 200,
+      "title": "Prepare for your next professional interview · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 390,
+      "heading": "Prepare for your next professional interview",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": []
+    },
+    {
+      "screen": "P17",
+      "locale": "en",
+      "width": 1440,
+      "path": "for-jobseekers",
+      "status": 200,
+      "title": "For jobseekers · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 1440,
+      "heading": "For jobseekers",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/home-hero.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-nurseries.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-preschool.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-primary-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-secondary-colleges.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-international-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-education.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-pediatrics.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-maternity-neonatal.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-therapy-development.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-hospitality.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-camps-sports.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-ngo-child-welfare.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-school-operations.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-digital-learning.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-specialist.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": [
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Pediatric clinics & hospitals"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Pediatric clinics & hospitals"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Maternity & neonatal settings"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Maternity & neonatal settings"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Therapy & developmental centers"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Therapy & developmental centers"
+        }
+      ]
+    },
+    {
+      "screen": "P17",
+      "locale": "en",
+      "width": 390,
+      "path": "for-jobseekers",
+      "status": 200,
+      "title": "For jobseekers · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 390,
+      "heading": "For jobseekers",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/home-hero.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-nurseries.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-preschool.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-primary-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-secondary-colleges.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-international-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-education.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-pediatrics.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-maternity-neonatal.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-therapy-development.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-hospitality.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-camps-sports.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-ngo-child-welfare.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-school-operations.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-digital-learning.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-specialist.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": [
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Kindergarten & preschool"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Kindergarten & preschool"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Primary schools"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Primary schools"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Secondary schools & colleges"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Secondary schools & colleges"
+        }
+      ]
+    },
+    {
+      "screen": "P18",
+      "locale": "en",
+      "width": 1440,
+      "path": "for-employers",
+      "status": 200,
+      "title": "For employers · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 1440,
+      "heading": "For employers",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-nurseries.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-nurseries.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-preschool.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-primary-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-secondary-colleges.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-international-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-education.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-pediatrics.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-maternity-neonatal.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-therapy-development.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-hospitality.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-camps-sports.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-ngo-child-welfare.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-school-operations.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-digital-learning.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-specialist.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-nurseries.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-preschool.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-primary-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-secondary-colleges.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-international-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-education.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-pediatrics.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-maternity-neonatal.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-therapy-development.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-hospitality.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-camps-sports.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-ngo-child-welfare.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-school-operations.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-digital-learning.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-specialist.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": [
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Pediatric clinics & hospitals"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Pediatric clinics & hospitals"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Maternity & neonatal settings"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Maternity & neonatal settings"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Therapy & developmental centers"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Therapy & developmental centers"
+        }
+      ]
+    },
+    {
+      "screen": "P18",
+      "locale": "en",
+      "width": 390,
+      "path": "for-employers",
+      "status": 200,
+      "title": "For employers · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 390,
+      "heading": "For employers",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-nurseries.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-nurseries.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-preschool.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-primary-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-secondary-colleges.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-international-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-education.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-pediatrics.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-maternity-neonatal.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-therapy-development.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-hospitality.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-camps-sports.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-ngo-child-welfare.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-school-operations.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-digital-learning.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-specialist.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-nurseries.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-preschool.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-primary-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-secondary-colleges.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-international-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-education.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-pediatrics.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-maternity-neonatal.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-therapy-development.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-hospitality.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-camps-sports.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-ngo-child-welfare.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-school-operations.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-digital-learning.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-specialist.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": [
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Kindergarten & preschool"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Kindergarten & preschool"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Primary schools"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Primary schools"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Secondary schools & colleges"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Secondary schools & colleges"
+        }
+      ]
+    },
+    {
+      "screen": "P19",
+      "locale": "en",
+      "width": 1440,
+      "path": "how-it-works",
+      "status": 200,
+      "title": "How JOBKIX works · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 1440,
+      "heading": "How JOBKIX works",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-ngo-child-welfare.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-nurseries.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-nurseries.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-preschool.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-primary-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-secondary-colleges.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-international-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-education.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-pediatrics.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-maternity-neonatal.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-therapy-development.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-hospitality.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-camps-sports.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-ngo-child-welfare.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-school-operations.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-digital-learning.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-specialist.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": [
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Pediatric clinics & hospitals"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Pediatric clinics & hospitals"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Maternity & neonatal settings"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Maternity & neonatal settings"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Therapy & developmental centers"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Therapy & developmental centers"
+        }
+      ]
+    },
+    {
+      "screen": "P19",
+      "locale": "en",
+      "width": 390,
+      "path": "how-it-works",
+      "status": 200,
+      "title": "How JOBKIX works · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 390,
+      "heading": "How JOBKIX works",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-ngo-child-welfare.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-nurseries.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-nurseries.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-preschool.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-primary-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-secondary-colleges.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-international-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-education.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-pediatrics.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-maternity-neonatal.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-therapy-development.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-hospitality.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-camps-sports.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-ngo-child-welfare.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-school-operations.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-digital-learning.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-specialist.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": [
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Kindergarten & preschool"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Kindergarten & preschool"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Primary schools"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Primary schools"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Secondary schools & colleges"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Secondary schools & colleges"
+        }
+      ]
+    },
+    {
+      "screen": "P20",
+      "locale": "en",
+      "width": 1440,
+      "path": "trust",
+      "status": 200,
+      "title": "Trust and safety — isolated fixture · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 1440,
+      "heading": "Trust & safety",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-specialist.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": []
+    },
+    {
+      "screen": "P20",
+      "locale": "en",
+      "width": 390,
+      "path": "trust",
+      "status": 200,
+      "title": "Trust and safety — isolated fixture · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 390,
+      "heading": "Trust & safety",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-specialist.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        }
+      ],
+      "overflow": []
+    },
+    {
+      "screen": "P21",
+      "locale": "en",
+      "width": 1440,
+      "path": "help",
+      "status": 200,
+      "title": "Help & support · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 1440,
+      "heading": "Help & support",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-digital-learning.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": []
+    },
+    {
+      "screen": "P21",
+      "locale": "en",
+      "width": 390,
+      "path": "help",
+      "status": 200,
+      "title": "Help & support · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 390,
+      "heading": "Help & support",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-digital-learning.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": []
+    },
+    {
+      "screen": "P22",
+      "locale": "en",
+      "width": 1440,
+      "path": "help/getting-started",
+      "status": 200,
+      "title": "Getting started with your career search · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 1440,
+      "heading": "Getting started with your career search",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": []
+    },
+    {
+      "screen": "P22",
+      "locale": "en",
+      "width": 390,
+      "path": "help/getting-started",
+      "status": 200,
+      "title": "Getting started with your career search · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 390,
+      "heading": "Getting started with your career search",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": []
+    },
+    {
+      "screen": "P23",
+      "locale": "en",
+      "width": 1440,
+      "path": "contact",
+      "status": 200,
+      "title": "Contact and assistance — isolated fixture · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 1440,
+      "heading": "Contact & assistance",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-digital-learning.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": []
+    },
+    {
+      "screen": "P23",
+      "locale": "en",
+      "width": 390,
+      "path": "contact",
+      "status": 200,
+      "title": "Contact and assistance — isolated fixture · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 390,
+      "heading": "Contact & assistance",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-digital-learning.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": []
+    },
+    {
+      "screen": "P24",
+      "locale": "en",
+      "width": 1440,
+      "path": "about",
+      "status": 200,
+      "title": "About JOBKIX — isolated fixture · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 1440,
+      "heading": "About JOBKIX",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-ngo-child-welfare.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-nurseries.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-preschool.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-primary-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-secondary-colleges.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-international-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-education.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-pediatrics.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-maternity-neonatal.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-therapy-development.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-hospitality.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-camps-sports.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-ngo-child-welfare.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-school-operations.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-digital-learning.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-specialist.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": [
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Pediatric clinics & hospitals"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Pediatric clinics & hospitals"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Maternity & neonatal settings"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Maternity & neonatal settings"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Therapy & developmental centers"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Therapy & developmental centers"
+        }
+      ]
+    },
+    {
+      "screen": "P24",
+      "locale": "en",
+      "width": 390,
+      "path": "about",
+      "status": 200,
+      "title": "About JOBKIX — isolated fixture · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 390,
+      "heading": "About JOBKIX",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-ngo-child-welfare.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-households.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-nurseries.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-preschool.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-primary-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-secondary-colleges.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-international-schools.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-education.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-pediatrics.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-maternity-neonatal.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-therapy-development.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-hospitality.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-camps-sports.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-ngo-child-welfare.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-school-operations.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-digital-learning.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-public-specialist.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        }
+      ],
+      "overflow": [
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Kindergarten & preschool"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Kindergarten & preschool"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Primary schools"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Primary schools"
+        },
+        {
+          "tag": "A",
+          "class": "jobkix_worldTile__GzWNd",
+          "text": "Secondary schools & colleges"
+        },
+        {
+          "tag": "PICTURE",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "IMG",
+          "class": "",
+          "text": ""
+        },
+        {
+          "tag": "STRONG",
+          "class": "",
+          "text": "Secondary schools & colleges"
+        }
+      ]
+    },
+    {
+      "screen": "P25",
+      "locale": "en",
+      "width": 1440,
+      "path": "report",
+      "status": 200,
+      "title": "Report a problem · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 1440,
+      "heading": "Report a problem",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-therapy-development.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        }
+      ],
+      "overflow": []
+    },
+    {
+      "screen": "P25",
+      "locale": "en",
+      "width": 390,
+      "path": "report",
+      "status": 200,
+      "title": "Report a problem · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 390,
+      "heading": "Report a problem",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/editorial/setting-therapy-development.webp",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        }
+      ],
+      "overflow": []
+    },
+    {
+      "screen": "P26",
+      "locale": "en",
+      "width": 1440,
+      "path": "legal",
+      "status": 200,
+      "title": "Legal & policies · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 1440,
+      "heading": "Legal & policies",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        }
+      ],
+      "overflow": []
+    },
+    {
+      "screen": "P26",
+      "locale": "en",
+      "width": 390,
+      "path": "legal",
+      "status": 200,
+      "title": "Legal & policies · JOBKIX",
+      "lang": "en",
+      "dir": "ltr",
+      "scrollWidth": 390,
+      "heading": "Legal & policies",
+      "images": [
+        {
+          "src": "/jobkix/brand/jobkix-logo-color.png",
+          "loaded": true
+        },
+        {
+          "src": "/jobkix/brand/jobkix-logo-white.png",
+          "loaded": true
+        }
+      ],
+      "icons": [
+        {
+          "rel": "icon",
+          "url": "/favicon.ico?603d046c9a6fdfbb"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-16.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        },
+        {
+          "rel": "icon",
+          "url": "/jobkix/brand/jobkix-favicon-48.png"
+        },
+        {
+          "rel": "apple-touch-icon",
+          "url": "/jobkix/brand/jobkix-icon-180.png"
+        },
+        {
+          "rel": "shortcut icon",
+          "url": "/jobkix/brand/jobkix-favicon-32.png"
+        }
+      ],
+      "overflow": []
+    }
+  ],
+  "errors": [
+    "Invalid or unexpected token",
+    "Invalid or unexpected token",
+    "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML ta",
+    "Invalid or unexpected token",
+    "Invalid or unexpected token",
+    "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+    "Invalid or unexpected token",
+    "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML ta"
+  ],
+  "limitation": "No hosted Auth/storage/email or production certification. Screenshot existence does not mean per-front visual acceptance."
+}

@@ -1,0 +1,202 @@
+{
+  "originals": [
+    {
+      "path": "/Users/user/Downloads/logo jobkix.png",
+      "filename": "logo jobkix.png",
+      "preservedPath": "docs/jobkix/references/brand/jobkix-original-color.png",
+      "sha256": "0240d84ff2a4a3e5a94f3fd697fdf37df864edeb2c237441f44aea2bb04334bd",
+      "bytes": 1099311,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "hasAlpha": false,
+      "role": "Approved user-supplied full-color logo",
+      "source": "User-designated originals in Downloads; located and visually inspected 2026-10-21",
+      "rights": "Supplied by user as official JOBKIX brand authority; no third-party rights verification claimed.",
+      "interpretation": "Originals retained unchanged. No redraw or alternate mark is authorized."
+    },
+    {
+      "path": "/Users/user/Downloads/logo jobkix reverted white.png",
+      "filename": "logo jobkix reverted white.png",
+      "preservedPath": "docs/jobkix/references/brand/jobkix-original-white.png",
+      "sha256": "95ca2f9849e53538f035a4bf3be6ba8af3a83b145d07628b5d647bcae4a05152",
+      "bytes": 1238448,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "hasAlpha": false,
+      "role": "Approved user-supplied reversed logo; opaque navy background must be removed",
+      "source": "User-designated originals in Downloads; located and visually inspected 2026-10-21",
+      "rights": "Supplied by user as official JOBKIX brand authority; no third-party rights verification claimed.",
+      "interpretation": "Originals retained unchanged. No redraw or alternate mark is authorized."
+    },
+    {
+      "path": "/Users/user/Downloads/favicon browser.png",
+      "filename": "favicon browser.png",
+      "preservedPath": "docs/jobkix/references/brand/jobkix-original-favicon.png",
+      "sha256": "dba7efc5f9fa913cab23ac85f25d9924e1501d2d07772499fc22ff44c367415d",
+      "bytes": 1135716,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "hasAlpha": false,
+      "role": "Approved user-supplied JOBKIX browser/application icon",
+      "source": "User-designated originals in Downloads; located and visually inspected 2026-10-21",
+      "rights": "Supplied by user as official JOBKIX brand authority; no third-party rights verification claimed.",
+      "interpretation": "Originals retained unchanged. No redraw or alternate mark is authorized."
+    }
+  ],
+  "derivatives": [
+    {
+      "path": "public/jobkix/brand/jobkix-logo-color.png",
+      "source": "docs/jobkix/references/brand/jobkix-original-color.png",
+      "sourceSha256": "0240d84ff2a4a3e5a94f3fd697fdf37df864edeb2c237441f44aea2bb04334bd",
+      "sha256": "4df0fe23ca35bd481b46a7bf69c82d9d687dbf6187293c142fbf8b8065ab6035",
+      "bytes": 281621,
+      "width": 1349,
+      "height": 518,
+      "hasAlpha": true,
+      "method": "Deterministic foreground/edge matting against row-wise sampled original background; no redraw, mirroring, recoloring or geometric transform",
+      "crop": {
+        "left": 83,
+        "top": 235,
+        "width": 1349,
+        "height": 518
+      },
+      "opaqueSourcePixelsPreserved": 237031,
+      "edgePixels": 13096,
+      "usage": "JOBKIX header and compact Marketplace brand shortcut"
+    },
+    {
+      "path": "public/jobkix/brand/jobkix-logo-white.png",
+      "source": "docs/jobkix/references/brand/jobkix-original-white.png",
+      "sourceSha256": "95ca2f9849e53538f035a4bf3be6ba8af3a83b145d07628b5d647bcae4a05152",
+      "sha256": "87c5aa720684f59955d3480cc261cece9cac8040461e84b56dc561a9abae56cc",
+      "bytes": 233530,
+      "width": 1347,
+      "height": 515,
+      "hasAlpha": true,
+      "method": "Deterministic foreground/edge matting against row-wise sampled original background; no redraw, mirroring, recoloring or geometric transform",
+      "crop": {
+        "left": 89,
+        "top": 237,
+        "width": 1347,
+        "height": 515
+      },
+      "opaqueSourcePixelsPreserved": 237301,
+      "edgePixels": 11084,
+      "usage": "Dark JOBKIX footer only"
+    },
+    {
+      "path": "public/jobkix/brand/jobkix-favicon-16.png",
+      "source": "docs/jobkix/references/brand/jobkix-original-favicon.png",
+      "sourceSha256": "dba7efc5f9fa913cab23ac85f25d9924e1501d2d07772499fc22ff44c367415d",
+      "sha256": "c5a1877fc98f55745fa39afd51747990dedb6e39d736ba7d5a8a87a6d34c19d2",
+      "bytes": 668,
+      "width": 16,
+      "height": 16,
+      "hasAlpha": false,
+      "method": "Proportional Lanczos resize of complete square original; no redraw",
+      "usage": "JOBKIX namespace only"
+    },
+    {
+      "path": "public/jobkix/brand/jobkix-favicon-32.png",
+      "source": "docs/jobkix/references/brand/jobkix-original-favicon.png",
+      "sourceSha256": "dba7efc5f9fa913cab23ac85f25d9924e1501d2d07772499fc22ff44c367415d",
+      "sha256": "b6a2e7782b14aa02afefa2294979b0215a7ab85c25b56ad373f49a77be0f3b33",
+      "bytes": 1559,
+      "width": 32,
+      "height": 32,
+      "hasAlpha": false,
+      "method": "Proportional Lanczos resize of complete square original; no redraw",
+      "usage": "JOBKIX namespace only"
+    },
+    {
+      "path": "public/jobkix/brand/jobkix-favicon-48.png",
+      "source": "docs/jobkix/references/brand/jobkix-original-favicon.png",
+      "sourceSha256": "dba7efc5f9fa913cab23ac85f25d9924e1501d2d07772499fc22ff44c367415d",
+      "sha256": "c567ad34ca26b9db74903f40045a750de2528813688d3d8f8d8f1c03e3f812bb",
+      "bytes": 2764,
+      "width": 48,
+      "height": 48,
+      "hasAlpha": false,
+      "method": "Proportional Lanczos resize of complete square original; no redraw",
+      "usage": "JOBKIX namespace only"
+    },
+    {
+      "path": "public/jobkix/brand/jobkix-icon-180.png",
+      "source": "docs/jobkix/references/brand/jobkix-original-favicon.png",
+      "sourceSha256": "dba7efc5f9fa913cab23ac85f25d9924e1501d2d07772499fc22ff44c367415d",
+      "sha256": "eafef64938dd6fbe1d6da94dd12c76a8b121b1360c31d5b505f3e09d6abc1280",
+      "bytes": 18805,
+      "width": 180,
+      "height": 180,
+      "hasAlpha": false,
+      "method": "Proportional Lanczos resize of complete square original; no redraw",
+      "usage": "JOBKIX namespace only"
+    },
+    {
+      "path": "public/jobkix/brand/jobkix-icon-192.png",
+      "source": "docs/jobkix/references/brand/jobkix-original-favicon.png",
+      "sourceSha256": "dba7efc5f9fa913cab23ac85f25d9924e1501d2d07772499fc22ff44c367415d",
+      "sha256": "93c0112009809abf985b4cdece0ef76c6a75006720a5203fe22c2be0b03c9305",
+      "bytes": 20754,
+      "width": 192,
+      "height": 192,
+      "hasAlpha": false,
+      "method": "Proportional Lanczos resize of complete square original; no redraw",
+      "usage": "JOBKIX namespace only"
+    },
+    {
+      "path": "public/jobkix/brand/jobkix-icon-512.png",
+      "source": "docs/jobkix/references/brand/jobkix-original-favicon.png",
+      "sourceSha256": "dba7efc5f9fa913cab23ac85f25d9924e1501d2d07772499fc22ff44c367415d",
+      "sha256": "c6bf12eb521dfae7974f1ff393164b67cce2c29e3ce5195036d8118e45ff8a96",
+      "bytes": 175274,
+      "width": 512,
+      "height": 512,
+      "hasAlpha": false,
+      "method": "Proportional Lanczos resize of complete square original; no redraw",
+      "usage": "JOBKIX namespace only"
+    }
+  ],
+  "integration": "SOURCE_INTEGRATED_PARTIAL_BROWSER_VERIFIED",
+  "faviconBoundary": "JOBKIX namespace only; all other world icons preserved",
+  "processing": {
+    "approvedByUser": "Deterministic pixel-based background removal, preserving the original logo geometry",
+    "rejectedAttempts": "Two image-generation extractions were rejected for visible glow/blotches. Neither is shipped.",
+    "visualReview": "Originals and derived color-on-white and white-on-dark PNG views individually inspected. Tagline, contours, holes and accents retained. This is asset review, not rendered application acceptance."
+  },
+  "protectedSources": [
+    {
+      "path": "app/favicon.ico",
+      "sha256": "2b8ad2d33455a8f736fc3a8ebf8f0bdea8848ad4c0db48a2833bd0f9cd775932"
+    },
+    {
+      "path": "angelcare-marketplace/kidflix/MarketplaceEntry.tsx",
+      "sha256": "986fad0428498681081d7244513eb34f7e8126f17c9cb0de38833c7e81b230e6"
+    },
+    {
+      "path": "angelcare-marketplace/kidflix/marketplace-entry.module.css",
+      "sha256": "8e6d9ee2d1c8e1d094492f11d7c1e498633ebaf0b26245a13bce62874e943aea"
+    },
+    {
+      "path": "angelcare-marketplace/public-experience-authority/storefront-navigation.ts",
+      "sha256": "8b6448272f6ac14bc0ab71da7507918b842d9cfa6aa2ad8f806f95029b250f53"
+    }
+  ],
+  "evidence": [
+    "docs/jobkix/evidence/brand-color-on-white.png",
+    "docs/jobkix/evidence/brand-white-on-dark.png",
+    "docs/jobkix/evidence/browser/navigation.json"
+  ],
+  "browserEvidence": {
+    "report": "docs/jobkix/evidence/browser/navigation.json",
+    "checks": 16,
+    "scope": "Seven native language changes retain context; Arabic P00 reflow at six widths; actual Arabic Marketplace link physically right of KidFlix; entry/back restores original icon descriptors and document attributes; unhydrated credential form safety.",
+    "limitation": "No browser-chrome favicon painting, full world-by-world regression or complete visual acceptance claim."
+  }
+}

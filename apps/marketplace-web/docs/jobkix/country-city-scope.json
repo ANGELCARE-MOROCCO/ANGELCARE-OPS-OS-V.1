@@ -1,0 +1,527 @@
+{
+  "recordedAt": "2026-10-21T23:50:42.473452+00:00",
+  "screenIds": [
+    "P08",
+    "P09"
+  ],
+  "relatedRegression": [
+    "P07",
+    "P10"
+  ],
+  "references": [
+    "docs/jobkix/references/P08.png",
+    "docs/jobkix/references/P09.png"
+  ],
+  "blueprintPagesInspected": [
+    6,
+    16,
+    17
+  ],
+  "fidelityDecisions": [
+    "Only native current vacancy/employer/city records supply facts.",
+    "No sample map pins, neighbourhood statistics, commuter claims, unrelated sectors, endorsements or visas are copied as facts.",
+    "Preserve reviewed custom media first; packaged Toronto/London images describe actual locations and match only their country or the exact named city."
+  ],
+  "files": [
+    {
+      "path": "angelcare-marketplace/jobkix/pages/Geography.tsx",
+      "sha256Before": "80af518e2dd84a73892e21969b8900fb00e39606b81af714ee77aa0bd93e5bd5",
+      "intendedChange": "Improve P08/P09 hierarchy with destination identity, native geographic summary, image-led city discovery, contextual settings/professions/employers and truthful empty/error recovery; preserve P07/P10 authorities.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        25,
+        26,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing country detection/codes/flags, native recruitment eligibility and records, operator-selected media, reviewed publication/version/language protection and all other product worlds remain intact."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/components/Public.tsx",
+      "sha256Before": "f4394fe695f22d9c8ac9bb93c23df1d266d46801f9883bfca12df0a746381dc9",
+      "intendedChange": "Add optional native query context to existing SettingTiles links; unchanged default behavior for all other callers.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        25,
+        26,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing country detection/codes/flags, native recruitment eligibility and records, operator-selected media, reviewed publication/version/language protection and all other product worlds remain intact."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/components/Discovery.tsx",
+      "sha256Before": "89e8257d09ec0cb6b896b4eec0d730c303036054ff40e009beb1c8da840bdc77",
+      "intendedChange": "Add optional context to existing related taxonomy and two-sided journey links, preserving default callers and native destinations.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        25,
+        26,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing country detection/codes/flags, native recruitment eligibility and records, operator-selected media, reviewed publication/version/language protection and all other product worlds remain intact."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/geography-copy.ts",
+      "sha256Before": "776dc3abdae416222449c7afa028e4c7ad9eee2241b2a3e84daa050daca7ed5a",
+      "intendedChange": "Complete seven-language geography opening, navigation, summaries, empty/error and factual image descriptions.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        25,
+        26,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing country detection/codes/flags, native recruitment eligibility and records, operator-selected media, reviewed publication/version/language protection and all other product worlds remain intact."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/geographic-scenes.ts",
+      "sha256Before": "NEW",
+      "intendedChange": "Match registered location scenes only to actual country and canonical city names, preserve operator-selected opening media first.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        25,
+        26,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing country detection/codes/flags, native recruitment eligibility and records, operator-selected media, reviewed publication/version/language protection and all other product worlds remain intact."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/editorial-assets.ts",
+      "sha256Before": "0d3e1be6549766a320b69a66fdf12efa55a5d6d8861f2dcce3ed021a9ebd4eb8",
+      "intendedChange": "Register two legitimate destination compositions in the existing packaged-editorial choices.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        25,
+        26,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing country detection/codes/flags, native recruitment eligibility and records, operator-selected media, reviewed publication/version/language protection and all other product worlds remain intact."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/migrations/028_packaged_editorial_scenes.sql",
+      "sha256Before": "NEW",
+      "intendedChange": "Additively align existing SQL media validation with the new location scenes and the already shipped cook composition; preserve all safety, reviewed hash and permission behavior.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        25,
+        26,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing country detection/codes/flags, native recruitment eligibility and records, operator-selected media, reviewed publication/version/language protection and all other product worlds remain intact."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/jobkix.module.css",
+      "sha256Before": "4f774214f40d189c0158b707cfdc6615c98ac9ed0651df14dad5d3ad397acf0d",
+      "intendedChange": "Owned country/city hierarchy, image crops, clear command composition, dense settings grid, responsive/RTL logical spacing and focus.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        25,
+        26,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing country detection/codes/flags, native recruitment eligibility and records, operator-selected media, reviewed publication/version/language protection and all other product worlds remain intact."
+    },
+    {
+      "path": "docs/jobkix/asset-register.json",
+      "sha256Before": "7fd2e1401554e976437248134092ebfb21dd3d1c31f2103cf7a66f177ecca92c",
+      "intendedChange": "Record actual source photographs, licenses, geography purpose, source hashes/dimensions, derivative processing and visual inspections; never identify them as JOBKIX employers.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        25,
+        26,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing country detection/codes/flags, native recruitment eligibility and records, operator-selected media, reviewed publication/version/language protection and all other product worlds remain intact."
+    },
+    {
+      "path": "scripts/jobkix/check-assets.cjs",
+      "sha256Before": "1587117ee0adb2d155c575318074357594bcb2b8de9b3b8778cd2a667d665b35",
+      "intendedChange": "Keep existing generated-art checks and separately verify human-photograph source files, hashes, license authority and processing instructions.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        25,
+        26,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing country detection/codes/flags, native recruitment eligibility and records, operator-selected media, reviewed publication/version/language protection and all other product worlds remain intact."
+    },
+    {
+      "path": "scripts/jobkix/domain.test.cjs",
+      "sha256Before": "4cec7897e0d3e23282d50141c5b9c97770e4c2cf14569ee371c1d37e12516d08",
+      "intendedChange": "Test exact country/city asset mapping and localized interpolation/context without fabricated geographic assertions.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        25,
+        26,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing country detection/codes/flags, native recruitment eligibility and records, operator-selected media, reviewed publication/version/language protection and all other product worlds remain intact."
+    },
+    {
+      "path": "scripts/jobkix/editorial-scenes.test.cjs",
+      "sha256Before": "NEW",
+      "intendedChange": "Execute isolated SQL save/read/review protection for every actual registered scene and unsafe/unknown inputs.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        25,
+        26,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing country detection/codes/flags, native recruitment eligibility and records, operator-selected media, reviewed publication/version/language protection and all other product worlds remain intact."
+    },
+    {
+      "path": "scripts/jobkix/geographic-worlds.cjs",
+      "sha256Before": "NEW",
+      "intendedChange": "Actual native country/city search/filter/context/error and mobile/RTL rendered checks with loaded images.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        25,
+        26,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing country detection/codes/flags, native recruitment eligibility and records, operator-selected media, reviewed publication/version/language protection and all other product worlds remain intact."
+    },
+    {
+      "path": "scripts/jobkix/geography.cjs",
+      "sha256Before": "52eb561026b7db7fd9fcd2747296bd1c1f2adfa895ab18c5bae255bbd4e528c4",
+      "intendedChange": "Update the exact expected localized country-world title after the intentional visual opening change; preserve native behavior assertions.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        25,
+        26,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing country detection/codes/flags, native recruitment eligibility and records, operator-selected media, reviewed publication/version/language protection and all other product worlds remain intact."
+    },
+    {
+      "path": "scripts/jobkix/capture-evidence.cjs",
+      "sha256Before": "f28df59c46c56078874f49e0944c94bed14a1f36390a591b1dd7eaae345f6549",
+      "intendedChange": "Include native packaged-editorial save/read SQL evidence in the scoped gate.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        25,
+        26,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing country detection/codes/flags, native recruitment eligibility and records, operator-selected media, reviewed publication/version/language protection and all other product worlds remain intact."
+    },
+    {
+      "path": "scripts/jobkix/checkpoint-progress.cjs",
+      "sha256Before": "dd53be6b2120c5f0320c6ef3a4a68f9a106fbe0ac8668d3a20fc5b1911f676a2",
+      "intendedChange": "Retain geographic-world evidence and explicit external blocked-check counts in checkpoints.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        25,
+        26,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing country detection/codes/flags, native recruitment eligibility and records, operator-selected media, reviewed publication/version/language protection and all other product worlds remain intact."
+    },
+    {
+      "path": "docs/jobkix/geography-source/toronto-374759.jpeg",
+      "sha256Before": "NEW",
+      "intendedChange": "Preserve licensed Burst/Pexels Toronto original, unchanged.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        25,
+        26,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing country detection/codes/flags, native recruitment eligibility and records, operator-selected media, reviewed publication/version/language protection and all other product worlds remain intact."
+    },
+    {
+      "path": "docs/jobkix/geography-source/london-460672.jpeg",
+      "sha256Before": "NEW",
+      "intendedChange": "Preserve licensed Pixabay/Pexels London original, unchanged.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        25,
+        26,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing country detection/codes/flags, native recruitment eligibility and records, operator-selected media, reviewed publication/version/language protection and all other product worlds remain intact."
+    },
+    {
+      "path": "docs/jobkix/geography-source/PHOTOGRAPH_RIGHTS.md",
+      "sha256Before": "NEW",
+      "intendedChange": "Actual source URLs, photographer/provider attribution and verified Pexels license; no endorsement or worldwide-compliance claims.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        25,
+        26,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing country detection/codes/flags, native recruitment eligibility and records, operator-selected media, reviewed publication/version/language protection and all other product worlds remain intact."
+    },
+    {
+      "path": "docs/jobkix/asset-prompts/destination-toronto.txt",
+      "sha256Before": "NEW",
+      "intendedChange": "Deterministic derivative processing instructions for the real photograph; explicitly not an AI generation prompt.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        25,
+        26,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing country detection/codes/flags, native recruitment eligibility and records, operator-selected media, reviewed publication/version/language protection and all other product worlds remain intact."
+    },
+    {
+      "path": "docs/jobkix/asset-prompts/destination-london.txt",
+      "sha256Before": "NEW",
+      "intendedChange": "Deterministic derivative processing instructions for the real photograph; explicitly not an AI generation prompt.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        25,
+        26,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing country detection/codes/flags, native recruitment eligibility and records, operator-selected media, reviewed publication/version/language protection and all other product worlds remain intact."
+    },
+    {
+      "path": "public/jobkix/editorial/destination-toronto.webp",
+      "sha256Before": "NEW",
+      "intendedChange": "Optimized, self-contained licensed editorial location photograph derivative; preserve real subject and source geometry.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        25,
+        26,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing country detection/codes/flags, native recruitment eligibility and records, operator-selected media, reviewed publication/version/language protection and all other product worlds remain intact."
+    },
+    {
+      "path": "public/jobkix/editorial/destination-toronto-mobile.webp",
+      "sha256Before": "NEW",
+      "intendedChange": "Optimized, self-contained licensed editorial location photograph derivative; preserve real subject and source geometry.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        25,
+        26,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing country detection/codes/flags, native recruitment eligibility and records, operator-selected media, reviewed publication/version/language protection and all other product worlds remain intact."
+    },
+    {
+      "path": "public/jobkix/editorial/destination-london.webp",
+      "sha256Before": "NEW",
+      "intendedChange": "Optimized, self-contained licensed editorial location photograph derivative; preserve real subject and source geometry.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        25,
+        26,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing country detection/codes/flags, native recruitment eligibility and records, operator-selected media, reviewed publication/version/language protection and all other product worlds remain intact."
+    },
+    {
+      "path": "public/jobkix/editorial/destination-london-mobile.webp",
+      "sha256Before": "NEW",
+      "intendedChange": "Optimized, self-contained licensed editorial location photograph derivative; preserve real subject and source geometry.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        25,
+        26,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing country detection/codes/flags, native recruitment eligibility and records, operator-selected media, reviewed publication/version/language protection and all other product worlds remain intact."
+    }
+  ]
+}

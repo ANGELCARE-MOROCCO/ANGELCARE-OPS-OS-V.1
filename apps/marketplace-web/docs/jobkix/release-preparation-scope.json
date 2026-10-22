@@ -1,0 +1,72 @@
+{
+  "recordedAt": "2026-10-22T02:14:24.431151+00:00",
+  "userAmendment": "Complete basic/necessary source preparation; email and external-service verification on standby; prepare release. No claim of full original contract acceptance.",
+  "files": [
+    {
+      "path": "scripts/jobkix/installer/install.mjs",
+      "before": "d8527d048d1ea3a66d3818a9663d0bb1a4be6052d7a7ffe2e1bcb8ec3369d4f8",
+      "intendedChange": "Allow only the two explicitly approved KidFlix CSS repair paths in the guarded source installer.",
+      "requirements": [
+        "USER_AMENDMENT_RELEASE_PREPARATION_20261022",
+        "REQ-31",
+        "REQ-32"
+      ],
+      "protectedBehavior": "No runtime/auth/permissions/data/publication, dependency, Git, build, production SQL or deployment changes."
+    },
+    {
+      "path": "scripts/jobkix/installer.test.mjs",
+      "before": "5ccb5e91dcc04e1baa552a215a0ba28d2f30aeace2d9b905a7c503ee2350d1bd",
+      "intendedChange": "Verify both approved exact paths and continued rejection of all other KidFlix paths.",
+      "requirements": [
+        "USER_AMENDMENT_RELEASE_PREPARATION_20261022",
+        "REQ-31",
+        "REQ-32"
+      ],
+      "protectedBehavior": "No runtime/auth/permissions/data/publication, dependency, Git, build, production SQL or deployment changes."
+    },
+    {
+      "path": "scripts/jobkix/prepare-release.cjs",
+      "before": "NEW",
+      "intendedChange": "NEW: stage the bounded release candidate, original shared-byte fixture, documentation, assets and hash manifests without release operations.",
+      "requirements": [
+        "USER_AMENDMENT_RELEASE_PREPARATION_20261022",
+        "REQ-31",
+        "REQ-32"
+      ],
+      "protectedBehavior": "No runtime/auth/permissions/data/publication, dependency, Git, build, production SQL or deployment changes."
+    },
+    {
+      "path": "scripts/jobkix/verify-release.cjs",
+      "before": "NEW",
+      "intendedChange": "NEW: integrity check and safely extract the actual ZIP, verify every file, exercise shipped install/verify/idempotency/rollback on a disposable full payload fixture, and compare baseline bytes.",
+      "requirements": [
+        "USER_AMENDMENT_RELEASE_PREPARATION_20261022",
+        "REQ-31",
+        "REQ-32"
+      ],
+      "protectedBehavior": "No runtime/auth/permissions/data/publication, dependency, Git, build, production SQL or deployment changes."
+    },
+    {
+      "path": "scripts/jobkix/capture-evidence.cjs",
+      "before": "ee4dfe5cb85b3c9231286053775472ceac15ecce48c6e4e4343bd7695d0cc835",
+      "intendedChange": "Clarify installer fixture versus separate extracted-archive validation evidence.",
+      "requirements": [
+        "USER_AMENDMENT_RELEASE_PREPARATION_20261022",
+        "REQ-31",
+        "REQ-32"
+      ],
+      "protectedBehavior": "No runtime/auth/permissions/data/publication, dependency, Git, build, production SQL or deployment changes."
+    }
+  ],
+  "output": "Guarded source release candidate in Downloads; safety-critical open items remain explicit.",
+  "standby": [
+    "Hosted email delivery and worker activation",
+    "External-service provisioning and hosted end-to-end checks"
+  ],
+  "notWaived": [
+    "Privacy/retention fulfillment",
+    "Registration reviewed-document disclosure",
+    "Authorization and private-file protection",
+    "Truthful family/language/visual acceptance"
+  ]
+}

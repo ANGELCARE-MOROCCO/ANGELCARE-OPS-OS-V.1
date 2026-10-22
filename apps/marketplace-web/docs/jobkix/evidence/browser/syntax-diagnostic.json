@@ -1,0 +1,302 @@
+{
+  "recordedAt": "2026-10-21T14:55:17.654Z",
+  "scope": "Local source runtime only",
+  "events": [
+    {
+      "screen": "jobs",
+      "kind": "parse-failure",
+      "scriptId": "455",
+      "url": "",
+      "startLine": 0,
+      "startColumn": 0,
+      "endLine": 2,
+      "endColumn": 34,
+      "executionContextId": 3,
+      "hash": "392bd7367fcc415a6286dc6855d8f1015a977b6209d76020ed9be00a643a448b",
+      "buildId": "",
+      "executionContextAuxData": {
+        "isDefault": true,
+        "type": "default",
+        "frameId": "898831B3D0B1178AF978270C6B8C2A9D"
+      },
+      "sourceMapURL": "",
+      "hasSourceURL": false,
+      "isModule": false,
+      "length": 109,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "parseModelString",
+            "scriptId": "95",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-server-dom-webpack/cjs/react-server-dom-webpack-client.browser.development.js",
+            "lineNumber": 2733,
+            "columnNumber": 32
+          }
+        ]
+      },
+      "scriptLanguage": "JavaScript",
+      "embedderName": "",
+      "sha256": "392bd7367fcc415a6286dc6855d8f1015a977b6209d76020ed9be00a643a448b",
+      "source": "Object.defineProperty(getAll () {\n            return cookieStore.getAll();\n        },\"name\",{value:\"getAll\"})"
+    },
+    {
+      "screen": "jobs",
+      "kind": "parse-failure",
+      "scriptId": "456",
+      "url": "",
+      "startLine": 0,
+      "startColumn": 0,
+      "endLine": 6,
+      "endColumn": 34,
+      "executionContextId": 3,
+      "hash": "2cb864912106ed5d4365637e6c8bb6fcdce6ca923686569e904744dd4337ce10",
+      "buildId": "",
+      "executionContextAuxData": {
+        "isDefault": true,
+        "type": "default",
+        "frameId": "898831B3D0B1178AF978270C6B8C2A9D"
+      },
+      "sourceMapURL": "",
+      "hasSourceURL": false,
+      "isModule": false,
+      "length": 321,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "parseModelString",
+            "scriptId": "95",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-server-dom-webpack/cjs/react-server-dom-webpack-client.browser.development.js",
+            "lineNumber": 2733,
+            "columnNumber": 32
+          }
+        ]
+      },
+      "scriptLanguage": "JavaScript",
+      "embedderName": "",
+      "sha256": "2cb864912106ed5d4365637e6c8bb6fcdce6ca923686569e904744dd4337ce10",
+      "source": "Object.defineProperty(setAll (cookiesToSet) {\n            try {\n                cookiesToSet.forEach(({ name, value, options })=>cookieStore.set(name, value, options));\n            } catch  {\n            // Server components can read cookies but cannot always mutate them.\n            }\n        },\"name\",{value:\"setAll\"})"
+    },
+    {
+      "screen": "jobs",
+      "kind": "parse-failure",
+      "scriptId": "4631",
+      "url": "",
+      "startLine": 0,
+      "startColumn": 0,
+      "endLine": 2,
+      "endColumn": 34,
+      "executionContextId": 17,
+      "hash": "392bd7367fcc415a6286dc6855d8f1015a977b6209d76020ed9be00a643a448b",
+      "buildId": "",
+      "executionContextAuxData": {
+        "isDefault": true,
+        "type": "default",
+        "frameId": "898831B3D0B1178AF978270C6B8C2A9D"
+      },
+      "sourceMapURL": "",
+      "hasSourceURL": false,
+      "isModule": false,
+      "length": 109,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "parseModelString",
+            "scriptId": "4272",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-server-dom-webpack/cjs/react-server-dom-webpack-client.browser.development.js",
+            "lineNumber": 2733,
+            "columnNumber": 32
+          }
+        ]
+      },
+      "scriptLanguage": "JavaScript",
+      "embedderName": "",
+      "sha256": "392bd7367fcc415a6286dc6855d8f1015a977b6209d76020ed9be00a643a448b",
+      "source": "Object.defineProperty(getAll () {\n            return cookieStore.getAll();\n        },\"name\",{value:\"getAll\"})"
+    },
+    {
+      "screen": "jobs",
+      "kind": "parse-failure",
+      "scriptId": "4632",
+      "url": "",
+      "startLine": 0,
+      "startColumn": 0,
+      "endLine": 6,
+      "endColumn": 34,
+      "executionContextId": 17,
+      "hash": "2cb864912106ed5d4365637e6c8bb6fcdce6ca923686569e904744dd4337ce10",
+      "buildId": "",
+      "executionContextAuxData": {
+        "isDefault": true,
+        "type": "default",
+        "frameId": "898831B3D0B1178AF978270C6B8C2A9D"
+      },
+      "sourceMapURL": "",
+      "hasSourceURL": false,
+      "isModule": false,
+      "length": 321,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "parseModelString",
+            "scriptId": "4272",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-server-dom-webpack/cjs/react-server-dom-webpack-client.browser.development.js",
+            "lineNumber": 2733,
+            "columnNumber": 32
+          }
+        ]
+      },
+      "scriptLanguage": "JavaScript",
+      "embedderName": "",
+      "sha256": "2cb864912106ed5d4365637e6c8bb6fcdce6ca923686569e904744dd4337ce10",
+      "source": "Object.defineProperty(setAll (cookiesToSet) {\n            try {\n                cookiesToSet.forEach(({ name, value, options })=>cookieStore.set(name, value, options));\n            } catch  {\n            // Server components can read cookies but cannot always mutate them.\n            }\n        },\"name\",{value:\"setAll\"})"
+    },
+    {
+      "screen": "jobs",
+      "kind": "parse-failure",
+      "scriptId": "8796",
+      "url": "",
+      "startLine": 0,
+      "startColumn": 0,
+      "endLine": 2,
+      "endColumn": 34,
+      "executionContextId": 31,
+      "hash": "392bd7367fcc415a6286dc6855d8f1015a977b6209d76020ed9be00a643a448b",
+      "buildId": "",
+      "executionContextAuxData": {
+        "isDefault": true,
+        "type": "default",
+        "frameId": "898831B3D0B1178AF978270C6B8C2A9D"
+      },
+      "sourceMapURL": "",
+      "hasSourceURL": false,
+      "isModule": false,
+      "length": 109,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "parseModelString",
+            "scriptId": "8444",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-server-dom-webpack/cjs/react-server-dom-webpack-client.browser.development.js",
+            "lineNumber": 2733,
+            "columnNumber": 32
+          }
+        ]
+      },
+      "scriptLanguage": "JavaScript",
+      "embedderName": "",
+      "sha256": "392bd7367fcc415a6286dc6855d8f1015a977b6209d76020ed9be00a643a448b",
+      "source": "Object.defineProperty(getAll () {\n            return cookieStore.getAll();\n        },\"name\",{value:\"getAll\"})"
+    },
+    {
+      "screen": "jobs",
+      "kind": "parse-failure",
+      "scriptId": "8797",
+      "url": "",
+      "startLine": 0,
+      "startColumn": 0,
+      "endLine": 6,
+      "endColumn": 34,
+      "executionContextId": 31,
+      "hash": "2cb864912106ed5d4365637e6c8bb6fcdce6ca923686569e904744dd4337ce10",
+      "buildId": "",
+      "executionContextAuxData": {
+        "isDefault": true,
+        "type": "default",
+        "frameId": "898831B3D0B1178AF978270C6B8C2A9D"
+      },
+      "sourceMapURL": "",
+      "hasSourceURL": false,
+      "isModule": false,
+      "length": 321,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "parseModelString",
+            "scriptId": "8444",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-server-dom-webpack/cjs/react-server-dom-webpack-client.browser.development.js",
+            "lineNumber": 2733,
+            "columnNumber": 32
+          }
+        ]
+      },
+      "scriptLanguage": "JavaScript",
+      "embedderName": "",
+      "sha256": "2cb864912106ed5d4365637e6c8bb6fcdce6ca923686569e904744dd4337ce10",
+      "source": "Object.defineProperty(setAll (cookiesToSet) {\n            try {\n                cookiesToSet.forEach(({ name, value, options })=>cookieStore.set(name, value, options));\n            } catch  {\n            // Server components can read cookies but cannot always mutate them.\n            }\n        },\"name\",{value:\"setAll\"})"
+    },
+    {
+      "screen": "jobs",
+      "kind": "parse-failure",
+      "scriptId": "12975",
+      "url": "",
+      "startLine": 0,
+      "startColumn": 0,
+      "endLine": 2,
+      "endColumn": 34,
+      "executionContextId": 45,
+      "hash": "392bd7367fcc415a6286dc6855d8f1015a977b6209d76020ed9be00a643a448b",
+      "buildId": "",
+      "executionContextAuxData": {
+        "isDefault": true,
+        "type": "default",
+        "frameId": "898831B3D0B1178AF978270C6B8C2A9D"
+      },
+      "sourceMapURL": "",
+      "hasSourceURL": false,
+      "isModule": false,
+      "length": 109,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "parseModelString",
+            "scriptId": "12616",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-server-dom-webpack/cjs/react-server-dom-webpack-client.browser.development.js",
+            "lineNumber": 2733,
+            "columnNumber": 32
+          }
+        ]
+      },
+      "scriptLanguage": "JavaScript",
+      "embedderName": "",
+      "sha256": "392bd7367fcc415a6286dc6855d8f1015a977b6209d76020ed9be00a643a448b",
+      "source": "Object.defineProperty(getAll () {\n            return cookieStore.getAll();\n        },\"name\",{value:\"getAll\"})"
+    },
+    {
+      "screen": "jobs",
+      "kind": "parse-failure",
+      "scriptId": "12976",
+      "url": "",
+      "startLine": 0,
+      "startColumn": 0,
+      "endLine": 6,
+      "endColumn": 34,
+      "executionContextId": 45,
+      "hash": "2cb864912106ed5d4365637e6c8bb6fcdce6ca923686569e904744dd4337ce10",
+      "buildId": "",
+      "executionContextAuxData": {
+        "isDefault": true,
+        "type": "default",
+        "frameId": "898831B3D0B1178AF978270C6B8C2A9D"
+      },
+      "sourceMapURL": "",
+      "hasSourceURL": false,
+      "isModule": false,
+      "length": 321,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "parseModelString",
+            "scriptId": "12616",
+            "url": "webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-server-dom-webpack/cjs/react-server-dom-webpack-client.browser.development.js",
+            "lineNumber": 2733,
+            "columnNumber": 32
+          }
+        ]
+      },
+      "scriptLanguage": "JavaScript",
+      "embedderName": "",
+      "sha256": "2cb864912106ed5d4365637e6c8bb6fcdce6ca923686569e904744dd4337ce10",
+      "source": "Object.defineProperty(setAll (cookiesToSet) {\n            try {\n                cookiesToSet.forEach(({ name, value, options })=>cookieStore.set(name, value, options));\n            } catch  {\n            // Server components can read cookies but cannot always mutate them.\n            }\n        },\"name\",{value:\"setAll\"})"
+    }
+  ]
+}

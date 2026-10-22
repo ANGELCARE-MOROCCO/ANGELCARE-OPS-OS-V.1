@@ -1,0 +1,38 @@
+{
+  "dependencies": [
+    {
+      "path": "supabase/migrations/20260804053000_angelcare_marketplace_complete_commerce_administration_universe.sql",
+      "sha256": "e9c10de46026769f708477174410b0e06bf48d1bf4e1ab23ba7cf7d9e42ad6b2",
+      "change": "UNCHANGED; existing native media schema, permission, lookup or usage/deletion authority inspected."
+    },
+    {
+      "path": "angelcare-marketplace/experience-builder/api-handlers.ts",
+      "sha256": "807e558a689780c3991d5070e5a50e8059243fd90de4713f548a0a0a528da67c",
+      "change": "UNCHANGED; existing native media schema, permission, lookup or usage/deletion authority inspected."
+    },
+    {
+      "path": "angelcare-marketplace/experience-builder/repository.ts",
+      "sha256": "c267acef1a76434d269ba8125d41e864c5e2efae66fac6398b9cd6e22d1d3bea",
+      "change": "UNCHANGED; existing native media schema, permission, lookup or usage/deletion authority inspected."
+    },
+    {
+      "path": "angelcare-marketplace/commerce-studio/media-storage-api.ts",
+      "sha256": "ec962fd2a6fba24c5353ce3271b5ba1acb895c107473ab44ed13c88ed3cdd322",
+      "change": "UNCHANGED; existing native media schema, permission, lookup or usage/deletion authority inspected."
+    },
+    {
+      "path": "angelcare-marketplace/total-commerce-control/repository.ts",
+      "sha256": "89d2f8be3cb9c6c19f48bed08e0ad71cf22831ba48c9e18d2e8b2d8006922ced",
+      "change": "UNCHANGED; existing native media schema, permission, lookup or usage/deletion authority inspected."
+    }
+  ],
+  "ownFiles": [
+    "angelcare-marketplace/jobkix/migrations/009_editorial_media_bindings.sql",
+    "angelcare-marketplace/jobkix/server/editorial-media.ts",
+    "angelcare-marketplace/jobkix/server/admin-repository.ts",
+    "angelcare-marketplace/jobkix/admin/EditorialImagePicker.tsx"
+  ],
+  "permission": "Existing marketplace.admin.access + JOBKIX editorial workspace; existing marketplace.media.view additionally required for native selection.",
+  "binding": "Immutable edition ID + stable section ID in existing native media usage registry. No existing registry row or media asset is deleted.",
+  "verification": "Actual authored SQL with isolated native-column fixtures; hosted Media Library/authorization/storage compatibility remains unverified."
+}

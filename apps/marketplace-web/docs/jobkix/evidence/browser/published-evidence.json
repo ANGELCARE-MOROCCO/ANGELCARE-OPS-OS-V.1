@@ -1,0 +1,2587 @@
+{
+  "publishedAt": "2026-10-22T01:31:43.718Z",
+  "source": "/private/tmp/jobkix-source-20261020/browser-evidence",
+  "files": [
+    {
+      "path": "docs/jobkix/evidence/browser/C13-ar-1440-private-export.png",
+      "bytes": 162885,
+      "sha256": "62cf30f1a5b9c2cef3f9f4ecbcbe988acfa7f2b371916c0d130906e5268dc200"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/C13-ar-360-private-export.png",
+      "bytes": 126318,
+      "sha256": "45595925466b59cf321601cefd14f1bbbff563c7edad28346f62ce80ff337b09"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/C13-en-1440-private-export.png",
+      "bytes": 206941,
+      "sha256": "0f4cee5aaaf9779e4749ee932b83b908dfde4a2bdaca04dff9122ac77f8ef7aa"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/C13-en-360-private-export.png",
+      "bytes": 162749,
+      "sha256": "1e3bb1a802f473b2a8d49510c6ac57f262d4d1a16fd0a0b0fb721ccaf8c9b2b3"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/C13-es-1440-private-export.png",
+      "bytes": 218268,
+      "sha256": "338fb3a02c5c8eb12328627e8ba89b0322aed90e9cc8022a7bd7eb9f298f09c8"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/C13-es-360-private-export.png",
+      "bytes": 171273,
+      "sha256": "43e2ba259ef9dcdcc0aaf023f13240faed1420fa1ac4abae78679af9df7093b8"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/C13-fr-1440-private-export.png",
+      "bytes": 223214,
+      "sha256": "f6216c75f523dbe4058778a927e1b882f0cd3c6bf299d7c2d425bcf0511f0117"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/C13-fr-360-private-export.png",
+      "bytes": 173252,
+      "sha256": "9116035a958129dd12cc6f9311f52ab93c023d44ad437f472dad7618d34e59f2"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/C13-hi-1440-private-export.png",
+      "bytes": 194158,
+      "sha256": "b3ca043518597aabbbd0d3f74ac658004f3f9098b905cc49aa16accb4756d8d0"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/C13-hi-360-private-export.png",
+      "bytes": 153676,
+      "sha256": "959aec0c60645fd0c5cdd102aac0bbd9d00f36a03331ffef09d903c2a4553bbc"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/C13-id-1440-private-export.png",
+      "bytes": 203647,
+      "sha256": "c97ec5d42ef6df8ba99148da1b79dbffe644c1fbd9a663653f6ec5b255e5eb97"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/C13-id-360-private-export.png",
+      "bytes": 157801,
+      "sha256": "df0320681ff660a72f649c652008d2aaef400a299a5b32f571c9e631dbd20811"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/C13-tl-1440-private-export.png",
+      "bytes": 234975,
+      "sha256": "fc77127af49a7c4592f4189686de2db018d7069757df0e5ec4d55e04fd0399c9"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/C13-tl-360-private-export.png",
+      "bytes": 180808,
+      "sha256": "51452fe3dc4b32ea9275e45f8fef28a2b159f98520881fc25ff1514ad6a2d11a"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/C14-ar-360-evidence-selection.png",
+      "bytes": 163540,
+      "sha256": "6c8227187bd751cf506d488d5e285a0e3fa7039de9307f73eb323e2fef0faa64"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/C14-en-390-evidence-selection.png",
+      "bytes": 204343,
+      "sha256": "bb08ca808dfd4b8f2fd11ec956f298409de5ded3be0cceea5bb22accbd5cc537"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/H08-ar-360-native-selection.png",
+      "bytes": 133022,
+      "sha256": "9764612d607cd9759f5d9856a0b38aaaeddcc5b2c9a69782a20cbbee8e5303ee"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/H08-diagnosis.png",
+      "bytes": 239919,
+      "sha256": "f72a82db9b8d66443f4828b258bde94d654023bb5f0c21c0d5a6eb64f676eceb"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/H08-en-390-native-selection.png",
+      "bytes": 166199,
+      "sha256": "7e3b25987e01c00533c68beb39e25ccdca5f8f20ab006d6b523cb01eddaf3355"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/H09-ar-360-bounded-panel.png",
+      "bytes": 286848,
+      "sha256": "7c5e6ada38ad8949dc989a52d7c87ec72e1ad976a80bd55b0b331483f502ed70"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/H09-en-390-bounded-panel.png",
+      "bytes": 343900,
+      "sha256": "ff8f73bf38623a5162b40ef8b55369dd316a0d9c2e8a5f4a423f42fe204c285d"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/H10-ar-360-revision-history.png",
+      "bytes": 243343,
+      "sha256": "776cd51591bf02bdb198ab565f33c4ff1646b129498fc1bd1b9e29db3c70a8b7"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/H10-en-390-revision-history.png",
+      "bytes": 285303,
+      "sha256": "5ac61cb52569bcf48d4b971b1507b1999f5947e899844a81a4cdfa4a92b95583"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/H16-ar-1440-private-export.png",
+      "bytes": 286924,
+      "sha256": "ffca249d9bba0fa2bedceae72ae4a035034d19e1a7be70aaeddb199690a39ca9"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/H16-ar-360-private-export.png",
+      "bytes": 235776,
+      "sha256": "6bb5ca4f7c679aade5f4161de49232cfa95a43d2094d9cc35e752ca8719a4d12"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/H16-en-1440-private-export.png",
+      "bytes": 376997,
+      "sha256": "9452f5ab143333d9ee4667e9300bc77b7a41d0023daae3763c2274a3760370d2"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/H16-en-360-private-export.png",
+      "bytes": 315478,
+      "sha256": "5e186a42a202f2f087276a89b5c5125b597386af27e9ddf647e112df8087e121"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/H16-es-1440-private-export.png",
+      "bytes": 397589,
+      "sha256": "6372c9c539ae0ee6cddc44f100d0eae202a505c6967e3810debfa91197664434"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/H16-es-360-private-export.png",
+      "bytes": 336947,
+      "sha256": "6c2c52c87b11fefec30278ff43cc5ef9de6433b12b013e05fdce2111c39d1ce2"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/H16-fr-1440-private-export.png",
+      "bytes": 400458,
+      "sha256": "1eb64abb77f04b3b7db49f0443812624920448de3d7a71251e93836a020158ce"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/H16-fr-360-private-export.png",
+      "bytes": 337019,
+      "sha256": "a4dae6361ccd51bf28bca5402a6a3517e30ed97c9b69613a7cb479b85cfe97f0"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/H16-hi-1440-private-export.png",
+      "bytes": 345758,
+      "sha256": "83f8865c23ce12091a3a90e35210e2182d87cd2e3748ea0ca21cf1ca7d0b1c16"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/H16-hi-360-private-export.png",
+      "bytes": 293842,
+      "sha256": "7ad76ea545a02557a91441ad5f74c01174fdbcea45d8f77c150e534eb06fd65c"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/H16-id-1440-private-export.png",
+      "bytes": 367973,
+      "sha256": "5aecfbd203ba10424faacec5e0bea34f2f82e1dc58028286cf9f83c99350cf72"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/H16-id-360-private-export.png",
+      "bytes": 309622,
+      "sha256": "604d3cfdbcb3ad626f31a3bd603c57c4ab80d2c8becc9354b5af5b604c15d243"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/H16-tl-1440-private-export.png",
+      "bytes": 434087,
+      "sha256": "164cc6d650de9698e90e6b46464153f25e5f72d6c6b4610be35b04db17750387"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/H16-tl-360-private-export.png",
+      "bytes": 356877,
+      "sha256": "47dc66535a3f4c7cc4d9471d9109579e1b33bcbb6591135e391fe973167204e8"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P00-ar-1440.png",
+      "bytes": 915374,
+      "sha256": "edb9963e3131132043d2fe28b8b9ed0814522a129e7534c61a0be39c1d78d7c8"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P00-ar-390.png",
+      "bytes": 1016464,
+      "sha256": "f178ac18b18445a2eb44c943b7ba917ddeb118e35bf1424a06d4de20ef30e5f8"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P00-en-1440.png",
+      "bytes": 1812464,
+      "sha256": "16d429adaf37e9d81b49d13e718cb49338b49477134d918dcf23895356060acd"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P00-en-390.png",
+      "bytes": 1043711,
+      "sha256": "3fe05e6aebe2f15edc4c88f49caaf0d3a6ab2323cf9e56f27645c470e8476ae8"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P00-hi-1440.png",
+      "bytes": 1861716,
+      "sha256": "8f06cef849ebb4b99e732d40f66b378ca2f45d1ecf69c5b74ce5970c6dbfd38c"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P00-hi-390.png",
+      "bytes": 1080801,
+      "sha256": "8a8c06584779fa6b1cd821b84cbeb057dea2ce246cf983beee7293885922a5eb"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P01-ar-1440.png",
+      "bytes": 816974,
+      "sha256": "1fac5fcb6d835f826a1abcbfed56104e567846ed5411f2720d9c9e7fc2e32ec2"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P01-ar-390.png",
+      "bytes": 455256,
+      "sha256": "c29e41d2f24ff0667220e238e84ebd22965e8f6a3d57dd67c08f59905a94b5a6"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P01-en-1440.png",
+      "bytes": 457551,
+      "sha256": "fd2ca430afb6801d1b867fdc1a7b84886bb9921a4eb0c955f5e0c9dc96bf5621"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P01-en-390.png",
+      "bytes": 465570,
+      "sha256": "ebc8d3dd73a1a0a9ca10a1241f0fa8235b564af826fc6e9dfdc8f1419f84350a"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P01-hi-1440.png",
+      "bytes": 980439,
+      "sha256": "c0cf20a6a7df0a911bc3887d8bf0646419092754372421231d8e9fdc0d0e8d65"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P01-hi-390.png",
+      "bytes": 493161,
+      "sha256": "c4d337b2ecf26ad1a6aa2253fcee5a00e8ded2950aa50b7a6b97285ebe67dd1a"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P02-ar-1440.png",
+      "bytes": 323367,
+      "sha256": "75d0c579a0753508d3bead55ad43d35b681a04ffc3e308a92a3fe843d9e17a17"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P02-ar-390-controls.png",
+      "bytes": 314807,
+      "sha256": "c27131a18ba9044174a2e91950ce779b662598ccc73bf3da680a13bedb1cba13"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P02-ar-390.png",
+      "bytes": 291281,
+      "sha256": "0aa6f8880512128f76fdf085c8f6427d1a931953ecb74e9898d0c23b931aac44"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P02-en-1440.png",
+      "bytes": 349824,
+      "sha256": "5bc6c46e907647235ad47d694c5e5b69d5a33dd879951ce71486ed575a6fb764"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P02-en-390-controls.png",
+      "bytes": 356629,
+      "sha256": "3df6d356ea061618a7464db086aa1f0d6f41d9e1adb7af85b77c5ac295f3e9bd"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P02-en-390-document-review.png",
+      "bytes": 402741,
+      "sha256": "9e2523c85ed918f226f53c5198c161e2795a21fe9b602c6aa4676986b9c4a99f"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P02-en-390.png",
+      "bytes": 301885,
+      "sha256": "769e27a6dac7d933b3522d34d96d7ec946d8e5b21b9aa6f7ed0355c227dc4c46"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P02-hi-1440.png",
+      "bytes": 366136,
+      "sha256": "82112e390fa1b764537da8881f50cd721a3f4f26b2939743fa9783e24f368039"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P02-hi-390-controls.png",
+      "bytes": 356550,
+      "sha256": "1c51b2d330c67a5cfb8b17b3735ac4564f43e3339fbe7c30f744ddff96cf3cc4"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P02-hi-390.png",
+      "bytes": 332139,
+      "sha256": "061e19d23f7af4500bdbd65c22df7eb18ca47f87441d14d8d910a3c5a0a2e8cd"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P03-ar-1440.png",
+      "bytes": 1382247,
+      "sha256": "43fef9c7be3e7bab3246edce3ef583584ec57b562642acbf50522e4a05427b36"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P03-ar-390.png",
+      "bytes": 1192273,
+      "sha256": "56642ef7ab3b959f5e0763fa582823ba118f20864214ca8eccbb2be405de4ff3"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P03-en-1440.png",
+      "bytes": 1567152,
+      "sha256": "6f6c219e75498709c34a01d9775cf9e321ec824f95baf6604e739f0ce82a81d9"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P03-en-390.png",
+      "bytes": 1378310,
+      "sha256": "dce780f479cdd906964f6da23262e827ac5c91456b652f5326593e8e08ddd9c9"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P03-fr-1440.png",
+      "bytes": 1568450,
+      "sha256": "165be7ed1741b4f3add0cce6982b07b3677b1c9d08c4a7c600ef376667a8e634"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P03-fr-390.png",
+      "bytes": 1408568,
+      "sha256": "6c485e331399c809064b48da7e9001c6253d6748ab914bf76b52ca1bad75a80c"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P03-hi-1440.png",
+      "bytes": 1519424,
+      "sha256": "1bed8f5a1adefdf599053896bef137181ef328a2ca7fbcd3ea320ef715828158"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P03-hi-390.png",
+      "bytes": 1327241,
+      "sha256": "ea7c4c5860729c376456ce8c777f0ebf81b738fff3449f38fdc6994877c9e129"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P04-ar-1440-opening.png",
+      "bytes": 620421,
+      "sha256": "41c942f4a64b73fbec94d590de9b2f6311189f202d39852a62a1680fa67d0939"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P04-ar-1440-review.png",
+      "bytes": 841943,
+      "sha256": "67125514778c7d2c9649014f1e3464c113a8386965c985f53d570bf3caae145e"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P04-ar-1440.png",
+      "bytes": 894081,
+      "sha256": "352800ccc1154ce916fe73dacbcfd71b310969b4f3814c44af90f7286972aaae"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P04-ar-390-opening.png",
+      "bytes": 211469,
+      "sha256": "60ad5bc0b787b295656139f0b25f5a225a5f75cc4458b3071bd414538ec33ebf"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P04-ar-390-review.png",
+      "bytes": 436121,
+      "sha256": "a492b93909e7da9c67524061e69dd1a7d89fe7b79fc922df37a04924eeea1984"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P04-ar-390.png",
+      "bytes": 496345,
+      "sha256": "76aadd48cb1749a8c323c561a53bf63d0f74181a5a721b9b9fa6506f015d4c15"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P04-en-1440-opening.png",
+      "bytes": 626079,
+      "sha256": "22f939f4284563a2cac0ce74ebf681d7280a4dbfae5eecba1720c739b090dbcb"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P04-en-1440-review.png",
+      "bytes": 909366,
+      "sha256": "c9a77db6a6e3489d8561377a4025f61e91d26b468025422799053369f7125d29"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P04-en-1440.png",
+      "bytes": 891979,
+      "sha256": "cbc068a0ad00cadd2d2a462ae965d062cb4e511bbc5ff11b7368f127e646275a"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P04-en-390-opening.png",
+      "bytes": 223113,
+      "sha256": "aaca1a1ec7577e3f712917a0a6706996fa5d8bc14be8cdc392034dfe7bc03cda"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P04-en-390-review.png",
+      "bytes": 515817,
+      "sha256": "aa40531f03de5f8849ecc4194aa50757366276ca704c6f6a2c44ce02f36cacd3"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P04-en-390.png",
+      "bytes": 515768,
+      "sha256": "ba3230bc24dd1d88eb2a9ca895b8dd5e78cef722adbfd608643c16362b920d5b"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P04-hi-1440.png",
+      "bytes": 962672,
+      "sha256": "7c7e011039266872c5768b8755f3b4ed74c44d19831bda3bb4e76cce4d1e706a"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P04-hi-390.png",
+      "bytes": 562398,
+      "sha256": "55311e99b88d2d09c6d56d11e3ea732b2b3ae9675d39a0604564f6169c4c4a1e"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P05-ar-1440.png",
+      "bytes": 2731808,
+      "sha256": "05468071bf4d72c509fbe49f678c32acba11f75372542bb730c524e8cb90d96d"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P05-ar-390.png",
+      "bytes": 1035948,
+      "sha256": "9ec7a822a31348becdeefb68837e3f929347cbf09e276ef6005aeb053caf4319"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P05-en-1440.png",
+      "bytes": 2705520,
+      "sha256": "998176afc4c7d7a26831df7ac80c4d214c40e0db8dd017ecde86bb7a8c808b71"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P05-en-390.png",
+      "bytes": 1105725,
+      "sha256": "fdcb94393dd3bf8c722afcbf914729add7931bc8801c5480c5eb66d543d8d801"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P05-fr-1440.png",
+      "bytes": 2823485,
+      "sha256": "eb83cf7fc792dc059873f1e10c0461d032826ada6942b1607abe5bf865b05267"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P05-fr-390.png",
+      "bytes": 1090382,
+      "sha256": "dbd290b882657ce0153611f16e4660a3a617fae44e7eb268a49669d16bdad667"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P05-hi-1440.png",
+      "bytes": 2706331,
+      "sha256": "d5f267447e66157882c7217ba640bfab589f8a9ef9f2f148aae948bd7d78f02f"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P05-hi-390.png",
+      "bytes": 1083550,
+      "sha256": "a2fd1eead22b53017a34d4fb5ce1435f432e4c6588c69e6fe47fd58c066c85d3"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P06-ar-1440-cook.png",
+      "bytes": 711840,
+      "sha256": "3caffccdcfe4ca66695c083e25b67ae9175df9b42f2c3a8964aed0bd071f440a"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P06-ar-1440.png",
+      "bytes": 996929,
+      "sha256": "d4c37327c62f9596449ed26230e8c4d0132bf3bf49635655b2f6e189177c26e5"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P06-ar-390-cook.png",
+      "bytes": 386873,
+      "sha256": "2d7c88ad53592a8cfe80d1568953cc8d3be6f4d99232175808cd0998ca8fd7f7"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P06-ar-390.png",
+      "bytes": 551357,
+      "sha256": "177dba02121f63cde72eb74955f913e3f7610325234e5b95a92efa208b8c48dd"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P06-en-1440-cook.png",
+      "bytes": 335745,
+      "sha256": "e813a02984c83adfbb6f876b8adb3dd67a3c32a98f6885e89685e95e2afc8e08"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P06-en-1440.png",
+      "bytes": 1030800,
+      "sha256": "9e78304d6ed8fa25fa8bbf516d63546dcb069a08afca76e0e0d5da1d67655f5a"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P06-en-390-cook.png",
+      "bytes": 460560,
+      "sha256": "5b5be40114e9b408267159f2a5566c590c186a6435604e32e5c5ad4d3ee4a707"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P06-en-390.png",
+      "bytes": 563446,
+      "sha256": "38475897e5eb45206d7612d18a7a33bafe4ac041821675fcc37af0ee878428e7"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P06-fr-1440-cook.png",
+      "bytes": 794449,
+      "sha256": "10550311d9316922c8e890cdc89ec9412870ab55009c2fdc6a476c8594707c8c"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P06-fr-390-cook.png",
+      "bytes": 486123,
+      "sha256": "96c66036b02ad853ba0337b8eaffc30fdf9810b9b0ce85a76a65737b92b5963a"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P06-hi-1440.png",
+      "bytes": 1086615,
+      "sha256": "003a0b9f3550a6aa2d55e3b221ac3911cdf6b863dbd9f5be575a242433205356"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P06-hi-390.png",
+      "bytes": 613699,
+      "sha256": "78314738cc59ef5b8bc7d5af43c4af80ee02db38420da45cb0120ab10eb134af"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-ar-1024-atlas.png",
+      "bytes": 462804,
+      "sha256": "db84df41c6074ddae71f70644eac0921361945bd3b55da865184c8c33ed27817"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-ar-1440-atlas.png",
+      "bytes": 522280,
+      "sha256": "b467a70aabd05007219d0772d89c991505503ab5af7f75c948c447b875379963"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-ar-1440.png",
+      "bytes": 908332,
+      "sha256": "6af46670559c53140dde29c6fbf2ae1401d330f2be3ceb5d4255c1ff47d8707e"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-ar-1920-atlas.png",
+      "bytes": 534951,
+      "sha256": "4a6e2d44f804c59a3d95151bb5b382bc8c8df6992b1d20e5936571e23e2dfc01"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-ar-360-atlas.png",
+      "bytes": 459428,
+      "sha256": "c3a1c55bfcd81a2ffcc8d753936beed65ffe1b1e92815a3bab14a8c44afb8f5b"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-ar-390-atlas.png",
+      "bytes": 466946,
+      "sha256": "334bef8d04d539f77a7b87c8e22f30f9cca1bb521df07fadc6691e915b1479da"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-ar-390.png",
+      "bytes": 638511,
+      "sha256": "3ec469cb18de0da6431fda7286216e5ff37e4caf4e585b0f1368f00e418b47cb"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-ar-768-atlas.png",
+      "bytes": 443484,
+      "sha256": "5e4ca606c379a3c996a7b246f7f4ccef06cf9f72129f7bb398e1a6ac924e6665"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-en-1024-atlas.png",
+      "bytes": 548380,
+      "sha256": "f23c42c138bf2509b3a9b4f2646781b4191f6748960dfc1b4c9e163ed7f9dca7"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-en-1440-atlas.png",
+      "bytes": 608263,
+      "sha256": "8eb31e21d63783b214310dd9912d237bdacef4f8a9430899b7d0211859ee52c7"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-en-1440.png",
+      "bytes": 1013453,
+      "sha256": "31db77ede39287a86a901fff386dd096c6d0e92680ec04b31e3921d9898c5f88"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-en-1920-atlas.png",
+      "bytes": 622785,
+      "sha256": "12f8bfacac4553049555505b3309ee3a4913741e780195be051a08ac8417110c"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-en-360-atlas.png",
+      "bytes": 561880,
+      "sha256": "14c15859d6dd75074d20981bf10fc8dc185093f7bc162e27c2f1873894bfb708"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-en-390-atlas.png",
+      "bytes": 569259,
+      "sha256": "4d1dcf3c940feddcb388433bb6967105b492e242bf036d941530a6928f68fa46"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-en-390.png",
+      "bytes": 747120,
+      "sha256": "f895cebaf6f1f3dc5efc77fd3865fa83544d86cc933c3f3a46f2c5aabb69227d"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-en-768-atlas.png",
+      "bytes": 539926,
+      "sha256": "1a52d623f1c03c4ddcfb766fb16ce2887a5c9e778fb5e28041796b3355ae1deb"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-es-1024-atlas.png",
+      "bytes": 545815,
+      "sha256": "47d4d88b2069101001f1baaa279811cb418d45ba9cf815118decf4511803fb2a"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-es-1440-atlas.png",
+      "bytes": 603982,
+      "sha256": "00d2b09285f847466f2d2c35c95f44044672141f5e93b45b6cb87f87a1c7a422"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-es-1920-atlas.png",
+      "bytes": 617775,
+      "sha256": "ae919543a003d571668f2224467ddf2f0d8596c68b84c3d7820edd4c5ca5c3a7"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-es-360-atlas.png",
+      "bytes": 566712,
+      "sha256": "2bda80772f1a55ca6cb714f089581466744e1721515adfce681c0b1eaa35540f"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-es-390-atlas.png",
+      "bytes": 574628,
+      "sha256": "0bec5a6a58cc4530dfe39cddc68ef0ac1feca57e21789c533da2acd24d851432"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-es-768-atlas.png",
+      "bytes": 536284,
+      "sha256": "8a32d0c3ae6f46d97e935d2dffe14cdc807841fddefafc596e77dd053b4630c1"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-fr-1024-atlas.png",
+      "bytes": 554523,
+      "sha256": "f94ccef2833b96988830e64d5f5b69c3facc45c03fae81bdb0f080fd190edc96"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-fr-1440-atlas.png",
+      "bytes": 609368,
+      "sha256": "903f78b12970a901ef198ab127f987af71f46f867f5c85eb20976376b7235130"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-fr-1920-atlas.png",
+      "bytes": 624201,
+      "sha256": "701fdcb3cf101eb18c70345bc19f6173754cb5da05b97ee630224b23551a9089"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-fr-360-atlas.png",
+      "bytes": 554905,
+      "sha256": "ae145a4f47205129e67e62802a34dc414f0a3ea6f7c7fc9935332f890b7454c3"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-fr-390-atlas.png",
+      "bytes": 560343,
+      "sha256": "d32c67bcadfa01a7ee354a6f579a5fe6b17f5e6ad922309f2ebaa269cf236e03"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-fr-768-atlas.png",
+      "bytes": 541881,
+      "sha256": "95b0d63b1545ff6a5b129410db90bd80114017c3b4acb7378383f74afcf9c0c6"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-hi-1024-atlas.png",
+      "bytes": 521393,
+      "sha256": "294bb496bef1f2464b86c02a8ba9040799fddc673f377137a2ff3ff182189926"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-hi-1440-atlas.png",
+      "bytes": 581591,
+      "sha256": "a67c4735563ab21c15c9aaf1c4889d2aaf93d919d4647ea83669616ef210d2d7"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-hi-1440.png",
+      "bytes": 968845,
+      "sha256": "79cc6608f9c2cb272bc555a6724c4d47a24aaccbf569c75b0d7d14125bfb32a6"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-hi-1920-atlas.png",
+      "bytes": 597403,
+      "sha256": "afddc55df58dcf7e272931b0d542248216fbca3a42c864e25d832c9a1b12229f"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-hi-360-atlas.png",
+      "bytes": 516565,
+      "sha256": "0cb41c07d065a42937664bb111d2a6ff40eb2ef42e2dc8e977c5733110f2afc4"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-hi-390-atlas.png",
+      "bytes": 526133,
+      "sha256": "30a3fde2244baf1381889beb479ae2a054b6989846783ee8debcfcac769a3922"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-hi-390.png",
+      "bytes": 673962,
+      "sha256": "ccd25ea1f71286df052c7836d44e91d4f48fe71d2ad612344ad6c00aa469f13a"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-hi-768-atlas.png",
+      "bytes": 504069,
+      "sha256": "adad44b4e642aa504336b5c93a09fe6034b8e6b02e1033d8b1fd040697fc1dc0"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-id-1024-atlas.png",
+      "bytes": 533762,
+      "sha256": "04711a3ad7bbd8c8fbfe3a2781a8da9b6530b76e0b41ee6c8cf6e2d25402beb3"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-id-1440-atlas.png",
+      "bytes": 592069,
+      "sha256": "6785a8fa75ff8e66e5708419ab3b4966a178742bfa17fd07cd26a16ebcbd1b54"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-id-1920-atlas.png",
+      "bytes": 606645,
+      "sha256": "71bb0e5dd2a833d40532ac9c184c59fdc54f2d3b3bf11feec0d24a5bff6b6406"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-id-360-atlas.png",
+      "bytes": 547277,
+      "sha256": "d7f6f3fd98948eec78b0f1ce4aae665a2f0ccc990589337b54aa31282c55adde"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-id-390-atlas.png",
+      "bytes": 553101,
+      "sha256": "9eb815450094d27987ec9c0ebeb612cd0a4daf3b604e89b33bf6af4c36e733bc"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-id-768-atlas.png",
+      "bytes": 533305,
+      "sha256": "c427a53e76ef2c0224d934a05f27b8017c1e62053f884533528ec63e6f2e7f00"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-tl-1024-atlas.png",
+      "bytes": 583385,
+      "sha256": "7a775665fe3da6321e9a1f99839373fb0b5830126a06e5d0a8d57bf4790bf02d"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-tl-1440-atlas.png",
+      "bytes": 645813,
+      "sha256": "3b7464948f9efbb43f7b4e397f0c01102d8f9aa501a6cd544c8278cfcaa5b12e"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-tl-1920-atlas.png",
+      "bytes": 661307,
+      "sha256": "b2b7dcc68543f45afb96a6dbdb84de69a9f96441bc83a10bd51c8ebdd76abf6e"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-tl-360-atlas.png",
+      "bytes": 608630,
+      "sha256": "ebee3f6b2bba2ed0ed03787628cfc9bb0f813012a06e1d191fc4d586ffe32fa1"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-tl-390-atlas.png",
+      "bytes": 615616,
+      "sha256": "274b12e47052a6c13a7a7c42fc5bb9d00bf644a16eaf3ae1983b5016f7a63937"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P07-tl-768-atlas.png",
+      "bytes": 582261,
+      "sha256": "fefe68c7faa4269745f11ff673b6e9a990a4d2afdc10e60c5454ce259d4e905d"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-ar-1024-destination.png",
+      "bytes": 2152373,
+      "sha256": "41cd9d8003e18c73e2865f3d70efc315ebda44d39dcd7d82ae927db08c5eb483"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-ar-1440-destination-polish.png",
+      "bytes": 2384797,
+      "sha256": "a66f6481ea9a60187d0839c2dfe1e4a144995933634392b1c14228fc178fb39f"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-ar-1440-destination.png",
+      "bytes": 2325489,
+      "sha256": "03bd14a610999f2251fec9b9ceb0ed603ce8ce5c3671925215b1cc076cd5cf69"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-ar-1440-geography-regression.png",
+      "bytes": 2384797,
+      "sha256": "a66f6481ea9a60187d0839c2dfe1e4a144995933634392b1c14228fc178fb39f"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-ar-1440.png",
+      "bytes": 623663,
+      "sha256": "58a8dbb4b2db0b6d3594c4d5fb82caaab1dcce170af0e04c2347616bd50e7467"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-ar-1920-destination.png",
+      "bytes": 2468648,
+      "sha256": "46221995710e8fd64ea44e74454680d99cb6e3c3ddfd4ac7f69aa932ebf69451"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-ar-360-destination.png",
+      "bytes": 1011024,
+      "sha256": "ee294762c02614c1d29c27a9295b9bb83bb4b017e3b8fc445c1f941e036c51ed"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-ar-390-destination-polish.png",
+      "bytes": 1124739,
+      "sha256": "7a844674785be4999f0eea8c67f30ea77ac3be07f6e5d9860db0226d36835512"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-ar-390-destination.png",
+      "bytes": 1125038,
+      "sha256": "2ebdc92fb78e9480defd416f5b289b83de25ac07c645f45290d894a2f54959e9"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-ar-390-geography-regression.png",
+      "bytes": 1124739,
+      "sha256": "7a844674785be4999f0eea8c67f30ea77ac3be07f6e5d9860db0226d36835512"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-ar-390.png",
+      "bytes": 377461,
+      "sha256": "e51c00521e257b0f27c73857cc69dc12538f3b125c78a43c631cf956b84fa553"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-ar-768-destination.png",
+      "bytes": 1439181,
+      "sha256": "d43c488dd415f58a8c223dd0c87f91313a1fa07836fa74c105b37b1abbe1f425"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-en-1024-destination.png",
+      "bytes": 2251825,
+      "sha256": "c470ae2ee8b8d491fc5e9090ee6486c1c11fc0a1ffc8ef4a5c0c7234eeff0cbc"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-en-1440-destination-polish.png",
+      "bytes": 2482907,
+      "sha256": "3bbcccacf755a39f0fe27e2a562b354d64a3bfe68d6170592e0e2c46e3f970b6"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-en-1440-destination.png",
+      "bytes": 2444393,
+      "sha256": "c339e8ba2f8cc6b40e9666224acf08ccc150ea81a86f10ce069f0ddd306d0e19"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-en-1440-geography-regression.png",
+      "bytes": 2494057,
+      "sha256": "bd0fba282147a71f4904b2e4492deeb43ff312e23c1cd51fa9503bdc8a0ab6b6"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-en-1440.png",
+      "bytes": 668899,
+      "sha256": "e13bc86e2a97cfb2dc779f54305d98f3f32e4daf1a588ebe2f52a531f83e1171"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-en-1920-destination.png",
+      "bytes": 2586900,
+      "sha256": "de569ee98334796a6ac0ec9399b7ab69c2b0920136d815dfb48fc6e2ee412249"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-en-360-destination.png",
+      "bytes": 1102991,
+      "sha256": "4f758f6a000e86f85cd2aebeced8f23f7b973efdd3423acdf13067cb92259576"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-en-390-destination-polish.png",
+      "bytes": 1215895,
+      "sha256": "b513ddbe7d0176e93081de6cdcd9d836f06335925f0c10bf6db10f0b4681a470"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-en-390-destination.png",
+      "bytes": 1215441,
+      "sha256": "9237ebe9044ce534158889cc22731a6e56558f2c7a950ce44a32206a73837e49"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-en-390-geography-regression.png",
+      "bytes": 1215895,
+      "sha256": "b513ddbe7d0176e93081de6cdcd9d836f06335925f0c10bf6db10f0b4681a470"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-en-390.png",
+      "bytes": 396963,
+      "sha256": "6c7238bb1dda55498ae25009607c0a7ae10b82039d04d77302fbe466c3e964ab"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-en-768-destination.png",
+      "bytes": 1545805,
+      "sha256": "48b58489787faff2c063ffaef98429caa25b4a7ff5213bb187c39bc226b9f41a"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-es-1024-destination.png",
+      "bytes": 2275424,
+      "sha256": "fb1492372956da8b1a2801f9933850d1728fdb78e0a303d7ae33fd119ef5882d"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-es-1440-destination.png",
+      "bytes": 2454518,
+      "sha256": "39bf3baed1f6952033bf467fa7d838947a64a6cd72b0daf93f10247249e84640"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-es-1920-destination.png",
+      "bytes": 2606673,
+      "sha256": "85ae9b07c1b5a273af1abb3f5c8e781896f15cc43cb9c066229625f12658f1b4"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-es-360-destination.png",
+      "bytes": 1121832,
+      "sha256": "2ae33f6e42b19a670920c64de18521c2d6a527c1bee71fed94a4bbd93289af39"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-es-390-destination.png",
+      "bytes": 1234031,
+      "sha256": "9ce00a12630dc3eb5e3bdca409742688502be396eb3ca6d96759450b2303ee06"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-es-768-destination.png",
+      "bytes": 1574075,
+      "sha256": "b3af53c37f8b0a12129535cf3716185c51300489dfe2c949b33275a72d8618ae"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-fr-1024-destination.png",
+      "bytes": 2287939,
+      "sha256": "bb0c84958b209048e682a0dbbca7553c4db8846ee6c978f9f0e589df8df1e9b8"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-fr-1440-destination.png",
+      "bytes": 2448474,
+      "sha256": "3de8914cd8d1dc9d2f3e0a31ff5cb304748fdae16f4553dff4eac0195254f538"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-fr-1920-destination.png",
+      "bytes": 2599129,
+      "sha256": "fac83889d3335be821563989a4a2844f1fca11a6380a5381d511946f37bcb7b3"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-fr-360-destination.png",
+      "bytes": 1125372,
+      "sha256": "17e879dcc371f8381a80000774cb715d7160810f57effbdebf04b74aebaf9853"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-fr-390-destination.png",
+      "bytes": 1236512,
+      "sha256": "910d5c49c62f2690089e9ddde4cc1836a1291aea574a16945896d6d11dfd0511"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-fr-768-destination.png",
+      "bytes": 1554222,
+      "sha256": "8429c1e9099b5559ceb4d75f08670266c8476b17076527142ffef048bb2d4b04"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-hi-1024-destination.png",
+      "bytes": 2257288,
+      "sha256": "9dc483c2b8eed19965a9e99f73b408ec1e10a2d2dd6ea715b088f305f14a4991"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-hi-1440-destination-polish.png",
+      "bytes": 2469417,
+      "sha256": "6d5529cadee1eec029bc872f786c8830e63914f187cb03aaddc3d88cab7fde8e"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-hi-1440-destination.png",
+      "bytes": 2422602,
+      "sha256": "061543a29a23e5328be5b3a9f521d907c8c5eccd17540d95f9a3de5d43936b6d"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-hi-1440.png",
+      "bytes": 686446,
+      "sha256": "b8753370e766b0e344e680213387946368b0f0101aa6028c32613db7c61752fd"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-hi-1920-destination.png",
+      "bytes": 2569806,
+      "sha256": "d0967b0897da3b893385fcb6f1e04008ad84761a6fcd6612c9bb9ebee20c58d5"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-hi-360-destination.png",
+      "bytes": 1082897,
+      "sha256": "666678c12814791fdbe5f40924c2be29aa20e15251ec7cac8690e337d471fecf"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-hi-390-destination-polish.png",
+      "bytes": 1199179,
+      "sha256": "13a722811a15f4ac7a863ee1c9f0038db906cc069132b34f3670183f14bde624"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-hi-390-destination.png",
+      "bytes": 1198403,
+      "sha256": "ddcb67c274f9e45f221b2d6f9e9b04876cd7bd4d4d17959df5b69a2b9e69797d"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-hi-390.png",
+      "bytes": 434231,
+      "sha256": "cb81202dc048b155baf3dc978ea7e1b529e7fcf76b4c0c8c1e5080e10774b80c"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-hi-768-destination.png",
+      "bytes": 1498311,
+      "sha256": "699cbccf5878ba06befc7acd1c2be0a479b0ac277953152e52cd7a368fc133fb"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-id-1024-destination.png",
+      "bytes": 2260094,
+      "sha256": "0156eb18d851738ed782d562ee294f2a9da35804dc811b2afe200f4fb5619e62"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-id-1440-destination.png",
+      "bytes": 2444351,
+      "sha256": "4301f22e294d414bd7843381cbe83e8e49b035eb7ba8a6da503cca08cef8d631"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-id-1920-destination.png",
+      "bytes": 2594027,
+      "sha256": "43ab3aa476391dbe4199422fcef3f2bd53d6c2d6e6c8e4eed4fd244e2e4a3c9f"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-id-360-destination.png",
+      "bytes": 1113240,
+      "sha256": "0bcafaad3e8b2ba9d07e2df096f9004d8380a4b8b8a5c2259a24ebd0f99d1ef2"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-id-390-destination.png",
+      "bytes": 1221529,
+      "sha256": "995f130a2e0724967ee1aa5849476977c79195c718193fd1ba84e15642b2eadf"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-id-768-destination.png",
+      "bytes": 1561341,
+      "sha256": "6a17377c3fde2f1e08dffc610f33ecc328616e7daa2fb97e77f4a4a944611932"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-tl-1024-destination.png",
+      "bytes": 2314433,
+      "sha256": "ba65e7a7f931270cb0f10de884b5dc0fff4ced467b2a93800120e0a4f19d5bb1"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-tl-1440-destination.png",
+      "bytes": 2486035,
+      "sha256": "f7db3fe20907a697850dd64ccb21bf8fb4ab336766d063c1903891e2598d40ee"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-tl-1920-destination.png",
+      "bytes": 2697938,
+      "sha256": "0aa5fdb75d4bccb607fd208146465c97d10ce3bc76444ab4851057c811e096cd"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-tl-360-destination.png",
+      "bytes": 1158096,
+      "sha256": "21424bb05c5b59fd68a00ca4d0a23725e6adc67190f98fb9411b0adb4daa20a0"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-tl-390-destination.png",
+      "bytes": 1269314,
+      "sha256": "5538225b2d6bb43c0bcdbef0e70e2f6c9a427e1ebf8dbc0b16a8220d899fa796"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P08-tl-768-destination.png",
+      "bytes": 1621520,
+      "sha256": "e8d33782fc4f3d60a97f79b4d28ed8194a386fdbc4a37315f5604d43b0351669"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-ar-1024-destination.png",
+      "bytes": 2073887,
+      "sha256": "3a9c703366a40ca9a5a411280101cc03916458411baabb5b3638b02a5c12f4ea"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-ar-1440-destination-polish.png",
+      "bytes": 2280278,
+      "sha256": "5eef7aaebdd760c7a3316bc31d0efc7e436a08719597bfe18c0735f7dc1511f7"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-ar-1440-destination.png",
+      "bytes": 2291189,
+      "sha256": "6c8f86a4c74ee55b5a80fe9770739e05f701bbadcce12ad23842f06b3e93a15f"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-ar-1440-geography-regression.png",
+      "bytes": 2287877,
+      "sha256": "df01742c99d57530b1e7f7500764ea2bf4817cc185a58c9d7ab44cfbc9b06a5b"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-ar-1440.png",
+      "bytes": 624903,
+      "sha256": "e290f6ff7e2c02c780c9b5083933573cadef70baae41c69517cc4bf79e3c82e4"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-ar-1920-destination.png",
+      "bytes": 2438846,
+      "sha256": "634f9ac87ecd8b542994fa8a2582c09333aec30960d0bba3e27430ac233e39c1"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-ar-360-destination.png",
+      "bytes": 962150,
+      "sha256": "747f797461d34b63c6961442ff128602603b1deeb00eaa8abbed5c3b250e4051"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-ar-390-destination-polish.png",
+      "bytes": 1067527,
+      "sha256": "f3f2ad24c43a12a04d198eb83dd4afdd3862c0c683d67a3c95ef8032ee654cbe"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-ar-390-destination.png",
+      "bytes": 1067527,
+      "sha256": "f3f2ad24c43a12a04d198eb83dd4afdd3862c0c683d67a3c95ef8032ee654cbe"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-ar-390-geography-regression.png",
+      "bytes": 1067527,
+      "sha256": "f3f2ad24c43a12a04d198eb83dd4afdd3862c0c683d67a3c95ef8032ee654cbe"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-ar-390.png",
+      "bytes": 371083,
+      "sha256": "99f726a365f9b2da3f865216bbe0aab5a73476ab88066b1bfe71ae3fd0bb0250"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-ar-768-destination.png",
+      "bytes": 1377373,
+      "sha256": "84378079f13e356ebe407d4a33bd3cf15b1a6da499079651ca8148bc3af39d89"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-en-1024-destination.png",
+      "bytes": 2148244,
+      "sha256": "56dbf397d6b7982655528bbc933711c1e47997a9804655488b01b2c3f273d5d5"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-en-1440-destination-polish.png",
+      "bytes": 2345828,
+      "sha256": "5556436679a9a532aa765a4017d70e3823f5b5644b6d0b912f530d02522e872f"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-en-1440-destination.png",
+      "bytes": 2345828,
+      "sha256": "5556436679a9a532aa765a4017d70e3823f5b5644b6d0b912f530d02522e872f"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-en-1440-geography-regression.png",
+      "bytes": 2344465,
+      "sha256": "49885dff8f938838be3b15f23ed63302a0de3b3ea75ff635ae76d668c03bbd9d"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-en-1440.png",
+      "bytes": 657214,
+      "sha256": "18f54832df6561a73a54a4702f62092ce0d5e792d93910abef92e9756981c520"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-en-1920-destination.png",
+      "bytes": 2497721,
+      "sha256": "26f90bc9ae7cd7dce9b8b7033ae4b15caae4ef5abdb3c2458d841942b1faab01"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-en-360-destination.png",
+      "bytes": 1052589,
+      "sha256": "1280766450a9a6617ffeff842062cc952f9202e7d17e855d3cef4c656d2295b1"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-en-390-destination-polish.png",
+      "bytes": 1157563,
+      "sha256": "4b621293b8f3d864d6fa9e0cbe3035d632087893219834a7f23b10a94a68de8b"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-en-390-destination.png",
+      "bytes": 1157563,
+      "sha256": "4b621293b8f3d864d6fa9e0cbe3035d632087893219834a7f23b10a94a68de8b"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-en-390-geography-regression.png",
+      "bytes": 1157563,
+      "sha256": "4b621293b8f3d864d6fa9e0cbe3035d632087893219834a7f23b10a94a68de8b"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-en-390.png",
+      "bytes": 387093,
+      "sha256": "a0e55762f9b1c173203d24573f927b8689e34af9663ad38aa2b8a1fe9960ca2f"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-en-768-destination.png",
+      "bytes": 1500168,
+      "sha256": "4a3170f0e5c27749c0a5b9bc5e4e528ef63acbb0b47856b336c61508a4d70049"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-es-1024-destination.png",
+      "bytes": 2189644,
+      "sha256": "15ed922819e6b592a07d1cd2b79af9f78c7b987421c20a7be0519b76a7dfe651"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-es-1440-destination.png",
+      "bytes": 2365940,
+      "sha256": "340deedbf5202dec8766fad52211819fc741e01aa88f00b13bc07126196e7b86"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-es-1920-destination.png",
+      "bytes": 2530556,
+      "sha256": "a07f8cc9f20e2f32a79bc40fe3e352f338569b564a74861196034ff4cc276f03"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-es-360-destination.png",
+      "bytes": 1074953,
+      "sha256": "f8529b93086f98b2377cf3f579f124c4d1d78d34fa42d4e985b11f8743927987"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-es-390-destination.png",
+      "bytes": 1179298,
+      "sha256": "9c7874893f7c94a3c6e7cad28c3f8a43dce382d1259b8dc5bbda08401db5beda"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-es-768-destination.png",
+      "bytes": 1504390,
+      "sha256": "f61eac36ed2b2e64049679b22e4db0f39bc95974264b187849d7b48dbcc7d3ab"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-fr-1024-destination.png",
+      "bytes": 1953778,
+      "sha256": "249fe7eecc94964fb234874eadeebb3ae8a0b66f09f16fd96205cf7fba4b9e2b"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-fr-1440-destination.png",
+      "bytes": 2043354,
+      "sha256": "30e0bbec876ff8a5611bde4b622b7cc9854501ea6a63eafe5d95e0844e31b84e"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-fr-1920-destination.png",
+      "bytes": 2078110,
+      "sha256": "753e590224ffdd417e8b6ccaeffe3a9d86539ed675ed9ab572c0d80d65be3d33"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-fr-360-destination.png",
+      "bytes": 1075300,
+      "sha256": "34f76619667b21338b02e76641e531a280039c3481df43df63e3a2dc79f88085"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-fr-390-destination.png",
+      "bytes": 1178769,
+      "sha256": "d103a1ac362313a7aac357f9c557a02861e290e5fbc63c0222c98d713330608c"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-fr-768-destination.png",
+      "bytes": 1520329,
+      "sha256": "947949e5195400aa4053a74ca04a33f5ed2a9881a16715b8c4e91be41dce5cac"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-hi-1024-destination.png",
+      "bytes": 2145021,
+      "sha256": "8e6057a66a2b6ee63d03df4868402cccb9b389e11b8d00a43d4cee0e17f9987d"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-hi-1440-destination-polish.png",
+      "bytes": 2337413,
+      "sha256": "34cfb440e99dbe589e0b8450ca68298abb2219bc07b463c2757e35ad02329497"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-hi-1440-destination.png",
+      "bytes": 2338751,
+      "sha256": "ba0b44ef5c79d5fad262abc15ae73ad522f69d864b75867497eac0572804da24"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-hi-1440.png",
+      "bytes": 673261,
+      "sha256": "2bda06c0b70f4876fea3b25a6284cf03ea40168aa4035209dd451f69d90dd911"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-hi-1920-destination.png",
+      "bytes": 2471426,
+      "sha256": "981e43dff3573e431d53e4acf388497e5d407c6393e0b9bfb2bf0899147b8563"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-hi-360-destination.png",
+      "bytes": 1036049,
+      "sha256": "6abe9e93a9b55fbdb484815014e6b427b604ce5a7a34dbae9a170c7f2069cb47"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-hi-390-destination-polish.png",
+      "bytes": 1140242,
+      "sha256": "4907509a37335bb1d166a9b6b1da4402b361c09b3be458b564d05a3b60ce5b40"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-hi-390-destination.png",
+      "bytes": 1140242,
+      "sha256": "4907509a37335bb1d166a9b6b1da4402b361c09b3be458b564d05a3b60ce5b40"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-hi-390.png",
+      "bytes": 424583,
+      "sha256": "cfc9b493fa6ed52aec32a54a31a21c697eb69e707576cd833a8e7c55626ed055"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-hi-768-destination.png",
+      "bytes": 1454493,
+      "sha256": "3cc28d1aefd904b74b31c4e28c7ca911a6a44d6f6924bf506c5e7bb15e444779"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-id-1024-destination.png",
+      "bytes": 2175411,
+      "sha256": "80cb5e8684ab42b2523a812eb7e3a3a34c7aafd2f16fd6ba68486c129037502b"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-id-1440-destination.png",
+      "bytes": 2353757,
+      "sha256": "2152809dcff22d681821bc2288190754e49c456dd3b9ada9f339bdd44a20810d"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-id-1920-destination.png",
+      "bytes": 2518203,
+      "sha256": "b5ca47d4969e6f2f6bf01c9062a816e71dd26b2d3cd9c15265093f3c9bda5045"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-id-360-destination.png",
+      "bytes": 1066357,
+      "sha256": "ad0e31f270a4d857fd9d496baf3354100a859ae1cfe53177c392be72e60b7103"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-id-390-destination.png",
+      "bytes": 1167680,
+      "sha256": "70e9a862dd50b4c97344fca374fef475325b0d07847223db3d7fd685f2c1eaf7"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-id-768-destination.png",
+      "bytes": 1513628,
+      "sha256": "bf02694362ee9623d6aa40f12723ecc0b4703addf2976322de90a61d60d85153"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-tl-1024-destination.png",
+      "bytes": 2205975,
+      "sha256": "666c38cfe0de54d0e3945253d6ccdce7ef947e8fc81870e4358f34707095d8cc"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-tl-1440-destination.png",
+      "bytes": 2401598,
+      "sha256": "0583e79f42fd9c3c43f1056175d105a6dcac0b4027b5befc67517c1d626d0e1d"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-tl-1920-destination.png",
+      "bytes": 2601905,
+      "sha256": "9cfafa6e789231e86b5d0ecf5ea648d8c85cba212109bfb9be118b32e16a2c50"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-tl-360-destination.png",
+      "bytes": 1111706,
+      "sha256": "06f4274b4d1467e39a3857015abcc32727099282666391f3ef13f5f2bff723b6"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-tl-390-destination.png",
+      "bytes": 1211674,
+      "sha256": "f69854a1c86b3e675b8e0152ccbdfca02a13946af39e1bdd34302e8685664204"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P09-tl-768-destination.png",
+      "bytes": 1557351,
+      "sha256": "475bccaa1afdc54b44346d2704b6261aa239d85a9bda5a47b505275a03272df9"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P10-ar-1440-geography-regression.png",
+      "bytes": 1169270,
+      "sha256": "caeed5c07e424c1417103e2670c3589d044ffde81feec588f6a6a9ca12087d79"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P10-ar-1440.png",
+      "bytes": 1099022,
+      "sha256": "2fee9a7004d2fd2cfd0963a36c4d15f6113bad5bf7ccad5cbd4269bab1bc021e"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P10-ar-390-geography-regression.png",
+      "bytes": 734836,
+      "sha256": "04b37e145139cf77a811b89dab1ee8893b22a4acd8a4511fbd283829a3cacf19"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P10-ar-390.png",
+      "bytes": 657613,
+      "sha256": "704d919353a11e07b4e69d659493dc5e824f14a6da644e67cb49f7d07ff287ad"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P10-en-1440-geography-regression.png",
+      "bytes": 1293403,
+      "sha256": "45946b4149c6117c602b2d95357423179fd2899833a1ed8048cca528b0de55bb"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P10-en-1440.png",
+      "bytes": 1246282,
+      "sha256": "ba96420f07718f4aa60efe2f92978af7f3ef9961cf3f85205ed3f6a762057358"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P10-en-390-geography-regression.png",
+      "bytes": 835867,
+      "sha256": "ae385e0c91ce5e2e40216f30cdf113192a85d7c2912f9cbc3e95804bb5d3754d"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P10-en-390.png",
+      "bytes": 759844,
+      "sha256": "b1eff5ba9c4452726adffdb387c4f2530a121676ae920c9f0b9ff1b0b823ed7a"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P10-hi-1440.png",
+      "bytes": 1201305,
+      "sha256": "039a25e4b329026e50719434fdad46d03a34009e7d8be38180eadd08fcc210e9"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P10-hi-390.png",
+      "bytes": 734693,
+      "sha256": "6063b4c4a76b7d1a1b5da1ec7bbdb9e4bd96807b68599feb4697585106156014"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-ar-1024-employer.png",
+      "bytes": 1205762,
+      "sha256": "b92dcc0f18d4705010f75496b4770095853dd8eb90122a7fd03faa62be6a8b7f"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-ar-1440-employer-polish.png",
+      "bytes": 1236398,
+      "sha256": "fe4e9804e2ef886edb6863cf91cb558e0d4e6670a53fef84acfa5dbcdbb6c237"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-ar-1440-employer.png",
+      "bytes": 1236398,
+      "sha256": "fe4e9804e2ef886edb6863cf91cb558e0d4e6670a53fef84acfa5dbcdbb6c237"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-ar-1440.png",
+      "bytes": 1052706,
+      "sha256": "b8a350931020a8409b8a175199c047248410865e74c3d5749b009d18cd825cd4"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-ar-1920-employer.png",
+      "bytes": 1445330,
+      "sha256": "f7460a00c0413cab12afcbbf60b300abe7f3fa421f01f63b8ef5cc6ffa23f084"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-ar-360-employer.png",
+      "bytes": 638735,
+      "sha256": "084d114ab7e5d4e80ecd05b61d4c55866f67c54411a0b97ca63947092b9a1241"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-ar-390-employer-polish.png",
+      "bytes": 706056,
+      "sha256": "856dc14f80ba1bd933a999f8ad90832786b6f0afe148da4f28920149f3ca4220"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-ar-390-employer.png",
+      "bytes": 706056,
+      "sha256": "856dc14f80ba1bd933a999f8ad90832786b6f0afe148da4f28920149f3ca4220"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-ar-390.png",
+      "bytes": 689203,
+      "sha256": "c14e5dcfe14371c5bb3e3977983f2cdbcf56792f79493b32ba119cce22f39a2c"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-ar-768-employer.png",
+      "bytes": 836091,
+      "sha256": "af70977112acf0efa47e7835de1f78505ec77e1dc13d1402b4079c151b751b29"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-en-1024-employer.png",
+      "bytes": 1257238,
+      "sha256": "633b3f1881a884e64a761fd8e3c6935d4c828a8358243c18de29bb83802a6190"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-en-1440-employer-polish.png",
+      "bytes": 1321895,
+      "sha256": "d0804fd2435d0b62bc05f044aa5291b1a2a2886d7c8d93af0b022cc15e6e1095"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-en-1440-employer.png",
+      "bytes": 1321895,
+      "sha256": "d0804fd2435d0b62bc05f044aa5291b1a2a2886d7c8d93af0b022cc15e6e1095"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-en-1440.png",
+      "bytes": 1171979,
+      "sha256": "6b4b40b118f817a5296d9c65304ff8fca1ea707138e8acadc951fdb3c42bcb20"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-en-1920-employer.png",
+      "bytes": 1566039,
+      "sha256": "f08e65051c955aaa69c0376e563bb3c5f35fbf451c5971c58b4d14a66eba4907"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-en-360-employer.png",
+      "bytes": 708498,
+      "sha256": "52c3d4cbf68a74a1609c85564dd7e9bf6cf61a57c9b45759b5a4e1df65266c11"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-en-390-employer-polish.png",
+      "bytes": 778246,
+      "sha256": "ee7b471a76dadd8d4d2299587b3c84a45a0ac6cca3eebc137ed1eb94f6341ddc"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-en-390-employer.png",
+      "bytes": 778246,
+      "sha256": "ee7b471a76dadd8d4d2299587b3c84a45a0ac6cca3eebc137ed1eb94f6341ddc"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-en-390.png",
+      "bytes": 764678,
+      "sha256": "14809648acd10c3ea867893fe585146eea98a18afdef3795bc17acfca822afb0"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-en-768-employer.png",
+      "bytes": 935686,
+      "sha256": "e0171ce0a2098f0832238a27970aea72a6a5290b66fe221feb03e85829bd027f"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-es-1024-employer.png",
+      "bytes": 1243697,
+      "sha256": "90ca96342670ab77d7f6b14cc7506fcec1a521562b59b01bd1ff8f3926df983e"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-es-1440-employer.png",
+      "bytes": 1345397,
+      "sha256": "22dd6d30d88d1c17caac28815f855568c5f240be6ea733e7089d63b11d90333f"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-es-1920-employer.png",
+      "bytes": 1595751,
+      "sha256": "a3c5d9823da1bbd1c7288899e63d2acd6ac0eb75eba0cec0dce8303400856078"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-es-360-employer.png",
+      "bytes": 720189,
+      "sha256": "06613bf02f91f3887d6052dfb2d97e345c8bcbc27b749bcdc7fcc4ff12f6a320"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-es-390-employer.png",
+      "bytes": 786044,
+      "sha256": "8d3c7fc5978ca9833b5abcdff67ed8a8123852c56fb0ea73c77a12683e44a3cc"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-es-768-employer.png",
+      "bytes": 940880,
+      "sha256": "6606e0636d18672aef32a3acd85b8fef3014c6013cc201df78d250d4733f8198"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-fr-1024-employer.png",
+      "bytes": 1264350,
+      "sha256": "455ad43f8999cb89dc640792e758a27f623653279fe8da4099140ed8deba7156"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-fr-1440-employer.png",
+      "bytes": 1357491,
+      "sha256": "c535d2fb7cd00c27b85dbca90ee1d2a7bdb077e601b45c0d5c55986878245533"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-fr-1920-employer.png",
+      "bytes": 1616072,
+      "sha256": "04d194c81b18ce61ca6ce2d72860643d9c3bff094b79ce7a07f5f995e8829707"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-fr-360-employer.png",
+      "bytes": 720500,
+      "sha256": "0ba6e528d49b5ed7c3ebc6da904e16855512dc4429fb4162663338532833a0d8"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-fr-390-employer.png",
+      "bytes": 786608,
+      "sha256": "cf1e6a942e7808d4c8909201f123fe93fdaf3208690b7b6fd7d565055d858eb1"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-fr-768-employer.png",
+      "bytes": 944282,
+      "sha256": "bf713bc8dcccccfe12f77fc0d2e5d6696693196585ac34b848ce85d62eeacd06"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-hi-1024-employer.png",
+      "bytes": 1235605,
+      "sha256": "7271e19339d63a06bf3ab2b021427edc9a04a9f46bc038384b668c1538bceb7d"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-hi-1440-employer-polish.png",
+      "bytes": 1300576,
+      "sha256": "1d197d3f393e7783c669d24de453aef814580072cb7403d446a1a737e37693e0"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-hi-1440-employer.png",
+      "bytes": 1300576,
+      "sha256": "1d197d3f393e7783c669d24de453aef814580072cb7403d446a1a737e37693e0"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-hi-1440.png",
+      "bytes": 1135493,
+      "sha256": "9f113e7cc6fd5b6a1757ed0fab33db903ba21941ee3baed6687cd39095aad778"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-hi-1920-employer.png",
+      "bytes": 1539742,
+      "sha256": "02332b05144318b5351bc731ab3d75bc4712698c4c55cc5051a015c9145d1ab1"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-hi-360-employer.png",
+      "bytes": 690577,
+      "sha256": "96d3f4a7b57d78cf0750d844d87296e5788ae7ec311520735e5b92bb6eee503e"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-hi-390-employer-polish.png",
+      "bytes": 756364,
+      "sha256": "f5e526df8aecc03adaab0d95bf990015a2f25929785927c4ef2a6b3de9f1c2dd"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-hi-390-employer.png",
+      "bytes": 756364,
+      "sha256": "f5e526df8aecc03adaab0d95bf990015a2f25929785927c4ef2a6b3de9f1c2dd"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-hi-390.png",
+      "bytes": 737335,
+      "sha256": "5e4675e5a8e4448d1173e8cbe477ca62f78ee9ce7bf3453e1e54f9f16b4b23ea"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-hi-768-employer.png",
+      "bytes": 877704,
+      "sha256": "7c42d7834e1e731fe4358f54d6fdb1e99e2f3668ff1c8a1ac9f1ab07a4492c80"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-id-1024-employer.png",
+      "bytes": 1262382,
+      "sha256": "b8e5f029a4be82d60c66594a4b58d788e5c642b85d0b67811d0ff41fff42d250"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-id-1440-employer.png",
+      "bytes": 1327173,
+      "sha256": "a079fd9981354c50ed6e99e366dddeb1fb55bcb9593aac224e2453e71c7262bd"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-id-1920-employer.png",
+      "bytes": 1571166,
+      "sha256": "98e2ab331441c947ab0281642370d8edfa76a555f1c07d4258ee198de4decf94"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-id-360-employer.png",
+      "bytes": 720414,
+      "sha256": "3546b7daa5bad12e6ddb969d44eb4c19b2095a1a8efd40f408e49439b8a9d202"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-id-390-employer.png",
+      "bytes": 787117,
+      "sha256": "a01da9935a39054cd02627877c0fdea2a94587ba5b4e9eefef6c8fe2af9fa912"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-id-768-employer.png",
+      "bytes": 936045,
+      "sha256": "9b0c47c077311726d948abfed2788834d451220b0e030952153de34abe98b644"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-tl-1024-employer.png",
+      "bytes": 1298013,
+      "sha256": "710c7470c9b4a4edc2b9dfccd256dc675375182a6bcc3bc6b41e87915be4dbe3"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-tl-1440-employer.png",
+      "bytes": 1398924,
+      "sha256": "f8c57decb604c3a816e46b633848fe39cfb885ccf82f5d03f98ba3c6cb423003"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-tl-1920-employer.png",
+      "bytes": 1659709,
+      "sha256": "3642cee6d9b73ec080b1b9e7237fd306346a459e1f067d0f22945225531d0beb"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-tl-360-employer.png",
+      "bytes": 756752,
+      "sha256": "234806f8a43da77a82825b44e982edc56c53bfa426c17abc4556b1fa38f19b66"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-tl-390-employer.png",
+      "bytes": 825748,
+      "sha256": "486a707234d9a79fcdba12981fe6e040555e81ab605893c4007010a72488b87d"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P11-tl-768-employer.png",
+      "bytes": 1005496,
+      "sha256": "5815d6c9a65cfcb0dd779c047665e86c677c1f4f644837bed65e0f02d8462995"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-ar-1024-employer.png",
+      "bytes": 318253,
+      "sha256": "09f387f5cc72f9e5dafcc9c5d2719f7e7df88fe62e8f19cc28a8f3510474685d"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-ar-1440-employer-polish.png",
+      "bytes": 346566,
+      "sha256": "ee88686e4a2d76fca83aa7d4c88038a102f13c8e9ffc344e5aaaf3b20127de3e"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-ar-1440-employer.png",
+      "bytes": 347617,
+      "sha256": "30b3a4d1e235675498c45ed4b1b39295f393632c5f400893951d05da6121f21d"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-ar-1440.png",
+      "bytes": 323958,
+      "sha256": "c3073ce10d1ae8e0af47dc7c1fc38e8d776cb194e706694ef7895d8b8a48e706"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-ar-1920-employer.png",
+      "bytes": 358038,
+      "sha256": "103c83649f3409f4819d4727f42961683480acbb0d9266056399a75ae7678c28"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-ar-360-employer.png",
+      "bytes": 283372,
+      "sha256": "9b2892722ff10e505ce8839e0f4db557b64716ffc703da066fe7a8936d64fa4d"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-ar-390-employer-polish.png",
+      "bytes": 283468,
+      "sha256": "787f90395e84b2938ae96ecd493829510137251099bdf1af579d87c0be556d61"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-ar-390-employer.png",
+      "bytes": 284603,
+      "sha256": "768ddf39be269ffbecd58ea6988658f6629a527cfe14519c3213bae65658ba0c"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-ar-390.png",
+      "bytes": 268650,
+      "sha256": "2bca554daa0dcfc408d557ad6b025d5c9fa3911d0aa4ee5a895de01de5426b31"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-ar-768-employer.png",
+      "bytes": 305208,
+      "sha256": "f38debc2ce10780fc06bb5338754f086a1856b0d0844a7265ab5f9435996755d"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-en-1024-employer.png",
+      "bytes": 404398,
+      "sha256": "11fe47d7c4d72e35c18d4d6926a6b79cd9a31f9e37c8e5e78c6ed88605beca92"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-en-1440-employer-polish.png",
+      "bytes": 429908,
+      "sha256": "9cbbb97db3366c782390ab81205be8c26492a8fa489cb60f743febe2dc5b01f7"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-en-1440-employer.png",
+      "bytes": 432098,
+      "sha256": "8f7345ed4c09e64b8497803d5c57caa63fad61f3d2e0e9856217ac3757f6e3ba"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-en-1440.png",
+      "bytes": 398357,
+      "sha256": "b5771dac70bdf37432772e698568245557d7f3284c5fbc3228787213ec46a48f"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-en-1920-employer.png",
+      "bytes": 443704,
+      "sha256": "d1ddd1c88009dcfa3b21735d4c724f025c8abc12f5eb439aa0f02ef9d987bde4"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-en-360-employer.png",
+      "bytes": 359289,
+      "sha256": "eabae58f7742dcf330aec93801ef2ffe0981ee1e9a1c562b1901c40e094c0e25"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-en-390-employer-polish.png",
+      "bytes": 357539,
+      "sha256": "b5ca120b850c505061aaf926347d8a1d42ba2441486ae3c3771cd12c1dc36ae4"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-en-390-employer.png",
+      "bytes": 359608,
+      "sha256": "6fc43a712107efa8cf5b89a9f0a911aa0c6d42b1ccb506b1266c051d0b4572c5"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-en-390.png",
+      "bytes": 332415,
+      "sha256": "c76ef7318735f1118425ad0f4c329a3f87fed013e27d780c3a955f5810a91661"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-en-768-employer.png",
+      "bytes": 389552,
+      "sha256": "90c9318256f2bb20cf0fa6f33f919b6c26e2b07fd2576885b1ada710b8a62405"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-es-1024-employer.png",
+      "bytes": 406262,
+      "sha256": "96f17f23cbbe7387dc746760f2573a2862476a9e722c2e7c7c0947a6d379eb63"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-es-1440-employer.png",
+      "bytes": 435751,
+      "sha256": "f533e603716fb93d71add62c4d7ad71952a3e7cec39f3cec3487f8a5a3105f15"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-es-1920-employer.png",
+      "bytes": 447562,
+      "sha256": "73495e800433e2374688ac936a54cad81ea24182d1483b2b7a78bbfdeb3d80f4"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-es-360-employer.png",
+      "bytes": 369304,
+      "sha256": "2ef91eb7fc4fd306e8216fff4c500d3ce67c1cf6dae312c64203cc4152255850"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-es-390-employer.png",
+      "bytes": 370744,
+      "sha256": "2a3385d4d14710505dc0f89f5f1a8ce8581f5a0e7829077aed398999944b9c1c"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-es-768-employer.png",
+      "bytes": 392471,
+      "sha256": "4509be9cea7a07975634956df208784a78a842f92ebdd9b3cb3a7afabdc2da3e"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-fr-1024-employer.png",
+      "bytes": 408402,
+      "sha256": "37bc39f1e72e14235ed6e9b6de713a506aba38b6c137a4bea6da7bd423008bc2"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-fr-1440-employer.png",
+      "bytes": 436023,
+      "sha256": "4f67034ca2d0dc0e850dbf9de7fc9ac3423e2571818e49fd3046284d609b7d8f"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-fr-1920-employer.png",
+      "bytes": 448037,
+      "sha256": "c74e4955386130904c4c060d3f1dc016aa002a5ae11e597d1af9942d419dab2e"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-fr-360-employer.png",
+      "bytes": 372316,
+      "sha256": "59736ad2789c56d40220803cc8a7e255c35c6515b444d3597d8d96f59db89b7b"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-fr-390-employer.png",
+      "bytes": 370211,
+      "sha256": "14da7f63681c873072404f5f0ca5a3d7b5c3d59645b6aa8f9a259903f953dd49"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-fr-768-employer.png",
+      "bytes": 399266,
+      "sha256": "4e36f6a035417bd41326a7deca9681c51f2bb3c26aa486d929a9d9a1c2b92e3a"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-hi-1024-employer.png",
+      "bytes": 374573,
+      "sha256": "45d14f114a34d75b435d37fb248fb5fd79f29c4af96b44603387f6537550e094"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-hi-1440-employer-polish.png",
+      "bytes": 402064,
+      "sha256": "64eec293963a15f507d8d335c7388556795cf71257764437c0caa475b6cc459a"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-hi-1440-employer.png",
+      "bytes": 403803,
+      "sha256": "0b693428098555e57428f3682fb8473add1c69494dfa26866b5b18f88cedccd1"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-hi-1440.png",
+      "bytes": 377593,
+      "sha256": "7501e89696b3c40cb9a9135d69a133bf68b11c441609aea3e4a07f3ac62b1094"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-hi-1920-employer.png",
+      "bytes": 415579,
+      "sha256": "0af3ae48a4678a555fdd02837d10f0e0a549a2246261658e3cfe430ac9a6a39f"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-hi-360-employer.png",
+      "bytes": 338243,
+      "sha256": "ef4c4768e0d8ae1c1043458dd9b13db78f8d609ad87285e064e6d0d9fbe31262"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-hi-390-employer-polish.png",
+      "bytes": 340284,
+      "sha256": "a1b78fae1fc43539779d3e5cc393ac757552bf7029b5234794282c94d1a49703"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-hi-390-employer.png",
+      "bytes": 341709,
+      "sha256": "a77b0630ecdb5f97a50f0ab2b301b35fe11e43152bf2943496f1cc313df049b9"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-hi-390.png",
+      "bytes": 321456,
+      "sha256": "fdcb95dd205155fdd97691de652c80c9e70ecfe1d60844cda8a5bf13c3cbdec1"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-hi-768-employer.png",
+      "bytes": 364451,
+      "sha256": "3ade0b15aae678cfe89f316cb743a0adbdec923e8fdf8a0c133cb27a8cd1e532"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-id-1024-employer.png",
+      "bytes": 407084,
+      "sha256": "ac7eb52ef78bed6eac78399fe1917d53674eae0dd00f8fab9e53670eaec1195f"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-id-1440-employer.png",
+      "bytes": 433183,
+      "sha256": "65d2a3bea473d01b9c9068ebfb10e6edd6b1c21ebdf4caa9ff6d835f42022acb"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-id-1920-employer.png",
+      "bytes": 444918,
+      "sha256": "26800f094d3165417d70d059b08c5ff9d0c26f5fbcf0d985eb9d892d6a1fdce0"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-id-360-employer.png",
+      "bytes": 363783,
+      "sha256": "81856b5637755bc9ba56278d8cf05f851ae9e34cf3dd8eb17c73af53be41aed4"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-id-390-employer.png",
+      "bytes": 362891,
+      "sha256": "a4226fb4e7aed2dace1035d884f126a5fa40181d4150f5ea7f645c2b987072e9"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-id-768-employer.png",
+      "bytes": 395464,
+      "sha256": "55f20f941986c49342d5dbdee345955af66a95cd779bc509f20b3afac6113a45"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-tl-1024-employer.png",
+      "bytes": 437123,
+      "sha256": "2d166802f63f7a5d6be24e6c4c5cee9d6e4607c04d17e7016b5b4997edde9296"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-tl-1440-employer.png",
+      "bytes": 467710,
+      "sha256": "66583826983c67bf5f19e2439d4802ad711041033cfea610e8a3f0e6ea90f4db"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-tl-1920-employer.png",
+      "bytes": 480066,
+      "sha256": "c5fd2ea9bd8d622c7a6ac11afe45361636a2a838196f0acc7e8353c9b1063866"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-tl-360-employer.png",
+      "bytes": 394979,
+      "sha256": "5024ac99f1c82f5f627fdb710e834dba09d31fde75da637578699ea280cc6d30"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-tl-390-employer.png",
+      "bytes": 394903,
+      "sha256": "92a087c5e0fb0acbd9c9cbae314dde71cd6f424f653ad6260cd88675e06450d3"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P12-tl-768-employer.png",
+      "bytes": 430901,
+      "sha256": "42fb7ca47b0da8dbf294c322244d1c43e9d77abf3aead3dbbe59c6d2e804e857"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P13-ar-1440.png",
+      "bytes": 747464,
+      "sha256": "67d23cd682a196bd8dea4c4ec6d2625ce0a4f04a1f46e3b05cf7322e341cf349"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P13-ar-390.png",
+      "bytes": 413979,
+      "sha256": "450db6a04a733683cfcac4c4162081b4d2af367a99a0de6acde718ef38f620fe"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P13-en-1440.png",
+      "bytes": 838362,
+      "sha256": "10a292c9131386f0822c881653d58f8f0b5864169c3b4f04fc3b0a67052acf0e"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P13-en-390.png",
+      "bytes": 470090,
+      "sha256": "9f834155ebf721e5566074b8fc991d6927ab9518cf73ffe75e99a8994d885046"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P13-hi-1440.png",
+      "bytes": 806742,
+      "sha256": "e736309bbce862566b7a2ed338a6a51f38ed577e1803c8be6f6c5b34a8e047c2"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P13-hi-390.png",
+      "bytes": 457324,
+      "sha256": "aceada27d50655edcdbaba2928ce4036537f90c37849ceaeb320196877781df8"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P14-ar-1440.png",
+      "bytes": 288704,
+      "sha256": "dde4bf986465896280d91e1ce74fefc3a34d7e1b95999b7efbf45155bff20472"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P14-ar-390.png",
+      "bytes": 460652,
+      "sha256": "ad5714c922856d7fa120e21697a20cfce39e27a515294a55800972eb074d07c2"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P14-en-1440.png",
+      "bytes": 962393,
+      "sha256": "a28db8f0d5bba0f6aad6e1c693c4220e4f8faa291db0aabaf62ea43181b193e3"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P14-en-390.png",
+      "bytes": 513679,
+      "sha256": "7e7e3e29a06d2da517d3425445b939fbf0c51c17bc4b85bc2d19ffc6f0722086"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P14-hi-1440.png",
+      "bytes": 916209,
+      "sha256": "f896f267f683ebc8d317de6c9af20e4c559007ea02fe0ff9ffc18a377f5153ac"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P14-hi-390.png",
+      "bytes": 508789,
+      "sha256": "67c41c2ae819dba68fe20be9a10be78fd68e3f47fc4768f69bef4cb67e932ffc"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P15-ar-1440.png",
+      "bytes": 959819,
+      "sha256": "89999e9dc3e63db3bf7365acb67da83346758059a823d1e56715f69d8de3a797"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P15-ar-390.png",
+      "bytes": 446736,
+      "sha256": "f5d6f548d4ccd3e675d2ae1bd61dedcfde80b96c9557d5ac66ab6079f598dcea"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P15-en-1440.png",
+      "bytes": 1111036,
+      "sha256": "171932f9e3f87006e789e26ad853d7096abea5fa6f82444a7a9cc1a304d7895f"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P15-en-390.png",
+      "bytes": 497928,
+      "sha256": "c51ab9f9dcbe072344b56811e04c47b7c24ad3566164c50265ada2136edc8c20"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P15-hi-1440.png",
+      "bytes": 1059728,
+      "sha256": "5452543a69d0a680c18b8e022dd27a0578ba67bd8fdc8a3efc7f81c0ee85ad8a"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P15-hi-390.png",
+      "bytes": 486211,
+      "sha256": "72dd929d4a989ad66272d570928c4fb3d5edc14e9d6fe1437ff4421c9cd12ead"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P16-ar-1440.png",
+      "bytes": 254727,
+      "sha256": "f1528f558b2c0a9711235e90b27c2e519f4682dc5c8be30faa7d9328864eda5d"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P16-ar-390.png",
+      "bytes": 220365,
+      "sha256": "50a9d3b952be4c1e0a696f8abdb431eebb47d8de24c43ade17a97d026bb9ec7c"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P16-en-1440.png",
+      "bytes": 277916,
+      "sha256": "3002c3fa5adc18a7542756b8fabeb2730957cd0b542b4d44b3699713dcc87913"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P16-en-390.png",
+      "bytes": 240105,
+      "sha256": "220c1c74691af07d961dd14a353de194e00f0dd245696e5b9a5176688c825254"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P16-hi-1440.png",
+      "bytes": 279841,
+      "sha256": "0a122e6247de995f42a54fd3f5c72e0f158a6c1099d82e1f507141e3d04a3105"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P16-hi-390.png",
+      "bytes": 243680,
+      "sha256": "2d5fcdac7ef616e1e8105fc814a78f284300d880470579148552ad4dee72e5b5"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P17-ar-1440.png",
+      "bytes": 695759,
+      "sha256": "7156f27b349a55c4b3f056505fde4cd7ae056d3d18d27150a6ecef677fb46b62"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P17-ar-390.png",
+      "bytes": 657057,
+      "sha256": "aa3622773b193ba59c898b117aff1fb5074731f137a3a5626cdb35687f5a7569"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P17-en-1440.png",
+      "bytes": 1271840,
+      "sha256": "681bc7e3d080f7b8c760149f1e47835dc49e9aa1ebc2bd94447f5b597625ebd9"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P17-en-390.png",
+      "bytes": 822835,
+      "sha256": "c9e5331468247b5427e2d28801cb9e5496a9017fe10a21ea1dfa141cd4188224"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P17-hi-1440.png",
+      "bytes": 1292088,
+      "sha256": "59d20885ae43a1faeb7d9e1810cc778e8adbdc7db90037cbd04e65c0b67706ff"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P17-hi-390.png",
+      "bytes": 759342,
+      "sha256": "1c385e2a6c1fbe719d1e18e7a77b53e51dd8b6c24249773d3b3f7ecb06e7f8ee"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P18-ar-1440.png",
+      "bytes": 1538215,
+      "sha256": "07317c5f986487f49b5f63678e9209292dc1f0bc64ada7e96b747a767b787ba0"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P18-ar-390.png",
+      "bytes": 759713,
+      "sha256": "9ce6fff482b3426f85851460dbe7e0c3234416a2b025dc2b32530ff5756305a1"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P18-en-1440.png",
+      "bytes": 1720163,
+      "sha256": "82e7b8a3134f7a55c780fb48b71451e2d13681c895e5971f61b18f5b8857a4d7"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P18-en-390.png",
+      "bytes": 935703,
+      "sha256": "29ef33d8e3d3f3d524eca07df07e97d7a8c7127dafdb27856d6f86029fa22bef"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P18-hi-1440.png",
+      "bytes": 1645664,
+      "sha256": "d613e2cb3aba50a120ba4da934d905b3970890b466a9e2cd1d0e260eb9a85791"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P18-hi-390.png",
+      "bytes": 863045,
+      "sha256": "cf30b751668d692ed9c79c444d27d236160bc810d3af01fcea4cbd96a1514ad7"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P19-ar-1440.png",
+      "bytes": 1842449,
+      "sha256": "7f7906e699cff588cb896f759a4eb7d09198bf35efb020c9c58d21929dd289e4"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P19-ar-390.png",
+      "bytes": 1050283,
+      "sha256": "8bb43e27acccca6cb6f058c3c1cfe84336d2f00e5a5b6e5ac1f9b128b4f364b3"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P19-en-1440.png",
+      "bytes": 2061106,
+      "sha256": "94da8b0864c4f4bee2a5fe2861998280f86d2ff3a0cf7ca996dce04f11e8c606"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P19-en-390.png",
+      "bytes": 1250347,
+      "sha256": "ef079c65e0e645704e3084f3b4307b0f9921ed2012784cb557aa4e50aef61925"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P19-hi-1440.png",
+      "bytes": 2052314,
+      "sha256": "587ee138d6bd9392bd140ea1e9346f6f6e8894282151ca7c43da6971a393ec91"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P19-hi-390.png",
+      "bytes": 1173179,
+      "sha256": "0cd94366f797393ddacc000f9d9c14c60f56e932e2bf986fba123d7556078fe6"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P20-ar-1440.png",
+      "bytes": 806644,
+      "sha256": "d242202c8cad86ad4aa4a882d08cc6f65c7981fe7e434229fc6562a2697efaa9"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P20-ar-390.png",
+      "bytes": 488515,
+      "sha256": "10fa6016bddb96be6141f87ff45a1458ea0c516e816d989831df670e059b1901"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P20-en-1440.png",
+      "bytes": 898934,
+      "sha256": "7c5416009d574bebfd89d816a84b3aba709b5d37515102f6972f76a2267a87eb"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P20-en-390.png",
+      "bytes": 596237,
+      "sha256": "2c44bfc2da9ea58854f26199fc98a5ac2dc2b6bccfcf8815451d935bf07c4bc9"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P20-hi-1440.png",
+      "bytes": 851573,
+      "sha256": "8e8b9d63758aa98768e0c29716f658fc77a249d3a308d87b2029c41d15edee53"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P20-hi-390.png",
+      "bytes": 553257,
+      "sha256": "6b2a85e56bcc4a30df15fc91b26adf18ae715596b5eccd450ca3ba200b59babe"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P21-ar-1440.png",
+      "bytes": 767995,
+      "sha256": "c59c3210d47f1c8d4879060041a8c01e7a60ec0e05d4d34e308865ddbdfc2789"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P21-ar-390.png",
+      "bytes": 367705,
+      "sha256": "0ebf639fbb82ede16723d5aed4ddc19ff1045880dc222fdca136871c66a3458e"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P21-en-1440.png",
+      "bytes": 843177,
+      "sha256": "bbc1b817d6de4852710c8a8bb9baad28d9f7f7e1c562ca782afd89d98e7cdf16"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P21-en-390.png",
+      "bytes": 417790,
+      "sha256": "bc0cf34f1e2162ffc34d6da698925c5e48e2f3340db2932fc134f5888cf065d3"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P21-hi-1440.png",
+      "bytes": 816710,
+      "sha256": "edab357d901bf934f8c24b616aaf43c49f9afd44f67515f3b3a99ca60d039373"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P21-hi-390.png",
+      "bytes": 394470,
+      "sha256": "398c9e89a435aaccedb5e21ebc89f4f2a871d65afd00e7bf6089a01c2047abd6"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P22-ar-1440.png",
+      "bytes": 218112,
+      "sha256": "067574ea24b964ebf0a9b01087103b3c766d9cf4492fdfd37a1b99c748c39e5f"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P22-ar-390.png",
+      "bytes": 192535,
+      "sha256": "0fb269ce5a209ee5d758a4934b5421dbd33b2e0cf5315ed3c44c09d9138ce828"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P22-en-1440.png",
+      "bytes": 235626,
+      "sha256": "9bef5a75a2ac6c55d93462e8371737311704f05de0f599043d1cfa3b7265a3c9"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P22-en-390.png",
+      "bytes": 205455,
+      "sha256": "d3fc8c21af8b6969d56d8be0c89b0674b77789dc2694f7c6dedfff39516e1e00"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P22-hi-1440.png",
+      "bytes": 235239,
+      "sha256": "46be8424697124b54758f276a526e68bf6b16631ca8777f934ad1cf26bf8c13a"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P22-hi-390.png",
+      "bytes": 206781,
+      "sha256": "3b650db3520fca48d9da65bdada3af6453ac7dd849f3f1b29948d8158355ff4a"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P23-ar-1440.png",
+      "bytes": 849617,
+      "sha256": "c8b60507ede52fcb044e2cce50333cae532dc705f1e0710a85c76d64ee9bf8aa"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P23-ar-390.png",
+      "bytes": 496560,
+      "sha256": "dda1e4d54e6a039ae03eea6895abf1729dc0768df3f7ad592727857b83d2c974"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P23-en-1440.png",
+      "bytes": 942940,
+      "sha256": "b0c93b7c0fbcc3f22b0f3123ed54ab60a72403af238dc6758bb0b106fbec8b1d"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P23-en-390.png",
+      "bytes": 560112,
+      "sha256": "c1f8e72afe83cc549041a7dd76fffd9adda68b18477c2b092d0fea86f77919fd"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P23-hi-1440.png",
+      "bytes": 397759,
+      "sha256": "b54b1d3e01a4a6f8c3b5825aa60b9df6f550b41ccd8b7cbd760396ee369a92cb"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P23-hi-390.png",
+      "bytes": 530302,
+      "sha256": "0c0c7056b233c77282e3f083deaf79f8dfef2ec1e27011659382870fc1c093da"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P24-ar-1440.png",
+      "bytes": 1145436,
+      "sha256": "56c9ade5ac9464300bb56b1400a7fa4d006a481b43aafdadb9e4f393662e232d"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P24-ar-390.png",
+      "bytes": 596012,
+      "sha256": "a25f83da99230ef0138025e4a66c96b005452908c07262be3fec0c92343ed618"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P24-en-1440.png",
+      "bytes": 1250104,
+      "sha256": "991c70513d70ec5ce346ff56948be62574b026c1db20cec68b2f61bbc97d07b6"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P24-en-390.png",
+      "bytes": 702945,
+      "sha256": "7f6086292fdb1ccf1a624ca0f60ca6c43fc16f57ec822ca7bef801bbed02f96a"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P24-hi-1440.png",
+      "bytes": 1199665,
+      "sha256": "3db11ce23fca3f0443fdd6c658fc7cc0b8e6e80746606f4094485ff49d060584"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P24-hi-390.png",
+      "bytes": 657962,
+      "sha256": "44f3a17f5e1d87dfe9a1cafb74e8cc5108f13c47b633899ad6eaf8c77aa22be2"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P25-ar-1440.png",
+      "bytes": 768598,
+      "sha256": "e92530968a0bbc891135c5bb63c05dbd4d2c4ac3d5519bac030f7546e3f9318f"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P25-ar-390.png",
+      "bytes": 427255,
+      "sha256": "21a7bf17eb0bf2e37bb5e266f115f4ea96179144f529b0105bc0ffccc9b0b942"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P25-en-1440.png",
+      "bytes": 378071,
+      "sha256": "1704ec6d682fffd18614e8d64f38d902bd381fbaa6a635e8d586a73f45436b11"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P25-en-390.png",
+      "bytes": 493665,
+      "sha256": "08046b7bd55a5b5048e302a0a4a7969a0cc55acd8a0a5aa4ae1bd7940925906e"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P25-hi-1440.png",
+      "bytes": 835803,
+      "sha256": "2adc700066f9214b771c240485c6a4ef3177e1df60c89ff0b215840c2ecc8b64"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P25-hi-390.png",
+      "bytes": 465414,
+      "sha256": "f5cadde8bc28a9fee0836d396e178083de026ffd7a89c00136f3a485d48a0ff9"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P26-ar-1440.png",
+      "bytes": 94153,
+      "sha256": "bd0b0601698806302da7273af5e976ab4ae99cd77e6b045144688961ef78679f"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P26-ar-390-attribution.png",
+      "bytes": 67729,
+      "sha256": "f086ae8471fa153d5ad4f2dafb9e4c5b7645c5b0200cf1426992d967476ce828"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P26-ar-390.png",
+      "bytes": 67684,
+      "sha256": "f3476aaad2d241a7398cbf7934aedac14829217fae12f60ce23643a94309a747"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P26-en-1440-attribution.png",
+      "bytes": 103325,
+      "sha256": "9ac04d9c7087cbcbb348ae5e21c0aab18d9ccf9a9a734d327985284a27056630"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P26-en-1440.png",
+      "bytes": 100898,
+      "sha256": "7e725a25aa6e585e17bd8fcb19c84d2a2cc3841fce217943d2ca957221213ab0"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P26-en-390-attribution.png",
+      "bytes": 77030,
+      "sha256": "61f97d16b7e7a07ed0f034ea08935c0882e958f9778b726b812cd7cc64d8d149"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P26-en-390.png",
+      "bytes": 77252,
+      "sha256": "fe84d21ed68823ad20458e52be2dcbdee8bfcf8169f8eb42d565f6630859bd64"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P26-hi-1440.png",
+      "bytes": 107679,
+      "sha256": "dd812ff4367c22d9c307bfd555c2b356c27d10044048b2e9c6236399856bb60e"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P26-hi-390-attribution.png",
+      "bytes": 79433,
+      "sha256": "208663694a124ecab8b35e09a7a4db0e811342ecc338175e42a2a503c82730ef"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/P26-hi-390.png",
+      "bytes": 79720,
+      "sha256": "c2b5527a4fc0318c1825f2ceab2c1c3d6dd25430ab02c8efb3ad278bf40a48ca"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/case-document-selection.json",
+      "bytes": 2505,
+      "sha256": "9b5687c47af7c445442a4da667416b064e5ed02af347bcc9e7f61dd96732e19f"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/connected-candidate-outcome.png",
+      "bytes": 349490,
+      "sha256": "8b684833be9bfb9b60c446ae8aa385569523d22240f244251a79d9cef1bfc76f"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/connected-context-0-failure.png",
+      "bytes": 349119,
+      "sha256": "6bdef0cf997fc3fa277b8321e8b0936abff89fdd762b418a46c0537bedfdd00c"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/connected-context-1-failure.png",
+      "bytes": 329687,
+      "sha256": "f63653b8b1f1ac9a7bd4dbf1a0f8381b5881e2aa4f222d0de9ee3787d5ccc347"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/connected-first-failure.png",
+      "bytes": 349119,
+      "sha256": "6bdef0cf997fc3fa277b8321e8b0936abff89fdd762b418a46c0537bedfdd00c"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/directory-failure-0.png",
+      "bytes": 68114,
+      "sha256": "d66bbbb3474141fa865f939b3fdcb3a67604927dda11d4c1c6e793e787e81b00"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/directory.json",
+      "bytes": 65280,
+      "sha256": "13f3b51ecfa1766ca9ff51a34a8413658839f4f98e711ddd25654b371aaf4d35"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/document-selection.json",
+      "bytes": 2604,
+      "sha256": "7a83f0d365d33567183086bb3d8e766d9212d093c928e74dfb6aefcf2317ae3c"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/editorial-opening.json",
+      "bytes": 6536,
+      "sha256": "d3569280ec5c5bb06553ea16b306e9d84142f18bbec8cde0ab8ef3fa65cc3e09"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/employer-world-first-failure.png",
+      "bytes": 1302569,
+      "sha256": "7be5cc477e9f3be726e4da6b122c020e08eeaf8f17a965a610faa2b8cc9e78cc"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/employer-worlds-before-final-clear-navigation-wait-20261022.json",
+      "bytes": 2014,
+      "sha256": "a29613d2d13f93e95e339085577e98de5f0fe4e62f8d9332e4610f05e313d7bb"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/employer-worlds-before-final-state-polish-20261022.json",
+      "bytes": 15325,
+      "sha256": "8e61ea8e79379ad6566b3817995fbd7472b1ad0aa3c46bfe8a04d6772b5aa455"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/employer-worlds-before-native-streaming-notfound-check-20261022.json",
+      "bytes": 3061,
+      "sha256": "1298b96c55ca2b79138a420636349546ee85bf2477475db0f9c41577a453d1d6"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/employer-worlds-before-runtime-loopback-approval-20261022.json",
+      "bytes": 1604,
+      "sha256": "4e9a4a43b0f2ec79676e8bd517596c4730b513bb206feb6f9199496e7195d300"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/employer-worlds-before-summary-locator-correction-20261022.json",
+      "bytes": 4269,
+      "sha256": "cfe6ef7eefa274ec1cfb8901d1f20e6bae8400b6c8da317f5e7628c9f72bebf5"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/employer-worlds.json",
+      "bytes": 5225,
+      "sha256": "aaa96c63881618375fd9913fd2eb00ccc792f8f2bf1964a9ab8bb2951bcc2da2"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/geographic-worlds-before-layout-polish-20261022.json",
+      "bytes": 291722,
+      "sha256": "edd6f332193724314f2ca9074cac7374b070f8e7fd5c585493fea8afaeb7cb82"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/geographic-worlds.json",
+      "bytes": 43288,
+      "sha256": "dfbffa13e8d4873e03aa9e374c14fed10b63534b37b35f66e2da7273e4dc1bde"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/geography-alert-scope-failure-20261021.json",
+      "bytes": 2828,
+      "sha256": "3146f2c274e8a3c5a4dfc341e9f26d1518d10a2af200c19cb871b9826ff82240"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/geography-before-rtl-polish-20261021.json",
+      "bytes": 441120,
+      "sha256": "234d5bb56cec6b5b58c6d5da860ffc4d238d65c02abcf3bad06bd365fa2d573a"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/geography-failure.png",
+      "bytes": 109385,
+      "sha256": "3fbbc562becbabd79e8c3ed82dc23bfed378513adbd72219189f778b7d21bf92"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/geography-recovery-stream-failure-20261021.json",
+      "bytes": 1988,
+      "sha256": "a18cbcf13c43de98bfba484d85191bab18168f5372508c553db24a4621b4a00e"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/geography.json",
+      "bytes": 432440,
+      "sha256": "218d744f76d5b6b39ad30ec4f2c7eb989082d0f42a6f5a08a5c050da942de8f5"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/journey.json",
+      "bytes": 4166,
+      "sha256": "e49e0aa2ad46ee9be669ea9dd8b0671eb94c6768224d91ed4c46f6657f4dd04a"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/kidflix-motion.json",
+      "bytes": 2961,
+      "sha256": "62d7322cf6cec1ea82317959da497c431c5719eef80bde022e9e4ffeea7628c7"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/legal-attribution.json",
+      "bytes": 2829,
+      "sha256": "46475f9d98c37278ccb61f6cb266bf2fb115050bbe626c8aed2729619f22ed32"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/navigation-before-native-locale-settle-20261021.json",
+      "bytes": 18606,
+      "sha256": "49d33e7ed6d82737ce05e551685dface5fd5e3920f9f7b35516a8b0c87bdbb16"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/navigation-isolation-before-metadata-20261021.json",
+      "bytes": 5906,
+      "sha256": "cbf654949a5d2f39d48920d7bdbd03cf102e86c3b4d025f10bdd572010683ee4"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/navigation-network-idle-interrupted-20261021.json",
+      "bytes": 29078,
+      "sha256": "e263cca751a4d884547d8ec8a8ae6ba2371de9ed4b7678e567f93abff051888d"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/navigation.json",
+      "bytes": 9029,
+      "sha256": "fbd14c1912529e6131a71703826adcbf35f72eda483869f584512f7b5040b9b7"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/panel-selection-before-history-20261021.json",
+      "bytes": 2826,
+      "sha256": "e94bbf2169359f899201f9101d2b8199795e9a0ddae75c975c2c132b1a21d3cc"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/panel-selection-fixture-failure-20261021.json",
+      "bytes": 1451,
+      "sha256": "3243df37187db1b26e13ce128ab318532c3297ef1065742b2d613a10b644fc36"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/panel-selection.json",
+      "bytes": 3202,
+      "sha256": "2a83940513d77e3605f13329989cb30752b30dde18c356d8db55b338321cabe9"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/presentation-before-metadata-20261021.json",
+      "bytes": 3958,
+      "sha256": "c60a9b7fd0353312d19fe2642c53b2f91f8227172f551a8ab5897f587ef8d31c"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/presentation.json",
+      "bytes": 4326,
+      "sha256": "194a70346d535e2d9d4e4b1f20d69524ea02a5186e5e721ebbe58f0a557e5d23"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/private-export-before-capture-scroll-correction-20261022.json",
+      "bytes": 6424,
+      "sha256": "639bd088ab075842272d800248a22b9d6e57d18fb6e34e142ea209a1ba5ce036"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/private-export-before-rpc-delay-handshake-20261022.json",
+      "bytes": 2173,
+      "sha256": "96b3f747479d4939ecc2f7ef0fe436592ebf9948517901aae041125418ee9562"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/private-export-before-unmount-timing-fix-20261022.json",
+      "bytes": 2173,
+      "sha256": "96b3f747479d4939ecc2f7ef0fe436592ebf9948517901aae041125418ee9562"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/private-export.json",
+      "bytes": 6424,
+      "sha256": "121babc929db022b7f2e41f22d62c44797dd4ae38468cf69f69c3d2e6c6f985f"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/public-ar.json",
+      "bytes": 158317,
+      "sha256": "e2014277c043acfaab76e7b422bdee4e992d8219a1d340ee996be1dac925ce1a"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/public-en.json",
+      "bytes": 155710,
+      "sha256": "c3810fc76304f70bb33711e74eb2a9db999f06ee9d05d4d8f4ce1d3953cbffd1"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/public-hi.json",
+      "bytes": 164045,
+      "sha256": "cb63c4d052291959e2b3dec4ad7d18ea0c7eb387d281c5d74954c484ac048a20"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/responsive-behavior.json",
+      "bytes": 5621,
+      "sha256": "9228693f96548c73667772e9094af7c39355e622943d56cbce74f4b8629b1d05"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/runtime-security.json",
+      "bytes": 2023,
+      "sha256": "1faf562df7f4c28eda88f6ff2bd61b3181934d727e46d48f3dcf4572cc48aa68"
+    },
+    {
+      "path": "docs/jobkix/evidence/browser/studio-selection.json",
+      "bytes": 4172,
+      "sha256": "cd6bb3abc4b1857dffc744f2e7e335f45da0212b45ea427a79dfbc020d3eb992"
+    }
+  ],
+  "limitation": "Capture publication records bytes only; functional and visual acceptance are in individual reports."
+}

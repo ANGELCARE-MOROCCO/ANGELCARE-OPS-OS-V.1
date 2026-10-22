@@ -1,0 +1,52 @@
+{
+  "recordedAt": "2026-10-21T22:45:24.790Z",
+  "sourceAtStart": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 332,
+    "digest": "294967dfd77088db898cc26a5d04fc2d469dd7cbf5335cdfc74d09942c3c974f"
+  },
+  "sourceAtEnd": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 332,
+    "digest": "294967dfd77088db898cc26a5d04fc2d469dd7cbf5335cdfc74d09942c3c974f"
+  },
+  "checks": [
+    {
+      "name": "native country pagination is distinct and preserves origin/destination/reach",
+      "status": "PASS"
+    },
+    {
+      "name": "country search resolves the actual native destination and retains independent context",
+      "status": "PASS"
+    },
+    {
+      "name": "country-world entry uses the native destination search authority",
+      "status": "PASS"
+    },
+    {
+      "name": "search within a native region preserves the selected region",
+      "status": "PASS"
+    },
+    {
+      "name": "explicit reset clears directory filters while retaining recruitment context",
+      "status": "PASS"
+    },
+    {
+      "name": "native geography dependency failure keeps useful country results and selected input without inventing zero counts",
+      "status": "PASS"
+    },
+    {
+      "name": "real retry recovers current counts without losing directory context",
+      "status": "PASS"
+    }
+  ],
+  "results": [],
+  "errors": [],
+  "failure": {
+    "message": "Expected values to be strictly equal:\n\n0 !== 24\n",
+    "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n0 !== 24\n\n    at /Users/user/Desktop/angelcare-platform/apps/marketplace-web/scripts/jobkix/geography.cjs:23:294"
+  },
+  "scope": "Actual Next frontend, native country/flag/M49 authorities and isolated SQL eligibility. Forty-two P07 locale/viewport renders and related P08–P10 regressions are feature evidence, not complete screen/language/content/visual acceptance or hosted certification."
+}

@@ -1,0 +1,4001 @@
+{
+  "families": [
+    {
+      "id": "P00",
+      "name": "JOBKIX Homepage",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED",
+      "partialBrowserEvidence": {
+        "report": "docs/jobkix/evidence/browser-reviews.json",
+        "functional": "PARTIAL_BROWSER_VERIFIED",
+        "visual": "VISUAL_PENDING",
+        "limitations": [
+          "Individually inspected actual desktop/mobile implementation against the original composition.",
+          "Hero text contrast corrected with an owned directional fade; resources now use actual reviewed guide bindings, and dual acquisition panels use registered editorial imagery.",
+          "Meaningful reference depth, complete localized/state behavior and final responsive/RTL acceptance remain pending."
+        ]
+      }
+    },
+    {
+      "id": "P01",
+      "name": "Global Job Search Pro Max",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED",
+      "partialBrowserEvidence": {
+        "report": "docs/jobkix/evidence/browser-reviews.json",
+        "functional": "PARTIAL_BROWSER_VERIFIED",
+        "visual": "VISUAL_PENDING",
+        "limitations": [
+          "Individually inspected desktop/mobile search composition against the original.",
+          "Inherited Marketplace mobile CSS hid every aside. Added a JOBKIX-only override so filters remain visible without editing shared CSS.",
+          "Native filter disclosures retain all inputs. The responsive suite exercised real keyboard disclosure and GET filtering with discovery context.",
+          "Complete depth, recovery, localization and visual acceptance remain pending."
+        ]
+      }
+    },
+    {
+      "id": "P02",
+      "name": "Job Detail Pro Max",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED",
+      "partialBrowserEvidence": {
+        "report": "docs/jobkix/evidence/browser-reviews.json",
+        "functional": "PARTIAL_BROWSER_VERIFIED",
+        "visual": "VISUAL_PENDING",
+        "limitations": [
+          "Individually inspected actual desktop/mobile job detail against the original reference.",
+          "Restored the canonical application sidebar at narrow widths through owned CSS; added a nearby canonical apply link for eligible vacancies.",
+          "Responsive suite checked the native apply destination/sidebar in English, Arabic and Hindi at all six required widths.",
+          "Full factual content depth, state and localized visual acceptance remain pending."
+        ]
+      }
+    },
+    {
+      "id": "P03",
+      "name": "All Employment Sectors",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED",
+      "partialBrowserEvidence": {
+        "report": "docs/jobkix/evidence/browser-reviews.json",
+        "functional": "PARTIAL_BROWSER_VERIFIED",
+        "visual": "VISUAL_PENDING",
+        "limitations": [
+          "Actual desktop directory and original individually inspected. Canonical blueprint settings intentionally differ from the broader illustrative image groupings.",
+          "Sixteen image-led settings, native directory search, grid/list controls and two-sided onward actions are present. Factual counts come from the isolated SQL fixture.",
+          "Complete mobile/localized visual fidelity and action/state acceptance remain pending."
+        ]
+      }
+    },
+    {
+      "id": "P04",
+      "name": "Sector Detail World",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED",
+      "partialBrowserEvidence": {
+        "report": "docs/jobkix/evidence/browser-reviews.json",
+        "functional": "PARTIAL_BROWSER_VERIFIED",
+        "visual": "VISUAL_PENDING",
+        "limitations": [
+          "Original and actual desktop sector world individually inspected; English and Arabic desktop/mobile hero crops also inspected.",
+          "Desktop full-page captures omitted the decoded hero while viewport captures were correct. Replaced negative editorial image/overlay layers with explicit nonnegative owned stacking. Fresh English and Arabic desktop/mobile viewport/full-page captures now retain the hero; individual full-page review confirms the desktop correction. No shared CSS or data authority changed.",
+          "Reviewed sector guidance/resources are unavailable in the synthetic fixture, so honest empty states appear. Required reviewed editorial depth remains a release/content dependency; sample reference claims and jobs are not fabricated.",
+          "Full page/state/language acceptance remains pending."
+        ]
+      }
+    },
+    {
+      "id": "P05",
+      "name": "All Professions",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED",
+      "partialBrowserEvidence": {
+        "report": "docs/jobkix/evidence/browser-reviews.json",
+        "functional": "PARTIAL_BROWSER_VERIFIED",
+        "visual": "VISUAL_PENDING",
+        "limitations": [
+          "Original full-page reference and actual English desktop/Arabic mobile directory individually inspected.",
+          "Canonical 16 setting navigation, published profession directory, actual opportunity counts, native search/alphabet/grid-list controls and two-sided entry are present. Illustrative profession popularity is not invented.",
+          "A native filtered profession search now uses the correct localized action and preserves independent origin, destination and reach into the profession world.",
+          "Cook previously reused an unrelated transport photograph. A distinct generated food-preparation scene is now registered and rendered; ordinary profession imagery still reflects editorial environments, not actual employers/staff.",
+          "Full directory state, keyboard, language and visual acceptance remains pending."
+        ]
+      }
+    },
+    {
+      "id": "P06",
+      "name": "Profession Detail World",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED",
+      "partialBrowserEvidence": {
+        "report": "docs/jobkix/evidence/browser-reviews.json",
+        "functional": "PARTIAL_BROWSER_VERIFIED",
+        "visual": "VISUAL_PENDING",
+        "limitations": [
+          "Mapped profession reference and actual English mobile/Arabic desktop cook world individually inspected. New kitchen scene remains visible with useful responsive crops.",
+          "The reference occupational-therapy composition does not authorize generic licensing/qualification claims for every profession. Canonical profession identity, employment setting, actual vacancy terms and governed editorial remain separate authorities.",
+          "Reviewed profession guidance, related settings and resources are unavailable for cook in the synthetic fixture. The page correctly presents honest empty states; required profession-specific editorial depth remains incomplete and is a release/content dependency.",
+          "Full state, keyboard, language and visual acceptance remains pending."
+        ]
+      }
+    },
+    {
+      "id": "P07",
+      "name": "Global Countries Directory",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED",
+      "partialBrowserEvidence": {
+        "report": "docs/jobkix/evidence/browser-reviews.json",
+        "functional": "PARTIAL_BROWSER_VERIFIED",
+        "visual": "VISUAL_PENDING",
+        "limitations": [
+          "Original P07 composition and actual final desktop/Arabic mobile atlas inspected individually. New geographic opening, compact 24-country directory, eight regional collections and native city links follow the mapped hierarchy.",
+          "Nine native filter/context/reset/error/retry/keyboard checks and 54 renders passed in the dated geography report. The 42 P07 views cover all seven languages and six required widths; 12 related P08/P09/P10 views cover English/Arabic desktop/mobile.",
+          "Counts and current destinations come only from canonical query-time eligibility. Failed reads preserve known country identities and selected filters with an unavailable count.",
+          "Decorative Natural Earth geometry has a preserved public-domain source and deterministic safe SVG export. No job pins or political-border claims were invented.",
+          "Complete per-family content, all-state, keyboard/screen-reader and localized visual acceptance remain pending."
+        ]
+      }
+    },
+    {
+      "id": "P08",
+      "name": "Country Careers World",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED",
+      "partialBrowserEvidence": {
+        "report": "docs/jobkix/evidence/browser-reviews.json",
+        "functional": "PARTIAL_BROWSER_VERIFIED",
+        "visual": "VISUAL_PENDING",
+        "limitations": [
+          "Mapped original country/city reference individually inspected. New geographic identity, licensed exact-location scene, native search command, all sixteen image-led settings, actual jobs/professions/employers, contextual navigation and two-sided acquisition are integrated.",
+          "The full 84-view sweep covers two fronts, seven languages and six widths. After inspecting layout, one-city cards and unavailable-count typography were refined; twelve English/Arabic/Hindi desktop/mobile renders repeated all eight behavior checks. Individual final P08 English desktop and P09 Arabic desktop views inspected.",
+          "Actual counts retain canonical query-time recruitment authority. No generic market statistics, map pins, neighbourhood guidance, employer claims or immigration promises were copied from sample references. Reviewed custom media retains priority.",
+          "Reviewed country/city guidance and related resources are unavailable in the synthetic fixture. Honest empty states remain; complete content, states, localization quality, accessibility and visual family acceptance remain pending."
+        ]
+      }
+    },
+    {
+      "id": "P09",
+      "name": "City & Region Careers World",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED",
+      "partialBrowserEvidence": {
+        "report": "docs/jobkix/evidence/browser-reviews.json",
+        "functional": "PARTIAL_BROWSER_VERIFIED",
+        "visual": "VISUAL_PENDING",
+        "limitations": [
+          "Mapped original country/city reference individually inspected. New geographic identity, licensed exact-location scene, native search command, all sixteen image-led settings, actual jobs/professions/employers, contextual navigation and two-sided acquisition are integrated.",
+          "The full 84-view sweep covers two fronts, seven languages and six widths. After inspecting layout, one-city cards and unavailable-count typography were refined; twelve English/Arabic/Hindi desktop/mobile renders repeated all eight behavior checks. Individual final P08 English desktop and P09 Arabic desktop views inspected.",
+          "Actual counts retain canonical query-time recruitment authority. No generic market statistics, map pins, neighbourhood guidance, employer claims or immigration promises were copied from sample references. Reviewed custom media retains priority.",
+          "Reviewed country/city guidance and related resources are unavailable in the synthetic fixture. Honest empty states remain; complete content, states, localization quality, accessibility and visual family acceptance remain pending."
+        ]
+      }
+    },
+    {
+      "id": "P10",
+      "name": "Careers Abroad Pro",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED",
+      "partialBrowserEvidence": {
+        "report": "docs/jobkix/evidence/browser-reviews.json",
+        "functional": "PARTIAL_BROWSER_VERIFIED",
+        "visual": "VISUAL_PENDING",
+        "limitations": [
+          "Original international front and actual English desktop abroad page inspected individually. Current repeated search opening and limited reviewed mobility content do not yet satisfy the rich mapped composition.",
+          "Preserve independent origin/destination and real employer overseas/sponsorship/relocation declarations. Do not convert illustrative visa pathways, counts or brands into promises.",
+          "The dated English/Arabic render regression is narrow evidence; full mobility, empty/error/recovery and visual acceptance remains pending."
+        ]
+      }
+    },
+    {
+      "id": "P11",
+      "name": "Employer Directory",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED",
+      "partialBrowserEvidence": {
+        "report": "docs/jobkix/evidence/browser-reviews.json",
+        "functional": "PARTIAL_BROWSER_VERIFIED",
+        "visual": "VISUAL_PENDING",
+        "limitations": [
+          "Original full-page reference and actual English desktop/mobile and Arabic mobile captures individually inspected. All six native employer filters now precede image-led type discovery, current approved public profiles, practical trust/discovery guidance and the owned footer.",
+          "Seven canonical employer kinds replace illustrative unsupported company-size/category samples. Generic icon cards are used when no actual employer media is available; unrelated imagery is not represented as an employer workplace.",
+          "The initial full sweep passed 84 views across seven languages and six widths with 15 behavior checks. After the documented neutral-trust-heading and page-preserving retry corrections, 12 English/Arabic/Hindi desktop/mobile views and 16 behaviors passed. The full sweep precedes those final corrections.",
+          "Partial evidence uses native Next/SQL and synthetic services. Complete localization quality, content/state depth, accessibility and visual family acceptance remain pending."
+        ]
+      }
+    },
+    {
+      "id": "P12",
+      "name": "Employer Public Profile Pro",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED",
+      "partialBrowserEvidence": {
+        "report": "docs/jobkix/evidence/browser-reviews.json",
+        "functional": "PARTIAL_BROWSER_VERIFIED",
+        "visual": "VISUAL_PENDING",
+        "limitations": [
+          "Original employer-profile reference and actual English desktop/mobile and Arabic mobile captures individually inspected. Unillustrated profiles use a compact factual identity opening rather than an empty image region.",
+          "Current native identity review, employer-scoped jobs, keyboard-operated complete filter disclosure, canonical save/share/report, published hiring locations and moderated workplace contribution bindings are integrated. Original-language descriptions remain annotated separately from interface language.",
+          "The synthetic employer has no approved native photos, published workplace edition or moderated contributions. Real photography/benefits/process/staff stories are not invented; complete employer-approved content/media and all corresponding rendered states remain pending.",
+          "The initial full sweep passed 84 views across seven languages and six widths with 15 behavior checks. After the documented neutral-trust-heading and page-preserving retry corrections, 12 English/Arabic/Hindi desktop/mobile views and 16 behaviors passed. The full sweep precedes those final corrections.",
+          "Partial evidence uses native Next/SQL and synthetic services. Complete localization quality, content/state depth, accessibility and visual family acceptance remain pending."
+        ]
+      }
+    },
+    {
+      "id": "P13",
+      "name": "Salaries & Compensation",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "P14",
+      "name": "Workplace Reviews",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "P15",
+      "name": "Career Resources Library",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "P16",
+      "name": "Career Guide Detail",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "P17",
+      "name": "For Jobseekers",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "P18",
+      "name": "For Employers",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "P19",
+      "name": "How JOBKIX Works",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "P20",
+      "name": "Trust & Safety Center",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "P21",
+      "name": "Help & Support Center",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "P22",
+      "name": "Help Article Detail",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "P23",
+      "name": "Contact & Assistance",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "P24",
+      "name": "About JOBKIX",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "P25",
+      "name": "Report a Problem",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "P26",
+      "name": "Legal & Policy Front",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED",
+      "partialBrowserEvidence": {
+        "report": "docs/jobkix/evidence/browser-reviews.json",
+        "functional": "PARTIAL_BROWSER_VERIFIED",
+        "visual": "VISUAL_PENDING",
+        "limitations": [
+          "Original reference inspected. Explicit user amendment supersedes its policy directory, policy reader and compliance claims.",
+          "Actual English desktop and Arabic/Hindi mobile screenshots individually inspected. Main content is the approved ANGELCARE attribution only, with no country or jurisdiction statement.",
+          "Twenty-five browser checks passed across seven languages and all original document aliases. This is narrow presentation evidence, not native-language approval or full consent-journey acceptance.",
+          "Registration consent links and their current reviewed-document boundary need reconciliation before full release acceptance."
+        ]
+      }
+    },
+    {
+      "id": "A01",
+      "name": "Candidate Sign-up",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "A02",
+      "name": "Candidate Sign-in",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "A03",
+      "name": "Hirer Sign-up",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "A04",
+      "name": "Hirer Sign-in",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "A05",
+      "name": "Email Confirmation & Callback",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "A06",
+      "name": "Recovery Request",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "A07",
+      "name": "Reset & Session Recovery",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "A08",
+      "name": "Progressive Onboarding, Invitations & Context",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "C01",
+      "name": "Dashboard",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "C02",
+      "name": "Discovery",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "C03",
+      "name": "Saved Jobs & Collections",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "C04",
+      "name": "Applications",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "C05",
+      "name": "Application Detail & Timeline",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "C06",
+      "name": "Career Passport",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "C07",
+      "name": "CV & Portfolio",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "C08",
+      "name": "Interviews & Calendar",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "C09",
+      "name": "Inbox",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "C10",
+      "name": "Alerts & Saved Searches",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "C11",
+      "name": "Visibility & Privacy",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "C12",
+      "name": "Career Insights",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "C13",
+      "name": "Account & Security",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "C14",
+      "name": "Help & Support",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "H01",
+      "name": "Dashboard",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "H02",
+      "name": "Vacancies",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "H03",
+      "name": "Create / Publish Vacancy",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "H04",
+      "name": "Vacancy Management",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "H05",
+      "name": "Applications Inbox",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "H06",
+      "name": "Pipeline & Comparison",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "H07",
+      "name": "Opt-in Talent Search",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "H08",
+      "name": "Talent Pools",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "H09",
+      "name": "Interviews & Evaluations",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "H10",
+      "name": "Offers & Hiring Decisions",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "H11",
+      "name": "Messaging",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "H12",
+      "name": "Team & Permissions",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "H13",
+      "name": "Organization & Branches",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "H14",
+      "name": "Verification",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "H15",
+      "name": "Analytics",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "H16",
+      "name": "Settings & Security",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "D01",
+      "name": "Employer Verification",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "D02",
+      "name": "Vacancy Moderation",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "D03",
+      "name": "Reports & Appeals",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "D04",
+      "name": "Reviews & Salary Moderation",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "D05",
+      "name": "Taxonomy",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "D06",
+      "name": "Content & Editorial",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "D07",
+      "name": "Health & Incidents",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "id": "D08",
+      "name": "Audit & Governance",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "implementation": "PARTIAL",
+      "acceptance": "NOT_ACCEPTED"
+    }
+  ],
+  "userLanguageCells": [
+    {
+      "family": "P00",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P00",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P00",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P00",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P00",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P00",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P00",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P01",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P01",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P01",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P01",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P01",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P01",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P01",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P02",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P02",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P02",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P02",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P02",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P02",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P02",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P03",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P03",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P03",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P03",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P03",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P03",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P03",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P04",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P04",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P04",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P04",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P04",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P04",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P04",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P05",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P05",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P05",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P05",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P05",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P05",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P05",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P06",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P06",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P06",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P06",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P06",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P06",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P06",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P07",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P07",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P07",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P07",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P07",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P07",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P07",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P08",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P08",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P08",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P08",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P08",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P08",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P08",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P09",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P09",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P09",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P09",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P09",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P09",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P09",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P10",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P10",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P10",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P10",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P10",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P10",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P10",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P11",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P11",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P11",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P11",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P11",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P11",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P11",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P12",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P12",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P12",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P12",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P12",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P12",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P12",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P13",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P13",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P13",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P13",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P13",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P13",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P13",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P14",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P14",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P14",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P14",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P14",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P14",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P14",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P15",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P15",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P15",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P15",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P15",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P15",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P15",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P16",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P16",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P16",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P16",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P16",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P16",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P16",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P17",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P17",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P17",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P17",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P17",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P17",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P17",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P18",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P18",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P18",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P18",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P18",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P18",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P18",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P19",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P19",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P19",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P19",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P19",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P19",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P19",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P20",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P20",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P20",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P20",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P20",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P20",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P20",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P21",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P21",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P21",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P21",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P21",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P21",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P21",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P22",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P22",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P22",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P22",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P22",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P22",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P22",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P23",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P23",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P23",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P23",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P23",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P23",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P23",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P24",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P24",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P24",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P24",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P24",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P24",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P24",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P25",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P25",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P25",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P25",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P25",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P25",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P25",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P26",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P26",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P26",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P26",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P26",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P26",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "P26",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A01",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A01",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A01",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A01",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A01",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A01",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A01",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A02",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A02",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A02",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A02",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A02",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A02",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A02",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A03",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A03",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A03",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A03",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A03",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A03",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A03",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A04",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A04",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A04",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A04",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A04",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A04",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A04",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A05",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A05",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A05",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A05",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A05",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A05",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A05",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A06",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A06",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A06",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A06",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A06",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A06",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A06",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A07",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A07",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A07",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A07",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A07",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A07",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A07",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A08",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A08",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A08",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A08",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A08",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A08",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "A08",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C01",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C01",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C01",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C01",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C01",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C01",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C01",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C02",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C02",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C02",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C02",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C02",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C02",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C02",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C03",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C03",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C03",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C03",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C03",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C03",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C03",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C04",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C04",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C04",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C04",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C04",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C04",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C04",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C05",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C05",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C05",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C05",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C05",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C05",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C05",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C06",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C06",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C06",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C06",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C06",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C06",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C06",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C07",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C07",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C07",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C07",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C07",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C07",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C07",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C08",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C08",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C08",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C08",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C08",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C08",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C08",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C09",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C09",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C09",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C09",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C09",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C09",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C09",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C10",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C10",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C10",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C10",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C10",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C10",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C10",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C11",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C11",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C11",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C11",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C11",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C11",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C11",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C12",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C12",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C12",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C12",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C12",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C12",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C12",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C13",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C13",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C13",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C13",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C13",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C13",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C13",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C14",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C14",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C14",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C14",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C14",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C14",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "C14",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H01",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H01",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H01",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H01",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H01",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H01",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H01",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H02",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H02",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H02",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H02",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H02",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H02",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H02",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H03",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H03",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H03",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H03",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H03",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H03",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H03",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H04",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H04",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H04",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H04",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H04",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H04",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H04",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H05",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H05",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H05",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H05",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H05",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H05",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H05",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H06",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H06",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H06",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H06",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H06",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H06",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H06",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H07",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H07",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H07",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H07",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H07",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H07",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H07",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H08",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H08",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H08",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H08",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H08",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H08",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H08",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H09",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H09",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H09",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H09",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H09",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H09",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H09",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H10",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H10",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H10",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H10",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H10",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H10",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H10",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H11",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H11",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H11",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H11",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H11",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H11",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H11",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H12",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H12",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H12",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H12",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H12",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H12",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H12",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H13",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H13",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H13",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H13",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H13",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H13",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H13",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H14",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H14",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H14",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H14",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H14",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H14",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H14",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H15",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H15",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H15",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H15",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H15",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H15",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H15",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H16",
+      "locale": "en",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H16",
+      "locale": "fr",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H16",
+      "locale": "es",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H16",
+      "locale": "hi",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H16",
+      "locale": "tl",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H16",
+      "locale": "id",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    },
+    {
+      "family": "H16",
+      "locale": "ar",
+      "functional": "NOT_STARTED",
+      "visual": "VISUAL_PENDING"
+    }
+  ],
+  "requiredFamilyCount": 73,
+  "requiredUserLanguageCellCount": 455,
+  "reviewedPublicFronts": 8,
+  "endToEnd": {
+    "A": "NOT_STARTED",
+    "B": "NOT_STARTED",
+    "C": "NOT_STARTED",
+    "D": "NOT_STARTED",
+    "E": "NOT_STARTED",
+    "F": "NOT_STARTED",
+    "G": "NOT_STARTED",
+    "H": "NOT_STARTED"
+  },
+  "currentCounts": {
+    "startedFamilies": 73,
+    "fullyImplementedFamilies": 0,
+    "acceptedFamilies": 0,
+    "verifiedUserLanguageCells": 0,
+    "individuallyRenderedAndReviewedPublicFronts": 14,
+    "visuallyAcceptedPublicFronts": 0
+  },
+  "limitations": [
+    "All 73 families remain unaccepted. Started units include partial source implementation.",
+    "Local Next development runtime and browser tests are user-authorized by EXECUTION_AMENDMENTS.md. Initial captures and partial workflows exist; none establishes full screen acceptance.",
+    "SQL tests use actual in-process PostgreSQL with synthetic identity, evidence and initial trust fixtures; they do not prove hosted Auth, storage, delivery, multi-session concurrency or production E2E."
+  ],
+  "executedPartialBrowserReports": [
+    {
+      "report": "docs/jobkix/evidence/browser/journey.json",
+      "recordedAt": "2026-10-21T22:25:19.450Z",
+      "checks": 15,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "scope": "runtime-and-verification-source-v2",
+        "files": 327,
+        "digest": "dc99e043b06135880c4f99e75eaa8ab7f0a2b950d3d12dcfb46163b52ea87e3d"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/runtime-security.json",
+      "recordedAt": "2026-10-21T22:27:29.084Z",
+      "checks": 13,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "scope": "runtime-and-verification-source-v2",
+        "files": 327,
+        "digest": "dc99e043b06135880c4f99e75eaa8ab7f0a2b950d3d12dcfb46163b52ea87e3d"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/responsive-behavior.json",
+      "recordedAt": "2026-10-21T15:53:34.144Z",
+      "checks": 37,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "files": 272,
+        "digest": "c7b780b9246f5f82e74bcdb027b0a3958fd5ec6a91b5152deea9b255e7999a3f"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/navigation.json",
+      "recordedAt": "2026-10-22T00:38:53.950Z",
+      "checks": 19,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 8,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "scope": "runtime-and-verification-source-v2",
+        "files": 345,
+        "digest": "d91337a75acc7c360c8d3742053bb2e8be37116f383591e147b95fe21318c5b2"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/legal-attribution.json",
+      "recordedAt": "2026-10-21T15:44:33.399Z",
+      "checks": 25,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "files": 272,
+        "digest": "c7b780b9246f5f82e74bcdb027b0a3958fd5ec6a91b5152deea9b255e7999a3f"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/public-en.json",
+      "recordedAt": "2026-10-21T16:05:07.100Z",
+      "checks": 54,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "files": 272,
+        "digest": "400da799fac7282bb384df3b0c5cdbbf5ffe2251335aecc62f40fae4c128c6f6"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/document-selection.json",
+      "recordedAt": "2026-10-21T21:18:03.089Z",
+      "checks": 13,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "files": 279,
+        "digest": "e6a87751af77f96aab5c52aec78f5118154a7c277d979a611e3723d11677e07b"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/studio-selection.json",
+      "recordedAt": "2026-10-21T22:26:34.228Z",
+      "checks": 25,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "scope": "runtime-and-verification-source-v2",
+        "files": 327,
+        "digest": "dc99e043b06135880c4f99e75eaa8ab7f0a2b950d3d12dcfb46163b52ea87e3d"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/case-document-selection.json",
+      "recordedAt": "2026-10-21T21:52:38.431Z",
+      "checks": 11,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "scope": "runtime-and-verification-source-v2",
+        "files": 323,
+        "digest": "78fc5a14b85ece7268a871d09b93f99e6eb91146f8d1265f87190054e286319f"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/panel-selection.json",
+      "recordedAt": "2026-10-21T22:23:45.870Z",
+      "checks": 14,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "scope": "runtime-and-verification-source-v2",
+        "files": 327,
+        "digest": "dc99e043b06135880c4f99e75eaa8ab7f0a2b950d3d12dcfb46163b52ea87e3d"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/public-ar.json",
+      "recordedAt": "2026-10-21T21:25:53.157Z",
+      "checks": 54,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "files": 279,
+        "digest": "e6a87751af77f96aab5c52aec78f5118154a7c277d979a611e3723d11677e07b"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/public-hi.json",
+      "recordedAt": "2026-10-21T21:37:26.516Z",
+      "checks": 54,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "scope": "runtime-and-verification-source-v2",
+        "files": 323,
+        "digest": "536233ed9b8b3b3f8809f13469d3154b0bfbf9f5370af4f2828c08fb3606142b"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/directory.json",
+      "recordedAt": "2026-10-21T21:34:48.763Z",
+      "checks": 19,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "scope": "runtime-and-verification-source-v2",
+        "files": 323,
+        "digest": "536233ed9b8b3b3f8809f13469d3154b0bfbf9f5370af4f2828c08fb3606142b"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/geography.json",
+      "recordedAt": "2026-10-22T00:25:38.431Z",
+      "checks": 9,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "scope": "runtime-and-verification-source-v2",
+        "files": 345,
+        "digest": "d62a84d5a88b886cc867d2d74c09ed7784948702bf28a7ff877edc4fb4a7ba44"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/geographic-worlds.json",
+      "recordedAt": "2026-10-22T00:14:26.535Z",
+      "checks": 8,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "scope": "runtime-and-verification-source-v2",
+        "files": 345,
+        "digest": "d62a84d5a88b886cc867d2d74c09ed7784948702bf28a7ff877edc4fb4a7ba44"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/presentation.json",
+      "recordedAt": "2026-10-22T00:36:15.655Z",
+      "checks": 22,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "scope": "runtime-and-verification-source-v2",
+        "files": 345,
+        "digest": "d91337a75acc7c360c8d3742053bb2e8be37116f383591e147b95fe21318c5b2"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/kidflix-motion.json",
+      "recordedAt": "2026-10-22T00:16:40.686Z",
+      "checks": 5,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "scope": "runtime-and-verification-source-v2",
+        "files": 345,
+        "digest": "d62a84d5a88b886cc867d2d74c09ed7784948702bf28a7ff877edc4fb4a7ba44"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/private-export.json",
+      "recordedAt": "2026-10-22T00:52:56.638Z",
+      "checks": 8,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "scope": "runtime-and-verification-source-v2",
+        "files": 349,
+        "digest": "d3f0ad6621b1c0353586ab9e3f81bf616c21fdc47cbc3a976adbeb2e5505cba5"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/employer-worlds.json",
+      "recordedAt": "2026-10-22T01:30:37.827Z",
+      "checks": 16,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "scope": "runtime-and-verification-source-v2",
+        "files": 352,
+        "digest": "1729568fbf32ea9d598ada0de4c6507c84a6076d247278592a212a228cbfa41a"
+      }
+    }
+  ]
+}

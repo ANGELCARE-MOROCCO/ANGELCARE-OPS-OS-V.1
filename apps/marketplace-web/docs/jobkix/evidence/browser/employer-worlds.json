@@ -1,0 +1,174 @@
+{
+  "recordedAt": "2026-10-22T01:30:37.827Z",
+  "mode": "focused-state-polish",
+  "sourceAtStart": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 352,
+    "digest": "1729568fbf32ea9d598ada0de4c6507c84a6076d247278592a212a228cbfa41a"
+  },
+  "sourceAtEnd": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 352,
+    "digest": "1729568fbf32ea9d598ada0de4c6507c84a6076d247278592a212a228cbfa41a"
+  },
+  "checks": [
+    {
+      "name": "all six native employer filters precede type discovery and real approved results",
+      "status": "PASS"
+    },
+    {
+      "name": "actual native GET combines employer filters while retaining origin destination and reach",
+      "status": "PASS"
+    },
+    {
+      "name": "employer-type discovery preserves independent context and selected native filters",
+      "status": "PASS"
+    },
+    {
+      "name": "clear removes native employer filters while retaining discovery country context",
+      "status": "PASS"
+    },
+    {
+      "name": "real zero-result state retains the query and a functional clear action",
+      "status": "PASS"
+    },
+    {
+      "name": "native directory dependency failure retains controls and independent discovery; explicit retry recovers",
+      "status": "PASS"
+    },
+    {
+      "name": "retry preserves the selected native page and query; clear deliberately returns to the first page",
+      "status": "PASS"
+    },
+    {
+      "name": "factual employer profile omits private fields and unrelated imagery and uses a genuine moderated-review empty state",
+      "status": "PASS"
+    },
+    {
+      "name": "compact employer job section retains all native filters behind a keyboard-operated disclosure",
+      "status": "PASS"
+    },
+    {
+      "name": "embedded filter submission reaches the existing search with employer and native context; default search filters remain open",
+      "status": "PASS"
+    },
+    {
+      "name": "native share uses employer-specific text and the canonical public profile URL",
+      "status": "PASS"
+    },
+    {
+      "name": "repeated verification removes only its own prior saved search through the native confirmed command",
+      "status": "PASS"
+    },
+    {
+      "name": "native employer save command persists a private canonical saved search and its management destination",
+      "status": "PASS"
+    },
+    {
+      "name": "authenticated Career Studio search keeps its default native filter presentation",
+      "status": "PASS"
+    },
+    {
+      "name": "job dependency failure preserves employer identity and reviews and recovers through the existing search API",
+      "status": "PASS"
+    },
+    {
+      "name": "unavailable employer renders the native not-found state with noindex",
+      "status": "PASS",
+      "observedHttpStatus": 200,
+      "transport": "Next streamed not-found documents may already have sent status 200; actual rendered absence and noindex are both asserted."
+    }
+  ],
+  "renders": [
+    {
+      "screen": "P11",
+      "locale": "en",
+      "width": 390,
+      "image": "P11-en-390-employer-polish.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "en",
+      "width": 390,
+      "image": "P12-en-390-employer-polish.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "en",
+      "width": 1440,
+      "image": "P11-en-1440-employer-polish.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "en",
+      "width": 1440,
+      "image": "P12-en-1440-employer-polish.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "ar",
+      "width": 390,
+      "image": "P11-ar-390-employer-polish.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "ar",
+      "width": 390,
+      "image": "P12-ar-390-employer-polish.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "ar",
+      "width": 1440,
+      "image": "P11-ar-1440-employer-polish.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "ar",
+      "width": 1440,
+      "image": "P12-ar-1440-employer-polish.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "hi",
+      "width": 390,
+      "image": "P11-hi-390-employer-polish.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "hi",
+      "width": 390,
+      "image": "P12-hi-390-employer-polish.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "hi",
+      "width": 1440,
+      "image": "P11-hi-1440-employer-polish.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "hi",
+      "width": 1440,
+      "image": "P12-hi-1440-employer-polish.png",
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "expectedNetworkErrors": [],
+  "failure": null,
+  "scope": "Actual authorized local Next routes, existing SQL public projections/eligibility and native private save commands. Synthetic Auth/storage/trust/editorial fixtures; deliberate RPC interruption. No hosted-service, approved real employer media/content, full family-language acceptance or production certification."
+}

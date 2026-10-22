@@ -1,0 +1,57 @@
+{
+  "archive": "ANGELCARE_KIDFLIX_INTERNATIONAL_FINALIZATION_20261020-candidate.zip",
+  "sha256": "754315ea021a1f15da0d3c53d414d746b5e8134c340f4da703182a959b01ed00",
+  "bytes": 148970282,
+  "integrity": "PASS",
+  "freshExtraction": "PASS",
+  "payloadFilesVerified": 149,
+  "packageFilesVerified": 208,
+  "shippedInstallerScenarios": 10,
+  "installVerificationIdempotenceRollback": "PASS",
+  "rollbackRestoresBaselineExactly": "PASS",
+  "installedFixtureChangesOnly": "No original checkout or live database modified",
+  "extractedPackage": "/private/tmp/kidflix-finalization-20261020/zip-extracted-candidate/ANGELCARE_KIDFLIX_INTERNATIONAL_FINALIZATION_20261020",
+  "command": "node /private/tmp/kidflix-finalization-20261020/zip-extracted-candidate/ANGELCARE_KIDFLIX_INTERNATIONAL_FINALIZATION_20261020/test-installer.mjs /private/tmp/kidflix-finalization-20261020/baseline/angelcare-platform",
+  "results": [
+    {
+      "name": "successful installation, shipped verification, idempotent application, shipped rollback exact restoration",
+      "status": "PASS"
+    },
+    {
+      "name": "source conflict refuses all writes",
+      "status": "PASS"
+    },
+    {
+      "name": "new-file collision refuses all writes",
+      "status": "PASS"
+    },
+    {
+      "name": "corrupt payload refuses all writes",
+      "status": "PASS"
+    },
+    {
+      "name": "path traversal manifest refused",
+      "status": "PASS"
+    },
+    {
+      "name": "symlink target and ancestor refused",
+      "status": "PASS"
+    },
+    {
+      "name": "simulated partial write failure restores exact baseline",
+      "status": "PASS"
+    },
+    {
+      "name": "conflicting concurrent change detected and protected during partial restore",
+      "status": "PASS"
+    },
+    {
+      "name": "rollback preflights all targets and refuses later edit without mutation",
+      "status": "PASS"
+    },
+    {
+      "name": "identity mismatch refuses installation",
+      "status": "PASS"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+import Link from 'next/link';
+import { ArrowRight,Globe2,ShieldCheck,HeartHandshake,UserRound,BriefcaseBusiness,LockKeyhole } from 'lucide-react';
+import type { Locale } from '../contracts';
+import { href } from '../routes';
+import { t } from '../i18n';
+import { SearchCommand } from '../client/SearchCommand';
+import { searchVacancies,publicEmployers,publicEdition,publicEditorialList,type DataRow } from '../server/repository';
+import { EditorialSections,ResourceLinks } from '../components/Discovery';
+import { EditorialImage } from '../components/EditorialImage';
+import { resolvedEditorialMedia } from '../editorial-media';
+import { object } from '../validation';
+import { str } from '../components/Public';
+import { SectionHeading,SettingTiles,JobCard,Empty,CountryLinks } from '../components/Public';
+import s from '../jobkix.module.css';
+const FEATURES=[
+ [Globe2,'worldwide','countries'],[BriefcaseBusiness,'chooseSetting','sectors'],[UserRound,'careerStudio','candidateJourney'],[ShieldCheck,'trust','privateByDefault'],
+] as const;
+
+/** P00: reference-registry P00; blueprint pp6/8/25. No sample jobs, claims or app-store badges. */
+export async function Home({locale,preview}:{locale:Locale;preview?:DataRow}){
+ const [jobs,employers,edition,resources]=await Promise.allSettled([searchVacancies({sort:'newest',page:'1'}),publicEmployers(),preview?Promise.resolve(preview):publicEdition('home',locale),publicEditorialList('guide',locale)]);
+ const published=edition.status==='fulfilled'&&edition.value?.kind==='front'?edition.value:null,sections=Array.isArray(published?.sections)?published.sections.map(object):[],heroImage=resolvedEditorialMedia(sections.find(section=>section.id==='opening')?._image);
+ const items=jobs.status==='fulfilled'?jobs.value.items:[];
+ return <>
+  <section className={s.hero}>{heroImage?<div className={s.heroEditorial}><EditorialImage image={heroImage} priority/></div>:<picture><source media="(max-width:767px)" srcSet="/jobkix/editorial/home-hero-mobile.webp"/><img className={s.heroPicture} src="/jobkix/editorial/home-hero.webp" alt="" width={2400} height={1000} fetchPriority="high"/></picture>}<div className={s.container}><div className={s.heroCopy}><span className={s.eyebrow}>{t(locale,'heroEyebrow')}</span><h1 className={s.heroTitle}>{published?str(published,'title'):<>{t(locale,'heroLead')} <em>{t(locale,'heroAccent')}</em></>}</h1><p className={s.heroDescription}>{published?str(published,'summary'):t(locale,'heroDescription')}</p><div className={s.heroTraits}><span><Globe2 size={17} aria-hidden="true"/>{t(locale,'worldwide')}</span><span><LockKeyhole size={17} aria-hidden="true"/>{t(locale,'privateByDefault')}</span></div></div></div></section>
+  <div className={`${s.container} ${s.commandWrap}`}><SearchCommand locale={locale}/></div>
+  <section className={s.section}><div className={s.container}><SectionHeading title={t(locale,'sixteenSettings')} action={<Link className={s.textLink} href={href(locale,'sectors')}>{t(locale,'sectors')}<ArrowRight size={17} aria-hidden="true"/></Link>}/><SettingTiles locale={locale} rail/></div></section>
+  <section className={s.sectionSoft}><div className={`${s.container} ${s.featureStrip}`}>{FEATURES.map(([Icon,title,description])=><div key={title}><Icon aria-hidden="true"/><div><strong>{t(locale,title)}</strong><p>{t(locale,description)}</p></div></div>)}</div></section>
+  <section className={s.section}><div className={s.container}><div className={s.why}><div><h2>{t(locale,'about')}</h2><p>{t(locale,'heroDescription')}</p><Link className={s.textLink} href={href(locale,'how-it-works')}>{t(locale,'continue')}<ArrowRight size={17} aria-hidden="true"/></Link></div>{[Globe2,HeartHandshake,LockKeyhole].map((Icon,i)=><div key={i}><div className={s.featureIcon}><Icon aria-hidden="true"/></div><h3>{t(locale,i===0?'globalReach':i===1?'trust':'profileControl')}</h3><p>{t(locale,i===0?'globalReachDescription':i===1?'trustDescription':'profileControlDescription')}</p></div>)}</div></div></section>
+  <section className={s.section}><div className={s.container}><SectionHeading title={t(locale,'featuredOpportunities')} action={<Link className={s.textLink} href={href(locale,'jobs')}>{t(locale,'viewAllJobs')}<ArrowRight size={17} aria-hidden="true"/></Link>}/>{items.length?<div className={s.jobsGrid}>{items.slice(0,6).map(job=><JobCard key={typeof job.id==='string'?job.id:JSON.stringify(job)} job={job} locale={locale}/>)}</div>:<Empty locale={locale} problem={jobs.status==='rejected'}/>}</div></section>
+  <section className={s.sectionDark}><div className={`${s.container} ${s.worldStatement}`}><div><span className={s.eyebrow}>{t(locale,'abroad')}</span><h2>{t(locale,'worldTitle')}</h2><p>{t(locale,'noVisaGuarantee')}</p><Link className={`${s.button} ${s.secondary}`} href={href(locale,'abroad')}>{t(locale,'abroad')}<ArrowRight size={18} aria-hidden="true"/></Link></div><CountryLinks locale={locale} codes={['FR','CA','GB','AE','PH','ID']}/></div></section>
+  <section className={s.section}><div className={`${s.container} ${s.journeys}`}><div className={s.journey}><picture><source media="(max-width:767px)" srcSet="/jobkix/editorial/search-hero-mobile.webp"/><img src="/jobkix/editorial/search-hero.webp" alt="" width={1536} height={1024} loading="lazy"/></picture><div className={s.journeyCopy}><span className={s.eyebrow}>{t(locale,'candidate')}</span><h2>{t(locale,'candidateJourney')}</h2><ul><li>{t(locale,'findJobs')}</li><li>{t(locale,'privateByDefault')}</li><li>{t(locale,'careerStudio')}</li></ul><Link className={s.button} href={href(locale,'candidate/sign-up')}>{t(locale,'signUp')}<ArrowRight size={16} aria-hidden="true"/></Link></div></div><div className={s.journey}><picture><source media="(max-width:767px)" srcSet="/jobkix/editorial/setting-international-schools-mobile.webp"/><img src="/jobkix/editorial/setting-international-schools.webp" alt="" width={1536} height={1024} loading="lazy"/></picture><div className={s.journeyCopy}><span className={s.eyebrow}>{t(locale,'hirer')}</span><h2>{t(locale,'hirerJourney')}</h2><ul><li>{t(locale,'postJob')}</li><li>{t(locale,'hiringStudio')}</li><li>{t(locale,'support')}</li></ul><Link className={`${s.button} ${s.coral}`} href={href(locale,'hirer/sign-up')}>{t(locale,'postJob')}<ArrowRight size={16} aria-hidden="true"/></Link></div></div></div></section>
+  <section className={`${s.section} ${s.sectionSoft}`}><div className={s.container}><SectionHeading title={t(locale,'employers')} action={<Link href={href(locale,'employers')} className={s.textLink}>{t(locale,'employers')}<ArrowRight size={17} aria-hidden="true"/></Link>}/>{employers.status==='fulfilled'&&employers.value.length?<div className={s.jobsGrid}>{employers.value.slice(0,6).map(employer=><Link className={s.panel} href={href(locale,'employers/'+String(employer.id))} key={String(employer.id)}><h3>{typeof employer.name==='string'?employer.name:''}</h3><p>{typeof employer.description==='string'?employer.description:''}</p></Link>)}</div>:<Empty locale={locale} title={t(locale,employers.status==='rejected'?'unavailable':'employers')} description={t(locale,'noPublishedContent')} problem={employers.status==='rejected'}/>}</div></section>
+  <ResourceLinks locale={locale} title={t(locale,'resources')} result={resources.status==='fulfilled'?resources.value:null} failed={resources.status==='rejected'}/>
+ {published||edition.status==='rejected'?<EditorialSections locale={locale} edition={published} failed={edition.status==='rejected'}/>:null}
+ </>;
+}

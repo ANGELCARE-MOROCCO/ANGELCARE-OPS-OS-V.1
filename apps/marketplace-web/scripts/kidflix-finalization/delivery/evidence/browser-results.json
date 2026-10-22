@@ -1,0 +1,1325 @@
+{
+  "adapter": "OFFLINE Next routing and HTTP fixtures; real components; no live database",
+  "checks": 329,
+  "results": [
+    {
+      "name": "render /kidflix/en @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/documents @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/printables @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/stories @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/learning @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/video @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/audio @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/visual-cards @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/presentations @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/assessments @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/activities @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/tools @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/planners @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/forms @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/community @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/commerce @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/bundles @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/documents @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/printables @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/stories @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/learning @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/video @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/audio @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/visual-cards @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/presentations @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/assessments @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/activities @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/tools @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/planners @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/forms @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/community @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/commerce @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/bundles @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/documents @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/printables @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/stories @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/learning @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/video @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/audio @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/visual-cards @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/presentations @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/assessments @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/activities @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/tools @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/planners @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/forms @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/community @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/commerce @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/bundles @360",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/documents @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/printables @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/stories @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/learning @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/video @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/audio @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/visual-cards @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/presentations @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/assessments @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/activities @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/tools @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/planners @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/forms @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/community @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/commerce @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/bundles @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/documents @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/printables @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/stories @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/learning @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/video @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/audio @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/visual-cards @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/presentations @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/assessments @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/activities @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/tools @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/planners @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/forms @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/community @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/commerce @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/bundles @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/documents @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/printables @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/stories @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/learning @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/video @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/audio @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/visual-cards @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/presentations @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/assessments @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/activities @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/tools @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/planners @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/forms @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/community @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/commerce @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/bundles @390",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/documents @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/printables @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/stories @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/learning @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/video @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/audio @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/visual-cards @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/presentations @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/assessments @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/activities @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/tools @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/planners @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/forms @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/community @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/commerce @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/bundles @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/documents @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/printables @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/stories @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/learning @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/video @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/audio @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/visual-cards @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/presentations @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/assessments @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/activities @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/tools @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/planners @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/forms @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/community @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/commerce @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/bundles @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/documents @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/printables @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/stories @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/learning @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/video @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/audio @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/visual-cards @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/presentations @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/assessments @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/activities @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/tools @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/planners @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/forms @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/community @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/commerce @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/bundles @768",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/documents @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/printables @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/stories @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/learning @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/video @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/audio @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/visual-cards @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/presentations @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/assessments @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/activities @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/tools @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/planners @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/forms @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/community @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/commerce @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/bundles @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/documents @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/printables @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/stories @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/learning @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/video @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/audio @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/visual-cards @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/presentations @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/assessments @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/activities @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/tools @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/planners @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/forms @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/community @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/commerce @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/bundles @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/documents @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/printables @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/stories @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/learning @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/video @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/audio @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/visual-cards @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/presentations @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/assessments @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/activities @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/tools @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/planners @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/forms @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/community @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/commerce @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/bundles @1024",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/documents @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/printables @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/stories @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/learning @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/video @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/audio @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/visual-cards @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/presentations @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/assessments @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/activities @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/tools @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/planners @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/forms @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/community @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/commerce @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/bundles @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/documents @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/printables @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/stories @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/learning @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/video @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/audio @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/visual-cards @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/presentations @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/assessments @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/activities @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/tools @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/planners @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/forms @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/community @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/commerce @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/bundles @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/documents @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/printables @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/stories @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/learning @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/video @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/audio @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/visual-cards @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/presentations @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/assessments @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/activities @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/tools @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/planners @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/forms @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/community @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/commerce @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/bundles @1440",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/documents @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/printables @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/stories @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/learning @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/video @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/audio @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/visual-cards @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/presentations @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/assessments @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/activities @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/tools @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/planners @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/forms @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/community @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/commerce @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/en/explore/bundles @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/documents @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/printables @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/stories @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/learning @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/video @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/audio @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/visual-cards @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/presentations @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/assessments @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/activities @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/tools @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/planners @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/forms @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/community @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/commerce @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/fr/explore/bundles @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/documents @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/printables @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/stories @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/learning @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/video @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/audio @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/visual-cards @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/presentations @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/assessments @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/activities @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/tools @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/planners @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/forms @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/community @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/commerce @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "render /kidflix/ar/explore/bundles @1920",
+      "status": "PASS"
+    },
+    {
+      "name": "footer white logo only",
+      "status": "PASS"
+    },
+    {
+      "name": "six discovery choices route native filters with context",
+      "status": "PASS"
+    },
+    {
+      "name": "keyboard focus and full world menu",
+      "status": "PASS"
+    },
+    {
+      "name": "six-scene mobile controls remain visible and keyboard-operable",
+      "status": "PASS"
+    },
+    {
+      "name": "gallery progresses after three visible seconds",
+      "status": "PASS"
+    },
+    {
+      "name": "hover pause, manual selection, pause and resume",
+      "status": "PASS"
+    },
+    {
+      "name": "failed next scene retains current image",
+      "status": "PASS"
+    },
+    {
+      "name": "failed initial image offers recovery without indefinite loading",
+      "status": "PASS"
+    },
+    {
+      "name": "mobile source falls back to desktop on failure",
+      "status": "PASS"
+    },
+    {
+      "name": "reduced motion pauses automatic scene changes",
+      "status": "PASS"
+    },
+    {
+      "name": "off-screen visibility pauses gallery",
+      "status": "PASS"
+    },
+    {
+      "name": "navigation delayed, slow, error and dismissal use lifecycle signals",
+      "status": "PASS"
+    },
+    {
+      "name": "navigation lifecycle completion and modified/external clicks",
+      "status": "PASS"
+    },
+    {
+      "name": "actual media waiting and recovery feedback",
+      "status": "PASS"
+    },
+    {
+      "name": "native homepage editor reorder, media binding, save reload preview",
+      "status": "PASS"
+    },
+    {
+      "name": "storefront retains results and filters after API failure",
+      "status": "PASS"
+    },
+    {
+      "name": "background document visibility pauses and resumes timer",
+      "status": "PASS"
+    },
+    {
+      "name": "stale asynchronous image completion cannot replace a newer selection",
+      "status": "PASS"
+    },
+    {
+      "name": "page requests only its own hero gallery images",
+      "status": "PASS"
+    },
+    {
+      "name": "native storefront editor save reload preview uses reviewed gallery",
+      "status": "PASS"
+    },
+    {
+      "name": "route loading and error use actual localized components and retry",
+      "status": "PASS"
+    },
+    {
+      "name": "absent media source keeps existing empty state without buffering spinner",
+      "status": "PASS"
+    },
+    {
+      "name": "search and language navigation preserve locale and relevant query context",
+      "status": "PASS"
+    }
+  ],
+  "failures": [],
+  "payloadManifestSha256": "621483bd73460d9e2095277f8122bc52244f67c71a1499aa67038a40cebfb559",
+  "finalSourceHashMatch": "149 current workspace files match final payload"
+}

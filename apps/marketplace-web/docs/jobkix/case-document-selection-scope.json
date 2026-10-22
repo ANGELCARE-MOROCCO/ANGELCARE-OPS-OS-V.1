@@ -1,0 +1,155 @@
+{
+  "screens": [
+    "C14",
+    "H14",
+    "H16"
+  ],
+  "blueprintPagesInspected": [
+    15,
+    21,
+    22,
+    23
+  ],
+  "referenceDecision": "No separate private Studio PNG. Reuse the current JOBKIX native form/selector grammar and blueprint safe-evidence workflow.",
+  "files": [
+    {
+      "path": "angelcare-marketplace/jobkix/document-selection.ts",
+      "sha256Before": "c5ce2a2b2f5e8bd9f845a6c55aae2675bd34b900836364ce7aa8df536b354ffd",
+      "intendedChange": "Reuse the bounded private document selector for support and organization verification. Search/page current owned ready files, resolve retained selection independently, and preserve native draft, command and permission behavior.",
+      "requirements": [
+        20,
+        24,
+        25,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "No schema, file access grant, storage, identity or command validation change. Application selector remains CV-only. Verification remains exact organization/purpose/current capability. Restricted accounts have no attachment access. Metadata only."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/server/repository.ts",
+      "sha256Before": "22680fa1d92f324c382de191da3bdfe1bb6028893dc831506c2c5969ea89e23f",
+      "intendedChange": "Reuse the bounded private document selector for support and organization verification. Search/page current owned ready files, resolve retained selection independently, and preserve native draft, command and permission behavior.",
+      "requirements": [
+        20,
+        24,
+        25,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "No schema, file access grant, storage, identity or command validation change. Application selector remains CV-only. Verification remains exact organization/purpose/current capability. Restricted accounts have no attachment access. Metadata only."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/DocumentPicker.tsx",
+      "sha256Before": "24d99307a2ef22377286c3e00f08c97aea0128f0e4ca2035245754e227061f92",
+      "intendedChange": "Reuse the bounded private document selector for support and organization verification. Search/page current owned ready files, resolve retained selection independently, and preserve native draft, command and permission behavior.",
+      "requirements": [
+        20,
+        24,
+        25,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "No schema, file access grant, storage, identity or command validation change. Application selector remains CV-only. Verification remains exact organization/purpose/current capability. Restricted accounts have no attachment access. Metadata only."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/CaseForms.tsx",
+      "sha256Before": "786346efb003246bb1e381bc6df041a6aaba0a953bb08128c2a797543893df50",
+      "intendedChange": "Reuse the bounded private document selector for support and organization verification. Search/page current owned ready files, resolve retained selection independently, and preserve native draft, command and permission behavior.",
+      "requirements": [
+        20,
+        24,
+        25,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "No schema, file access grant, storage, identity or command validation change. Application selector remains CV-only. Verification remains exact organization/purpose/current capability. Restricted accounts have no attachment access. Metadata only."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/pages/CandidateAccount.tsx",
+      "sha256Before": "57cd50993463741f6046b2588440e2c9ee5fc66032dda2ab3db6a2e6b21e62ca",
+      "intendedChange": "Reuse the bounded private document selector for support and organization verification. Search/page current owned ready files, resolve retained selection independently, and preserve native draft, command and permission behavior.",
+      "requirements": [
+        20,
+        24,
+        25,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "No schema, file access grant, storage, identity or command validation change. Application selector remains CV-only. Verification remains exact organization/purpose/current capability. Restricted accounts have no attachment access. Metadata only."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/pages/RestrictedCases.tsx",
+      "sha256Before": "aa808c5dfd7fc317eb861240dff0d52b3a760313ba324c80fd2bb5b6b35f8162",
+      "intendedChange": "Reuse the bounded private document selector for support and organization verification. Search/page current owned ready files, resolve retained selection independently, and preserve native draft, command and permission behavior.",
+      "requirements": [
+        20,
+        24,
+        25,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "No schema, file access grant, storage, identity or command validation change. Application selector remains CV-only. Verification remains exact organization/purpose/current capability. Restricted accounts have no attachment access. Metadata only."
+    },
+    {
+      "path": "app/api/jobkix/files/route.ts",
+      "sha256Before": "8d500177e0cd4c489613fcde787b7245ae6232592b9fd51737026fe4c4b588bd",
+      "intendedChange": "Reuse the bounded private document selector for support and organization verification. Search/page current owned ready files, resolve retained selection independently, and preserve native draft, command and permission behavior.",
+      "requirements": [
+        20,
+        24,
+        25,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "No schema, file access grant, storage, identity or command validation change. Application selector remains CV-only. Verification remains exact organization/purpose/current capability. Restricted accounts have no attachment access. Metadata only."
+    },
+    {
+      "path": "scripts/jobkix/domain.test.cjs",
+      "sha256Before": "0347c71154373601b16eab834ee6aa1c86b84a237670a3add4230de30adc620b",
+      "intendedChange": "Reuse the bounded private document selector for support and organization verification. Search/page current owned ready files, resolve retained selection independently, and preserve native draft, command and permission behavior.",
+      "requirements": [
+        20,
+        24,
+        25,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "No schema, file access grant, storage, identity or command validation change. Application selector remains CV-only. Verification remains exact organization/purpose/current capability. Restricted accounts have no attachment access. Metadata only."
+    },
+    {
+      "path": "scripts/jobkix/case-document-selection.cjs",
+      "sha256Before": "NEW",
+      "intendedChange": "Reuse the bounded private document selector for support and organization verification. Search/page current owned ready files, resolve retained selection independently, and preserve native draft, command and permission behavior.",
+      "requirements": [
+        20,
+        24,
+        25,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "No schema, file access grant, storage, identity or command validation change. Application selector remains CV-only. Verification remains exact organization/purpose/current capability. Restricted accounts have no attachment access. Metadata only."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/account-copy.ts",
+      "sha256Before": "ee53e7f9ea64c2c7c6e0fdd34d8bb1dd7ff101f69d038363a02a3a56af5e5d88",
+      "intendedChange": "Add accurate seven-language evidence search and attachment labels; required verification attachments must not be labelled optional or CV-only.",
+      "requirements": [
+        13,
+        20,
+        24,
+        26,
+        29
+      ],
+      "protectedBehavior": "Copy only within JOBKIX. No global translations, file purpose or required-input changes."
+    }
+  ]
+}

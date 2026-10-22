@@ -1,0 +1,478 @@
+{
+  "updatedAt": "2026-10-22T01:33:02.319612+00:00",
+  "sourceBaseline": "d655c0f99c8891deb08471bc0e83f5d0cfb1fa89",
+  "clauses": [
+    {
+      "clause": 1,
+      "name": "Required outcome",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "docs/jobkix/execution-ledger.json",
+        "docs/jobkix/acceptance-matrix.json"
+      ],
+      "remaining": [
+        "See gate, family and dependency ledgers; this clause is not accepted."
+      ]
+    },
+    {
+      "clause": 2,
+      "name": "Source and reference authorities",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "docs/jobkix/execution-ledger.json",
+        "docs/jobkix/acceptance-matrix.json"
+      ],
+      "remaining": [
+        "See gate, family and dependency ledgers; this clause is not accepted."
+      ]
+    },
+    {
+      "clause": 3,
+      "name": "Mandatory reference registry",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "docs/jobkix/execution-ledger.json",
+        "docs/jobkix/acceptance-matrix.json"
+      ],
+      "remaining": [
+        "See gate, family and dependency ledgers; this clause is not accepted."
+      ]
+    },
+    {
+      "clause": 4,
+      "name": "Reference-to-implementation loop",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "docs/jobkix/execution-ledger.json",
+        "docs/jobkix/acceptance-matrix.json",
+        "docs/jobkix/implementation-units.json",
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "remaining": [
+        "See gate, family and dependency ledgers; this clause is not accepted."
+      ]
+    },
+    {
+      "clause": 5,
+      "name": "Initial execution and preservation",
+      "status": "PASS",
+      "evidence": [
+        "docs/jobkix/source-baseline.json",
+        "docs/jobkix/shared-file-register.json",
+        "docs/jobkix/changed-files.json"
+      ],
+      "scopeOfPass": "Initial baseline and original-byte checkpoints verified; ongoing preservation remains required.",
+      "remaining": []
+    },
+    {
+      "clause": 6,
+      "name": "Execution authority",
+      "status": "PASS",
+      "evidence": [
+        "docs/jobkix/evidence/source-verification.json",
+        "docs/jobkix/execution-ledger.json"
+      ],
+      "scopeOfPass": "Source-stage execution restriction observed to this checkpoint. No release or application build invoked.",
+      "remaining": []
+    },
+    {
+      "clause": 7,
+      "name": "Local application build restriction",
+      "status": "PASS",
+      "evidence": [
+        "scripts/jobkix/check-types.cjs",
+        "scripts/jobkix/capture-evidence.cjs",
+        "docs/jobkix/evidence/source-verification.json",
+        "docs/jobkix/EXECUTION_AMENDMENTS.md"
+      ],
+      "scopeOfPass": "No production application build was invoked. User-authorized local Next development/browser tests use isolated synthetic services, as recorded in the execution amendment.",
+      "remaining": []
+    },
+    {
+      "clause": 8,
+      "name": "Change allowlist and shared files",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "docs/jobkix/execution-ledger.json",
+        "docs/jobkix/acceptance-matrix.json"
+      ],
+      "remaining": [
+        "See gate, family and dependency ledgers; this clause is not accepted."
+      ]
+    },
+    {
+      "clause": 9,
+      "name": "Protected product boundaries",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "docs/jobkix/execution-ledger.json",
+        "docs/jobkix/acceptance-matrix.json",
+        "docs/jobkix/shared-file-register.json",
+        "docs/jobkix/amendments/kidflix-motion-approved-scope.json",
+        "docs/jobkix/evidence/browser/presentation.json",
+        "docs/jobkix/evidence/browser/kidflix-motion.json"
+      ],
+      "remaining": [
+        "See gate, family and dependency ledgers; this clause is not accepted."
+      ]
+    },
+    {
+      "clause": 10,
+      "name": "Independent JOBKIX experience",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "docs/jobkix/execution-ledger.json",
+        "docs/jobkix/acceptance-matrix.json",
+        "docs/jobkix/implementation-units.json",
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "remaining": [
+        "See gate, family and dependency ledgers; this clause is not accepted."
+      ]
+    },
+    {
+      "clause": 11,
+      "name": "Marketplace entry",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "docs/jobkix/execution-ledger.json",
+        "docs/jobkix/acceptance-matrix.json",
+        "docs/jobkix/brand-register.json",
+        "docs/jobkix/evidence/browser/navigation.json"
+      ],
+      "remaining": [
+        "Brand assets and shortcut are implemented. Arabic physical-right placement and native navigation passed. Complete narrow-screen Marketplace interaction and full product regression remain pending."
+      ]
+    },
+    {
+      "clause": 12,
+      "name": "Country detection and search context",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "docs/jobkix/execution-ledger.json",
+        "docs/jobkix/acceptance-matrix.json",
+        "docs/jobkix/employer-worlds-scope.json",
+        "docs/jobkix/evidence/browser/employer-worlds.json"
+      ],
+      "remaining": [
+        "See gate, family and dependency ledgers; this clause is not accepted."
+      ]
+    },
+    {
+      "clause": 13,
+      "name": "Seven-language product",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "docs/jobkix/execution-ledger.json",
+        "docs/jobkix/acceptance-matrix.json"
+      ],
+      "remaining": [
+        "See gate, family and dependency ledgers; this clause is not accepted."
+      ]
+    },
+    {
+      "clause": 14,
+      "name": "Localization architecture and quality",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "docs/jobkix/execution-ledger.json",
+        "docs/jobkix/acceptance-matrix.json"
+      ],
+      "remaining": [
+        "See gate, family and dependency ledgers; this clause is not accepted."
+      ]
+    },
+    {
+      "clause": 15,
+      "name": "Locked inventory",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "docs/jobkix/execution-ledger.json",
+        "docs/jobkix/acceptance-matrix.json",
+        "docs/jobkix/implementation-units.json",
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "remaining": [
+        "See gate, family and dependency ledgers; this clause is not accepted."
+      ]
+    },
+    {
+      "clause": 16,
+      "name": "Public experience depth",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "docs/jobkix/execution-ledger.json",
+        "docs/jobkix/acceptance-matrix.json",
+        "docs/jobkix/implementation-units.json",
+        "docs/jobkix/evidence/source-verification.json",
+        "docs/jobkix/employer-worlds-scope.json",
+        "docs/jobkix/evidence/browser/employer-worlds.json"
+      ],
+      "remaining": [
+        "See gate, family and dependency ledgers; this clause is not accepted."
+      ]
+    },
+    {
+      "clause": 17,
+      "name": "Visual system and maturity",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "docs/jobkix/execution-ledger.json",
+        "docs/jobkix/acceptance-matrix.json",
+        "docs/jobkix/employer-worlds-scope.json",
+        "docs/jobkix/evidence/browser/employer-worlds.json"
+      ],
+      "remaining": [
+        "See gate, family and dependency ledgers; this clause is not accepted."
+      ]
+    },
+    {
+      "clause": 18,
+      "name": "Image and brand authority",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "docs/jobkix/execution-ledger.json",
+        "docs/jobkix/acceptance-matrix.json",
+        "docs/jobkix/brand-register.json",
+        "docs/jobkix/asset-register.json",
+        "docs/jobkix/evidence/browser/public-en.json",
+        "docs/jobkix/employer-worlds-scope.json",
+        "docs/jobkix/evidence/browser/employer-worlds.json"
+      ],
+      "remaining": [
+        "All three approved brand originals are located, preserved and integrated. Complete factual editorial media/content coverage and per-front acceptance remain pending."
+      ]
+    },
+    {
+      "clause": 19,
+      "name": "Reference discrepancies",
+      "status": "PASS",
+      "evidence": [
+        "docs/jobkix/reference-registry.json",
+        "angelcare-marketplace/jobkix/taxonomy.ts",
+        "angelcare-marketplace/jobkix/migrations/004_approved_taxonomy.sql"
+      ],
+      "scopeOfPass": "Folder 23 retained as secondary P15; P22 remains required. Canonical sixteen settings retained.",
+      "remaining": []
+    },
+    {
+      "clause": 20,
+      "name": "Two operating studios",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "docs/jobkix/execution-ledger.json",
+        "docs/jobkix/acceptance-matrix.json",
+        "docs/jobkix/implementation-units.json",
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "remaining": [
+        "See gate, family and dependency ledgers; this clause is not accepted."
+      ]
+    },
+    {
+      "clause": 21,
+      "name": "Canonical records and identity",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "docs/jobkix/execution-ledger.json",
+        "docs/jobkix/acceptance-matrix.json"
+      ],
+      "remaining": [
+        "See gate, family and dependency ledgers; this clause is not accepted."
+      ]
+    },
+    {
+      "clause": 22,
+      "name": "Transactional recruitment integrity",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "docs/jobkix/execution-ledger.json",
+        "docs/jobkix/acceptance-matrix.json",
+        "docs/jobkix/implementation-units.json",
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "remaining": [
+        "See gate, family and dependency ledgers; this clause is not accepted."
+      ]
+    },
+    {
+      "clause": 23,
+      "name": "Communication and outcomes",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "docs/jobkix/execution-ledger.json",
+        "docs/jobkix/acceptance-matrix.json",
+        "docs/jobkix/implementation-units.json",
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "remaining": [
+        "See gate, family and dependency ledgers; this clause is not accepted."
+      ]
+    },
+    {
+      "clause": 24,
+      "name": "Privacy and authorization",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "docs/jobkix/execution-ledger.json",
+        "docs/jobkix/acceptance-matrix.json",
+        "docs/jobkix/implementation-units.json",
+        "docs/jobkix/evidence/source-verification.json",
+        "docs/jobkix/evidence/browser/private-export.json",
+        "docs/jobkix/evidence/private-export.log"
+      ],
+      "remaining": [
+        "See gate, family and dependency ledgers; this clause is not accepted."
+      ]
+    },
+    {
+      "clause": 25,
+      "name": "Editorial and operations",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "docs/jobkix/execution-ledger.json",
+        "docs/jobkix/acceptance-matrix.json",
+        "docs/jobkix/implementation-units.json",
+        "docs/jobkix/evidence/source-verification.json",
+        "docs/jobkix/EXECUTION_AMENDMENTS.md",
+        "docs/jobkix/legal-attribution-scope.json",
+        "docs/jobkix/employer-worlds-scope.json",
+        "docs/jobkix/evidence/browser/employer-worlds.json"
+      ],
+      "remaining": [
+        "P26 public presentation amended to attribution-only by explicit user direction. Registration still enforces reviewed terms/privacy consent; its public disclosure mismatch remains unresolved. Remaining operational/editorial acceptance is recorded in the execution ledger."
+      ]
+    },
+    {
+      "clause": 26,
+      "name": "Screen states and actions",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "docs/jobkix/execution-ledger.json",
+        "docs/jobkix/acceptance-matrix.json",
+        "docs/jobkix/implementation-units.json",
+        "docs/jobkix/evidence/source-verification.json",
+        "docs/jobkix/evidence/browser/private-export.json",
+        "docs/jobkix/evidence/private-export.log",
+        "docs/jobkix/employer-worlds-scope.json",
+        "docs/jobkix/evidence/browser/employer-worlds.json"
+      ],
+      "remaining": [
+        "See gate, family and dependency ledgers; this clause is not accepted."
+      ]
+    },
+    {
+      "clause": 27,
+      "name": "Verification matrix",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "docs/jobkix/execution-ledger.json",
+        "docs/jobkix/acceptance-matrix.json",
+        "docs/jobkix/implementation-units.json",
+        "docs/jobkix/evidence/source-verification.json",
+        "docs/jobkix/evidence/browser/private-export.json",
+        "docs/jobkix/evidence/private-export.log",
+        "docs/jobkix/employer-worlds-scope.json",
+        "docs/jobkix/evidence/browser/employer-worlds.json"
+      ],
+      "remaining": [
+        "See gate, family and dependency ledgers; this clause is not accepted."
+      ]
+    },
+    {
+      "clause": 28,
+      "name": "Visual acceptance gate",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "docs/jobkix/execution-ledger.json",
+        "docs/jobkix/acceptance-matrix.json",
+        "docs/jobkix/implementation-units.json",
+        "docs/jobkix/evidence/source-verification.json",
+        "docs/jobkix/evidence/browser-reviews.json",
+        "docs/jobkix/evidence/browser/public-en.json",
+        "docs/jobkix/evidence/browser/editorial-opening.json",
+        "docs/jobkix/employer-worlds-scope.json",
+        "docs/jobkix/evidence/browser/employer-worlds.json"
+      ],
+      "remaining": [
+        "All 27 English public fronts have dated desktop/mobile renders. Fourteen fronts have partial individual reference comparisons (P00\u2013P12 and P26); none is fully visually accepted. Complete content/state/localization/RTL/accessibility review remains pending."
+      ]
+    },
+    {
+      "clause": 29,
+      "name": "Accessibility SEO performance",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "docs/jobkix/execution-ledger.json",
+        "docs/jobkix/acceptance-matrix.json",
+        "docs/jobkix/implementation-units.json",
+        "docs/jobkix/evidence/source-verification.json",
+        "docs/jobkix/employer-worlds-scope.json",
+        "docs/jobkix/evidence/browser/employer-worlds.json"
+      ],
+      "remaining": [
+        "See gate, family and dependency ledgers; this clause is not accepted."
+      ]
+    },
+    {
+      "clause": 30,
+      "name": "Excluded expansion",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "docs/jobkix/execution-ledger.json",
+        "docs/jobkix/acceptance-matrix.json"
+      ],
+      "remaining": [
+        "See gate, family and dependency ledgers; this clause is not accepted."
+      ]
+    },
+    {
+      "clause": 31,
+      "name": "Gates and checkpoints",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "docs/jobkix/execution-ledger.json",
+        "docs/jobkix/acceptance-matrix.json"
+      ],
+      "remaining": [
+        "See gate, family and dependency ledgers; this clause is not accepted."
+      ]
+    },
+    {
+      "clause": 32,
+      "name": "Installer and recovery",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "scripts/jobkix/installer/install.mjs",
+        "scripts/jobkix/installer/verify.mjs",
+        "scripts/jobkix/installer/rollback.mjs",
+        "scripts/jobkix/installer.test.mjs",
+        "docs/jobkix/evidence/source-verification.json"
+      ],
+      "remaining": [
+        "Complete product source acceptance, final payload/manifest generation and Downloads archive creation.",
+        "Execute final-ZIP integrity and fresh-extraction installation/verification/rollback acceptance.",
+        "Record actual final size, SHA-256, apply and rollback commands."
+      ]
+    },
+    {
+      "clause": 33,
+      "name": "Completion standard",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "docs/jobkix/execution-ledger.json",
+        "docs/jobkix/acceptance-matrix.json"
+      ],
+      "remaining": [
+        "See gate, family and dependency ledgers; this clause is not accepted."
+      ]
+    }
+  ],
+  "acceptance": "NOT_ACCEPTED",
+  "currentReleasePreparationAmendment": {
+    "recordedAt": "2026-10-22T02:20:48.243786+00:00",
+    "reference": "docs/jobkix/release-candidate.json",
+    "emailAndExternalServices": "STANDBY",
+    "completeContractAccepted": false
+  }
+}

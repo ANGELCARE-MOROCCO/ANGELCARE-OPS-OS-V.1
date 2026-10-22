@@ -1,0 +1,49 @@
+{
+  "archives": [
+    {
+      "archive": "ANGELCARE_REPO_20261020_090124_PART_01_OF_04.zip",
+      "size": 101340171,
+      "sha256": "f98bfa5d7cde9236d0892ab0a60865bc055e668a589fa8e433316465f344ed4f",
+      "entries": 9879,
+      "expanded_bytes": 465840078
+    },
+    {
+      "archive": "ANGELCARE_REPO_20261020_090124_PART_02_OF_04.zip",
+      "size": 96958167,
+      "sha256": "1623694c7de993a6491cccff2b1029fb5581428dadc7f432b9bd5010cc419462",
+      "entries": 9881,
+      "expanded_bytes": 465840079
+    },
+    {
+      "archive": "ANGELCARE_REPO_20261020_090124_PART_03_OF_04.zip",
+      "size": 99132326,
+      "sha256": "59e5877835baa58c818e0ac006b9b79a4f55689dca03e79048840e6c6bdd0ce5",
+      "entries": 9998,
+      "expanded_bytes": 465840076
+    },
+    {
+      "archive": "ANGELCARE_REPO_20261020_090124_PART_04_OF_04.zip",
+      "size": 103340688,
+      "sha256": "7bdce36d1c65480080c5bffaea219b29eabca398e03a4f66ad707797d3cdef0b",
+      "entries": 9880,
+      "expanded_bytes": 465840077
+    }
+  ],
+  "unique_files": 39631,
+  "identical_duplicates": [
+    "PACKING_REPORT.txt",
+    "PACKING_REPORT.txt",
+    "PACKING_REPORT.txt"
+  ],
+  "contradictory_duplicates": [],
+  "unsafe_entries": [
+    "angelcare-platform/apps/marketplace-web/rrunCommand\\(`([^`]*)`\\),",
+    "angelcare-platform/apps/marketplace-web/rvoid executeContentCommandAction(\"content.command.dynamic\", { label: `\\1` }),",
+    "angelcare-platform/apps/ops-web/rrunCommand\\(`([^`]*)`\\),",
+    "angelcare-platform/apps/ops-web/rvoid executeContentCommandAction(\"content.command.dynamic\", { label: `\\1` }),"
+  ],
+  "application_candidates": [
+    "angelcare-platform/apps/marketplace-web/package.json"
+  ],
+  "instructions": []
+}

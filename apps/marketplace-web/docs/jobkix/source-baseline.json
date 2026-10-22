@@ -1,0 +1,17 @@
+{
+  "gitRoot": "/Users/user/Desktop/angelcare-platform",
+  "application": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web",
+  "branch": "upgrade/next-angelcare-upgrade",
+  "head": "d655c0f99c8891deb08471bc0e83f5d0cfb1fa89",
+  "workingTree": [
+    "?? apps/marketplace-web/scripts/kidflix-finalization/ANGELCARE_KIDFLIX_INTERNATIONAL_FINALIZATION_20261020.zip.sha256",
+    "?? apps/marketplace-web/scripts/kidflix-finalization/ZIP_VALIDATION.json",
+    "?? apps/marketplace-web/scripts/kidflix-finalization/delivery/"
+  ],
+  "preservedUntracked": [
+    "apps/marketplace-web/scripts/kidflix-finalization/"
+  ],
+  "sourceAuthority": "current checkout; no repository ZIP replacement",
+  "appPackageSha256": "b67d6353baeb098e99fc6ae3242bdcca92bdfc9903df070a3107caee915fbf91",
+  "correction": "Mission-entry working tree is recorded here; JOBKIX docs created during discovery are excluded from pre-existing changes."
+}

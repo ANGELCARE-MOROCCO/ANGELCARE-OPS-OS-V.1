@@ -1,0 +1,290 @@
+{
+  "recordedAt": "2026-10-21T22:32:37.944793+00:00",
+  "referenceBindings": {
+    "primaryImage": "docs/jobkix/references/P07.png",
+    "blueprintPages": [
+      6,
+      16,
+      17
+    ],
+    "registry": "docs/jobkix/reference-registry.json",
+    "inspection": "Original full-page P07 and actual previous desktop rendering inspected. Current flag grid lacks the required geographic hierarchy; Search jobs is an inaccurate directory action."
+  },
+  "files": [
+    {
+      "path": "angelcare-marketplace/jobkix/pages/Geography.tsx",
+      "sha256Before": "e79ac08f7329a481baade164752fdb40ef5a9a7e9caa3d5dade73b57f4cb50b6",
+      "intendedChange": "Implement P07 atlas opening, compact country results, real active destinations and native region collections. Preserve existing P08/P09/P10 and all shared country/eligibility authorities.",
+      "requirements": [
+        12,
+        13,
+        16,
+        17,
+        18,
+        26,
+        27,
+        28,
+        29,
+        31
+      ],
+      "screenIds": [
+        "P07"
+      ],
+      "protectedBehavior": "Existing country codes, detection, flags, M49 membership, origin/destination/language separation, catalogue eligibility, approved editions, authentication and all non-JOBKIX products remain authoritative."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/components/CountryAtlas.tsx",
+      "sha256Before": "NEW",
+      "intendedChange": "Owned P07 map/search composition with native GET discovery context, selected region and localized controls.",
+      "requirements": [
+        12,
+        13,
+        16,
+        17,
+        18,
+        26,
+        27,
+        28,
+        29,
+        31
+      ],
+      "screenIds": [
+        "P07"
+      ],
+      "protectedBehavior": "Existing country codes, detection, flags, M49 membership, origin/destination/language separation, catalogue eligibility, approved editions, authentication and all non-JOBKIX products remain authoritative."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/geography-copy.ts",
+      "sha256Before": "5e2bfdac4e4f51546b0f3e024b3082efcdb06faa3797dd5965d2e680cc8aacaa",
+      "intendedChange": "Professional seven-language P07 copy and accurate country-search actions.",
+      "requirements": [
+        12,
+        13,
+        16,
+        17,
+        18,
+        26,
+        27,
+        28,
+        29,
+        31
+      ],
+      "screenIds": [
+        "P07"
+      ],
+      "protectedBehavior": "Existing country codes, detection, flags, M49 membership, origin/destination/language separation, catalogue eligibility, approved editions, authentication and all non-JOBKIX products remain authoritative."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/jobkix.module.css",
+      "sha256Before": "01629d6fa618a8f52b4e32e5cc613f53d33c98856b950078dfc80c4285b90551",
+      "intendedChange": "Owned responsive/RTL atlas, compact country directory and region collection styles only.",
+      "requirements": [
+        12,
+        13,
+        16,
+        17,
+        18,
+        26,
+        27,
+        28,
+        29,
+        31
+      ],
+      "screenIds": [
+        "P07"
+      ],
+      "protectedBehavior": "Existing country codes, detection, flags, M49 membership, origin/destination/language separation, catalogue eligibility, approved editions, authentication and all non-JOBKIX products remain authoritative."
+    },
+    {
+      "path": "public/jobkix/geography/world-land.svg",
+      "sha256Before": "NEW",
+      "intendedChange": "Deterministic optimized land-outline asset derived from the verified public-domain Natural Earth 110m source, without political borders or fabricated job pins.",
+      "requirements": [
+        12,
+        13,
+        16,
+        17,
+        18,
+        26,
+        27,
+        28,
+        29,
+        31
+      ],
+      "screenIds": [
+        "P07"
+      ],
+      "protectedBehavior": "Existing country codes, detection, flags, M49 membership, origin/destination/language separation, catalogue eligibility, approved editions, authentication and all non-JOBKIX products remain authoritative."
+    },
+    {
+      "path": "docs/jobkix/geography-source/ne_110m_land.geojson",
+      "sha256Before": "NEW",
+      "intendedChange": "Preserve the exact retrieved original geographic source bytes.",
+      "requirements": [
+        12,
+        13,
+        16,
+        17,
+        18,
+        26,
+        27,
+        28,
+        29,
+        31
+      ],
+      "screenIds": [
+        "P07"
+      ],
+      "protectedBehavior": "Existing country codes, detection, flags, M49 membership, origin/destination/language separation, catalogue eligibility, approved editions, authentication and all non-JOBKIX products remain authoritative."
+    },
+    {
+      "path": "docs/jobkix/geography-asset-register.json",
+      "sha256Before": "NEW",
+      "intendedChange": "Record provenance, usage rights, original/export hashes, dimensions and map purpose.",
+      "requirements": [
+        12,
+        13,
+        16,
+        17,
+        18,
+        26,
+        27,
+        28,
+        29,
+        31
+      ],
+      "screenIds": [
+        "P07"
+      ],
+      "protectedBehavior": "Existing country codes, detection, flags, M49 membership, origin/destination/language separation, catalogue eligibility, approved editions, authentication and all non-JOBKIX products remain authoritative."
+    },
+    {
+      "path": "scripts/jobkix/prepare-world-map.cjs",
+      "sha256Before": "NEW",
+      "intendedChange": "Reproducible built-in-only map conversion from numeric GeoJSON coordinates to a static SVG.",
+      "requirements": [
+        12,
+        13,
+        16,
+        17,
+        18,
+        26,
+        27,
+        28,
+        29,
+        31
+      ],
+      "screenIds": [
+        "P07"
+      ],
+      "protectedBehavior": "Existing country codes, detection, flags, M49 membership, origin/destination/language separation, catalogue eligibility, approved editions, authentication and all non-JOBKIX products remain authoritative."
+    },
+    {
+      "path": "scripts/jobkix/check-geography-assets.cjs",
+      "sha256Before": "NEW",
+      "intendedChange": "Verify source/export hashes, source-bound geometry, safe SVG and decoding.",
+      "requirements": [
+        12,
+        13,
+        16,
+        17,
+        18,
+        26,
+        27,
+        28,
+        29,
+        31
+      ],
+      "screenIds": [
+        "P07"
+      ],
+      "protectedBehavior": "Existing country codes, detection, flags, M49 membership, origin/destination/language separation, catalogue eligibility, approved editions, authentication and all non-JOBKIX products remain authoritative."
+    },
+    {
+      "path": "scripts/jobkix/geography.cjs",
+      "sha256Before": "NEW",
+      "intendedChange": "Actual native country/region/context/failure/retry checks plus responsive seven-language rendered evidence.",
+      "requirements": [
+        12,
+        13,
+        16,
+        17,
+        18,
+        26,
+        27,
+        28,
+        29,
+        31
+      ],
+      "screenIds": [
+        "P07"
+      ],
+      "protectedBehavior": "Existing country codes, detection, flags, M49 membership, origin/destination/language separation, catalogue eligibility, approved editions, authentication and all non-JOBKIX products remain authoritative."
+    },
+    {
+      "path": "scripts/jobkix/capture-evidence.cjs",
+      "sha256Before": "f98a52ca13483392166afbf880cccd937a902d5cbc515de1a7889054a6788ff1",
+      "intendedChange": "Add the focused geographic asset integrity gate.",
+      "requirements": [
+        12,
+        13,
+        16,
+        17,
+        18,
+        26,
+        27,
+        28,
+        29,
+        31
+      ],
+      "screenIds": [
+        "P07"
+      ],
+      "protectedBehavior": "Existing country codes, detection, flags, M49 membership, origin/destination/language separation, catalogue eligibility, approved editions, authentication and all non-JOBKIX products remain authoritative."
+    },
+    {
+      "path": "scripts/jobkix/checkpoint-progress.cjs",
+      "sha256Before": "21fda2201e6ce742beb099b2141692a9076f103b2be1c1cfc916b24ebe0434e3",
+      "intendedChange": "Record executed geography browser evidence without inferring full acceptance.",
+      "requirements": [
+        12,
+        13,
+        16,
+        17,
+        18,
+        26,
+        27,
+        28,
+        29,
+        31
+      ],
+      "screenIds": [
+        "P07"
+      ],
+      "protectedBehavior": "Existing country codes, detection, flags, M49 membership, origin/destination/language separation, catalogue eligibility, approved editions, authentication and all non-JOBKIX products remain authoritative."
+    },
+    {
+      "path": "scripts/jobkix/browser.cjs",
+      "sha256Before": "adeac8e32894990babb591cf51ddb72333fa2bc819dec98d0fb9fdbc0350d48f",
+      "intendedChange": "Guard the existing executable entry point so its exported real-image settling/inspection helpers can be reused by the focused geography check without launching a second browser.",
+      "requirements": [
+        27,
+        28,
+        31
+      ],
+      "protectedBehavior": "Verification helper only; existing direct browser commands and application source are unchanged."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/components/Discovery.tsx",
+      "sha256Before": "497561b85063bb6391f7f2724d3902e96d5ce83e1ba6b96c644474b7d237e987",
+      "intendedChange": "Use the existing localized editorial-pending explanation for an empty ResourceLinks section, replacing its misleading job-filter advice discovered in P07 rendering.",
+      "requirements": [
+        13,
+        16,
+        26,
+        28
+      ],
+      "protectedBehavior": "JOBKIX-owned empty-state copy only. Reviewed resource bindings, publication, permissions, locale and all surrounding product authorities unchanged."
+    }
+  ]
+}

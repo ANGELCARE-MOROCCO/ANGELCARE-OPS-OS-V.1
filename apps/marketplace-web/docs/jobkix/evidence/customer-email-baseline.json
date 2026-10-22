@@ -1,0 +1,25 @@
+{
+  "sourcePath": "angelcare-marketplace/customer-commerce/auth-email-native/messages.ts",
+  "beforeSha256": "3e96beda913aeb798f6374d04f290ee706804bed5ba7884806aed23d4908a600",
+  "provenance": "Actual pre-JOBKIX source composition with isolated synthetic email fixtures; no network or private user data.",
+  "cases": {
+    "en:signup": "df12b0f03560ddf61badadccb47c4dcd0c5a43195198ab0401f2a1b173a58804",
+    "en:recovery": "9c1d38cb2eadab294157e5a5d0beeaebb154a62a81aa5af57fb9c7845691c1b0",
+    "en:magiclink": "ca6ce0b1c67f3a3948bfe0b02a116d52b31261c4fa2955995b201a5c9f31ad90",
+    "en:invite": "9f7d1982f88dd0fbf50c956e16dd2074fee710c9f6066e29fe7a832ef09838aa",
+    "en:reauthentication": "910518b7edc7ad6f375a9cd9a65aa034b740f9f81b2a06384af3dd50071430ab",
+    "en:password_changed_notification": "3a2f9b0d8a37fb25434ca08401bdf1d4f29294f8681dcf69c1fee9dc71ea5fbf",
+    "fr:signup": "db18cd92f5d7f180468106ba4a1dbf20a26fe67123196e025a080a9da1332549",
+    "fr:recovery": "41dbce1809f28563473d0ea156ad5eec749415857b22a5320dbcbe02914d1a74",
+    "fr:magiclink": "9eff627944f2f7e19706924ae74f3a6e96d867391f902d9192171fd5c77924ee",
+    "fr:invite": "e0b0be46c3c64441a59014c9e74eee6a65ff9aa1b75a426cb5b5b9c2b312faea",
+    "fr:reauthentication": "60cd38d51a3d34d52bb670c75cdcde7ef2712eb717ab81435ba133b53f7bac82",
+    "fr:password_changed_notification": "fce1bc259795b9eb564a55db7b47b33564d8ef5ff6dadeb800dc351283cece28",
+    "ar:signup": "e1848df591f8bec292854a2a853610e0ab6be46514ecdda355af99763e304377",
+    "ar:recovery": "7d5c5ab107545bfbb16c846a47500ab3e0513799d9054076bd31cf3f22474dd2",
+    "ar:magiclink": "e4950a2af8fb9a41d075865c3bdbdb0122a52a5a08efaf00528dd4e2cdff0cdb",
+    "ar:invite": "402e3119d260d9801d22fb7d53aac6df8bf6bc718f657e71104d4b3f86dc8f88",
+    "ar:reauthentication": "af66ef0b305e1698d419e83b9718504123874522db34eae910a200fc01c3151d",
+    "ar:password_changed_notification": "e43b5f0a44318be9c44713ede59faba642723f69ce17c87e9722ce6e0471e82a"
+  }
+}

@@ -1,0 +1,1543 @@
+[
+  {
+    "id": "home-1",
+    "world": "home",
+    "role": "hero",
+    "subject": "International children and a caregiver explore a magical garden library",
+    "descriptions": {
+      "en": "International children and a caregiver explore a magical garden library",
+      "fr": "Des enfants et une éducatrice explorent une bibliothèque enchantée",
+      "ar": "أطفال من ثقافات متنوعة ومربية يستكشفون مكتبة ساحرة"
+    },
+    "desktop": "public/kidflix/international-20261020/home-1.webp",
+    "mobile": "public/kidflix/international-20261020/home-1-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing home world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "International children and a caregiver explore a magical garden library"
+    }
+  },
+  {
+    "id": "home-2",
+    "world": "home",
+    "role": "hero",
+    "subject": "Families create a colorful paper city together",
+    "descriptions": {
+      "en": "Families create a colorful paper city together",
+      "fr": "Des familles créent ensemble une ville en papier coloré",
+      "ar": "عائلات تبدع معاً مدينة ورقية ملونة"
+    },
+    "desktop": "public/kidflix/international-20261020/home-2.webp",
+    "mobile": "public/kidflix/international-20261020/home-2-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing home world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "Families create a colorful paper city together"
+    }
+  },
+  {
+    "id": "home-3",
+    "world": "home",
+    "role": "hero",
+    "subject": "Children explore a glowing ocean of discovery islands",
+    "descriptions": {
+      "en": "Children explore a glowing ocean of discovery islands",
+      "fr": "Des enfants explorent un océan d’îles lumineuses",
+      "ar": "أطفال يستكشفون محيطاً من جزر الاكتشاف المضيئة"
+    },
+    "desktop": "public/kidflix/international-20261020/home-3.webp",
+    "mobile": "public/kidflix/international-20261020/home-3-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing home world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "Children explore a glowing ocean of discovery islands"
+    }
+  },
+  {
+    "id": "documents-1",
+    "world": "documents",
+    "role": "hero",
+    "subject": "A Moroccan father and daughter discovering an illustrated nature guide in a sunlit courtyard",
+    "descriptions": {
+      "en": "A Moroccan father and daughter discovering an illustrated nature guide in a sunlit courtyard. Illustrated editorial scene.",
+      "fr": "Guides illustrés et découvertes dans la nature · illustration 1.",
+      "ar": "أدلة مصورة واكتشافات في الطبيعة · رسم 1."
+    },
+    "desktop": "public/kidflix/international-20261020/documents-1.webp",
+    "mobile": "public/kidflix/international-20261020/documents-1-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing documents world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A Moroccan father and daughter discovering an illustrated nature guide in a sunlit courtyard"
+    }
+  },
+  {
+    "id": "documents-2",
+    "world": "documents",
+    "role": "hero",
+    "subject": "A tiny paper research library among giant leaves and woodland creatures",
+    "descriptions": {
+      "en": "A tiny paper research library among giant leaves and woodland creatures. Illustrated editorial scene.",
+      "fr": "Guides illustrés et découvertes dans la nature · illustration 2.",
+      "ar": "أدلة مصورة واكتشافات في الطبيعة · رسم 2."
+    },
+    "desktop": "public/kidflix/international-20261020/documents-2.webp",
+    "mobile": "public/kidflix/international-20261020/documents-2-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing documents world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A tiny paper research library among giant leaves and woodland creatures"
+    }
+  },
+  {
+    "id": "documents-3",
+    "world": "documents",
+    "role": "hero",
+    "subject": "An open field notebook with pressed flowers shells and a brass magnifying glass",
+    "descriptions": {
+      "en": "An open field notebook with pressed flowers shells and a brass magnifying glass. Illustrated editorial scene.",
+      "fr": "Guides illustrés et découvertes dans la nature · illustration 3.",
+      "ar": "أدلة مصورة واكتشافات في الطبيعة · رسم 3."
+    },
+    "desktop": "public/kidflix/international-20261020/documents-3.webp",
+    "mobile": "public/kidflix/international-20261020/documents-3-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing documents world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "An open field notebook with pressed flowers shells and a brass magnifying glass"
+    }
+  },
+  {
+    "id": "documents-tile",
+    "world": "documents",
+    "role": "tile",
+    "subject": "A paper heron unfolding a beautifully illustrated woodland document",
+    "descriptions": {
+      "en": "A paper heron unfolding a beautifully illustrated woodland document. Illustrated editorial scene.",
+      "fr": "Guides illustrés et découvertes dans la nature · illustration 4.",
+      "ar": "أدلة مصورة واكتشافات في الطبيعة · رسم 4."
+    },
+    "desktop": "public/kidflix/international-20261020/documents-tile.webp",
+    "mobile": null,
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing documents world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A paper heron unfolding a beautifully illustrated woodland document"
+    }
+  },
+  {
+    "id": "printables-1",
+    "world": "printables",
+    "role": "hero",
+    "subject": "A Black British mother and child cutting colorful paper animals at a craft table",
+    "descriptions": {
+      "en": "A Black British mother and child cutting colorful paper animals at a craft table. Illustrated editorial scene.",
+      "fr": "Créations en papier et idées à imprimer · illustration 1.",
+      "ar": "إبداعات ورقية وأفكار للطباعة · رسم 1."
+    },
+    "desktop": "public/kidflix/international-20261020/printables-1.webp",
+    "mobile": "public/kidflix/international-20261020/printables-1-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing printables world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A Black British mother and child cutting colorful paper animals at a craft table"
+    }
+  },
+  {
+    "id": "printables-2",
+    "world": "printables",
+    "role": "hero",
+    "subject": "A whimsical origami town with paper bridges and paper gardens",
+    "descriptions": {
+      "en": "A whimsical origami town with paper bridges and paper gardens. Illustrated editorial scene.",
+      "fr": "Créations en papier et idées à imprimer · illustration 2.",
+      "ar": "إبداعات ورقية وأفكار للطباعة · رسم 2."
+    },
+    "desktop": "public/kidflix/international-20261020/printables-2.webp",
+    "mobile": "public/kidflix/international-20261020/printables-2-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing printables world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A whimsical origami town with paper bridges and paper gardens"
+    }
+  },
+  {
+    "id": "printables-3",
+    "world": "printables",
+    "role": "hero",
+    "subject": "A creative tabletop with carefully cut animal shapes colored pencils and folded paper",
+    "descriptions": {
+      "en": "A creative tabletop with carefully cut animal shapes colored pencils and folded paper. Illustrated editorial scene.",
+      "fr": "Créations en papier et idées à imprimer · illustration 3.",
+      "ar": "إبداعات ورقية وأفكار للطباعة · رسم 3."
+    },
+    "desktop": "public/kidflix/international-20261020/printables-3.webp",
+    "mobile": "public/kidflix/international-20261020/printables-3-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing printables world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A creative tabletop with carefully cut animal shapes colored pencils and folded paper"
+    }
+  },
+  {
+    "id": "printables-tile",
+    "world": "printables",
+    "role": "tile",
+    "subject": "A playful paper lion beside printable shapes and scissors",
+    "descriptions": {
+      "en": "A playful paper lion beside printable shapes and scissors. Illustrated editorial scene.",
+      "fr": "Créations en papier et idées à imprimer · illustration 4.",
+      "ar": "إبداعات ورقية وأفكار للطباعة · رسم 4."
+    },
+    "desktop": "public/kidflix/international-20261020/printables-tile.webp",
+    "mobile": null,
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing printables world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A playful paper lion beside printable shapes and scissors"
+    }
+  },
+  {
+    "id": "stories-1",
+    "world": "stories",
+    "role": "hero",
+    "subject": "A Japanese grandfather reading with two children under a glowing garden tree",
+    "descriptions": {
+      "en": "A Japanese grandfather reading with two children under a glowing garden tree. Illustrated editorial scene.",
+      "fr": "Histoires et aventures imaginaires · illustration 1.",
+      "ar": "حكايات ومغامرات خيالية · رسم 1."
+    },
+    "desktop": "public/kidflix/international-20261020/stories-1.webp",
+    "mobile": "public/kidflix/international-20261020/stories-1-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing stories world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A Japanese grandfather reading with two children under a glowing garden tree"
+    }
+  },
+  {
+    "id": "stories-2",
+    "world": "stories",
+    "role": "hero",
+    "subject": "A small fox sailing a storybook boat through a moonlit forest",
+    "descriptions": {
+      "en": "A small fox sailing a storybook boat through a moonlit forest. Illustrated editorial scene.",
+      "fr": "Histoires et aventures imaginaires · illustration 2.",
+      "ar": "حكايات ومغامرات خيالية · رسم 2."
+    },
+    "desktop": "public/kidflix/international-20261020/stories-2.webp",
+    "mobile": "public/kidflix/international-20261020/stories-2-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing stories world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A small fox sailing a storybook boat through a moonlit forest"
+    }
+  },
+  {
+    "id": "stories-3",
+    "world": "stories",
+    "role": "hero",
+    "subject": "An open illustrated fairy tale with a miniature castle rising from its pages",
+    "descriptions": {
+      "en": "An open illustrated fairy tale with a miniature castle rising from its pages. Illustrated editorial scene.",
+      "fr": "Histoires et aventures imaginaires · illustration 3.",
+      "ar": "حكايات ومغامرات خيالية · رسم 3."
+    },
+    "desktop": "public/kidflix/international-20261020/stories-3.webp",
+    "mobile": "public/kidflix/international-20261020/stories-3-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing stories world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "An open illustrated fairy tale with a miniature castle rising from its pages"
+    }
+  },
+  {
+    "id": "stories-tile",
+    "world": "stories",
+    "role": "tile",
+    "subject": "A friendly owl carrying a book through a starry story garden",
+    "descriptions": {
+      "en": "A friendly owl carrying a book through a starry story garden. Illustrated editorial scene.",
+      "fr": "Histoires et aventures imaginaires · illustration 4.",
+      "ar": "حكايات ومغامرات خيالية · رسم 4."
+    },
+    "desktop": "public/kidflix/international-20261020/stories-tile.webp",
+    "mobile": null,
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing stories world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A friendly owl carrying a book through a starry story garden"
+    }
+  },
+  {
+    "id": "learning-1",
+    "world": "learning",
+    "role": "hero",
+    "subject": "An Indian girl and Kenyan boy exploring seedlings with their teacher in a garden classroom",
+    "descriptions": {
+      "en": "An Indian girl and Kenyan boy exploring seedlings with their teacher in a garden classroom. Illustrated editorial scene.",
+      "fr": "Apprendre par la découverte · illustration 1.",
+      "ar": "التعلم من خلال الاكتشاف · رسم 1."
+    },
+    "desktop": "public/kidflix/international-20261020/learning-1.webp",
+    "mobile": "public/kidflix/international-20261020/learning-1-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing learning world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "An Indian girl and Kenyan boy exploring seedlings with their teacher in a garden classroom"
+    }
+  },
+  {
+    "id": "learning-2",
+    "world": "learning",
+    "role": "hero",
+    "subject": "A winding learning path through a miniature mountain world with stepping stones",
+    "descriptions": {
+      "en": "A winding learning path through a miniature mountain world with stepping stones. Illustrated editorial scene.",
+      "fr": "Apprendre par la découverte · illustration 2.",
+      "ar": "التعلم من خلال الاكتشاف · رسم 2."
+    },
+    "desktop": "public/kidflix/international-20261020/learning-2.webp",
+    "mobile": "public/kidflix/international-20261020/learning-2-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing learning world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A winding learning path through a miniature mountain world with stepping stones"
+    }
+  },
+  {
+    "id": "learning-3",
+    "world": "learning",
+    "role": "hero",
+    "subject": "A tactile solar system model and counting beads on a warm wooden table",
+    "descriptions": {
+      "en": "A tactile solar system model and counting beads on a warm wooden table. Illustrated editorial scene.",
+      "fr": "Apprendre par la découverte · illustration 3.",
+      "ar": "التعلم من خلال الاكتشاف · رسم 3."
+    },
+    "desktop": "public/kidflix/international-20261020/learning-3.webp",
+    "mobile": "public/kidflix/international-20261020/learning-3-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing learning world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A tactile solar system model and counting beads on a warm wooden table"
+    }
+  },
+  {
+    "id": "learning-tile",
+    "world": "learning",
+    "role": "tile",
+    "subject": "A curious little explorer crossing a bridge of colored learning stones",
+    "descriptions": {
+      "en": "A curious little explorer crossing a bridge of colored learning stones. Illustrated editorial scene.",
+      "fr": "Apprendre par la découverte · illustration 4.",
+      "ar": "التعلم من خلال الاكتشاف · رسم 4."
+    },
+    "desktop": "public/kidflix/international-20261020/learning-tile.webp",
+    "mobile": null,
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing learning world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A curious little explorer crossing a bridge of colored learning stones"
+    }
+  },
+  {
+    "id": "video-1",
+    "world": "video",
+    "role": "hero",
+    "subject": "A Brazilian father and daughter watching an educational nature film on a small home screen",
+    "descriptions": {
+      "en": "A Brazilian father and daughter watching an educational nature film on a small home screen. Illustrated editorial scene.",
+      "fr": "Un univers de découvertes en images · illustration 1.",
+      "ar": "عالم من الاكتشافات المرئية · رسم 1."
+    },
+    "desktop": "public/kidflix/international-20261020/video-1.webp",
+    "mobile": "public/kidflix/international-20261020/video-1-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing video world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A Brazilian father and daughter watching an educational nature film on a small home screen"
+    }
+  },
+  {
+    "id": "video-2",
+    "world": "video",
+    "role": "hero",
+    "subject": "A magical miniature cinema showing a coral reef without any text",
+    "descriptions": {
+      "en": "A magical miniature cinema showing a coral reef without any text. Illustrated editorial scene.",
+      "fr": "Un univers de découvertes en images · illustration 2.",
+      "ar": "عالم من الاكتشافات المرئية · رسم 2."
+    },
+    "desktop": "public/kidflix/international-20261020/video-2.webp",
+    "mobile": "public/kidflix/international-20261020/video-2-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing video world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A magical miniature cinema showing a coral reef without any text"
+    }
+  },
+  {
+    "id": "video-3",
+    "world": "video",
+    "role": "hero",
+    "subject": "A small projector casting paper butterflies onto a deep blue wall",
+    "descriptions": {
+      "en": "A small projector casting paper butterflies onto a deep blue wall. Illustrated editorial scene.",
+      "fr": "Un univers de découvertes en images · illustration 3.",
+      "ar": "عالم من الاكتشافات المرئية · رسم 3."
+    },
+    "desktop": "public/kidflix/international-20261020/video-3.webp",
+    "mobile": "public/kidflix/international-20261020/video-3-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing video world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A small projector casting paper butterflies onto a deep blue wall"
+    }
+  },
+  {
+    "id": "video-tile",
+    "world": "video",
+    "role": "tile",
+    "subject": "A film reel unfurling into a lush miniature jungle",
+    "descriptions": {
+      "en": "A film reel unfurling into a lush miniature jungle. Illustrated editorial scene.",
+      "fr": "Un univers de découvertes en images · illustration 4.",
+      "ar": "عالم من الاكتشافات المرئية · رسم 4."
+    },
+    "desktop": "public/kidflix/international-20261020/video-tile.webp",
+    "mobile": null,
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing video world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A film reel unfurling into a lush miniature jungle"
+    }
+  },
+  {
+    "id": "audio-1",
+    "world": "audio",
+    "role": "hero",
+    "subject": "A child of Turkish heritage listening to headphones beside a rain-streaked window",
+    "descriptions": {
+      "en": "A child of Turkish heritage listening to headphones beside a rain-streaked window. Illustrated editorial scene.",
+      "fr": "Écoute et imagination dans un univers paisible · illustration 1.",
+      "ar": "استماع وخيال في عالم هادئ · رسم 1."
+    },
+    "desktop": "public/kidflix/international-20261020/audio-1.webp",
+    "mobile": "public/kidflix/international-20261020/audio-1-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing audio world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A child of Turkish heritage listening to headphones beside a rain-streaked window"
+    }
+  },
+  {
+    "id": "audio-2",
+    "world": "audio",
+    "role": "hero",
+    "subject": "Musical notes imagined as birds flying through a peaceful moonlit meadow",
+    "descriptions": {
+      "en": "Musical notes imagined as birds flying through a peaceful moonlit meadow. Illustrated editorial scene.",
+      "fr": "Écoute et imagination dans un univers paisible · illustration 2.",
+      "ar": "استماع وخيال في عالم هادئ · رسم 2."
+    },
+    "desktop": "public/kidflix/international-20261020/audio-2.webp",
+    "mobile": "public/kidflix/international-20261020/audio-2-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing audio world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "Musical notes imagined as birds flying through a peaceful moonlit meadow"
+    }
+  },
+  {
+    "id": "audio-3",
+    "world": "audio",
+    "role": "hero",
+    "subject": "A record player headphones and cozy cushions beside a warm reading lamp",
+    "descriptions": {
+      "en": "A record player headphones and cozy cushions beside a warm reading lamp. Illustrated editorial scene.",
+      "fr": "Écoute et imagination dans un univers paisible · illustration 3.",
+      "ar": "استماع وخيال في عالم هادئ · رسم 3."
+    },
+    "desktop": "public/kidflix/international-20261020/audio-3.webp",
+    "mobile": "public/kidflix/international-20261020/audio-3-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing audio world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A record player headphones and cozy cushions beside a warm reading lamp"
+    }
+  },
+  {
+    "id": "audio-tile",
+    "world": "audio",
+    "role": "tile",
+    "subject": "A sleepy bear listening to a seashell beneath a crescent moon",
+    "descriptions": {
+      "en": "A sleepy bear listening to a seashell beneath a crescent moon. Illustrated editorial scene.",
+      "fr": "Écoute et imagination dans un univers paisible · illustration 4.",
+      "ar": "استماع وخيال في عالم هادئ · رسم 4."
+    },
+    "desktop": "public/kidflix/international-20261020/audio-tile.webp",
+    "mobile": null,
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing audio world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A sleepy bear listening to a seashell beneath a crescent moon"
+    }
+  },
+  {
+    "id": "visual-cards-1",
+    "world": "visual-cards",
+    "role": "hero",
+    "subject": "Two Senegalese siblings matching illustrated animal cards on a classroom rug",
+    "descriptions": {
+      "en": "Two Senegalese siblings matching illustrated animal cards on a classroom rug. Illustrated editorial scene.",
+      "fr": "Cartes illustrées pour observer et découvrir · illustration 1.",
+      "ar": "بطاقات مصورة للملاحظة والاكتشاف · رسم 1."
+    },
+    "desktop": "public/kidflix/international-20261020/visual-cards-1.webp",
+    "mobile": "public/kidflix/international-20261020/visual-cards-1-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing visual-cards world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "Two Senegalese siblings matching illustrated animal cards on a classroom rug"
+    }
+  },
+  {
+    "id": "visual-cards-2",
+    "world": "visual-cards",
+    "role": "hero",
+    "subject": "A flock of colorful paper birds emerging from picture cards",
+    "descriptions": {
+      "en": "A flock of colorful paper birds emerging from picture cards. Illustrated editorial scene.",
+      "fr": "Cartes illustrées pour observer et découvrir · illustration 2.",
+      "ar": "بطاقات مصورة للملاحظة والاكتشاف · رسم 2."
+    },
+    "desktop": "public/kidflix/international-20261020/visual-cards-2.webp",
+    "mobile": "public/kidflix/international-20261020/visual-cards-2-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing visual-cards world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A flock of colorful paper birds emerging from picture cards"
+    }
+  },
+  {
+    "id": "visual-cards-3",
+    "world": "visual-cards",
+    "role": "hero",
+    "subject": "Beautiful illustrated botanical cards arranged with leaves and seed pods",
+    "descriptions": {
+      "en": "Beautiful illustrated botanical cards arranged with leaves and seed pods. Illustrated editorial scene.",
+      "fr": "Cartes illustrées pour observer et découvrir · illustration 3.",
+      "ar": "بطاقات مصورة للملاحظة والاكتشاف · رسم 3."
+    },
+    "desktop": "public/kidflix/international-20261020/visual-cards-3.webp",
+    "mobile": "public/kidflix/international-20261020/visual-cards-3-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing visual-cards world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "Beautiful illustrated botanical cards arranged with leaves and seed pods"
+    }
+  },
+  {
+    "id": "visual-cards-tile",
+    "world": "visual-cards",
+    "role": "tile",
+    "subject": "A tiny chameleon climbing a fan of illustrated nature cards",
+    "descriptions": {
+      "en": "A tiny chameleon climbing a fan of illustrated nature cards. Illustrated editorial scene.",
+      "fr": "Cartes illustrées pour observer et découvrir · illustration 4.",
+      "ar": "بطاقات مصورة للملاحظة والاكتشاف · رسم 4."
+    },
+    "desktop": "public/kidflix/international-20261020/visual-cards-tile.webp",
+    "mobile": null,
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing visual-cards world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A tiny chameleon climbing a fan of illustrated nature cards"
+    }
+  },
+  {
+    "id": "presentations-1",
+    "world": "presentations",
+    "role": "hero",
+    "subject": "A French Algerian educator sharing a planet model with a small diverse class",
+    "descriptions": {
+      "en": "A French Algerian educator sharing a planet model with a small diverse class. Illustrated editorial scene.",
+      "fr": "Leçons visuelles pour comprendre ensemble · illustration 1.",
+      "ar": "دروس مرئية للفهم معاً · رسم 1."
+    },
+    "desktop": "public/kidflix/international-20261020/presentations-1.webp",
+    "mobile": "public/kidflix/international-20261020/presentations-1-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing presentations world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A French Algerian educator sharing a planet model with a small diverse class"
+    }
+  },
+  {
+    "id": "presentations-2",
+    "world": "presentations",
+    "role": "hero",
+    "subject": "A miniature theatre of planets stars and painted scenery",
+    "descriptions": {
+      "en": "A miniature theatre of planets stars and painted scenery. Illustrated editorial scene.",
+      "fr": "Leçons visuelles pour comprendre ensemble · illustration 2.",
+      "ar": "دروس مرئية للفهم معاً · رسم 2."
+    },
+    "desktop": "public/kidflix/international-20261020/presentations-2.webp",
+    "mobile": "public/kidflix/international-20261020/presentations-2-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing presentations world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A miniature theatre of planets stars and painted scenery"
+    }
+  },
+  {
+    "id": "presentations-3",
+    "world": "presentations",
+    "role": "hero",
+    "subject": "A set of illustrated landscape lesson boards on a wooden easel",
+    "descriptions": {
+      "en": "A set of illustrated landscape lesson boards on a wooden easel. Illustrated editorial scene.",
+      "fr": "Leçons visuelles pour comprendre ensemble · illustration 3.",
+      "ar": "دروس مرئية للفهم معاً · رسم 3."
+    },
+    "desktop": "public/kidflix/international-20261020/presentations-3.webp",
+    "mobile": "public/kidflix/international-20261020/presentations-3-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing presentations world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A set of illustrated landscape lesson boards on a wooden easel"
+    }
+  },
+  {
+    "id": "presentations-tile",
+    "world": "presentations",
+    "role": "tile",
+    "subject": "A paper stage revealing a vivid underwater world",
+    "descriptions": {
+      "en": "A paper stage revealing a vivid underwater world. Illustrated editorial scene.",
+      "fr": "Leçons visuelles pour comprendre ensemble · illustration 4.",
+      "ar": "دروس مرئية للفهم معاً · رسم 4."
+    },
+    "desktop": "public/kidflix/international-20261020/presentations-tile.webp",
+    "mobile": null,
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing presentations world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A paper stage revealing a vivid underwater world"
+    }
+  },
+  {
+    "id": "assessments-1",
+    "world": "assessments",
+    "role": "hero",
+    "subject": "A girl with a hearing aid and her friend solving a colorful pattern puzzle",
+    "descriptions": {
+      "en": "A girl with a hearing aid and her friend solving a colorful pattern puzzle. Illustrated editorial scene.",
+      "fr": "Défis de logique et jeux de formes · illustration 1.",
+      "ar": "تحديات منطق وألعاب أشكال · رسم 1."
+    },
+    "desktop": "public/kidflix/international-20261020/assessments-1.webp",
+    "mobile": "public/kidflix/international-20261020/assessments-1-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing assessments world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A girl with a hearing aid and her friend solving a colorful pattern puzzle"
+    }
+  },
+  {
+    "id": "assessments-2",
+    "world": "assessments",
+    "role": "hero",
+    "subject": "A playful woodland obstacle trail of shapes and matching stones",
+    "descriptions": {
+      "en": "A playful woodland obstacle trail of shapes and matching stones. Illustrated editorial scene.",
+      "fr": "Défis de logique et jeux de formes · illustration 2.",
+      "ar": "تحديات منطق وألعاب أشكال · رسم 2."
+    },
+    "desktop": "public/kidflix/international-20261020/assessments-2.webp",
+    "mobile": "public/kidflix/international-20261020/assessments-2-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing assessments world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A playful woodland obstacle trail of shapes and matching stones"
+    }
+  },
+  {
+    "id": "assessments-3",
+    "world": "assessments",
+    "role": "hero",
+    "subject": "A tabletop of counting tokens geometric puzzles and a small wooden star",
+    "descriptions": {
+      "en": "A tabletop of counting tokens geometric puzzles and a small wooden star. Illustrated editorial scene.",
+      "fr": "Défis de logique et jeux de formes · illustration 3.",
+      "ar": "تحديات منطق وألعاب أشكال · رسم 3."
+    },
+    "desktop": "public/kidflix/international-20261020/assessments-3.webp",
+    "mobile": "public/kidflix/international-20261020/assessments-3-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing assessments world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A tabletop of counting tokens geometric puzzles and a small wooden star"
+    }
+  },
+  {
+    "id": "assessments-tile",
+    "world": "assessments",
+    "role": "tile",
+    "subject": "A brave little rabbit completing a stepping stone pattern",
+    "descriptions": {
+      "en": "A brave little rabbit completing a stepping stone pattern. Illustrated editorial scene.",
+      "fr": "Défis de logique et jeux de formes · illustration 4.",
+      "ar": "تحديات منطق وألعاب أشكال · رسم 4."
+    },
+    "desktop": "public/kidflix/international-20261020/assessments-tile.webp",
+    "mobile": null,
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing assessments world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A brave little rabbit completing a stepping stone pattern"
+    }
+  },
+  {
+    "id": "activities-1",
+    "world": "activities",
+    "role": "hero",
+    "subject": "Mexican siblings making clay animals with a grandparent at a patio table",
+    "descriptions": {
+      "en": "Mexican siblings making clay animals with a grandparent at a patio table. Illustrated editorial scene.",
+      "fr": "Activités créatives et découvertes à partager · illustration 1.",
+      "ar": "أنشطة إبداعية واكتشافات مشتركة · رسم 1."
+    },
+    "desktop": "public/kidflix/international-20261020/activities-1.webp",
+    "mobile": "public/kidflix/international-20261020/activities-1-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing activities world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "Mexican siblings making clay animals with a grandparent at a patio table"
+    }
+  },
+  {
+    "id": "activities-2",
+    "world": "activities",
+    "role": "hero",
+    "subject": "A fantastical garden playground made of imaginative natural materials",
+    "descriptions": {
+      "en": "A fantastical garden playground made of imaginative natural materials. Illustrated editorial scene.",
+      "fr": "Activités créatives et découvertes à partager · illustration 2.",
+      "ar": "أنشطة إبداعية واكتشافات مشتركة · رسم 2."
+    },
+    "desktop": "public/kidflix/international-20261020/activities-2.webp",
+    "mobile": "public/kidflix/international-20261020/activities-2-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing activities world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A fantastical garden playground made of imaginative natural materials"
+    }
+  },
+  {
+    "id": "activities-3",
+    "world": "activities",
+    "role": "hero",
+    "subject": "A craft table with clay animals paint brushes and handmade flowers",
+    "descriptions": {
+      "en": "A craft table with clay animals paint brushes and handmade flowers. Illustrated editorial scene.",
+      "fr": "Activités créatives et découvertes à partager · illustration 3.",
+      "ar": "أنشطة إبداعية واكتشافات مشتركة · رسم 3."
+    },
+    "desktop": "public/kidflix/international-20261020/activities-3.webp",
+    "mobile": "public/kidflix/international-20261020/activities-3-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing activities world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A craft table with clay animals paint brushes and handmade flowers"
+    }
+  },
+  {
+    "id": "activities-tile",
+    "world": "activities",
+    "role": "tile",
+    "subject": "A joyful squirrel balancing colorful wooden activity blocks",
+    "descriptions": {
+      "en": "A joyful squirrel balancing colorful wooden activity blocks. Illustrated editorial scene.",
+      "fr": "Activités créatives et découvertes à partager · illustration 4.",
+      "ar": "أنشطة إبداعية واكتشافات مشتركة · رسم 4."
+    },
+    "desktop": "public/kidflix/international-20261020/activities-tile.webp",
+    "mobile": null,
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing activities world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A joyful squirrel balancing colorful wooden activity blocks"
+    }
+  },
+  {
+    "id": "tools-1",
+    "world": "tools",
+    "role": "hero",
+    "subject": "A Korean child and an Arab child exploring a simple balance scale with an adult",
+    "descriptions": {
+      "en": "A Korean child and an Arab child exploring a simple balance scale with an adult. Illustrated editorial scene.",
+      "fr": "Expériences et outils pour explorer · illustration 1.",
+      "ar": "تجارب وأدوات للاستكشاف · رسم 1."
+    },
+    "desktop": "public/kidflix/international-20261020/tools-1.webp",
+    "mobile": "public/kidflix/international-20261020/tools-1-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing tools world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A Korean child and an Arab child exploring a simple balance scale with an adult"
+    }
+  },
+  {
+    "id": "tools-2",
+    "world": "tools",
+    "role": "hero",
+    "subject": "A miniature discovery laboratory with a water wheel prism and colored light",
+    "descriptions": {
+      "en": "A miniature discovery laboratory with a water wheel prism and colored light. Illustrated editorial scene.",
+      "fr": "Expériences et outils pour explorer · illustration 2.",
+      "ar": "تجارب وأدوات للاستكشاف · رسم 2."
+    },
+    "desktop": "public/kidflix/international-20261020/tools-2.webp",
+    "mobile": "public/kidflix/international-20261020/tools-2-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing tools world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A miniature discovery laboratory with a water wheel prism and colored light"
+    }
+  },
+  {
+    "id": "tools-3",
+    "world": "tools",
+    "role": "hero",
+    "subject": "A beautiful brass compass balance scale geometric solids and prism experiment",
+    "descriptions": {
+      "en": "A beautiful brass compass balance scale geometric solids and prism experiment. Illustrated editorial scene.",
+      "fr": "Expériences et outils pour explorer · illustration 3.",
+      "ar": "تجارب وأدوات للاستكشاف · رسم 3."
+    },
+    "desktop": "public/kidflix/international-20261020/tools-3.webp",
+    "mobile": "public/kidflix/international-20261020/tools-3-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing tools world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A beautiful brass compass balance scale geometric solids and prism experiment"
+    }
+  },
+  {
+    "id": "tools-tile",
+    "world": "tools",
+    "role": "tile",
+    "subject": "A small paper inventor adjusting a water wheel in a garden laboratory",
+    "descriptions": {
+      "en": "A small paper inventor adjusting a water wheel in a garden laboratory. Illustrated editorial scene.",
+      "fr": "Expériences et outils pour explorer · illustration 4.",
+      "ar": "تجارب وأدوات للاستكشاف · رسم 4."
+    },
+    "desktop": "public/kidflix/international-20261020/tools-tile.webp",
+    "mobile": null,
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing tools world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A small paper inventor adjusting a water wheel in a garden laboratory"
+    }
+  },
+  {
+    "id": "planners-1",
+    "world": "planners",
+    "role": "hero",
+    "subject": "An Afro-Caribbean family planning a garden picnic together with illustrated picture tiles",
+    "descriptions": {
+      "en": "An Afro-Caribbean family planning a garden picnic together with illustrated picture tiles. Illustrated editorial scene.",
+      "fr": "Des idées pour organiser les moments du quotidien · illustration 1.",
+      "ar": "أفكار لتنظيم اللحظات اليومية · رسم 1."
+    },
+    "desktop": "public/kidflix/international-20261020/planners-1.webp",
+    "mobile": "public/kidflix/international-20261020/planners-1-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing planners world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "An Afro-Caribbean family planning a garden picnic together with illustrated picture tiles"
+    }
+  },
+  {
+    "id": "planners-2",
+    "world": "planners",
+    "role": "hero",
+    "subject": "A peaceful miniature day unfolding from sunrise to evening in a paper garden",
+    "descriptions": {
+      "en": "A peaceful miniature day unfolding from sunrise to evening in a paper garden. Illustrated editorial scene.",
+      "fr": "Des idées pour organiser les moments du quotidien · illustration 2.",
+      "ar": "أفكار لتنظيم اللحظات اليومية · رسم 2."
+    },
+    "desktop": "public/kidflix/international-20261020/planners-2.webp",
+    "mobile": "public/kidflix/international-20261020/planners-2-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing planners world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A peaceful miniature day unfolding from sunrise to evening in a paper garden"
+    }
+  },
+  {
+    "id": "planners-3",
+    "world": "planners",
+    "role": "hero",
+    "subject": "A personal planner with blank colored blocks picture stickers and a cup of tea",
+    "descriptions": {
+      "en": "A personal planner with blank colored blocks picture stickers and a cup of tea. Illustrated editorial scene.",
+      "fr": "Des idées pour organiser les moments du quotidien · illustration 3.",
+      "ar": "أفكار لتنظيم اللحظات اليومية · رسم 3."
+    },
+    "desktop": "public/kidflix/international-20261020/planners-3.webp",
+    "mobile": "public/kidflix/international-20261020/planners-3-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing planners world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A personal planner with blank colored blocks picture stickers and a cup of tea"
+    }
+  },
+  {
+    "id": "planners-tile",
+    "world": "planners",
+    "role": "tile",
+    "subject": "A friendly hedgehog organizing picture tokens in a leaf shaped planner",
+    "descriptions": {
+      "en": "A friendly hedgehog organizing picture tokens in a leaf shaped planner. Illustrated editorial scene.",
+      "fr": "Des idées pour organiser les moments du quotidien · illustration 4.",
+      "ar": "أفكار لتنظيم اللحظات اليومية · رسم 4."
+    },
+    "desktop": "public/kidflix/international-20261020/planners-tile.webp",
+    "mobile": null,
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing planners world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A friendly hedgehog organizing picture tokens in a leaf shaped planner"
+    }
+  },
+  {
+    "id": "forms-1",
+    "world": "forms",
+    "role": "hero",
+    "subject": "A North African parent reflecting quietly with an illustrated journal in a cozy room",
+    "descriptions": {
+      "en": "A North African parent reflecting quietly with an illustrated journal in a cozy room. Illustrated editorial scene.",
+      "fr": "Un moment pour réfléchir et choisir · illustration 1.",
+      "ar": "لحظة للتأمل والاختيار · رسم 1."
+    },
+    "desktop": "public/kidflix/international-20261020/forms-1.webp",
+    "mobile": "public/kidflix/international-20261020/forms-1-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing forms world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A North African parent reflecting quietly with an illustrated journal in a cozy room"
+    }
+  },
+  {
+    "id": "forms-2",
+    "world": "forms",
+    "role": "hero",
+    "subject": "A serene landscape of stepping stones and reflection pools symbolizing thoughtful choices",
+    "descriptions": {
+      "en": "A serene landscape of stepping stones and reflection pools symbolizing thoughtful choices. Illustrated editorial scene.",
+      "fr": "Un moment pour réfléchir et choisir · illustration 2.",
+      "ar": "لحظة للتأمل والاختيار · رسم 2."
+    },
+    "desktop": "public/kidflix/international-20261020/forms-2.webp",
+    "mobile": "public/kidflix/international-20261020/forms-2-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing forms world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A serene landscape of stepping stones and reflection pools symbolizing thoughtful choices"
+    }
+  },
+  {
+    "id": "forms-3",
+    "world": "forms",
+    "role": "hero",
+    "subject": "A blank illustrated reflection journal with colored tokens and a small plant",
+    "descriptions": {
+      "en": "A blank illustrated reflection journal with colored tokens and a small plant. Illustrated editorial scene.",
+      "fr": "Un moment pour réfléchir et choisir · illustration 3.",
+      "ar": "لحظة للتأمل والاختيار · رسم 3."
+    },
+    "desktop": "public/kidflix/international-20261020/forms-3.webp",
+    "mobile": "public/kidflix/international-20261020/forms-3-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing forms world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A blank illustrated reflection journal with colored tokens and a small plant"
+    }
+  },
+  {
+    "id": "forms-tile",
+    "world": "forms",
+    "role": "tile",
+    "subject": "A thoughtful red panda beside a mirror pond and picture cards",
+    "descriptions": {
+      "en": "A thoughtful red panda beside a mirror pond and picture cards. Illustrated editorial scene.",
+      "fr": "Un moment pour réfléchir et choisir · illustration 4.",
+      "ar": "لحظة للتأمل والاختيار · رسم 4."
+    },
+    "desktop": "public/kidflix/international-20261020/forms-tile.webp",
+    "mobile": null,
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing forms world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A thoughtful red panda beside a mirror pond and picture cards"
+    }
+  },
+  {
+    "id": "community-1",
+    "world": "community",
+    "role": "hero",
+    "subject": "Parents and educators of varied international backgrounds sharing ideas in a garden circle",
+    "descriptions": {
+      "en": "Parents and educators of varied international backgrounds sharing ideas in a garden circle. Illustrated editorial scene.",
+      "fr": "Des idées et des regards à partager · illustration 1.",
+      "ar": "أفكار ورؤى نتشاركها · رسم 1."
+    },
+    "desktop": "public/kidflix/international-20261020/community-1.webp",
+    "mobile": "public/kidflix/international-20261020/community-1-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing community world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "Parents and educators of varied international backgrounds sharing ideas in a garden circle"
+    }
+  },
+  {
+    "id": "community-2",
+    "world": "community",
+    "role": "hero",
+    "subject": "A miniature village of warm homes linked by glowing paths and speech shaped clouds",
+    "descriptions": {
+      "en": "A miniature village of warm homes linked by glowing paths and speech shaped clouds. Illustrated editorial scene.",
+      "fr": "Des idées et des regards à partager · illustration 2.",
+      "ar": "أفكار ورؤى نتشاركها · رسم 2."
+    },
+    "desktop": "public/kidflix/international-20261020/community-2.webp",
+    "mobile": "public/kidflix/international-20261020/community-2-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing community world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A miniature village of warm homes linked by glowing paths and speech shaped clouds"
+    }
+  },
+  {
+    "id": "community-3",
+    "world": "community",
+    "role": "hero",
+    "subject": "A round table with notebooks cups and symbolic illustrated conversation cards",
+    "descriptions": {
+      "en": "A round table with notebooks cups and symbolic illustrated conversation cards. Illustrated editorial scene.",
+      "fr": "Des idées et des regards à partager · illustration 3.",
+      "ar": "أفكار ورؤى نتشاركها · رسم 3."
+    },
+    "desktop": "public/kidflix/international-20261020/community-3.webp",
+    "mobile": "public/kidflix/international-20261020/community-3-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing community world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A round table with notebooks cups and symbolic illustrated conversation cards"
+    }
+  },
+  {
+    "id": "community-tile",
+    "world": "community",
+    "role": "tile",
+    "subject": "Three friendly woodland animals sharing a book in a garden circle",
+    "descriptions": {
+      "en": "Three friendly woodland animals sharing a book in a garden circle. Illustrated editorial scene.",
+      "fr": "Des idées et des regards à partager · illustration 4.",
+      "ar": "أفكار ورؤى نتشاركها · رسم 4."
+    },
+    "desktop": "public/kidflix/international-20261020/community-tile.webp",
+    "mobile": null,
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing community world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "Three friendly woodland animals sharing a book in a garden circle"
+    }
+  },
+  {
+    "id": "commerce-1",
+    "world": "commerce",
+    "role": "hero",
+    "subject": "A South Asian parent and child examining a learning toolkit in a warm workshop",
+    "descriptions": {
+      "en": "A South Asian parent and child examining a learning toolkit in a warm workshop. Illustrated editorial scene.",
+      "fr": "Des ressources et outils de découverte · illustration 1.",
+      "ar": "موارد وأدوات للاكتشاف · رسم 1."
+    },
+    "desktop": "public/kidflix/international-20261020/commerce-1.webp",
+    "mobile": "public/kidflix/international-20261020/commerce-1-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing commerce world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A South Asian parent and child examining a learning toolkit in a warm workshop"
+    }
+  },
+  {
+    "id": "commerce-2",
+    "world": "commerce",
+    "role": "hero",
+    "subject": "A tiny imaginative resource shop with wooden learning toys paper books and nature kits",
+    "descriptions": {
+      "en": "A tiny imaginative resource shop with wooden learning toys paper books and nature kits. Illustrated editorial scene.",
+      "fr": "Des ressources et outils de découverte · illustration 2.",
+      "ar": "موارد وأدوات للاكتشاف · رسم 2."
+    },
+    "desktop": "public/kidflix/international-20261020/commerce-2.webp",
+    "mobile": "public/kidflix/international-20261020/commerce-2-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing commerce world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A tiny imaginative resource shop with wooden learning toys paper books and nature kits"
+    }
+  },
+  {
+    "id": "commerce-3",
+    "world": "commerce",
+    "role": "hero",
+    "subject": "A carefully arranged educational toolkit of blocks cards craft materials and books",
+    "descriptions": {
+      "en": "A carefully arranged educational toolkit of blocks cards craft materials and books. Illustrated editorial scene.",
+      "fr": "Des ressources et outils de découverte · illustration 3.",
+      "ar": "موارد وأدوات للاكتشاف · رسم 3."
+    },
+    "desktop": "public/kidflix/international-20261020/commerce-3.webp",
+    "mobile": "public/kidflix/international-20261020/commerce-3-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing commerce world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A carefully arranged educational toolkit of blocks cards craft materials and books"
+    }
+  },
+  {
+    "id": "commerce-tile",
+    "world": "commerce",
+    "role": "tile",
+    "subject": "A cheerful paper bear opening a thoughtfully assembled learning toolkit",
+    "descriptions": {
+      "en": "A cheerful paper bear opening a thoughtfully assembled learning toolkit. Illustrated editorial scene.",
+      "fr": "Des ressources et outils de découverte · illustration 4.",
+      "ar": "موارد وأدوات للاكتشاف · رسم 4."
+    },
+    "desktop": "public/kidflix/international-20261020/commerce-tile.webp",
+    "mobile": null,
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing commerce world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A cheerful paper bear opening a thoughtfully assembled learning toolkit"
+    }
+  },
+  {
+    "id": "bundles-1",
+    "world": "bundles",
+    "role": "hero",
+    "subject": "A multigenerational diverse family preparing a discovery backpack beside a garden path",
+    "descriptions": {
+      "en": "A multigenerational diverse family preparing a discovery backpack beside a garden path. Illustrated editorial scene.",
+      "fr": "Une collection pour prolonger la découverte · illustration 1.",
+      "ar": "مجموعة لمواصلة الاكتشاف · رسم 1."
+    },
+    "desktop": "public/kidflix/international-20261020/bundles-1.webp",
+    "mobile": "public/kidflix/international-20261020/bundles-1-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing bundles world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A multigenerational diverse family preparing a discovery backpack beside a garden path"
+    }
+  },
+  {
+    "id": "bundles-2",
+    "world": "bundles",
+    "role": "hero",
+    "subject": "A winding trail connecting storybook islands of art science nature and music",
+    "descriptions": {
+      "en": "A winding trail connecting storybook islands of art science nature and music. Illustrated editorial scene.",
+      "fr": "Une collection pour prolonger la découverte · illustration 2.",
+      "ar": "مجموعة لمواصلة الاكتشاف · رسم 2."
+    },
+    "desktop": "public/kidflix/international-20261020/bundles-2.webp",
+    "mobile": "public/kidflix/international-20261020/bundles-2-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing bundles world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A winding trail connecting storybook islands of art science nature and music"
+    }
+  },
+  {
+    "id": "bundles-3",
+    "world": "bundles",
+    "role": "hero",
+    "subject": "A beautiful backpack with coordinated learning books activity cards and a nature journal",
+    "descriptions": {
+      "en": "A beautiful backpack with coordinated learning books activity cards and a nature journal. Illustrated editorial scene.",
+      "fr": "Une collection pour prolonger la découverte · illustration 3.",
+      "ar": "مجموعة لمواصلة الاكتشاف · رسم 3."
+    },
+    "desktop": "public/kidflix/international-20261020/bundles-3.webp",
+    "mobile": "public/kidflix/international-20261020/bundles-3-mobile.webp",
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing bundles world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A beautiful backpack with coordinated learning books activity cards and a nature journal"
+    }
+  },
+  {
+    "id": "bundles-tile",
+    "world": "bundles",
+    "role": "tile",
+    "subject": "A little fox following a map between three connected discovery islands",
+    "descriptions": {
+      "en": "A little fox following a map between three connected discovery islands. Illustrated editorial scene.",
+      "fr": "Une collection pour prolonger la découverte · illustration 4.",
+      "ar": "مجموعة لمواصلة الاكتشاف · رسم 4."
+    },
+    "desktop": "public/kidflix/international-20261020/bundles-tile.webp",
+    "mobile": null,
+    "focal": {
+      "x": 50,
+      "y": 50
+    },
+    "commercialPurpose": "Editorial discovery of the existing bundles world; does not depict or promise a catalogue resource.",
+    "provenance": {
+      "method": "AI-generated original illustration using built-in imagegen",
+      "rights": "Generated for this authorized KidFlix commission; no stock photography or photographer attribution. Subject to applicable service terms.",
+      "prompt": "A little fox following a map between three connected discovery islands"
+    }
+  }
+]

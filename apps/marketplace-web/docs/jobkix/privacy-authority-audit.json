@@ -1,0 +1,93 @@
+{
+  "recordedAt": "2026-10-22T01:39:19.485615+00:00",
+  "state": "SOURCE_AUTHORITY_INSPECTED_IMPLEMENTATION_NOT_STARTED",
+  "screenIds": [
+    "C11",
+    "C13",
+    "C14",
+    "H14",
+    "H16",
+    "D03",
+    "D07",
+    "D08"
+  ],
+  "requirementIds": [
+    20,
+    21,
+    24,
+    25,
+    26,
+    27,
+    31
+  ],
+  "references": {
+    "blueprint": "docs/jobkix/references/ANGELCARE_CAREERS_2027.pdf",
+    "pages": [
+      11,
+      21,
+      22,
+      23
+    ],
+    "contract": "user-pasted-execution-contract"
+  },
+  "sourceFiles": [
+    {
+      "path": "supabase/migrations/20260801180000_angelcare_marketplace_ultra_05_mz20_analytics_security_recovery.sql",
+      "sha256": "7c9eb3e1f2acdaf93b194d79a138021abe5f7625aa511b8e350ff0172a451f3f"
+    },
+    {
+      "path": "angelcare-marketplace/analytics-security/repository.ts",
+      "sha256": "e8093f014619ac8e1c497a95d434aca8ee737e3fd1a7cc6d48fc980683c18aa3"
+    },
+    {
+      "path": "angelcare-marketplace/analytics-security/api-handlers.ts",
+      "sha256": "6e3334488dee36e4fd77bfb8769b29e7606938977789de38da60c1360b703893"
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/migrations/001_recruitment_records.sql",
+      "sha256": "71dfc6adb49865f4edaeac18a053e5a47c1b867eb0de55e6fe4205a6b79f9b0b"
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/migrations/002_authorization_and_queries.sql",
+      "sha256": "0a6c6a985a678f1d0946eece964011389479819a862a1e574c068c857dc6097d"
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/migrations/006_native_administration.sql",
+      "sha256": "8067aec12ec90c9d165add3e0189dc1259f656fbdb9181e75cf234bbdd315a1d"
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/migrations/015_account_operations.sql",
+      "sha256": "cb1e13a3113dba3c88752d04f834f9e10041943444068d11f17673a281167def"
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/migrations/026_restricted_account_support.sql",
+      "sha256": "9e503a344f78a82b4b786cff9d8269f880c4237d00d4f28f046bbb12b99215c0"
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/server/admin-repository.ts",
+      "sha256": "8389ba840456523da6a45415189fea6c68a78d1159eee3bc303ca57cf2646b0f"
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/server/files.ts",
+      "sha256": "de61cac7254c36c2a37ad3216d820ec84b4845178cd8d13926f84a9408d44039"
+    }
+  ],
+  "verifiedSourceFindings": [
+    "The native Marketplace security register already owns retention policy records: angelcare_marketplace_security_retention_policies. It exposes domain, record_type, retention_days, legal_hold_supported, deletion_mode, archive_mode, territory_id, status, owner_role and review dates. The existing source route is a permission-gated read, not an erasure engine.",
+    "The native sensitive permission marketplace.security.retention.manage exists in its source migration. No new administration role or unrelated permission changes are needed merely to reuse it.",
+    "JOBKIX already owns authenticated privacy_export/privacy_deletion cases, versioned case replies/appeals and self-export. Actual retention/erasure fulfillment and hold records/commands are absent. No migration 029 has been authored.",
+    "Shared auth.users is the existing cross-product identity. Closing/removing JOBKIX data must not delete that identity or unrelated product records.",
+    "An account closure must consider active memberships, sole organization ownership and existing scoped read policies. Several self/support/history policies intentionally permit authenticated ownership reads independently of an active account; a status toggle alone does not prove complete erasure.",
+    "Applications, communication, interview/offer revisions, file references, cases, receipts, events and outbox records have separate retention and counterparty roles. A deletion request is currently a review request, not a proven confirmation to withdraw active recruitment or erase another party’s records.",
+    "Private document bytes use the existing service-authorized non-public JOBKIX bucket with immutable owner/file/original keys and hash verification. Physical purge requires durable guarded work and current hold/reference checks; archival is not erasure.",
+    "The inspected OpsOS storage destruction code governs its own storage domain. Its existence does not establish JOBKIX private-bucket or recruitment erasure authority."
+  ],
+  "nextImplementationRequirements": [
+    "Bind reviewed JOBKIX retention decisions to actual native policy records; do not seed arbitrary periods or claim worldwide compliance.",
+    "Integrate purpose/audit/current-permission, exact-version/hash plan review and intended-user confirmation within existing case/account/admin components.",
+    "Add hold-aware bounded durable erasure/purge commands with shared identity and counterparty protections, storage acknowledgement/retry and explicit honest partial/retained states.",
+    "Execute isolated negative, concurrency/replay, hold/release, later-edit, private-byte purge and cross-product preservation checks before accepting the workflow."
+  ],
+  "hostedEvidence": "NOT_RUN; source inspection only. No policy values, actual hosted schema or current production records were read.",
+  "sourceChangesInThisAudit": []
+}

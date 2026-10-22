@@ -1,0 +1,26 @@
+{
+  "files": [
+    {
+      "path": "angelcare-marketplace/jobkix/client/RuntimeClock.tsx",
+      "sha256Before": "a881ba3bf428eba82407312f8a15370ec1b682374622a6518fae5da3eeb870da",
+      "requirements": [
+        13,
+        26,
+        29
+      ],
+      "intendedChange": "Require the individual control to mount before enabling interaction; retain clock/provider readiness and native settings/session authority.",
+      "protectedBehavior": "No change to locale routing, country routing, settings commands or authorization."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/LanguageControl.tsx",
+      "sha256Before": "cca96ce01371b16673b1eda3a780a4bd6e4c84ae92d294e4f578973b465275b4",
+      "requirements": [
+        13,
+        26,
+        29
+      ],
+      "intendedChange": "Require the individual control to mount before enabling interaction; retain clock/provider readiness and native settings/session authority.",
+      "protectedBehavior": "No change to locale routing, country routing, settings commands or authorization."
+    }
+  ]
+}

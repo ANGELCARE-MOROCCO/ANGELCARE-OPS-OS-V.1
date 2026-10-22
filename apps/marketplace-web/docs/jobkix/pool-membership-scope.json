@@ -1,0 +1,118 @@
+{
+  "screens": [
+    "H07",
+    "H08"
+  ],
+  "blueprintPagesInspected": [
+    14,
+    15,
+    20,
+    21
+  ],
+  "referenceDecision": "Native private Studio interaction grammar; no private Studio PNG provided. Current canonical pool version behavior remains authority.",
+  "files": [
+    {
+      "path": "angelcare-marketplace/jobkix/pool-membership.ts",
+      "sha256Before": "NEW",
+      "intendedChange": "Detect an existing active talent-pool binding via current native actor/capability, organization, consent and row security before add; present an actionable existing-state recovery without extending retention or bypassing expected-version checks. Verify repeat saves, denied reads and malformed input.",
+      "requirements": [
+        20,
+        23,
+        24,
+        26,
+        27
+      ],
+      "protectedBehavior": "No SQL/schema, command/CAS/idempotency/retention change. Read returns only a boolean for one currently authorized candidate-pool binding. Unrelated identity and products unchanged."
+    },
+    {
+      "path": "app/api/jobkix/talent/pool-membership/route.ts",
+      "sha256Before": "NEW",
+      "intendedChange": "Detect an existing active talent-pool binding via current native actor/capability, organization, consent and row security before add; present an actionable existing-state recovery without extending retention or bypassing expected-version checks. Verify repeat saves, denied reads and malformed input.",
+      "requirements": [
+        20,
+        23,
+        24,
+        26,
+        27
+      ],
+      "protectedBehavior": "No SQL/schema, command/CAS/idempotency/retention change. Read returns only a boolean for one currently authorized candidate-pool binding. Unrelated identity and products unchanged."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/server/repository.ts",
+      "sha256Before": "738094840666769d65e61d9b9e28b132cf8131921cd45edc876cf8686e42843a",
+      "intendedChange": "Detect an existing active talent-pool binding via current native actor/capability, organization, consent and row security before add; present an actionable existing-state recovery without extending retention or bypassing expected-version checks. Verify repeat saves, denied reads and malformed input.",
+      "requirements": [
+        20,
+        23,
+        24,
+        26,
+        27
+      ],
+      "protectedBehavior": "No SQL/schema, command/CAS/idempotency/retention change. Read returns only a boolean for one currently authorized candidate-pool binding. Unrelated identity and products unchanged."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/TalentForms.tsx",
+      "sha256Before": "7b02265189774849dada711cbd96330f60523db89a74a537c4d5d27b3297440f",
+      "intendedChange": "Detect an existing active talent-pool binding via current native actor/capability, organization, consent and row security before add; present an actionable existing-state recovery without extending retention or bypassing expected-version checks. Verify repeat saves, denied reads and malformed input.",
+      "requirements": [
+        20,
+        23,
+        24,
+        26,
+        27
+      ],
+      "protectedBehavior": "No SQL/schema, command/CAS/idempotency/retention change. Read returns only a boolean for one currently authorized candidate-pool binding. Unrelated identity and products unchanged."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/workforce-copy.ts",
+      "sha256Before": "2507ed839413870e68da1839d4d128ae050ec939a68c1a994c7ade34e5c8f575",
+      "intendedChange": "Detect an existing active talent-pool binding via current native actor/capability, organization, consent and row security before add; present an actionable existing-state recovery without extending retention or bypassing expected-version checks. Verify repeat saves, denied reads and malformed input.",
+      "requirements": [
+        20,
+        23,
+        24,
+        26,
+        27
+      ],
+      "protectedBehavior": "No SQL/schema, command/CAS/idempotency/retention change. Read returns only a boolean for one currently authorized candidate-pool binding. Unrelated identity and products unchanged."
+    },
+    {
+      "path": "scripts/jobkix/domain.test.cjs",
+      "sha256Before": "910ddf79e4718bfac42bd2799c8ceb8b527934f50d07ffa3e0d61408d50dace0",
+      "intendedChange": "Detect an existing active talent-pool binding via current native actor/capability, organization, consent and row security before add; present an actionable existing-state recovery without extending retention or bypassing expected-version checks. Verify repeat saves, denied reads and malformed input.",
+      "requirements": [
+        20,
+        23,
+        24,
+        26,
+        27
+      ],
+      "protectedBehavior": "No SQL/schema, command/CAS/idempotency/retention change. Read returns only a boolean for one currently authorized candidate-pool binding. Unrelated identity and products unchanged."
+    },
+    {
+      "path": "scripts/jobkix/studio-selection.cjs",
+      "sha256Before": "20ed3a96f2295e0687dc48fd1a484da9a02dab48c6afca2901ae5a5d151ebaa3",
+      "intendedChange": "Detect an existing active talent-pool binding via current native actor/capability, organization, consent and row security before add; present an actionable existing-state recovery without extending retention or bypassing expected-version checks. Verify repeat saves, denied reads and malformed input.",
+      "requirements": [
+        20,
+        23,
+        24,
+        26,
+        27
+      ],
+      "protectedBehavior": "No SQL/schema, command/CAS/idempotency/retention change. Read returns only a boolean for one currently authorized candidate-pool binding. Unrelated identity and products unchanged."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/pages/HiringTalent.tsx",
+      "sha256Before": "487295ef43073c2d85dcbeecbe47fac9a9c58e30dd70bb5d0a446add9a7ffc1d",
+      "intendedChange": "Key the talent control by candidate, organization and add/remove pool context so navigation cannot retain a completed command from another action.",
+      "requirements": [
+        20,
+        24,
+        26,
+        27
+      ],
+      "protectedBehavior": "Preserve native action payload, expected version, idempotency and RLS. No command or database behavior changes."
+    }
+  ]
+}

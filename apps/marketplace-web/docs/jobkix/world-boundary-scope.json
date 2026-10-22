@@ -1,0 +1,7 @@
+{
+  "path": "app/layout.tsx",
+  "currentBeforeSha256": "304c276ffa7f6d44defa709dc1564a7ecb53e250371ea2c70a87699686ddc721",
+  "originalBaseline": "shared-file-register.json",
+  "requirement": "REQ-10/13/29: independent world and correct document language throughout client navigation",
+  "modification": "Replace only server-only bridge selection with an owned client boundary; preserve native bridges and non-JOBKIX initial attributes."
+}

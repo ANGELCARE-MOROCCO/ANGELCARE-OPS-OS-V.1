@@ -1,0 +1,2 @@
+import {loadPackage,repository,targets,digest} from './install.mjs';
+try{if(process.argv.length!==3)throw Error('Usage: node verify.mjs /path/to/angelcare-platform');const manifest=loadPackage(),root=repository(process.argv[2],manifest);for(const row of targets(root,manifest))if(digest(row.target)!==row.after)throw Error('Installed file mismatch: '+row.path);console.log('PAYLOAD_AND_INSTALLED_HASHES=PASS files='+manifest.files.length);}catch(e){console.error(e.message);process.exitCode=1;}

@@ -1,0 +1,7 @@
+const fs=require('node:fs'),path=require('node:path'),net=require('node:net'),crypto=require('node:crypto');
+const {evidenceDirectory}=require('./source-fingerprint.cjs'),source=evidenceDirectory(),target=path.resolve(__dirname,'../../docs/jobkix/evidence/browser');
+(async()=>{const running=await new Promise(resolve=>{const socket=net.connect({host:'127.0.0.1',port:3180});socket.once('connect',()=>{socket.destroy();resolve(true);});socket.once('error',()=>resolve(false));});if(running)throw Error('Stop the local development runtime before publishing captures into application paths.');
+ fs.mkdirSync(target,{recursive:true});const files=[];
+ for(const name of fs.readdirSync(source)){if(!/^[a-zA-Z0-9-]+\.(json|png)$/.test(name))continue;const file=path.join(source,name);if(!fs.lstatSync(file).isFile())throw Error('Evidence must be a regular file');const bytes=fs.readFileSync(file);fs.writeFileSync(path.join(target,name),bytes);files.push({path:'docs/jobkix/evidence/browser/'+name,bytes:bytes.length,sha256:crypto.createHash('sha256').update(bytes).digest('hex')});}
+ fs.writeFileSync(path.join(target,'published-evidence.json'),JSON.stringify({publishedAt:new Date().toISOString(),source,files,limitation:'Capture publication records bytes only; functional and visual acceptance are in individual reports.'},null,2)+'\n');console.log('PUBLISHED_RUNTIME_EVIDENCE='+files.length);
+})().catch(error=>{console.error(error);process.exitCode=1;});

@@ -1,0 +1,65 @@
+{
+  "recordedAt": "2026-10-21T12:56:54.188Z",
+  "runtime": "Actual Next.js development app",
+  "data": "Isolated PGlite with actual JOBKIX migrations/commands/RLS; synthetic Auth/storage/initial trust/content fixtures",
+  "mode": "probe",
+  "results": [
+    {
+      "image": {
+        "tag": "IMG",
+        "rect": {
+          "x": 0,
+          "y": 99,
+          "width": 1440,
+          "height": 530
+        },
+        "display": "block",
+        "position": "absolute",
+        "opacity": "1",
+        "zIndex": "auto",
+        "overflow": "clip",
+        "visibility": "visible",
+        "objectFit": "cover",
+        "height": "530px"
+      },
+      "picture": {
+        "tag": "PICTURE",
+        "rect": {
+          "x": 0,
+          "y": 99,
+          "width": 0,
+          "height": 0
+        },
+        "display": "inline",
+        "position": "static",
+        "opacity": "1",
+        "zIndex": "auto",
+        "overflow": "visible",
+        "visibility": "visible",
+        "objectFit": "fill",
+        "height": "auto"
+      },
+      "hero": {
+        "tag": "SECTION",
+        "rect": {
+          "x": 0,
+          "y": 99,
+          "width": 1440,
+          "height": 530
+        },
+        "display": "block",
+        "position": "relative",
+        "opacity": "1",
+        "zIndex": "auto",
+        "overflow": "hidden",
+        "visibility": "visible",
+        "objectFit": "fill",
+        "height": "530px"
+      },
+      "source": "http://127.0.0.1:3180/jobkix/editorial/home-hero.webp",
+      "top": "<img class=\"jobkix_heroPicture__rL2p8\" src=\"/jobkix/editorial/home-hero.webp\" alt=\"\" width=\"2400\" height=\"1000\" fetchpriority=\"high\" loading=\"eager\">"
+    }
+  ],
+  "errors": [],
+  "limitation": "No hosted Auth/storage/email or production certification. Screenshot existence does not mean per-front visual acceptance."
+}

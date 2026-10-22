@@ -1,0 +1,106 @@
+{
+  "recordedAt": "2026-10-22T00:16:40.686Z",
+  "sourceAtStart": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 345,
+    "digest": "d62a84d5a88b886cc867d2d74c09ed7784948702bf28a7ff877edc4fb4a7ba44"
+  },
+  "sourceAtEnd": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 345,
+    "digest": "d62a84d5a88b886cc867d2d74c09ed7784948702bf28a7ff877edc4fb4a7ba44"
+  },
+  "checks": [
+    {
+      "name": "installed Next CSS-module pure mode compiles the approved file",
+      "status": "PASS",
+      "file": "angelcare-marketplace/kidflix/journey/journey.module.css"
+    },
+    {
+      "name": "installed Next CSS-module pure mode compiles the approved file",
+      "status": "PASS",
+      "file": "angelcare-marketplace/kidflix/kidflix.module.css"
+    },
+    {
+      "name": "native KidFlix document renders and the existing motion state remains contained/restorable",
+      "status": "PASS",
+      "locale": "en",
+      "before": {
+        "animation": "5s",
+        "transition": "5s",
+        "scroll": "smooth"
+      },
+      "contained": {
+        "animation": "0s",
+        "transition": "0s",
+        "scroll": "auto"
+      },
+      "foreign": {
+        "animation": "5s",
+        "transition": "5s",
+        "scroll": "smooth"
+      },
+      "restored": {
+        "animation": "5s",
+        "transition": "5s",
+        "scroll": "smooth"
+      }
+    },
+    {
+      "name": "native KidFlix document renders and the existing motion state remains contained/restorable",
+      "status": "PASS",
+      "locale": "fr",
+      "before": {
+        "animation": "5s",
+        "transition": "5s",
+        "scroll": "smooth"
+      },
+      "contained": {
+        "animation": "0s",
+        "transition": "0s",
+        "scroll": "auto"
+      },
+      "foreign": {
+        "animation": "5s",
+        "transition": "5s",
+        "scroll": "smooth"
+      },
+      "restored": {
+        "animation": "5s",
+        "transition": "5s",
+        "scroll": "smooth"
+      }
+    },
+    {
+      "name": "native KidFlix document renders and the existing motion state remains contained/restorable",
+      "status": "PASS",
+      "locale": "ar",
+      "before": {
+        "animation": "5s",
+        "transition": "5s",
+        "scroll": "smooth"
+      },
+      "contained": {
+        "animation": "0s",
+        "transition": "0s",
+        "scroll": "auto"
+      },
+      "foreign": {
+        "animation": "5s",
+        "transition": "5s",
+        "scroll": "smooth"
+      },
+      "restored": {
+        "animation": "5s",
+        "transition": "5s",
+        "scroll": "smooth"
+      }
+    }
+  ],
+  "errors": [],
+  "dependencyErrors": [],
+  "failure": null,
+  "scope": "Actual installed Next CSS transformer and native rendered KidFlix shell. Test-only DOM probes exercise the existing html motion attribute; this does not certify the preference UI, catalogue APIs or complete KidFlix experience."
+}

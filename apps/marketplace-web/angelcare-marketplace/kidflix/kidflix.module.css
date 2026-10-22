@@ -3938,3 +3938,9 @@
 @media(max-width:390px){.root .hero h1{font-size:35px}.root .headerActions{gap:3px}.root .worldCard h3{font-size:16px}.root .worldCardText{padding-inline:12px}.root .worldCardText>div{flex-wrap:wrap;gap:8px}}
 @media(prefers-reduced-motion:reduce){.root *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 .root .search input::placeholder{color:#5b6c82;opacity:1}.root .worldCard small{color:#364864}.root .primary{background:#c92870;color:#fff}
+
+:global(html[data-kidflix-motion="no"]) .root * {
+  animation: none !important;
+  scroll-behavior: auto !important;
+  transition: none !important;
+}

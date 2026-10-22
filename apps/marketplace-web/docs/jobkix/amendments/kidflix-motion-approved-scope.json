@@ -1,0 +1,54 @@
+{
+  "approvedAt": "2026-10-21T23:52:26.337278+00:00",
+  "proposal": "docs/jobkix/amendments/kidflix-motion-proposal.json",
+  "patch": "docs/jobkix/amendments/kidflix-motion-compile-repair.patch",
+  "files": [
+    {
+      "path": "angelcare-marketplace/kidflix/journey/journey.module.css",
+      "baselineSha256": "6df18b471e3ee8202a6f10ca121f4e575b0e1f28776790e92bee2a1f7903af71",
+      "proposedSha256": "cf09ab690746ea5afa0a6bfb62ab927c716a93067b9a1e144962f9f7f702b246",
+      "nextPureCssCompilation": "PASS",
+      "requirements": [
+        8,
+        9,
+        27,
+        31
+      ],
+      "authorization": "User: yes apply it all and finish it for final production ready",
+      "changedPurpose": "Move the identical motion-reduction declarations into the module that owns the actual KidFlix root class; preserve descendant-wide behavior under the existing html motion setting.",
+      "originalPath": "docs/jobkix/amendments/kidflix-motion-before/angelcare-marketplace/kidflix/journey/journey.module.css"
+    },
+    {
+      "path": "angelcare-marketplace/kidflix/kidflix.module.css",
+      "baselineSha256": "038548ecac0aed52b32c72be457dc7d68be7eb930c4cf96fb384aa8767b3e0b7",
+      "proposedSha256": "1dc977858f6756ec93413dce247a5976d3257bf053e4964cf4639608e39776bc",
+      "nextPureCssCompilation": "PASS",
+      "requirements": [
+        8,
+        9,
+        27,
+        31
+      ],
+      "authorization": "User: yes apply it all and finish it for final production ready",
+      "changedPurpose": "Move the identical motion-reduction declarations into the module that owns the actual KidFlix root class; preserve descendant-wide behavior under the existing html motion setting.",
+      "originalPath": "docs/jobkix/amendments/kidflix-motion-before/angelcare-marketplace/kidflix/kidflix.module.css"
+    }
+  ],
+  "verificationFiles": [
+    {
+      "path": "scripts/jobkix/kidflix-motion.cjs",
+      "before": "NEW",
+      "intendedChange": "Verify installed CSS-module pure-mode compilation and real native KidFlix DOM motion containment/restoration in en/fr/ar; no complete KidFlix product acceptance claim."
+    },
+    {
+      "path": "scripts/jobkix/presentation.cjs",
+      "before": "c62122ccd7bfda24bb1bdb6efe631226622437f908ee5bac82f84b560c344c76",
+      "intendedChange": "Retest actual KidFlix documents after the approved source repair; retain any remaining runtime failure as BLOCKED."
+    },
+    {
+      "path": "scripts/jobkix/brand.test.cjs",
+      "before": "REGISTERED_IN_PRESENTATION_SCOPE",
+      "intendedChange": "Keep original protected hashes and allow only the explicitly approved exact CSS derivative hash, with preserved baseline bytes."
+    }
+  ]
+}

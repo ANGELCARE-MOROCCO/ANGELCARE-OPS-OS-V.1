@@ -1,0 +1,50 @@
+{
+  "authority": "Explicit user amendment 2026-10-21: legal page only JOBKIX built and operated by ANGELCARE; no country/jurisdiction mentions.",
+  "files": [
+    {
+      "path": "angelcare-marketplace/jobkix/pages/Legal.tsx",
+      "sha256Before": "1780e0489c0f950991f7ab95c9848bdb4702a250851e04547107e7c139efbc67",
+      "requirements": [
+        2,
+        13,
+        19,
+        25,
+        29
+      ],
+      "intendedChange": "Public P26 and document aliases render only the user-approved operator attribution. Preserve the existing permission-gated private editorial preview.",
+      "protectedBehavior": "No publication, consent, authentication, permission, country detection or shared Marketplace changes."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/i18n.ts",
+      "sha256Before": "b93cc4c91f4a939fd309a1745f0ce53d9c40c0fe1d0b7329ea547d0aaa5b215c",
+      "requirements": [
+        2,
+        13,
+        19,
+        25,
+        29
+      ],
+      "intendedChange": "Add one stable localized attribution key in all seven JOBKIX languages.",
+      "protectedBehavior": "No publication, consent, authentication, permission, country detection or shared Marketplace changes."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/server/page-metadata.ts",
+      "sha256Before": "ce0b4fb977cb4331bcc44922c84e0d53326b905a070bef142bf31aca93780c93",
+      "requirements": [
+        2,
+        13,
+        19,
+        25,
+        29
+      ],
+      "intendedChange": "Use attribution-only P26 metadata and canonicalize document aliases to the public attribution page; exclude published legal text from public metadata.",
+      "protectedBehavior": "No publication, consent, authentication, permission, country detection or shared Marketplace changes."
+    },
+    {
+      "path": "scripts/jobkix/legal-presentation.cjs",
+      "sha256Before": "NEW",
+      "intendedChange": "Execute actual browser checks for attribution-only legal content and metadata across seven locales and document aliases.",
+      "protectedBehavior": "Isolated verification only; no production handler or content writes."
+    }
+  ]
+}

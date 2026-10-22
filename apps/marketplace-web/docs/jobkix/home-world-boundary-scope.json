@@ -1,0 +1,50 @@
+{
+  "references": [
+    "P00",
+    "blueprint pp6,8,25"
+  ],
+  "files": [
+    {
+      "path": "angelcare-marketplace/jobkix/client/WorldBoundary.tsx",
+      "sha256Before": "9440161cd21de33c45a006e55a13ca0a782f8a5ef65bcc1da1d9461e032bf0a5",
+      "intendedChange": "Capture original document attributes even when a foreign world uses the same language as the JOBKIX entry.",
+      "requirements": [
+        4,
+        10,
+        16,
+        17,
+        18,
+        29
+      ],
+      "protectedBehavior": "Other world shells/assets, native document authorities and recruitment workflows unchanged."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/pages/Home.tsx",
+      "sha256Before": "fe521d3028f48a6c1c6d667e474f8bf214745caae31cc6715fa199a674695636",
+      "intendedChange": "Add relevant registered editorial photography to the two acquisition panels without changing accounts, catalogue truth or destinations.",
+      "requirements": [
+        4,
+        10,
+        16,
+        17,
+        18,
+        29
+      ],
+      "protectedBehavior": "Other world shells/assets, native document authorities and recruitment workflows unchanged."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/jobkix.module.css",
+      "sha256Before": "a0f063b0bd5feb31b68cd3b7f1c99f0e883d5bd10ef608d528b05536181895e8",
+      "intendedChange": "Compose responsive acquisition panels with readable text, full actions and intentional image crops.",
+      "requirements": [
+        4,
+        10,
+        16,
+        17,
+        18,
+        29
+      ],
+      "protectedBehavior": "Other world shells/assets, native document authorities and recruitment workflows unchanged."
+    }
+  ]
+}

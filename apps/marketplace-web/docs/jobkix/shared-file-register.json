@@ -1,0 +1,153 @@
+[
+  {
+    "path": "apps/marketplace-web/proxy.ts",
+    "baselineSha256": "8329a2a12528a6ffd0a3f301b89f6935dc0e5b42b05532dfde613244b42e71ed",
+    "backupPath": "/private/tmp/jobkix-source-20261020/baseline/proxy.ts",
+    "requirement": "REQ-10/13/24/29",
+    "intendedModification": "Add only JOBKIX request language/context and session refresh matching.",
+    "preservedBehavior": "Existing routing, cookie refresh and CareLink protections.",
+    "regressionRequired": [
+      "scoped TypeScript",
+      "non-JOBKIX behavior regression",
+      "target-specific integration test"
+    ],
+    "status": "SCOPED_SOURCE_CHECKS_PASS_FULL_ACCEPTANCE_PENDING",
+    "sourceEvidence": "docs/jobkix/evidence/source-verification.json",
+    "additionalChanges": [
+      {
+        "scopeManifest": "docs/jobkix/presentation-isolation-scope.json",
+        "requirement": "Preserve surrounding-world document language/direction against forged JOBKIX hint headers.",
+        "change": "Sanitize only owned hints for requests outside JOBKIX; add ingress coverage for potential root-document responses; preserve all existing authentication/routing decisions.",
+        "regressionEvidence": [
+          "scripts/jobkix/presentation-routing.test.cjs",
+          "scripts/jobkix/presentation.cjs",
+          "scripts/jobkix/navigation.cjs"
+        ]
+      }
+    ]
+  },
+  {
+    "path": "apps/marketplace-web/app/layout.tsx",
+    "baselineSha256": "75e42c15165dad468d9557cc692f1e5959c98d34be8c9b2751aa4e2a5201d9ba",
+    "backupPath": "/private/tmp/jobkix-source-20261020/baseline/app/layout.tsx",
+    "requirement": "REQ-10/13/24/29",
+    "intendedModification": "Resolve JOBKIX document language and native metadata; use one owned pathname-aware boundary so client language/world navigation updates document attributes and removes/restores the existing global runtime bridges.",
+    "preservedBehavior": "Initial non-JOBKIX document attributes are untouched, the same existing runtime bridges render outside JOBKIX, and native web-presence/favicon authority remains unchanged. Restore only attributes still owned by JOBKIX after leaving; preserve other world updates.",
+    "regressionRequired": [
+      "scoped TypeScript",
+      "native initial-render/bridge regression",
+      "actual client language navigation and return to another world",
+      "native icon transitions",
+      "no JOBKIX document attributes leaked outside its namespace"
+    ],
+    "status": "SCOPED_SOURCE_CHECKS_PASS_FULL_ACCEPTANCE_PENDING",
+    "sourceEvidence": "docs/jobkix/evidence/source-verification.json",
+    "additionalChanges": [
+      {
+        "unit": "presentation-header-isolation",
+        "baselineSha256": "c33d3388310b914e34492ea0a56a6075757bd80429f47b9770cd6c440041ff21",
+        "requirement": "JOBKIX contract 8, 9, 10, 18, 29: native route metadata ownership and cross-world isolation",
+        "intendedChange": "Restore original global metadata authority. Keep canonical JOBKIX request hints limited to server document language/direction; route metadata owns JOBKIX identity and icons.",
+        "regressionEvidenceRequired": "Native JOBKIX metadata all seven languages, actual Marketplace client entry/back/forward, global metadata function preserved."
+      }
+    ]
+  },
+  {
+    "path": "apps/marketplace-web/angelcare-marketplace/public-universe/components/GlobalPublicShell.tsx",
+    "baselineSha256": "fea3c0e30c6e61039921a08716854b66a7ebd533921bca88693ef019633cfe68",
+    "backupPath": "/private/tmp/jobkix-source-20261020/baseline/angelcare-marketplace/public-universe/components/GlobalPublicShell.tsx",
+    "requirement": "REQ-11",
+    "intendedModification": "Add compact brand-world shortcut immediately physically right of KidFlix.",
+    "preservedBehavior": "Twelve storefront registry, order, all existing navigation, KidFlix and footer.",
+    "regressionRequired": [
+      "scoped TypeScript",
+      "exact shared-shell diff and unchanged native KidFlix/storefront hashes",
+      "actual server-rendered brand link markup",
+      "authorized responsive and physical-right Arabic placement review"
+    ],
+    "status": "SCOPED_SOURCE_CHECKS_PASS_FULL_ACCEPTANCE_PENDING",
+    "sourceEvidence": "docs/jobkix/evidence/source-verification.json"
+  },
+  {
+    "path": "apps/marketplace-web/angelcare-marketplace/shells/AdminShell.tsx",
+    "baselineSha256": "c5ae512dcdada4040534e237d71c568b3c3748ae23a6df02100251bd8355ef5f",
+    "backupPath": "/private/tmp/jobkix-source-20261020/baseline/angelcare-marketplace/shells/AdminShell.tsx",
+    "requirement": "REQ-8/9/25",
+    "intendedModification": "Register eight additive JOBKIX workspace destinations within the native shell.",
+    "preservedBehavior": "Existing shell, design, workspaces, permissions and DCE.",
+    "regressionRequired": [
+      "scoped TypeScript",
+      "non-JOBKIX behavior regression",
+      "target-specific integration test"
+    ],
+    "status": "SCOPED_SOURCE_CHECKS_PASS_FULL_ACCEPTANCE_PENDING",
+    "sourceEvidence": "docs/jobkix/evidence/source-verification.json"
+  },
+  {
+    "path": "apps/marketplace-web/angelcare-marketplace/customer-commerce/auth-email-native/worker.ts",
+    "baselineSha256": "c4ca9f45450f3a3ed59fb63ab6fb4ef52f77a055ac422fe8cb94eb1ffa187bbf",
+    "backupPath": "/private/tmp/jobkix-source-20261020/baseline/angelcare-marketplace/customer-commerce/auth-email-native/worker.ts",
+    "requirement": "REQ-13/14: seven-language JOBKIX authentication emails through the existing native identity delivery authority",
+    "intendedModification": "One additive renderer dispatch for explicitly tagged JOBKIX auth jobs; no changes to customer rendering, auth tokens, queue, sender resolver, SMTP policy or delivery state handling.",
+    "preservedBehavior": "Existing FR/EN/AR AuthLocale and customer messages remain unchanged; existing provider/lease guards remain authoritative.",
+    "regressionRequired": [
+      "existing native auth composition tests",
+      "JOBKIX seven-language token/redirect tests",
+      "scoped TypeScript"
+    ],
+    "status": "SCOPED_SOURCE_CHECKS_PASS_FULL_ACCEPTANCE_PENDING",
+    "sourceEvidence": "docs/jobkix/evidence/source-verification.json"
+  },
+  {
+    "path": "apps/marketplace-web/angelcare-marketplace/customer-commerce/auth-email-native/messages.ts",
+    "baselineSha256": "3e96beda913aeb798f6374d04f290ee706804bed5ba7884806aed23d4908a600",
+    "backupPath": "/private/tmp/jobkix-source-20261020/baseline/angelcare-marketplace/customer-commerce/auth-email-native/messages.ts",
+    "requirement": "REQ-13/14/24: reuse canonical authentication token composition for seven-language JOBKIX mail",
+    "intendedModification": "Expose the already-computed safe action link in the internal composed message result. No change to token construction, sender, recipients, customer subjects or rendered bodies.",
+    "preservedBehavior": "All existing FR/EN/AR customer messages and token/redirect policy.",
+    "regressionRequired": [
+      "Existing customer message byte equality against baseline",
+      "JOBKIX locale/link and unsafe-origin tests",
+      "Scoped TypeScript"
+    ],
+    "status": "SCOPED_SOURCE_CHECKS_PASS_FULL_ACCEPTANCE_PENDING",
+    "sourceEvidence": "docs/jobkix/evidence/source-verification.json"
+  },
+  {
+    "path": "apps/marketplace-web/app/robots.ts",
+    "baselineSha256": "cfbb4a570c627040ebf14bbe6532794c4e13ea5c4af398fb98c76e8ba62207f5",
+    "backupPath": "/private/tmp/jobkix-source-20261020/baseline/app/robots.ts",
+    "requirement": "REQ-8/29: discover only current public JOBKIX records through sitemap indexing",
+    "intendedModification": "Append the independent JOBKIX sitemap index to the native robots result only when its canonical sitemap authority is enabled.",
+    "preservedBehavior": "Existing rules, production indexing gate, hostname, Marketplace sitemap, and root routing remain authoritative.",
+    "regressionRequired": [
+      "Pure tests preserve all original rules and disabled authority",
+      "Scoped TypeScript",
+      "Authorized runtime robots regression"
+    ],
+    "status": "SCOPED_SOURCE_CHECKS_PASS_FULL_ACCEPTANCE_PENDING",
+    "sourceEvidence": "docs/jobkix/evidence/source-verification.json"
+  },
+  {
+    "path": "apps/marketplace-web/angelcare-marketplace/kidflix/journey/journey.module.css",
+    "baselineSha256": "6df18b471e3ee8202a6f10ca121f4e575b0e1f28776790e92bee2a1f7903af71",
+    "backupPath": "/private/tmp/jobkix-source-20261020/baseline/angelcare-marketplace/kidflix/journey/journey.module.css",
+    "requirement": "Explicit user amendment 2026-10-21: approve the prepared two-file KidFlix reduced-motion CSS compilation repair.",
+    "preservedBehavior": "Identical reduced-motion declarations, only within the actual KidFlix root. No designs, data, navigation, sessions, galleries, media, catalogue or publishing changes.",
+    "intendedChange": "Move the identical motion-reduction declarations into the module that owns the actual KidFlix root class; preserve descendant-wide behavior under the existing html motion setting.",
+    "regressionEvidenceRequired": "Installed Next pure-mode CSS compilation, actual KidFlix en/fr/ar HTTP rendering, reduced-motion state in native KidFlix DOM, unaffected JOBKIX icon/header isolation.",
+    "status": "SCOPED_SOURCE_CHECKS_PASS_FULL_ACCEPTANCE_PENDING",
+    "sourceEvidence": "docs/jobkix/evidence/source-verification.json"
+  },
+  {
+    "path": "apps/marketplace-web/angelcare-marketplace/kidflix/kidflix.module.css",
+    "baselineSha256": "038548ecac0aed52b32c72be457dc7d68be7eb930c4cf96fb384aa8767b3e0b7",
+    "backupPath": "/private/tmp/jobkix-source-20261020/baseline/angelcare-marketplace/kidflix/kidflix.module.css",
+    "requirement": "Explicit user amendment 2026-10-21: approve the prepared two-file KidFlix reduced-motion CSS compilation repair.",
+    "preservedBehavior": "Identical reduced-motion declarations, only within the actual KidFlix root. No designs, data, navigation, sessions, galleries, media, catalogue or publishing changes.",
+    "intendedChange": "Move the identical motion-reduction declarations into the module that owns the actual KidFlix root class; preserve descendant-wide behavior under the existing html motion setting.",
+    "regressionEvidenceRequired": "Installed Next pure-mode CSS compilation, actual KidFlix en/fr/ar HTTP rendering, reduced-motion state in native KidFlix DOM, unaffected JOBKIX icon/header isolation.",
+    "status": "SCOPED_SOURCE_CHECKS_PASS_FULL_ACCEPTANCE_PENDING",
+    "sourceEvidence": "docs/jobkix/evidence/source-verification.json"
+  }
+]

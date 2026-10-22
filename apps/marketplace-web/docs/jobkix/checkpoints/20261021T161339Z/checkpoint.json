@@ -1,0 +1,41 @@
+{
+  "createdAt": "2026-10-21T16:13:51.963733+00:00",
+  "state": "PAUSED_FOR_USER_RESTART",
+  "path": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/checkpoints/20261021T161339Z",
+  "application": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web",
+  "sourceBaseline": "d655c0f99c8891deb08471bc0e83f5d0cfb1fa89",
+  "sourceFiles": 309,
+  "archives": [
+    {
+      "filename": "JOBKIX_RESTART_CHECKPOINT_20261021T161339Z.zip",
+      "kind": "WIP-scoped-source-reference-evidence-recovery",
+      "bytes": 143309810,
+      "sha256": "c1a65ef1896407770f24dfc7c97434a0e72f9f49dc1a8119ba2f628997279264",
+      "entries": 592,
+      "integrity": "PASS",
+      "allPayloadHashes": "PASS"
+    },
+    {
+      "filename": "ISOLATED_VERIFICATION_TOOLS_ONLY.zip",
+      "kind": "verification-tools",
+      "bytes": 10010688,
+      "sha256": "2d5ae3a7a3b5456b335f1d30a334f6dc4a861afb2ea48671ab14c2165d72e9bf",
+      "entries": 310,
+      "integrity": "PASS",
+      "allPayloadHashes": "PASS"
+    }
+  ],
+  "finalInstaller": false,
+  "workspaceSource": "PRESERVED",
+  "localRuntime": "STOPPED",
+  "nextGeneratedDeclaration": "RESTORED",
+  "sourceVerification": {
+    "commands": 10,
+    "passed": 10,
+    "reportedTests": 184,
+    "typescriptRoots": 201,
+    "transitiveFiles": 1087,
+    "diagnostics": 0
+  },
+  "limitations": "WIP checkpoint only. Full product acceptance and final guarded installer package remain incomplete."
+}

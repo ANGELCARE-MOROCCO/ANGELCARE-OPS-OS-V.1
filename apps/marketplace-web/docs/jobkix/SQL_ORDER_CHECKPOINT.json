@@ -1,0 +1,176 @@
+{
+  "status": "AUTHORING_CHECKPOINT_NOT_FINAL_MANUAL_INSTALL_SET",
+  "productionExecuted": false,
+  "isolation": "Actual ordered migrations exercised in PGlite; synthetic native Auth/media/trust fixtures. No hosted schema/storage certification.",
+  "files": [
+    {
+      "order": 1,
+      "path": "angelcare-marketplace/jobkix/migrations/001_recruitment_records.sql",
+      "sha256": "71dfc6adb49865f4edaeac18a053e5a47c1b867eb0de55e6fe4205a6b79f9b0b",
+      "bytes": 25685
+    },
+    {
+      "order": 2,
+      "path": "angelcare-marketplace/jobkix/migrations/002_authorization_and_queries.sql",
+      "sha256": "0a6c6a985a678f1d0946eece964011389479819a862a1e574c068c857dc6097d",
+      "bytes": 30800
+    },
+    {
+      "order": 3,
+      "path": "angelcare-marketplace/jobkix/migrations/003_transactional_recruitment.sql",
+      "sha256": "6469e79f0f605fab2eac15b56efaecf142ee8caf798cb748f9b94debca1ce4a3",
+      "bytes": 43166
+    },
+    {
+      "order": 4,
+      "path": "angelcare-marketplace/jobkix/migrations/004_approved_taxonomy.sql",
+      "sha256": "2258f79b3f421558884b50b26c5c8daffad85425c3d15e219e3e905792907064",
+      "bytes": 15927
+    },
+    {
+      "order": 5,
+      "path": "angelcare-marketplace/jobkix/migrations/005_workspace_operations.sql",
+      "sha256": "557cd03566137a2c85c4aec3f6633c2560cfc6337097dd744adc15c646b92cbd",
+      "bytes": 28097
+    },
+    {
+      "order": 6,
+      "path": "angelcare-marketplace/jobkix/migrations/006_native_administration.sql",
+      "sha256": "8067aec12ec90c9d165add3e0189dc1259f656fbdb9181e75cf234bbdd315a1d",
+      "bytes": 25907
+    },
+    {
+      "order": 7,
+      "path": "angelcare-marketplace/jobkix/migrations/007_private_document_commands.sql",
+      "sha256": "e7c2cbeb707df248af50d4b8c465f7280facd70c1ce5ecd129a81ffa1be52034",
+      "bytes": 9192
+    },
+    {
+      "order": 8,
+      "path": "angelcare-marketplace/jobkix/migrations/008_public_discovery.sql",
+      "sha256": "b6b0b224f18f5848eb1212d04109302ec7701e3aa6712a91cee2b09242457071",
+      "bytes": 6227
+    },
+    {
+      "order": 9,
+      "path": "angelcare-marketplace/jobkix/migrations/009_editorial_media_bindings.sql",
+      "sha256": "c4e1a2011928e6e8d763322fc199a2822910945ab788ee946381f7afd08c45fb",
+      "bytes": 4887
+    },
+    {
+      "order": 10,
+      "path": "angelcare-marketplace/jobkix/migrations/010_resource_bookmarks.sql",
+      "sha256": "0fff3a3c7fe2d7ec4be57cdb541e50f969b6168d7f2e68933cacd35f3df13c66",
+      "bytes": 7827
+    },
+    {
+      "order": 11,
+      "path": "angelcare-marketplace/jobkix/migrations/011_scoped_draft_recovery.sql",
+      "sha256": "c6f15349116ff65650ef14b99e5d8f55f936671dd1148e9d30b1bce21a80fde9",
+      "bytes": 7053
+    },
+    {
+      "order": 12,
+      "path": "angelcare-marketplace/jobkix/migrations/012_hiring_receipt_recovery.sql",
+      "sha256": "46eaa3d69b4540de2129d8722a752776bc14d6fa118c96da671e5c3f12f649e4",
+      "bytes": 2036
+    },
+    {
+      "order": 13,
+      "path": "angelcare-marketplace/jobkix/migrations/013_recruitment_draft_recovery.sql",
+      "sha256": "52ea5eab51000ce27d9a03cc0a9c7b23f0c49b79258e0c0a1b906e346859b67d",
+      "bytes": 3168
+    },
+    {
+      "order": 14,
+      "path": "angelcare-marketplace/jobkix/migrations/014_scoped_panel_access.sql",
+      "sha256": "028be2909e9e09bf886f8f94212bd01fca49b90a62cdb1a8091807edca6175f3",
+      "bytes": 2799
+    },
+    {
+      "order": 15,
+      "path": "angelcare-marketplace/jobkix/migrations/015_account_operations.sql",
+      "sha256": "cb1e13a3113dba3c88752d04f834f9e10041943444068d11f17673a281167def",
+      "bytes": 7827
+    },
+    {
+      "order": 16,
+      "path": "angelcare-marketplace/jobkix/migrations/016_hiring_operations.sql",
+      "sha256": "1e0b8804b7f4978fc3d9d0063dff919b0e3d9f3d9cf2d9dccd011d1700150203",
+      "bytes": 11116
+    },
+    {
+      "order": 17,
+      "path": "angelcare-marketplace/jobkix/migrations/017_operational_delivery.sql",
+      "sha256": "63dd0582583ef802d585c183933a331f5b8de9230498b1fee644e0a846e10d8e",
+      "bytes": 15012
+    },
+    {
+      "order": 18,
+      "path": "angelcare-marketplace/jobkix/migrations/018_private_guest_cases.sql",
+      "sha256": "fab9ae2899e8dd5ee44603ff1b4d7e5f1e92336bc213883bb6d9ee1e087cb63d",
+      "bytes": 9814
+    },
+    {
+      "order": 19,
+      "path": "angelcare-marketplace/jobkix/migrations/019_public_world_queries.sql",
+      "sha256": "d6b03d21df0e13280d80cd94722e0b0ed2ef893cb722c103e95b6ceadc105395",
+      "bytes": 6898
+    },
+    {
+      "order": 20,
+      "path": "angelcare-marketplace/jobkix/migrations/020_employer_media_approval.sql",
+      "sha256": "42a2c01d5d98cdc92c16a2899d2a58a79236e8f80c8dcd7331f83fd1962c6f5b",
+      "bytes": 2825
+    },
+    {
+      "order": 21,
+      "path": "angelcare-marketplace/jobkix/migrations/021_moderated_reputation.sql",
+      "sha256": "80fcb4da63df4bcfff01e9c0c3935e91aea655b76b7f8c147f9cb678040bef4a",
+      "bytes": 9328
+    },
+    {
+      "order": 22,
+      "path": "angelcare-marketplace/jobkix/migrations/022_scheduled_recruitment_operations.sql",
+      "sha256": "4aee97e68444326e53e710815cdaeb9d7c0c04b5f6297a6a85fae70391130552",
+      "bytes": 18843
+    },
+    {
+      "order": 23,
+      "path": "angelcare-marketplace/jobkix/migrations/023_pipeline_commands.sql",
+      "sha256": "f2b8bbb800a8f6b6356ff089cbf8523bd9203c8246b35aef47fb75af0f9b19ec",
+      "bytes": 5722
+    },
+    {
+      "order": 24,
+      "path": "angelcare-marketplace/jobkix/migrations/024_native_admin_pagination.sql",
+      "sha256": "7d91e6438b2ddf701504f86b05b43509a9ba2e5e280dd4662ff64e1b713fb409",
+      "bytes": 1775
+    },
+    {
+      "order": 25,
+      "path": "angelcare-marketplace/jobkix/migrations/025_public_sitemaps.sql",
+      "sha256": "b3e0341d950f4c442ef4acc70dd645373568162b08e70d54f233f786fbc20163",
+      "bytes": 5115
+    },
+    {
+      "order": 26,
+      "path": "angelcare-marketplace/jobkix/migrations/026_restricted_account_support.sql",
+      "sha256": "9e503a344f78a82b4b786cff9d8269f880c4237d00d4f28f046bbb12b99215c0",
+      "bytes": 12331
+    },
+    {
+      "order": 27,
+      "path": "angelcare-marketplace/jobkix/migrations/027_bounded_panel_selection.sql",
+      "sha256": "dc4fc2cafdd1ca85e6319ecfa2b30005ed82cd49aac956958812c71a2164c549",
+      "bytes": 4000
+    },
+    {
+      "order": 28,
+      "path": "angelcare-marketplace/jobkix/migrations/028_packaged_editorial_scenes.sql",
+      "sha256": "add443cdc1b030c928c96a4a541f9ea0dad7fb5d8069c1045d7a38ebac142566",
+      "bytes": 3746
+    }
+  ],
+  "updatedAt": "2026-10-22T00:54:32.401577+00:00"
+}

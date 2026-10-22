@@ -1,0 +1,60 @@
+{
+  "recordedAt": "2026-10-22T00:46:58.463Z",
+  "sourceAtStart": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 349,
+    "digest": "dc902f2701d12c43866b4e3d25f1ace62c7ecc46ea1f10e77955bcc803a20775"
+  },
+  "sourceAtEnd": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 349,
+    "digest": "dc902f2701d12c43866b4e3d25f1ace62c7ecc46ea1f10e77955bcc803a20775"
+  },
+  "checks": [
+    {
+      "name": "anonymous export denied without an attachment",
+      "status": "PASS"
+    },
+    {
+      "name": "canonical export returns current actor data with private subject-bound headers",
+      "status": "PASS"
+    },
+    {
+      "name": "another identity receives its own export only",
+      "status": "PASS"
+    },
+    {
+      "name": "real SQL dependency failure creates no error download and retains authored settings",
+      "status": "PASS"
+    },
+    {
+      "name": "explicit retry produces one valid actual JSON download with honest readiness feedback",
+      "status": "PASS"
+    },
+    {
+      "name": "pending export blocks duplicate activation until the real response",
+      "status": "PASS"
+    }
+  ],
+  "renders": [],
+  "errors": [],
+  "expectedNetworkErrors": [
+    {
+      "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+      "location": {
+        "url": "http://localhost:3180/api/jobkix/account/export",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    }
+  ],
+  "failure": {
+    "message": "Expected values to be strictly equal:\n\n3 !== 2\n",
+    "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n3 !== 2\n\n    at /Users/user/Desktop/angelcare-platform/apps/marketplace-web/scripts/jobkix/private-export.cjs:26:430"
+  },
+  "scope": "Actual authorized local Next runtime, current export HTTP handler, SQL/RLS and real Chromium download bytes. Synthetic Auth/storage adapters and deliberately interrupted RPC transport. No hosted-service, full-family/language acceptance, retention/erasure completion or production certification."
+}

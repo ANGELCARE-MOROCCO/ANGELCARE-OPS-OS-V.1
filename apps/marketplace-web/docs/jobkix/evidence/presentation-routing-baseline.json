@@ -1,0 +1,76 @@
+{
+  "recordedAt": "2026-10-21T23:17:40.603Z",
+  "scope": "Read-only anonymous HTTP in the authorized local runtime; synthetic service adapters, no production certification.",
+  "rows": [
+    {
+      "path": "/angelcare-marketplace/en",
+      "status": 200,
+      "location": null,
+      "html": "<html lang=\"en\">",
+      "milliseconds": 1313
+    },
+    {
+      "path": "/angelcare-marketplace/fr",
+      "status": 200,
+      "location": null,
+      "html": "<html lang=\"en\">",
+      "milliseconds": 329
+    },
+    {
+      "path": "/angelcare-marketplace/ar",
+      "status": 200,
+      "location": null,
+      "html": "<html lang=\"en\">",
+      "milliseconds": 327
+    },
+    {
+      "path": "/kidflix/en",
+      "status": 500,
+      "location": null,
+      "html": "<html>",
+      "milliseconds": 11181
+    },
+    {
+      "path": "/kidflix/fr",
+      "status": 500,
+      "location": null,
+      "html": "<html>",
+      "milliseconds": 17
+    },
+    {
+      "path": "/kidflix/ar",
+      "status": 500,
+      "location": null,
+      "html": "<html>",
+      "milliseconds": 17
+    },
+    {
+      "path": "/carelink-ops",
+      "status": 307,
+      "location": "/login?next=%2Fcarelink-ops",
+      "html": null,
+      "milliseconds": 10
+    },
+    {
+      "path": "/carelink",
+      "status": 307,
+      "location": "/carelink/login?next=%2Fcarelink",
+      "html": null,
+      "milliseconds": 11
+    },
+    {
+      "path": "/carelink/login",
+      "status": 500,
+      "location": null,
+      "html": "<html>",
+      "milliseconds": 21
+    },
+    {
+      "path": "/angelcare-marketplace/en/account",
+      "status": 500,
+      "location": null,
+      "html": "<html>",
+      "milliseconds": 1874
+    }
+  ]
+}

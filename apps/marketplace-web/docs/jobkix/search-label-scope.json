@@ -1,0 +1,44 @@
+{
+  "screens": [
+    "P00",
+    "P01",
+    "P03",
+    "P04",
+    "P05",
+    "C02"
+  ],
+  "references": "docs/jobkix/reference-registry.json",
+  "blueprintPages": [
+    8,
+    11,
+    21
+  ],
+  "files": [
+    {
+      "path": "angelcare-marketplace/jobkix/client/SearchCommand.tsx",
+      "sha256Before": "e47758570d152c0991857db24662e9a4201d9c4b9ae9cb992f8325a3bdde36e4",
+      "intendedChange": "Distinguish search reach from work destination and match keyword/setting helper copy to each actual field in all seven languages.",
+      "requirements": [
+        12,
+        13,
+        17,
+        26,
+        29
+      ],
+      "protectedBehavior": "No filter names, query semantics, routes, country detection, locale behavior, permissions or shared copy changes."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/i18n.ts",
+      "sha256Before": "4ca09f1aaaacbda559141148bb338def551a160aca202fee4d9cef71538f8364",
+      "intendedChange": "Distinguish search reach from work destination and match keyword/setting helper copy to each actual field in all seven languages.",
+      "requirements": [
+        12,
+        13,
+        17,
+        26,
+        29
+      ],
+      "protectedBehavior": "No filter names, query semantics, routes, country detection, locale behavior, permissions or shared copy changes."
+    }
+  ]
+}

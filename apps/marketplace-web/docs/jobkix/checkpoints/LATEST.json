@@ -1,0 +1,7 @@
+{
+  "path": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/checkpoints/20261022_RELEASE_CANDIDATE",
+  "checkpoint": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/checkpoints/20261022_RELEASE_CANDIDATE/checkpoint.json",
+  "state": "SOURCE_CANDIDATE_DELIVERED_PRODUCTION_ACTIVATION_BLOCKED",
+  "productionGo": "BLOCKED",
+  "previousRestartCheckpointRetained": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/checkpoints/20261021T161339Z"
+}

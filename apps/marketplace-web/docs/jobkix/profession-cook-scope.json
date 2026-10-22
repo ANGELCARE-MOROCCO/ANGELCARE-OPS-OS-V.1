@@ -1,0 +1,58 @@
+{
+  "screens": [
+    "P05",
+    "P06"
+  ],
+  "referenceImagesInspected": [
+    "docs/jobkix/references/P05.png"
+  ],
+  "blueprintPages": [
+    6,
+    16,
+    17
+  ],
+  "files": [
+    {
+      "path": "angelcare-marketplace/jobkix/editorial-assets.ts",
+      "sha256Before": "ca77d2277834b14117b2406fa5ba5e7cf95954428be717b8243f19a7694cf24e",
+      "intendedChange": "Replace the cook profession\u2019s unrelated transport fallback with a distinct food-preparation editorial composition and responsive derivative. Register generated provenance and inspect human/food/kitchen details.",
+      "requirements": [
+        4,
+        16,
+        17,
+        18,
+        28,
+        29
+      ],
+      "protectedBehavior": "Editorial placement only. No taxonomy, vacancy eligibility, employer identity/media, global brand, edition publication or commerce change."
+    },
+    {
+      "path": "public/jobkix/editorial/profession-cook.webp",
+      "sha256Before": "NEW",
+      "intendedChange": "Replace the cook profession\u2019s unrelated transport fallback with a distinct food-preparation editorial composition and responsive derivative. Register generated provenance and inspect human/food/kitchen details.",
+      "requirements": [
+        4,
+        16,
+        17,
+        18,
+        28,
+        29
+      ],
+      "protectedBehavior": "Editorial placement only. No taxonomy, vacancy eligibility, employer identity/media, global brand, edition publication or commerce change."
+    },
+    {
+      "path": "public/jobkix/editorial/profession-cook-mobile.webp",
+      "sha256Before": "NEW",
+      "intendedChange": "Replace the cook profession\u2019s unrelated transport fallback with a distinct food-preparation editorial composition and responsive derivative. Register generated provenance and inspect human/food/kitchen details.",
+      "requirements": [
+        4,
+        16,
+        17,
+        18,
+        28,
+        29
+      ],
+      "protectedBehavior": "Editorial placement only. No taxonomy, vacancy eligibility, employer identity/media, global brand, edition publication or commerce change."
+    }
+  ]
+}

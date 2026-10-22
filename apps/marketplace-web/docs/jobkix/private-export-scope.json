@@ -1,0 +1,216 @@
+{
+  "recordedAt": "2026-10-22T00:43:23.929746+00:00",
+  "screenIds": [
+    "C13",
+    "H16"
+  ],
+  "references": [
+    "docs/jobkix/references/ANGELCARE_CAREERS_2027.pdf",
+    "docs/jobkix/references/ANGELCARE_CAREERS_2027_ENGINEERING_BLUEPRINT_R1.md"
+  ],
+  "blueprintPagesInspected": [
+    11,
+    21,
+    22
+  ],
+  "contractSections": [
+    13,
+    20,
+    21,
+    24,
+    26,
+    27,
+    29,
+    31
+  ],
+  "visualReferenceDecision": "No private-studio PNG supplied. Inherit the existing owned Studio panel/form/feedback grammar; this is a functional recovery unit, not public-front visual acceptance.",
+  "files": [
+    {
+      "path": "angelcare-marketplace/jobkix/private-export.ts",
+      "sha256Before": "NEW",
+      "intendedChange": "Validate the canonical raw export format, ownership and HTTP download metadata before creating an attachment.",
+      "requirements": [
+        4,
+        13,
+        20,
+        21,
+        24,
+        26,
+        27,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing shared Auth identity, server authorization, SQL export scope, consent, immutable submission records, organization permissions and unrelated product worlds remain unchanged. No new persistence, public bearer link, service, migration or dependency."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/PrivateExport.tsx",
+      "sha256Before": "NEW",
+      "intendedChange": "Use the existing private export endpoint with pending, honest readiness, error/retry, abort/stale guards and ephemeral download bytes.",
+      "requirements": [
+        4,
+        13,
+        20,
+        21,
+        24,
+        26,
+        27,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing shared Auth identity, server authorization, SQL export scope, consent, immutable submission records, organization permissions and unrelated product worlds remain unchanged. No new persistence, public bearer link, service, migration or dependency."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/AccountControls.tsx",
+      "sha256Before": "2c5c6c381b6cac775008795d70252688ea8ecc74260b356da6ba23719dbc45d3",
+      "intendedChange": "Replace the bare export anchor with the native export action; receive the current authenticated subject.",
+      "requirements": [
+        4,
+        13,
+        20,
+        21,
+        24,
+        26,
+        27,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing shared Auth identity, server authorization, SQL export scope, consent, immutable submission records, organization permissions and unrelated product worlds remain unchanged. No new persistence, public bearer link, service, migration or dependency."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/pages/CandidateAccount.tsx",
+      "sha256Before": "8ace534da61e3303b1b1dda9484e714aec07b0426762d59e99089fbcadd3d2b3",
+      "intendedChange": "Bind C13 account component state to authenticated user and account version.",
+      "requirements": [
+        4,
+        13,
+        20,
+        21,
+        24,
+        26,
+        27,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing shared Auth identity, server authorization, SQL export scope, consent, immutable submission records, organization permissions and unrelated product worlds remain unchanged. No new persistence, public bearer link, service, migration or dependency."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/pages/HiringAccount.tsx",
+      "sha256Before": "27ae35a516e7fa61b374587ffbeab02f71e6cfbcbef7d5a89db7e47448b54ca0",
+      "intendedChange": "Bind H16 account component state to authenticated user and account version; preserve organization context.",
+      "requirements": [
+        4,
+        13,
+        20,
+        21,
+        24,
+        26,
+        27,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing shared Auth identity, server authorization, SQL export scope, consent, immutable submission records, organization permissions and unrelated product worlds remain unchanged. No new persistence, public bearer link, service, migration or dependency."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/account-copy.ts",
+      "sha256Before": "1c27689ce90fbb97f694ea1eee4a31d46393bc4dfe6fc577218371f89843a70d",
+      "intendedChange": "Add complete seven-language preparing/readiness/retry export feedback.",
+      "requirements": [
+        4,
+        13,
+        20,
+        21,
+        24,
+        26,
+        27,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing shared Auth identity, server authorization, SQL export scope, consent, immutable submission records, organization permissions and unrelated product worlds remain unchanged. No new persistence, public bearer link, service, migration or dependency."
+    },
+    {
+      "path": "app/api/jobkix/account/export/route.ts",
+      "sha256Before": "8e9e755cd17460a839522e8d67aa2edd4fd74a6f63e2f937782601fe386a78c9",
+      "intendedChange": "Preserve canonical identity and SQL export authority, validate its result, and return a private response subject header.",
+      "requirements": [
+        4,
+        13,
+        20,
+        21,
+        24,
+        26,
+        27,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing shared Auth identity, server authorization, SQL export scope, consent, immutable submission records, organization permissions and unrelated product worlds remain unchanged. No new persistence, public bearer link, service, migration or dependency."
+    },
+    {
+      "path": "scripts/jobkix/private-export.test.cjs",
+      "sha256Before": "NEW",
+      "intendedChange": "Verify malformed/unsafe/wrong-subject exports are refused and canonical response bytes remain exact.",
+      "requirements": [
+        4,
+        13,
+        20,
+        21,
+        24,
+        26,
+        27,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing shared Auth identity, server authorization, SQL export scope, consent, immutable submission records, organization permissions and unrelated product worlds remain unchanged. No new persistence, public bearer link, service, migration or dependency."
+    },
+    {
+      "path": "scripts/jobkix/private-export.cjs",
+      "sha256Before": "NEW",
+      "intendedChange": "Exercise real UI/API/SQL export success, anonymous refusal, failure/retry/input preservation, abort and actor isolation in the authorized local runtime.",
+      "requirements": [
+        4,
+        13,
+        20,
+        21,
+        24,
+        26,
+        27,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing shared Auth identity, server authorization, SQL export scope, consent, immutable submission records, organization permissions and unrelated product worlds remain unchanged. No new persistence, public bearer link, service, migration or dependency."
+    },
+    {
+      "path": "scripts/jobkix/capture-evidence.cjs",
+      "sha256Before": "5b8b49ac10cdef74429a46115173ba3a8633fa9f4c3017acdc9864b241e1c44f",
+      "intendedChange": "Include the focused private export validation tests in the scoped source gate.",
+      "requirements": [
+        4,
+        13,
+        20,
+        21,
+        24,
+        26,
+        27,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing shared Auth identity, server authorization, SQL export scope, consent, immutable submission records, organization permissions and unrelated product worlds remain unchanged. No new persistence, public bearer link, service, migration or dependency."
+    },
+    {
+      "path": "scripts/jobkix/checkpoint-progress.cjs",
+      "sha256Before": "93f7b7265aeaa39dcce131d34b4dcb3afd20ab22fe9fe97ba3b932242529f854",
+      "intendedChange": "Register executed private export browser evidence without claiming full-family acceptance.",
+      "requirements": [
+        4,
+        13,
+        20,
+        21,
+        24,
+        26,
+        27,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing shared Auth identity, server authorization, SQL export scope, consent, immutable submission records, organization permissions and unrelated product worlds remain unchanged. No new persistence, public bearer link, service, migration or dependency."
+    }
+  ]
+}

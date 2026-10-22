@@ -1,0 +1,6 @@
+.pair{display:inline-flex;flex:0 0 auto;align-items:center;gap:5px;direction:ltr;white-space:nowrap;max-width:100%;scroll-snap-align:start}
+.pair>.entry{display:inline-flex;flex:0 0 auto;align-items:center;justify-content:center;min-width:100px;min-height:44px;padding:5px 8px;border:1px solid #dcd9ee;border-radius:9px;background:#fff;box-sizing:border-box;transition:background .15s ease,border-color .15s ease}
+.entry img{display:block;width:96px;height:auto;max-height:38px;object-fit:contain}
+.pair>.entry:hover{background:#f0edff;border-color:#9382ed}
+.pair>.entry:focus-visible{outline:3px solid #593bcf;outline-offset:3px}
+@media(prefers-reduced-motion:reduce){.pair>.entry{transition:none}}

@@ -1,0 +1,50 @@
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import type { Locale } from '../contracts';
+import type { JobkixSession } from '../server/identity';
+import { studioRows,studioPage,caseDocuments,blockedOrganizations,caseReceipt,searchVacancies,publicEditorialList,type DataRow } from '../server/repository';
+import { uuid,object } from '../validation';
+import { caseIntent } from '../case-draft';
+import { su } from '../support-copy';
+import { ac,caseLabel } from '../account-copy';
+import { screenName } from '../screen-copy';
+import { st } from '../studio-copy';
+import { e } from '../experience-copy';
+import { t,formatDate } from '../i18n';
+import { href } from '../routes';
+import { str,Empty,JobCard } from '../components/Public';
+import { StudioPagination } from '../components/StudioPagination';
+import { SavedSearchEditor,PrivacyControls,AccountSettings } from '../client/AccountControls';
+import { CaseCreate,CaseResponse } from '../client/CaseForms';
+import s from '../jobkix.module.css';
+type Params=Record<string,string|string[]|undefined>;
+const query=(search:Params,key:string)=>typeof search[key]==='string'?search[key]:'';
+async function restored(draft:DataRow|null){const intent=draft?.body?caseIntent(object(draft.body).intent):null;return intent?caseReceipt(intent.action,intent.key):null;}
+export async function CandidateAccount({locale,screen,session,profile,search,page,path}:{locale:Locale;screen:string;session:Extract<JobkixSession,{state:'active'}>;profile:DataRow;search:Params;page:number;path:string}){
+ if(screen==='C10'){
+  const result=await studioPage('alerts',{user_id:session.userId},page);
+  return <div className={s.stack}><section className={s.panel}><h2>{ac(locale,'savedSearches')}</h2><Link className={s.button} href={href(locale,'career/discovery')}>{t(locale,'findJobs')}</Link></section>{result.items.map(row=><SavedSearchEditor key={str(row,'id')+':'+row.version} locale={locale} row={row} timezone={session.timezone}/>)}{!result.items.length?<Empty locale={locale} title={ac(locale,'savedSearches')} description={e(locale,'saveSearch')}/>:null}<StudioPagination locale={locale} path={path} search={search} result={result}/></div>;
+ }
+ if(screen==='C11')return <PrivacyControls key={String(profile.version)} locale={locale} profile={profile} blocked={await blockedOrganizations()}/>;
+ if(screen==='C13')return <AccountSettings key={session.userId+':'+session.accountVersion} userId={session.userId} locale={locale} version={session.accountVersion} initialLocale={session.locale} timezone={session.timezone} emailNotifications={session.emailNotifications} email={session.email}/>;
+ if(screen==='C12'){
+  const documents=await studioPage('files',{owner_user_id:session.userId,purpose:'cv',state:'ready'},1,{archived:false}),occupations=Array.isArray(profile.occupations)?profile.occupations.filter((value):value is string=>typeof value==='string'):[];
+  const [jobs,guides]=await Promise.allSettled([searchVacancies({...(str(profile,'country')?{destination:str(profile,'country')}:{}),...(occupations[0]?{occupation:occupations[0]}:{})}),publicEditorialList('guide',locale)]);
+  const evidence=[{id:'C06',label:st(locale,'summary'),present:Boolean(str(profile,'summary')),path:'career/passport'},{id:'C06',label:st(locale,'skills'),present:Array.isArray(profile.skills)&&profile.skills.length>0,path:'career/passport'},{id:'C06',label:st(locale,'experience'),present:Array.isArray(profile.experience)&&profile.experience.length>0,path:'career/passport'},{id:'C07',label:screenName('C07',locale),present:documents.total>0,path:'career/cv'}];
+  return <div className={s.stack}><section className={s.panel}><h2>{screenName('C12',locale)}</h2><p>{ac(locale,'insightsHelp')}</p><h3>{ac(locale,'declaredEvidence')}</h3><div className={s.stack}>{evidence.map((item,index)=><div className={s.blockedOrganization} key={index}><div><strong>{item.label}</strong><p>{ac(locale,item.present?'ready':'incomplete')}</p></div><Link className={`${s.button} ${s.secondary}`} href={href(locale,item.path)}>{t(locale,'continue')}</Link></div>)}</div></section><section className={s.panel}><h2>{ac(locale,'employerRequirements')}</h2>{jobs.status==='fulfilled'?jobs.value.items.length?<div className={s.searchCards}>{jobs.value.items.slice(0,3).map(job=><JobCard locale={locale} job={job} key={str(job,'id')}/>)}</div>:<Empty locale={locale}/>:<Empty locale={locale} problem/>}<Link className={s.textLink} href={href(locale,'career/discovery')}>{t(locale,'findJobs')}</Link></section><section className={s.panel}><h2>{t(locale,'resources')}</h2>{guides.status==='fulfilled'?guides.value.items.length?<div className={s.stack}>{guides.value.items.slice(0,4).map(guide=><article key={str(guide,'id')}><h3><Link href={href(locale,'resources/'+str(guide,'slug'))}>{str(guide,'title')}</Link></h3><p>{str(guide,'summary')}</p></article>)}</div>:<p>{t(locale,'noPublishedContent')}</p>:<Empty locale={locale} problem/>}</section></div>;
+ }
+ if(screen==='C14')return <CaseWorkspace locale={locale} userId={session.userId} timezone={session.timezone} path={path} search={search} page={page}/>;
+ notFound();
+}
+
+export async function CaseWorkspace({locale,userId,timezone,path,search,page,organizationId,verification=false,documentHref}:{locale:Locale;userId:string;timezone:string;path:string;search:Params;page:number;organizationId?:string;verification?:boolean;documentHref?:string}){
+  const caseId=query(search,'case');if(caseId){try{uuid(caseId);}catch{notFound();}const row=(await studioRows('cases',{id:caseId,reporter_user_id:userId,...(organizationId?{organization_id:organizationId}:{}),...(verification?{kind:'verification'}:{})}))[0];if(!row)notFound();
+   const canReply=['reported','triaged','under_review','needs_information','appealed'].includes(str(row,'state')),appeal=['action','no_action','resolved'].includes(str(row,'state')),draftKey=(appeal?'appeal:':'reply:')+caseId;
+   const [events,drafts]=await Promise.all([studioPage('caseEvents',{case_id:caseId},page),studioRows('drafts',{user_id:userId,kind:'case',draft_key:draftKey})]),draft=drafts[0]||null,receipt=await restored(draft),original=str(row,'original_locale');
+   return <div className={s.stack}><Link className={s.textLink} href={href(locale,path,organizationId?new URLSearchParams({organization:organizationId}):undefined)}>{t(locale,'back')}</Link><section className={s.panel}><span className={s.chip}>{caseLabel(locale,str(row,'state'))}</span><h2><bdi>{str(row,'public_reference')}</bdi></h2><p>{caseLabel(locale,str(row,'kind'))} · <time dateTime={str(row,'created_at')}>{formatDate(str(row,'created_at'),locale,timezone)}</time></p><p className={s.authoredText} lang={original||undefined} dir={original==='ar'?'rtl':'auto'}>{str(row,'description')}</p>{row.evidence_file_id?<a className={s.textLink} href={'/api/jobkix/files/'+str(row,'evidence_file_id')} download>{st(locale,'download')}</a>:null}</section><section className={s.panel}><h2>{ac(locale,'caseHistory')}</h2><ol className={s.timeline}>{events.items.map(event=><li key={str(event,'id')}><time dateTime={str(event,'created_at')}>{formatDate(str(event,'created_at'),locale,timezone)}</time><p className={s.authoredText} lang={str(event,'original_locale')||undefined} dir={event.original_locale==='ar'?'rtl':'auto'}>{str(event,'detail')}</p></li>)}</ol><StudioPagination locale={locale} path={path} search={search} result={events}/></section>{canReply||appeal?<CaseResponse key={caseId+':'+row.version} locale={locale} row={row} appeal={appeal} draft={draft} receipt={receipt}/>:null}</div>;
+  }
+  const [result,drafts]=await Promise.all([studioPage('cases',{reporter_user_id:userId,...(organizationId?{organization_id:organizationId}:{}),...(verification?{kind:'verification'}:{})},page),studioRows('drafts',{user_id:userId,kind:'case',draft_key:verification?'verification:'+organizationId:organizationId?'support:'+organizationId:'new-case'})]),draft=drafts[0]||null,receipt=await restored(draft),kind=query(search,'kind'),initialKind=verification?'verification':kind==='report'||kind==='privacy_export'||kind==='privacy_deletion'?kind:'support';
+  const fields=draft?.body?object(object(draft.body).fields||{}):{},params=new URLSearchParams({context:verification?'verification':'case'});if(verification&&organizationId)params.set('organization',organizationId);if(str(fields,'fileId'))params.set('selected',str(fields,'fileId'));const documents=await caseDocuments(params);
+  return <div className={s.stack}><section className={s.panel}><h2>{ac(locale,'supportTitle')}</h2><p>{ac(locale,'supportHelp')}</p><Link className={s.textLink} href={documentHref||href(locale,'career/cv')}>{st(locale,'documents')}</Link></section><CaseCreate key={userId+':'+(organizationId||'candidate')+':'+initialKind} locale={locale} initialKind={initialKind} initialCategory={query(search,'category')||'general'} initialDescription={query(search,'url')?su(locale,'relatedUrl')+': '+query(search,'url')+'\n\n':''} organizationId={organizationId} casePath={path} draft={draft} receipt={receipt} documents={documents}/><section className={s.panel}><h2>{ac(locale,'caseHistory')}</h2><div className={s.stack}>{result.items.map(row=><article className={s.blockedOrganization} key={str(row,'id')}><div><span className={s.chip}>{caseLabel(locale,str(row,'state'))}</span><h3><Link href={href(locale,path,new URLSearchParams({case:str(row,'id'),...(organizationId?{organization:organizationId}:{})}))}><bdi>{str(row,'public_reference')}</bdi></Link></h3><p>{caseLabel(locale,str(row,'kind'))} · {formatDate(str(row,'updated_at'),locale,timezone)}</p></div><Link className={`${s.button} ${s.secondary}`} href={href(locale,path,new URLSearchParams({case:str(row,'id'),...(organizationId?{organization:organizationId}:{})}))}>{t(locale,'continue')}</Link></article>)}</div>{!result.items.length?<p>{st(locale,'noActivity')}</p>:null}<StudioPagination locale={locale} path={path} search={search} result={result}/></section></div>;
+
+}

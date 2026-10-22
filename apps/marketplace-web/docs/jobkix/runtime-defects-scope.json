@@ -1,0 +1,69 @@
+{
+  "files": [
+    {
+      "path": "angelcare-marketplace/jobkix/server/repository.ts",
+      "sha256Before": "0a6fa12f9c8ad2f05ab49845a15a7a995c65ca2e0edbe15337ff001d859a07e9",
+      "requirements": [
+        16,
+        24,
+        26,
+        28,
+        29
+      ],
+      "intendedChange": "Allow only the exact revision foreign-key filters used by their own native paginated views. Preserve RLS.",
+      "protectedBehavior": "Existing global products, identity, canonical eligibility, command/RLS guards and all filter fields unchanged."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/server/files.ts",
+      "sha256Before": "295b78252754d6bb7ee9342931bb123ef3d7dadde3c88ea716fe7ef4e030fd2a",
+      "requirements": [
+        16,
+        24,
+        26,
+        28,
+        29
+      ],
+      "intendedChange": "Require current JOBKIX session before private candidate/recruiter download metadata RPC.",
+      "protectedBehavior": "Existing global products, identity, canonical eligibility, command/RLS guards and all filter fields unchanged."
+    },
+    {
+      "path": "app/api/jobkix/files/[id]/route.ts",
+      "sha256Before": "c1502fddb15f1114cedb52786f900c1288c2fcf48c3a275999fc7cba635fa12f",
+      "requirements": [
+        16,
+        24,
+        26,
+        28,
+        29
+      ],
+      "intendedChange": "Require current JOBKIX session before archive RPC.",
+      "protectedBehavior": "Existing global products, identity, canonical eligibility, command/RLS guards and all filter fields unchanged."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/SearchResults.tsx",
+      "sha256Before": "5b31c8db43a8d48376a2cfe3a5f66181a5a2353f236ddbe30f125aa9dbd09561",
+      "requirements": [
+        16,
+        24,
+        26,
+        28,
+        29
+      ],
+      "intendedChange": "Restore native GET filter fallback; group existing complete filters into accessible disclosures without changing catalogue/filter authority.",
+      "protectedBehavior": "Existing global products, identity, canonical eligibility, command/RLS guards and all filter fields unchanged."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/jobkix.module.css",
+      "sha256Before": "b7e7e5e9c2773d250d76cc935c40334300a2b2888c71f162b40055aeee200809",
+      "requirements": [
+        16,
+        24,
+        26,
+        28,
+        29
+      ],
+      "intendedChange": "Correct white link contrast on navy country links and style filter groups with logical spacing.",
+      "protectedBehavior": "Existing global products, identity, canonical eligibility, command/RLS guards and all filter fields unchanged."
+    }
+  ]
+}

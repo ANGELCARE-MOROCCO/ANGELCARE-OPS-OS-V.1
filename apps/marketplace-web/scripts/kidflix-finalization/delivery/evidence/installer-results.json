@@ -1,0 +1,47 @@
+{
+  "checks": 10,
+  "results": [
+    {
+      "name": "successful installation, shipped verification, idempotent application, shipped rollback exact restoration",
+      "status": "PASS"
+    },
+    {
+      "name": "source conflict refuses all writes",
+      "status": "PASS"
+    },
+    {
+      "name": "new-file collision refuses all writes",
+      "status": "PASS"
+    },
+    {
+      "name": "corrupt payload refuses all writes",
+      "status": "PASS"
+    },
+    {
+      "name": "path traversal manifest refused",
+      "status": "PASS"
+    },
+    {
+      "name": "symlink target and ancestor refused",
+      "status": "PASS"
+    },
+    {
+      "name": "simulated partial write failure restores exact baseline",
+      "status": "PASS"
+    },
+    {
+      "name": "conflicting concurrent change detected and protected during partial restore",
+      "status": "PASS"
+    },
+    {
+      "name": "rollback preflights all targets and refuses later edit without mutation",
+      "status": "PASS"
+    },
+    {
+      "name": "identity mismatch refuses installation",
+      "status": "PASS"
+    }
+  ],
+  "baseline": "/private/tmp/kidflix-finalization-20261020/baseline/angelcare-platform",
+  "adapter": "Fresh local baseline fixtures, Node built-ins only"
+}

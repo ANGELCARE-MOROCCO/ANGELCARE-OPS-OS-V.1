@@ -1,0 +1,274 @@
+{
+  "screens": [
+    "H01",
+    "H02",
+    "H03",
+    "H04",
+    "H07",
+    "H08",
+    "H12",
+    "H13"
+  ],
+  "blueprintPagesInspected": [
+    14,
+    15,
+    16,
+    20,
+    21
+  ],
+  "referenceDecision": "No separate private Studio reference PNG supplied. Preserve the implemented JOBKIX studio shell and native form grammar; use blueprint/contract anatomy.",
+  "files": [
+    {
+      "path": "angelcare-marketplace/jobkix/studio-selection.ts",
+      "sha256Before": "NEW",
+      "intendedChange": "Replace capped organization/site/vacancy/pool choices with native bounded search/paging and independently retained selected records. Preserve canonical current user/RLS and existing command/draft authorities.",
+      "requirements": [
+        20,
+        21,
+        24,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "No authorization, schema, publication, cross-product identity, recruitment command, shared shell or persistence authority changes. Private selection responses project labels/IDs only."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/StudioRecordPicker.tsx",
+      "sha256Before": "NEW",
+      "intendedChange": "Replace capped organization/site/vacancy/pool choices with native bounded search/paging and independently retained selected records. Preserve canonical current user/RLS and existing command/draft authorities.",
+      "requirements": [
+        20,
+        21,
+        24,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "No authorization, schema, publication, cross-product identity, recruitment command, shared shell or persistence authority changes. Private selection responses project labels/IDs only."
+    },
+    {
+      "path": "app/api/jobkix/lookups/route.ts",
+      "sha256Before": "NEW",
+      "intendedChange": "Replace capped organization/site/vacancy/pool choices with native bounded search/paging and independently retained selected records. Preserve canonical current user/RLS and existing command/draft authorities.",
+      "requirements": [
+        20,
+        21,
+        24,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "No authorization, schema, publication, cross-product identity, recruitment command, shared shell or persistence authority changes. Private selection responses project labels/IDs only."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/server/repository.ts",
+      "sha256Before": "d4fb82bddd0c85b935a3fac844ec144d14460dcab090597b40b628daca69b7b0",
+      "intendedChange": "Replace capped organization/site/vacancy/pool choices with native bounded search/paging and independently retained selected records. Preserve canonical current user/RLS and existing command/draft authorities.",
+      "requirements": [
+        20,
+        21,
+        24,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "No authorization, schema, publication, cross-product identity, recruitment command, shared shell or persistence authority changes. Private selection responses project labels/IDs only."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/server/hiring-context.ts",
+      "sha256Before": "7401e0f859dd4b6b464b8292d90e5a3a84bc760e5b7f36a16254a15939baa6e3",
+      "intendedChange": "Replace capped organization/site/vacancy/pool choices with native bounded search/paging and independently retained selected records. Preserve canonical current user/RLS and existing command/draft authorities.",
+      "requirements": [
+        20,
+        21,
+        24,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "No authorization, schema, publication, cross-product identity, recruitment command, shared shell or persistence authority changes. Private selection responses project labels/IDs only."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/pages/Hirer.tsx",
+      "sha256Before": "9337c2db29dc961e3d3e79d35e6a9997b231fc8fe6fcb027b5d7b326899c8253",
+      "intendedChange": "Replace capped organization/site/vacancy/pool choices with native bounded search/paging and independently retained selected records. Preserve canonical current user/RLS and existing command/draft authorities.",
+      "requirements": [
+        20,
+        21,
+        24,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "No authorization, schema, publication, cross-product identity, recruitment command, shared shell or persistence authority changes. Private selection responses project labels/IDs only."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/pages/HiringTeam.tsx",
+      "sha256Before": "ff4e2f9db92f2fb813a43a276b9beba857d61832fca375f93c34e02788925732",
+      "intendedChange": "Replace capped organization/site/vacancy/pool choices with native bounded search/paging and independently retained selected records. Preserve canonical current user/RLS and existing command/draft authorities.",
+      "requirements": [
+        20,
+        21,
+        24,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "No authorization, schema, publication, cross-product identity, recruitment command, shared shell or persistence authority changes. Private selection responses project labels/IDs only."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/TeamForms.tsx",
+      "sha256Before": "8852dbb10ab4edb61a20434f863d4565dfcc0f3bc5b1bf85fa77953c1b259134",
+      "intendedChange": "Replace capped organization/site/vacancy/pool choices with native bounded search/paging and independently retained selected records. Preserve canonical current user/RLS and existing command/draft authorities.",
+      "requirements": [
+        20,
+        21,
+        24,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "No authorization, schema, publication, cross-product identity, recruitment command, shared shell or persistence authority changes. Private selection responses project labels/IDs only."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/pages/HiringTalent.tsx",
+      "sha256Before": "e73375584fb81f7050a90eadfbcc8ddd5d992027dfc78f6ab2fb90a05a785d54",
+      "intendedChange": "Replace capped organization/site/vacancy/pool choices with native bounded search/paging and independently retained selected records. Preserve canonical current user/RLS and existing command/draft authorities.",
+      "requirements": [
+        20,
+        21,
+        24,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "No authorization, schema, publication, cross-product identity, recruitment command, shared shell or persistence authority changes. Private selection responses project labels/IDs only."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/TalentForms.tsx",
+      "sha256Before": "a23c1a597558f98424c27e8a87abafa37bfb30a36c3154236d9f508fd7e483d1",
+      "intendedChange": "Replace capped organization/site/vacancy/pool choices with native bounded search/paging and independently retained selected records. Preserve canonical current user/RLS and existing command/draft authorities.",
+      "requirements": [
+        20,
+        21,
+        24,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "No authorization, schema, publication, cross-product identity, recruitment command, shared shell or persistence authority changes. Private selection responses project labels/IDs only."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/pages/Vacancies.tsx",
+      "sha256Before": "f36a505edcdcefe712d8bf5484484c6d4d0b9417fc21272418eac468c93b1c90",
+      "intendedChange": "Replace capped organization/site/vacancy/pool choices with native bounded search/paging and independently retained selected records. Preserve canonical current user/RLS and existing command/draft authorities.",
+      "requirements": [
+        20,
+        21,
+        24,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "No authorization, schema, publication, cross-product identity, recruitment command, shared shell or persistence authority changes. Private selection responses project labels/IDs only."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/VacancyEditor.tsx",
+      "sha256Before": "8ece1dc08c19123ea1bf3b1387d40882c461530fb67d98607eb82904fce058ce",
+      "intendedChange": "Replace capped organization/site/vacancy/pool choices with native bounded search/paging and independently retained selected records. Preserve canonical current user/RLS and existing command/draft authorities.",
+      "requirements": [
+        20,
+        21,
+        24,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "No authorization, schema, publication, cross-product identity, recruitment command, shared shell or persistence authority changes. Private selection responses project labels/IDs only."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/i18n.ts",
+      "sha256Before": "afdb808dab76cf909c9ac454d81178c14baa520d79a26d34d3bcc4db565829a1",
+      "intendedChange": "Replace capped organization/site/vacancy/pool choices with native bounded search/paging and independently retained selected records. Preserve canonical current user/RLS and existing command/draft authorities.",
+      "requirements": [
+        20,
+        21,
+        24,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "No authorization, schema, publication, cross-product identity, recruitment command, shared shell or persistence authority changes. Private selection responses project labels/IDs only."
+    },
+    {
+      "path": "scripts/jobkix/domain.test.cjs",
+      "sha256Before": "5b5cfa6edfc8abf2037efaa478a140fd0675816cad0d8f45eb210c11a2a8d0b9",
+      "intendedChange": "Replace capped organization/site/vacancy/pool choices with native bounded search/paging and independently retained selected records. Preserve canonical current user/RLS and existing command/draft authorities.",
+      "requirements": [
+        20,
+        21,
+        24,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "No authorization, schema, publication, cross-product identity, recruitment command, shared shell or persistence authority changes. Private selection responses project labels/IDs only."
+    },
+    {
+      "path": "scripts/jobkix/fixture-studio-selection.cjs",
+      "sha256Before": "NEW",
+      "intendedChange": "Create loopback-only private selector records through actual canonical commands and verify native selection, scope, durable reload, permission denial and mobile/RTL behavior beyond 200 records.",
+      "requirements": [
+        20,
+        24,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "Synthetic isolated verification only. No fixture imports from application handlers and no public published vacancies or production operations."
+    },
+    {
+      "path": "scripts/jobkix/studio-selection.cjs",
+      "sha256Before": "NEW",
+      "intendedChange": "Create loopback-only private selector records through actual canonical commands and verify native selection, scope, durable reload, permission denial and mobile/RTL behavior beyond 200 records.",
+      "requirements": [
+        20,
+        24,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "Synthetic isolated verification only. No fixture imports from application handlers and no public published vacancies or production operations."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/jobkix.module.css",
+      "sha256Before": "aba3ae518d4144851ddbf104a44e871c6621a6835052d47a4a1db2b811fde5b8",
+      "intendedChange": "Correct private talent heading/empty-state vocabulary and render compact, visibly expandable selector summaries after actual English/Arabic mobile inspection.",
+      "requirements": [
+        4,
+        13,
+        17,
+        20,
+        26,
+        28,
+        29
+      ],
+      "protectedBehavior": "No membership retention, consent, search, authorization or shared styles change. All new strings stay within the JOBKIX seven-language boundary."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/workforce-copy.ts",
+      "sha256Before": "838f49f27f13964a2cb2a92e2db4dbead360ab60ba42f839d3dff2918b120da4",
+      "intendedChange": "Correct private talent heading/empty-state vocabulary and render compact, visibly expandable selector summaries after actual English/Arabic mobile inspection.",
+      "requirements": [
+        4,
+        13,
+        17,
+        20,
+        26,
+        28,
+        29
+      ],
+      "protectedBehavior": "No membership retention, consent, search, authorization or shared styles change. All new strings stay within the JOBKIX seven-language boundary."
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "adapter": "OFFLINE Next routing and HTTP fixtures; real components; no live database",
+  "checks": 22,
+  "results": [
+    {
+      "name": "footer white logo only",
+      "status": "PASS"
+    },
+    {
+      "name": "six discovery choices route native filters with context",
+      "status": "PASS"
+    },
+    {
+      "name": "keyboard focus and full world menu",
+      "status": "PASS"
+    },
+    {
+      "name": "six-scene mobile controls remain visible and keyboard-operable",
+      "status": "PASS"
+    },
+    {
+      "name": "gallery progresses after three visible seconds",
+      "status": "PASS"
+    },
+    {
+      "name": "hover pause, manual selection, pause and resume",
+      "status": "PASS"
+    },
+    {
+      "name": "failed next scene retains current image",
+      "status": "PASS"
+    },
+    {
+      "name": "mobile source falls back to desktop on failure",
+      "status": "PASS"
+    },
+    {
+      "name": "reduced motion pauses automatic scene changes",
+      "status": "PASS"
+    },
+    {
+      "name": "off-screen visibility pauses gallery",
+      "status": "PASS"
+    },
+    {
+      "name": "navigation delayed, slow, error and dismissal use lifecycle signals",
+      "status": "PASS"
+    },
+    {
+      "name": "navigation lifecycle completion and modified/external clicks",
+      "status": "PASS"
+    },
+    {
+      "name": "actual media waiting and recovery feedback",
+      "status": "PASS"
+    },
+    {
+      "name": "native homepage editor reorder, media binding, save reload preview",
+      "status": "PASS"
+    },
+    {
+      "name": "storefront retains results and filters after API failure",
+      "status": "PASS"
+    },
+    {
+      "name": "background document visibility pauses and resumes timer",
+      "status": "PASS"
+    },
+    {
+      "name": "stale asynchronous image completion cannot replace a newer selection",
+      "status": "PASS"
+    },
+    {
+      "name": "page requests only its own hero gallery images",
+      "status": "PASS"
+    },
+    {
+      "name": "native storefront editor save reload preview uses reviewed gallery",
+      "status": "PASS"
+    },
+    {
+      "name": "route loading and error use actual localized components and retry",
+      "status": "PASS"
+    },
+    {
+      "name": "absent media source keeps existing empty state without buffering spinner",
+      "status": "PASS"
+    },
+    {
+      "name": "search and language navigation preserve locale and relevant query context",
+      "status": "PASS"
+    }
+  ],
+  "failures": []
+}

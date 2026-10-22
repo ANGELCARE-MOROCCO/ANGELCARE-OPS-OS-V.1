@@ -1,0 +1,16 @@
+{
+  "files": [
+    {
+      "path": "scripts/jobkix/source-fingerprint.cjs",
+      "sha256Before": "78471086a7911aa24fa7843cdbc0fd1480155f696a2bf6404e0d72e6dfe95907",
+      "intendedChange": "Include verification utility source in immutable per-run fingerprints so a harness edit during a run invalidates its same-source assertion. Label historical runtime-only fingerprints separately.",
+      "requirements": [
+        27,
+        28,
+        31,
+        32
+      ],
+      "protectedBehavior": "Verification-only. No application source, runtime behavior, permission, package configuration or production handler change."
+    }
+  ]
+}

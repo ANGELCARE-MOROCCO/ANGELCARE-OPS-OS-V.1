@@ -1,0 +1,76 @@
+{
+  "kind": "Actual asset contact and detail inspection artifacts, not implementation screenshots",
+  "assets": [
+    {
+      "id": "setting-households",
+      "sourceSha256": "d6c6d39d03460fdaec77a39958509ed4c6c4fd5853c741ffed56ea7e888f6ba4"
+    },
+    {
+      "id": "setting-nurseries",
+      "sourceSha256": "22df4f249eddc6d5ff7eac62452b82b06d6ce001eb06cecd60f990f48f74ef6a"
+    },
+    {
+      "id": "setting-primary-schools",
+      "sourceSha256": "e338046897e7c1b126a150a38d73f3641cf9746ebb47f4cf945f9213f898894d"
+    },
+    {
+      "id": "setting-hospitality",
+      "sourceSha256": "e21cb2bb52dfa14a579562f5f9c4a92b46bc9c194bd0020bfc876d6b8b6098a7"
+    },
+    {
+      "id": "setting-preschool",
+      "sourceSha256": "e7fbafa87ed46e5360668d4216bfc408e51e4bb3b6ade945fd8f0f5a6c4030b0"
+    },
+    {
+      "id": "setting-secondary-colleges",
+      "sourceSha256": "7a7b39f8f5d62ac5176381d284bd81321284d2f02fb685914ff60698cbda6f7a"
+    },
+    {
+      "id": "setting-international-schools",
+      "sourceSha256": "80844009f4d06bd827221fab6346946e6907ff0cc2dfacd90438a4ae45251567"
+    },
+    {
+      "id": "setting-public-education",
+      "sourceSha256": "fa9d9ac9b0f011fc69227aa96e34ee23fb9373af349726b867cf2d658759a98a"
+    },
+    {
+      "id": "setting-pediatrics",
+      "sourceSha256": "e9cd0930064116e69f97eff05219b71ee80ad5735a4e9969f29ee88305e29b1e"
+    },
+    {
+      "id": "setting-maternity-neonatal",
+      "sourceSha256": "50901788998a0907b21088d7ea64638d619231b5466299718881f132d1b25b05"
+    },
+    {
+      "id": "setting-therapy-development",
+      "sourceSha256": "2dedf3fdb3d51a0e1c0299dc721ec0b5987e452d40f2d91316deb5ec8e594acf"
+    },
+    {
+      "id": "setting-camps-sports",
+      "sourceSha256": "be3ccf96158aa28bd74e9ec7d07bc6da42a5976b2973f4173d85a9d24bc01948"
+    },
+    {
+      "id": "setting-ngo-child-welfare",
+      "sourceSha256": "a8cf42856fbba73581d80dac8672b1e2253e6ebb7f8e994d193c665fb6f5f12f"
+    },
+    {
+      "id": "setting-school-operations",
+      "sourceSha256": "95f2dd77d5bbd3ec44378cfe735870b0d872ff3d207894e3ec99282e5d1a0394"
+    },
+    {
+      "id": "setting-digital-learning",
+      "sourceSha256": "0de69ee00b40af73ae310654e5d585e3b215c0d6b2a4843908b1a5c76e734baa"
+    },
+    {
+      "id": "setting-public-specialist",
+      "sourceSha256": "9533e302f743b1db4e80c32e083206efdfbb33d928f12c197f62032071ab3e97"
+    }
+  ],
+  "overview": "all-settings-contact.webp",
+  "detailPages": [
+    "settings-details-1.png",
+    "settings-details-2.png",
+    "settings-details-3.png",
+    "settings-details-4.png"
+  ]
+}

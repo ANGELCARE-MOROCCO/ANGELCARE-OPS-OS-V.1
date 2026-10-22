@@ -1,0 +1,2983 @@
+[
+  {
+    "id": "published-vacancy-isolation",
+    "recordedAt": "2026-10-21T01:06:27.617Z",
+    "screens": [
+      "P01",
+      "P02",
+      "H04"
+    ],
+    "contractClauses": [
+      21,
+      22,
+      24,
+      25
+    ],
+    "blueprint": {
+      "path": "docs/jobkix/references/ANGELCARE_CAREERS_2027.pdf",
+      "sha256": "ac4d6e8a20da6dfb348b7f80aac332867876ae89920bc071c2b70487776b46d9",
+      "pagesInspected": [
+        8,
+        9,
+        15,
+        20,
+        21
+      ]
+    },
+    "publicImageBindings": "docs/jobkix/reference-registry.json",
+    "privateStudioImageReference": null,
+    "referenceDecision": "No private Studio PNG was supplied. Studio anatomy follows the inspected blueprint and the independent JOBKIX visual system. Public P01/P02 bindings remain in the original registry.",
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/migrations/001_recruitment_records.sql",
+        "sha256": "71dfc6adb49865f4edaeac18a053e5a47c1b867eb0de55e6fe4205a6b79f9b0b"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/migrations/002_authorization_and_queries.sql",
+        "sha256": "0a6c6a985a678f1d0946eece964011389479819a862a1e574c068c857dc6097d"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/migrations/003_transactional_recruitment.sql",
+        "sha256": "6469e79f0f605fab2eac15b56efaecf142ee8caf798cb748f9b94debca1ce4a3"
+      }
+    ],
+    "decisions": [
+      "Anonymous historical reads use the last published snapshot, including original screening questions. Private revised text cannot replace it."
+    ],
+    "executedEvidence": [
+      "docs/jobkix/evidence/source-verification.json"
+    ],
+    "functional": "IMPLEMENTED_UNVERIFIED",
+    "visual": "VISUAL_PENDING",
+    "renderedEvidence": [],
+    "acceptance": "NOT_ACCEPTED",
+    "limitations": [
+      "Isolated SQL/domain checks do not establish browser E2E.",
+      "User-authorized local Next dev runtime now exists. Partial isolated browser evidence is recorded separately; complete family acceptance remains pending.",
+      "Remaining states, page depth and full language/responsive review must be accepted separately."
+    ],
+    "lastSourceReconciledAt": "2026-10-21T11:38:48.657638+00:00",
+    "sourceHashesReconciledAt": "2026-10-21T12:14:23.497250+00:00"
+  },
+  {
+    "id": "vacancy-operations",
+    "recordedAt": "2026-10-21T01:06:27.619Z",
+    "screens": [
+      "H01",
+      "H02",
+      "H03",
+      "H04"
+    ],
+    "contractClauses": [
+      20,
+      22,
+      24,
+      26
+    ],
+    "blueprint": {
+      "path": "docs/jobkix/references/ANGELCARE_CAREERS_2027.pdf",
+      "sha256": "ac4d6e8a20da6dfb348b7f80aac332867876ae89920bc071c2b70487776b46d9",
+      "pagesInspected": [
+        14,
+        15,
+        20,
+        21,
+        34
+      ]
+    },
+    "publicImageBindings": "docs/jobkix/reference-registry.json",
+    "privateStudioImageReference": null,
+    "referenceDecision": "No private Studio PNG was supplied. Studio anatomy follows the inspected blueprint and the independent JOBKIX visual system. Public P01/P02 bindings remain in the original registry.",
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/pages/Hirer.tsx",
+        "sha256": "9337c2db29dc961e3d3e79d35e6a9997b231fc8fe6fcb027b5d7b326899c8253"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/pages/Vacancies.tsx",
+        "sha256": "f36a505edcdcefe712d8bf5484484c6d4d0b9417fc21272418eac468c93b1c90"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/VacancyEditor.tsx",
+        "sha256": "538895d3569904e568035f53cd08ac099ee4dd1950815d95c82bbfdc60d561bd"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/VacancyPublication.tsx",
+        "sha256": "311d4402f8928ea29914ca95717325c561a94f344cbff6d681aeefe2f1661eb3"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/components/VacancyContent.tsx",
+        "sha256": "7d6f2ce13cca73bc72a2db0d36caa19f2aaf87cc3a64ea15685876d1330974c8"
+      }
+    ],
+    "decisions": [
+      "Native published taxonomy and current site capabilities remain authoritative. A private duplicate has new question IDs and no inherited publication/review approval."
+    ],
+    "executedEvidence": [
+      "docs/jobkix/evidence/source-verification.json"
+    ],
+    "functional": "IMPLEMENTED_UNVERIFIED",
+    "visual": "VISUAL_PENDING",
+    "renderedEvidence": [],
+    "acceptance": "NOT_ACCEPTED",
+    "limitations": [
+      "Isolated SQL/domain checks do not establish browser E2E.",
+      "User-authorized local Next dev runtime now exists. Partial isolated browser evidence is recorded separately; complete family acceptance remains pending.",
+      "Remaining states, page depth and full language/responsive review must be accepted separately."
+    ],
+    "lastSourceReconciledAt": "2026-10-21T11:38:48.657638+00:00",
+    "sourceHashesReconciledAt": "2026-10-21T12:14:23.497250+00:00"
+  },
+  {
+    "id": "hirer-review-messaging",
+    "recordedAt": "2026-10-21T01:06:27.653Z",
+    "screens": [
+      "H05",
+      "H06",
+      "H11"
+    ],
+    "contractClauses": [
+      20,
+      22,
+      23,
+      24,
+      26
+    ],
+    "blueprint": {
+      "path": "docs/jobkix/references/ANGELCARE_CAREERS_2027.pdf",
+      "sha256": "ac4d6e8a20da6dfb348b7f80aac332867876ae89920bc071c2b70487776b46d9",
+      "pagesInspected": [
+        12,
+        15,
+        20,
+        21,
+        25,
+        34
+      ]
+    },
+    "publicImageBindings": "docs/jobkix/reference-registry.json",
+    "privateStudioImageReference": null,
+    "referenceDecision": "No private Studio PNG was supplied. Studio anatomy follows the inspected blueprint and the independent JOBKIX visual system. Public P01/P02 bindings remain in the original registry.",
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/pages/HiringApplications.tsx",
+        "sha256": "bfba09a94f5b1546939b789bab083418c35aca134ef011f9503ddb48f3bd389e"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/components/ApplicationEvidence.tsx",
+        "sha256": "b851dfd4312a62a334a6704b48d7e5b3b578db9d926efea19b08a75ffe3a2e72"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/RecruiterStage.tsx",
+        "sha256": "90b4b93b986192cd056acdf74af14ef3ac19642404b33377a309dabfe13c754d"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/Conversation.tsx",
+        "sha256": "48843f28de685ab741dbdab41d734ff125f1c17d57a5e241435c3dbb69694d67"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/ComparisonForm.tsx",
+        "sha256": "9ea360e08176fb4859fe5392a65869f7341a24a093878615b2926a4ed95c2011"
+      }
+    ],
+    "decisions": [
+      "Comparison uses submitted snapshots. Board/list and atomic human-reviewed group stage commands now have source and isolated tests; browser acceptance is still pending. Employer stage changes never accept an offer."
+    ],
+    "executedEvidence": [
+      "docs/jobkix/evidence/source-verification.json"
+    ],
+    "functional": "IMPLEMENTED_UNVERIFIED",
+    "visual": "VISUAL_PENDING",
+    "renderedEvidence": [],
+    "acceptance": "NOT_ACCEPTED",
+    "limitations": [
+      "Isolated SQL/domain checks do not establish browser E2E.",
+      "User-authorized local Next dev runtime now exists. Partial isolated browser evidence is recorded separately; complete family acceptance remains pending.",
+      "Remaining states, page depth and full language/responsive review must be accepted separately."
+    ],
+    "lastSourceReconciledAt": "2026-10-21T11:38:48.657638+00:00",
+    "sourceHashesReconciledAt": "2026-10-21T12:14:23.497250+00:00"
+  },
+  {
+    "id": "interviews-offers-panels",
+    "recordedAt": "2026-10-21T01:06:27.680Z",
+    "screens": [
+      "H09",
+      "H10",
+      "C05",
+      "C08"
+    ],
+    "contractClauses": [
+      20,
+      22,
+      23,
+      24,
+      26
+    ],
+    "blueprint": {
+      "path": "docs/jobkix/references/ANGELCARE_CAREERS_2027.pdf",
+      "sha256": "ac4d6e8a20da6dfb348b7f80aac332867876ae89920bc071c2b70487776b46d9",
+      "pagesInspected": [
+        12,
+        13,
+        15,
+        20,
+        21,
+        34
+      ]
+    },
+    "publicImageBindings": "docs/jobkix/reference-registry.json",
+    "privateStudioImageReference": null,
+    "referenceDecision": "No private Studio PNG was supplied. Studio anatomy follows the inspected blueprint and the independent JOBKIX visual system. Public P01/P02 bindings remain in the original registry.",
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/pages/HiringOperations.tsx",
+        "sha256": "202f4ed0a54bc9d5a9ba4aaa4bdcf25cdff10d4661dd784cd2197d5f58eb9a7b"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/RecruitmentForms.tsx",
+        "sha256": "6c72e7c129d4577eda9b20d06f564ea3a605ba8148a5db50defcebcda32859d7"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/PanelResponse.tsx",
+        "sha256": "31aedf3baa7178d14b62ab461984043fc04352c164e1d56869584624bbdc2115"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/useRecruitmentDraft.ts",
+        "sha256": "d8fddee2b0415207e988f66cf9dc5a07d9c007104837551f719f768b7140e025"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/migrations/013_recruitment_draft_recovery.sql",
+        "sha256": "52ea5eab51000ce27d9a03cc0a9c7b23f0c49b79258e0c0a1b906e346859b67d"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/migrations/014_scoped_panel_access.sql",
+        "sha256": "028be2909e9e09bf886f8f94212bd01fca49b90a62cdb1a8091807edca6175f3"
+      }
+    ],
+    "decisions": [
+      "Explicit IANA wall-time conversion rejects repeated/nonexistent local times. Assigned panel access shares submitted evidence without exposing the live private profile or private vacancy draft. Candidate and panel responses remain separate."
+    ],
+    "executedEvidence": [
+      "docs/jobkix/evidence/source-verification.json"
+    ],
+    "functional": "IMPLEMENTED_UNVERIFIED",
+    "visual": "VISUAL_PENDING",
+    "renderedEvidence": [],
+    "acceptance": "NOT_ACCEPTED",
+    "limitations": [
+      "Isolated SQL/domain checks do not establish browser E2E.",
+      "User-authorized local Next dev runtime now exists. Partial isolated browser evidence is recorded separately; complete family acceptance remains pending.",
+      "Remaining states, page depth and full language/responsive review must be accepted separately."
+    ],
+    "lastSourceReconciledAt": "2026-10-21T11:38:48.657638+00:00",
+    "sourceHashesReconciledAt": "2026-10-21T12:14:23.497250+00:00"
+  },
+  {
+    "id": "native-taxonomy-discovery",
+    "recordedAt": "2026-10-21T01:06:27.688Z",
+    "screens": [
+      "P01",
+      "C02",
+      "H03"
+    ],
+    "contractClauses": [
+      12,
+      16,
+      21,
+      26
+    ],
+    "blueprint": {
+      "path": "docs/jobkix/references/ANGELCARE_CAREERS_2027.pdf",
+      "sha256": "ac4d6e8a20da6dfb348b7f80aac332867876ae89920bc071c2b70487776b46d9",
+      "pagesInspected": [
+        8,
+        15,
+        16,
+        17
+      ]
+    },
+    "publicImageBindings": "docs/jobkix/reference-registry.json",
+    "privateStudioImageReference": null,
+    "referenceDecision": "No private Studio PNG was supplied. Studio anatomy follows the inspected blueprint and the independent JOBKIX visual system. Public P01/P02 bindings remain in the original registry.",
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/client/TaxonomySelect.tsx",
+        "sha256": "1e5c3483eab35100fff2dedf47508c315ee2f6788dad89c41013b79582700416"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/SearchResults.tsx",
+        "sha256": "8c5dbd7170508f59da39266eed4675c10b9280c2b0116c51883780b191cd73cd"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/taxonomy-query.ts",
+        "sha256": "b2f37a80521527571c14b347676a653f3f6f2ccb9acd377909a34ba544b6b954"
+      }
+    ],
+    "decisions": [
+      "Current published native records, search and pagination are reused. Selecting a newly published profession does not depend on the initial occupation list."
+    ],
+    "executedEvidence": [
+      "docs/jobkix/evidence/source-verification.json"
+    ],
+    "functional": "IMPLEMENTED_UNVERIFIED",
+    "visual": "VISUAL_PENDING",
+    "renderedEvidence": [],
+    "acceptance": "NOT_ACCEPTED",
+    "limitations": [
+      "Isolated SQL/domain checks do not establish browser E2E.",
+      "User-authorized local Next dev runtime now exists. Partial isolated browser evidence is recorded separately; complete family acceptance remains pending.",
+      "Remaining states, page depth and full language/responsive review must be accepted separately."
+    ],
+    "lastSourceReconciledAt": "2026-10-21T11:38:48.657638+00:00",
+    "sourceHashesReconciledAt": "2026-10-21T12:14:23.497250+00:00"
+  },
+  {
+    "id": "candidate-account-operations",
+    "recordedAt": "2026-10-21T09:43:04.195591+00:00",
+    "screens": [
+      "C10",
+      "C11",
+      "C12",
+      "C13",
+      "C14"
+    ],
+    "contractClauses": [
+      13,
+      14,
+      16,
+      17,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28
+    ],
+    "blueprint": {
+      "path": "docs/jobkix/references/ANGELCARE_CAREERS_2027.pdf",
+      "sha256": "ac4d6e8a20da6dfb348b7f80aac332867876ae89920bc071c2b70487776b46d9",
+      "pagesInspected": [
+        10,
+        11,
+        21,
+        22,
+        23,
+        25,
+        34
+      ]
+    },
+    "publicImageBindings": "docs/jobkix/reference-registry.json",
+    "privateStudioImageReference": null,
+    "referenceDecision": "Mapped originals inspected. No private Studio PNG supplied; Studio uses blueprint anatomy and shared JOBKIX shell. No illustrative metrics or testimonials are treated as records.",
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/pages/CandidateAccount.tsx",
+        "sha256": "57cd50993463741f6046b2588440e2c9ee5fc66032dda2ab3db6a2e6b21e62ca"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/AccountControls.tsx",
+        "sha256": "464cb61ef1a667a28837e8b22067e1e32ab3e8ace5e6fe8ddb311eaba6edf4a9"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/CaseForms.tsx",
+        "sha256": "48ae79d2c2f47e2b6cc14db3a54c46ed7f2906ff61b7c1d8147c675c0f1b815f"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/useDurableDraft.ts",
+        "sha256": "d28ea36c1c99f71b8b4b07eaadcc61488dca1523b07a9cebfff8680c09e340d2"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/account-copy.ts",
+        "sha256": "ee53e7f9ea64c2c7c6e0fdd34d8bb1dd7ff101f69d038363a02a3a56af5e5d88"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/account-input.ts",
+        "sha256": "d4eed78055adbca92d7696a136fe28dc3901705823efdac37ad8c7f562677563"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/migrations/015_account_operations.sql",
+        "sha256": "cb1e13a3113dba3c88752d04f834f9e10041943444068d11f17673a281167def"
+      }
+    ],
+    "functional": "IMPLEMENTED_UNVERIFIED",
+    "visual": "VISUAL_PENDING",
+    "renderedEvidence": [],
+    "acceptance": "NOT_ACCEPTED",
+    "executedEvidence": [
+      "docs/jobkix/evidence/source-verification.json"
+    ],
+    "limitations": [
+      "Isolated SQL/domain tests do not establish hosted Auth, storage, SMTP, browser or multi-session concurrency certification.",
+      "No authorized application preview runtime designated. No family is accepted.",
+      "Seven-language copy is authored; no human/native review claimed."
+    ],
+    "lastSourceReconciledAt": "2026-10-21T11:38:48.657638+00:00",
+    "sourceHashesReconciledAt": "2026-10-21T12:14:23.497250+00:00"
+  },
+  {
+    "id": "hiring-talent-team-settings",
+    "recordedAt": "2026-10-21T09:43:04.195591+00:00",
+    "screens": [
+      "H07",
+      "H08",
+      "H12",
+      "H14",
+      "H15",
+      "H16"
+    ],
+    "contractClauses": [
+      13,
+      14,
+      16,
+      17,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28
+    ],
+    "blueprint": {
+      "path": "docs/jobkix/references/ANGELCARE_CAREERS_2027.pdf",
+      "sha256": "ac4d6e8a20da6dfb348b7f80aac332867876ae89920bc071c2b70487776b46d9",
+      "pagesInspected": [
+        14,
+        15,
+        21,
+        22,
+        23,
+        25,
+        34
+      ]
+    },
+    "publicImageBindings": "docs/jobkix/reference-registry.json",
+    "privateStudioImageReference": null,
+    "referenceDecision": "Mapped originals inspected. No private Studio PNG supplied; Studio uses blueprint anatomy and shared JOBKIX shell. No illustrative metrics or testimonials are treated as records.",
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/pages/HiringTalent.tsx",
+        "sha256": "e73375584fb81f7050a90eadfbcc8ddd5d992027dfc78f6ab2fb90a05a785d54"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/pages/HiringTeam.tsx",
+        "sha256": "ff4e2f9db92f2fb813a43a276b9beba857d61832fca375f93c34e02788925732"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/pages/HiringAccount.tsx",
+        "sha256": "27ae35a516e7fa61b374587ffbeab02f71e6cfbcbef7d5a89db7e47448b54ca0"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/TeamForms.tsx",
+        "sha256": "c1241840bd07f7da0604435ab0814bc799ded484069583cf45edf7076b0445dc"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/TalentForms.tsx",
+        "sha256": "b25967bc93c0cd500b9736525af008ab9167a74589ce630430293d3c17e3bc7d"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/migrations/016_hiring_operations.sql",
+        "sha256": "1e0b8804b7f4978fc3d9d0063dff919b0e3d9f3d9cf2d9dccd011d1700150203"
+      }
+    ],
+    "functional": "IMPLEMENTED_UNVERIFIED",
+    "visual": "VISUAL_PENDING",
+    "renderedEvidence": [],
+    "acceptance": "NOT_ACCEPTED",
+    "executedEvidence": [
+      "docs/jobkix/evidence/source-verification.json"
+    ],
+    "limitations": [
+      "Isolated SQL/domain tests do not establish hosted Auth, storage, SMTP, browser or multi-session concurrency certification.",
+      "No authorized application preview runtime designated. No family is accepted.",
+      "Seven-language copy is authored; no human/native review claimed."
+    ],
+    "lastSourceReconciledAt": "2026-10-21T11:38:48.657638+00:00",
+    "sourceHashesReconciledAt": "2026-10-21T12:14:23.497250+00:00"
+  },
+  {
+    "id": "private-notification-and-invitation",
+    "recordedAt": "2026-10-21T09:43:04.195591+00:00",
+    "screens": [
+      "A08",
+      "C09",
+      "H11",
+      "H12"
+    ],
+    "contractClauses": [
+      13,
+      14,
+      16,
+      17,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28
+    ],
+    "blueprint": {
+      "path": "docs/jobkix/references/ANGELCARE_CAREERS_2027.pdf",
+      "sha256": "ac4d6e8a20da6dfb348b7f80aac332867876ae89920bc071c2b70487776b46d9",
+      "pagesInspected": [
+        10,
+        14,
+        15,
+        21,
+        25,
+        34
+      ]
+    },
+    "publicImageBindings": "docs/jobkix/reference-registry.json",
+    "privateStudioImageReference": null,
+    "referenceDecision": "Mapped originals inspected. No private Studio PNG supplied; Studio uses blueprint anatomy and shared JOBKIX shell. No illustrative metrics or testimonials are treated as records.",
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/server/operational-worker.ts",
+        "sha256": "a9c56de48f8d7f967ead39c16a4d486dc507a2210ce097655dc877e5064b072d"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/notification.ts",
+        "sha256": "0adcaabedaef55c33f0109f2eb94695c4a08cbe7cb1e3210af177305788d4d79"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/InvitationAcceptance.tsx",
+        "sha256": "ee65c09141243c9e435625846a03d58d43e8370db4d4ba36a5ca1b4999f7d566"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/components/Notifications.tsx",
+        "sha256": "b2f73792634c27c58e7d794f766d0dd8275ac964add1b69288daf9cf70b81dc4"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/migrations/017_operational_delivery.sql",
+        "sha256": "63dd0582583ef802d585c183933a331f5b8de9230498b1fee644e0a846e10d8e"
+      }
+    ],
+    "functional": "IMPLEMENTED_UNVERIFIED",
+    "visual": "VISUAL_PENDING",
+    "renderedEvidence": [],
+    "acceptance": "NOT_ACCEPTED",
+    "executedEvidence": [
+      "docs/jobkix/evidence/source-verification.json"
+    ],
+    "limitations": [
+      "Isolated SQL/domain tests do not establish hosted Auth, storage, SMTP, browser or multi-session concurrency certification.",
+      "No authorized application preview runtime designated. No family is accepted.",
+      "Seven-language copy is authored; no human/native review claimed."
+    ],
+    "lastSourceReconciledAt": "2026-10-21T11:38:48.657638+00:00",
+    "sourceHashesReconciledAt": "2026-10-21T12:14:23.497250+00:00"
+  },
+  {
+    "id": "public-acquisition-journeys",
+    "recordedAt": "2026-10-21T09:43:04.195591+00:00",
+    "screens": [
+      "P17",
+      "P18",
+      "P19"
+    ],
+    "contractClauses": [
+      13,
+      14,
+      16,
+      17,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28
+    ],
+    "blueprint": {
+      "path": "docs/jobkix/references/ANGELCARE_CAREERS_2027.pdf",
+      "sha256": "ac4d6e8a20da6dfb348b7f80aac332867876ae89920bc071c2b70487776b46d9",
+      "pagesInspected": [
+        4,
+        10,
+        11,
+        12,
+        14,
+        15,
+        25
+      ]
+    },
+    "publicImageBindings": "docs/jobkix/reference-registry.json",
+    "privateStudioImageReference": null,
+    "referenceDecision": "Mapped originals inspected. No private Studio PNG supplied; Studio uses blueprint anatomy and shared JOBKIX shell. No illustrative metrics or testimonials are treated as records.",
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/pages/Journeys.tsx",
+        "sha256": "3be17f1653c4057775b4f56eac6bc59962bd17d66cc404e1896c3ecb4ca7c340"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/journey-copy.ts",
+        "sha256": "4b98c30e3166634d41290e4ba1eefa9c311e030a7fa95ed865b21ac6c23bcffb"
+      }
+    ],
+    "functional": "IMPLEMENTED_UNVERIFIED",
+    "visual": "VISUAL_PENDING",
+    "renderedEvidence": [],
+    "acceptance": "NOT_ACCEPTED",
+    "executedEvidence": [
+      "docs/jobkix/evidence/source-verification.json"
+    ],
+    "limitations": [
+      "Isolated SQL/domain tests do not establish hosted Auth, storage, SMTP, browser or multi-session concurrency certification.",
+      "No authorized application preview runtime designated. No family is accepted.",
+      "Seven-language copy is authored; no human/native review claimed."
+    ],
+    "lastSourceReconciledAt": "2026-10-21T11:38:48.657638+00:00",
+    "sourceHashesReconciledAt": "2026-10-21T12:14:23.497250+00:00"
+  },
+  {
+    "id": "private-reporting-support",
+    "recordedAt": "2026-10-21T11:38:48.657638+00:00",
+    "screens": [
+      "P20",
+      "P21",
+      "P22",
+      "P23",
+      "P24",
+      "P25",
+      "C14",
+      "D03"
+    ],
+    "contractClauses": [
+      13,
+      14,
+      16,
+      17,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29
+    ],
+    "blueprint": {
+      "path": "docs/jobkix/references/ANGELCARE_CAREERS_2027.pdf",
+      "sha256": "ac4d6e8a20da6dfb348b7f80aac332867876ae89920bc071c2b70487776b46d9",
+      "pagesInspected": [
+        21,
+        22,
+        23,
+        24,
+        25,
+        34
+      ]
+    },
+    "publicImageBindings": "docs/jobkix/reference-registry.json",
+    "referenceDecision": "Original public references inspected with their mapped section order. No private Studio PNG was supplied. Sample facts are not production records. Source inspection and isolated checks do not establish rendered fidelity.",
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/pages/PublicSupport.tsx",
+        "sha256": "6468a797b1aea6097569b9c400ba19f3f9a732a7973ab88ec4e8790ea0114714"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/pages/Guide.tsx",
+        "sha256": "c153e48d9c2a359ffa4fcee3fb90046906cbf28433897191df9b25cb170f3a79"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/GuestCaseForm.tsx",
+        "sha256": "840434d488a2b2e6661f49ccaa98e62c53fe8a9176d78fb67491389c06d1ce32"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/CaseForms.tsx",
+        "sha256": "48ae79d2c2f47e2b6cc14db3a54c46ed7f2906ff61b7c1d8147c675c0f1b815f"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/server/guest-cases.ts",
+        "sha256": "6a2ebc841a482c37014c3d652a62a18fa0c237a63d9beea8a5d79bedb5d7c23e"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/guest-case.ts",
+        "sha256": "ee403040bcd6ebaecac11c8aa6830b986819badb871d976dc67afacf47446c39"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/guest-credential.ts",
+        "sha256": "8bc7de09a46a9c109418248e72c42306f4cd6df7c5df850003d326042b54383a"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/reviewed-links.ts",
+        "sha256": "03dcb868f5dc8fa0809ef1faa82a101eabf1f97dca30bc57f97b37fb368eae88"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/migrations/018_private_guest_cases.sql",
+        "sha256": "fab9ae2899e8dd5ee44603ff1b4d7e5f1e92336bc213883bb6d9ee1e087cb63d"
+      }
+    ],
+    "executedEvidence": [
+      "docs/jobkix/evidence/source-verification.json"
+    ],
+    "functional": "IMPLEMENTED_UNVERIFIED",
+    "visual": "VISUAL_PENDING",
+    "renderedEvidence": [],
+    "acceptance": "NOT_ACCEPTED",
+    "limitations": [
+      "Source and isolated functional evidence only. Full family state/depth and browser verification remain pending.",
+      "No authorized application preview runtime designated.",
+      "No native/human translation review claimed."
+    ],
+    "lastSourceReconciledAt": "2026-10-21T11:38:48.657638+00:00",
+    "sourceHashesReconciledAt": "2026-10-21T12:14:23.497250+00:00"
+  },
+  {
+    "id": "public-geography-employer-worlds",
+    "recordedAt": "2026-10-21T11:38:48.657638+00:00",
+    "screens": [
+      "P07",
+      "P08",
+      "P09",
+      "P10",
+      "P11",
+      "P12",
+      "D01"
+    ],
+    "contractClauses": [
+      13,
+      14,
+      16,
+      17,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29
+    ],
+    "blueprint": {
+      "path": "docs/jobkix/references/ANGELCARE_CAREERS_2027.pdf",
+      "sha256": "ac4d6e8a20da6dfb348b7f80aac332867876ae89920bc071c2b70487776b46d9",
+      "pagesInspected": [
+        6,
+        16,
+        17,
+        21,
+        23
+      ]
+    },
+    "publicImageBindings": "docs/jobkix/reference-registry.json",
+    "referenceDecision": "Original public references inspected with their mapped section order. No private Studio PNG was supplied. Sample facts are not production records. Source inspection and isolated checks do not establish rendered fidelity.",
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/pages/Geography.tsx",
+        "sha256": "e79ac08f7329a481baade164752fdb40ef5a9a7e9caa3d5dade73b57f4cb50b6"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/pages/Employers.tsx",
+        "sha256": "20cd772238c3929650a84fe8bcfdee5c948ddb2200613e14f38683cbc76880a7"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/geography.ts",
+        "sha256": "a8b90605db45381cebf6b33256862aefca10d26279a6f56f3a76914c300870c3"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/country-regions.ts",
+        "sha256": "b4cfdeb57fa251823363fba4f3638350b0f769dfcac4391eb34f005f89f6f795"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/geography-copy.ts",
+        "sha256": "5e2bfdac4e4f51546b0f3e024b3082efcdb06faa3797dd5965d2e680cc8aacaa"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/employer-query.ts",
+        "sha256": "0808f93d072d300e3b1d58eb78d13ba53c7ca78d4a88018f7b13e750e0296d41"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/employer-copy.ts",
+        "sha256": "a7203510c5f4a8599e090d7e324476c0c6abcd8fa91fe1d8337e577401b48584"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/EmployerActions.tsx",
+        "sha256": "05067bf4a954a84200aa2330f0adfa7c2d14df841f53c73ad8b43caecbb66a23"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/admin/EmployerMediaReview.tsx",
+        "sha256": "3a53bf6f674554729c84d3f56582a40673ba45b667f92682967a4099b4239e01"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/migrations/019_public_world_queries.sql",
+        "sha256": "d6b03d21df0e13280d80cd94722e0b0ed2ef893cb722c103e95b6ceadc105395"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/migrations/020_employer_media_approval.sql",
+        "sha256": "42a2c01d5d98cdc92c16a2899d2a58a79236e8f80c8dcd7331f83fd1962c6f5b"
+      }
+    ],
+    "executedEvidence": [
+      "docs/jobkix/evidence/source-verification.json"
+    ],
+    "functional": "IMPLEMENTED_UNVERIFIED",
+    "visual": "VISUAL_PENDING",
+    "renderedEvidence": [],
+    "acceptance": "NOT_ACCEPTED",
+    "limitations": [
+      "Source and isolated functional evidence only. Full family state/depth and browser verification remain pending.",
+      "No authorized application preview runtime designated.",
+      "No native/human translation review claimed."
+    ],
+    "lastSourceReconciledAt": "2026-10-21T11:38:48.657638+00:00",
+    "sourceHashesReconciledAt": "2026-10-21T12:14:23.497250+00:00"
+  },
+  {
+    "id": "moderated-reputation",
+    "recordedAt": "2026-10-21T11:38:48.657638+00:00",
+    "screens": [
+      "P13",
+      "P14",
+      "D04"
+    ],
+    "contractClauses": [
+      13,
+      14,
+      16,
+      17,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29
+    ],
+    "blueprint": {
+      "path": "docs/jobkix/references/ANGELCARE_CAREERS_2027.pdf",
+      "sha256": "ac4d6e8a20da6dfb348b7f80aac332867876ae89920bc071c2b70487776b46d9",
+      "pagesInspected": [
+        6,
+        23,
+        24
+      ]
+    },
+    "publicImageBindings": "docs/jobkix/reference-registry.json",
+    "referenceDecision": "Original public references inspected with their mapped section order. No private Studio PNG was supplied. Sample facts are not production records. Source inspection and isolated checks do not establish rendered fidelity.",
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/pages/Reputation.tsx",
+        "sha256": "1df64072b3224d0c02943872edfcb62352e35cfebeba6ed7aea700761c4d7c35"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/ReputationForm.tsx",
+        "sha256": "7c468c2bb68a5b7105b58d844bc467dfdcb54f638961f8382dfd00f040f94ee8"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/reputation-copy.ts",
+        "sha256": "a095a6a977522befb5e7ff864d0e44568081fa61e40d15ff6183428c66656d44"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/reputation-query.ts",
+        "sha256": "d17107d9c4f947f49cb5d88c02d7ce92e536e1f6bcfc71ae1354ab9d55dbec2d"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/reputation-draft.ts",
+        "sha256": "72e3120e445b18190e3f89f5632cb205b3f6ff2e4c447d8f91c0db8877f0f661"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/migrations/021_moderated_reputation.sql",
+        "sha256": "80fcb4da63df4bcfff01e9c0c3935e91aea655b76b7f8c147f9cb678040bef4a"
+      }
+    ],
+    "executedEvidence": [
+      "docs/jobkix/evidence/source-verification.json"
+    ],
+    "functional": "IMPLEMENTED_UNVERIFIED",
+    "visual": "VISUAL_PENDING",
+    "renderedEvidence": [],
+    "acceptance": "NOT_ACCEPTED",
+    "limitations": [
+      "Source and isolated functional evidence only. Full family state/depth and browser verification remain pending.",
+      "No authorized application preview runtime designated.",
+      "No native/human translation review claimed."
+    ],
+    "lastSourceReconciledAt": "2026-10-21T11:38:48.657638+00:00",
+    "sourceHashesReconciledAt": "2026-10-21T12:14:23.497250+00:00"
+  },
+  {
+    "id": "scheduled-operations-recovery",
+    "recordedAt": "2026-10-21T11:38:48.657638+00:00",
+    "screens": [
+      "C08",
+      "C09",
+      "C10",
+      "H09",
+      "H10",
+      "H11",
+      "D07"
+    ],
+    "contractClauses": [
+      13,
+      14,
+      16,
+      17,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29
+    ],
+    "blueprint": {
+      "path": "docs/jobkix/references/ANGELCARE_CAREERS_2027.pdf",
+      "sha256": "ac4d6e8a20da6dfb348b7f80aac332867876ae89920bc071c2b70487776b46d9",
+      "pagesInspected": [
+        11,
+        15,
+        25,
+        27,
+        34
+      ]
+    },
+    "publicImageBindings": "docs/jobkix/reference-registry.json",
+    "referenceDecision": "Original public references inspected with their mapped section order. No private Studio PNG was supplied. Sample facts are not production records. Source inspection and isolated checks do not establish rendered fidelity.",
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/server/operational-worker.ts",
+        "sha256": "a9c56de48f8d7f967ead39c16a4d486dc507a2210ce097655dc877e5064b072d"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/notification.ts",
+        "sha256": "0adcaabedaef55c33f0109f2eb94695c4a08cbe7cb1e3210af177305788d4d79"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/admin/OperationsQueue.tsx",
+        "sha256": "21a426fc5c901fcc9849cdca8ae521c5093e50aa81398c4c804dc9849605ada9"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/admin-delivery-copy.ts",
+        "sha256": "e13d428493861fcf8dd1b911cf1c79e9951e4c32ec7047b97976e0709f6a4ba2"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/migrations/022_scheduled_recruitment_operations.sql",
+        "sha256": "4aee97e68444326e53e710815cdaeb9d7c0c04b5f6297a6a85fae70391130552"
+      }
+    ],
+    "executedEvidence": [
+      "docs/jobkix/evidence/source-verification.json"
+    ],
+    "functional": "IMPLEMENTED_UNVERIFIED",
+    "visual": "VISUAL_PENDING",
+    "renderedEvidence": [],
+    "acceptance": "NOT_ACCEPTED",
+    "limitations": [
+      "Source and isolated functional evidence only. Full family state/depth and browser verification remain pending.",
+      "No authorized application preview runtime designated.",
+      "No native/human translation review claimed."
+    ],
+    "lastSourceReconciledAt": "2026-10-21T11:38:48.657638+00:00",
+    "sourceHashesReconciledAt": "2026-10-21T12:14:23.497250+00:00"
+  },
+  {
+    "id": "atomic-accessible-pipeline",
+    "recordedAt": "2026-10-21T11:38:48.657638+00:00",
+    "screens": [
+      "H05",
+      "H06"
+    ],
+    "contractClauses": [
+      13,
+      14,
+      16,
+      17,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29
+    ],
+    "blueprint": {
+      "path": "docs/jobkix/references/ANGELCARE_CAREERS_2027.pdf",
+      "sha256": "ac4d6e8a20da6dfb348b7f80aac332867876ae89920bc071c2b70487776b46d9",
+      "pagesInspected": [
+        15,
+        20,
+        21,
+        25,
+        34
+      ]
+    },
+    "publicImageBindings": "docs/jobkix/reference-registry.json",
+    "referenceDecision": "Original public references inspected with their mapped section order. No private Studio PNG was supplied. Sample facts are not production records. Source inspection and isolated checks do not establish rendered fidelity.",
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/pages/HiringApplications.tsx",
+        "sha256": "bfba09a94f5b1546939b789bab083418c35aca134ef011f9503ddb48f3bd389e"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/Pipeline.tsx",
+        "sha256": "18bd9af07b9d393b16f385e078bb86616cdaae79117b9b48e722fd09e9b2ca8d"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/pipeline.ts",
+        "sha256": "2f49c18f0794c3d890d9ce7c92c3add60ab5e51fc9b8e45fcaac3adfee893b2b"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/pipeline-copy.ts",
+        "sha256": "868aa22ededa6b3fa839c99ab356a21b28adbe4e4d3dd5492c0b2054545b391d"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/migrations/023_pipeline_commands.sql",
+        "sha256": "f2b8bbb800a8f6b6356ff089cbf8523bd9203c8246b35aef47fb75af0f9b19ec"
+      }
+    ],
+    "executedEvidence": [
+      "docs/jobkix/evidence/source-verification.json"
+    ],
+    "functional": "IMPLEMENTED_UNVERIFIED",
+    "visual": "VISUAL_PENDING",
+    "renderedEvidence": [],
+    "acceptance": "NOT_ACCEPTED",
+    "limitations": [
+      "Source and isolated functional evidence only. Full family state/depth and browser verification remain pending.",
+      "No authorized application preview runtime designated.",
+      "No native/human translation review claimed."
+    ],
+    "lastSourceReconciledAt": "2026-10-21T11:38:48.657638+00:00",
+    "sourceHashesReconciledAt": "2026-10-21T12:14:23.497250+00:00"
+  },
+  {
+    "id": "native-administration-paging-preview",
+    "recordedAt": "2026-10-21T11:38:48.657638+00:00",
+    "screens": [
+      "D01",
+      "D02",
+      "D03",
+      "D04",
+      "D05",
+      "D06",
+      "D07",
+      "D08"
+    ],
+    "contractClauses": [
+      13,
+      14,
+      16,
+      17,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29
+    ],
+    "blueprint": {
+      "path": "docs/jobkix/references/ANGELCARE_CAREERS_2027.pdf",
+      "sha256": "ac4d6e8a20da6dfb348b7f80aac332867876ae89920bc071c2b70487776b46d9",
+      "pagesInspected": [
+        23,
+        24,
+        25,
+        34
+      ]
+    },
+    "publicImageBindings": "docs/jobkix/reference-registry.json",
+    "referenceDecision": "Original public references inspected with their mapped section order. No private Studio PNG was supplied. Sample facts are not production records. Source inspection and isolated checks do not establish rendered fidelity.",
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/admin/Workspace.tsx",
+        "sha256": "1e25244d7c3d548ba81a3c11f1ab280a02fed8aea1edd135fb96c203845e4f2d"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/admin/EditorialEditor.tsx",
+        "sha256": "770bc038851fa2e8fb6a1efd535938295d7f8b5eea6c61837fd7b6998dd52847"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/server/admin-repository.ts",
+        "sha256": "8389ba840456523da6a45415189fea6c68a78d1159eee3bc303ca57cf2646b0f"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/editorial-preview.ts",
+        "sha256": "8229feefcfa79db14b4fc8aa7b445c6db510a48d7a4041d0ab7d9083e36784ac"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/migrations/024_native_admin_pagination.sql",
+        "sha256": "7d91e6438b2ddf701504f86b05b43509a9ba2e5e280dd4662ff64e1b713fb409"
+      }
+    ],
+    "executedEvidence": [
+      "docs/jobkix/evidence/source-verification.json"
+    ],
+    "functional": "IMPLEMENTED_UNVERIFIED",
+    "visual": "VISUAL_PENDING",
+    "renderedEvidence": [],
+    "acceptance": "NOT_ACCEPTED",
+    "limitations": [
+      "Source and isolated functional evidence only. Full family state/depth and browser verification remain pending.",
+      "No authorized application preview runtime designated.",
+      "No native/human translation review claimed."
+    ],
+    "lastSourceReconciledAt": "2026-10-21T11:38:48.657638+00:00",
+    "sourceHashesReconciledAt": "2026-10-21T12:14:23.497250+00:00"
+  },
+  {
+    "id": "public-indexing",
+    "recordedAt": "2026-10-21T11:38:48.657638+00:00",
+    "screens": [
+      "P00",
+      "P01",
+      "P02",
+      "P03",
+      "P04",
+      "P05",
+      "P06",
+      "P07",
+      "P08",
+      "P09",
+      "P10",
+      "P11",
+      "P12",
+      "P13",
+      "P14",
+      "P15",
+      "P16",
+      "P17",
+      "P18",
+      "P19",
+      "P20",
+      "P21",
+      "P22",
+      "P23",
+      "P24",
+      "P25",
+      "P26"
+    ],
+    "contractClauses": [
+      13,
+      14,
+      16,
+      17,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29
+    ],
+    "blueprint": {
+      "path": "docs/jobkix/references/ANGELCARE_CAREERS_2027.pdf",
+      "sha256": "ac4d6e8a20da6dfb348b7f80aac332867876ae89920bc071c2b70487776b46d9",
+      "pagesInspected": [
+        26,
+        27,
+        32
+      ]
+    },
+    "publicImageBindings": "docs/jobkix/reference-registry.json",
+    "referenceDecision": "Original public references inspected with their mapped section order. No private Studio PNG was supplied. Sample facts are not production records. Source inspection and isolated checks do not establish rendered fidelity.",
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/server/page-metadata.ts",
+        "sha256": "ce0b4fb977cb4331bcc44922c84e0d53326b905a070bef142bf31aca93780c93"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/sitemap.ts",
+        "sha256": "914a5f04251fcf5fa4568b9397ff5ed988e50b4d6c73986be5ea5638ddd3a83a"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/server/sitemap.ts",
+        "sha256": "65c7b50db7cf3b35912ec9a17254649f44723a0b2c3d2d8c18a49f264fdf8411"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/migrations/025_public_sitemaps.sql",
+        "sha256": "b3e0341d950f4c442ef4acc70dd645373568162b08e70d54f233f786fbc20163"
+      }
+    ],
+    "executedEvidence": [
+      "docs/jobkix/evidence/source-verification.json"
+    ],
+    "functional": "IMPLEMENTED_UNVERIFIED",
+    "visual": "VISUAL_PENDING",
+    "renderedEvidence": [],
+    "acceptance": "NOT_ACCEPTED",
+    "limitations": [
+      "Source and isolated functional evidence only. Full family state/depth and browser verification remain pending.",
+      "No authorized application preview runtime designated.",
+      "No native/human translation review claimed."
+    ],
+    "lastSourceReconciledAt": "2026-10-21T11:38:48.657638+00:00",
+    "sourceHashesReconciledAt": "2026-10-21T12:14:23.497250+00:00"
+  },
+  {
+    "id": "restricted-private-assistance",
+    "recordedAt": "2026-10-21T12:14:23.497250+00:00",
+    "screens": [
+      "P23",
+      "P25",
+      "C14",
+      "H16",
+      "D03"
+    ],
+    "contractClauses": [
+      24,
+      25,
+      26
+    ],
+    "blueprint": {
+      "path": "docs/jobkix/references/ANGELCARE_CAREERS_2027.pdf",
+      "sha256": "ac4d6e8a20da6dfb348b7f80aac332867876ae89920bc071c2b70487776b46d9",
+      "pagesInspected": [
+        20,
+        21,
+        22
+      ]
+    },
+    "publicImageBindings": "docs/jobkix/reference-registry.json",
+    "referenceDecision": "Narrow private assistance continues for verified native identities without active JOBKIX recruitment authority. Existing recruitment and file permissions remain unchanged.",
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/migrations/026_restricted_account_support.sql",
+        "sha256": "9e503a344f78a82b4b786cff9d8269f880c4237d00d4f28f046bbb12b99215c0"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/pages/RestrictedCases.tsx",
+        "sha256": "aa808c5dfd7fc317eb861240dff0d52b3a760313ba324c80fd2bb5b6b35f8162"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/pages/PublicSupport.tsx",
+        "sha256": "6468a797b1aea6097569b9c400ba19f3f9a732a7973ab88ec4e8790ea0114714"
+      },
+      {
+        "path": "app/api/jobkix/commands/route.ts",
+        "sha256": "cb67c1d73cc1e59bc70a42551b19f847689f16a4fc305aa3b56c45d2a3a388f9"
+      }
+    ],
+    "checks": [
+      "Actual isolated PostgreSQL support/reply/appeal/rate-limit/ownership tests; see database.log"
+    ],
+    "functional": "IMPLEMENTED_UNVERIFIED",
+    "visual": "VISUAL_PENDING",
+    "limitations": [
+      "No authorized application runtime; no browser/rendered acceptance. Isolated SQL and source tests do not certify hosted Auth/storage/email or production behavior."
+    ],
+    "sourceHashesReconciledAt": "2026-10-21T12:14:23.497250+00:00"
+  },
+  {
+    "id": "durable-institution-sites",
+    "recordedAt": "2026-10-21T12:14:23.497250+00:00",
+    "screens": [
+      "H13"
+    ],
+    "contractClauses": [
+      20,
+      21,
+      24,
+      26
+    ],
+    "blueprint": {
+      "path": "docs/jobkix/references/ANGELCARE_CAREERS_2027.pdf",
+      "sha256": "ac4d6e8a20da6dfb348b7f80aac332867876ae89920bc071c2b70487776b46d9",
+      "pagesInspected": [
+        14,
+        15,
+        20
+      ]
+    },
+    "publicImageBindings": "docs/jobkix/reference-registry.json",
+    "referenceDecision": "Native paged site records and URL-selected editing retain current organization scope; draft and same-key command receipt use existing authorities. No private Studio reference PNG was supplied.",
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/client/SiteEditor.tsx",
+        "sha256": "97bca09742590918e8310d399a80477143d19cfd5817d174f88ab25a1dec0361"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/site-draft.ts",
+        "sha256": "455d35e277cb914491d385495fb4d7f6c49e6a57b75a5fb138b4605d4c093eba"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/pages/Hirer.tsx",
+        "sha256": "9337c2db29dc961e3d3e79d35e6a9997b231fc8fe6fcb027b5d7b326899c8253"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/migrations/011_scoped_draft_recovery.sql",
+        "sha256": "c6f15349116ff65650ef14b99e5d8f55f936671dd1148e9d30b1bce21a80fde9"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/server/repository.ts",
+        "sha256": "ba58dfa4ff30e03beafb811984c5c1127a83389d8fac5e741e715a3e3fb15765"
+      }
+    ],
+    "checks": [
+      "Domain recovery-input test; actual SQL draft reload/replay/conflict/membership-revocation checks; scoped TypeScript"
+    ],
+    "functional": "IMPLEMENTED_UNVERIFIED",
+    "visual": "VISUAL_PENDING",
+    "limitations": [
+      "No authorized application runtime; no browser/rendered acceptance. Isolated SQL and source tests do not certify hosted Auth/storage/email or production behavior."
+    ],
+    "sourceHashesReconciledAt": "2026-10-21T12:14:23.497250+00:00"
+  },
+  {
+    "id": "official-brand-integration",
+    "recordedAt": "2026-10-21T12:14:23.497250+00:00",
+    "screens": [
+      "P00",
+      "P01",
+      "P02",
+      "P03",
+      "P04",
+      "P05",
+      "P06",
+      "P07",
+      "P08",
+      "P09",
+      "P10",
+      "P11",
+      "P12",
+      "P13",
+      "P14",
+      "P15",
+      "P16",
+      "P17",
+      "P18",
+      "P19",
+      "P20",
+      "P21",
+      "P22",
+      "P23",
+      "P24",
+      "P25",
+      "P26",
+      "A01-A08",
+      "C01-C14",
+      "H01-H16"
+    ],
+    "contractClauses": [
+      9,
+      10,
+      11,
+      17,
+      18,
+      29
+    ],
+    "blueprint": {
+      "path": "docs/jobkix/references/ANGELCARE_CAREERS_2027.pdf",
+      "sha256": "ac4d6e8a20da6dfb348b7f80aac332867876ae89920bc071c2b70487776b46d9",
+      "pagesInspected": [
+        6,
+        25,
+        26
+      ]
+    },
+    "publicImageBindings": "docs/jobkix/reference-registry.json",
+    "referenceDecision": "P00 original header/footer composition re-inspected alongside all three supplied brand masters. Exact transparent extraction was explicitly authorized. Normal header, reversed dark footer and native route icons follow the supplied identity. No native administration restyle.",
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/Shell.tsx",
+        "sha256": "2aa94bfe6eecb5a953ba3e3f14902c26ea0f1211840874edffc67b03f724c025"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/brand.ts",
+        "sha256": "775744db4eee9ef05b560f7eb89f9464275d2c22473f8d958df9a41d035ff2a8"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/MarketplaceEntry.tsx",
+        "sha256": "aad3a9c159513381148d644299f3443f6ff297b09b929d6110daf34ccae5ad56"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/marketplace-entry.module.css",
+        "sha256": "874c9559c501680e5cac65c4cbffbcdeaca3ef5e8620bca6fa24e14ff335d2b1"
+      },
+      {
+        "path": "app/jobkix/[locale]/layout.tsx",
+        "sha256": "5ed674e887fdd0f4bdbf0fc5eb50bba74c536a6d35e95bf727e62d3a6753d20e"
+      },
+      {
+        "path": "app/layout.tsx",
+        "sha256": "304c276ffa7f6d44defa709dc1564a7ecb53e250371ea2c70a87699686ddc721"
+      },
+      {
+        "path": "angelcare-marketplace/public-universe/components/GlobalPublicShell.tsx",
+        "sha256": "954e4869832a0abe7afb59ef329efa959a58a98ab2380f19e400b25a2deb8c88"
+      },
+      {
+        "path": "scripts/jobkix/prepare-brand.cjs",
+        "sha256": "dde66f5f602f8698436d628f68a5a148a26643b91af708bfcb6ab49667d985c6"
+      },
+      {
+        "path": "scripts/jobkix/brand.test.cjs",
+        "sha256": "131190919c794a5200dd88aa8ab1687d360f2b6935673bf772774499cbebd7b8"
+      }
+    ],
+    "checks": [
+      "Asset inspection evidence and exact foreground/hash/transparency/icon tests; actual React/Next Link server markup; protected source bytes; native browser favicon lifecycle still pending"
+    ],
+    "functional": "IMPLEMENTED_UNVERIFIED",
+    "visual": "VISUAL_PENDING",
+    "limitations": [
+      "No authorized application runtime; no browser/rendered acceptance. Isolated SQL and source tests do not certify hosted Auth/storage/email or production behavior."
+    ],
+    "sourceHashesReconciledAt": "2026-10-21T12:14:23.497250+00:00"
+  },
+  {
+    "id": "local-command-readiness-and-world-isolation",
+    "recordedAt": "2026-10-21T15:44:24.262Z",
+    "screens": [
+      "P00",
+      "P01",
+      "P02",
+      "A01",
+      "A02",
+      "A03",
+      "A04",
+      "A08",
+      "C04",
+      "C05",
+      "C08",
+      "C09",
+      "H05",
+      "H09",
+      "H10"
+    ],
+    "contractClauses": [
+      4,
+      9,
+      13,
+      17,
+      20,
+      24,
+      26,
+      27,
+      28,
+      29
+    ],
+    "referenceBindings": "docs/jobkix/reference-registry.json",
+    "scopeManifests": [
+      "docs/jobkix/command-readiness-scope.json",
+      "docs/jobkix/country-hydration-scope.json",
+      "docs/jobkix/world-boundary-scope.json",
+      "docs/jobkix/local-interactivity-scope.json",
+      "docs/jobkix/runtime-defects-scope.json"
+    ],
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/client/AccountControls.tsx",
+        "sha256": "2c5c6c381b6cac775008795d70252688ea8ecc74260b356da6ba23719dbc45d3"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/ApplicationActions.tsx",
+        "sha256": "41e358d5da997a23f73347c781c37ca4da01174a8c76a2a7ef73780f6ff39182"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/ApplicationWizard.tsx",
+        "sha256": "a2a9a38742f7a7c4a7b1efed276bee79641ce0d8bb178a98b94241f712810d1f"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/AuthForm.tsx",
+        "sha256": "2704277199642aaea1e453a104898cd4dc6bbf248d5969090bf8aed1ca856bb6"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/CaseForms.tsx",
+        "sha256": "786346efb003246bb1e381bc6df041a6aaba0a953bb08128c2a797543893df50"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/Conversation.tsx",
+        "sha256": "b785f9b281219233c3cb22b657dba7178b7010780d1facf525957e8e93291bb3"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/DocumentLibrary.tsx",
+        "sha256": "dfe114504498cb09116eaace17d0b08244ceb6902729e0520063d0e19aa62305"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/GuestCaseForm.tsx",
+        "sha256": "031ea323121d629aca1027ea20c462996618700107d0d48abd48c01b1d9f3319"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/InvitationAcceptance.tsx",
+        "sha256": "e8a84da5137099169f9c1254c1fa98d7be6eb070d64036a9e42b78d6e26b6f9d"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/OrganizationEditor.tsx",
+        "sha256": "1a5f4a1e620d49758aa98652b5c65785cb026660497ca1409513872078dd37ad"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/Pipeline.tsx",
+        "sha256": "ecce242a6484471050fd52679533ee34ba6c8c981ff41bf5684dc19278de1c7c"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/ProfileEditor.tsx",
+        "sha256": "006826512011fd3a2334ae2c3ad1e6c001bedd0d1e6c57ab8125c3a477ae015d"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/RecruiterStage.tsx",
+        "sha256": "924213c950dfbaa17e54f46077494c3d53769a57f67b36de40b2ee5cc8eed388"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/RecruitmentForms.tsx",
+        "sha256": "68171bea38eccabd8abbb0ef342c9930cef146664da04a17cb314009367191da"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/ReputationForm.tsx",
+        "sha256": "a367a5a7ac92534e9dabc211ecfbb53b8feb80328cc324ae29f89fafd6d8d854"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/SavedItemActions.tsx",
+        "sha256": "539100d8d1408f9abfc6af794c1e62619c1e23433b7dc2befce76d944008d928"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/SearchResults.tsx",
+        "sha256": "cdf86b10286b02e0e7d922462684650707f327a3eabfd0c18015e6c8035cf900"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/SiteEditor.tsx",
+        "sha256": "c13e8860889866dbfb5d1cf6cd0ded121f655cb06ecff643ea812ea37bfb0449"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/TalentForms.tsx",
+        "sha256": "a23c1a597558f98424c27e8a87abafa37bfb30a36c3154236d9f508fd7e483d1"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/TeamForms.tsx",
+        "sha256": "8852dbb10ab4edb61a20434f863d4565dfcc0f3bc5b1bf85fa77953c1b259134"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/VacancyEditor.tsx",
+        "sha256": "8ece1dc08c19123ea1bf3b1387d40882c461530fb67d98607eb82904fce058ce"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/VacancyPublication.tsx",
+        "sha256": "01095eaf93327a3e256c1537acfed69bfea78c945b13c5d967ae2b8eb258d263"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/admin/EditorialEditor.tsx",
+        "sha256": "31f67956c6390f2e61c87ff65aaf93aa406d067a03d3653d02f0ea3fe408ee34"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/admin/EmployerMediaReview.tsx",
+        "sha256": "45a4c6a5a74e697ac07dc6826ee38f3192d17033e86cfed6969562b13fb9eb0e"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/admin/OperationsQueue.tsx",
+        "sha256": "a98467b75315bb1d6ddd0ddc3bf782d7d9f38cb3685962b946174bc3400b70be"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/admin/TaxonomyEditor.tsx",
+        "sha256": "4d52fa332e59f07879f2efc1ea2f396eec646b02b4ba613d373c692277e3b874"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/admin/Workspace.tsx",
+        "sha256": "e3ca0216a35bbb466f792a32bf948f9801ea263024e9ba6e8965ddb575c45753"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/RuntimeClock.tsx",
+        "sha256": "a881ba3bf428eba82407312f8a15370ec1b682374622a6518fae5da3eeb870da"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/LanguageControl.tsx",
+        "sha256": "cca96ce01371b16673b1eda3a780a4bd6e4c84ae92d294e4f578973b465275b4"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/server/repository.ts",
+        "sha256": "d7aa08653ff8fe2ced5314e02eae2ac7ebae79b980ae3563144bb6ce958ffc7a"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/server/files.ts",
+        "sha256": "de61cac7254c36c2a37ad3216d820ec84b4845178cd8d13926f84a9408d44039"
+      },
+      {
+        "path": "app/api/jobkix/files/[id]/route.ts",
+        "sha256": "e7e6b17c82ce82db2ebc11927362dc59185be039ee042270cf83307900060d45"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/jobkix.module.css",
+        "sha256": "9db9dba60ec7adb0e8d3459c2e23498e42ba551fdd8118f8e21ca7cf891b9a07"
+      }
+    ],
+    "decisions": [
+      "Native mutation forms remain inert before their own client mount. Country labels are serialized once per locale to avoid CLDR hydration differences. Deadline checks use a server-anchored runtime clock. Shared runtime bridges remain outside JOBKIX.",
+      "Actual UI recruitment flow passed fifteen checks against canonical SQL with synthetic local Auth/storage. Hosted-service and full state acceptance remain separate."
+    ],
+    "executedEvidence": [
+      "docs/jobkix/evidence/browser/journey.json",
+      "docs/jobkix/evidence/browser/runtime-security.json"
+    ],
+    "functional": "IMPLEMENTED_UNVERIFIED",
+    "visual": "VISUAL_PENDING",
+    "acceptance": "NOT_ACCEPTED",
+    "limitations": [
+      "Executed checks cover named partial behavior only; they do not establish complete family, seven-language, hosted-service or production acceptance."
+    ]
+  },
+  {
+    "id": "essential-mobile-controls",
+    "recordedAt": "2026-10-21T15:44:24.262Z",
+    "screens": [
+      "P01",
+      "P02"
+    ],
+    "contractClauses": [
+      4,
+      9,
+      13,
+      17,
+      20,
+      24,
+      26,
+      27,
+      28,
+      29
+    ],
+    "referenceBindings": "docs/jobkix/reference-registry.json",
+    "scopeManifests": [
+      "docs/jobkix/essential-mobile-controls-scope.json"
+    ],
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/jobkix.module.css",
+        "sha256": "9db9dba60ec7adb0e8d3459c2e23498e42ba551fdd8118f8e21ca7cf891b9a07"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/pages/JobDetail.tsx",
+        "sha256": "95b30ba30c3ffdd5c894916cbc8dac56d48557d4c70e486dbfde3c1263e936e7"
+      }
+    ],
+    "decisions": [
+      "Inherited shared mobile CSS hides asides. Override only within owned JOBKIX scope so native filters, application actions and studio sidebars remain available.",
+      "Thirty-seven isolated browser checks passed: English/Arabic/Hindi search and application controls at six widths, plus keyboard/native filtering with origin and destination preserved."
+    ],
+    "executedEvidence": [
+      "docs/jobkix/evidence/browser/responsive-behavior.json"
+    ],
+    "functional": "IMPLEMENTED_UNVERIFIED",
+    "visual": "VISUAL_PENDING",
+    "acceptance": "NOT_ACCEPTED",
+    "limitations": [
+      "Executed checks cover named partial behavior only; they do not establish complete family, seven-language, hosted-service or production acceptance."
+    ]
+  },
+  {
+    "id": "public-operator-attribution-amendment",
+    "recordedAt": "2026-10-21T15:44:24.262Z",
+    "screens": [
+      "P26"
+    ],
+    "contractClauses": [
+      4,
+      9,
+      13,
+      17,
+      20,
+      24,
+      26,
+      27,
+      28,
+      29
+    ],
+    "referenceBindings": "docs/jobkix/reference-registry.json",
+    "scopeManifests": [
+      "docs/jobkix/legal-attribution-scope.json"
+    ],
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/pages/Legal.tsx",
+        "sha256": "80a1a8fefd299e71324b1b7764809f8eb8761f6a43964b674844357457455aaf"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/i18n.ts",
+        "sha256": "4ca09f1aaaacbda559141148bb338def551a160aca202fee4d9cef71538f8364"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/server/page-metadata.ts",
+        "sha256": "3ec997048f3701f9bd05ef8b5cebe7ab5720ec3a3051270e51d0d40b4dbcae14"
+      },
+      {
+        "path": "scripts/jobkix/legal-presentation.cjs",
+        "sha256": "9b28b90cf527cbbccbfe64675cf52092d67d649786ab866f3fe0c7c583d05803"
+      }
+    ],
+    "decisions": [
+      "Explicit user amendment supersedes the P26 image anatomy. Public legal content and aliases show only localized JOBKIX built and operated by ANGELCARE; metadata uses the same approved wording. No country, jurisdiction or worldwide-compliance statement is added.",
+      "The existing permission-gated private edition preview remains functional. Account-consent records and validation are not replaced by attribution. Their public disclosure mismatch remains a release blocker."
+    ],
+    "executedEvidence": [
+      "docs/jobkix/evidence/browser/legal-attribution.json",
+      "docs/jobkix/evidence/browser-reviews.json"
+    ],
+    "functional": "IMPLEMENTED_UNVERIFIED",
+    "visual": "VISUAL_PENDING",
+    "acceptance": "NOT_ACCEPTED",
+    "limitations": [
+      "Executed checks cover named partial behavior only; they do not establish complete family, seven-language, hosted-service or production acceptance."
+    ]
+  },
+  {
+    "id": "editorial-positive-paint-layers",
+    "recordedAt": "2026-10-21T16:04:31.910Z",
+    "screens": [
+      "P03",
+      "P04",
+      "P05",
+      "P06",
+      "P07",
+      "P08",
+      "P09",
+      "P10"
+    ],
+    "contractClauses": [
+      4,
+      17,
+      28,
+      29
+    ],
+    "referenceBindings": "docs/jobkix/reference-registry.json",
+    "scopeManifest": "docs/jobkix/editorial-layer-scope.json",
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/jobkix.module.css",
+        "sha256": "aba3ae518d4144851ddbf104a44e871c6621a6835052d47a4a1db2b811fde5b8"
+      }
+    ],
+    "decisions": [
+      "Use explicit nonnegative layers for editorial image, overlay and foreground. Pointer events remain on foreground links/controls. Preserve sources, focal points and RTL/mobile behavior.",
+      "Actual English/Arabic desktop/mobile viewport and full-page captures individually inspected. The previously omitted desktop hero now paints in the complete page."
+    ],
+    "executedEvidence": [
+      "docs/jobkix/evidence/browser/editorial-opening.json",
+      "docs/jobkix/evidence/browser/P04-en-1440-review.png",
+      "docs/jobkix/evidence/browser/public-en.json"
+    ],
+    "functional": "IMPLEMENTED_UNVERIFIED",
+    "visual": "VISUAL_PENDING",
+    "acceptance": "NOT_ACCEPTED",
+    "limitations": [
+      "Hero paint correction is verified separately from remaining reviewed editorial content, full state depth and complete per-family acceptance."
+    ]
+  },
+  {
+    "id": "bounded-application-document-selection",
+    "recordedAt": "2026-10-21T20:32:54.919Z",
+    "screens": [
+      "P02",
+      "C04",
+      "C07"
+    ],
+    "contractClauses": [
+      20,
+      22,
+      24,
+      26,
+      27,
+      29
+    ],
+    "scopeManifest": "docs/jobkix/document-selection-scope.json",
+    "blueprintPagesInspected": [
+      11,
+      12,
+      21,
+      22
+    ],
+    "referenceBindings": "docs/jobkix/reference-registry.json",
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/document-selection.ts",
+        "sha256": "c5ce2a2b2f5e8bd9f845a6c55aae2675bd34b900836364ce7aa8df536b354ffd"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/DocumentPicker.tsx",
+        "sha256": "24d99307a2ef22377286c3e00f08c97aea0128f0e4ca2035245754e227061f92"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/ApplicationWizard.tsx",
+        "sha256": "029a72c2fea33ec9247e62069c375fe7518f9111f65a5fad2c8f68ff764db4a1"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/server/repository.ts",
+        "sha256": "d4fb82bddd0c85b935a3fac844ec144d14460dcab090597b40b628daca69b7b0"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/pages/JobDetail.tsx",
+        "sha256": "b9e4f79ac4a5d08e38e668b965208a9f9e259db399791a0ebda1a34f428f8229"
+      },
+      {
+        "path": "app/api/jobkix/files/route.ts",
+        "sha256": "8d500177e0cd4c489613fcde787b7245ae6232592b9fd51737026fe4c4b588bd"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/i18n.ts",
+        "sha256": "afdb808dab76cf909c9ac454d81178c14baa520d79a26d34d3bcc4db565829a1"
+      },
+      {
+        "path": "scripts/jobkix/domain.test.cjs",
+        "sha256": "5b5cfa6edfc8abf2037efaa478a140fd0675816cad0d8f45eb210c11a2a8d0b9"
+      },
+      {
+        "path": "scripts/jobkix/local-database.cjs",
+        "sha256": "8647d2c6881802d4dceb56fa464a5cbae4cd70c38e52b551e52df2daebb3506c"
+      },
+      {
+        "path": "scripts/jobkix/local-runtime.cjs",
+        "sha256": "a2756c6f484645219ed4e2e340f4cf2c084698c7fa5eccdb2b8a04ea323e3fb7"
+      },
+      {
+        "path": "scripts/jobkix/document-selection.cjs",
+        "sha256": "012044aa84ee5048b05226ab123b2551666748f52647212f135d1f6f3fa79c67"
+      }
+    ],
+    "decisions": [
+      "Reuse the existing native file handler and current user client/RLS. Page only ready owned CVs, project minimal metadata and resolve the current selection independently from the page.",
+      "Preserve drafts and selected CVs across search/paging/error/reload. Abort superseded requests and guard late completion. Key application state by candidate and vacancy. Existing immutable submission and authorization commands remain unchanged."
+    ],
+    "executedEvidence": [
+      "docs/jobkix/evidence/browser/document-selection.json",
+      "docs/jobkix/evidence/browser/journey.json"
+    ],
+    "functional": "IMPLEMENTED_UNVERIFIED",
+    "visual": "VISUAL_PENDING",
+    "acceptance": "NOT_ACCEPTED",
+    "limitations": [
+      "Feature-specific isolated checks and English mobile review only. No hosted-service or complete family/language acceptance claim."
+    ]
+  },
+  {
+    "id": "bounded-private-studio-selection",
+    "recordedAt": "2026-10-21T21:17:29.326386+00:00",
+    "screens": [
+      "H01",
+      "H02",
+      "H03",
+      "H04",
+      "H07",
+      "H08",
+      "H12",
+      "H13"
+    ],
+    "scopeManifest": "docs/jobkix/studio-selection-scope.json",
+    "blueprintPages": [
+      14,
+      15,
+      16,
+      20,
+      21
+    ],
+    "referenceBindings": "docs/jobkix/reference-registry.json",
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/studio-selection.ts",
+        "sha256": "b046d7f29ccce52ca6862cee468508047162989ede841b710c37881b25e85927"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/StudioRecordPicker.tsx",
+        "sha256": "c54685e3a87fde04e852b15ceabb0eeab4737b1e5a482018067efd4fd7258529"
+      },
+      {
+        "path": "app/api/jobkix/lookups/route.ts",
+        "sha256": "82b49f6e119beffc4152930672539012392fc3140585d329745481fe915d1565"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/server/repository.ts",
+        "sha256": "962307481a5c2025430e27f86bed5cd78f6e2718907a3d1a3f109bb0974255b0"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/server/hiring-context.ts",
+        "sha256": "405c14c1fdc17b90013835ef53ac8fc618631118f77cb7d2d9987ec5617526c5"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/pages/Hirer.tsx",
+        "sha256": "a2d62dcec191ee825fbea3d60e84e8c0ceb8c5abebcce6ff6b50097102c7e2e4"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/pages/HiringTeam.tsx",
+        "sha256": "6d5fc493b1507951ec4e21b41cbb4422702285655cd9f61e24ce5e35d7c82471"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/TeamForms.tsx",
+        "sha256": "c067c6ce7b3bbc1abf52467c2c288c55bd10ee07deb9089fc86f1cef35e41d9c"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/pages/HiringTalent.tsx",
+        "sha256": "ed4e55cc778948a4d5d34af12f214e6ed9e9543d6fe868e0f451626567862c49"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/TalentForms.tsx",
+        "sha256": "8b831b37d35eeec40179afe75ecdf770a2bf96346d4617395db4c7cf2964a14e"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/pages/Vacancies.tsx",
+        "sha256": "69fec0b26d459717432cefc6bdb77c11494fe3d20bbb2f09cc01de3b24d2ce5a"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/VacancyEditor.tsx",
+        "sha256": "797875c3fc6b17cf3dc13dcd143411eff69e1ce3e4abcba86bf36b8b170f28ec"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/i18n.ts",
+        "sha256": "11770153fe5215dec2eb3f748cded47d28822aa81a20f26974149b4fd80d06bf"
+      },
+      {
+        "path": "scripts/jobkix/domain.test.cjs",
+        "sha256": "71cb2f08a97ee6c0b5ccc55630722fe588bd2ab93bf6a19a9793ec75f392ddbc"
+      },
+      {
+        "path": "scripts/jobkix/fixture-studio-selection.cjs",
+        "sha256": "8167459c7f1c4b4ddde1992e79a4a13d23c4bdbae26a64b3945f58f1ba03f0b7"
+      },
+      {
+        "path": "scripts/jobkix/studio-selection.cjs",
+        "sha256": "8180db943c440452b7702f35ef860c4e1694138a48229d2e32b0a89aa20b979f"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/jobkix.module.css",
+        "sha256": "01629d6fa618a8f52b4e32e5cc613f53d33c98856b950078dfc80c4285b90551"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/workforce-copy.ts",
+        "sha256": "3aec61e50b7ac40b24c4392fba189c123c78444fb1da06018c7bc93806c6a33e"
+      }
+    ],
+    "decisions": [
+      "Native paginated organization/site/vacancy/pool choices and independently resolved retained labels; actual native draft, scope, consent and reflow checks beyond 200 records."
+    ],
+    "executedEvidence": [
+      "docs/jobkix/evidence/browser/studio-selection.json"
+    ],
+    "functional": "FUNCTIONAL_VERIFIED",
+    "visual": "VISUAL_PENDING",
+    "acceptance": "NOT_ACCEPTED",
+    "limitations": [
+      "Feature-specific isolated checks only. Full family, language, hosted-service and visual acceptance remain separate."
+    ]
+  },
+  {
+    "id": "native-talent-existing-membership-recovery",
+    "recordedAt": "2026-10-21T21:17:29.342242+00:00",
+    "screens": [
+      "H07",
+      "H08"
+    ],
+    "scopeManifest": "docs/jobkix/pool-membership-scope.json",
+    "blueprintPages": [
+      14,
+      15,
+      20,
+      21
+    ],
+    "referenceBindings": "docs/jobkix/reference-registry.json",
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/pool-membership.ts",
+        "sha256": "eaa018c3cf4c5da6f3656daf34c0159653b10824d383fb507c686c64e93a4ec5"
+      },
+      {
+        "path": "app/api/jobkix/talent/pool-membership/route.ts",
+        "sha256": "e9bd76734bde0f2ef42bcbe95301190880639d1a994012635e558fd5abe4e0d9"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/server/repository.ts",
+        "sha256": "962307481a5c2025430e27f86bed5cd78f6e2718907a3d1a3f109bb0974255b0"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/TalentForms.tsx",
+        "sha256": "8b831b37d35eeec40179afe75ecdf770a2bf96346d4617395db4c7cf2964a14e"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/workforce-copy.ts",
+        "sha256": "3aec61e50b7ac40b24c4392fba189c123c78444fb1da06018c7bc93806c6a33e"
+      },
+      {
+        "path": "scripts/jobkix/domain.test.cjs",
+        "sha256": "71cb2f08a97ee6c0b5ccc55630722fe588bd2ab93bf6a19a9793ec75f392ddbc"
+      },
+      {
+        "path": "scripts/jobkix/studio-selection.cjs",
+        "sha256": "8180db943c440452b7702f35ef860c4e1694138a48229d2e32b0a89aa20b979f"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/pages/HiringTalent.tsx",
+        "sha256": "ed4e55cc778948a4d5d34af12f214e6ed9e9543d6fe868e0f451626567862c49"
+      }
+    ],
+    "decisions": [
+      "Current native authorization and consent preflight detects an existing binding, provides onward pool navigation and preserves version-checked removal. It does not renew retention or overwrite a concurrent effect."
+    ],
+    "executedEvidence": [
+      "docs/jobkix/evidence/browser/studio-selection.json"
+    ],
+    "functional": "FUNCTIONAL_VERIFIED",
+    "visual": "VISUAL_PENDING",
+    "acceptance": "NOT_ACCEPTED",
+    "limitations": [
+      "Feature-specific isolated checks only. Full family, language, hosted-service and visual acceptance remain separate."
+    ]
+  },
+  {
+    "id": "bounded-support-verification-evidence",
+    "recordedAt": "2026-10-21T21:17:29.388689+00:00",
+    "screens": [
+      "C14",
+      "H14",
+      "H16"
+    ],
+    "scopeManifest": "docs/jobkix/case-document-selection-scope.json",
+    "blueprintPages": [
+      15,
+      21,
+      22,
+      23
+    ],
+    "referenceBindings": "docs/jobkix/reference-registry.json",
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/document-selection.ts",
+        "sha256": "a04a5383f0d1e7b18316630d789105c4f06bdd650fe0101ead1bb2bc69850137"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/server/repository.ts",
+        "sha256": "962307481a5c2025430e27f86bed5cd78f6e2718907a3d1a3f109bb0974255b0"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/DocumentPicker.tsx",
+        "sha256": "2fa1c126997fa1bab5b5e4dc27f101295672cc64ceca1b69d2f8b12ec3dfb156"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/CaseForms.tsx",
+        "sha256": "af9a3b212ae139c13e8113845c3c516dc9bf48666cecb7ae73a8ddcffd9c4a9b"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/pages/CandidateAccount.tsx",
+        "sha256": "8ace534da61e3303b1b1dda9484e714aec07b0426762d59e99089fbcadd3d2b3"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/pages/RestrictedCases.tsx",
+        "sha256": "b2c03948ea39652addcb57fb184ef9113c30c6a8efc422083a80fb7718db4455"
+      },
+      {
+        "path": "app/api/jobkix/files/route.ts",
+        "sha256": "d31d1fa15481ec16dbe7e2f2a0c5709b4296ffe3a9df3204616f804af8466999"
+      },
+      {
+        "path": "scripts/jobkix/domain.test.cjs",
+        "sha256": "71cb2f08a97ee6c0b5ccc55630722fe588bd2ab93bf6a19a9793ec75f392ddbc"
+      },
+      {
+        "path": "scripts/jobkix/case-document-selection.cjs",
+        "sha256": "224655a0160d4ca236034c70eee0f051df6af6616332f41b3284abf96f6b6a26"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/account-copy.ts",
+        "sha256": "1c27689ce90fbb97f694ea1eee4a31d46393bc4dfe6fc577218371f89843a70d"
+      }
+    ],
+    "decisions": [
+      "Reuse one bounded document picker while preserving CV-only application selection and exact organization/purpose verification scope. Actual private byte upload, saved case reload, failure/retry and canonical bindings verified."
+    ],
+    "executedEvidence": [
+      "docs/jobkix/evidence/browser/case-document-selection.json"
+    ],
+    "functional": "FUNCTIONAL_VERIFIED",
+    "visual": "VISUAL_PENDING",
+    "acceptance": "NOT_ACCEPTED",
+    "limitations": [
+      "Feature-specific isolated checks only. Full family, language, hosted-service and visual acceptance remain separate."
+    ]
+  },
+  {
+    "id": "current-evaluator-record",
+    "recordedAt": "2026-10-21T21:17:29.389419+00:00",
+    "screens": [
+      "H09"
+    ],
+    "scopeManifest": "docs/jobkix/current-evaluator-scope.json",
+    "blueprintPages": [
+      15,
+      20,
+      21
+    ],
+    "referenceBindings": "docs/jobkix/reference-registry.json",
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/pages/HiringOperations.tsx",
+        "sha256": "39f124ca75ec73cd74b21c7c07d885e92e9c2a5286c71a69772453f79eb5002d"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/server/repository.ts",
+        "sha256": "962307481a5c2025430e27f86bed5cd78f6e2718907a3d1a3f109bb0974255b0"
+      }
+    ],
+    "decisions": [
+      "Read one evaluation by the native unique (interview_id,evaluator_user_id) key. Interview panels are bounded to 20 by the existing SQL command. No broad evaluation collection scan."
+    ],
+    "executedEvidence": [],
+    "functional": "IMPLEMENTED_UNVERIFIED",
+    "visual": "VISUAL_PENDING",
+    "acceptance": "NOT_ACCEPTED",
+    "limitations": [
+      "Feature-specific isolated checks only. Full family, language, hosted-service and visual acceptance remain separate."
+    ]
+  },
+  {
+    "id": "search-command-labels",
+    "recordedAt": "2026-10-21T21:17:29.390366+00:00",
+    "screens": [
+      "P00",
+      "P01",
+      "P03",
+      "P04",
+      "P05",
+      "C02"
+    ],
+    "scopeManifest": "docs/jobkix/search-label-scope.json",
+    "blueprintPages": [],
+    "referenceBindings": "docs/jobkix/reference-registry.json",
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/client/SearchCommand.tsx",
+        "sha256": "9f6c4f7d34fcd8bd1a8ca08b04c644e94767f0b62a886ae09cd34d4de8a71fd8"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/i18n.ts",
+        "sha256": "11770153fe5215dec2eb3f748cded47d28822aa81a20f26974149b4fd80d06bf"
+      }
+    ],
+    "decisions": [
+      "Correct seven-language reach, keyword and employment-setting labels; preserve native search filters and context."
+    ],
+    "executedEvidence": [],
+    "functional": "IMPLEMENTED_UNVERIFIED",
+    "visual": "VISUAL_PENDING",
+    "acceptance": "NOT_ACCEPTED",
+    "limitations": [
+      "Feature-specific isolated checks only. Full family, language, hosted-service and visual acceptance remain separate."
+    ]
+  },
+  {
+    "id": "durable-workflow-lifecycle-and-pool-context",
+    "recordedAt": "2026-10-21T21:50:40.875344+00:00",
+    "screens": [
+      "H07",
+      "H08",
+      "H12",
+      "H14",
+      "C14"
+    ],
+    "scopeManifest": "docs/jobkix/durable-workflow-unmount-scope.json",
+    "referenceBindings": "docs/jobkix/reference-registry.json",
+    "blueprintPages": [
+      15,
+      20,
+      21,
+      22
+    ],
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/client/useDurableDraft.ts",
+        "sha256": "377441ed499b053817a9dedec4940deb2d056133c261d268fecae5c04bf2e192"
+      },
+      {
+        "path": "scripts/jobkix/studio-selection.cjs",
+        "sha256": "99fd2a58da52b301e48e4d13c62ea95746d9f3c2c4993478aa07ee59a354dfb5"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/TalentForms.tsx",
+        "sha256": "0024a1ce73dbfbb62118768619af6bcc17b1cb5a1628be71a986f4be9e4de024"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/workforce-copy.ts",
+        "sha256": "0befdab95ac5b814ac9567d114236934cd76e8caa7a8aa462576b59a3f498809"
+      }
+    ],
+    "decisions": [
+      "Track component lifecycle and acknowledged draft/effect/cleanup state separately. Detaching stops new network phases and stale route refresh while preserving the original private intent and effect receipt. Reactivating a cached route requires explicit recovery with the original key.",
+      "Block a retained intent that belongs to a different add/remove or pool/candidate context. Provide native onward recovery and explicit discard; never rebind the stored payload.",
+      "Actual native draft save was committed and its response held while a soft navigation removed the form. No business effect followed until reopening and explicit same-key resume. Native race conflict and another-pool mismatch also exercised."
+    ],
+    "executedEvidence": [
+      "docs/jobkix/evidence/browser/studio-selection.json"
+    ],
+    "functional": "FUNCTIONAL_VERIFIED",
+    "visual": "VISUAL_PENDING",
+    "acceptance": "NOT_ACCEPTED",
+    "limitations": [
+      "Feature-specific isolated evidence. No complete family/language, hosted-service or production acceptance."
+    ]
+  },
+  {
+    "id": "profession-cook-editorial",
+    "recordedAt": "2026-10-21T21:50:40.994384+00:00",
+    "screens": [
+      "P05",
+      "P06"
+    ],
+    "scopeManifest": "docs/jobkix/profession-cook-scope.json",
+    "referenceBindings": "docs/jobkix/reference-registry.json",
+    "blueprintPages": [
+      6,
+      16,
+      17
+    ],
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/editorial-assets.ts",
+        "sha256": "0d3e1be6549766a320b69a66fdf12efa55a5d6d8861f2dcce3ed021a9ebd4eb8"
+      },
+      {
+        "path": "public/jobkix/editorial/profession-cook.webp",
+        "sha256": "2d0a26db1278c6413fbd024f8ea2fbdc1d24c9bd071abae8b0d7cdce49e215dd"
+      },
+      {
+        "path": "public/jobkix/editorial/profession-cook-mobile.webp",
+        "sha256": "c8c95dfc1923e483a7ef7809bf49005e6e5f4d5c09ba36f969de52080e4c8211"
+      }
+    ],
+    "decisions": [
+      "A distinct generated kitchen scene replaces the unrelated school-transport fallback for cook. Desktop/mobile WebP derivatives, original master, prompt, provenance, hashes and inspected face/hand/utensil detail evidence are retained.",
+      "Actual P05/P06 English/French/Arabic desktop/mobile rendering and context-preserving native directory filtering were checked. Governed profession guidance remains a content/release dependency; no fictional qualifications, employers or jobs are supplied."
+    ],
+    "executedEvidence": [
+      "docs/jobkix/evidence/browser/directory.json"
+    ],
+    "functional": "FUNCTIONAL_VERIFIED",
+    "visual": "VISUAL_PENDING",
+    "acceptance": "NOT_ACCEPTED",
+    "limitations": [
+      "Feature-specific isolated evidence. No complete family/language, hosted-service or production acceptance."
+    ]
+  },
+  {
+    "id": "profession-directory-action-labels",
+    "recordedAt": "2026-10-21T21:50:41.049134+00:00",
+    "screens": [
+      "P03",
+      "P05",
+      "P06"
+    ],
+    "scopeManifest": "docs/jobkix/profession-directory-scope.json",
+    "referenceBindings": "docs/jobkix/reference-registry.json",
+    "blueprintPages": [
+      6,
+      16,
+      17
+    ],
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/discovery-copy.ts",
+        "sha256": "862544e50ffd734b120a807b4991a2a7fa3c25022fc646da1b7b1a4370c8ac19"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/pages/Directories.tsx",
+        "sha256": "7f12858b51a5546384549573a08286e8cf2c5a410b1dc4afc0a3944c7949228b"
+      },
+      {
+        "path": "scripts/jobkix/browser.cjs",
+        "sha256": "adeac8e32894990babb591cf51ddb72333fa2bc819dec98d0fb9fdbc0350d48f"
+      }
+    ],
+    "decisions": [
+      "Use accurate seven-language search actions for the setting/profession directory; preserve the native taxonomy query and independent origin/destination/reach through onward navigation."
+    ],
+    "executedEvidence": [
+      "docs/jobkix/evidence/browser/directory.json"
+    ],
+    "functional": "FUNCTIONAL_VERIFIED",
+    "visual": "VISUAL_PENDING",
+    "acceptance": "NOT_ACCEPTED",
+    "limitations": [
+      "Feature-specific isolated evidence. No complete family/language, hosted-service or production acceptance."
+    ]
+  },
+  {
+    "id": "bounded-interview-panel-selection",
+    "recordedAt": "2026-10-21T22:29:49.429127+00:00",
+    "screens": [
+      "H09",
+      "H10"
+    ],
+    "scopeManifest": "docs/jobkix/panel-selection-scope.json",
+    "referenceBindings": "docs/jobkix/reference-registry.json",
+    "blueprint": {
+      "path": "docs/jobkix/references/ANGELCARE_CAREERS_2027.pdf",
+      "pagesInspected": [
+        12,
+        15,
+        20,
+        21
+      ]
+    },
+    "privateStudioImageReference": null,
+    "referenceDecision": "No private Studio PNG was supplied. Preserve the owned Studio shell and blueprint interview/panel/offer grammar.",
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/panel-selection.ts",
+        "sha256": "6c350547a8ce8a0012b3e373a7d0b7fe64be5c23fbaf332ac2f43d6538483f2f"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/migrations/027_bounded_panel_selection.sql",
+        "sha256": "dc4fc2cafdd1ca85e6319ecfa2b30005ed82cd49aac956958812c71a2164c549"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/server/repository.ts",
+        "sha256": "63c9886dfdd20826336d6e7740199e0d73e21f3a3990cebdca7206d330941618"
+      },
+      {
+        "path": "app/api/jobkix/lookups/route.ts",
+        "sha256": "aa3e8d3b05acb2763b048b1b3d34ea22d8248b792af58df13852848ce7b98850"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/StudioRecordPicker.tsx",
+        "sha256": "144f0f2cc035554b6b6dbfcc33d45f723e9cf9fb59ac106a17fede7fb781cc8c"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/RecruitmentForms.tsx",
+        "sha256": "865e4ce8ed0c26abdf0312dfdcb6bf0d2d1180c2976d3f31a4fe02157e402c22"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/pages/HiringOperations.tsx",
+        "sha256": "19c8f34a3558d901437276bc80aa569a283be5ae35d4d7e74479c018f93cee04"
+      },
+      {
+        "path": "scripts/jobkix/domain.test.cjs",
+        "sha256": "3b0466115e2a397667f8676cb0aa5cda63d316c6a3df01b06238b05ac1029ce2"
+      },
+      {
+        "path": "scripts/jobkix/panel-selection.test.cjs",
+        "sha256": "db1e6b7ea0251907a157fbb9ac504f0ba45fdf1ca5f03aefaa7e42daa8b276bc"
+      },
+      {
+        "path": "scripts/jobkix/panel-selection.cjs",
+        "sha256": "84a2682aa1fae7db5cbc3c991e8509767681b15223943b1c0e3008176c18155d"
+      },
+      {
+        "path": "scripts/jobkix/local-database.cjs",
+        "sha256": "10e67c57638c52645cbd4ff94da971270bae903a9d539dd54d06451e60189b0b"
+      },
+      {
+        "path": "scripts/jobkix/capture-evidence.cjs",
+        "sha256": "f98a52ca13483392166afbf880cccd937a902d5cbc515de1a7889054a6788ff1"
+      },
+      {
+        "path": "scripts/jobkix/checkpoint-progress.cjs",
+        "sha256": "21fda2201e6ce742beb099b2141692a9076f103b2be1c1cfc916b24ebe0434e3"
+      },
+      {
+        "path": "docs/jobkix/HIRING_OPERATOR_CHECKPOINT.md",
+        "sha256": "6b161fb72c39579211d54c103ce18a10f29a0c955603d1d15b417f4b2c9fd0d5"
+      },
+      {
+        "path": "scripts/jobkix/fixture-vacancy.cjs",
+        "sha256": "9424f3bd907d385c931bbbbe45a8e9921001814fa4206fdca106b6113df3fae1"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/operations-copy.ts",
+        "sha256": "8d8ac70e0ba1c01fad56378d19fa8b27868b6ed6d49c96a8ff2f9a4d0a4664ca"
+      }
+    ],
+    "decisions": [
+      "Use one eligible native roster read for a compatible legacy projection and a 24-record application-bound picker. Do not expose contact details or candidate records.",
+      "Preserve up to 20 stable selected member IDs through search, draft save/reload and canonical interview creation. Revocations, candidate blocking, site/job scope and command CAS remain authoritative.",
+      "Native SQL tests cover 250 panelists, current permissions and a revoked-selection command failure. Actual browser checks exercise eleven pages, native drafts, real dependency failure/retry, selection limit, exact stored IDs and English/Arabic mobile views.",
+      "Correct interview/offer history headings in all seven authored languages after individually reviewing actual English/Arabic views.",
+      "The first institution browser fixture used a nonexistent occupation alias and was rejected. Its failed-run report is retained; the fixture now uses the actual published early-childhood-educator key. No validation was weakened."
+    ],
+    "executedEvidence": [
+      "docs/jobkix/evidence/source-verification.json",
+      "docs/jobkix/evidence/panel-selection.log",
+      "docs/jobkix/evidence/browser/panel-selection.json",
+      "docs/jobkix/evidence/browser/journey.json",
+      "docs/jobkix/evidence/browser/studio-selection.json",
+      "docs/jobkix/evidence/browser/runtime-security.json"
+    ],
+    "renderedEvidence": [
+      "docs/jobkix/evidence/browser/H09-en-390-bounded-panel.png",
+      "docs/jobkix/evidence/browser/H09-ar-360-bounded-panel.png",
+      "docs/jobkix/evidence/browser/H10-ar-360-revision-history.png"
+    ],
+    "functional": "FUNCTIONAL_VERIFIED",
+    "visual": "VISUAL_PENDING",
+    "acceptance": "NOT_ACCEPTED",
+    "limitations": [
+      "Feature-specific isolated SQL/Auth/storage evidence, not complete H09/H10 or seven-language acceptance.",
+      "No hosted-service or independent simultaneous PostgreSQL-session certification.",
+      "Actual mobile screenshots individually inspected; complete all-width/keyboard/screen-reader/reference acceptance remains."
+    ],
+    "reactReview": {
+      "method": "Applied the previously read React best-practices checklist to the changed TSX.",
+      "findings": [
+        "No runtime dependency or shared design-system change.",
+        "Abort/stale-result guards and explicit current selected IDs remain in the reused picker.",
+        "Panel props require application context; generic form-selection types exclude the panel branch.",
+        "Native fieldset/legend/checkbox controls and localized paging/retry are retained.",
+        "Independent initial reads remain parallel; retained panel resolution follows draft recovery because it depends on the saved IDs."
+      ]
+    }
+  },
+  {
+    "id": "country-directory-reference-fidelity",
+    "recordedAt": "2026-10-21T23:47:59.830838+00:00",
+    "screens": [
+      "P07"
+    ],
+    "scopeManifest": "docs/jobkix/country-directory-scope.json",
+    "referenceBindings": "docs/jobkix/reference-registry.json",
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/pages/Geography.tsx",
+        "sha256": "80af518e2dd84a73892e21969b8900fb00e39606b81af714ee77aa0bd93e5bd5"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/components/CountryAtlas.tsx",
+        "sha256": "0365adfb84d65bc36bd3ab0501ac12d44b3103fd9420ce0251a79d1744716bd4"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/geography-copy.ts",
+        "sha256": "776dc3abdae416222449c7afa028e4c7ad9eee2241b2a3e84daa050daca7ed5a"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/jobkix.module.css",
+        "sha256": "4f774214f40d189c0158b707cfdc6615c98ac9ed0651df14dad5d3ad397acf0d"
+      },
+      {
+        "path": "public/jobkix/geography/world-land.svg",
+        "sha256": "22413f15b46d2d44e1a681c7893557c2c9dbf91028bcf8e41dab3f1d4a791e11"
+      },
+      {
+        "path": "docs/jobkix/geography-source/ne_110m_land.geojson",
+        "sha256": "9e0729ee253ca7d7a5c4ae9395fb1902264c5377c52e224d13dd85010e2835d9"
+      },
+      {
+        "path": "docs/jobkix/geography-asset-register.json",
+        "sha256": "c1c6ade3b00e52345ee85e4b0513b1a374c6b43f8d82e6001f98a68fb1857e91"
+      },
+      {
+        "path": "scripts/jobkix/prepare-world-map.cjs",
+        "sha256": "378a6dcdfebbe3e511d10627c5ee51e3fcfe0df3d878a6a637f9419285d3bc76"
+      },
+      {
+        "path": "scripts/jobkix/check-geography-assets.cjs",
+        "sha256": "5031dc1032f4423c1bc2a1e686aa3f46ae8066c1c2a2987e0baaefeb7efb4cd4"
+      },
+      {
+        "path": "scripts/jobkix/geography.cjs",
+        "sha256": "52eb561026b7db7fd9fcd2747296bd1c1f2adfa895ab18c5bae255bbd4e528c4"
+      },
+      {
+        "path": "scripts/jobkix/capture-evidence.cjs",
+        "sha256": "f28df59c46c56078874f49e0944c94bed14a1f36390a591b1dd7eaae345f6549"
+      },
+      {
+        "path": "scripts/jobkix/checkpoint-progress.cjs",
+        "sha256": "dd53be6b2120c5f0320c6ef3a4a68f9a106fbe0ac8668d3a20fc5b1911f676a2"
+      },
+      {
+        "path": "scripts/jobkix/browser.cjs",
+        "sha256": "bd90f2b79f2ea7a64d7ced3809133cc27580e9db361a99ce9be0f1488a647235"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/components/Discovery.tsx",
+        "sha256": "89e8257d09ec0cb6b896b4eec0d730c303036054ff40e009beb1c8da840bdc77"
+      }
+    ],
+    "decisions": [
+      "Use existing country, M49, locale and recruitment query authorities; preserve discovery context through search, region, reset, pagination and onward navigation.",
+      "Provide a non-mirrored deterministic decorative map, compact country results, real current destinations and native regional collections. No false catalogue content or counts.",
+      "Nine meaningful native behaviors and 54 dated rendered views passed. Current-source immutable browser evidence remains feature-specific, not complete family acceptance."
+    ],
+    "executedEvidence": [
+      "docs/jobkix/evidence/browser/geography.json",
+      "docs/jobkix/evidence/browser-reviews.json",
+      "docs/jobkix/geography-asset-register.json"
+    ],
+    "functional": "FUNCTIONAL_VERIFIED",
+    "visual": "VISUAL_PENDING",
+    "acceptance": "NOT_ACCEPTED",
+    "limitations": [
+      "Feature-specific isolated evidence only. No complete family, hosted-service, final-source A–H or production certification."
+    ]
+  },
+  {
+    "id": "presentation-header-isolation",
+    "recordedAt": "2026-10-21T23:47:59.830838+00:00",
+    "screens": [
+      "P00",
+      "P01",
+      "A02"
+    ],
+    "scopeManifest": "docs/jobkix/presentation-isolation-scope.json",
+    "referenceBindings": "docs/jobkix/reference-registry.json",
+    "files": [
+      {
+        "path": "proxy.ts",
+        "sha256": "6488238dc3096268c760e998a695bdfa25427649b8195bf079a8657fac4e8efe"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/presentation-context.ts",
+        "sha256": "865a84a3db0118c1524253b4ab4ac980e15a7407dfbeb42dc4c4e6c1b817fa42"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/session-proxy.ts",
+        "sha256": "112e7f35c41194f35cae3a94ce4e6a87fe99b737ff148dbef809f99c8a73b1e3"
+      },
+      {
+        "path": "scripts/jobkix/domain.test.cjs",
+        "sha256": "4cec7897e0d3e23282d50141c5b9c97770e4c2cf14569ee371c1d37e12516d08"
+      },
+      {
+        "path": "scripts/jobkix/presentation-routing.test.cjs",
+        "sha256": "c6a7cf612997eb38d2647e25d4c826d61d67b40468944d2a7feea1fd23f46482"
+      },
+      {
+        "path": "scripts/jobkix/presentation.cjs",
+        "sha256": "c62122ccd7bfda24bb1bdb6efe631226622437f908ee5bac82f84b560c344c76"
+      },
+      {
+        "path": "scripts/jobkix/capture-evidence.cjs",
+        "sha256": "f28df59c46c56078874f49e0944c94bed14a1f36390a591b1dd7eaae345f6549"
+      },
+      {
+        "path": "scripts/jobkix/checkpoint-progress.cjs",
+        "sha256": "dd53be6b2120c5f0320c6ef3a4a68f9a106fbe0ac8668d3a20fc5b1911f676a2"
+      },
+      {
+        "path": "docs/jobkix/shared-file-register.json",
+        "sha256": "f10ef03455cc0791d7e880d512970636cd64b203040de4e28f1eb85cace0a82b"
+      },
+      {
+        "path": "docs/jobkix/evidence/presentation-header-preflight.json",
+        "sha256": "a845253347e79de459fd9b821e4679d65b8e401298a244b7c0d8b8fed2dd5abd"
+      },
+      {
+        "path": "docs/jobkix/evidence/presentation-routing-baseline.json",
+        "sha256": "7993ff334b00689dd4fb4e5117d18fb642dd08c189c3c7ed644f7d00795054f0"
+      },
+      {
+        "path": "app/layout.tsx",
+        "sha256": "84a2f405db393c8139bae4bc85e2f0a4eb1c4983345612f46a3e490fc649a2e9"
+      },
+      {
+        "path": "app/jobkix/[locale]/layout.tsx",
+        "sha256": "45c274df7bc101c2c02e786cfaf6b572c1d3f8da271a2484ace0d7be4bfa1f3c"
+      },
+      {
+        "path": "scripts/jobkix/navigation.cjs",
+        "sha256": "d7f46535b0136b0821a96fea5025bdde46d969a03a1122137137ffc9b578d901"
+      },
+      {
+        "path": "scripts/jobkix/brand.test.cjs",
+        "sha256": "c6e670fa54c75420edfe403f99c5ea25fc82b3291b4ba0054c65a025ad0c651a"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/MarketplaceEntry.tsx",
+        "sha256": "b29302bdec8ede8a57a8594da11950cc36dd28cd930d34ea20c5e0ee8300c0b5"
+      }
+    ],
+    "decisions": [
+      "Strip caller-supplied owned hints at ingress and derive JOBKIX document language from the actual request path. Preserve existing routing, native authentication refresh and every unrelated header.",
+      "Restore original global metadata authority. JOBKIX social metadata and icons belong to its localized route. Its independent brand shortcut opens a native document with unchanged destination/placement.",
+      "Native proxy tests, 19 browser checks and 13 HTTP assertions passed. Three KidFlix HTTP checks remain BLOCKED by a pre-existing non-pure CSS selector.",
+      "Retain failed/interrupted browser reports. One harness waited for network-idle during native Marketplace polling; another compared pre-hydration server language with native hydrated locale. The final test waits for actual native locale setup and verifies repeated back/forward document/icon restoration.",
+      "Known native Marketplace API failures are retained separately, with exact URLs, as isolated-adapter dependencies. They do not establish complete surrounding-product regression acceptance."
+    ],
+    "executedEvidence": [
+      "docs/jobkix/evidence/presentation-header-preflight.json",
+      "docs/jobkix/evidence/presentation-routing-baseline.json",
+      "docs/jobkix/evidence/presentation-routing.log",
+      "docs/jobkix/evidence/browser/navigation.json",
+      "docs/jobkix/evidence/browser/presentation.json"
+    ],
+    "functional": "PARTIAL_FUNCTIONAL_VERIFIED",
+    "visual": "VISUAL_PENDING",
+    "acceptance": "NOT_ACCEPTED",
+    "limitations": [
+      "Feature-specific isolated evidence only. No complete family, hosted-service, final-source A–H or production certification."
+    ]
+  },
+  {
+    "id": "country-city-reference-fidelity",
+    "recordedAt": "2026-10-22T00:54:32.401577+00:00",
+    "screens": [
+      "P07",
+      "P08",
+      "P09",
+      "P10"
+    ],
+    "contractClauses": [
+      4,
+      12,
+      13,
+      16,
+      17,
+      18,
+      21,
+      25,
+      26,
+      27,
+      28,
+      29,
+      31
+    ],
+    "blueprint": {
+      "path": "docs/jobkix/references/ANGELCARE_CAREERS_2027.pdf",
+      "sha256": "ac4d6e8a20da6dfb348b7f80aac332867876ae89920bc071c2b70487776b46d9",
+      "pagesInspected": [
+        6,
+        16,
+        17
+      ]
+    },
+    "scopeManifest": "docs/jobkix/country-city-scope.json",
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/pages/Geography.tsx",
+        "sha256": "670f7511417303070b002b8bc64c146a3270ee68c8d642cc27911d5b97d0f3ee"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/components/Public.tsx",
+        "sha256": "f218f518a7c53e7e9aa04245d0bec53e5b4e37d222b25a4ecbf7cfb113c2fab0"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/components/Discovery.tsx",
+        "sha256": "ba7ef8b522bf5739ca9473d881f523f80f43a41d2412c9b3bbe06eecab10215b"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/geography-copy.ts",
+        "sha256": "dd2ae215d0f25ae2e44789d5c013f4122e65be23d48d7865c5af3f886489a285"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/geographic-scenes.ts",
+        "sha256": "a95b681806ae4626c70b870258343921d9d7a67754600be0ceefa257a44b6d01"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/editorial-assets.ts",
+        "sha256": "69c9be74633377d64c82af417af77c471532706ffe86864371a73c98354ff3ef"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/migrations/028_packaged_editorial_scenes.sql",
+        "sha256": "add443cdc1b030c928c96a4a541f9ea0dad7fb5d8069c1045d7a38ebac142566"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/jobkix.module.css",
+        "sha256": "93bb9d2119bdb8613bfbfd11ba3e9518a5eb00afecc82b0c3ae3cae51ad0f3cf"
+      },
+      {
+        "path": "docs/jobkix/asset-register.json",
+        "sha256": "d06a282590dbf1b7179c3452c04236ae11afdec86ec8c6c45adce866c4fa6211"
+      },
+      {
+        "path": "scripts/jobkix/check-assets.cjs",
+        "sha256": "726fcb263f10971275ff8767b4091750b17d68c3f7791774f6d74c0f201e423d"
+      },
+      {
+        "path": "scripts/jobkix/domain.test.cjs",
+        "sha256": "fdaff6556b942949e74dc6837eb567b97e986a73627e3090ff34d5eaf656077e"
+      },
+      {
+        "path": "scripts/jobkix/editorial-scenes.test.cjs",
+        "sha256": "b70b2f07bd81b44eaf29e1040f327baf4bd18b0e0620a8021cf041ba523641a0"
+      },
+      {
+        "path": "scripts/jobkix/geographic-worlds.cjs",
+        "sha256": "669901b0de2c1425558d37776832a062f32a2b451ca7dbb1832ffed68acd5e74"
+      },
+      {
+        "path": "scripts/jobkix/geography.cjs",
+        "sha256": "33aa7539af36ffb60c8cc6471c706b82417da8d291b1f8116222d0d6cc95a252"
+      },
+      {
+        "path": "scripts/jobkix/capture-evidence.cjs",
+        "sha256": "1afa91c01618de1e08e6f91009d9a85d7d405db4a8d006cf0361cd8931eece62"
+      },
+      {
+        "path": "scripts/jobkix/checkpoint-progress.cjs",
+        "sha256": "af5f0b824ac085552c4f8d6cede405c17f1824041bd388bacce2a75463f706cf"
+      },
+      {
+        "path": "docs/jobkix/geography-source/toronto-374759.jpeg",
+        "sha256": "3c25276643671fac319c6528c39a62ea3b7f599b14f99c6bbf25ae389c6bf9d3"
+      },
+      {
+        "path": "docs/jobkix/geography-source/london-460672.jpeg",
+        "sha256": "f21f14a85f6434a3724bdc2537e6f25aa59067bf935e05094b36eb2be1078a42"
+      },
+      {
+        "path": "docs/jobkix/geography-source/PHOTOGRAPH_RIGHTS.md",
+        "sha256": "8935def538d930698aeacb4f89ac41bc1235f1d0fb379ed95388871b8674ac00"
+      },
+      {
+        "path": "docs/jobkix/asset-prompts/destination-toronto.txt",
+        "sha256": "0199226b20d19e6f0dc70a838c3c23df22e3552880f45566716737bbb4678297"
+      },
+      {
+        "path": "docs/jobkix/asset-prompts/destination-london.txt",
+        "sha256": "a093733885db2a169675a4cd75cd145b18291ce8e2c2532b69ae29ea7f59d368"
+      },
+      {
+        "path": "public/jobkix/editorial/destination-toronto.webp",
+        "sha256": "f4cbf85124d9623d459c52625e0badc4f8e7d4877f036e8f02162c94cbf5e6d2"
+      },
+      {
+        "path": "public/jobkix/editorial/destination-toronto-mobile.webp",
+        "sha256": "d8211c289ef9b2f6c0a9e83f025957d0e906bef0e7c73af675d47f6d94f1d216"
+      },
+      {
+        "path": "public/jobkix/editorial/destination-london.webp",
+        "sha256": "3196d22766b99c0ea07df11cd1abe4f6b0a5e18a905e86bd11eb44c672052d00"
+      },
+      {
+        "path": "public/jobkix/editorial/destination-london-mobile.webp",
+        "sha256": "51e453d319c759c1f703dbcc46f1aa5554699b0c030c068be87a2f20b8feb816"
+      }
+    ],
+    "decisions": [
+      "Licensed photographs match actual destinations only. Reviewed custom media and native search/publication authority preserved.",
+      "Eight native behaviors, 84 initial renders, 12 layout-polish rerenders and 54 geography regression renders passed. The full sweep precedes the documented layout polish."
+    ],
+    "executedEvidence": [
+      "docs/jobkix/evidence/browser/geographic-worlds-before-layout-polish-20261022.json",
+      "docs/jobkix/evidence/browser/geographic-worlds.json",
+      "docs/jobkix/evidence/browser/geography.json",
+      "docs/jobkix/evidence/editorial-scenes.log"
+    ],
+    "renderedEvidence": [
+      "docs/jobkix/evidence/browser/P08-en-1440-destination-polish.png",
+      "docs/jobkix/evidence/browser/P09-ar-1440-destination-polish.png"
+    ],
+    "functional": "PARTIAL_FUNCTIONAL_VERIFIED",
+    "visual": "VISUAL_PENDING",
+    "acceptance": "NOT_ACCEPTED",
+    "limitations": [
+      "Isolated synthetic Auth/storage and actual PGlite SQL/RLS do not establish hosted-service or full-family acceptance.",
+      "Remaining states, complete localization/content and full responsive/accessibility acceptance are tracked separately."
+    ]
+  },
+  {
+    "id": "private-export-recovery",
+    "recordedAt": "2026-10-22T00:54:32.401577+00:00",
+    "screens": [
+      "C13",
+      "H16"
+    ],
+    "contractClauses": [
+      13,
+      20,
+      21,
+      24,
+      26,
+      27,
+      29,
+      31
+    ],
+    "blueprint": {
+      "path": "docs/jobkix/references/ANGELCARE_CAREERS_2027.pdf",
+      "sha256": "ac4d6e8a20da6dfb348b7f80aac332867876ae89920bc071c2b70487776b46d9",
+      "pagesInspected": [
+        11,
+        21,
+        22
+      ]
+    },
+    "scopeManifest": "docs/jobkix/private-export-scope.json",
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/private-export.ts",
+        "sha256": "ecb844aee4d28907b185e67c49e487869e18148a5dc87f53be02f880d4495f92"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/PrivateExport.tsx",
+        "sha256": "31bea2f6008b425eda19716816675b4268ac6c29c0a78570e0fe47f8d6cd6a9a"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/AccountControls.tsx",
+        "sha256": "b3153e46a832f467fbb0107b8b854c07ddc967e2734757ff4d2bed7c3755bbfc"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/pages/CandidateAccount.tsx",
+        "sha256": "326fef7b62aca51b27843998166be503fe9a74c6de9c69e69e089fcf8b31d27b"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/pages/HiringAccount.tsx",
+        "sha256": "5af31aa10aaef8c66cb1232b1ee7f0dc874c15f094aa9adfed410632f1e926b4"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/account-copy.ts",
+        "sha256": "fcb30e4e478fbb894c8ea26e3542278395defb13e33155d6e780c93683e37e83"
+      },
+      {
+        "path": "app/api/jobkix/account/export/route.ts",
+        "sha256": "eddbed0364a380b01ba773967db5aa067623f2812d72b517d96293e40132b02f"
+      },
+      {
+        "path": "scripts/jobkix/private-export.test.cjs",
+        "sha256": "0ae164d5647d3de4505eab28a3b9c41412e78174bc5dc0e55443ced2605f10a9"
+      },
+      {
+        "path": "scripts/jobkix/private-export.cjs",
+        "sha256": "91516dd28e4dec3fa0c1a5cf33bf7df9e8370d0bec7d19c76b357637a58eaf6a"
+      },
+      {
+        "path": "scripts/jobkix/capture-evidence.cjs",
+        "sha256": "1afa91c01618de1e08e6f91009d9a85d7d405db4a8d006cf0361cd8931eece62"
+      },
+      {
+        "path": "scripts/jobkix/checkpoint-progress.cjs",
+        "sha256": "af5f0b824ac085552c4f8d6cede405c17f1824041bd388bacce2a75463f706cf"
+      }
+    ],
+    "decisions": [
+      "Canonical SQL export ownership and shared Auth authority unchanged. Actual response format/subject and private headers validated before a browser download.",
+      "Eight actual UI/API/SQL behavior checks and 28 localized responsive views passed; fourteen keyboard downloads decoded as the current actor’s canonical JSON. Failure preserves authored settings. Navigation cancels a held real response."
+    ],
+    "executedEvidence": [
+      "docs/jobkix/evidence/browser/private-export.json",
+      "docs/jobkix/evidence/private-export.log"
+    ],
+    "renderedEvidence": [
+      "docs/jobkix/evidence/browser/C13-en-360-private-export.png",
+      "docs/jobkix/evidence/browser/C13-en-1440-private-export.png",
+      "docs/jobkix/evidence/browser/H16-ar-360-private-export.png"
+    ],
+    "functional": "PARTIAL_FUNCTIONAL_VERIFIED",
+    "visual": "VISUAL_PENDING",
+    "acceptance": "NOT_ACCEPTED",
+    "limitations": [
+      "Isolated synthetic Auth/storage and actual PGlite SQL/RLS do not establish hosted-service or full-family acceptance.",
+      "Remaining states, complete localization/content and full responsive/accessibility acceptance are tracked separately."
+    ]
+  },
+  {
+    "id": "employer-reference-fidelity",
+    "recordedAt": "2026-10-22T01:33:02.319612+00:00",
+    "screens": [
+      "P11",
+      "P12"
+    ],
+    "contractClauses": [
+      4,
+      12,
+      13,
+      16,
+      17,
+      18,
+      21,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      31
+    ],
+    "blueprint": {
+      "path": "docs/jobkix/references/ANGELCARE_CAREERS_2027.pdf",
+      "sha256": "ac4d6e8a20da6dfb348b7f80aac332867876ae89920bc071c2b70487776b46d9",
+      "pagesInspected": [
+        6,
+        21,
+        23
+      ]
+    },
+    "scopeManifest": "docs/jobkix/employer-worlds-scope.json",
+    "files": [
+      {
+        "path": "angelcare-marketplace/jobkix/pages/Employers.tsx",
+        "sha256": "5df0315b87be24a93cead9803f2f6aa96c1e606c6b95d60707282cf84207898b"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/employer-query.ts",
+        "sha256": "63d9819b7301b9101ec1dba60515580f14b87ac9ed9a20a287bbd6921bc168a6"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/employer-world.ts",
+        "sha256": "99129e45bb29fef2cce432ab4cdc8fe50b222e66c7c696a238f6948b97035e53"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/employer-copy.ts",
+        "sha256": "ebd842ee9a6bedb62e2de51ff14c1d64a213d550a13dd58ed762d96acdfa6972"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/EmployerActions.tsx",
+        "sha256": "273fefc8caaed058243632d47dd818a8107ecbe46ad6dbb3a0bc409eecd6f433"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/client/SearchResults.tsx",
+        "sha256": "875258b60344896014b4f7bacfa95add4f719a1d9fc0d35310b4dbfd3b531069"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/jobkix.module.css",
+        "sha256": "505d04bbbfed1c96794b088e210457e10663593ba07962f60ffa5cb47c42cff3"
+      },
+      {
+        "path": "scripts/jobkix/employer-worlds.test.cjs",
+        "sha256": "ae3c96641cc02f4e933b6693aa2865f236c9c4bec04589601b460b34cabb07c6"
+      },
+      {
+        "path": "scripts/jobkix/employer-worlds.cjs",
+        "sha256": "e174c9b855a5d5c52baec7c34624be1361e5d87daf177a79ea8216d3ea709496"
+      },
+      {
+        "path": "scripts/jobkix/capture-evidence.cjs",
+        "sha256": "ee4dfe5cb85b3c9231286053775472ceac15ecce48c6e4e4343bd7695d0cc835"
+      },
+      {
+        "path": "scripts/jobkix/checkpoint-progress.cjs",
+        "sha256": "7fa5ca0e0a987ee03e8182d8356c1a5757af1bc776b723f22cffe9a1a40dc14b"
+      },
+      {
+        "path": "angelcare-marketplace/jobkix/components/Discovery.tsx",
+        "sha256": "4ff141466fcd8dd8c874be7d59994c0b2c3ac7ad8f7ecede8f83e62593f6f4f6"
+      }
+    ],
+    "decisions": [
+      "Original full-page P11/P12 and existing rendered desktop views inspected before editing.",
+      "Use seven canonical employer kinds and sixteen employment settings; no unsupported organization-size filter or invented counts, companies, awards, staff testimonials, video or guarantees.",
+      "Actual employer imagery requires its existing native approval. Absent imagery uses a purposeful factual identity layout, never unrelated stock or generated employer representation.",
+      "Keep all native job filters available in an explicit disclosure when embedded; filtering navigates to the existing jobs authority.",
+      "Original employer-authored description language is retained, and saved-profile action state is keyed to the current authenticated actor.",
+      "A missing employer can return HTTP 200 after streaming starts; actual rendered not-found state and noindex are asserted rather than calling it an HTTP 404 pass.",
+      "Retry retains the directory page and native query. A final clear-navigation assertion waits for real navigation and rendered results, without a fixed completion timeout."
+    ],
+    "executedEvidence": [
+      "docs/jobkix/evidence/employer-worlds.log",
+      "docs/jobkix/evidence/browser/employer-worlds-before-final-state-polish-20261022.json",
+      "docs/jobkix/evidence/browser/employer-worlds.json"
+    ],
+    "renderedEvidence": [
+      "docs/jobkix/evidence/browser/P11-en-1440-employer-polish.png",
+      "docs/jobkix/evidence/browser/P11-ar-390-employer-polish.png",
+      "docs/jobkix/evidence/browser/P12-en-390-employer-polish.png",
+      "docs/jobkix/evidence/browser/P12-ar-390-employer-polish.png"
+    ],
+    "functional": "PARTIAL_FUNCTIONAL_VERIFIED",
+    "visual": "VISUAL_PENDING",
+    "acceptance": "NOT_ACCEPTED",
+    "limitations": [
+      "Actual local Next and SQL/RLS use synthetic Auth/storage/trust/editorial adapters. No hosted-service or full-family acceptance.",
+      "Approved real employer media, rich published employer editions, actual moderated contributions and all associated states remain to be rendered and accepted."
+    ]
+  }
+]

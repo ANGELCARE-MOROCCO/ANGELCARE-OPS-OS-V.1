@@ -1,0 +1,122 @@
+{
+  "recordedAt": "2026-10-21T21:57:23.339587+00:00",
+  "files": [
+    {
+      "path": "scripts/jobkix/checkpoint-progress.cjs",
+      "sha256Before": "7469f5bd3a7b4f1e8b397383364eb033b349dbe45b032100bcbc8d9db16f6732",
+      "intendedChange": "Include the executed Hindi public render report in checkpoint summaries.",
+      "requirements": [
+        27,
+        28,
+        31,
+        32,
+        33
+      ],
+      "protectedBehavior": "Evidence and verification summaries only; no runtime, permissions, routes, production handler or configuration change."
+    },
+    {
+      "path": "docs/jobkix/execution-ledger.json",
+      "sha256Before": "18b7d3eae892a1826c340267770afff53f0b76a5f55853580ef71619748384a2",
+      "intendedChange": "Reconcile the latest source and browser evidence without increasing family acceptance.",
+      "requirements": [
+        27,
+        28,
+        31,
+        32,
+        33
+      ],
+      "protectedBehavior": "Evidence and verification summaries only; no runtime, permissions, routes, production handler or configuration change."
+    },
+    {
+      "path": "docs/jobkix/remaining-work.json",
+      "sha256Before": "0e4d246bad190853dfadce3a2fb4125d512eb5e70ecec3ce096064013ed0c743",
+      "intendedChange": "Record the current approximate progress and remaining release blockers.",
+      "requirements": [
+        27,
+        28,
+        31,
+        32,
+        33
+      ],
+      "protectedBehavior": "Evidence and verification summaries only; no runtime, permissions, routes, production handler or configuration change."
+    },
+    {
+      "path": "docs/jobkix/RELEASE_READINESS.md",
+      "sha256Before": "a352d0265a7de4f2d8372fb7083b4cb923f92875cfcc2d0aa19c1ae596d49b5b",
+      "intendedChange": "Replace stale restart-only counts with actual current verification and limitations.",
+      "requirements": [
+        27,
+        28,
+        31,
+        32,
+        33
+      ],
+      "protectedBehavior": "Evidence and verification summaries only; no runtime, permissions, routes, production handler or configuration change."
+    },
+    {
+      "path": "docs/jobkix/VERIFICATION_CHECKPOINT.md",
+      "sha256Before": "3afb8e1853fc561365f877376199844d6ae69fd3d23745e9c2ca6c562e912493",
+      "intendedChange": "Record executed source commands and individually dated browser snapshots.",
+      "requirements": [
+        27,
+        28,
+        31,
+        32,
+        33
+      ],
+      "protectedBehavior": "Evidence and verification summaries only; no runtime, permissions, routes, production handler or configuration change."
+    },
+    {
+      "path": "docs/jobkix/KNOWN_LIMITATIONS.md",
+      "sha256Before": "a7c14b7bb8fb8fad5cd840f947251bef89f6f3198e566ca8b76a8d4c074a8f49",
+      "intendedChange": "Reconcile completed bounded selectors and remaining acceptance blockers.",
+      "requirements": [
+        27,
+        28,
+        31,
+        32,
+        33
+      ],
+      "protectedBehavior": "Evidence and verification summaries only; no runtime, permissions, routes, production handler or configuration change."
+    },
+    {
+      "path": "docs/jobkix/acceptance-matrix.json",
+      "sha256Before": "f8ce5368f30c532be9ad37fcdb5efee5f8910c7f701d5b4229a2450fa2c24717",
+      "intendedChange": "Refresh partial evidence and review counts; no family acceptance inferred.",
+      "requirements": [
+        27,
+        28,
+        31,
+        32,
+        33
+      ],
+      "protectedBehavior": "Evidence and verification summaries only; no runtime, permissions, routes, production handler or configuration change."
+    },
+    {
+      "path": "docs/jobkix/changed-files.json",
+      "sha256Before": "cac9c5f3aecbc9486357392405f48cc74ecb12b6fa5bf6e392b7f36a23c53700",
+      "intendedChange": "Regenerate current scoped source hashes after verification.",
+      "requirements": [
+        27,
+        28,
+        31,
+        32,
+        33
+      ],
+      "protectedBehavior": "Evidence and verification summaries only; no runtime, permissions, routes, production handler or configuration change."
+    },
+    {
+      "path": "docs/jobkix/shared-file-register.json",
+      "sha256Before": "55e6fe34b377ff53bc346a2bb725b2eb29037f29ffbe60828907dd7c510245f3",
+      "intendedChange": "Refresh current shared-file checkpoint statuses while preserving original hashes.",
+      "requirements": [
+        27,
+        28,
+        31,
+        32,
+        33
+      ],
+      "protectedBehavior": "Evidence and verification summaries only; no runtime, permissions, routes, production handler or configuration change."
+    }
+  ]
+}

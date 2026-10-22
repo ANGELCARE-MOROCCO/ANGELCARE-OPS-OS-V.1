@@ -1,0 +1,18 @@
+{
+  "url": "https://unstats.un.org/unsd/methodology/m49/overview/",
+  "retrievedAt": "2026-10-21T10:06:36.492289+00:00",
+  "rawFile": "/private/tmp/jobkix-source-20261020/m49.html",
+  "rawSha256": "b9048114f6e7f2abda83bf03d4263c9d7cd1bd7230e3d0461025ee7839a7a1fb",
+  "rows": 248,
+  "extractedFields": [
+    "ISO-alpha2 Code",
+    "Region Code",
+    "Sub-region Code"
+  ],
+  "purpose": "Statistical discovery grouping of existing native country flag codes only. Not nationality, eligibility, detection or sovereignty authority.",
+  "adaptations": [
+    "Western Asia uses the official subregion rather than inventing a Middle East membership list.",
+    "Native codes absent from this source retain an Other grouping.",
+    "Northern America and Latin America/Caribbean retain M49 definitions."
+  ]
+}

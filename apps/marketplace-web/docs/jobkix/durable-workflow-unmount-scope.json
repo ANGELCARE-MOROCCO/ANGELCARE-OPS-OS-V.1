@@ -1,0 +1,70 @@
+{
+  "screens": [
+    "H07",
+    "H08",
+    "H12",
+    "H14",
+    "C14"
+  ],
+  "blueprintPagesInspected": [
+    15,
+    20,
+    21,
+    22
+  ],
+  "referenceDecision": "Use the existing native private Studio form and durable draft protocol; no supplied private Studio PNG.",
+  "files": [
+    {
+      "path": "angelcare-marketplace/jobkix/client/useDurableDraft.ts",
+      "sha256Before": "d28ea36c1c99f71b8b4b07eaadcc61488dca1523b07a9cebfff8680c09e340d2",
+      "intendedChange": "Stop a detached workflow before issuing another command or refreshing its abandoned route; preserve the server draft and original intent/receipt for exact-key recovery. Exercise actual soft navigation between native draft save and effect submission.",
+      "requirements": [
+        20,
+        22,
+        24,
+        26,
+        27
+      ],
+      "protectedBehavior": "No business command, version/idempotency, actor/permission or storage authority changes. A committed effect remains committed. Saved intent remains private to the original account and scoped native draft."
+    },
+    {
+      "path": "scripts/jobkix/studio-selection.cjs",
+      "sha256Before": "2ce803c5a0b6ee6f2bd56e698049f6793d049bd0d7fe01b822f99fc7474fb030",
+      "intendedChange": "Stop a detached workflow before issuing another command or refreshing its abandoned route; preserve the server draft and original intent/receipt for exact-key recovery. Exercise actual soft navigation between native draft save and effect submission.",
+      "requirements": [
+        20,
+        22,
+        24,
+        26,
+        27
+      ],
+      "protectedBehavior": "No business command, version/idempotency, actor/permission or storage authority changes. A committed effect remains committed. Saved intent remains private to the original account and scoped native draft."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/TalentForms.tsx",
+      "sha256Before": "8b831b37d35eeec40179afe75ecdf770a2bf96346d4617395db4c7cf2964a14e",
+      "intendedChange": "A retained talent intent must identify the same add/remove action and candidate/pool context before resuming. Provide localized onward recovery or explicit discard for a different saved context.",
+      "requirements": [
+        20,
+        22,
+        24,
+        26,
+        27
+      ],
+      "protectedBehavior": "Preserve original intent/key and server authorization/version checks. Never silently rebind an unfinished command to another pool."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/workforce-copy.ts",
+      "sha256Before": "3aec61e50b7ac40b24c4392fba189c123c78444fb1da06018c7bc93806c6a33e",
+      "intendedChange": "A retained talent intent must identify the same add/remove action and candidate/pool context before resuming. Provide localized onward recovery or explicit discard for a different saved context.",
+      "requirements": [
+        20,
+        22,
+        24,
+        26,
+        27
+      ],
+      "protectedBehavior": "Preserve original intent/key and server authorization/version checks. Never silently rebind an unfinished command to another pool."
+    }
+  ]
+}

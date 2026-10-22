@@ -1,0 +1,2104 @@
+{
+  "authorityOrder": [
+    "pasted JOBKIX execution mandate",
+    "pasted governing contract (user confirmed 2026-10-20)",
+    "37-page operational blueprint",
+    "locked P00–P26 sequence",
+    "mapped visual references",
+    "verified source constraints"
+  ],
+  "archive": {
+    "path": "/Users/user/Downloads/drive-download-20261020T110107Z-1-001.zip",
+    "sha256": "86df9687cf2163801cd871cc09bbaf14c68fb32aff8b26b5ce572fa3c498b581",
+    "integrity": "PASS",
+    "safeExtraction": "PASS",
+    "files": 28
+  },
+  "documentsAndImages": [
+    {
+      "archiveEntry": "ARCHITECTURE/4-EXPLORE BY SECTOR /Explorez les secteurs d’emploi.png",
+      "actualPath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/references/P03.png",
+      "filename": "Explorez les secteurs d’emploi.png",
+      "sha256": "f1c116c92c23b84f48c6030853ff23da4ebe497129431679a62e263eb2524258",
+      "bytes": 1964653,
+      "dimensions": [
+        1312,
+        1199
+      ],
+      "id": "P03",
+      "sourceArchive": "/Users/user/Downloads/drive-download-20261020T110107Z-1-001.zip",
+      "pageCount": null,
+      "governs": [
+        "P03"
+      ],
+      "decision": "Illustrative facts, employer names, statistics, testimonials, contact channels and app badges are not production data."
+    },
+    {
+      "archiveEntry": "ARCHITECTURE/24-CONTACT US /Page d’assistance mondiale Jobkix.png",
+      "actualPath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/references/P23.png",
+      "filename": "Page d’assistance mondiale Jobkix.png",
+      "sha256": "d27df1985e05ba9f73d478bac7385d47f566855761011a9ca100fece296f5253",
+      "bytes": 1692529,
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "id": "P23",
+      "sourceArchive": "/Users/user/Downloads/drive-download-20261020T110107Z-1-001.zip",
+      "pageCount": null,
+      "governs": [
+        "P23"
+      ],
+      "decision": "Illustrative facts, employer names, statistics, testimonials, contact channels and app badges are not production data."
+    },
+    {
+      "archiveEntry": "ARCHITECTURE/8-GLOBAL COUNTRIES DISCOVERY/Image ChatGPT 19 oct. 2026, 19_49_16-4.png",
+      "actualPath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/references/P07.png",
+      "filename": "Image ChatGPT 19 oct. 2026, 19_49_16-4.png",
+      "sha256": "cfb4561b9d985c1f9a0fde9bc9b15312fbc9b96ca967abfd419f7ddf7fd11063",
+      "bytes": 1892847,
+      "dimensions": [
+        1086,
+        1448
+      ],
+      "id": "P07",
+      "sourceArchive": "/Users/user/Downloads/drive-download-20261020T110107Z-1-001.zip",
+      "pageCount": null,
+      "governs": [
+        "P07"
+      ],
+      "decision": "Illustrative facts, employer names, statistics, testimonials, contact channels and app badges are not production data."
+    },
+    {
+      "archiveEntry": "ARCHITECTURE/5-SECTOR DETAILED WORLD/Image ChatGPT 19 oct. 2026, 19_49_11-1.png",
+      "actualPath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/references/P04.png",
+      "filename": "Image ChatGPT 19 oct. 2026, 19_49_11-1.png",
+      "sha256": "77ee4d78017f9388f655ec83899f699839d011a3ff87c3921d77e55fd230a6d6",
+      "bytes": 1876852,
+      "dimensions": [
+        1086,
+        1448
+      ],
+      "id": "P04",
+      "sourceArchive": "/Users/user/Downloads/drive-download-20261020T110107Z-1-001.zip",
+      "pageCount": null,
+      "governs": [
+        "P04"
+      ],
+      "decision": "Illustrative facts, employer names, statistics, testimonials, contact channels and app badges are not production data."
+    },
+    {
+      "archiveEntry": "ARCHITECTURE/3-DETAILED JOB OFFER/Page de recrutement Jobkix – Enseignant préscolaire.png",
+      "actualPath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/references/P02.png",
+      "filename": "Page de recrutement Jobkix – Enseignant préscolaire.png",
+      "sha256": "b5f68c986e976f51db96696c48de46b3ca94f3024d44679f02f26740de9a388b",
+      "bytes": 1796094,
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "id": "P02",
+      "sourceArchive": "/Users/user/Downloads/drive-download-20261020T110107Z-1-001.zip",
+      "pageCount": null,
+      "governs": [
+        "P02"
+      ],
+      "decision": "Illustrative facts, employer names, statistics, testimonials, contact channels and app badges are not production data."
+    },
+    {
+      "archiveEntry": "ARCHITECTURE/23-LEARN GROW SUCCEED/Bibliothèque de ressources carrière Jobkix.png",
+      "actualPath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/references/P15-secondary.png",
+      "filename": "Bibliothèque de ressources carrière Jobkix.png",
+      "sha256": "e93a98e3f3abc51ef935538ea3e8d3e0865b3915680d54830e700528716d360d",
+      "bytes": 1999995,
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "id": "P15-secondary",
+      "sourceArchive": "/Users/user/Downloads/drive-download-20261020T110107Z-1-001.zip",
+      "pageCount": null,
+      "governs": [
+        "P15"
+      ],
+      "decision": "Folder 23 is secondary P15, not P22."
+    },
+    {
+      "archiveEntry": "ARCHITECTURE/16-CAREERS RESSOURCES LIBRARY/Portail de ressources carrière Jobkix.png",
+      "actualPath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/references/P15.png",
+      "filename": "Portail de ressources carrière Jobkix.png",
+      "sha256": "ce80ec8d82d0e644ebd818c3d93ca10e613f94048e0a66d5a5b2d05e54f61901",
+      "bytes": 1954905,
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "id": "P15",
+      "sourceArchive": "/Users/user/Downloads/drive-download-20261020T110107Z-1-001.zip",
+      "pageCount": null,
+      "governs": [
+        "P15"
+      ],
+      "decision": "Illustrative facts, employer names, statistics, testimonials, contact channels and app badges are not production data."
+    },
+    {
+      "archiveEntry": "ARCHITECTURE/14-SALARIES AND COMPENSATIONS/Image ChatGPT 19 oct. 2026, 19_57_02-5.png",
+      "actualPath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/references/P13.png",
+      "filename": "Image ChatGPT 19 oct. 2026, 19_57_02-5.png",
+      "sha256": "f6e413c22bae1adb3dc19ecd9f891446005c92cf4eed179c25cdd766219c7ffd",
+      "bytes": 1728979,
+      "dimensions": [
+        1122,
+        1402
+      ],
+      "id": "P13",
+      "sourceArchive": "/Users/user/Downloads/drive-download-20261020T110107Z-1-001.zip",
+      "pageCount": null,
+      "governs": [
+        "P13"
+      ],
+      "decision": "Illustrative facts, employer names, statistics, testimonials, contact channels and app badges are not production data."
+    },
+    {
+      "archiveEntry": "ARCHITECTURE/7-PROFESSIONAL DETAIL WORLD/Image ChatGPT 19 oct. 2026, 19_49_15-3.png",
+      "actualPath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/references/P06.png",
+      "filename": "Image ChatGPT 19 oct. 2026, 19_49_15-3.png",
+      "sha256": "84d52d35913d2717ead77742a89d49fdf8660382c69587a2c46ab55733bd08a8",
+      "bytes": 1951723,
+      "dimensions": [
+        1086,
+        1448
+      ],
+      "id": "P06",
+      "sourceArchive": "/Users/user/Downloads/drive-download-20261020T110107Z-1-001.zip",
+      "pageCount": null,
+      "governs": [
+        "P06"
+      ],
+      "decision": "Illustrative facts, employer names, statistics, testimonials, contact channels and app badges are not production data."
+    },
+    {
+      "archiveEntry": "ARCHITECTURE/26-REPORT AN ISSUE/Signaler un problème sur Jobkix.png",
+      "actualPath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/references/P25.png",
+      "filename": "Signaler un problème sur Jobkix.png",
+      "sha256": "49600f1db6e8b820574fc095c86e10e17796685dd55678b88a010b000aab4107",
+      "bytes": 1735574,
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "id": "P25",
+      "sourceArchive": "/Users/user/Downloads/drive-download-20261020T110107Z-1-001.zip",
+      "pageCount": null,
+      "governs": [
+        "P25"
+      ],
+      "decision": "Illustrative facts, employer names, statistics, testimonials, contact channels and app badges are not production data."
+    },
+    {
+      "archiveEntry": "ARCHITECTURE/21-TRUST AND SECURITY/Centre Confiance et Sécurité JOBKIX.png",
+      "actualPath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/references/P20.png",
+      "filename": "Centre Confiance et Sécurité JOBKIX.png",
+      "sha256": "9c381feec7458ab145345b811303a69a39b6c3bae72fc102bf568d1c7d6a02ea",
+      "bytes": 1977092,
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "id": "P20",
+      "sourceArchive": "/Users/user/Downloads/drive-download-20261020T110107Z-1-001.zip",
+      "pageCount": null,
+      "governs": [
+        "P20"
+      ],
+      "decision": "Illustrative facts, employer names, statistics, testimonials, contact channels and app badges are not production data."
+    },
+    {
+      "archiveEntry": "ARCHITECTURE/11-CAREERS ABROAD PRO/Image ChatGPT 19 oct. 2026, 19_56_58-2.png",
+      "actualPath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/references/P10.png",
+      "filename": "Image ChatGPT 19 oct. 2026, 19_56_58-2.png",
+      "sha256": "f7577174fbd36810c8eaa73f1865d026fc43efd60795b0afc6a0990efe0fb992",
+      "bytes": 2116369,
+      "dimensions": [
+        1122,
+        1402
+      ],
+      "id": "P10",
+      "sourceArchive": "/Users/user/Downloads/drive-download-20261020T110107Z-1-001.zip",
+      "pageCount": null,
+      "governs": [
+        "P10"
+      ],
+      "decision": "Illustrative facts, employer names, statistics, testimonials, contact channels and app badges are not production data."
+    },
+    {
+      "archiveEntry": "ARCHITECTURE/2-GLOBAL SEARCH PRO MAX/Portail d’emploi mondial JOBKIX pour carrières auprès des enfants.png",
+      "actualPath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/references/P01.png",
+      "filename": "Portail d’emploi mondial JOBKIX pour carrières auprès des enfants.png",
+      "sha256": "f8ecf994b3e5e359c0948ca2e762fee0b5533f44be51660aac889c5306bf9015",
+      "bytes": 1947775,
+      "dimensions": [
+        941,
+        1672
+      ],
+      "id": "P01",
+      "sourceArchive": "/Users/user/Downloads/drive-download-20261020T110107Z-1-001.zip",
+      "pageCount": null,
+      "governs": [
+        "P01"
+      ],
+      "decision": "Illustrative facts, employer names, statistics, testimonials, contact channels and app badges are not production data."
+    },
+    {
+      "archiveEntry": "ARCHITECTURE/13-EMPLOYER PUBLIC PROFILE PRO/Image ChatGPT 19 oct. 2026, 19_57_01-4.png",
+      "actualPath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/references/P12.png",
+      "filename": "Image ChatGPT 19 oct. 2026, 19_57_01-4.png",
+      "sha256": "f4c38e66669e3515cbf05b265d26a90ee6b883d8a1bd69e94af9bdffe5cdf518",
+      "bytes": 2075392,
+      "dimensions": [
+        1122,
+        1402
+      ],
+      "id": "P12",
+      "sourceArchive": "/Users/user/Downloads/drive-download-20261020T110107Z-1-001.zip",
+      "pageCount": null,
+      "governs": [
+        "P12"
+      ],
+      "decision": "Illustrative facts, employer names, statistics, testimonials, contact channels and app badges are not production data."
+    },
+    {
+      "archiveEntry": "ARCHITECTURE/18-FOR JOBSEEKER/Plateforme JOBKIX pour carrières épanouissantes.png",
+      "actualPath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/references/P17.png",
+      "filename": "Plateforme JOBKIX pour carrières épanouissantes.png",
+      "sha256": "5ecc89962ce4b715c7b31f76682bd99a82ef47612aa44107323f14e04a491b9c",
+      "bytes": 1935374,
+      "dimensions": [
+        971,
+        1619
+      ],
+      "id": "P17",
+      "sourceArchive": "/Users/user/Downloads/drive-download-20261020T110107Z-1-001.zip",
+      "pageCount": null,
+      "governs": [
+        "P17"
+      ],
+      "decision": "Illustrative facts, employer names, statistics, testimonials, contact channels and app badges are not production data."
+    },
+    {
+      "archiveEntry": "ARCHITECTURE/20-HOW JOBKIX WORKS/Comment JOBKIX fonctionne _ carrières mondiales.png",
+      "actualPath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/references/P19.png",
+      "filename": "Comment JOBKIX fonctionne _ carrières mondiales.png",
+      "sha256": "d0438d678fdd742bd47c40b3da73359111c2c54767c72405ebc1efa31c71cb08",
+      "bytes": 2050478,
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "id": "P19",
+      "sourceArchive": "/Users/user/Downloads/drive-download-20261020T110107Z-1-001.zip",
+      "pageCount": null,
+      "governs": [
+        "P19"
+      ],
+      "decision": "Illustrative facts, employer names, statistics, testimonials, contact channels and app badges are not production data."
+    },
+    {
+      "archiveEntry": "ARCHITECTURE/12-EMPLOYER DIRECTORY/Image ChatGPT 19 oct. 2026, 19_57_00-3.png",
+      "actualPath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/references/P11.png",
+      "filename": "Image ChatGPT 19 oct. 2026, 19_57_00-3.png",
+      "sha256": "aad874ce3e46db8929dede9ce9aad9234d5711b2a839256b68be7c3279356117",
+      "bytes": 2015649,
+      "dimensions": [
+        1122,
+        1402
+      ],
+      "id": "P11",
+      "sourceArchive": "/Users/user/Downloads/drive-download-20261020T110107Z-1-001.zip",
+      "pageCount": null,
+      "governs": [
+        "P11"
+      ],
+      "decision": "Illustrative facts, employer names, statistics, testimonials, contact channels and app badges are not production data."
+    },
+    {
+      "archiveEntry": "ARCHITECTURE/1-HOMEPAGE/Jobkix _ carrières sans frontières (1).png",
+      "actualPath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/references/P00.png",
+      "filename": "Jobkix _ carrières sans frontières (1).png",
+      "sha256": "8d30299e3d819f1b629b4b00c31602ae9dd0aa7f0a271986fc7047690b758278",
+      "bytes": 2118585,
+      "dimensions": [
+        822,
+        1913
+      ],
+      "id": "P00",
+      "sourceArchive": "/Users/user/Downloads/drive-download-20261020T110107Z-1-001.zip",
+      "pageCount": null,
+      "governs": [
+        "P00"
+      ],
+      "decision": "Illustrative facts, employer names, statistics, testimonials, contact channels and app badges are not production data."
+    },
+    {
+      "archiveEntry": "ARCHITECTURE/6-ALL PROFESSIONALS/Image ChatGPT 19 oct. 2026, 19_49_13-2.png",
+      "actualPath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/references/P05.png",
+      "filename": "Image ChatGPT 19 oct. 2026, 19_49_13-2.png",
+      "sha256": "8df5751b8586c2114a489ddc73c6f03d5e0d453e3af2b4ac011245435f705dde",
+      "bytes": 2067002,
+      "dimensions": [
+        1086,
+        1448
+      ],
+      "id": "P05",
+      "sourceArchive": "/Users/user/Downloads/drive-download-20261020T110107Z-1-001.zip",
+      "pageCount": null,
+      "governs": [
+        "P05"
+      ],
+      "decision": "Illustrative facts, employer names, statistics, testimonials, contact channels and app badges are not production data."
+    },
+    {
+      "archiveEntry": "ARCHITECTURE/19-FOR EMPLOYERS/Solutions de recrutement JOBKIX 恒一.png",
+      "actualPath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/references/P18.png",
+      "filename": "Solutions de recrutement JOBKIX 恒一.png",
+      "sha256": "1c56460d14660909003a7192160c0d844bbe014b012647447fac650e81dfb0b4",
+      "bytes": 2087617,
+      "dimensions": [
+        971,
+        1619
+      ],
+      "id": "P18",
+      "sourceArchive": "/Users/user/Downloads/drive-download-20261020T110107Z-1-001.zip",
+      "pageCount": null,
+      "governs": [
+        "P18"
+      ],
+      "decision": "Illustrative facts, employer names, statistics, testimonials, contact channels and app badges are not production data."
+    },
+    {
+      "archiveEntry": "ARCHITECTURE/27-legal/Centre juridique et politiques JOBKIX.png",
+      "actualPath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/references/P26.png",
+      "filename": "Centre juridique et politiques JOBKIX.png",
+      "sha256": "46575fd7180eaa7c2a16d547df74dbd9cb47284995ad825ea70ce43e6aec48b0",
+      "bytes": 1843802,
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "id": "P26",
+      "sourceArchive": "/Users/user/Downloads/drive-download-20261020T110107Z-1-001.zip",
+      "pageCount": null,
+      "governs": [
+        "P26"
+      ],
+      "decision": "Illustrative facts, employer names, statistics, testimonials, contact channels and app badges are not production data."
+    },
+    {
+      "archiveEntry": "ARCHITECTURE/9-COUNTRY CAREERS WORLD /Image ChatGPT 19 oct. 2026, 19_49_19-5.png",
+      "actualPath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/references/P08.png",
+      "filename": "Image ChatGPT 19 oct. 2026, 19_49_19-5.png",
+      "sha256": "e370aaf82919dae86a910cb1b11b946e3882a0d97467a4113d4d7b46925bd939",
+      "bytes": 2034428,
+      "dimensions": [
+        1086,
+        1448
+      ],
+      "id": "P08",
+      "sourceArchive": "/Users/user/Downloads/drive-download-20261020T110107Z-1-001.zip",
+      "pageCount": null,
+      "governs": [
+        "P08"
+      ],
+      "decision": "Illustrative facts, employer names, statistics, testimonials, contact channels and app badges are not production data."
+    },
+    {
+      "archiveEntry": "ARCHITECTURE/22-HELP SUPPORT/Centre d’aide et de support Jobkix.png",
+      "actualPath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/references/P21.png",
+      "filename": "Centre d’aide et de support Jobkix.png",
+      "sha256": "b12e41d45fda33c9c4990078fed7cd40b7b19738c4518c2485d3e85edca5edbe",
+      "bytes": 1985364,
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "id": "P21",
+      "sourceArchive": "/Users/user/Downloads/drive-download-20261020T110107Z-1-001.zip",
+      "pageCount": null,
+      "governs": [
+        "P21"
+      ],
+      "decision": "Illustrative facts, employer names, statistics, testimonials, contact channels and app badges are not production data."
+    },
+    {
+      "archiveEntry": "ARCHITECTURE/17-CAREER GUIDE DETAILS/Guide pour devenir enseignant en maternelle (1).png",
+      "actualPath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/references/P16.png",
+      "filename": "Guide pour devenir enseignant en maternelle (1).png",
+      "sha256": "bff57d060eabea282ba8e368402a64f7d9f65ab40791f91284f5b55892f301bd",
+      "bytes": 1962232,
+      "dimensions": [
+        971,
+        1619
+      ],
+      "id": "P16",
+      "sourceArchive": "/Users/user/Downloads/drive-download-20261020T110107Z-1-001.zip",
+      "pageCount": null,
+      "governs": [
+        "P16"
+      ],
+      "decision": "Illustrative facts, employer names, statistics, testimonials, contact channels and app badges are not production data."
+    },
+    {
+      "archiveEntry": "ARCHITECTURE/25-ABOUT US/Page À propos de JOBKIX _ un avenir plus lumineux.png",
+      "actualPath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/references/P24.png",
+      "filename": "Page À propos de JOBKIX _ un avenir plus lumineux.png",
+      "sha256": "52bb221487711bc35a176b771cc5018a8858fd7c1f63afe5300b32d5b2fd9b82",
+      "bytes": 1980874,
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "id": "P24",
+      "sourceArchive": "/Users/user/Downloads/drive-download-20261020T110107Z-1-001.zip",
+      "pageCount": null,
+      "governs": [
+        "P24"
+      ],
+      "decision": "Illustrative facts, employer names, statistics, testimonials, contact channels and app badges are not production data."
+    },
+    {
+      "archiveEntry": "CORE ATOMIC BLUEPRINT/ANGELCARE_CAREERS_2027.pdf",
+      "actualPath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/references/ANGELCARE_CAREERS_2027.pdf",
+      "filename": "ANGELCARE_CAREERS_2027.pdf",
+      "sha256": "ac4d6e8a20da6dfb348b7f80aac332867876ae89920bc071c2b70487776b46d9",
+      "bytes": 196695,
+      "dimensions": null,
+      "id": "blueprint",
+      "sourceArchive": "/Users/user/Downloads/drive-download-20261020T110107Z-1-001.zip",
+      "pageCount": 37,
+      "governs": [
+        "P00–P26",
+        "A01–A08",
+        "C01–C14",
+        "H01–H16",
+        "D01–D08"
+      ],
+      "decision": "Pasted execution contract overrides proposed routes, three-language planning and older source-stage scope."
+    },
+    {
+      "archiveEntry": "ARCHITECTURE/10-CAREERS PER REGION IN A COUNTRY/Image ChatGPT 19 oct. 2026, 19_56_56-1.png",
+      "actualPath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/references/P09.png",
+      "filename": "Image ChatGPT 19 oct. 2026, 19_56_56-1.png",
+      "sha256": "a4467cd4e4e3f74d4ffaea106340f25c2d7c146241eed3154658464599d2d6a8",
+      "bytes": 2017260,
+      "dimensions": [
+        1122,
+        1402
+      ],
+      "id": "P09",
+      "sourceArchive": "/Users/user/Downloads/drive-download-20261020T110107Z-1-001.zip",
+      "pageCount": null,
+      "governs": [
+        "P09"
+      ],
+      "decision": "Illustrative facts, employer names, statistics, testimonials, contact channels and app badges are not production data."
+    },
+    {
+      "archiveEntry": "ARCHITECTURE/15-EMPLYER WORKSPACE REVIEW/Avis sur les lieux de travail Jobkix-3.png",
+      "actualPath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/references/P14.png",
+      "filename": "Avis sur les lieux de travail Jobkix-3.png",
+      "sha256": "d91f609fe817816300d6ad860e95b00301b52d29f501cf2f16c0603a27c27356",
+      "bytes": 1912287,
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "id": "P14",
+      "sourceArchive": "/Users/user/Downloads/drive-download-20261020T110107Z-1-001.zip",
+      "pageCount": null,
+      "governs": [
+        "P14"
+      ],
+      "decision": "Illustrative facts, employer names, statistics, testimonials, contact channels and app badges are not production data."
+    },
+    {
+      "id": "engineering-blueprint-md",
+      "actualPath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/references/ANGELCARE_CAREERS_2027_ENGINEERING_BLUEPRINT_R1.md",
+      "filename": "ANGELCARE_CAREERS_2027_ENGINEERING_BLUEPRINT_R1.md",
+      "originalPath": "/Users/user/Downloads/ANGELCARE_CAREERS_2027_ENGINEERING_BLUEPRINT_R1.md",
+      "sha256": "ba41bca36bb36bb26d75ebdd36600ed75be34c460a1b211dbad88b125a8aae2c",
+      "pageCount": null,
+      "dimensions": null,
+      "governs": [
+        "all recruitment families"
+      ],
+      "decision": "Supporting guidance; current pasted mandate governs conflicts."
+    },
+    {
+      "id": "BRAND-COLOR",
+      "actualPath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/references/brand/jobkix-original-color.png",
+      "preservedPath": "docs/jobkix/references/brand/jobkix-original-color.png",
+      "filename": "logo jobkix.png",
+      "sourcePath": "/Users/user/Downloads/logo jobkix.png",
+      "sha256": "0240d84ff2a4a3e5a94f3fd697fdf37df864edeb2c237441f44aea2bb04334bd",
+      "bytes": 1099311,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "pageCount": null,
+      "governs": [
+        "all JOBKIX public/auth/studio chrome",
+        "REQ-11 Marketplace brand shortcut"
+      ],
+      "screenFamilyMapping": "P00-P26/A01-A08/C01-C14/H01-H16; existing administration shell remains native",
+      "decision": "User-designated original retained unchanged. Deterministic transparency extraction explicitly approved; no redraw. Derivatives and source provenance in brand-register.json."
+    },
+    {
+      "id": "BRAND-WHITE",
+      "actualPath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/references/brand/jobkix-original-white.png",
+      "preservedPath": "docs/jobkix/references/brand/jobkix-original-white.png",
+      "filename": "logo jobkix reverted white.png",
+      "sourcePath": "/Users/user/Downloads/logo jobkix reverted white.png",
+      "sha256": "95ca2f9849e53538f035a4bf3be6ba8af3a83b145d07628b5d647bcae4a05152",
+      "bytes": 1238448,
+      "dimensions": [
+        1536,
+        1024
+      ],
+      "pageCount": null,
+      "governs": [
+        "all JOBKIX public/auth/studio chrome",
+        "dark JOBKIX footer"
+      ],
+      "screenFamilyMapping": "P00-P26/A01-A08/C01-C14/H01-H16; existing administration shell remains native",
+      "decision": "User-designated original retained unchanged. Deterministic transparency extraction explicitly approved; no redraw. Derivatives and source provenance in brand-register.json."
+    },
+    {
+      "id": "BRAND-FAVICON",
+      "actualPath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/docs/jobkix/references/brand/jobkix-original-favicon.png",
+      "preservedPath": "docs/jobkix/references/brand/jobkix-original-favicon.png",
+      "filename": "favicon browser.png",
+      "sourcePath": "/Users/user/Downloads/favicon browser.png",
+      "sha256": "dba7efc5f9fa913cab23ac85f25d9924e1501d2d07772499fc22ff44c367415d",
+      "bytes": 1135716,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "pageCount": null,
+      "governs": [
+        "all JOBKIX public/auth/studio chrome",
+        "JOBKIX-only icon metadata"
+      ],
+      "screenFamilyMapping": "P00-P26/A01-A08/C01-C14/H01-H16; existing administration shell remains native",
+      "decision": "User-designated original retained unchanged. Deterministic transparency extraction explicitly approved; no redraw. Derivatives and source provenance in brand-register.json."
+    }
+  ],
+  "fronts": [
+    {
+      "id": "P00",
+      "name": "JOBKIX Homepage",
+      "route": "/jobkix/{locale}/",
+      "primaryImage": "P00",
+      "secondaryImages": [],
+      "blueprintPages": [
+        6,
+        8,
+        25,
+        34
+      ],
+      "buildContractSections": {
+        "authority": "user-pasted-execution-contract",
+        "sections": [
+          3,
+          4,
+          12,
+          15,
+          16,
+          17,
+          26,
+          28,
+          29
+        ]
+      },
+      "requiredSectionOrder": [
+        "hero",
+        "country-first-command",
+        "settings-rail",
+        "value-and-trust",
+        "current-opportunities",
+        "international-discovery",
+        "candidate-and-hirer-journeys",
+        "resources",
+        "product-access",
+        "footer"
+      ],
+      "dependencies": [
+        "canonical query-time recruitment eligibility",
+        "published JOBKIX editions",
+        "seven-language copy",
+        "authorized media",
+        "scoped actions and error recovery"
+      ],
+      "adaptations": [
+        "Pasted /jobkix/{locale} route authority; factual records replace visual sample data."
+      ],
+      "referenceInspection": "FULL_PAGE_INSPECTED",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [],
+      "implementation": "PARTIAL",
+      "sourceEvidence": "docs/jobkix/implementation-units.json"
+    },
+    {
+      "id": "P01",
+      "name": "Global Job Search Pro Max",
+      "route": "/jobkix/{locale}/jobs",
+      "primaryImage": "P01",
+      "secondaryImages": [],
+      "blueprintPages": [
+        8,
+        16,
+        17,
+        26,
+        34
+      ],
+      "buildContractSections": {
+        "authority": "user-pasted-execution-contract",
+        "sections": [
+          3,
+          4,
+          12,
+          15,
+          16,
+          17,
+          26,
+          28,
+          29
+        ]
+      },
+      "requiredSectionOrder": [
+        "hero",
+        "country-search-command",
+        "filters-and-selected-chips",
+        "sort-and-results",
+        "pagination",
+        "related-discovery",
+        "employers",
+        "trust",
+        "footer"
+      ],
+      "dependencies": [
+        "canonical query-time recruitment eligibility",
+        "published JOBKIX editions",
+        "seven-language copy",
+        "authorized media",
+        "scoped actions and error recovery"
+      ],
+      "adaptations": [
+        "Pasted /jobkix/{locale} route authority; factual records replace visual sample data."
+      ],
+      "referenceInspection": "FULL_PAGE_INSPECTED",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [],
+      "implementation": "PARTIAL",
+      "sourceEvidence": "docs/jobkix/implementation-units.json"
+    },
+    {
+      "id": "P02",
+      "name": "Job Detail Pro Max",
+      "route": "/jobkix/{locale}/jobs/:id",
+      "primaryImage": "P02",
+      "secondaryImages": [],
+      "blueprintPages": [
+        9,
+        12,
+        13,
+        20,
+        26
+      ],
+      "buildContractSections": {
+        "authority": "user-pasted-execution-contract",
+        "sections": [
+          3,
+          4,
+          15,
+          16,
+          17,
+          21,
+          26,
+          28,
+          29
+        ]
+      },
+      "requiredSectionOrder": [
+        "breadcrumb-and-hero",
+        "identity-and-employment-summary",
+        "apply-and-account-continuity",
+        "overview",
+        "duties",
+        "requirements",
+        "benefits",
+        "international-declarations",
+        "employer",
+        "related-jobs",
+        "footer"
+      ],
+      "dependencies": [
+        "canonical query-time recruitment eligibility",
+        "published JOBKIX editions",
+        "seven-language copy",
+        "authorized media",
+        "scoped actions and error recovery"
+      ],
+      "adaptations": [
+        "Pasted /jobkix/{locale} route authority; factual records replace visual sample data."
+      ],
+      "referenceInspection": "FULL_PAGE_INSPECTED",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [],
+      "implementation": "PARTIAL",
+      "sourceEvidence": "docs/jobkix/implementation-units.json"
+    },
+    {
+      "id": "P03",
+      "name": "All Employment Sectors",
+      "route": "/jobkix/{locale}/sectors",
+      "primaryImage": "P03",
+      "secondaryImages": [],
+      "blueprintPages": [
+        6,
+        16,
+        17
+      ],
+      "buildContractSections": {
+        "authority": "user-pasted-execution-contract",
+        "sections": [
+          3,
+          4,
+          15,
+          16,
+          17,
+          21,
+          26,
+          28,
+          29
+        ]
+      },
+      "requiredSectionOrder": [
+        "brand-navigation",
+        "illustrated-editorial-opening",
+        "country-keyword-reach-discovery",
+        "sixteen-canonical-setting-cards",
+        "grid-list-controls",
+        "candidate-guidance-and-hirer-acquisition",
+        "full-footer"
+      ],
+      "dependencies": [
+        "canonical query-time recruitment eligibility",
+        "published JOBKIX editions",
+        "seven-language copy",
+        "authorized media",
+        "scoped actions and error recovery"
+      ],
+      "adaptations": [
+        "Pasted /jobkix/{locale} route authority; factual records replace visual sample data.",
+        "Preserve blueprint page 17 canonical sixteen settings; broader sample-image groupings do not replace them.",
+        "Published taxonomy and actual eligible vacancy counts replace illustrative profession popularity and sample employers. Reviewed editorial is required for professional guidance; no unreviewed qualification or licensing standards are manufactured."
+      ],
+      "referenceInspection": "FULL_SOURCE_IMAGE_AND_RELEVANT_BLUEPRINT_INSPECTED",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "angelcare-marketplace/jobkix/pages/Directories.tsx",
+        "angelcare-marketplace/jobkix/pages/ProfessionalWorld.tsx",
+        "angelcare-marketplace/jobkix/migrations/008_public_discovery.sql"
+      ],
+      "implementation": "PARTIAL",
+      "sourceEvidence": "docs/jobkix/implementation-units.json"
+    },
+    {
+      "id": "P04",
+      "name": "Sector Detail World",
+      "route": "/jobkix/{locale}/sectors/:slug",
+      "primaryImage": "P04",
+      "secondaryImages": [],
+      "blueprintPages": [
+        6,
+        16,
+        17
+      ],
+      "buildContractSections": {
+        "authority": "user-pasted-execution-contract",
+        "sections": [
+          3,
+          4,
+          15,
+          16,
+          17,
+          21,
+          26,
+          28,
+          29
+        ]
+      },
+      "requiredSectionOrder": [
+        "brand-navigation",
+        "setting-editorial-opening",
+        "country-and-role-search",
+        "related-professions",
+        "current-opportunities",
+        "published-work-environment-and-skill-context",
+        "declared-contracts-and-requirements",
+        "two-sided-entry",
+        "related-reviewed-resources",
+        "full-footer"
+      ],
+      "dependencies": [
+        "canonical query-time recruitment eligibility",
+        "published JOBKIX editions",
+        "seven-language copy",
+        "authorized media",
+        "scoped actions and error recovery"
+      ],
+      "adaptations": [
+        "Pasted /jobkix/{locale} route authority; factual records replace visual sample data.",
+        "Published taxonomy and actual eligible vacancy counts replace illustrative profession popularity and sample employers. Reviewed editorial is required for professional guidance; no unreviewed qualification or licensing standards are manufactured."
+      ],
+      "referenceInspection": "FULL_SOURCE_IMAGE_AND_RELEVANT_BLUEPRINT_INSPECTED",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "angelcare-marketplace/jobkix/pages/Directories.tsx",
+        "angelcare-marketplace/jobkix/pages/ProfessionalWorld.tsx",
+        "angelcare-marketplace/jobkix/migrations/008_public_discovery.sql"
+      ],
+      "implementation": "PARTIAL",
+      "sourceEvidence": "docs/jobkix/implementation-units.json"
+    },
+    {
+      "id": "P05",
+      "name": "All Professions",
+      "route": "/jobkix/{locale}/professions",
+      "primaryImage": "P05",
+      "secondaryImages": [],
+      "blueprintPages": [
+        6,
+        16,
+        17
+      ],
+      "buildContractSections": {
+        "authority": "user-pasted-execution-contract",
+        "sections": [
+          3,
+          4,
+          15,
+          16,
+          17,
+          21,
+          26,
+          28,
+          29
+        ]
+      },
+      "requiredSectionOrder": [
+        "brand-navigation",
+        "profession-editorial-opening",
+        "country-first-discovery",
+        "employment-setting-navigation",
+        "profession-directory-search",
+        "localized-alphabet-and-grid-list-directory",
+        "candidate-and-hirer-guidance",
+        "full-footer"
+      ],
+      "dependencies": [
+        "canonical query-time recruitment eligibility",
+        "published JOBKIX editions",
+        "seven-language copy",
+        "authorized media",
+        "scoped actions and error recovery"
+      ],
+      "adaptations": [
+        "Pasted /jobkix/{locale} route authority; factual records replace visual sample data.",
+        "Published taxonomy and actual eligible vacancy counts replace illustrative profession popularity and sample employers. Reviewed editorial is required for professional guidance; no unreviewed qualification or licensing standards are manufactured."
+      ],
+      "referenceInspection": "FULL_SOURCE_IMAGE_AND_RELEVANT_BLUEPRINT_INSPECTED",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "angelcare-marketplace/jobkix/pages/Directories.tsx",
+        "angelcare-marketplace/jobkix/pages/ProfessionalWorld.tsx",
+        "angelcare-marketplace/jobkix/migrations/008_public_discovery.sql"
+      ],
+      "implementation": "PARTIAL",
+      "sourceEvidence": "docs/jobkix/implementation-units.json"
+    },
+    {
+      "id": "P06",
+      "name": "Profession Detail World",
+      "route": "/jobkix/{locale}/professions/:slug",
+      "primaryImage": "P06",
+      "secondaryImages": [],
+      "blueprintPages": [
+        6,
+        16,
+        17
+      ],
+      "buildContractSections": {
+        "authority": "user-pasted-execution-contract",
+        "sections": [
+          3,
+          4,
+          15,
+          16,
+          17,
+          21,
+          26,
+          28,
+          29
+        ]
+      },
+      "requiredSectionOrder": [
+        "brand-navigation",
+        "profession-editorial-opening-and-primary-actions",
+        "in-page-navigation",
+        "reviewed-overview-responsibilities-skills-qualifications",
+        "work-environments",
+        "career-context-and-declared-requirements",
+        "current-opportunities",
+        "related-reviewed-resources",
+        "two-sided-entry",
+        "full-footer"
+      ],
+      "dependencies": [
+        "canonical query-time recruitment eligibility",
+        "published JOBKIX editions",
+        "seven-language copy",
+        "authorized media",
+        "scoped actions and error recovery"
+      ],
+      "adaptations": [
+        "Pasted /jobkix/{locale} route authority; factual records replace visual sample data.",
+        "Published taxonomy and actual eligible vacancy counts replace illustrative profession popularity and sample employers. Reviewed editorial is required for professional guidance; no unreviewed qualification or licensing standards are manufactured."
+      ],
+      "referenceInspection": "FULL_SOURCE_IMAGE_AND_RELEVANT_BLUEPRINT_INSPECTED",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "angelcare-marketplace/jobkix/pages/Directories.tsx",
+        "angelcare-marketplace/jobkix/pages/ProfessionalWorld.tsx",
+        "angelcare-marketplace/jobkix/migrations/008_public_discovery.sql"
+      ],
+      "implementation": "PARTIAL",
+      "sourceEvidence": "docs/jobkix/implementation-units.json"
+    },
+    {
+      "id": "P07",
+      "name": "Global Countries Directory",
+      "route": "/jobkix/{locale}/countries",
+      "primaryImage": "P07",
+      "secondaryImages": [],
+      "blueprintPages": [
+        6,
+        16,
+        17
+      ],
+      "buildContractSections": {
+        "authority": "user-pasted-execution-contract",
+        "sections": [
+          3,
+          4,
+          12,
+          15,
+          16,
+          17,
+          26,
+          28,
+          29
+        ]
+      },
+      "requiredSectionOrder": [
+        "geographic-hero-with-country-and-city-search",
+        "regional-navigation",
+        "country-discovery-with-live-counts",
+        "countries-by-region",
+        "origin-and-destination-journeys",
+        "published-geographic-guides",
+        "owned-footer"
+      ],
+      "dependencies": [
+        "canonical query-time recruitment eligibility",
+        "published JOBKIX editions",
+        "seven-language copy",
+        "authorized media",
+        "scoped actions and error recovery"
+      ],
+      "adaptations": [
+        "Pasted /jobkix/{locale} route authority; factual records replace visual sample data.",
+        "The 16 approved employment settings replace unrelated illustrative general-industry sectors.",
+        "No fabricated counts, maps/coordinates, reviews, compensation statistics, company logos or immigration guarantees. Real approved media and reviewed editions remain authoritative."
+      ],
+      "referenceInspection": "FULL_PAGE_INSPECTED",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [],
+      "implementation": "PARTIAL",
+      "sourceEvidence": "docs/jobkix/implementation-units.json"
+    },
+    {
+      "id": "P08",
+      "name": "Country Careers World",
+      "route": "/jobkix/{locale}/countries/:country",
+      "primaryImage": "P08",
+      "secondaryImages": [],
+      "blueprintPages": [
+        6,
+        16,
+        17
+      ],
+      "buildContractSections": {
+        "authority": "user-pasted-execution-contract",
+        "sections": [
+          3,
+          4,
+          12,
+          15,
+          16,
+          17,
+          26,
+          28,
+          29
+        ]
+      },
+      "requiredSectionOrder": [
+        "country-identity-and-reviewed-opening-media",
+        "native-country-search-command",
+        "factual-country-context",
+        "canonical-city-discovery",
+        "sixteen-professional-settings",
+        "reviewed-local-and-international-guidance",
+        "eligible-jobs-and-related-professions",
+        "two-sided-actions",
+        "owned-footer"
+      ],
+      "dependencies": [
+        "canonical query-time recruitment eligibility",
+        "published JOBKIX editions",
+        "seven-language copy",
+        "authorized media",
+        "scoped actions and error recovery"
+      ],
+      "adaptations": [
+        "Pasted /jobkix/{locale} route authority; factual records replace visual sample data.",
+        "The 16 approved employment settings replace unrelated illustrative general-industry sectors.",
+        "No fabricated counts, maps/coordinates, reviews, compensation statistics, company logos or immigration guarantees. Real approved media and reviewed editions remain authoritative."
+      ],
+      "referenceInspection": "FULL_PAGE_INSPECTED",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [],
+      "implementation": "PARTIAL",
+      "sourceEvidence": "docs/jobkix/implementation-units.json"
+    },
+    {
+      "id": "P09",
+      "name": "City & Region Careers World",
+      "route": "/jobkix/{locale}/countries/:country/:city",
+      "primaryImage": "P09",
+      "secondaryImages": [],
+      "blueprintPages": [
+        6,
+        16,
+        17
+      ],
+      "buildContractSections": {
+        "authority": "user-pasted-execution-contract",
+        "sections": [
+          3,
+          4,
+          12,
+          15,
+          16,
+          17,
+          26,
+          28,
+          29
+        ]
+      },
+      "requiredSectionOrder": [
+        "city-and-country-identity",
+        "native-local-search-command",
+        "city-section-navigation",
+        "canonical-city-and-region-navigation",
+        "eligible-local-jobs-accessible-list",
+        "local-employment-settings",
+        "published-employers",
+        "reviewed-practical-local-content",
+        "resources-and-two-sided-actions",
+        "owned-footer"
+      ],
+      "dependencies": [
+        "canonical query-time recruitment eligibility",
+        "published JOBKIX editions",
+        "seven-language copy",
+        "authorized media",
+        "scoped actions and error recovery"
+      ],
+      "adaptations": [
+        "Pasted /jobkix/{locale} route authority; factual records replace visual sample data.",
+        "The 16 approved employment settings replace unrelated illustrative general-industry sectors.",
+        "No fabricated counts, maps/coordinates, reviews, compensation statistics, company logos or immigration guarantees. Real approved media and reviewed editions remain authoritative."
+      ],
+      "referenceInspection": "FULL_PAGE_INSPECTED",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [],
+      "implementation": "PARTIAL",
+      "sourceEvidence": "docs/jobkix/implementation-units.json"
+    },
+    {
+      "id": "P10",
+      "name": "Careers Abroad Pro",
+      "route": "/jobkix/{locale}/abroad",
+      "primaryImage": "P10",
+      "secondaryImages": [],
+      "blueprintPages": [
+        6,
+        16,
+        17
+      ],
+      "buildContractSections": {
+        "authority": "user-pasted-execution-contract",
+        "sections": [
+          3,
+          4,
+          12,
+          15,
+          16,
+          17,
+          26,
+          28,
+          29
+        ]
+      },
+      "requiredSectionOrder": [
+        "international-hero-and-origin-destination-command",
+        "declaration-filters",
+        "destinations-with-current-eligible-jobs",
+        "reviewed-mobility-guidance",
+        "sixteen-professional-settings",
+        "practical-checklist-without-visa-guarantees",
+        "published-resources-and-employers",
+        "owned-footer"
+      ],
+      "dependencies": [
+        "canonical query-time recruitment eligibility",
+        "published JOBKIX editions",
+        "seven-language copy",
+        "authorized media",
+        "scoped actions and error recovery"
+      ],
+      "adaptations": [
+        "Pasted /jobkix/{locale} route authority; factual records replace visual sample data.",
+        "The 16 approved employment settings replace unrelated illustrative general-industry sectors.",
+        "No fabricated counts, maps/coordinates, reviews, compensation statistics, company logos or immigration guarantees. Real approved media and reviewed editions remain authoritative."
+      ],
+      "referenceInspection": "FULL_PAGE_INSPECTED",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [],
+      "implementation": "PARTIAL",
+      "sourceEvidence": "docs/jobkix/implementation-units.json"
+    },
+    {
+      "id": "P11",
+      "name": "Employer Directory",
+      "route": "/jobkix/{locale}/employers",
+      "primaryImage": "P11",
+      "secondaryImages": [],
+      "blueprintPages": [
+        6,
+        21,
+        23
+      ],
+      "buildContractSections": {
+        "authority": "user-pasted-execution-contract",
+        "sections": [
+          3,
+          4,
+          15,
+          16,
+          17,
+          21,
+          26,
+          28,
+          29
+        ]
+      },
+      "requiredSectionOrder": [
+        "professional-employer-hero-and-search-command",
+        "native-employer-filters",
+        "employer-type-discovery",
+        "current-approved-employer-results",
+        "defined-identity-review-scope",
+        "practical-candidate-discovery-guidance",
+        "owned-footer"
+      ],
+      "dependencies": [
+        "canonical query-time recruitment eligibility",
+        "published JOBKIX editions",
+        "seven-language copy",
+        "authorized media",
+        "scoped actions and error recovery"
+      ],
+      "adaptations": [
+        "Pasted /jobkix/{locale} route authority; factual records replace visual sample data.",
+        "The 16 approved employment settings replace unrelated illustrative general-industry sectors.",
+        "No fabricated counts, maps/coordinates, reviews, compensation statistics, company logos or immigration guarantees. Real approved media and reviewed editions remain authoritative."
+      ],
+      "referenceInspection": "FULL_PAGE_INSPECTED",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [],
+      "implementation": "PARTIAL",
+      "sourceEvidence": "docs/jobkix/implementation-units.json"
+    },
+    {
+      "id": "P12",
+      "name": "Employer Public Profile Pro",
+      "route": "/jobkix/{locale}/employers/:id",
+      "primaryImage": "P12",
+      "secondaryImages": [],
+      "blueprintPages": [
+        6,
+        21,
+        23
+      ],
+      "buildContractSections": {
+        "authority": "user-pasted-execution-contract",
+        "sections": [
+          3,
+          4,
+          15,
+          16,
+          17,
+          21,
+          26,
+          28,
+          29
+        ]
+      },
+      "requiredSectionOrder": [
+        "approved-employer-identity-and-media",
+        "factual-employer-header-and-primary-actions",
+        "section-navigation",
+        "approved-workplace-description",
+        "published-practical-employer-content",
+        "actual-eligible-open-positions",
+        "approved-location-information",
+        "moderated-reviews",
+        "report-and-related-discovery",
+        "owned-footer"
+      ],
+      "dependencies": [
+        "canonical query-time recruitment eligibility",
+        "published JOBKIX editions",
+        "seven-language copy",
+        "authorized media",
+        "scoped actions and error recovery"
+      ],
+      "adaptations": [
+        "Pasted /jobkix/{locale} route authority; factual records replace visual sample data.",
+        "The 16 approved employment settings replace unrelated illustrative general-industry sectors.",
+        "No fabricated counts, maps/coordinates, reviews, compensation statistics, company logos or immigration guarantees. Real approved media and reviewed editions remain authoritative."
+      ],
+      "referenceInspection": "FULL_PAGE_INSPECTED",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [],
+      "implementation": "PARTIAL",
+      "sourceEvidence": "docs/jobkix/implementation-units.json"
+    },
+    {
+      "id": "P13",
+      "name": "Salaries & Compensation",
+      "route": "/jobkix/{locale}/salaries",
+      "primaryImage": "P13",
+      "secondaryImages": [],
+      "blueprintPages": [
+        6,
+        23,
+        24
+      ],
+      "buildContractSections": {
+        "authority": "user-pasted-execution-contract",
+        "sections": [
+          3,
+          4,
+          15,
+          16,
+          17,
+          25,
+          26,
+          28,
+          29
+        ]
+      },
+      "requiredSectionOrder": [
+        "compensation-hero-and-professional-filters",
+        "source-and-methodology-context",
+        "adequately-aggregated-compensation-groups",
+        "comparable-currency-unit-and-role-results",
+        "declared-vacancy-pay-separate-from-contributions",
+        "benefits-and-professional-guidance",
+        "contribution-correction-and-moderation-actions",
+        "owned-footer"
+      ],
+      "dependencies": [
+        "canonical query-time recruitment eligibility",
+        "published JOBKIX editions",
+        "seven-language copy",
+        "authorized media",
+        "scoped actions and error recovery"
+      ],
+      "adaptations": [
+        "Pasted /jobkix/{locale} route authority; factual records replace visual sample data.",
+        "The 16 approved employment settings replace unrelated illustrative general-industry sectors.",
+        "No fabricated counts, maps/coordinates, reviews, compensation statistics, company logos or immigration guarantees. Real approved media and reviewed editions remain authoritative."
+      ],
+      "referenceInspection": "FULL_PAGE_INSPECTED",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [],
+      "implementation": "PARTIAL",
+      "sourceEvidence": "docs/jobkix/implementation-units.json"
+    },
+    {
+      "id": "P14",
+      "name": "Workplace Reviews",
+      "route": "/jobkix/{locale}/reviews",
+      "primaryImage": "P14",
+      "secondaryImages": [],
+      "blueprintPages": [
+        6,
+        23,
+        24
+      ],
+      "buildContractSections": {
+        "authority": "user-pasted-execution-contract",
+        "sections": [
+          3,
+          4,
+          15,
+          16,
+          17,
+          25,
+          26,
+          28,
+          29
+        ]
+      },
+      "requiredSectionOrder": [
+        "workplace-reputation-hero-and-filters",
+        "methodology-and-provenance",
+        "approved-employers-with-published-contributions",
+        "moderated-review-results",
+        "privacy-and-correction-context",
+        "private-contribution-and-appeal-actions",
+        "owned-footer"
+      ],
+      "dependencies": [
+        "canonical query-time recruitment eligibility",
+        "published JOBKIX editions",
+        "seven-language copy",
+        "authorized media",
+        "scoped actions and error recovery"
+      ],
+      "adaptations": [
+        "Pasted /jobkix/{locale} route authority; factual records replace visual sample data.",
+        "The 16 approved employment settings replace unrelated illustrative general-industry sectors.",
+        "No fabricated counts, maps/coordinates, reviews, compensation statistics, company logos or immigration guarantees. Real approved media and reviewed editions remain authoritative."
+      ],
+      "referenceInspection": "FULL_PAGE_INSPECTED",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [],
+      "implementation": "PARTIAL",
+      "sourceEvidence": "docs/jobkix/implementation-units.json"
+    },
+    {
+      "id": "P15",
+      "name": "Career Resources Library",
+      "route": "/jobkix/{locale}/resources",
+      "primaryImage": "P15",
+      "secondaryImages": [
+        "P15-secondary"
+      ],
+      "blueprintPages": [
+        6,
+        23,
+        25
+      ],
+      "buildContractSections": {
+        "authority": "user-pasted-execution-contract",
+        "sections": [
+          3,
+          4,
+          15,
+          16,
+          17,
+          25,
+          26,
+          28,
+          29
+        ]
+      },
+      "requiredSectionOrder": [
+        "brand-navigation",
+        "editorial-library-opening",
+        "resource-search-and-topics",
+        "reviewed-resource-cards",
+        "connected-career-tools",
+        "career-context-navigation",
+        "latest-reviewed-guides",
+        "factual-support-entry",
+        "full-footer"
+      ],
+      "dependencies": [
+        "canonical query-time recruitment eligibility",
+        "published JOBKIX editions",
+        "seven-language copy",
+        "authorized media",
+        "scoped actions and error recovery"
+      ],
+      "adaptations": [
+        "Pasted /jobkix/{locale} route authority; factual records replace visual sample data.",
+        "Sample ratings, testimonials, counts, newsletter promises and unavailable learning-hub videos are omitted. Tool entries lead to actual Career Studio workflows. Article text and imagery require current reviewed publication."
+      ],
+      "referenceInspection": "FULL_PRIMARY_SECONDARY_WHERE_PRESENT_AND_RELEVANT_BLUEPRINT_INSPECTED",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "angelcare-marketplace/jobkix/pages/Resources.tsx",
+        "angelcare-marketplace/jobkix/pages/Guide.tsx",
+        "angelcare-marketplace/jobkix/admin/EditorialEditor.tsx"
+      ],
+      "implementation": "PARTIAL",
+      "sourceEvidence": "docs/jobkix/implementation-units.json"
+    },
+    {
+      "id": "P16",
+      "name": "Career Guide Detail",
+      "route": "/jobkix/{locale}/resources/:slug",
+      "primaryImage": "P16",
+      "secondaryImages": [],
+      "blueprintPages": [
+        6,
+        23,
+        25
+      ],
+      "buildContractSections": {
+        "authority": "user-pasted-execution-contract",
+        "sections": [
+          3,
+          4,
+          15,
+          16,
+          17,
+          25,
+          26,
+          28,
+          29
+        ]
+      },
+      "requiredSectionOrder": [
+        "breadcrumb-and-guide-identity",
+        "editorial-opening-and-authorship-revision",
+        "sticky-contents-and-career-search",
+        "substantial-sectioned-guide",
+        "reviewed-qualifications-and-pay-context",
+        "maintained-related-discovery",
+        "full-footer"
+      ],
+      "dependencies": [
+        "canonical query-time recruitment eligibility",
+        "published JOBKIX editions",
+        "seven-language copy",
+        "authorized media",
+        "scoped actions and error recovery"
+      ],
+      "adaptations": [
+        "Pasted /jobkix/{locale} route authority; factual records replace visual sample data.",
+        "Sample salaries, demand claims, video and time estimates are not facts; publish only approved evidence and media.",
+        "Sample ratings, testimonials, counts, newsletter promises and unavailable learning-hub videos are omitted. Tool entries lead to actual Career Studio workflows. Article text and imagery require current reviewed publication."
+      ],
+      "referenceInspection": "FULL_PRIMARY_SECONDARY_WHERE_PRESENT_AND_RELEVANT_BLUEPRINT_INSPECTED",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [
+        "angelcare-marketplace/jobkix/pages/Resources.tsx",
+        "angelcare-marketplace/jobkix/pages/Guide.tsx",
+        "angelcare-marketplace/jobkix/admin/EditorialEditor.tsx"
+      ],
+      "implementation": "PARTIAL",
+      "sourceEvidence": "docs/jobkix/implementation-units.json"
+    },
+    {
+      "id": "P17",
+      "name": "For Jobseekers",
+      "route": "/jobkix/{locale}/for-jobseekers",
+      "primaryImage": "P17",
+      "secondaryImages": [],
+      "blueprintPages": [
+        10,
+        11,
+        12
+      ],
+      "buildContractSections": {
+        "authority": "user-pasted-execution-contract",
+        "sections": [
+          3,
+          4,
+          15,
+          16,
+          17,
+          25,
+          26,
+          28,
+          29
+        ]
+      },
+      "requiredSectionOrder": [
+        "split-professional-hero-and-two-actions",
+        "factual-product-principles-strip",
+        "eight-career-capabilities",
+        "five-step-candidate-journey",
+        "career-studio-navigation-preview",
+        "image-led-setting-discovery",
+        "privacy-and-application-guidance",
+        "reviewed-resources",
+        "final-dual-action",
+        "owned-footer"
+      ],
+      "dependencies": [
+        "canonical query-time recruitment eligibility",
+        "published JOBKIX editions",
+        "seven-language copy",
+        "authorized media",
+        "scoped actions and error recovery"
+      ],
+      "adaptations": [
+        "Pasted /jobkix/{locale} route authority; factual records replace visual sample data.",
+        "Illustrative user/job/country metrics and testimonials are replaced by factual workflow guidance; no unsupported free/pricing or verification guarantees.",
+        "Studio overview links to implemented native modules. No fabricated private dashboard screenshot or activity is shown."
+      ],
+      "referenceInspection": "FULL_PAGE_INSPECTED",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [],
+      "implementation": "PARTIAL",
+      "sourceEvidence": "docs/jobkix/implementation-units.json"
+    },
+    {
+      "id": "P18",
+      "name": "For Employers",
+      "route": "/jobkix/{locale}/for-employers",
+      "primaryImage": "P18",
+      "secondaryImages": [],
+      "blueprintPages": [
+        14,
+        15
+      ],
+      "buildContractSections": {
+        "authority": "user-pasted-execution-contract",
+        "sections": [
+          3,
+          4,
+          15,
+          16,
+          17,
+          25,
+          26,
+          28,
+          29
+        ]
+      },
+      "requiredSectionOrder": [
+        "split-professional-hero-and-two-actions",
+        "factual-hiring-principles-strip",
+        "image-led-employer-settings",
+        "six-hiring-capabilities",
+        "five-step-hiring-journey",
+        "hiring-studio-navigation-preview",
+        "image-led-setting-discovery",
+        "trust-scope-and-support",
+        "final-dual-action",
+        "owned-footer"
+      ],
+      "dependencies": [
+        "canonical query-time recruitment eligibility",
+        "published JOBKIX editions",
+        "seven-language copy",
+        "authorized media",
+        "scoped actions and error recovery"
+      ],
+      "adaptations": [
+        "Pasted /jobkix/{locale} route authority; factual records replace visual sample data.",
+        "Illustrative user/job/country metrics and testimonials are replaced by factual workflow guidance; no unsupported free/pricing or verification guarantees.",
+        "Studio overview links to implemented native modules. No fabricated private dashboard screenshot or activity is shown."
+      ],
+      "referenceInspection": "FULL_PAGE_INSPECTED",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [],
+      "implementation": "PARTIAL",
+      "sourceEvidence": "docs/jobkix/implementation-units.json"
+    },
+    {
+      "id": "P19",
+      "name": "How JOBKIX Works",
+      "route": "/jobkix/{locale}/how-it-works",
+      "primaryImage": "P19",
+      "secondaryImages": [],
+      "blueprintPages": [
+        4,
+        12,
+        14,
+        25
+      ],
+      "buildContractSections": {
+        "authority": "user-pasted-execution-contract",
+        "sections": [
+          3,
+          4,
+          15,
+          16,
+          17,
+          25,
+          26,
+          28,
+          29
+        ]
+      },
+      "requiredSectionOrder": [
+        "split-professional-hero-and-two-actions",
+        "factual-product-principles-strip",
+        "candidate-journey-with-contextual-image",
+        "hirer-journey-with-contextual-image",
+        "origin-destination-discovery",
+        "professional-tools",
+        "image-led-settings",
+        "reviewed-guidance",
+        "two-role-acquisition-actions",
+        "owned-footer"
+      ],
+      "dependencies": [
+        "canonical query-time recruitment eligibility",
+        "published JOBKIX editions",
+        "seven-language copy",
+        "authorized media",
+        "scoped actions and error recovery"
+      ],
+      "adaptations": [
+        "Pasted /jobkix/{locale} route authority; factual records replace visual sample data.",
+        "Illustrative user/job/country metrics and testimonials are replaced by factual workflow guidance; no unsupported free/pricing or verification guarantees.",
+        "Studio overview links to implemented native modules. No fabricated private dashboard screenshot or activity is shown."
+      ],
+      "referenceInspection": "FULL_PAGE_INSPECTED",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [],
+      "implementation": "PARTIAL",
+      "sourceEvidence": "docs/jobkix/implementation-units.json"
+    },
+    {
+      "id": "P20",
+      "name": "Trust & Safety Center",
+      "route": "/jobkix/{locale}/trust",
+      "primaryImage": "P20",
+      "secondaryImages": [],
+      "blueprintPages": [
+        21,
+        22,
+        23,
+        24
+      ],
+      "buildContractSections": {
+        "authority": "user-pasted-execution-contract",
+        "sections": [
+          3,
+          4,
+          15,
+          16,
+          17,
+          25,
+          26,
+          28,
+          29
+        ]
+      },
+      "requiredSectionOrder": [
+        "illustrated-trust-hero",
+        "limited-and-defined-trust-scopes",
+        "privacy-and-safeguarding-principles",
+        "reviewed-trust-edition",
+        "report-review-and-appeal-journey",
+        "report-and-policy-actions",
+        "published-safety-resources",
+        "owned-footer"
+      ],
+      "dependencies": [
+        "canonical query-time recruitment eligibility",
+        "published JOBKIX editions",
+        "seven-language copy",
+        "authorized media",
+        "scoped actions and error recovery"
+      ],
+      "adaptations": [
+        "Pasted /jobkix/{locale} route authority; factual records replace visual sample data.",
+        "No fabricated phone numbers, live-chat availability, response times, worldwide compliance, staff photographs, company history, usage metrics or blanket verification claims. Billing is excluded.",
+        "Contact and legal-entity details require a current reviewed native edition. P22 remains a single article; folder 23 is a secondary P15 reference."
+      ],
+      "referenceInspection": "FULL_PAGE_INSPECTED",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [],
+      "implementation": "PARTIAL",
+      "sourceEvidence": "docs/jobkix/implementation-units.json"
+    },
+    {
+      "id": "P21",
+      "name": "Help & Support Center",
+      "route": "/jobkix/{locale}/help",
+      "primaryImage": "P21",
+      "secondaryImages": [],
+      "blueprintPages": [
+        23,
+        25,
+        34
+      ],
+      "buildContractSections": {
+        "authority": "user-pasted-execution-contract",
+        "sections": [
+          3,
+          4,
+          15,
+          16,
+          17,
+          25,
+          26,
+          28,
+          29
+        ]
+      },
+      "requiredSectionOrder": [
+        "illustrated-help-hero-and-native-article-search",
+        "six-supported-help-topics-without-billing",
+        "published-help-articles-and-private-assistance-panel",
+        "reviewed-help-and-operational-context",
+        "career-resources-navigation",
+        "contact-and-search-actions",
+        "owned-footer"
+      ],
+      "dependencies": [
+        "canonical query-time recruitment eligibility",
+        "published JOBKIX editions",
+        "seven-language copy",
+        "authorized media",
+        "scoped actions and error recovery"
+      ],
+      "adaptations": [
+        "Pasted /jobkix/{locale} route authority; factual records replace visual sample data.",
+        "No fabricated phone numbers, live-chat availability, response times, worldwide compliance, staff photographs, company history, usage metrics or blanket verification claims. Billing is excluded.",
+        "Contact and legal-entity details require a current reviewed native edition. P22 remains a single article; folder 23 is a secondary P15 reference."
+      ],
+      "referenceInspection": "FULL_PAGE_INSPECTED",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [],
+      "implementation": "PARTIAL",
+      "sourceEvidence": "docs/jobkix/implementation-units.json"
+    },
+    {
+      "id": "P22",
+      "name": "Help Article Detail",
+      "route": "/jobkix/{locale}/help/:slug",
+      "primaryImage": "P21",
+      "secondaryImages": [],
+      "blueprintPages": [
+        23,
+        25,
+        34
+      ],
+      "buildContractSections": {
+        "authority": "user-pasted-execution-contract",
+        "sections": [
+          3,
+          4,
+          15,
+          16,
+          17,
+          25,
+          26,
+          28,
+          29
+        ]
+      },
+      "requiredSectionOrder": [
+        "support-breadcrumb-and-single-article-heading",
+        "authorship-review-revision-context",
+        "article-contents-navigation",
+        "complete-published-article-body-and-approved-media",
+        "assistance-and-correction-actions",
+        "related-published-help",
+        "owned-footer"
+      ],
+      "dependencies": [
+        "canonical query-time recruitment eligibility",
+        "published JOBKIX editions",
+        "seven-language copy",
+        "authorized media",
+        "scoped actions and error recovery"
+      ],
+      "adaptations": [
+        "No illustrative sample employers, jobs, counts, salaries, badges or support numbers.",
+        "P22 uses the single-article support grammar; archive folder 23 belongs to P15.",
+        "No fabricated phone numbers, live-chat availability, response times, worldwide compliance, staff photographs, company history, usage metrics or blanket verification claims. Billing is excluded.",
+        "Contact and legal-entity details require a current reviewed native edition. P22 remains a single article; folder 23 is a secondary P15 reference."
+      ],
+      "referenceInspection": "SUPPORT_GRAMMAR_INSPECTED",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [],
+      "implementation": "PARTIAL",
+      "sourceEvidence": "docs/jobkix/implementation-units.json"
+    },
+    {
+      "id": "P23",
+      "name": "Contact & Assistance",
+      "route": "/jobkix/{locale}/contact",
+      "primaryImage": "P23",
+      "secondaryImages": [],
+      "blueprintPages": [
+        23,
+        25,
+        34
+      ],
+      "buildContractSections": {
+        "authority": "user-pasted-execution-contract",
+        "sections": [
+          3,
+          4,
+          15,
+          16,
+          17,
+          25,
+          26,
+          28,
+          29
+        ]
+      },
+      "requiredSectionOrder": [
+        "assistance-hero",
+        "genuine-support-destinations",
+        "private-case-form-and-what-happens-next",
+        "published-contact-channel-edition-only",
+        "published-help-articles",
+        "locale-and-country-navigation",
+        "owned-footer"
+      ],
+      "dependencies": [
+        "canonical query-time recruitment eligibility",
+        "published JOBKIX editions",
+        "seven-language copy",
+        "authorized media",
+        "scoped actions and error recovery"
+      ],
+      "adaptations": [
+        "Pasted /jobkix/{locale} route authority; factual records replace visual sample data.",
+        "No fabricated phone numbers, live-chat availability, response times, worldwide compliance, staff photographs, company history, usage metrics or blanket verification claims. Billing is excluded.",
+        "Contact and legal-entity details require a current reviewed native edition. P22 remains a single article; folder 23 is a secondary P15 reference."
+      ],
+      "referenceInspection": "FULL_PAGE_INSPECTED",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [],
+      "implementation": "PARTIAL",
+      "sourceEvidence": "docs/jobkix/implementation-units.json"
+    },
+    {
+      "id": "P24",
+      "name": "About JOBKIX",
+      "route": "/jobkix/{locale}/about",
+      "primaryImage": "P24",
+      "secondaryImages": [],
+      "blueprintPages": [
+        2,
+        4,
+        23,
+        24
+      ],
+      "buildContractSections": {
+        "authority": "user-pasted-execution-contract",
+        "sections": [
+          3,
+          4,
+          15,
+          16,
+          17,
+          25,
+          26,
+          28,
+          29
+        ]
+      },
+      "requiredSectionOrder": [
+        "professional-purpose-hero",
+        "factual-product-principles",
+        "mission-and-operating-boundaries",
+        "reviewed-about-and-legal-entity-edition",
+        "six-core-professional-values",
+        "professional-settings-and-two-sided-journeys",
+        "join-and-support-actions",
+        "owned-footer"
+      ],
+      "dependencies": [
+        "canonical query-time recruitment eligibility",
+        "published JOBKIX editions",
+        "seven-language copy",
+        "authorized media",
+        "scoped actions and error recovery"
+      ],
+      "adaptations": [
+        "Pasted /jobkix/{locale} route authority; factual records replace visual sample data.",
+        "No fabricated phone numbers, live-chat availability, response times, worldwide compliance, staff photographs, company history, usage metrics or blanket verification claims. Billing is excluded.",
+        "Contact and legal-entity details require a current reviewed native edition. P22 remains a single article; folder 23 is a secondary P15 reference."
+      ],
+      "referenceInspection": "FULL_PAGE_INSPECTED",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [],
+      "implementation": "PARTIAL",
+      "sourceEvidence": "docs/jobkix/implementation-units.json"
+    },
+    {
+      "id": "P25",
+      "name": "Report a Problem",
+      "route": "/jobkix/{locale}/report",
+      "primaryImage": "P25",
+      "secondaryImages": [],
+      "blueprintPages": [
+        21,
+        23,
+        24,
+        34
+      ],
+      "buildContractSections": {
+        "authority": "user-pasted-execution-contract",
+        "sections": [
+          3,
+          4,
+          15,
+          16,
+          17,
+          25,
+          26,
+          28,
+          29
+        ]
+      },
+      "requiredSectionOrder": [
+        "reporting-hero-without-response-guarantees",
+        "six-report-categories",
+        "private-canonical-report-form",
+        "review-receipt-and-appeal-guidance",
+        "emergency-guidance-without-invented-numbers",
+        "privacy-and-reporting-tips",
+        "trust-and-support-actions",
+        "owned-footer"
+      ],
+      "dependencies": [
+        "canonical query-time recruitment eligibility",
+        "published JOBKIX editions",
+        "seven-language copy",
+        "authorized media",
+        "scoped actions and error recovery"
+      ],
+      "adaptations": [
+        "Pasted /jobkix/{locale} route authority; factual records replace visual sample data.",
+        "No fabricated phone numbers, live-chat availability, response times, worldwide compliance, staff photographs, company history, usage metrics or blanket verification claims. Billing is excluded.",
+        "Contact and legal-entity details require a current reviewed native edition. P22 remains a single article; folder 23 is a secondary P15 reference."
+      ],
+      "referenceInspection": "FULL_PAGE_INSPECTED",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [],
+      "implementation": "PARTIAL",
+      "sourceEvidence": "docs/jobkix/implementation-units.json"
+    },
+    {
+      "id": "P26",
+      "name": "Legal & Policy Front",
+      "route": "/jobkix/{locale}/legal/:document?",
+      "primaryImage": "P26",
+      "secondaryImages": [],
+      "blueprintPages": [
+        7,
+        21,
+        22,
+        24,
+        26
+      ],
+      "buildContractSections": {
+        "authority": "user-pasted-execution-contract",
+        "sections": [
+          3,
+          4,
+          15,
+          16,
+          17,
+          25,
+          26,
+          28,
+          29
+        ]
+      },
+      "requiredSectionOrder": [
+        "JOBKIX built and operated by ANGELCARE (localized equivalents)"
+      ],
+      "dependencies": [
+        "seven-language operator attribution",
+        "existing JOBKIX public shell"
+      ],
+      "adaptations": [
+        "Pasted /jobkix/{locale} route authority; factual records replace visual sample data.",
+        "2026-10-21 explicit user amendment: public legal page contains only the ANGELCARE attribution, without country, jurisdiction, policy directory or compliance claims. The original P26 image is retained unchanged. Permission-gated private editorial preview remains separate."
+      ],
+      "referenceInspection": "ORIGINAL_INSPECTED_USER_AMENDMENT_ACTIVE",
+      "functional": "IMPLEMENTED_UNVERIFIED",
+      "visual": "VISUAL_PENDING",
+      "evidence": [],
+      "implementation": "PARTIAL",
+      "sourceEvidence": "docs/jobkix/legal-attribution-scope.json"
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "original-brand",
+      "status": "RESOLVED_SOURCE_AND_PARTIAL_BROWSER_VERIFIED",
+      "detail": "Originals and deterministic derivatives are preserved and individually inspected. Native browser tests verify JOBKIX route icon descriptors and restoration on Marketplace return, seven language changes, Arabic six-width reflow and the physical-right shortcut. Full product visual acceptance and browser-chrome painting remain separate.",
+      "evidence": "docs/jobkix/brand-register.json"
+    },
+    {
+      "id": "browser-runtime",
+      "status": "RESOLVED_FOR_LOCAL_DEVELOPMENT",
+      "detail": "User authorized local development tests on 2026-10-21. Actual Next dev with isolated SQL/Auth/storage fixtures is usable. Hosted-service and complete visual acceptance remain separate.",
+      "evidence": [
+        "docs/jobkix/EXECUTION_AMENDMENTS.md",
+        "docs/jobkix/evidence/browser/journey.json"
+      ]
+    }
+  ]
+}

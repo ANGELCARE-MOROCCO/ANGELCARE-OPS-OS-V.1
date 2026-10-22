@@ -1,0 +1,1132 @@
+[
+  {
+    "id": "home-hero",
+    "subject": "Early-childhood educator helping children explore wooden shapes",
+    "purpose": "P00 editorial homepage opening",
+    "source": "/Users/user/.codex/generated_images/01a15a7f-f91b-7bc0-917b-03eb0759aa24/exec-27fd0d15-cf41-4014-9281-73948ee117dd.png",
+    "originalSha256": "444572e03eaa9d4beb7d67e30567c015d7535ab7c894a2e76e512017de7684ff",
+    "originalDimensions": {
+      "width": 1942,
+      "height": 809
+    },
+    "provenance": "OpenAI built-in image_gen; AI-generated fictional editorial imagery, not a human photographer or an actual employer, employee or platform success story.",
+    "rights": "Generated for this user task. No third-party employer branding or identifiable real workplace was supplied.",
+    "prompt": "Use case: photorealistic-natural. Asset type: original professional editorial homepage hero photograph for JOBKIX Global Careers Platform. Create a single wide landscape documentary-style scene, natural human anatomy and authentic textures, of an adult early-childhood educator of Southeast Asian heritage sitting at a child-height wooden table with two children from different ethnic backgrounds, attentively helping them explore simple wooden shape blocks in a bright contemporary preschool. The adult is a credible working professional in understated cream and light blue clothing, candid warm expression rather than posing for camera. Children fully clothed in ordinary modest everyday clothing. Subjects occupy the right half of the wide image. The left half is a softly out-of-focus pale classroom with white daylight and quiet negative space for website heading overlay. Materials feel real: wood, paper, cotton, natural skin texture. Premium editorial photographic quality, 50mm lens, soft natural daylight, restrained warm highlights, crisp important faces and hands, coherent physical objects, professionally composed, internationally credible. No logos, no branding, no text, no embedded UI, no watermarks. No exaggerated smiles, glossy artificial skin, uncanny anatomy, duplicated fingers, impossible objects or stylized illustration. This is fictional editorial imagery, not a representation of any real employer, employee or success story.",
+    "focalDesktop": {
+      "x": 75,
+      "y": 50
+    },
+    "focalMobile": {
+      "x": 50,
+      "y": 50
+    },
+    "visualInspection": "ASSET_DETAIL_AND_MOBILE_EXPORT_REVIEWED",
+    "files": [
+      {
+        "path": "public/jobkix/editorial/home-hero.webp",
+        "width": 1920,
+        "height": 800,
+        "bytes": 111758,
+        "sha256": "34704a2a6d9bbd847e78e084066ebaafde2e07282602c238a213d661babffe4a"
+      },
+      {
+        "path": "public/jobkix/editorial/home-hero-mobile.webp",
+        "width": 1000,
+        "height": 672,
+        "bytes": 72590,
+        "sha256": "88125dd8606d44eec5a108ad6f2de84cc5d62f145c0d67aec1bd27a6e779b77c"
+      }
+    ],
+    "inspection": {
+      "at": "2026-10-20T21:50:21.548Z",
+      "method": "Full original, enlarged human/hand detail and actual optimized mobile export viewed; no browser-rendered composition approval claimed.",
+      "finding": "Faces, hands, clothing and setting visually inspected. Mobile export retains all principal faces.",
+      "evidence": [
+        "docs/jobkix/evidence/home-hero-detail.png"
+      ],
+      "renderedLayout": "VISUAL_PENDING"
+    },
+    "promptFile": "docs/jobkix/asset-prompts/home-hero.txt",
+    "rtlTreatment": "Desktop uses a separate physical-left image region with the original photograph preserved; no mirrored composition or extra composition count. Actual rendered crop remains VISUAL_PENDING."
+  },
+  {
+    "id": "setting-households",
+    "subject": "A Black adult professional nanny and a parent discussing a child's routine at a tidy sunlit family kitchen table in a contemporary apartment; a young child is safely playing with wooden blocks nearby. Approximate anonymous domestic setting, no private addresses or personal identifiers.",
+    "purpose": "Profession/setting editorial discovery",
+    "source": "/Users/user/.codex/generated_images/01a15a7f-f91b-7bc0-917b-03eb0759aa24/exec-43aea5e8-23db-4a14-9b28-198560329124.png",
+    "originalSha256": "d6c6d39d03460fdaec77a39958509ed4c6c4fd5853c741ffed56ea7e888f6ba4",
+    "originalDimensions": {
+      "width": 1536,
+      "height": 1024
+    },
+    "provenance": "OpenAI built-in image_gen; AI-generated fictional editorial imagery, not a human photographer or an actual employer, employee or platform success story.",
+    "rights": "Generated for this user task. No third-party employer branding or identifiable real workplace was supplied.",
+    "prompt": "Use case: photorealistic-natural. Asset type: original JOBKIX employment-setting editorial photograph. Create one landscape photograph, 3:2 composition, suitable for both a professional website image-led card and a section opening. Documentary editorial photography, natural skin and materials, credible professional everyday setting, candid and confident; coherent anatomy, hands, props and lighting. Internationally relevant adult employment context. A Black adult professional nanny and a parent discussing a child's routine at a tidy sunlit family kitchen table in a contemporary apartment; a young child is safely playing with wooden blocks nearby. Approximate anonymous domestic setting, no private addresses or personal identifiers. Keep all important faces fully inside the central 75 percent for responsive crops. Premium professional quality, natural daylight, restrained color, no artificial glossy skin. No text, logos, watermarks, UI, badges, ratings, or implied affiliation to any actual employer. Subjects are fictional editorial people, not real JOBKIX employees, users, employers or success stories. Children must be fully clothed in ordinary modest everyday clothes. Avoid uncanny faces, distorted hands, duplicated limbs and physically impossible objects.",
+    "focalDesktop": {
+      "x": 50,
+      "y": 45
+    },
+    "focalMobile": {
+      "x": 50,
+      "y": 45
+    },
+    "visualInspection": "ASSET_DETAIL_AND_MOBILE_EXPORT_REVIEWED",
+    "files": [
+      {
+        "path": "public/jobkix/editorial/setting-households.webp",
+        "width": 1536,
+        "height": 1024,
+        "bytes": 162104,
+        "sha256": "34a3605ac1b08cc97d03f7ab18a9de4a8363f4bf1d0a80c062906e5822f3a848"
+      },
+      {
+        "path": "public/jobkix/editorial/setting-households-mobile.webp",
+        "width": 1000,
+        "height": 667,
+        "bytes": 90242,
+        "sha256": "7f9eadc98a539d6df0e3bd71ff7ac5321fdd0771a05b16bf4e0d8e9ce99959d0"
+      }
+    ],
+    "promptFile": "docs/jobkix/asset-prompts/setting-households.txt",
+    "world": "households",
+    "role": "employment-setting-editorial",
+    "inspection": {
+      "at": "2026-10-20T22:43:33.218Z",
+      "method": "Actual optimized desktop and mobile contact sheets and four enlarged face/hand/object detail pages visually inspected by the coding assistant; no human photographer or native-review claim.",
+      "finding": "Relevant fictional professional setting, principal faces and coherent hands/objects reviewed. Desktop/mobile exports retain the composition.",
+      "evidence": [
+        "docs/jobkix/evidence/asset-review/all-settings-contact.webp",
+        "docs/jobkix/evidence/asset-review/mobile-exports-contact.webp",
+        "docs/jobkix/evidence/asset-review/settings-details-1.png"
+      ],
+      "renderedLayout": "VISUAL_PENDING"
+    }
+  },
+  {
+    "id": "setting-nurseries",
+    "subject": "An adult male early-years educator of European heritage helping two toddlers explore simple wooden toys in a bright nursery playroom, candid respectful professional interaction.",
+    "purpose": "Profession/setting editorial discovery",
+    "source": "/Users/user/.codex/generated_images/01a15a7f-f91b-7bc0-917b-03eb0759aa24/exec-f8a6e071-3019-402a-8e8c-e462252fdfa0.png",
+    "originalSha256": "22df4f249eddc6d5ff7eac62452b82b06d6ce001eb06cecd60f990f48f74ef6a",
+    "originalDimensions": {
+      "width": 1536,
+      "height": 1024
+    },
+    "provenance": "OpenAI built-in image_gen; AI-generated fictional editorial imagery, not a human photographer or an actual employer, employee or platform success story.",
+    "rights": "Generated for this user task. No third-party employer branding or identifiable real workplace was supplied.",
+    "prompt": "Use case: photorealistic-natural. Asset type: original JOBKIX employment-setting editorial photograph. Create one landscape photograph, 3:2 composition, suitable for both a professional website image-led card and a section opening. Documentary editorial photography, natural skin and materials, credible professional everyday setting, candid and confident; coherent anatomy, hands, props and lighting. Internationally relevant adult employment context. An adult male early-years educator of European heritage helping two toddlers explore simple wooden toys in a bright nursery playroom, candid respectful professional interaction. Keep all important faces fully inside the central 75 percent for responsive crops. Premium professional quality, natural daylight, restrained color, no artificial glossy skin. No text, logos, watermarks, UI, badges, ratings, or implied affiliation to any actual employer. Subjects are fictional editorial people, not real JOBKIX employees, users, employers or success stories. Children must be fully clothed in ordinary modest everyday clothes. Avoid uncanny faces, distorted hands, duplicated limbs and physically impossible objects.",
+    "focalDesktop": {
+      "x": 50,
+      "y": 45
+    },
+    "focalMobile": {
+      "x": 50,
+      "y": 45
+    },
+    "visualInspection": "ASSET_DETAIL_AND_MOBILE_EXPORT_REVIEWED",
+    "files": [
+      {
+        "path": "public/jobkix/editorial/setting-nurseries.webp",
+        "width": 1536,
+        "height": 1024,
+        "bytes": 164828,
+        "sha256": "4888bbfe0eadcc97966350d9975f827b9383acaead37dda110c9e02f2fdb2fba"
+      },
+      {
+        "path": "public/jobkix/editorial/setting-nurseries-mobile.webp",
+        "width": 1000,
+        "height": 667,
+        "bytes": 97628,
+        "sha256": "7af393c7ad265e5fa6873ee9c94d021ab865b200ca07366b4ffe1501a87471f8"
+      }
+    ],
+    "promptFile": "docs/jobkix/asset-prompts/setting-nurseries.txt",
+    "world": "nurseries",
+    "role": "employment-setting-editorial",
+    "inspection": {
+      "at": "2026-10-20T22:43:33.219Z",
+      "method": "Actual optimized desktop and mobile contact sheets and four enlarged face/hand/object detail pages visually inspected by the coding assistant; no human photographer or native-review claim.",
+      "finding": "Relevant fictional professional setting, principal faces and coherent hands/objects reviewed. Desktop/mobile exports retain the composition.",
+      "evidence": [
+        "docs/jobkix/evidence/asset-review/all-settings-contact.webp",
+        "docs/jobkix/evidence/asset-review/mobile-exports-contact.webp",
+        "docs/jobkix/evidence/asset-review/settings-details-1.png"
+      ],
+      "renderedLayout": "VISUAL_PENDING"
+    }
+  },
+  {
+    "id": "setting-primary-schools",
+    "subject": "An adult Indian primary-school teacher in a contemporary classroom guiding a small group of children through a hands-on science activity with simple leaves and magnifying glasses, believable everyday professional setting.",
+    "purpose": "Profession/setting editorial discovery",
+    "source": "/Users/user/.codex/generated_images/01a15a7f-f91b-7bc0-917b-03eb0759aa24/exec-4c825f22-3e15-4d91-b63a-57a4acae74c7.png",
+    "originalSha256": "e338046897e7c1b126a150a38d73f3641cf9746ebb47f4cf945f9213f898894d",
+    "originalDimensions": {
+      "width": 1536,
+      "height": 1024
+    },
+    "provenance": "OpenAI built-in image_gen; AI-generated fictional editorial imagery, not a human photographer or an actual employer, employee or platform success story.",
+    "rights": "Generated for this user task. No third-party employer branding or identifiable real workplace was supplied.",
+    "prompt": "Use case: photorealistic-natural. Asset type: original JOBKIX employment-setting editorial photograph. Create one landscape photograph, 3:2 composition, suitable for both a professional website image-led card and a section opening. Documentary editorial photography, natural skin and materials, credible professional everyday setting, candid and confident; coherent anatomy, hands, props and lighting. Internationally relevant adult employment context. An adult Indian primary-school teacher in a contemporary classroom guiding a small group of children through a hands-on science activity with simple leaves and magnifying glasses, believable everyday professional setting. Keep all important faces fully inside the central 75 percent for responsive crops. Premium professional quality, natural daylight, restrained color, no artificial glossy skin. No text, logos, watermarks, UI, badges, ratings, or implied affiliation to any actual employer. Subjects are fictional editorial people, not real JOBKIX employees, users, employers or success stories. Children must be fully clothed in ordinary modest everyday clothes. Avoid uncanny faces, distorted hands, duplicated limbs and physically impossible objects.",
+    "focalDesktop": {
+      "x": 50,
+      "y": 45
+    },
+    "focalMobile": {
+      "x": 50,
+      "y": 45
+    },
+    "visualInspection": "ASSET_DETAIL_AND_MOBILE_EXPORT_REVIEWED",
+    "files": [
+      {
+        "path": "public/jobkix/editorial/setting-primary-schools.webp",
+        "width": 1536,
+        "height": 1024,
+        "bytes": 164062,
+        "sha256": "1b374b10274ed14f40989f555ce21c511eb3d42517d25276bd614bee1992ac0e"
+      },
+      {
+        "path": "public/jobkix/editorial/setting-primary-schools-mobile.webp",
+        "width": 1000,
+        "height": 667,
+        "bytes": 94466,
+        "sha256": "34964f3b7924fb3052a02ee0fe08cc1e30b3354d31e2b59f24a79a27ce450077"
+      }
+    ],
+    "promptFile": "docs/jobkix/asset-prompts/setting-primary-schools.txt",
+    "world": "primary-schools",
+    "role": "employment-setting-editorial",
+    "inspection": {
+      "at": "2026-10-20T22:43:33.219Z",
+      "method": "Actual optimized desktop and mobile contact sheets and four enlarged face/hand/object detail pages visually inspected by the coding assistant; no human photographer or native-review claim.",
+      "finding": "Relevant fictional professional setting, principal faces and coherent hands/objects reviewed. Desktop/mobile exports retain the composition.",
+      "evidence": [
+        "docs/jobkix/evidence/asset-review/all-settings-contact.webp",
+        "docs/jobkix/evidence/asset-review/mobile-exports-contact.webp",
+        "docs/jobkix/evidence/asset-review/settings-details-1.png"
+      ],
+      "renderedLayout": "VISUAL_PENDING"
+    }
+  },
+  {
+    "id": "setting-hospitality",
+    "subject": "An adult Filipina recreation coordinator preparing an organized creative activity for children in a contemporary resort kids club, another adult colleague assisting, warm natural daylight, no hotel identity or branded uniforms.",
+    "purpose": "Profession/setting editorial discovery",
+    "source": "/Users/user/.codex/generated_images/01a15a7f-f91b-7bc0-917b-03eb0759aa24/exec-e8817749-bf73-4dc4-ba2a-6806774c6638.png",
+    "originalSha256": "e21cb2bb52dfa14a579562f5f9c4a92b46bc9c194bd0020bfc876d6b8b6098a7",
+    "originalDimensions": {
+      "width": 1536,
+      "height": 1024
+    },
+    "provenance": "OpenAI built-in image_gen; AI-generated fictional editorial imagery, not a human photographer or an actual employer, employee or platform success story.",
+    "rights": "Generated for this user task. No third-party employer branding or identifiable real workplace was supplied.",
+    "prompt": "Use case: photorealistic-natural. Asset type: original JOBKIX employment-setting editorial photograph. Create one landscape photograph, 3:2 composition, suitable for both a professional website image-led card and a section opening. Documentary editorial photography, natural skin and materials, credible professional everyday setting, candid and confident; coherent anatomy, hands, props and lighting. Internationally relevant adult employment context. An adult Filipina recreation coordinator preparing an organized creative activity for children in a contemporary resort kids club, another adult colleague assisting, warm natural daylight, no hotel identity or branded uniforms. Keep all important faces fully inside the central 75 percent for responsive crops. Premium professional quality, natural daylight, restrained color, no artificial glossy skin. No text, logos, watermarks, UI, badges, ratings, or implied affiliation to any actual employer. Subjects are fictional editorial people, not real JOBKIX employees, users, employers or success stories. Children must be fully clothed in ordinary modest everyday clothes. Avoid uncanny faces, distorted hands, duplicated limbs and physically impossible objects.",
+    "focalDesktop": {
+      "x": 50,
+      "y": 45
+    },
+    "focalMobile": {
+      "x": 50,
+      "y": 45
+    },
+    "visualInspection": "ASSET_DETAIL_AND_MOBILE_EXPORT_REVIEWED",
+    "files": [
+      {
+        "path": "public/jobkix/editorial/setting-hospitality.webp",
+        "width": 1536,
+        "height": 1024,
+        "bytes": 141140,
+        "sha256": "26809223fa3a82fc7cf9560175ea4e20d3c0e3e9bd7157da508bea21bea3b724"
+      },
+      {
+        "path": "public/jobkix/editorial/setting-hospitality-mobile.webp",
+        "width": 1000,
+        "height": 667,
+        "bytes": 85544,
+        "sha256": "b4bc4efcb503e6bbde29e782d12b6fca6a7b2e0dd56dd4176f5e882630c39ee4"
+      }
+    ],
+    "promptFile": "docs/jobkix/asset-prompts/setting-hospitality.txt",
+    "world": "hospitality",
+    "role": "employment-setting-editorial",
+    "inspection": {
+      "at": "2026-10-20T22:43:33.219Z",
+      "method": "Actual optimized desktop and mobile contact sheets and four enlarged face/hand/object detail pages visually inspected by the coding assistant; no human photographer or native-review claim.",
+      "finding": "Relevant fictional professional setting, principal faces and coherent hands/objects reviewed. Desktop/mobile exports retain the composition.",
+      "evidence": [
+        "docs/jobkix/evidence/asset-review/all-settings-contact.webp",
+        "docs/jobkix/evidence/asset-review/mobile-exports-contact.webp",
+        "docs/jobkix/evidence/asset-review/settings-details-1.png"
+      ],
+      "renderedLayout": "VISUAL_PENDING"
+    }
+  },
+  {
+    "id": "search-hero",
+    "subject": "Three fictional international care and education professionals walking outside a community campus",
+    "purpose": "P01 search opening, fictional international professionals; not employer-approved workplace media",
+    "source": "/Users/user/.codex/generated_images/01a15a7f-f91b-7bc0-917b-03eb0759aa24/exec-56fdf2d6-f453-410c-bf48-7830dbfd7128.png",
+    "originalSha256": "feda00a8853430d07079b3606408015933202986893cbd862de9ff399aa67244",
+    "originalDimensions": {
+      "width": 1536,
+      "height": 1024
+    },
+    "provenance": "OpenAI built-in image_gen; AI-generated fictional editorial imagery, not a human photographer or an actual employer, employee or platform success story.",
+    "rights": "Generated for this user task. No third-party employer branding or identifiable real workplace was supplied.",
+    "prompt": "Use case: photorealistic-natural. Create one original wide editorial website hero photograph for JOBKIX Global Careers Platform search. A candid professional conversation between three adult education and care professionals walking along a leafy path outside a contemporary international community campus: a Black British woman in her early thirties, an Indonesian man in his thirties, and a French North African woman in her forties. Understated smart casual clothing, natural varied expressions, believable anatomy and hands, ordinary work bags, no uniforms or badges. The people occupy the right half of the frame. Warm late-afternoon daylight, a softly blurred urban campus and foliage, premium natural documentary photography, authentic skin and fabric texture, restrained color, no artificial glossy faces. The left half provides dark softly shaded trees and quiet negative space for a white heading overlay. Wide landscape 3:2 composition, eye-level camera, 50mm lens. No logos, no text, no embedded graphics, no watermarks, no flag collage. Fictional editorial people and setting; do not represent a real employer or actual JOBKIX employees.\n",
+    "focalDesktop": {
+      "x": 75,
+      "y": 35
+    },
+    "focalMobile": {
+      "x": 50,
+      "y": 36
+    },
+    "visualInspection": "ASSET_DETAIL_AND_MOBILE_EXPORT_REVIEWED",
+    "files": [
+      {
+        "path": "public/jobkix/editorial/search-hero.webp",
+        "width": 1536,
+        "height": 1024,
+        "bytes": 195990,
+        "sha256": "dbb72aa32a9f355ad411055affe62075828c4b6fd913ba0635f608da86e2e014"
+      },
+      {
+        "path": "public/jobkix/editorial/search-hero-mobile.webp",
+        "width": 952,
+        "height": 1024,
+        "bytes": 136876,
+        "sha256": "859fa870f43a7c5481a319bbd2876a41b1ba6e34ff90dc1313f5fe41aa3d192a"
+      }
+    ],
+    "inspection": {
+      "at": "2026-10-20T21:50:21.549Z",
+      "method": "Full original, enlarged human/hand detail and actual optimized mobile export viewed; no browser-rendered composition approval claimed.",
+      "finding": "Faces, hands, clothing and setting visually inspected. Mobile export retains all principal faces.",
+      "evidence": [
+        "docs/jobkix/evidence/search-hero-detail.png"
+      ],
+      "renderedLayout": "VISUAL_PENDING"
+    },
+    "promptFile": "docs/jobkix/asset-prompts/search-hero.txt",
+    "rtlTreatment": "Desktop uses a separate physical-left image region with the original photograph preserved; no mirrored composition or extra composition count. Actual rendered crop remains VISUAL_PENDING.",
+    "additionalPlacements": [
+      {
+        "screen": "P00",
+        "purpose": "Editorial professional discovery photograph for candidate acquisition panel; not an actual applicant or success story.",
+        "renderedCrop": "VISUAL_PENDING"
+      }
+    ]
+  },
+  {
+    "id": "setting-preschool",
+    "subject": "A Latina preschool educator guiding two young children through a simple counting activity using wooden counting beads beside a classroom garden. The educator is seated at child level, absorbed in her work, children naturally engaged. Warm green and cream surroundings.",
+    "purpose": "Profession/setting editorial discovery",
+    "source": "/Users/user/.codex/generated_images/01a15a7f-f91b-7bc0-917b-03eb0759aa24/exec-7b20fe0c-9197-4eaf-8cb0-05b006370d1e.png",
+    "originalSha256": "e7fbafa87ed46e5360668d4216bfc408e51e4bb3b6ade945fd8f0f5a6c4030b0",
+    "originalDimensions": {
+      "width": 1536,
+      "height": 1024
+    },
+    "provenance": "OpenAI built-in image_gen; AI-generated fictional editorial imagery, not a human photographer or an actual employer, employee or platform success story.",
+    "rights": "Generated for this user task. No third-party employer branding or identifiable real workplace was supplied.",
+    "prompt": "Use case: photorealistic-natural. Create a single original 3:2 wide professional editorial photograph for JOBKIX Global Careers Platform. Premium natural documentary photography, authentic human anatomy, coherent hands and objects, realistic skin and cloth texture, understated styling, international relevance. Candid working moment, purposeful composition, soft natural light, quiet background, no exaggerated smiles or glossy artificial faces. All children fully clothed in ordinary modest everyday clothing. No logos, text, watermarks, readable signage, employee badges or embedded graphics. This is fictional editorial imagery and must not identify an actual employer, employee, patient or platform success story. Subject: A Latina preschool educator guiding two young children through a simple counting activity using wooden counting beads beside a classroom garden. The educator is seated at child level, absorbed in her work, children naturally engaged. Warm green and cream surroundings.",
+    "focalDesktop": {
+      "x": 50,
+      "y": 45
+    },
+    "focalMobile": {
+      "x": 50,
+      "y": 45
+    },
+    "visualInspection": "ASSET_DETAIL_AND_MOBILE_EXPORT_REVIEWED",
+    "files": [
+      {
+        "path": "public/jobkix/editorial/setting-preschool.webp",
+        "width": 1536,
+        "height": 1024,
+        "bytes": 229478,
+        "sha256": "9276c53a187a5646a0372aeec85abe1b3576ba03ddbe86b635115884c3a587a1"
+      },
+      {
+        "path": "public/jobkix/editorial/setting-preschool-mobile.webp",
+        "width": 1000,
+        "height": 667,
+        "bytes": 129578,
+        "sha256": "5f300943956af37a95bc81638fc4d49c316bb20dc0334dc0b4a554929e7f13d0"
+      }
+    ],
+    "world": "preschool",
+    "role": "employment-setting-editorial",
+    "inspection": {
+      "at": "2026-10-20T22:43:33.219Z",
+      "method": "Actual optimized desktop and mobile contact sheets and four enlarged face/hand/object detail pages visually inspected by the coding assistant; no human photographer or native-review claim.",
+      "finding": "Relevant fictional professional setting, principal faces and coherent hands/objects reviewed. Desktop/mobile exports retain the composition.",
+      "evidence": [
+        "docs/jobkix/evidence/asset-review/all-settings-contact.webp",
+        "docs/jobkix/evidence/asset-review/mobile-exports-contact.webp",
+        "docs/jobkix/evidence/asset-review/settings-details-2.png"
+      ],
+      "renderedLayout": "VISUAL_PENDING"
+    },
+    "promptFile": "docs/jobkix/asset-prompts/setting-preschool.txt"
+  },
+  {
+    "id": "setting-secondary-colleges",
+    "subject": "An Arab male secondary-school science educator supervising two teenage students at a classroom lab bench with simple clean educational science equipment. Modest ordinary clothes and appropriate safety glasses, attentive teaching, bright genuine-looking modern school laboratory. No dangerous procedure or dramatic effects.",
+    "purpose": "Profession/setting editorial discovery",
+    "source": "/Users/user/.codex/generated_images/01a15a7f-f91b-7bc0-917b-03eb0759aa24/exec-5c86d851-690d-46a6-95ed-fef1015a83a8.png",
+    "originalSha256": "7a7b39f8f5d62ac5176381d284bd81321284d2f02fb685914ff60698cbda6f7a",
+    "originalDimensions": {
+      "width": 1536,
+      "height": 1024
+    },
+    "provenance": "OpenAI built-in image_gen; AI-generated fictional editorial imagery, not a human photographer or an actual employer, employee or platform success story.",
+    "rights": "Generated for this user task. No third-party employer branding or identifiable real workplace was supplied.",
+    "prompt": "Use case: photorealistic-natural. Create a single original 3:2 wide professional editorial photograph for JOBKIX Global Careers Platform. Premium natural documentary photography, authentic human anatomy, coherent hands and objects, realistic skin and cloth texture, understated styling, international relevance. Candid working moment, purposeful composition, soft natural light, quiet background, no exaggerated smiles or glossy artificial faces. All children fully clothed in ordinary modest everyday clothing. No logos, text, watermarks, readable signage, employee badges or embedded graphics. This is fictional editorial imagery and must not identify an actual employer, employee, patient or platform success story. Subject: An Arab male secondary-school science educator supervising two teenage students at a classroom lab bench with simple clean educational science equipment. Modest ordinary clothes and appropriate safety glasses, attentive teaching, bright genuine-looking modern school laboratory. No dangerous procedure or dramatic effects.",
+    "focalDesktop": {
+      "x": 50,
+      "y": 45
+    },
+    "focalMobile": {
+      "x": 50,
+      "y": 45
+    },
+    "visualInspection": "ASSET_DETAIL_AND_MOBILE_EXPORT_REVIEWED",
+    "files": [
+      {
+        "path": "public/jobkix/editorial/setting-secondary-colleges.webp",
+        "width": 1536,
+        "height": 1024,
+        "bytes": 108070,
+        "sha256": "1453aef14075d052d0601a6ae36089974a764d104650643fb9517225d5705cfe"
+      },
+      {
+        "path": "public/jobkix/editorial/setting-secondary-colleges-mobile.webp",
+        "width": 1000,
+        "height": 667,
+        "bytes": 62968,
+        "sha256": "5795b2fdfe6f009dd6452f006d995d5675468dc2655d35e5523ca057bb430056"
+      }
+    ],
+    "world": "secondary-colleges",
+    "role": "employment-setting-editorial",
+    "inspection": {
+      "at": "2026-10-20T22:43:33.219Z",
+      "method": "Actual optimized desktop and mobile contact sheets and four enlarged face/hand/object detail pages visually inspected by the coding assistant; no human photographer or native-review claim.",
+      "finding": "Relevant fictional professional setting, principal faces and coherent hands/objects reviewed. Desktop/mobile exports retain the composition.",
+      "evidence": [
+        "docs/jobkix/evidence/asset-review/all-settings-contact.webp",
+        "docs/jobkix/evidence/asset-review/mobile-exports-contact.webp",
+        "docs/jobkix/evidence/asset-review/settings-details-2.png"
+      ],
+      "renderedLayout": "VISUAL_PENDING"
+    },
+    "promptFile": "docs/jobkix/asset-prompts/setting-secondary-colleges.txt"
+  },
+  {
+    "id": "setting-international-schools",
+    "subject": "A Black woman school leader and two adult colleagues of different ethnic backgrounds discussing a paper lesson plan in a light contemporary international school corridor overlooking a courtyard. Discreet professional attire, candid collegial interaction, the papers contain no readable writing.",
+    "purpose": "Profession/setting editorial discovery",
+    "source": "/Users/user/.codex/generated_images/01a15a7f-f91b-7bc0-917b-03eb0759aa24/exec-72428143-8d7c-4c93-8f9d-fc6bd4fd795e.png",
+    "originalSha256": "80844009f4d06bd827221fab6346946e6907ff0cc2dfacd90438a4ae45251567",
+    "originalDimensions": {
+      "width": 1536,
+      "height": 1024
+    },
+    "provenance": "OpenAI built-in image_gen; AI-generated fictional editorial imagery, not a human photographer or an actual employer, employee or platform success story.",
+    "rights": "Generated for this user task. No third-party employer branding or identifiable real workplace was supplied.",
+    "prompt": "Use case: photorealistic-natural. Create a single original 3:2 wide professional editorial photograph for JOBKIX Global Careers Platform. Premium natural documentary photography, authentic human anatomy, coherent hands and objects, realistic skin and cloth texture, understated styling, international relevance. Candid working moment, purposeful composition, soft natural light, quiet background, no exaggerated smiles or glossy artificial faces. All children fully clothed in ordinary modest everyday clothing. No logos, text, watermarks, readable signage, employee badges or embedded graphics. This is fictional editorial imagery and must not identify an actual employer, employee, patient or platform success story. Subject: A Black woman school leader and two adult colleagues of different ethnic backgrounds discussing a paper lesson plan in a light contemporary international school corridor overlooking a courtyard. Discreet professional attire, candid collegial interaction, the papers contain no readable writing.",
+    "focalDesktop": {
+      "x": 50,
+      "y": 45
+    },
+    "focalMobile": {
+      "x": 50,
+      "y": 45
+    },
+    "visualInspection": "ASSET_DETAIL_AND_MOBILE_EXPORT_REVIEWED",
+    "files": [
+      {
+        "path": "public/jobkix/editorial/setting-international-schools.webp",
+        "width": 1536,
+        "height": 1024,
+        "bytes": 118916,
+        "sha256": "8626d9201217f4e266f5c27c93d0fc69b32b054d6223eaf558f9b60107951d08"
+      },
+      {
+        "path": "public/jobkix/editorial/setting-international-schools-mobile.webp",
+        "width": 1000,
+        "height": 667,
+        "bytes": 68782,
+        "sha256": "2da1bb2c633dfed144357d3019a73feb0236320092ffef50b1b05def480bfe2b"
+      }
+    ],
+    "world": "international-schools",
+    "role": "employment-setting-editorial",
+    "inspection": {
+      "at": "2026-10-20T22:43:33.219Z",
+      "method": "Actual optimized desktop and mobile contact sheets and four enlarged face/hand/object detail pages visually inspected by the coding assistant; no human photographer or native-review claim.",
+      "finding": "Relevant fictional professional setting, principal faces and coherent hands/objects reviewed. Desktop/mobile exports retain the composition.",
+      "evidence": [
+        "docs/jobkix/evidence/asset-review/all-settings-contact.webp",
+        "docs/jobkix/evidence/asset-review/mobile-exports-contact.webp",
+        "docs/jobkix/evidence/asset-review/settings-details-2.png"
+      ],
+      "renderedLayout": "VISUAL_PENDING"
+    },
+    "promptFile": "docs/jobkix/asset-prompts/setting-international-schools.txt",
+    "additionalPlacements": [
+      {
+        "screen": "P00",
+        "purpose": "Editorial institutional hiring/team context in hirer acquisition panel; not an actual JOBKIX employer.",
+        "renderedCrop": "VISUAL_PENDING"
+      }
+    ]
+  },
+  {
+    "id": "setting-public-education",
+    "subject": "An East Asian woman public-school teacher sitting with three primary-age pupils from varied backgrounds at a welcoming library reading table. The children examine an open illustrated book with no readable text, soft daylight, credible ordinary school setting.",
+    "purpose": "Profession/setting editorial discovery",
+    "source": "/Users/user/.codex/generated_images/01a15a7f-f91b-7bc0-917b-03eb0759aa24/exec-61d2cf47-eced-4b4d-9bd2-522cd686dcad.png",
+    "originalSha256": "fa9d9ac9b0f011fc69227aa96e34ee23fb9373af349726b867cf2d658759a98a",
+    "originalDimensions": {
+      "width": 1536,
+      "height": 1024
+    },
+    "provenance": "OpenAI built-in image_gen; AI-generated fictional editorial imagery, not a human photographer or an actual employer, employee or platform success story.",
+    "rights": "Generated for this user task. No third-party employer branding or identifiable real workplace was supplied.",
+    "prompt": "Use case: photorealistic-natural. Create a single original 3:2 wide professional editorial photograph for JOBKIX Global Careers Platform. Premium natural documentary photography, authentic human anatomy, coherent hands and objects, realistic skin and cloth texture, understated styling, international relevance. Candid working moment, purposeful composition, soft natural light, quiet background, no exaggerated smiles or glossy artificial faces. All children fully clothed in ordinary modest everyday clothing. No logos, text, watermarks, readable signage, employee badges or embedded graphics. This is fictional editorial imagery and must not identify an actual employer, employee, patient or platform success story. Subject: An East Asian woman public-school teacher sitting with three primary-age pupils from varied backgrounds at a welcoming library reading table. The children examine an open illustrated book with no readable text, soft daylight, credible ordinary school setting.",
+    "focalDesktop": {
+      "x": 50,
+      "y": 45
+    },
+    "focalMobile": {
+      "x": 50,
+      "y": 45
+    },
+    "visualInspection": "ASSET_DETAIL_AND_MOBILE_EXPORT_REVIEWED",
+    "files": [
+      {
+        "path": "public/jobkix/editorial/setting-public-education.webp",
+        "width": 1536,
+        "height": 1024,
+        "bytes": 146306,
+        "sha256": "12efb83258a9a8b6b91ee5b43e2a0c677c7f5fba262260f9f7585dbc63fd3774"
+      },
+      {
+        "path": "public/jobkix/editorial/setting-public-education-mobile.webp",
+        "width": 1000,
+        "height": 667,
+        "bytes": 77808,
+        "sha256": "a5b62f254dc00fcc8fbc9508ef4726aaeb2810156ab9025c203ab6667eff8ac7"
+      }
+    ],
+    "world": "public-education",
+    "role": "employment-setting-editorial",
+    "inspection": {
+      "at": "2026-10-20T22:43:33.219Z",
+      "method": "Actual optimized desktop and mobile contact sheets and four enlarged face/hand/object detail pages visually inspected by the coding assistant; no human photographer or native-review claim.",
+      "finding": "Relevant fictional professional setting, principal faces and coherent hands/objects reviewed. Desktop/mobile exports retain the composition.",
+      "evidence": [
+        "docs/jobkix/evidence/asset-review/all-settings-contact.webp",
+        "docs/jobkix/evidence/asset-review/mobile-exports-contact.webp",
+        "docs/jobkix/evidence/asset-review/settings-details-2.png"
+      ],
+      "renderedLayout": "VISUAL_PENDING"
+    },
+    "promptFile": "docs/jobkix/asset-prompts/setting-public-education.txt"
+  },
+  {
+    "id": "setting-pediatrics",
+    "subject": "A Black female pediatric nurse in plain navy scrubs having a reassuring professional conversation with an adult father of South Asian heritage and his fully clothed primary-age child in a bright pediatric consultation room. They look at one another. A simple stethoscope rests on the desk, no medical procedure, no dramatic symptoms or frightening equipment.",
+    "purpose": "Profession/setting editorial discovery",
+    "source": "/Users/user/.codex/generated_images/01a15a7f-f91b-7bc0-917b-03eb0759aa24/exec-500bb138-4ba6-49fd-a36c-23b63a300e01.png",
+    "originalSha256": "e9cd0930064116e69f97eff05219b71ee80ad5735a4e9969f29ee88305e29b1e",
+    "originalDimensions": {
+      "width": 1536,
+      "height": 1024
+    },
+    "provenance": "OpenAI built-in image_gen; AI-generated fictional editorial imagery, not a human photographer or an actual employer, employee or platform success story.",
+    "rights": "Generated for this user task. No third-party employer branding or identifiable real workplace was supplied.",
+    "prompt": "Use case: photorealistic-natural. Create one original 3:2 wide premium editorial photograph for JOBKIX Global Careers Platform. Natural documentary photographic style, credible anatomy, realistic skin, coherent hands and ordinary objects, modest professional styling, warm neutral color, soft natural light. Show a candid working moment rather than people posing for a camera. Children fully clothed, respectful and ordinary family context. No logos, text, watermarks, badges or readable signage. Do not imply an actual employer, actual clinician, actual patient or testimonial; all people and settings are fictional editorial subjects. Subject: A Black female pediatric nurse in plain navy scrubs having a reassuring professional conversation with an adult father of South Asian heritage and his fully clothed primary-age child in a bright pediatric consultation room. They look at one another. A simple stethoscope rests on the desk, no medical procedure, no dramatic symptoms or frightening equipment.",
+    "focalDesktop": {
+      "x": 50,
+      "y": 45
+    },
+    "focalMobile": {
+      "x": 50,
+      "y": 45
+    },
+    "visualInspection": "ASSET_DETAIL_AND_MOBILE_EXPORT_REVIEWED",
+    "files": [
+      {
+        "path": "public/jobkix/editorial/setting-pediatrics.webp",
+        "width": 1536,
+        "height": 1024,
+        "bytes": 127194,
+        "sha256": "0496448dd6e13974502e5ceaaa263bf107afd6936413b9e35e300beb0dc93b02"
+      },
+      {
+        "path": "public/jobkix/editorial/setting-pediatrics-mobile.webp",
+        "width": 1000,
+        "height": 667,
+        "bytes": 72542,
+        "sha256": "b6b95533cb01ae5b316a7cb48f34136b6f599b815427fa976084508eaab9a2fe"
+      }
+    ],
+    "world": "pediatrics",
+    "role": "employment-setting-editorial",
+    "inspection": {
+      "at": "2026-10-20T22:43:33.219Z",
+      "method": "Actual optimized desktop and mobile contact sheets and four enlarged face/hand/object detail pages visually inspected by the coding assistant; no human photographer or native-review claim.",
+      "finding": "Relevant fictional professional setting, principal faces and coherent hands/objects reviewed. Desktop/mobile exports retain the composition.",
+      "evidence": [
+        "docs/jobkix/evidence/asset-review/all-settings-contact.webp",
+        "docs/jobkix/evidence/asset-review/mobile-exports-contact.webp",
+        "docs/jobkix/evidence/asset-review/settings-details-3.png"
+      ],
+      "renderedLayout": "VISUAL_PENDING"
+    },
+    "promptFile": "docs/jobkix/asset-prompts/setting-pediatrics.txt"
+  },
+  {
+    "id": "setting-maternity-neonatal",
+    "subject": "Two adult maternity-care professionals, a Filipina woman and a woman of Eastern European heritage, in understated clean pastel workwear reviewing a blank folder with a seated adult mother holding her fully wrapped newborn in a quiet bright maternity family room. Natural attentive expressions, realistic infant fully covered in a modest cotton wrap, no clinical procedure or exposed body.",
+    "purpose": "Profession/setting editorial discovery",
+    "source": "/Users/user/.codex/generated_images/01a15a7f-f91b-7bc0-917b-03eb0759aa24/exec-ab99c961-46ee-496c-9737-96681d2959f8.png",
+    "originalSha256": "50901788998a0907b21088d7ea64638d619231b5466299718881f132d1b25b05",
+    "originalDimensions": {
+      "width": 1536,
+      "height": 1024
+    },
+    "provenance": "OpenAI built-in image_gen; AI-generated fictional editorial imagery, not a human photographer or an actual employer, employee or platform success story.",
+    "rights": "Generated for this user task. No third-party employer branding or identifiable real workplace was supplied.",
+    "prompt": "Use case: photorealistic-natural. Create one original 3:2 wide premium editorial photograph for JOBKIX Global Careers Platform. Natural documentary photographic style, credible anatomy, realistic skin, coherent hands and ordinary objects, modest professional styling, warm neutral color, soft natural light. Show a candid working moment rather than people posing for a camera. Children fully clothed, respectful and ordinary family context. No logos, text, watermarks, badges or readable signage. Do not imply an actual employer, actual clinician, actual patient or testimonial; all people and settings are fictional editorial subjects. Subject: Two adult maternity-care professionals, a Filipina woman and a woman of Eastern European heritage, in understated clean pastel workwear reviewing a blank folder with a seated adult mother holding her fully wrapped newborn in a quiet bright maternity family room. Natural attentive expressions, realistic infant fully covered in a modest cotton wrap, no clinical procedure or exposed body.",
+    "focalDesktop": {
+      "x": 50,
+      "y": 45
+    },
+    "focalMobile": {
+      "x": 50,
+      "y": 45
+    },
+    "visualInspection": "ASSET_DETAIL_AND_MOBILE_EXPORT_REVIEWED",
+    "files": [
+      {
+        "path": "public/jobkix/editorial/setting-maternity-neonatal.webp",
+        "width": 1536,
+        "height": 1024,
+        "bytes": 119142,
+        "sha256": "d29647b505cd85724c1252a961a2e6c8da3e756a6ffa3100970cb3489a85a52b"
+      },
+      {
+        "path": "public/jobkix/editorial/setting-maternity-neonatal-mobile.webp",
+        "width": 1000,
+        "height": 667,
+        "bytes": 68248,
+        "sha256": "a8a61294318376b9f8ea8caf9151bf78a40c0e186ca346f619b58ffe1a796f05"
+      }
+    ],
+    "world": "maternity-neonatal",
+    "role": "employment-setting-editorial",
+    "inspection": {
+      "at": "2026-10-20T22:43:33.220Z",
+      "method": "Actual optimized desktop and mobile contact sheets and four enlarged face/hand/object detail pages visually inspected by the coding assistant; no human photographer or native-review claim.",
+      "finding": "Relevant fictional professional setting, principal faces and coherent hands/objects reviewed. Desktop/mobile exports retain the composition.",
+      "evidence": [
+        "docs/jobkix/evidence/asset-review/all-settings-contact.webp",
+        "docs/jobkix/evidence/asset-review/mobile-exports-contact.webp",
+        "docs/jobkix/evidence/asset-review/settings-details-3.png"
+      ],
+      "renderedLayout": "VISUAL_PENDING"
+    },
+    "promptFile": "docs/jobkix/asset-prompts/setting-maternity-neonatal.txt"
+  },
+  {
+    "id": "setting-therapy-development",
+    "subject": "A North African male occupational-therapy professional sitting on a low stool beside a fully clothed young child and an adult parent in a thoughtful developmental playroom. They cooperate to assemble large simple wooden shapes on a low table. Calm supportive atmosphere, natural hands and coherent toys, no implication of a real diagnosis or treatment outcome.",
+    "purpose": "Profession/setting editorial discovery",
+    "source": "/Users/user/.codex/generated_images/01a15a7f-f91b-7bc0-917b-03eb0759aa24/exec-b105795d-1c9a-44b2-a698-42f1df0d4a98.png",
+    "originalSha256": "2dedf3fdb3d51a0e1c0299dc721ec0b5987e452d40f2d91316deb5ec8e594acf",
+    "originalDimensions": {
+      "width": 1536,
+      "height": 1024
+    },
+    "provenance": "OpenAI built-in image_gen; AI-generated fictional editorial imagery, not a human photographer or an actual employer, employee or platform success story.",
+    "rights": "Generated for this user task. No third-party employer branding or identifiable real workplace was supplied.",
+    "prompt": "Use case: photorealistic-natural. Create one original 3:2 wide premium editorial photograph for JOBKIX Global Careers Platform. Natural documentary photographic style, credible anatomy, realistic skin, coherent hands and ordinary objects, modest professional styling, warm neutral color, soft natural light. Show a candid working moment rather than people posing for a camera. Children fully clothed, respectful and ordinary family context. No logos, text, watermarks, badges or readable signage. Do not imply an actual employer, actual clinician, actual patient or testimonial; all people and settings are fictional editorial subjects. Subject: A North African male occupational-therapy professional sitting on a low stool beside a fully clothed young child and an adult parent in a thoughtful developmental playroom. They cooperate to assemble large simple wooden shapes on a low table. Calm supportive atmosphere, natural hands and coherent toys, no implication of a real diagnosis or treatment outcome.",
+    "focalDesktop": {
+      "x": 50,
+      "y": 45
+    },
+    "focalMobile": {
+      "x": 50,
+      "y": 45
+    },
+    "visualInspection": "ASSET_DETAIL_AND_MOBILE_EXPORT_REVIEWED",
+    "files": [
+      {
+        "path": "public/jobkix/editorial/setting-therapy-development.webp",
+        "width": 1536,
+        "height": 1024,
+        "bytes": 142456,
+        "sha256": "7c8b59349257c72ec3dbffbe1e9fc775060cbeb2bf02c3e01433e7c754165265"
+      },
+      {
+        "path": "public/jobkix/editorial/setting-therapy-development-mobile.webp",
+        "width": 1000,
+        "height": 667,
+        "bytes": 83388,
+        "sha256": "e5c2a1e5130a78b8f99903b473023c5341cc6f85970d382636c73adef333fe66"
+      }
+    ],
+    "world": "therapy-development",
+    "role": "employment-setting-editorial",
+    "inspection": {
+      "at": "2026-10-20T22:43:33.220Z",
+      "method": "Actual optimized desktop and mobile contact sheets and four enlarged face/hand/object detail pages visually inspected by the coding assistant; no human photographer or native-review claim.",
+      "finding": "Relevant fictional professional setting, principal faces and coherent hands/objects reviewed. Desktop/mobile exports retain the composition.",
+      "evidence": [
+        "docs/jobkix/evidence/asset-review/all-settings-contact.webp",
+        "docs/jobkix/evidence/asset-review/mobile-exports-contact.webp",
+        "docs/jobkix/evidence/asset-review/settings-details-3.png"
+      ],
+      "renderedLayout": "VISUAL_PENDING"
+    },
+    "promptFile": "docs/jobkix/asset-prompts/setting-therapy-development.txt"
+  },
+  {
+    "id": "setting-camps-sports",
+    "subject": "A Latino adult outdoor activity leader with three school-age children from varied ethnic backgrounds at a park activity table, preparing a simple nature scavenger activity with leaves and wooden sample trays. They wear ordinary outdoor clothing and sun hats, shaded green landscape, candid engaged work, no logos or readable papers.",
+    "purpose": "Profession/setting editorial discovery",
+    "source": "/Users/user/.codex/generated_images/01a15a7f-f91b-7bc0-917b-03eb0759aa24/exec-7dab2495-c5a7-45e4-8f49-bc344421f4c1.png",
+    "originalSha256": "be3ccf96158aa28bd74e9ec7d07bc6da42a5976b2973f4173d85a9d24bc01948",
+    "originalDimensions": {
+      "width": 1536,
+      "height": 1024
+    },
+    "provenance": "OpenAI built-in image_gen; AI-generated fictional editorial imagery, not a human photographer or an actual employer, employee or platform success story.",
+    "rights": "Generated for this user task. No third-party employer branding or identifiable real workplace was supplied.",
+    "prompt": "Use case: photorealistic-natural. Create one original 3:2 wide premium editorial photograph for JOBKIX Global Careers Platform. Natural documentary photographic style, credible anatomy, realistic skin, coherent hands and ordinary objects, modest professional styling, warm neutral color, soft natural light. Show a candid working moment rather than people posing for a camera. Children fully clothed, respectful and ordinary family context. No logos, text, watermarks, badges or readable signage. Do not imply an actual employer, actual clinician, actual patient or testimonial; all people and settings are fictional editorial subjects. Subject: A Latino adult outdoor activity leader with three school-age children from varied ethnic backgrounds at a park activity table, preparing a simple nature scavenger activity with leaves and wooden sample trays. They wear ordinary outdoor clothing and sun hats, shaded green landscape, candid engaged work, no logos or readable papers.",
+    "focalDesktop": {
+      "x": 50,
+      "y": 45
+    },
+    "focalMobile": {
+      "x": 50,
+      "y": 45
+    },
+    "visualInspection": "ASSET_DETAIL_AND_MOBILE_EXPORT_REVIEWED",
+    "files": [
+      {
+        "path": "public/jobkix/editorial/setting-camps-sports.webp",
+        "width": 1536,
+        "height": 1024,
+        "bytes": 212212,
+        "sha256": "27590864ed0ccddfa98efb7c6b38b7266dd71ee9933517898626c6653fac88b8"
+      },
+      {
+        "path": "public/jobkix/editorial/setting-camps-sports-mobile.webp",
+        "width": 1000,
+        "height": 667,
+        "bytes": 124526,
+        "sha256": "c263546cb95e0f88fc86d2923f87636f259703e5d7e03ba6f836adbc408336c6"
+      }
+    ],
+    "world": "camps-sports",
+    "role": "employment-setting-editorial",
+    "inspection": {
+      "at": "2026-10-20T22:43:33.220Z",
+      "method": "Actual optimized desktop and mobile contact sheets and four enlarged face/hand/object detail pages visually inspected by the coding assistant; no human photographer or native-review claim.",
+      "finding": "Relevant fictional professional setting, principal faces and coherent hands/objects reviewed. Desktop/mobile exports retain the composition.",
+      "evidence": [
+        "docs/jobkix/evidence/asset-review/all-settings-contact.webp",
+        "docs/jobkix/evidence/asset-review/mobile-exports-contact.webp",
+        "docs/jobkix/evidence/asset-review/settings-details-3.png"
+      ],
+      "renderedLayout": "VISUAL_PENDING"
+    },
+    "promptFile": "docs/jobkix/asset-prompts/setting-camps-sports.txt"
+  },
+  {
+    "id": "setting-ngo-child-welfare",
+    "subject": "A South Asian woman community-program professional and a West African male colleague discussing a plain folder with an adult parent at a welcoming nonprofit family-services office table. A fully clothed child draws quietly at a separate nearby table in soft focus. Supportive professional conversation, dignified ordinary community setting, no distress, no charity stereotypes, no readable writing.",
+    "purpose": "Profession/setting editorial discovery",
+    "source": "/Users/user/.codex/generated_images/01a15a7f-f91b-7bc0-917b-03eb0759aa24/exec-eb334f4d-ba72-4f3d-8f02-cefe4f6d9478.png",
+    "originalSha256": "a8cf42856fbba73581d80dac8672b1e2253e6ebb7f8e994d193c665fb6f5f12f",
+    "originalDimensions": {
+      "width": 1536,
+      "height": 1024
+    },
+    "provenance": "OpenAI built-in image_gen; AI-generated fictional editorial imagery, not a human photographer or an actual employer, employee or platform success story.",
+    "rights": "Generated for this user task. No third-party employer branding or identifiable real workplace was supplied.",
+    "prompt": "Use case: photorealistic-natural. Create one distinct original 3:2 wide professional editorial photograph for JOBKIX Global Careers Platform. Consistent premium natural documentary photography: authentic skin and cloth textures, natural anatomy and hands, coherent ordinary objects, candid engaged work, restrained warm neutral colors and soft natural light. Internationally relevant and respectful. No logos, brands, readable text, signage, watermarks, badges or embedded UI. All people and workplaces are fictional editorial subjects, not actual JOBKIX staff, real employers, real officials or success stories. Subject: A South Asian woman community-program professional and a West African male colleague discussing a plain folder with an adult parent at a welcoming nonprofit family-services office table. A fully clothed child draws quietly at a separate nearby table in soft focus. Supportive professional conversation, dignified ordinary community setting, no distress, no charity stereotypes, no readable writing.",
+    "focalDesktop": {
+      "x": 50,
+      "y": 45
+    },
+    "focalMobile": {
+      "x": 50,
+      "y": 45
+    },
+    "visualInspection": "ASSET_DETAIL_AND_MOBILE_EXPORT_REVIEWED",
+    "files": [
+      {
+        "path": "public/jobkix/editorial/setting-ngo-child-welfare.webp",
+        "width": 1536,
+        "height": 1024,
+        "bytes": 133052,
+        "sha256": "7d7036676ffbb6804388132ef45b54230fa917ef9247ec4a09d1d003abab68c7"
+      },
+      {
+        "path": "public/jobkix/editorial/setting-ngo-child-welfare-mobile.webp",
+        "width": 1000,
+        "height": 667,
+        "bytes": 74450,
+        "sha256": "62c6818afdcde8571d34320e3ac3a61239786437ef805160caac3b41bdd419d2"
+      }
+    ],
+    "world": "ngo-child-welfare",
+    "role": "employment-setting-editorial",
+    "inspection": {
+      "at": "2026-10-20T22:43:33.220Z",
+      "method": "Actual optimized desktop and mobile contact sheets and four enlarged face/hand/object detail pages visually inspected by the coding assistant; no human photographer or native-review claim.",
+      "finding": "Relevant fictional professional setting, principal faces and coherent hands/objects reviewed. Desktop/mobile exports retain the composition.",
+      "evidence": [
+        "docs/jobkix/evidence/asset-review/all-settings-contact.webp",
+        "docs/jobkix/evidence/asset-review/mobile-exports-contact.webp",
+        "docs/jobkix/evidence/asset-review/settings-details-4.png"
+      ],
+      "renderedLayout": "VISUAL_PENDING"
+    },
+    "promptFile": "docs/jobkix/asset-prompts/setting-ngo-child-welfare.txt"
+  },
+  {
+    "id": "setting-school-operations",
+    "subject": "An adult Southeast Asian female school transport professional wearing a plain practical jacket, standing beside a parked unbranded small school bus and talking with an adult father outside a school courtyard. No driving motion, no children in traffic, no readable license plate or transport logos. Show the human professional work of school operations, natural warm morning daylight.",
+    "purpose": "Profession/setting editorial discovery",
+    "source": "/Users/user/.codex/generated_images/01a15a7f-f91b-7bc0-917b-03eb0759aa24/exec-4ca3f2cd-cb48-4e3f-98e1-e0461e78f3b7.png",
+    "originalSha256": "95f2dd77d5bbd3ec44378cfe735870b0d872ff3d207894e3ec99282e5d1a0394",
+    "originalDimensions": {
+      "width": 1536,
+      "height": 1024
+    },
+    "provenance": "OpenAI built-in image_gen; AI-generated fictional editorial imagery, not a human photographer or an actual employer, employee or platform success story.",
+    "rights": "Generated for this user task. No third-party employer branding or identifiable real workplace was supplied.",
+    "prompt": "Use case: photorealistic-natural. Create one distinct original 3:2 wide professional editorial photograph for JOBKIX Global Careers Platform. Consistent premium natural documentary photography: authentic skin and cloth textures, natural anatomy and hands, coherent ordinary objects, candid engaged work, restrained warm neutral colors and soft natural light. Internationally relevant and respectful. No logos, brands, readable text, signage, watermarks, badges or embedded UI. All people and workplaces are fictional editorial subjects, not actual JOBKIX staff, real employers, real officials or success stories. Subject: An adult Southeast Asian female school transport professional wearing a plain practical jacket, standing beside a parked unbranded small school bus and talking with an adult father outside a school courtyard. No driving motion, no children in traffic, no readable license plate or transport logos. Show the human professional work of school operations, natural warm morning daylight.",
+    "focalDesktop": {
+      "x": 50,
+      "y": 45
+    },
+    "focalMobile": {
+      "x": 50,
+      "y": 45
+    },
+    "visualInspection": "ASSET_DETAIL_AND_MOBILE_EXPORT_REVIEWED",
+    "files": [
+      {
+        "path": "public/jobkix/editorial/setting-school-operations.webp",
+        "width": 1536,
+        "height": 1024,
+        "bytes": 156372,
+        "sha256": "c742ecccc5054cd56969cee0e47416686d5215b23ff5100d6461add427299069"
+      },
+      {
+        "path": "public/jobkix/editorial/setting-school-operations-mobile.webp",
+        "width": 1000,
+        "height": 667,
+        "bytes": 89452,
+        "sha256": "ae1b88da5d6ca09894f50678947d88c7811b8dae36b045e7060b49d57a1f2601"
+      }
+    ],
+    "world": "school-operations",
+    "role": "employment-setting-editorial",
+    "inspection": {
+      "at": "2026-10-20T22:43:33.220Z",
+      "method": "Actual optimized desktop and mobile contact sheets and four enlarged face/hand/object detail pages visually inspected by the coding assistant; no human photographer or native-review claim.",
+      "finding": "Relevant fictional professional setting, principal faces and coherent hands/objects reviewed. Desktop/mobile exports retain the composition.",
+      "evidence": [
+        "docs/jobkix/evidence/asset-review/all-settings-contact.webp",
+        "docs/jobkix/evidence/asset-review/mobile-exports-contact.webp",
+        "docs/jobkix/evidence/asset-review/settings-details-4.png"
+      ],
+      "renderedLayout": "VISUAL_PENDING"
+    },
+    "promptFile": "docs/jobkix/asset-prompts/setting-school-operations.txt"
+  },
+  {
+    "id": "setting-digital-learning",
+    "subject": "A Malaysian woman learning designer and a Latino male content producer working together at a modern light creative studio desk. They examine simple physical educational illustration boards and a tablet with abstract color blocks, no readable words or interface. Practical creative tools, believable hands, candid thoughtful collaboration, design work for children's learning without depicting a real company.",
+    "purpose": "Profession/setting editorial discovery",
+    "source": "/Users/user/.codex/generated_images/01a15a7f-f91b-7bc0-917b-03eb0759aa24/exec-b83ebacc-448c-49ed-be23-531753ed0177.png",
+    "originalSha256": "0de69ee00b40af73ae310654e5d585e3b215c0d6b2a4843908b1a5c76e734baa",
+    "originalDimensions": {
+      "width": 1536,
+      "height": 1024
+    },
+    "provenance": "OpenAI built-in image_gen; AI-generated fictional editorial imagery, not a human photographer or an actual employer, employee or platform success story.",
+    "rights": "Generated for this user task. No third-party employer branding or identifiable real workplace was supplied.",
+    "prompt": "Use case: photorealistic-natural. Create one distinct original 3:2 wide professional editorial photograph for JOBKIX Global Careers Platform. Consistent premium natural documentary photography: authentic skin and cloth textures, natural anatomy and hands, coherent ordinary objects, candid engaged work, restrained warm neutral colors and soft natural light. Internationally relevant and respectful. No logos, brands, readable text, signage, watermarks, badges or embedded UI. All people and workplaces are fictional editorial subjects, not actual JOBKIX staff, real employers, real officials or success stories. Subject: A Malaysian woman learning designer and a Latino male content producer working together at a modern light creative studio desk. They examine simple physical educational illustration boards and a tablet with abstract color blocks, no readable words or interface. Practical creative tools, believable hands, candid thoughtful collaboration, design work for children's learning without depicting a real company.",
+    "focalDesktop": {
+      "x": 50,
+      "y": 45
+    },
+    "focalMobile": {
+      "x": 50,
+      "y": 45
+    },
+    "visualInspection": "ASSET_DETAIL_AND_MOBILE_EXPORT_REVIEWED",
+    "files": [
+      {
+        "path": "public/jobkix/editorial/setting-digital-learning.webp",
+        "width": 1536,
+        "height": 1024,
+        "bytes": 142452,
+        "sha256": "5c7541f61aceb3ce173b8e94be48ef9fa3b9091777917dab6ad75b878d46f646"
+      },
+      {
+        "path": "public/jobkix/editorial/setting-digital-learning-mobile.webp",
+        "width": 1000,
+        "height": 667,
+        "bytes": 84402,
+        "sha256": "139874830499ed14b139be4089d64310d915531aa538e584fd4065a288dccec0"
+      }
+    ],
+    "world": "digital-learning",
+    "role": "employment-setting-editorial",
+    "inspection": {
+      "at": "2026-10-20T22:43:33.236Z",
+      "method": "Actual optimized desktop and mobile contact sheets and four enlarged face/hand/object detail pages visually inspected by the coding assistant; no human photographer or native-review claim.",
+      "finding": "Relevant fictional professional setting, principal faces and coherent hands/objects reviewed. Desktop/mobile exports retain the composition.",
+      "evidence": [
+        "docs/jobkix/evidence/asset-review/all-settings-contact.webp",
+        "docs/jobkix/evidence/asset-review/mobile-exports-contact.webp",
+        "docs/jobkix/evidence/asset-review/settings-details-4.png"
+      ],
+      "renderedLayout": "VISUAL_PENDING"
+    },
+    "promptFile": "docs/jobkix/asset-prompts/setting-digital-learning.txt"
+  },
+  {
+    "id": "setting-public-specialist",
+    "subject": "An Arab woman education-program coordinator and a Black male specialist colleague in understated professional clothing reviewing a blank planning folder at a round meeting table inside a contemporary civic education center. Soft daylight, plants and shelves, internationally credible ordinary public-service work. No official seals, government marks or readable documents.",
+    "purpose": "Profession/setting editorial discovery",
+    "source": "/Users/user/.codex/generated_images/01a15a7f-f91b-7bc0-917b-03eb0759aa24/exec-c46da978-591d-4b72-917a-b80234dc93b7.png",
+    "originalSha256": "9533e302f743b1db4e80c32e083206efdfbb33d928f12c197f62032071ab3e97",
+    "originalDimensions": {
+      "width": 1536,
+      "height": 1024
+    },
+    "provenance": "OpenAI built-in image_gen; AI-generated fictional editorial imagery, not a human photographer or an actual employer, employee or platform success story.",
+    "rights": "Generated for this user task. No third-party employer branding or identifiable real workplace was supplied.",
+    "prompt": "Use case: photorealistic-natural. Create one distinct original 3:2 wide professional editorial photograph for JOBKIX Global Careers Platform. Consistent premium natural documentary photography: authentic skin and cloth textures, natural anatomy and hands, coherent ordinary objects, candid engaged work, restrained warm neutral colors and soft natural light. Internationally relevant and respectful. No logos, brands, readable text, signage, watermarks, badges or embedded UI. All people and workplaces are fictional editorial subjects, not actual JOBKIX staff, real employers, real officials or success stories. Subject: An Arab woman education-program coordinator and a Black male specialist colleague in understated professional clothing reviewing a blank planning folder at a round meeting table inside a contemporary civic education center. Soft daylight, plants and shelves, internationally credible ordinary public-service work. No official seals, government marks or readable documents.",
+    "focalDesktop": {
+      "x": 50,
+      "y": 45
+    },
+    "focalMobile": {
+      "x": 50,
+      "y": 45
+    },
+    "visualInspection": "ASSET_DETAIL_AND_MOBILE_EXPORT_REVIEWED",
+    "files": [
+      {
+        "path": "public/jobkix/editorial/setting-public-specialist.webp",
+        "width": 1536,
+        "height": 1024,
+        "bytes": 113512,
+        "sha256": "f23a7439f1329ae8a699606e7b39260f1cbfffa98d0be3aac4924a6aa6dbbe73"
+      },
+      {
+        "path": "public/jobkix/editorial/setting-public-specialist-mobile.webp",
+        "width": 1000,
+        "height": 667,
+        "bytes": 61144,
+        "sha256": "66506c5825ae11cd8057f233a8e55c56fc16ae527df63ac9ea61cb25bf70fd49"
+      }
+    ],
+    "world": "public-specialist",
+    "role": "employment-setting-editorial",
+    "inspection": {
+      "at": "2026-10-20T22:43:33.237Z",
+      "method": "Actual optimized desktop and mobile contact sheets and four enlarged face/hand/object detail pages visually inspected by the coding assistant; no human photographer or native-review claim.",
+      "finding": "Relevant fictional professional setting, principal faces and coherent hands/objects reviewed. Desktop/mobile exports retain the composition.",
+      "evidence": [
+        "docs/jobkix/evidence/asset-review/all-settings-contact.webp",
+        "docs/jobkix/evidence/asset-review/mobile-exports-contact.webp",
+        "docs/jobkix/evidence/asset-review/settings-details-4.png"
+      ],
+      "renderedLayout": "VISUAL_PENDING"
+    },
+    "promptFile": "docs/jobkix/asset-prompts/setting-public-specialist.txt"
+  },
+  {
+    "id": "profession-cook",
+    "world": "cook",
+    "role": "profession-editorial",
+    "subject": "Fictional adult cook portions vegetables in an institutional kitchen with another adult colleague working behind her.",
+    "purpose": "Relevant food-preparation context for profession directory and cook career opening; does not represent an actual employer or staff.",
+    "source": "/Users/user/.codex/generated_images/01a15a7f-f91b-7bc0-917b-03eb0759aa24/exec-5f294832-8c44-4486-93e4-af55f85c724a.png",
+    "workspaceOriginal": "docs/jobkix/artwork-originals/profession-cook.png",
+    "originalSha256": "ccc0254d885ecc094130283d0d6a339430c29da45386ded36f3ada16b88b6caa",
+    "originalDimensions": {
+      "width": 1536,
+      "height": 1024
+    },
+    "provenance": "OpenAI built-in image_gen; AI-generated fictional editorial imagery, not a human photographer or an actual employer, employee or platform success story.",
+    "rights": "Generated for this user task. No third-party employer branding or identifiable real workplace was supplied.",
+    "prompt": "Use case: photorealistic-natural. Asset type: JOBKIX profession directory card and profession hero editorial image. Primary request: a polished naturally photographed editorial scene of a professional cook preparing a fresh school lunch in a clean contemporary institutional kitchen. Subject: one adult woman of West African heritage, around 35–45, wearing a plain pale-blue chef jacket, clean dark apron and correctly secured hair, calmly portioning vegetables from a stainless tray into a ceramic lunch bowl. A second adult colleague of East Asian heritage, softly out of focus in the background, prepares food at a separate work surface. No children. Scene: realistic stainless work surfaces, organized unbranded cookware, subtle daylight through high windows, food-safe working practices. Composition: wide 3:2 landscape; principal cook and food preparation on the right half, the left third quieter for an existing webpage text overlay; keep the cook's face, both hands and bowl within the central-right region so a portrait crop remains useful. Style: premium international careers-platform editorial photography, warm neutral daylight, natural skin texture, believable hands and utensils, restrained colors compatible with an existing light violet/blue interface. Constraints: this is illustrative fictional imagery, not an actual employer or staff portrait; no writing, signage, logos, watermarks, decorative graphics, exaggerated expressions, extra limbs, malformed fingers or implausible food. One coherent photograph, no collage.",
+    "promptFile": "docs/jobkix/asset-prompts/profession-cook.txt",
+    "focalDesktop": {
+      "x": 70,
+      "y": 46
+    },
+    "focalMobile": {
+      "x": 70,
+      "y": 46
+    },
+    "visualInspection": "ASSET_DETAIL_AND_MOBILE_EXPORT_REVIEWED",
+    "files": [
+      {
+        "path": "public/jobkix/editorial/profession-cook.webp",
+        "width": 1536,
+        "height": 1024,
+        "bytes": 132590,
+        "sha256": "2d0a26db1278c6413fbd024f8ea2fbdc1d24c9bd071abae8b0d7cdce49e215dd"
+      },
+      {
+        "path": "public/jobkix/editorial/profession-cook-mobile.webp",
+        "width": 1000,
+        "height": 667,
+        "bytes": 79034,
+        "sha256": "c8c95dfc1923e483a7ef7809bf49005e6e5f4d5c09ba36f969de52080e4c8211"
+      }
+    ],
+    "inspection": {
+      "at": "2026-10-21T21:28:51.778202+00:00",
+      "method": "Coding assistant inspected the generated master, optimized mobile export and enlarged face/foreground hands/tongs/food/background hands details. No human-photographer or native-review claim.",
+      "finding": "Relevant coherent food-preparation context. Principal face, hands and utensils are plausible and legible; background colleague remains naturally defocused. No embedded text/branding observed.",
+      "evidence": [
+        "docs/jobkix/evidence/asset-review/profession-cook-details.png",
+        "docs/jobkix/evidence/browser/P06-en-390-cook.png",
+        "docs/jobkix/evidence/browser/P06-ar-1440-cook.png"
+      ],
+      "renderedLayout": "PARTIAL_DESKTOP_MOBILE_RTL_REVIEW"
+    },
+    "alternativeText": "A fictional professional cook portions vegetables in an institutional kitchen.",
+    "renderingAlternative": "Decorative editorial context beside the named profession heading; native public images intentionally use empty alt text and make no real-person/employer claim."
+  },
+  {
+    "id": "destination-toronto",
+    "subject": "Toronto waterfront skyline at night with the CN Tower and Lake Ontario reflections.",
+    "purpose": "P08 country and exact P09 city editorial destination opening/cards. This scenery is not an employer workplace, current vacancy or endorsement.",
+    "sourceKind": "photograph",
+    "source": "docs/jobkix/geography-source/toronto-374759.jpeg",
+    "originalSha256": "3c25276643671fac319c6528c39a62ea3b7f599b14f99c6bbf25ae389c6bf9d3",
+    "originalDimensions": {
+      "width": 5472,
+      "height": 3648
+    },
+    "provenance": "Real source photograph supplied on Pexels by Burst. Deterministic WebP derivatives; not generated imagery, an actual JOBKIX employer or a platform success story.",
+    "rights": "Pexels License permits free website/app use and modification. No endorsement implied; no standalone resale or stock-library redistribution.",
+    "rightsUrl": "https://www.pexels.com/license/",
+    "sourceUrl": "https://www.pexels.com/photo/architecture-buildings-city-city-lights-374759/",
+    "creator": "Burst",
+    "licenseVerifiedAt": "2026-10-21T23:51:38.045Z",
+    "prompt": "Real photograph by Burst, sourced from Pexels. This is not AI-generated artwork and has no generation prompt.\nPreserve the original subject and geometry. Encode a 1536 × 1024 desktop WebP and a 1000 × 800 mobile WebP with Sharp cover/centre resize, quality 86 and effort 6. No retouching, generative edits, mirroring, text, colour alteration or invented locations.\nSource: https://www.pexels.com/photo/architecture-buildings-city-city-lights-374759/\nLicense: https://www.pexels.com/license/\n",
+    "promptFile": "docs/jobkix/asset-prompts/destination-toronto.txt",
+    "promptPurpose": "Deterministic derivative processing instructions only; not an AI generation prompt.",
+    "focalDesktop": {
+      "x": 52,
+      "y": 65
+    },
+    "focalMobile": {
+      "x": 50,
+      "y": 60
+    },
+    "visualInspection": "ASSET_DETAIL_AND_MOBILE_EXPORT_REVIEWED",
+    "files": [
+      {
+        "path": "public/jobkix/editorial/destination-toronto.webp",
+        "width": 1536,
+        "height": 1024,
+        "bytes": 98608,
+        "sha256": "f4cbf85124d9623d459c52625e0badc4f8e7d4877f036e8f02162c94cbf5e6d2"
+      },
+      {
+        "path": "public/jobkix/editorial/destination-toronto-mobile.webp",
+        "width": 1000,
+        "height": 800,
+        "bytes": 54834,
+        "sha256": "d8211c289ef9b2f6c0a9e83f025957d0e906bef0e7c73af675d47f6d94f1d216"
+      }
+    ],
+    "inspection": {
+      "at": "2026-10-22T00:54:32.401577+00:00",
+      "method": "Original and desktop/mobile WebP exports individually viewed. Actual native P07 cards and representative P08/P09 English/Arabic desktop/mobile captures inspected; no full-family acceptance.",
+      "finding": "Identifiable Toronto/London landmarks and intended scenery preserved. Photographs are not mirrored or represented as employer workplaces.",
+      "evidence": [
+        "docs/jobkix/evidence/browser/P07-en-1440-atlas.png",
+        "docs/jobkix/evidence/browser/P08-en-1440-destination-polish.png",
+        "docs/jobkix/evidence/browser/P09-ar-1440-destination-polish.png"
+      ],
+      "renderedLayout": "PARTIAL_RENDERED_REVIEW_NOT_FAMILY_ACCEPTANCE"
+    }
+  },
+  {
+    "id": "destination-london",
+    "subject": "London at sunset: Big Ben, Westminster Bridge and the River Thames.",
+    "purpose": "P08 country and exact P09 city editorial destination opening/cards. This scenery is not an employer workplace, current vacancy or endorsement.",
+    "sourceKind": "photograph",
+    "source": "docs/jobkix/geography-source/london-460672.jpeg",
+    "originalSha256": "f21f14a85f6434a3724bdc2537e6f25aa59067bf935e05094b36eb2be1078a42",
+    "originalDimensions": {
+      "width": 1999,
+      "height": 1376
+    },
+    "provenance": "Real source photograph supplied on Pexels by Pixabay. Deterministic WebP derivatives; not generated imagery, an actual JOBKIX employer or a platform success story.",
+    "rights": "Pexels License permits free website/app use and modification. No endorsement implied; no standalone resale or stock-library redistribution.",
+    "rightsUrl": "https://www.pexels.com/license/",
+    "sourceUrl": "https://www.pexels.com/photo/london-cityscape-460672/",
+    "creator": "Pixabay",
+    "licenseVerifiedAt": "2026-10-21T23:51:38.433Z",
+    "prompt": "Real photograph by Pixabay, sourced from Pexels. This is not AI-generated artwork and has no generation prompt.\nPreserve the original subject and geometry. Encode a 1536 × 1024 desktop WebP and a 1000 × 800 mobile WebP with Sharp cover/centre resize, quality 86 and effort 6. No retouching, generative edits, mirroring, text, colour alteration or invented locations.\nSource: https://www.pexels.com/photo/london-cityscape-460672/\nLicense: https://www.pexels.com/license/\n",
+    "promptFile": "docs/jobkix/asset-prompts/destination-london.txt",
+    "promptPurpose": "Deterministic derivative processing instructions only; not an AI generation prompt.",
+    "focalDesktop": {
+      "x": 60,
+      "y": 53
+    },
+    "focalMobile": {
+      "x": 50,
+      "y": 60
+    },
+    "visualInspection": "ASSET_DETAIL_AND_MOBILE_EXPORT_REVIEWED",
+    "files": [
+      {
+        "path": "public/jobkix/editorial/destination-london.webp",
+        "width": 1536,
+        "height": 1024,
+        "bytes": 103468,
+        "sha256": "3196d22766b99c0ea07df11cd1abe4f6b0a5e18a905e86bd11eb44c672052d00"
+      },
+      {
+        "path": "public/jobkix/editorial/destination-london-mobile.webp",
+        "width": 1000,
+        "height": 800,
+        "bytes": 59200,
+        "sha256": "51e453d319c759c1f703dbcc46f1aa5554699b0c030c068be87a2f20b8feb816"
+      }
+    ],
+    "inspection": {
+      "at": "2026-10-22T00:54:32.401577+00:00",
+      "method": "Original and desktop/mobile WebP exports individually viewed. Actual native P07 cards and representative P08/P09 English/Arabic desktop/mobile captures inspected; no full-family acceptance.",
+      "finding": "Identifiable Toronto/London landmarks and intended scenery preserved. Photographs are not mirrored or represented as employer workplaces.",
+      "evidence": [
+        "docs/jobkix/evidence/browser/P07-en-1440-atlas.png"
+      ],
+      "renderedLayout": "PARTIAL_RENDERED_REVIEW_NOT_FAMILY_ACCEPTANCE"
+    }
+  }
+]

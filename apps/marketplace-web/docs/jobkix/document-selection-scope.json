@@ -1,0 +1,164 @@
+{
+  "screens": [
+    "P02",
+    "C04",
+    "C07"
+  ],
+  "blueprintPages": [
+    11,
+    12,
+    21,
+    22
+  ],
+  "references": "docs/jobkix/reference-registry.json",
+  "files": [
+    {
+      "path": "angelcare-marketplace/jobkix/document-selection.ts",
+      "sha256Before": "NEW",
+      "intendedChange": "Define bounded private document query/response contracts and safe projected metadata.",
+      "requirements": [
+        20,
+        22,
+        24,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "Existing file ownership/readiness/storage, application eligibility, immutable snapshots, actor/version/idempotency/consent boundaries and all shared product behavior remain authoritative."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/DocumentPicker.tsx",
+      "sha256Before": "NEW",
+      "intendedChange": "Provide native searchable/paginated CV selection, retained selection, cancellation, stale-response protection and honest retry states.",
+      "requirements": [
+        20,
+        22,
+        24,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "Existing file ownership/readiness/storage, application eligibility, immutable snapshots, actor/version/idempotency/consent boundaries and all shared product behavior remain authoritative."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/ApplicationWizard.tsx",
+      "sha256Before": "a2a9a38742f7a7c4a7b1efed276bee79641ce0d8bb178a98b94241f712810d1f",
+      "intendedChange": "Replace the capped file dropdown with the native bounded picker while retaining answers, draft IDs and exact selected CV in review.",
+      "requirements": [
+        20,
+        22,
+        24,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "Existing file ownership/readiness/storage, application eligibility, immutable snapshots, actor/version/idempotency/consent boundaries and all shared product behavior remain authoritative."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/server/repository.ts",
+      "sha256Before": "d7aa08653ff8fe2ced5314e02eae2ac7ebae79b980ae3563144bb6ce958ffc7a",
+      "intendedChange": "Use the existing current user client/RLS to page only owned ready CV metadata, with current selected-document lookup.",
+      "requirements": [
+        20,
+        22,
+        24,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "Existing file ownership/readiness/storage, application eligibility, immutable snapshots, actor/version/idempotency/consent boundaries and all shared product behavior remain authoritative."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/pages/JobDetail.tsx",
+      "sha256Before": "95b30ba30c3ffdd5c894916cbc8dac56d48557d4c70e486dbfde3c1263e936e7",
+      "intendedChange": "Prepare one document page and any restored selection instead of up to 200 raw private rows; key the wizard by candidate and vacancy.",
+      "requirements": [
+        20,
+        22,
+        24,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "Existing file ownership/readiness/storage, application eligibility, immutable snapshots, actor/version/idempotency/consent boundaries and all shared product behavior remain authoritative."
+    },
+    {
+      "path": "app/api/jobkix/files/route.ts",
+      "sha256Before": "4f9201bc34c1bff4f285fc542bcd7f1789f08b23c1cdd885839849ca71e32ce6",
+      "intendedChange": "Add GET to the existing native private file handler, using current session authorization and strict bounded query input. Preserve POST upload.",
+      "requirements": [
+        20,
+        22,
+        24,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "Existing file ownership/readiness/storage, application eligibility, immutable snapshots, actor/version/idempotency/consent boundaries and all shared product behavior remain authoritative."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/i18n.ts",
+      "sha256Before": "b36ca42e61da859be96bec2391a25a31f7020039a1396421e61b76c9c36fa75c",
+      "intendedChange": "Add seven-language labels for native document selection states and paging.",
+      "requirements": [
+        20,
+        22,
+        24,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "Existing file ownership/readiness/storage, application eligibility, immutable snapshots, actor/version/idempotency/consent boundaries and all shared product behavior remain authoritative."
+    },
+    {
+      "path": "scripts/jobkix/domain.test.cjs",
+      "sha256Before": "313ee518874f38b2b81eb99da79cab29f7436f0610cd7ad10626002fe1dec071",
+      "intendedChange": "Execute unsafe/repeated/invalid document query and private metadata projection tests.",
+      "requirements": [
+        20,
+        22,
+        24,
+        26,
+        27,
+        29
+      ],
+      "protectedBehavior": "Existing file ownership/readiness/storage, application eligibility, immutable snapshots, actor/version/idempotency/consent boundaries and all shared product behavior remain authoritative."
+    },
+    {
+      "path": "scripts/jobkix/local-database.cjs",
+      "sha256Before": "60f83fc7dcccc1300a4e3a892a78cfc9cbb197bb522d893ed65eacca8d82c2e5",
+      "intendedChange": "Opt-in isolated fixtures and meaningful HTTP/browser verification beyond 200 owned documents, with outsider/readiness/projection/reload/error/concurrency boundaries.",
+      "requirements": [
+        22,
+        24,
+        26,
+        27
+      ],
+      "protectedBehavior": "Verification-only scripts; no imports from production handlers, no hosted or production records."
+    },
+    {
+      "path": "scripts/jobkix/local-runtime.cjs",
+      "sha256Before": "752d0b928beafea91aed0c554ca020ecc3487e6c7c8d7d9be4fd6eed746a88b6",
+      "intendedChange": "Opt-in isolated fixtures and meaningful HTTP/browser verification beyond 200 owned documents, with outsider/readiness/projection/reload/error/concurrency boundaries.",
+      "requirements": [
+        22,
+        24,
+        26,
+        27
+      ],
+      "protectedBehavior": "Verification-only scripts; no imports from production handlers, no hosted or production records."
+    },
+    {
+      "path": "scripts/jobkix/document-selection.cjs",
+      "sha256Before": "NEW",
+      "intendedChange": "Opt-in isolated fixtures and meaningful HTTP/browser verification beyond 200 owned documents, with outsider/readiness/projection/reload/error/concurrency boundaries.",
+      "requirements": [
+        22,
+        24,
+        26,
+        27
+      ],
+      "protectedBehavior": "Verification-only scripts; no imports from production handlers, no hosted or production records."
+    }
+  ]
+}

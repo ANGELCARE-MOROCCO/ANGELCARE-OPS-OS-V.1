@@ -1,0 +1,130 @@
+{
+  "payloadFiles": 149,
+  "existingChangedFiles": 18,
+  "newFiles": 131,
+  "baselineFilesRetainedWithoutChange": 110,
+  "unexpectedBaselineChanges": [],
+  "sourceFingerprints": [
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/catalogue.ts",
+      "sha256": "307f6a7e0aa7869577bec1c23f2157fdad21819482eb2fbf24477e222d824628"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/Home.tsx",
+      "sha256": "21c8565ec58ce61b5921aaaa60240b9f1034ccd8abd4b056a81154e38deb2e41"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/Shell.tsx",
+      "sha256": "4088efa465a3cf573a4849662b86ad2c5f91f818810ae8730e9aa74b1588d416"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/kidflix.module.css",
+      "sha256": "038548ecac0aed52b32c72be457dc7d68be7eb930c4cf96fb384aa8767b3e0b7"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/journey/Discovery.tsx",
+      "sha256": "7065ddb6250293c8205381e5fb1c30b6b4e148de300e1af982b6a2c4ba442a4e"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/HomeStudio.tsx",
+      "sha256": "2fc53ec4c14ce89243e6a0c4746f4959a75248bdb9903b84e911689896058846"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/admin-service.ts",
+      "sha256": "11e0a45909ac2d62186b54f9561fbbc23fe9e4111b3763bfee8c9f0324f2cbca"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/server.ts",
+      "sha256": "74943cc4a23af5d8f8860e31d52404d184b8b5f632b940cba711dba11e043856"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/detail/Media.tsx",
+      "sha256": "e78b713f74a670f7ca287cb287324f16319c50f58a6d421ed1187acc660139f9"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/storefronts/model.ts",
+      "sha256": "ee749d0b951927e527d7b88d52ddc53937f159f766e8daf396562e3f7f30ac89"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/storefronts/themes.ts",
+      "sha256": "733929d4574abe1a0e20716d4a95f648f6bb3de396480a7ba4d797f73fdc64f7"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/storefronts/Opening.tsx",
+      "sha256": "a130df00bd47b04de9c24002323a8d520096fb9f0421d776c635e0a5035b4ccc"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/storefronts/storefronts.module.css",
+      "sha256": "03a9e06f5bd2f3e30968aef8fa0f77ef6009aa269abcb6e51e840a95d4ec4c78"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/storefronts/admin-service.ts",
+      "sha256": "5adb6dcc676f94e4016319fc72315297c2bc5234ce9ca45dd7529db87e91a9a1"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/storefronts/StorefrontStudio.tsx",
+      "sha256": "b959e5ddc2538c8f835006e4d401641091193d569b146dfdaf19cbf08489ad34"
+    },
+    {
+      "path": "apps/marketplace-web/app/kidflix/[locale]/loading.tsx",
+      "sha256": "9963b76406c8ba6ca4cff3c2b59d277fb4eb6f051eb92a3e83e446fffab3fc70"
+    },
+    {
+      "path": "apps/marketplace-web/app/kidflix/[locale]/error.tsx",
+      "sha256": "c110aeb58119a42877b6d6788d2f8cfd7cc4c57564e57d2b97fcf149ef49d884"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/repository.ts",
+      "sha256": "a3c1294b4699fd3a248701208b79ff6a5f3c660b86d46354d3916d2ec078af25"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/gallery-contract.ts",
+      "sha256": "6f6c4137070becca7086f0ab9f4188bb4804a2479c4a56d80c7963de98715002"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/editorial.ts",
+      "sha256": "3b3e8815eafa0a69add554582f2ba1ac41115d19675300d3ff205fcb79bb456a"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/Gallery.tsx",
+      "sha256": "37a3e6f797c7eb430b19c74b18edb93ee7fb3d02a104725149e4db7aefba7c68"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/GalleryEditor.tsx",
+      "sha256": "ae0683f1d649e419e659a3548c787d6c001db45b27cf181c4bd01dae78c871cf"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/gallery.module.css",
+      "sha256": "655ecd2c36d7102b708361226dbd8d08d681282f56921240588e7a37cb14263a"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/Navigation.tsx",
+      "sha256": "4011c2f41c73e38374138d06b6cf3317d6f267482a99286c96e1327b8772f51e"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/navigation-events.ts",
+      "sha256": "76dbe124ae8d46cfb3330915eac480c1f82b37f3287fe57a6e7340d14df533f0"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/Launcher.tsx",
+      "sha256": "95d1ac83ecc4f822a6462a128648af0d4a8a1725bae90496245f794899881ec3"
+    },
+    {
+      "path": "apps/marketplace-web/scripts/kidflix-finalization/check-types.cjs",
+      "sha256": "35d51d25b6a472949017141730909c712c506e157c345e8d5ac925fa1c7bdc11"
+    },
+    {
+      "path": "apps/marketplace-web/scripts/kidflix-finalization/verify-behavior.cjs",
+      "sha256": "cbabf92566779feb2f777d81c2652898b6028c7bc092a046f49765ede759e119"
+    },
+    {
+      "path": "apps/marketplace-web/scripts/kidflix-finalization/preview.cjs",
+      "sha256": "15a075659c1b39827760fa25b6a1ee7f8cf8af31236ed41f141ef3a08d8e9aa0"
+    },
+    {
+      "path": "apps/marketplace-web/scripts/kidflix-finalization/browser.cjs",
+      "sha256": "184225e22f99ca338bdbde0d5fbb91a46e4628203594d461c7893c4f4b976e23"
+    }
+  ],
+  "newFilesAbsentFromAllBaselineArchives": true
+}

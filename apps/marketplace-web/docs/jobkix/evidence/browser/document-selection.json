@@ -1,0 +1,82 @@
+{
+  "recordedAt": "2026-10-21T21:18:03.089Z",
+  "sourceAtStart": {
+    "algorithm": "sha256",
+    "files": 279,
+    "digest": "e6a87751af77f96aab5c52aec78f5118154a7c277d979a611e3723d11677e07b"
+  },
+  "sourceAtEnd": {
+    "algorithm": "sha256",
+    "files": 279,
+    "digest": "e6a87751af77f96aab5c52aec78f5118154a7c277d979a611e3723d11677e07b"
+  },
+  "checks": [
+    {
+      "name": "anonymous document enumeration denied",
+      "status": "PASS"
+    },
+    {
+      "name": "all 251 owned ready CVs reachable across eleven native pages",
+      "status": "PASS"
+    },
+    {
+      "name": "projection excludes storage/owner fields, archived rows, non-CVs and unrelated files",
+      "status": "PASS"
+    },
+    {
+      "name": "selected-ID lookup does not disclose another actor document",
+      "status": "PASS"
+    },
+    {
+      "name": "retained archived selection resolves without returning it to the active library",
+      "status": "PASS"
+    },
+    {
+      "name": "unsafe or ambiguous private queries rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "native search selects a CV beyond the previous 200-file boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "canonical draft reload retains the off-page CV and authored answer",
+      "status": "PASS"
+    },
+    {
+      "name": "native next and previous pages retain off-page selection and authored input",
+      "status": "PASS"
+    },
+    {
+      "name": "dependency failure retains selection, useful options and authored input",
+      "status": "PASS"
+    },
+    {
+      "name": "explicit retry recovers the native query without resetting selection",
+      "status": "PASS"
+    },
+    {
+      "name": "a late superseded search cannot replace the newer result",
+      "status": "PASS"
+    },
+    {
+      "name": "review shows the exact selected CV after paging, reload and recovery",
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "expectedNetworkErrors": [
+    {
+      "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+      "location": {
+        "url": "http://localhost:3180/api/jobkix/files?page=1&q=interrupted+search&selected=30000000-0000-4000-8000-000000001250",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    }
+  ],
+  "failure": null,
+  "scope": "Actual Next handler, owner-scoped PostgreSQL/RLS and application draft commands. Opt-in synthetic CV metadata/bytes and Auth/storage adapters; deliberate HTTP 503 and real delayed queries test recovery. No hosted-service or production certification."
+}

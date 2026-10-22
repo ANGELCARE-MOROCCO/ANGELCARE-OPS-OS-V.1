@@ -1,0 +1,673 @@
+{
+  "recordedAt": "2026-10-22T01:26:36.643Z",
+  "sourceAtStart": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 352,
+    "digest": "010efd597564b1c0e0d95aae82554f0c4aa2121fd8e82290b9e82e1f21f6588b"
+  },
+  "sourceAtEnd": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 352,
+    "digest": "010efd597564b1c0e0d95aae82554f0c4aa2121fd8e82290b9e82e1f21f6588b"
+  },
+  "checks": [
+    {
+      "name": "all six native employer filters precede type discovery and real approved results",
+      "status": "PASS"
+    },
+    {
+      "name": "actual native GET combines employer filters while retaining origin destination and reach",
+      "status": "PASS"
+    },
+    {
+      "name": "employer-type discovery preserves independent context and selected native filters",
+      "status": "PASS"
+    },
+    {
+      "name": "clear removes native employer filters while retaining discovery country context",
+      "status": "PASS"
+    },
+    {
+      "name": "real zero-result state retains the query and a functional clear action",
+      "status": "PASS"
+    },
+    {
+      "name": "native directory dependency failure retains controls and independent discovery; explicit retry recovers",
+      "status": "PASS"
+    },
+    {
+      "name": "factual employer profile omits private fields and unrelated imagery and uses a genuine moderated-review empty state",
+      "status": "PASS"
+    },
+    {
+      "name": "compact employer job section retains all native filters behind a keyboard-operated disclosure",
+      "status": "PASS"
+    },
+    {
+      "name": "embedded filter submission reaches the existing search with employer and native context; default search filters remain open",
+      "status": "PASS"
+    },
+    {
+      "name": "native share uses employer-specific text and the canonical public profile URL",
+      "status": "PASS"
+    },
+    {
+      "name": "repeated verification removes only its own prior saved search through the native confirmed command",
+      "status": "PASS"
+    },
+    {
+      "name": "native employer save command persists a private canonical saved search and its management destination",
+      "status": "PASS"
+    },
+    {
+      "name": "authenticated Career Studio search keeps its default native filter presentation",
+      "status": "PASS"
+    },
+    {
+      "name": "job dependency failure preserves employer identity and reviews and recovers through the existing search API",
+      "status": "PASS"
+    },
+    {
+      "name": "unavailable employer renders the native not-found state with noindex",
+      "status": "PASS",
+      "observedHttpStatus": 200,
+      "transport": "Next streamed not-found documents may already have sent status 200; actual rendered absence and noindex are both asserted."
+    }
+  ],
+  "renders": [
+    {
+      "screen": "P11",
+      "locale": "en",
+      "width": 360,
+      "image": "P11-en-360-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "en",
+      "width": 360,
+      "image": "P12-en-360-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "en",
+      "width": 390,
+      "image": "P11-en-390-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "en",
+      "width": 390,
+      "image": "P12-en-390-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "en",
+      "width": 768,
+      "image": "P11-en-768-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "en",
+      "width": 768,
+      "image": "P12-en-768-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "en",
+      "width": 1024,
+      "image": "P11-en-1024-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "en",
+      "width": 1024,
+      "image": "P12-en-1024-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "en",
+      "width": 1440,
+      "image": "P11-en-1440-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "en",
+      "width": 1440,
+      "image": "P12-en-1440-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "en",
+      "width": 1920,
+      "image": "P11-en-1920-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "en",
+      "width": 1920,
+      "image": "P12-en-1920-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "fr",
+      "width": 360,
+      "image": "P11-fr-360-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "fr",
+      "width": 360,
+      "image": "P12-fr-360-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "fr",
+      "width": 390,
+      "image": "P11-fr-390-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "fr",
+      "width": 390,
+      "image": "P12-fr-390-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "fr",
+      "width": 768,
+      "image": "P11-fr-768-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "fr",
+      "width": 768,
+      "image": "P12-fr-768-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "fr",
+      "width": 1024,
+      "image": "P11-fr-1024-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "fr",
+      "width": 1024,
+      "image": "P12-fr-1024-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "fr",
+      "width": 1440,
+      "image": "P11-fr-1440-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "fr",
+      "width": 1440,
+      "image": "P12-fr-1440-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "fr",
+      "width": 1920,
+      "image": "P11-fr-1920-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "fr",
+      "width": 1920,
+      "image": "P12-fr-1920-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "es",
+      "width": 360,
+      "image": "P11-es-360-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "es",
+      "width": 360,
+      "image": "P12-es-360-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "es",
+      "width": 390,
+      "image": "P11-es-390-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "es",
+      "width": 390,
+      "image": "P12-es-390-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "es",
+      "width": 768,
+      "image": "P11-es-768-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "es",
+      "width": 768,
+      "image": "P12-es-768-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "es",
+      "width": 1024,
+      "image": "P11-es-1024-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "es",
+      "width": 1024,
+      "image": "P12-es-1024-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "es",
+      "width": 1440,
+      "image": "P11-es-1440-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "es",
+      "width": 1440,
+      "image": "P12-es-1440-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "es",
+      "width": 1920,
+      "image": "P11-es-1920-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "es",
+      "width": 1920,
+      "image": "P12-es-1920-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "hi",
+      "width": 360,
+      "image": "P11-hi-360-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "hi",
+      "width": 360,
+      "image": "P12-hi-360-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "hi",
+      "width": 390,
+      "image": "P11-hi-390-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "hi",
+      "width": 390,
+      "image": "P12-hi-390-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "hi",
+      "width": 768,
+      "image": "P11-hi-768-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "hi",
+      "width": 768,
+      "image": "P12-hi-768-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "hi",
+      "width": 1024,
+      "image": "P11-hi-1024-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "hi",
+      "width": 1024,
+      "image": "P12-hi-1024-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "hi",
+      "width": 1440,
+      "image": "P11-hi-1440-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "hi",
+      "width": 1440,
+      "image": "P12-hi-1440-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "hi",
+      "width": 1920,
+      "image": "P11-hi-1920-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "hi",
+      "width": 1920,
+      "image": "P12-hi-1920-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "tl",
+      "width": 360,
+      "image": "P11-tl-360-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "tl",
+      "width": 360,
+      "image": "P12-tl-360-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "tl",
+      "width": 390,
+      "image": "P11-tl-390-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "tl",
+      "width": 390,
+      "image": "P12-tl-390-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "tl",
+      "width": 768,
+      "image": "P11-tl-768-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "tl",
+      "width": 768,
+      "image": "P12-tl-768-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "tl",
+      "width": 1024,
+      "image": "P11-tl-1024-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "tl",
+      "width": 1024,
+      "image": "P12-tl-1024-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "tl",
+      "width": 1440,
+      "image": "P11-tl-1440-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "tl",
+      "width": 1440,
+      "image": "P12-tl-1440-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "tl",
+      "width": 1920,
+      "image": "P11-tl-1920-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "tl",
+      "width": 1920,
+      "image": "P12-tl-1920-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "id",
+      "width": 360,
+      "image": "P11-id-360-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "id",
+      "width": 360,
+      "image": "P12-id-360-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "id",
+      "width": 390,
+      "image": "P11-id-390-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "id",
+      "width": 390,
+      "image": "P12-id-390-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "id",
+      "width": 768,
+      "image": "P11-id-768-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "id",
+      "width": 768,
+      "image": "P12-id-768-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "id",
+      "width": 1024,
+      "image": "P11-id-1024-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "id",
+      "width": 1024,
+      "image": "P12-id-1024-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "id",
+      "width": 1440,
+      "image": "P11-id-1440-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "id",
+      "width": 1440,
+      "image": "P12-id-1440-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "id",
+      "width": 1920,
+      "image": "P11-id-1920-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "id",
+      "width": 1920,
+      "image": "P12-id-1920-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "ar",
+      "width": 360,
+      "image": "P11-ar-360-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "ar",
+      "width": 360,
+      "image": "P12-ar-360-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "ar",
+      "width": 390,
+      "image": "P11-ar-390-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "ar",
+      "width": 390,
+      "image": "P12-ar-390-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "ar",
+      "width": 768,
+      "image": "P11-ar-768-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "ar",
+      "width": 768,
+      "image": "P12-ar-768-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "ar",
+      "width": 1024,
+      "image": "P11-ar-1024-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "ar",
+      "width": 1024,
+      "image": "P12-ar-1024-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "ar",
+      "width": 1440,
+      "image": "P11-ar-1440-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "ar",
+      "width": 1440,
+      "image": "P12-ar-1440-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P11",
+      "locale": "ar",
+      "width": 1920,
+      "image": "P11-ar-1920-employer.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "P12",
+      "locale": "ar",
+      "width": 1920,
+      "image": "P12-ar-1920-employer.png",
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "expectedNetworkErrors": [],
+  "failure": null,
+  "scope": "Actual authorized local Next routes, existing SQL public projections/eligibility and native private save commands. Synthetic Auth/storage/trust/editorial fixtures; deliberate RPC interruption. No hosted-service, approved real employer media/content, full family-language acceptance or production certification."
+}

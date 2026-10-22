@@ -1,0 +1,119 @@
+{
+  "recordedAt": "2026-10-21T23:32:26.197Z",
+  "sourceAtStart": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 334,
+    "digest": "7ea5fff4d0e469d7b63700c0def083026fd8e05ea376ad87a590410427c96aac"
+  },
+  "sourceAtEnd": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 334,
+    "digest": "7ea5fff4d0e469d7b63700c0def083026fd8e05ea376ad87a590410427c96aac"
+  },
+  "checks": [
+    {
+      "name": "actual JOBKIX request overrides incoming locale hints",
+      "status": "PASS",
+      "locale": "en",
+      "html": "<html lang=\"en\" dir=\"ltr\">"
+    },
+    {
+      "name": "actual JOBKIX request overrides incoming locale hints",
+      "status": "PASS",
+      "locale": "fr",
+      "html": "<html lang=\"fr\" dir=\"ltr\">"
+    },
+    {
+      "name": "actual JOBKIX request overrides incoming locale hints",
+      "status": "PASS",
+      "locale": "es",
+      "html": "<html lang=\"es\" dir=\"ltr\">"
+    },
+    {
+      "name": "actual JOBKIX request overrides incoming locale hints",
+      "status": "PASS",
+      "locale": "hi",
+      "html": "<html lang=\"hi\" dir=\"ltr\">"
+    },
+    {
+      "name": "actual JOBKIX request overrides incoming locale hints",
+      "status": "PASS",
+      "locale": "tl",
+      "html": "<html lang=\"tl\" dir=\"ltr\">"
+    },
+    {
+      "name": "actual JOBKIX request overrides incoming locale hints",
+      "status": "PASS",
+      "locale": "id",
+      "html": "<html lang=\"id\" dir=\"ltr\">"
+    },
+    {
+      "name": "actual JOBKIX request overrides incoming locale hints",
+      "status": "PASS",
+      "locale": "ar",
+      "html": "<html lang=\"ar\" dir=\"rtl\">"
+    },
+    {
+      "name": "default JOBKIX entry retains its English redirect",
+      "status": "PASS"
+    },
+    {
+      "name": "Marketplace document and icons ignore JOBKIX hint injection",
+      "status": "PASS",
+      "route": "/angelcare-marketplace/en",
+      "html": "<html lang=\"en\">"
+    },
+    {
+      "name": "Marketplace document and icons ignore JOBKIX hint injection",
+      "status": "PASS",
+      "route": "/angelcare-marketplace/fr",
+      "html": "<html lang=\"en\">"
+    },
+    {
+      "name": "Marketplace document and icons ignore JOBKIX hint injection",
+      "status": "PASS",
+      "route": "/angelcare-marketplace/ar",
+      "html": "<html lang=\"en\">"
+    },
+    {
+      "name": "existing anonymous protected redirect is unchanged",
+      "status": 307,
+      "route": "/carelink-ops?tab=fixture"
+    },
+    {
+      "name": "existing anonymous protected redirect is unchanged",
+      "status": 307,
+      "route": "/carelink?tab=fixture"
+    }
+  ],
+  "blockedChecks": [
+    {
+      "name": "KidFlix rendered document isolation",
+      "route": "/kidflix/en",
+      "status": "BLOCKED",
+      "observedStatus": 500,
+      "forgedStatus": 500,
+      "reason": "Pre-existing KidFlix journey.module.css:301 non-pure CSS module selector prevents compilation. No KidFlix source change made."
+    },
+    {
+      "name": "KidFlix rendered document isolation",
+      "route": "/kidflix/fr",
+      "status": "BLOCKED",
+      "observedStatus": 500,
+      "forgedStatus": 500,
+      "reason": "Pre-existing KidFlix journey.module.css:301 non-pure CSS module selector prevents compilation. No KidFlix source change made."
+    },
+    {
+      "name": "KidFlix rendered document isolation",
+      "route": "/kidflix/ar",
+      "status": "BLOCKED",
+      "observedStatus": 500,
+      "forgedStatus": 500,
+      "reason": "Pre-existing KidFlix journey.module.css:301 non-pure CSS module selector prevents compilation. No KidFlix source change made."
+    }
+  ],
+  "failure": null,
+  "scope": "Actual anonymous HTTP/HTML from the local authorized Next runtime with synthetic service adapters. Raw-document presentation, metadata links and redirects; not hosted identity, browser favicon paint or complete surrounding-world regression certification."
+}

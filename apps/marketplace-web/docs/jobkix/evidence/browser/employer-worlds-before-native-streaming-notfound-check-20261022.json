@@ -1,0 +1,77 @@
+{
+  "recordedAt": "2026-10-22T01:17:30.964Z",
+  "sourceAtStart": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 352,
+    "digest": "2934a1a0b910dd3c1026672327b257b7d9e5fd61dec1b06bceef6c239def5700"
+  },
+  "sourceAtEnd": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 352,
+    "digest": "2934a1a0b910dd3c1026672327b257b7d9e5fd61dec1b06bceef6c239def5700"
+  },
+  "checks": [
+    {
+      "name": "all six native employer filters precede type discovery and real approved results",
+      "status": "PASS"
+    },
+    {
+      "name": "actual native GET combines employer filters while retaining origin destination and reach",
+      "status": "PASS"
+    },
+    {
+      "name": "employer-type discovery preserves independent context and selected native filters",
+      "status": "PASS"
+    },
+    {
+      "name": "clear removes native employer filters while retaining discovery country context",
+      "status": "PASS"
+    },
+    {
+      "name": "real zero-result state retains the query and a functional clear action",
+      "status": "PASS"
+    },
+    {
+      "name": "native directory dependency failure retains controls and independent discovery; explicit retry recovers",
+      "status": "PASS"
+    },
+    {
+      "name": "factual employer profile omits private fields and unrelated imagery and uses a genuine moderated-review empty state",
+      "status": "PASS"
+    },
+    {
+      "name": "compact employer job section retains all native filters behind a keyboard-operated disclosure",
+      "status": "PASS"
+    },
+    {
+      "name": "embedded filter submission reaches the existing search with employer and native context; default search filters remain open",
+      "status": "PASS"
+    },
+    {
+      "name": "native share uses employer-specific text and the canonical public profile URL",
+      "status": "PASS"
+    },
+    {
+      "name": "native employer save command persists a private canonical saved search and its management destination",
+      "status": "PASS"
+    },
+    {
+      "name": "authenticated Career Studio search keeps its default native filter presentation",
+      "status": "PASS"
+    },
+    {
+      "name": "job dependency failure preserves employer identity and reviews and recovers through the existing search API",
+      "status": "PASS"
+    }
+  ],
+  "renders": [],
+  "errors": [],
+  "expectedNetworkErrors": [],
+  "failure": {
+    "message": "Expected values to be strictly equal:\n\n200 !== 404\n",
+    "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n200 !== 404\n\n    at /Users/user/Desktop/angelcare-platform/apps/marketplace-web/scripts/jobkix/employer-worlds.cjs:25:126"
+  },
+  "scope": "Actual authorized local Next routes, existing SQL public projections/eligibility and native private save commands. Synthetic Auth/storage/trust/editorial fixtures; deliberate RPC interruption. No hosted-service, approved real employer media/content, full family-language acceptance or production certification."
+}

@@ -1,0 +1,88 @@
+[
+  {
+    "time": "2026-10-21T13:42:03.925Z",
+    "event": "navigation",
+    "path": "/jobkix/en/candidate/sign-in"
+  },
+  {
+    "time": "2026-10-21T13:42:05.919Z",
+    "event": "dev-socket",
+    "action": "sync",
+    "hash": "2246304cdbe18393",
+    "errors": 0
+  },
+  {
+    "time": "2026-10-21T13:42:05.925Z",
+    "event": "dev-socket",
+    "action": "isrManifest"
+  },
+  {
+    "time": "2026-10-21T13:42:06.300Z",
+    "event": "navigation",
+    "path": "/jobkix/en/candidate/sign-in"
+  },
+  {
+    "time": "2026-10-21T13:42:06.511Z",
+    "event": "auth-request",
+    "method": "POST",
+    "url": "http://localhost:3180/api/jobkix/auth/sign-in"
+  },
+  {
+    "time": "2026-10-21T13:42:06.603Z",
+    "event": "dev-socket",
+    "action": "building"
+  },
+  {
+    "time": "2026-10-21T13:42:06.988Z",
+    "event": "dev-socket",
+    "action": "built",
+    "hash": "2246304cdbe18393",
+    "errors": 0
+  },
+  {
+    "time": "2026-10-21T13:42:07.959Z",
+    "event": "auth-response",
+    "status": 200,
+    "url": "http://localhost:3180/api/jobkix/auth/sign-in"
+  },
+  {
+    "time": "2026-10-21T13:42:08.269Z",
+    "event": "dev-socket",
+    "action": "isrManifest"
+  },
+  {
+    "time": "2026-10-21T13:42:08.568Z",
+    "event": "dev-socket",
+    "action": "isrManifest"
+  },
+  {
+    "time": "2026-10-21T13:42:09.060Z",
+    "event": "dev-socket",
+    "action": "isrManifest"
+  },
+  {
+    "time": "2026-10-21T13:42:09.141Z",
+    "event": "dev-socket",
+    "action": "isrManifest"
+  },
+  {
+    "time": "2026-10-21T13:42:09.182Z",
+    "event": "navigation",
+    "path": "/jobkix/en/career"
+  },
+  {
+    "time": "2026-10-21T13:42:36.533Z",
+    "event": "final-state",
+    "url": "http://localhost:3180/jobkix/en/career",
+    "cookies": [
+      {
+        "name": "sb-127-auth-token",
+        "domain": "localhost",
+        "secure": false
+      }
+    ],
+    "alerts": [
+      "Career dashboard · JOBKIX"
+    ]
+  }
+]

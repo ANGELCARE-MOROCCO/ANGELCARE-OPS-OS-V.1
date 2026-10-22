@@ -1,0 +1,266 @@
+{
+  "recordedAt": "2026-10-21T16:02:43.442Z",
+  "sourceAtStart": {
+    "algorithm": "sha256",
+    "files": 272,
+    "digest": "400da799fac7282bb384df3b0c5cdbbf5ffe2251335aecc62f40fae4c128c6f6"
+  },
+  "sourceAtEnd": {
+    "algorithm": "sha256",
+    "files": 272,
+    "digest": "400da799fac7282bb384df3b0c5cdbbf5ffe2251335aecc62f40fae4c128c6f6"
+  },
+  "results": [
+    {
+      "locale": "en",
+      "width": 1440,
+      "status": "PASS",
+      "scrollWidth": 1440,
+      "image": {
+        "rect": {
+          "x": 648,
+          "y": 99,
+          "width": 792,
+          "height": 441.453125,
+          "top": 99,
+          "right": 1440,
+          "bottom": 540.453125,
+          "left": 648
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "zIndex": "auto",
+        "position": "static",
+        "objectPosition": "50% 42%"
+      },
+      "picture": {
+        "rect": {
+          "x": 648,
+          "y": 99,
+          "width": 792,
+          "height": 441.453125,
+          "top": 99,
+          "right": 1440,
+          "bottom": 540.453125,
+          "left": 648
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "zIndex": "0",
+        "position": "absolute",
+        "objectPosition": "50% 50%"
+      },
+      "section": {
+        "rect": {
+          "x": 0,
+          "y": 99,
+          "width": 1440,
+          "height": 441.453125,
+          "top": 99,
+          "right": 1440,
+          "bottom": 540.453125,
+          "left": 0
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "zIndex": "auto",
+        "position": "relative",
+        "objectPosition": "50% 50%"
+      },
+      "source": "http://localhost:3180/jobkix/editorial/setting-households.webp",
+      "scrollY": 0
+    },
+    {
+      "locale": "en",
+      "width": 390,
+      "status": "PASS",
+      "scrollWidth": 390,
+      "image": {
+        "rect": {
+          "x": 0,
+          "y": 472.5625,
+          "width": 390,
+          "height": 260.125,
+          "top": 472.5625,
+          "right": 390,
+          "bottom": 732.6875,
+          "left": 0
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "zIndex": "auto",
+        "position": "static",
+        "objectPosition": "50% 42%"
+      },
+      "picture": {
+        "rect": {
+          "x": 0,
+          "y": 472.5625,
+          "width": 390,
+          "height": 260.125,
+          "top": 472.5625,
+          "right": 390,
+          "bottom": 732.6875,
+          "left": 0
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "zIndex": "0",
+        "position": "relative",
+        "objectPosition": "50% 50%"
+      },
+      "section": {
+        "rect": {
+          "x": 0,
+          "y": 75,
+          "width": 390,
+          "height": 657.6875,
+          "top": 75,
+          "right": 390,
+          "bottom": 732.6875,
+          "left": 0
+        },
+        "display": "flex",
+        "visibility": "visible",
+        "opacity": "1",
+        "zIndex": "auto",
+        "position": "relative",
+        "objectPosition": "50% 50%"
+      },
+      "source": "http://localhost:3180/jobkix/editorial/setting-households-mobile.webp",
+      "scrollY": 0
+    },
+    {
+      "locale": "ar",
+      "width": 1440,
+      "status": "PASS",
+      "scrollWidth": 1440,
+      "image": {
+        "rect": {
+          "x": 0,
+          "y": 99,
+          "width": 792,
+          "height": 471.671875,
+          "top": 99,
+          "right": 792,
+          "bottom": 570.671875,
+          "left": 0
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "zIndex": "auto",
+        "position": "static",
+        "objectPosition": "50% 42%"
+      },
+      "picture": {
+        "rect": {
+          "x": 0,
+          "y": 99,
+          "width": 792,
+          "height": 471.671875,
+          "top": 99,
+          "right": 792,
+          "bottom": 570.671875,
+          "left": 0
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "zIndex": "0",
+        "position": "absolute",
+        "objectPosition": "50% 50%"
+      },
+      "section": {
+        "rect": {
+          "x": 0,
+          "y": 99,
+          "width": 1440,
+          "height": 471.671875,
+          "top": 99,
+          "right": 1440,
+          "bottom": 570.671875,
+          "left": 0
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "zIndex": "auto",
+        "position": "relative",
+        "objectPosition": "50% 50%"
+      },
+      "source": "http://localhost:3180/jobkix/editorial/setting-households.webp",
+      "scrollY": 0
+    },
+    {
+      "locale": "ar",
+      "width": 390,
+      "status": "PASS",
+      "scrollWidth": 390,
+      "image": {
+        "rect": {
+          "x": 0,
+          "y": 437.234375,
+          "width": 390,
+          "height": 260.125,
+          "top": 437.234375,
+          "right": 390,
+          "bottom": 697.359375,
+          "left": 0
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "zIndex": "auto",
+        "position": "static",
+        "objectPosition": "50% 42%"
+      },
+      "picture": {
+        "rect": {
+          "x": 0,
+          "y": 437.234375,
+          "width": 390,
+          "height": 260.125,
+          "top": 437.234375,
+          "right": 390,
+          "bottom": 697.359375,
+          "left": 0
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "zIndex": "0",
+        "position": "relative",
+        "objectPosition": "50% 50%"
+      },
+      "section": {
+        "rect": {
+          "x": 0,
+          "y": 75,
+          "width": 390,
+          "height": 622.359375,
+          "top": 75,
+          "right": 390,
+          "bottom": 697.359375,
+          "left": 0
+        },
+        "display": "flex",
+        "visibility": "visible",
+        "opacity": "1",
+        "zIndex": "auto",
+        "position": "relative",
+        "objectPosition": "50% 50%"
+      },
+      "source": "http://localhost:3180/jobkix/editorial/setting-households-mobile.webp",
+      "scrollY": 0
+    }
+  ],
+  "errors": [],
+  "failure": null,
+  "scope": "Actual viewport rendering, loaded image and geometry. Screenshots require individual visual inspection; geometry alone is not visual acceptance."
+}

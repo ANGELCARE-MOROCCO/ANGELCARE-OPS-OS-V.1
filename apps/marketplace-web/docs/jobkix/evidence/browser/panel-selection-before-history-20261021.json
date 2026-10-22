@@ -1,0 +1,85 @@
+{
+  "recordedAt": "2026-10-21T22:14:38.692Z",
+  "sourceAtStart": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 327,
+    "digest": "4f69b2513e794ae39727f8104275746960005518b92d31964555b5c76a3ba2b7"
+  },
+  "sourceAtEnd": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 327,
+    "digest": "4f69b2513e794ae39727f8104275746960005518b92d31964555b5c76a3ba2b7"
+  },
+  "checks": [
+    {
+      "name": "real native application and interview-stage fixture established",
+      "status": "PASS"
+    },
+    {
+      "name": "private application scope and unsafe input enforced by actual handlers",
+      "status": "PASS"
+    },
+    {
+      "name": "eleven bounded native pages expose all eligible members without private fields",
+      "status": "PASS"
+    },
+    {
+      "name": "retained off-page identity resolves independently from the search page",
+      "status": "PASS"
+    },
+    {
+      "name": "off-page panel choice and interview fields survive native draft save and reload",
+      "status": "PASS"
+    },
+    {
+      "name": "real dependency failure preserves retained selection and authored interview fields",
+      "status": "PASS"
+    },
+    {
+      "name": "native retry restores lookup results and permits an additional off-page panelist",
+      "status": "PASS"
+    },
+    {
+      "name": "twenty-member interaction limit retains removable choices without dropping selected IDs",
+      "status": "PASS"
+    },
+    {
+      "name": "native interview submission stores exactly the two selected off-page member IDs",
+      "status": "PASS",
+      "interviewId": "2fa820c1-4b5d-4001-8441-62cd5f2d0cb0"
+    },
+    {
+      "name": "saved interview reload preserves native panel bindings",
+      "status": "PASS"
+    },
+    {
+      "name": "bounded interview editor reflow",
+      "status": "PASS",
+      "locale": "en",
+      "width": 390
+    },
+    {
+      "name": "bounded interview editor reflow",
+      "status": "PASS",
+      "locale": "ar",
+      "width": 360
+    }
+  ],
+  "errors": [],
+  "expectedNetworkErrors": [
+    {
+      "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+      "location": {
+        "url": "http://localhost:3180/api/jobkix/lookups?kind=panels&page=1&q=0249&application=9a75eb43-e5e2-4ba6-b7a3-cc39f510fcb5&selected=30000000-0000-4000-8000-000000006250",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    }
+  ],
+  "failure": null,
+  "scope": "Actual native Next/HTTP/SQL panel reads, durable draft recovery and interview commands with 250 opt-in isolated synthetic team identities. Not hosted identity/storage, independent-session concurrency, complete family acceptance or production certification."
+}

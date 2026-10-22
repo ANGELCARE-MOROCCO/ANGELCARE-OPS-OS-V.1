@@ -3,6 +3,7 @@ import { createServiceClient } from '@/lib/supabase/server'
 import { sendEmailOSDirect } from '@/lib/email-os-core/send-mail'
 import { resolveEmailOSMailboxIdentityFromDb } from '@/lib/email-os-core/multi-mailbox-resolver'
 import { composeAuthEmail, classifyDeliveryError, type AuthEmailJob } from './messages'
+import { composeJobkixAuthEmail, jobkixAuthLocale } from '../../jobkix/server/auth-email'
 export function isAuthEmailWorkerAuthorized(request: Request): boolean {
  const secret=process.env.ANGELCARE_AUTH_EMAIL_WORKER_SECRET||''
  if(secret.length<32)return false
@@ -22,7 +23,7 @@ export async function processOneAuthEmail(): Promise<Record<string,unknown>> {
   if(!process.env.EMAIL_OS_BRIDGE_URL?.trim()||!process.env.EMAIL_OS_BRIDGE_TOKEN?.trim())throw Error('BRIDGE_REQUIRED')
   const bridge=new URL(process.env.EMAIL_OS_BRIDGE_URL.trim())
   if(!['https:','http:'].includes(bridge.protocol)||bridge.username||bridge.password)throw Error('BRIDGE_REQUIRED')
-  const message=composeAuthEmail(job,{
+  const message=(jobkixAuthLocale(job)?composeJobkixAuthEmail:composeAuthEmail)(job,{
    authOrigin:process.env.NEXT_PUBLIC_SUPABASE_URL||'',
    marketplaceOrigin:process.env.ANGELCARE_AUTH_EMAIL_MARKETPLACE_ORIGIN||'https://my.angelcarehub.com',
    redirectOrigins:(process.env.ANGELCARE_AUTH_EMAIL_REDIRECT_ORIGINS||'').split(',').map(s=>s.trim()).filter(Boolean),

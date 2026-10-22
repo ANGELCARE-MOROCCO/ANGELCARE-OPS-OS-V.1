@@ -1,0 +1,37 @@
+{
+  "screens": [
+    "H09"
+  ],
+  "blueprintPagesInspected": [
+    15,
+    20,
+    21
+  ],
+  "canonicalBound": "jobkix_evaluations unique(interview_id,evaluator_user_id); panel membership is bounded to 20 by native interview command.",
+  "files": [
+    {
+      "path": "angelcare-marketplace/jobkix/pages/HiringOperations.tsx",
+      "sha256Before": "4deb87847ae771347d052cce44b672819b9612e43a1e39a2adee2db93088a0b8",
+      "intendedChange": "Resolve only the current evaluator\u2019s unique interview evaluation by its exact native key, avoiding a first-200 collection scan.",
+      "requirements": [
+        20,
+        23,
+        24,
+        26
+      ],
+      "protectedBehavior": "Preserve native RLS, evaluation permissions, confidentiality, command validation and version state. No SQL/schema/shared-product change."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/server/repository.ts",
+      "sha256Before": "bd8d53ca76f3cc4ac5e7a1ae51a920aacc8fc430a975c0f2b336820c6d61571f",
+      "intendedChange": "Resolve only the current evaluator\u2019s unique interview evaluation by its exact native key, avoiding a first-200 collection scan.",
+      "requirements": [
+        20,
+        23,
+        24,
+        26
+      ],
+      "protectedBehavior": "Preserve native RLS, evaluation permissions, confidentiality, command validation and version state. No SQL/schema/shared-product change."
+    }
+  ]
+}

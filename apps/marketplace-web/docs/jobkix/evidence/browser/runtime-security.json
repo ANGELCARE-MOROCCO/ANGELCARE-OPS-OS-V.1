@@ -1,0 +1,72 @@
+{
+  "recordedAt": "2026-10-21T22:27:29.084Z",
+  "sourceAtStart": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 327,
+    "digest": "dc99e043b06135880c4f99e75eaa8ab7f0a2b950d3d12dcfb46163b52ea87e3d"
+  },
+  "sourceAtEnd": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 327,
+    "digest": "dc99e043b06135880c4f99e75eaa8ab7f0a2b950d3d12dcfb46163b52ea87e3d"
+  },
+  "checks": [
+    {
+      "name": "anonymous private file read denied before metadata/storage",
+      "status": "PASS"
+    },
+    {
+      "name": "anonymous archive command denied",
+      "status": "PASS"
+    },
+    {
+      "name": "owner receives hash-verified actual private PDF bytes",
+      "status": "PASS",
+      "bytes": 1330
+    },
+    {
+      "name": "authorized recruiter receives only submitted CV bytes",
+      "status": "PASS"
+    },
+    {
+      "name": "unrelated actor cannot download submitted CV",
+      "status": "PASS"
+    },
+    {
+      "name": "unrelated actor cannot archive candidate CV",
+      "status": "PASS"
+    },
+    {
+      "name": "candidate current authorized UTC interview calendar",
+      "status": "PASS"
+    },
+    {
+      "name": "recruiter current authorized UTC interview calendar",
+      "status": "PASS"
+    },
+    {
+      "name": "calendar private participant boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "cross-origin command refused",
+      "status": "PASS"
+    },
+    {
+      "name": "guest case begins only with explicit isolated trusted-IP configuration",
+      "status": "PASS"
+    },
+    {
+      "name": "guest report is durable and same-key replay preserves one case",
+      "status": "PASS"
+    },
+    {
+      "name": "another guest cannot see private report receipt",
+      "status": "PASS"
+    }
+  ],
+  "failure": null,
+  "scope": "Actual local Next handlers, SQL commands/RLS and bytes over HTTP; synthetic isolated Auth/storage and trusted-IP fixture. No hosted-service or production certification."
+}

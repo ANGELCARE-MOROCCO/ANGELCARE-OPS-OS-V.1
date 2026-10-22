@@ -1,0 +1,15 @@
+{
+  "id": "basic-source-release-candidate",
+  "recordedAt": "2026-10-22T02:18:26.630535+00:00",
+  "state": "IMPLEMENTATION_AND_PACKAGE_VERIFICATION",
+  "scope": "release-preparation-scope.json",
+  "userAmendment": "Email/external-service work on standby; prepare basic necessary source release candidate.",
+  "retainedPrivacyCheckpoint": "privacy-authority-audit.json",
+  "nextExecutableAction": "Execute final scoped source gate, stage exact payload, validate actual ZIP install/verify/idempotency/rollback, deliver candidate and receipt to Downloads.",
+  "productionGo": "BLOCKED",
+  "coreBlockers": "release-candidate.json",
+  "LOCAL_APPLICATION_BUILD": "FORBIDDEN_NOT_INVOKED",
+  "PRODUCTION_SQL": "NOT_EXECUTED",
+  "GIT_RELEASE_ACTIONS": "NOT_EXECUTED",
+  "DEPLOYMENT": "NOT_EXECUTED"
+}

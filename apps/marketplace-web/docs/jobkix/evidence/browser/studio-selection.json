@@ -1,0 +1,140 @@
+{
+  "recordedAt": "2026-10-21T22:26:34.228Z",
+  "sourceAtStart": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 327,
+    "digest": "dc99e043b06135880c4f99e75eaa8ab7f0a2b950d3d12dcfb46163b52ea87e3d"
+  },
+  "sourceAtEnd": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 327,
+    "digest": "dc99e043b06135880c4f99e75eaa8ab7f0a2b950d3d12dcfb46163b52ea87e3d"
+  },
+  "checks": [
+    {
+      "name": "anonymous private lookup denied",
+      "status": "PASS"
+    },
+    {
+      "name": "bounded native organizations selection resolves records beyond 200",
+      "status": "PASS",
+      "total": 252
+    },
+    {
+      "name": "bounded native sites selection resolves records beyond 200",
+      "status": "PASS",
+      "total": 251
+    },
+    {
+      "name": "bounded native vacancies selection resolves records beyond 200",
+      "status": "PASS",
+      "total": 253
+    },
+    {
+      "name": "bounded native pools selection resolves records beyond 200",
+      "status": "PASS",
+      "total": 250
+    },
+    {
+      "name": "selected labels remain bound to the requested organization",
+      "status": "PASS"
+    },
+    {
+      "name": "unrelated actor cannot enumerate private employer records",
+      "status": "PASS"
+    },
+    {
+      "name": "unsafe and ambiguous lookup input rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "off-page organization URL resolves the exact authorized context",
+      "status": "PASS"
+    },
+    {
+      "name": "vacancy site choice beyond 200 survives native draft reload and explicit restoration",
+      "status": "PASS"
+    },
+    {
+      "name": "native team draft preserves off-page site and vacancy bindings",
+      "status": "PASS"
+    },
+    {
+      "name": "off-page talent-pool URL and native filter retain the exact pool",
+      "status": "PASS"
+    },
+    {
+      "name": "pool binding presence is minimal, organization-bound and private",
+      "status": "PASS"
+    },
+    {
+      "name": "selected off-page pool receives a real currently consenting candidate",
+      "status": "PASS"
+    },
+    {
+      "name": "repeat save opens the existing pool without extending retention or a conflicting add",
+      "status": "PASS"
+    },
+    {
+      "name": "existing pool onward action exposes a version-checked native removal",
+      "status": "PASS"
+    },
+    {
+      "name": "intervening native pool save produces a genuine version conflict with the chosen pool retained",
+      "status": "PASS"
+    },
+    {
+      "name": "discarding only the failed intent recovers to the existing binding without a second effect",
+      "status": "PASS"
+    },
+    {
+      "name": "soft navigation after native draft commit stops the detached form before a business effect",
+      "status": "PASS"
+    },
+    {
+      "name": "another pool cannot resume a saved command with a different action or target",
+      "status": "PASS"
+    },
+    {
+      "name": "reopening the private form recovers the exact saved payload and original effect key",
+      "status": "PASS"
+    },
+    {
+      "name": "withdrawn consent also denies pool binding reads",
+      "status": "PASS"
+    },
+    {
+      "name": "withdrawn discoverability removes the candidate from the pool projection",
+      "status": "PASS"
+    },
+    {
+      "name": "native private selection reflow",
+      "status": "PASS",
+      "locale": "en",
+      "width": 390
+    },
+    {
+      "name": "native private selection reflow",
+      "status": "PASS",
+      "locale": "ar",
+      "width": 360
+    }
+  ],
+  "errors": [],
+  "expectedNetworkErrors": [
+    {
+      "message": "Failed to load resource: the server responded with a status of 409 (Conflict)",
+      "location": {
+        "url": "http://localhost:3180/api/jobkix/commands",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    }
+  ],
+  "failure": null,
+  "scope": "Actual Next pages/handlers, canonical private command fixtures, user RLS, durable draft commands and opt-in talent/pool commands. No publication of selector fixtures, hosted services or production certification."
+}

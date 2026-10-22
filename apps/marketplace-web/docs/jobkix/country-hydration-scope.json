@@ -1,0 +1,41 @@
+[
+  {
+    "path": "angelcare-marketplace/jobkix/Country.tsx",
+    "existingSha256": "987cb6a3571808641a9aeba83d997630a3a1e9f71ef07f9bca1df9affb697d36",
+    "change": "Serialize one locale of native country labels and their sorted order from the server to avoid Node/browser ICU hydration differences.",
+    "clauses": [
+      12,
+      13,
+      14,
+      26,
+      29
+    ],
+    "protectedBehavior": "Existing country detection, flag authority, independent origin/destination/language and native country endpoint stay unchanged."
+  },
+  {
+    "path": "angelcare-marketplace/jobkix/country-format.ts",
+    "existingSha256": "6303f99ced04314c4b4c24d5331942865519292889380a5287839f6fb131296a",
+    "change": "Serialize one locale of native country labels and their sorted order from the server to avoid Node/browser ICU hydration differences.",
+    "clauses": [
+      12,
+      13,
+      14,
+      26,
+      29
+    ],
+    "protectedBehavior": "Existing country detection, flag authority, independent origin/destination/language and native country endpoint stay unchanged."
+  },
+  {
+    "path": "app/jobkix/[locale]/layout.tsx",
+    "existingSha256": "5ed674e887fdd0f4bdbf0fc5eb50bba74c536a6d35e95bf727e62d3a6753d20e",
+    "change": "Serialize one locale of native country labels and their sorted order from the server to avoid Node/browser ICU hydration differences.",
+    "clauses": [
+      12,
+      13,
+      14,
+      26,
+      29
+    ],
+    "protectedBehavior": "Existing country detection, flag authority, independent origin/destination/language and native country endpoint stay unchanged."
+  }
+]

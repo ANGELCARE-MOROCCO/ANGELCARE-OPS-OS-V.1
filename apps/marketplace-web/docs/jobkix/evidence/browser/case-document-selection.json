@@ -1,0 +1,80 @@
+{
+  "recordedAt": "2026-10-21T21:52:38.431Z",
+  "sourceAtStart": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 323,
+    "digest": "78fc5a14b85ece7268a871d09b93f99e6eb91146f8d1265f87190054e286319f"
+  },
+  "sourceAtEnd": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 323,
+    "digest": "78fc5a14b85ece7268a871d09b93f99e6eb91146f8d1265f87190054e286319f"
+  },
+  "checks": [
+    {
+      "name": "anonymous evidence selection denied",
+      "status": "PASS"
+    },
+    {
+      "name": "all 252 owned ready evidence files are reachable with minimal metadata",
+      "status": "PASS"
+    },
+    {
+      "name": "unsafe or unrelated files excluded; retained archived evidence stays separately identifiable",
+      "status": "PASS"
+    },
+    {
+      "name": "verification lookup requires its exact authorized organization",
+      "status": "PASS"
+    },
+    {
+      "name": "native private upload is selectable only for its verification organization",
+      "status": "PASS"
+    },
+    {
+      "name": "off-page evidence and authored case text survive native draft reload",
+      "status": "PASS"
+    },
+    {
+      "name": "failed evidence search preserves the selected attachment and supports explicit retry",
+      "status": "PASS"
+    },
+    {
+      "name": "submitted native case stores the exact off-page evidence binding",
+      "status": "PASS"
+    },
+    {
+      "name": "support attachment selector reflow",
+      "status": "PASS",
+      "locale": "en",
+      "width": 390
+    },
+    {
+      "name": "support attachment selector reflow",
+      "status": "PASS",
+      "locale": "ar",
+      "width": 360
+    },
+    {
+      "name": "native verification submission uses the purpose-scoped private file",
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "expectedNetworkErrors": [
+    {
+      "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+      "location": {
+        "url": "http://localhost:3180/api/jobkix/files?page=1&q=interrupted+evidence&selected=30000000-0000-4000-8000-000000001250&context=case",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    }
+  ],
+  "failure": null,
+  "scope": "Actual local Next UI/handlers, private PDF byte upload and canonical file/case commands/RLS. Synthetic isolated Auth/storage and disposable private evidence; no hosted-service or production certification."
+}

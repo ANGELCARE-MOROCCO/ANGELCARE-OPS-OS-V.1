@@ -1,0 +1,44 @@
+{
+  "recordedAt": "2026-10-21T22:42:46.285Z",
+  "sourceAtStart": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 332,
+    "digest": "a4d07eb87d0cafb67853d61b95c155b41f27d9967bf0fe3485eb138bef9dd111"
+  },
+  "sourceAtEnd": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 332,
+    "digest": "a4d07eb87d0cafb67853d61b95c155b41f27d9967bf0fe3485eb138bef9dd111"
+  },
+  "checks": [
+    {
+      "name": "native country pagination is distinct and preserves origin/destination/reach",
+      "status": "PASS"
+    },
+    {
+      "name": "country search resolves the actual native destination and retains independent context",
+      "status": "PASS"
+    },
+    {
+      "name": "country-world entry uses the native destination search authority",
+      "status": "PASS"
+    },
+    {
+      "name": "search within a native region preserves the selected region",
+      "status": "PASS"
+    },
+    {
+      "name": "explicit reset clears directory filters while retaining recruitment context",
+      "status": "PASS"
+    }
+  ],
+  "results": [],
+  "errors": [],
+  "failure": {
+    "message": "locator.waitFor: Error: strict mode violation: getByRole('alert') resolved to 3 elements:\n    1) <div role=\"alert\" class=\"jobkix_empty__yVTgC jobkix_error__PW_tM\">…</div> aka locator('#destination-results').getByRole('alert')\n    2) <div role=\"alert\" class=\"jobkix_empty__yVTgC jobkix_error__PW_tM\">…</div> aka locator('section').filter({ hasText: 'Cities and regions in' }).getByRole('alert')\n    3) <div role=\"alert\" aria-live=\"assertive\" id=\"__next-route-announcer__\"></div> aka locator('[id=\"__next-route-announcer__\"]')\n\nCall log:\n\u001b[2m  - waiting for getByRole('alert') to be visible\u001b[22m\n",
+    "stack": "locator.waitFor: Error: strict mode violation: getByRole('alert') resolved to 3 elements:\n    1) <div role=\"alert\" class=\"jobkix_empty__yVTgC jobkix_error__PW_tM\">…</div> aka locator('#destination-results').getByRole('alert')\n    2) <div role=\"alert\" class=\"jobkix_empty__yVTgC jobkix_error__PW_tM\">…</div> aka locator('section').filter({ hasText: 'Cities and regions in' }).getByRole('alert')\n    3) <div role=\"alert\" aria-live=\"assertive\" id=\"__next-route-announcer__\"></div> aka locator('[id=\"__next-route-announcer__\"]')\n\nCall log:\n\u001b[2m  - waiting for getByRole('alert') to be visible\u001b[22m\n\n    at /Users/user/Desktop/angelcare-platform/apps/marketplace-web/scripts/jobkix/geography.cjs:21:331"
+  },
+  "scope": "Actual Next frontend, native country/flag/M49 authorities and isolated SQL eligibility. Forty-two P07 locale/viewport renders and related P08–P10 regressions are feature evidence, not complete screen/language/content/visual acceptance or hosted certification."
+}

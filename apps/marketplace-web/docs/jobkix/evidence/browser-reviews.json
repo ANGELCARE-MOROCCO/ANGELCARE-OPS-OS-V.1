@@ -1,0 +1,293 @@
+{
+  "runtime": "Actual Next.js dev, explicitly user-authorized 2026-10-21",
+  "data": "Isolated PGlite with actual SQL/RLS; synthetic Auth/storage/trust/editorial fixtures. No production or hosted-service certification.",
+  "reviewed": [
+    {
+      "screen": "P00",
+      "references": [
+        "docs/jobkix/references/P00.png"
+      ],
+      "views": [
+        "P00-en-1440.png",
+        "P00-en-390.png",
+        "P00-ar-390.png"
+      ],
+      "findings": [
+        "Individually inspected actual desktop/mobile implementation against the original composition.",
+        "Hero text contrast corrected with an owned directional fade; resources now use actual reviewed guide bindings, and dual acquisition panels use registered editorial imagery.",
+        "Meaningful reference depth, complete localized/state behavior and final responsive/RTL acceptance remain pending."
+      ],
+      "functional": "PARTIAL_BROWSER_VERIFIED",
+      "visual": "VISUAL_PENDING",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "screen": "P01",
+      "references": [
+        "docs/jobkix/references/P01.png"
+      ],
+      "views": [
+        "P01-en-1440.png",
+        "P01-en-390.png"
+      ],
+      "findings": [
+        "Individually inspected desktop/mobile search composition against the original.",
+        "Inherited Marketplace mobile CSS hid every aside. Added a JOBKIX-only override so filters remain visible without editing shared CSS.",
+        "Native filter disclosures retain all inputs. The responsive suite exercised real keyboard disclosure and GET filtering with discovery context.",
+        "Complete depth, recovery, localization and visual acceptance remain pending."
+      ],
+      "functional": "PARTIAL_BROWSER_VERIFIED",
+      "visual": "VISUAL_PENDING",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "screen": "P02",
+      "references": [
+        "docs/jobkix/references/P02.png"
+      ],
+      "views": [
+        "P02-en-1440.png",
+        "P02-en-390.png",
+        "P02-en-390-controls.png",
+        "P02-ar-390-controls.png",
+        "P02-hi-390-controls.png"
+      ],
+      "findings": [
+        "Individually inspected actual desktop/mobile job detail against the original reference.",
+        "Restored the canonical application sidebar at narrow widths through owned CSS; added a nearby canonical apply link for eligible vacancies.",
+        "Responsive suite checked the native apply destination/sidebar in English, Arabic and Hindi at all six required widths.",
+        "Full factual content depth, state and localized visual acceptance remain pending."
+      ],
+      "functional": "PARTIAL_BROWSER_VERIFIED",
+      "visual": "VISUAL_PENDING",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "screen": "P26",
+      "references": [
+        "docs/jobkix/references/P26.png",
+        "docs/jobkix/EXECUTION_AMENDMENTS.md"
+      ],
+      "views": [
+        "P26-en-1440-attribution.png",
+        "P26-ar-390-attribution.png",
+        "P26-hi-390-attribution.png"
+      ],
+      "findings": [
+        "Original reference inspected. Explicit user amendment supersedes its policy directory, policy reader and compliance claims.",
+        "Actual English desktop and Arabic/Hindi mobile screenshots individually inspected. Main content is the approved ANGELCARE attribution only, with no country or jurisdiction statement.",
+        "Twenty-five browser checks passed across seven languages and all original document aliases. This is narrow presentation evidence, not native-language approval or full consent-journey acceptance.",
+        "Registration consent links and their current reviewed-document boundary need reconciliation before full release acceptance."
+      ],
+      "functional": "PARTIAL_BROWSER_VERIFIED",
+      "visual": "VISUAL_PENDING",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "screen": "P03",
+      "references": [
+        "docs/jobkix/references/P03.png"
+      ],
+      "views": [
+        "P03-en-1440.png"
+      ],
+      "findings": [
+        "Actual desktop directory and original individually inspected. Canonical blueprint settings intentionally differ from the broader illustrative image groupings.",
+        "Sixteen image-led settings, native directory search, grid/list controls and two-sided onward actions are present. Factual counts come from the isolated SQL fixture.",
+        "Complete mobile/localized visual fidelity and action/state acceptance remain pending."
+      ],
+      "functional": "PARTIAL_BROWSER_VERIFIED",
+      "visual": "VISUAL_PENDING",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "screen": "P04",
+      "references": [
+        "docs/jobkix/references/P04.png"
+      ],
+      "views": [
+        "P04-en-1440.png",
+        "P04-en-1440-opening.png",
+        "P04-ar-1440-opening.png",
+        "P04-en-390-opening.png",
+        "P04-ar-390-opening.png",
+        "P04-en-1440-review.png",
+        "P04-ar-390-review.png"
+      ],
+      "findings": [
+        "Original and actual desktop sector world individually inspected; English and Arabic desktop/mobile hero crops also inspected.",
+        "Desktop full-page captures omitted the decoded hero while viewport captures were correct. Replaced negative editorial image/overlay layers with explicit nonnegative owned stacking. Fresh English and Arabic desktop/mobile viewport/full-page captures now retain the hero; individual full-page review confirms the desktop correction. No shared CSS or data authority changed.",
+        "Reviewed sector guidance/resources are unavailable in the synthetic fixture, so honest empty states appear. Required reviewed editorial depth remains a release/content dependency; sample reference claims and jobs are not fabricated.",
+        "Full page/state/language acceptance remains pending."
+      ],
+      "functional": "PARTIAL_BROWSER_VERIFIED",
+      "visual": "VISUAL_PENDING",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "screen": "P05",
+      "references": [
+        "docs/jobkix/references/P05.png"
+      ],
+      "views": [
+        "P05-en-1440.png",
+        "P05-ar-390.png"
+      ],
+      "findings": [
+        "Original full-page reference and actual English desktop/Arabic mobile directory individually inspected.",
+        "Canonical 16 setting navigation, published profession directory, actual opportunity counts, native search/alphabet/grid-list controls and two-sided entry are present. Illustrative profession popularity is not invented.",
+        "A native filtered profession search now uses the correct localized action and preserves independent origin, destination and reach into the profession world.",
+        "Cook previously reused an unrelated transport photograph. A distinct generated food-preparation scene is now registered and rendered; ordinary profession imagery still reflects editorial environments, not actual employers/staff.",
+        "Full directory state, keyboard, language and visual acceptance remains pending."
+      ],
+      "functional": "PARTIAL_BROWSER_VERIFIED",
+      "visual": "VISUAL_PENDING",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "screen": "P06",
+      "references": [
+        "docs/jobkix/references/P06.png"
+      ],
+      "views": [
+        "P06-en-390-cook.png",
+        "P06-ar-1440-cook.png"
+      ],
+      "findings": [
+        "Mapped profession reference and actual English mobile/Arabic desktop cook world individually inspected. New kitchen scene remains visible with useful responsive crops.",
+        "The reference occupational-therapy composition does not authorize generic licensing/qualification claims for every profession. Canonical profession identity, employment setting, actual vacancy terms and governed editorial remain separate authorities.",
+        "Reviewed profession guidance, related settings and resources are unavailable for cook in the synthetic fixture. The page correctly presents honest empty states; required profession-specific editorial depth remains incomplete and is a release/content dependency.",
+        "Full state, keyboard, language and visual acceptance remains pending."
+      ],
+      "functional": "PARTIAL_BROWSER_VERIFIED",
+      "visual": "VISUAL_PENDING",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "screen": "P07",
+      "references": [
+        "docs/jobkix/references/P07.png"
+      ],
+      "views": [
+        "P07-en-1440-atlas.png",
+        "P07-ar-390-atlas.png",
+        "P07-hi-390-atlas.png"
+      ],
+      "findings": [
+        "Original P07 composition and actual final desktop/Arabic mobile atlas inspected individually. New geographic opening, compact 24-country directory, eight regional collections and native city links follow the mapped hierarchy.",
+        "Nine native filter/context/reset/error/retry/keyboard checks and 54 renders passed in the dated geography report. The 42 P07 views cover all seven languages and six required widths; 12 related P08/P09/P10 views cover English/Arabic desktop/mobile.",
+        "Counts and current destinations come only from canonical query-time eligibility. Failed reads preserve known country identities and selected filters with an unavailable count.",
+        "Decorative Natural Earth geometry has a preserved public-domain source and deterministic safe SVG export. No job pins or political-border claims were invented.",
+        "Complete per-family content, all-state, keyboard/screen-reader and localized visual acceptance remain pending."
+      ],
+      "functional": "PARTIAL_BROWSER_VERIFIED",
+      "visual": "VISUAL_PENDING",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "screen": "P08",
+      "references": [
+        "docs/jobkix/references/P08.png"
+      ],
+      "views": [
+        "P08-en-1440-geography-regression.png",
+        "P08-ar-390-geography-regression.png",
+        "P08-en-1440-destination-polish.png",
+        "P08-ar-1440-destination-polish.png",
+        "P08-en-390-destination-polish.png"
+      ],
+      "findings": [
+        "Mapped original country/city reference individually inspected. New geographic identity, licensed exact-location scene, native search command, all sixteen image-led settings, actual jobs/professions/employers, contextual navigation and two-sided acquisition are integrated.",
+        "The full 84-view sweep covers two fronts, seven languages and six widths. After inspecting layout, one-city cards and unavailable-count typography were refined; twelve English/Arabic/Hindi desktop/mobile renders repeated all eight behavior checks. Individual final P08 English desktop and P09 Arabic desktop views inspected.",
+        "Actual counts retain canonical query-time recruitment authority. No generic market statistics, map pins, neighbourhood guidance, employer claims or immigration promises were copied from sample references. Reviewed custom media retains priority.",
+        "Reviewed country/city guidance and related resources are unavailable in the synthetic fixture. Honest empty states remain; complete content, states, localization quality, accessibility and visual family acceptance remain pending."
+      ],
+      "functional": "PARTIAL_BROWSER_VERIFIED",
+      "visual": "VISUAL_PENDING",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "screen": "P09",
+      "references": [
+        "docs/jobkix/references/P09.png"
+      ],
+      "views": [
+        "P09-en-1440-geography-regression.png",
+        "P09-ar-390-geography-regression.png",
+        "P09-en-1440-destination-polish.png",
+        "P09-ar-1440-destination-polish.png",
+        "P09-en-390-destination-polish.png"
+      ],
+      "findings": [
+        "Mapped original country/city reference individually inspected. New geographic identity, licensed exact-location scene, native search command, all sixteen image-led settings, actual jobs/professions/employers, contextual navigation and two-sided acquisition are integrated.",
+        "The full 84-view sweep covers two fronts, seven languages and six widths. After inspecting layout, one-city cards and unavailable-count typography were refined; twelve English/Arabic/Hindi desktop/mobile renders repeated all eight behavior checks. Individual final P08 English desktop and P09 Arabic desktop views inspected.",
+        "Actual counts retain canonical query-time recruitment authority. No generic market statistics, map pins, neighbourhood guidance, employer claims or immigration promises were copied from sample references. Reviewed custom media retains priority.",
+        "Reviewed country/city guidance and related resources are unavailable in the synthetic fixture. Honest empty states remain; complete content, states, localization quality, accessibility and visual family acceptance remain pending."
+      ],
+      "functional": "PARTIAL_BROWSER_VERIFIED",
+      "visual": "VISUAL_PENDING",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "screen": "P10",
+      "references": [
+        "docs/jobkix/references/P10.png"
+      ],
+      "views": [
+        "P10-en-1440-geography-regression.png"
+      ],
+      "findings": [
+        "Original international front and actual English desktop abroad page inspected individually. Current repeated search opening and limited reviewed mobility content do not yet satisfy the rich mapped composition.",
+        "Preserve independent origin/destination and real employer overseas/sponsorship/relocation declarations. Do not convert illustrative visa pathways, counts or brands into promises.",
+        "The dated English/Arabic render regression is narrow evidence; full mobility, empty/error/recovery and visual acceptance remains pending."
+      ],
+      "functional": "PARTIAL_BROWSER_VERIFIED",
+      "visual": "VISUAL_PENDING",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "screen": "P11",
+      "references": [
+        "docs/jobkix/references/P11.png"
+      ],
+      "views": [
+        "P11-en-1440-employer-polish.png",
+        "P11-en-390-employer-polish.png",
+        "P11-ar-390-employer-polish.png"
+      ],
+      "findings": [
+        "Original full-page reference and actual English desktop/mobile and Arabic mobile captures individually inspected. All six native employer filters now precede image-led type discovery, current approved public profiles, practical trust/discovery guidance and the owned footer.",
+        "Seven canonical employer kinds replace illustrative unsupported company-size/category samples. Generic icon cards are used when no actual employer media is available; unrelated imagery is not represented as an employer workplace.",
+        "The initial full sweep passed 84 views across seven languages and six widths with 15 behavior checks. After the documented neutral-trust-heading and page-preserving retry corrections, 12 English/Arabic/Hindi desktop/mobile views and 16 behaviors passed. The full sweep precedes those final corrections.",
+        "Partial evidence uses native Next/SQL and synthetic services. Complete localization quality, content/state depth, accessibility and visual family acceptance remain pending."
+      ],
+      "functional": "PARTIAL_BROWSER_VERIFIED",
+      "visual": "VISUAL_PENDING",
+      "acceptance": "NOT_ACCEPTED"
+    },
+    {
+      "screen": "P12",
+      "references": [
+        "docs/jobkix/references/P12.png"
+      ],
+      "views": [
+        "P12-en-1440-employer-polish.png",
+        "P12-en-390-employer-polish.png",
+        "P12-ar-390-employer-polish.png"
+      ],
+      "findings": [
+        "Original employer-profile reference and actual English desktop/mobile and Arabic mobile captures individually inspected. Unillustrated profiles use a compact factual identity opening rather than an empty image region.",
+        "Current native identity review, employer-scoped jobs, keyboard-operated complete filter disclosure, canonical save/share/report, published hiring locations and moderated workplace contribution bindings are integrated. Original-language descriptions remain annotated separately from interface language.",
+        "The synthetic employer has no approved native photos, published workplace edition or moderated contributions. Real photography/benefits/process/staff stories are not invented; complete employer-approved content/media and all corresponding rendered states remain pending.",
+        "The initial full sweep passed 84 views across seven languages and six widths with 15 behavior checks. After the documented neutral-trust-heading and page-preserving retry corrections, 12 English/Arabic/Hindi desktop/mobile views and 16 behaviors passed. The full sweep precedes those final corrections.",
+        "Partial evidence uses native Next/SQL and synthetic services. Complete localization quality, content/state depth, accessibility and visual family acceptance remain pending."
+      ],
+      "functional": "PARTIAL_BROWSER_VERIFIED",
+      "visual": "VISUAL_PENDING",
+      "acceptance": "NOT_ACCEPTED"
+    }
+  ],
+  "individuallyReviewedFronts": 12,
+  "acceptedFronts": 0,
+  "updatedAt": "2026-10-21T23:47:59.830838+00:00"
+}

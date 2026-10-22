@@ -1,0 +1,143 @@
+{
+  "recordedAt": "2026-10-21T15:44:33.399Z",
+  "sourceAtStart": {
+    "algorithm": "sha256",
+    "files": 272,
+    "digest": "c7b780b9246f5f82e74bcdb027b0a3958fd5ec6a91b5152deea9b255e7999a3f"
+  },
+  "sourceAtEnd": {
+    "algorithm": "sha256",
+    "files": 272,
+    "digest": "c7b780b9246f5f82e74bcdb027b0a3958fd5ec6a91b5152deea9b255e7999a3f"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "suffix": "",
+      "status": "PASS"
+    },
+    {
+      "locale": "en",
+      "suffix": "/account-terms",
+      "status": "PASS"
+    },
+    {
+      "locale": "en",
+      "suffix": "/privacy",
+      "status": "PASS"
+    },
+    {
+      "locale": "fr",
+      "suffix": "",
+      "status": "PASS"
+    },
+    {
+      "locale": "fr",
+      "suffix": "/account-terms",
+      "status": "PASS"
+    },
+    {
+      "locale": "fr",
+      "suffix": "/privacy",
+      "status": "PASS"
+    },
+    {
+      "locale": "es",
+      "suffix": "",
+      "status": "PASS"
+    },
+    {
+      "locale": "es",
+      "suffix": "/account-terms",
+      "status": "PASS"
+    },
+    {
+      "locale": "es",
+      "suffix": "/privacy",
+      "status": "PASS"
+    },
+    {
+      "locale": "hi",
+      "suffix": "",
+      "status": "PASS"
+    },
+    {
+      "locale": "hi",
+      "suffix": "/account-terms",
+      "status": "PASS"
+    },
+    {
+      "locale": "hi",
+      "suffix": "/privacy",
+      "status": "PASS"
+    },
+    {
+      "locale": "tl",
+      "suffix": "",
+      "status": "PASS"
+    },
+    {
+      "locale": "tl",
+      "suffix": "/account-terms",
+      "status": "PASS"
+    },
+    {
+      "locale": "tl",
+      "suffix": "/privacy",
+      "status": "PASS"
+    },
+    {
+      "locale": "id",
+      "suffix": "",
+      "status": "PASS"
+    },
+    {
+      "locale": "id",
+      "suffix": "/account-terms",
+      "status": "PASS"
+    },
+    {
+      "locale": "id",
+      "suffix": "/privacy",
+      "status": "PASS"
+    },
+    {
+      "locale": "ar",
+      "suffix": "",
+      "status": "PASS"
+    },
+    {
+      "locale": "ar",
+      "suffix": "/account-terms",
+      "status": "PASS"
+    },
+    {
+      "locale": "ar",
+      "suffix": "/privacy",
+      "status": "PASS"
+    },
+    {
+      "locale": "en",
+      "suffix": "/cookies",
+      "status": "PASS"
+    },
+    {
+      "locale": "en",
+      "suffix": "/community",
+      "status": "PASS"
+    },
+    {
+      "locale": "en",
+      "suffix": "/acceptable-use",
+      "status": "PASS"
+    },
+    {
+      "locale": "en",
+      "suffix": "/fair-hiring",
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "failure": null,
+  "scope": "Public P26 main content and metadata, seven locales and all legacy document aliases. Original source art intentionally superseded by explicit user amendment. No worldwide compliance, policy adequacy, native-language review or hosted-service certification claimed."
+}

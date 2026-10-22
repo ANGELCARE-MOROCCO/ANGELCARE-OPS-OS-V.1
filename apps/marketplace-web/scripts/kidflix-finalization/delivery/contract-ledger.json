@@ -1,0 +1,141 @@
+[
+  {
+    "clause": "01",
+    "status": "PASS",
+    "evidence": [
+      "archive-audit.json",
+      "evidence/scope-reconciliation.json"
+    ]
+  },
+  {
+    "clause": "02",
+    "status": "PASS",
+    "evidence": [
+      "scope-manifest.json",
+      "payload-manifest.json",
+      "evidence/dce-dispatch.diff"
+    ]
+  },
+  {
+    "clause": "03",
+    "status": "PASS",
+    "evidence": [
+      "evidence/scope-reconciliation.json",
+      "evidence/dce-dispatch.diff"
+    ]
+  },
+  {
+    "clause": "04",
+    "status": "PASS",
+    "evidence": [
+      "VERIFICATION.md"
+    ]
+  },
+  {
+    "clause": "05",
+    "status": "PASS",
+    "evidence": [
+      "evidence/HOMEPAGE_PREVIEW_DESKTOP.png",
+      "evidence/view-home-en-390.png",
+      "evidence/view-stories-fr-1440.png"
+    ]
+  },
+  {
+    "clause": "06",
+    "status": "PASS",
+    "evidence": [
+      "asset-register.json",
+      "evidence/artwork/"
+    ]
+  },
+  {
+    "clause": "07",
+    "status": "PASS",
+    "evidence": [
+      "payload/apps/marketplace-web/angelcare-marketplace/kidflix/gallery-contract.ts",
+      "evidence/behavior.log"
+    ]
+  },
+  {
+    "clause": "08",
+    "status": "PASS",
+    "evidence": [
+      "payload/apps/marketplace-web/angelcare-marketplace/kidflix/Gallery.tsx",
+      "evidence/browser-results.json"
+    ]
+  },
+  {
+    "clause": "09",
+    "status": "PASS",
+    "evidence": [
+      "payload/apps/marketplace-web/angelcare-marketplace/kidflix/Launcher.tsx",
+      "evidence/browser-results.json"
+    ]
+  },
+  {
+    "clause": "10",
+    "status": "PASS",
+    "evidence": [
+      "payload/apps/marketplace-web/angelcare-marketplace/kidflix/GalleryEditor.tsx",
+      "evidence/behavior.log",
+      "evidence/browser-results.json"
+    ]
+  },
+  {
+    "clause": "11",
+    "status": "PASS",
+    "evidence": [
+      "payload/apps/marketplace-web/angelcare-marketplace/kidflix/Navigation.tsx",
+      "payload/apps/marketplace-web/angelcare-marketplace/kidflix/detail/Media.tsx",
+      "evidence/browser-results.json"
+    ]
+  },
+  {
+    "clause": "12",
+    "status": "PASS",
+    "evidence": [
+      "evidence/browser-results.json",
+      "evidence/view-home-ar-390.png",
+      "evidence/view-learning-ar-390.png"
+    ]
+  },
+  {
+    "clause": "13",
+    "status": "PASS",
+    "evidence": [
+      "evidence/typescript.log",
+      "evidence/behavior.log",
+      "evidence/browser-results.json",
+      "KNOWN_LIMITATIONS.md"
+    ]
+  },
+  {
+    "clause": "14",
+    "status": "PASS",
+    "evidence": [
+      "install.mjs",
+      "verify.mjs",
+      "rollback.mjs",
+      "test-installer.mjs",
+      "evidence/installer-results.json"
+    ]
+  },
+  {
+    "clause": "15",
+    "status": "PASS",
+    "evidence": [
+      "payload-manifest.json",
+      "evidence/zip-roundtrip-candidate.json",
+      "EXTERNAL: ZIP_VALIDATION.json alongside delivered ZIP"
+    ]
+  },
+  {
+    "clause": "16",
+    "status": "PASS",
+    "evidence": [
+      "payload-manifest.json",
+      "evidence/zip-roundtrip-candidate.json",
+      "EXTERNAL: ZIP_VALIDATION.json alongside delivered ZIP"
+    ]
+  }
+]

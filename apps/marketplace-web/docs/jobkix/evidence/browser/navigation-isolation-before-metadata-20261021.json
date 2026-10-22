@@ -1,0 +1,177 @@
+{
+  "recordedAt": "2026-10-21T23:28:20.318Z",
+  "sourceAtStart": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 334,
+    "digest": "7ea5fff4d0e469d7b63700c0def083026fd8e05ea376ad87a590410427c96aac"
+  },
+  "sourceAtEnd": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 334,
+    "digest": "7ea5fff4d0e469d7b63700c0def083026fd8e05ea376ad87a590410427c96aac"
+  },
+  "checks": [
+    {
+      "name": "native language switch retains discovery context and document direction",
+      "status": "PASS",
+      "locale": "ar"
+    },
+    {
+      "name": "native language switch retains discovery context and document direction",
+      "status": "PASS",
+      "locale": "hi"
+    },
+    {
+      "name": "native language switch retains discovery context and document direction",
+      "status": "PASS",
+      "locale": "fr"
+    },
+    {
+      "name": "native language switch retains discovery context and document direction",
+      "status": "PASS",
+      "locale": "es"
+    },
+    {
+      "name": "native language switch retains discovery context and document direction",
+      "status": "PASS",
+      "locale": "tl"
+    },
+    {
+      "name": "native language switch retains discovery context and document direction",
+      "status": "PASS",
+      "locale": "id"
+    },
+    {
+      "name": "native language switch retains discovery context and document direction",
+      "status": "PASS",
+      "locale": "en"
+    },
+    {
+      "name": "Arabic homepage header/search reflow",
+      "status": "PASS",
+      "width": 360
+    },
+    {
+      "name": "Arabic homepage header/search reflow",
+      "status": "PASS",
+      "width": 390
+    },
+    {
+      "name": "Arabic homepage header/search reflow",
+      "status": "PASS",
+      "width": 768
+    },
+    {
+      "name": "Arabic homepage header/search reflow",
+      "status": "PASS",
+      "width": 1024
+    },
+    {
+      "name": "Arabic homepage header/search reflow",
+      "status": "PASS",
+      "width": 1440
+    },
+    {
+      "name": "Arabic homepage header/search reflow",
+      "status": "PASS",
+      "width": 1920
+    },
+    {
+      "name": "actual Arabic Marketplace shortcut physically right of KidFlix",
+      "status": "PASS",
+      "direction": "ltr",
+      "kidflix": {
+        "x": 549.8125,
+        "y": 119.5,
+        "width": 135.078125,
+        "height": 53,
+        "top": 119.5,
+        "right": 684.890625,
+        "bottom": 172.5,
+        "left": 549.8125
+      },
+      "jobkix": {
+        "x": 689.890625,
+        "y": 121.5625,
+        "width": 114,
+        "height": 48.859375,
+        "top": 121.5625,
+        "right": 803.890625,
+        "bottom": 170.421875,
+        "left": 689.890625
+      }
+    }
+  ],
+  "errors": [
+    {
+      "url": "http://localhost:3180/angelcare-marketplace/ar",
+      "message": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "url": "http://localhost:3180/angelcare-marketplace/ar",
+      "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    },
+    {
+      "url": "http://localhost:3180/angelcare-marketplace/ar",
+      "message": "Failed to load resource: the server responded with a status of 400 (Bad Request)"
+    },
+    {
+      "url": "http://localhost:3180/angelcare-marketplace/ar",
+      "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://localhost:3180/angelcare-marketplace/ar",
+      "message": "Failed to load resource: the server responded with a status of 400 (Bad Request)"
+    },
+    {
+      "url": "http://localhost:3180/angelcare-marketplace/ar",
+      "message": "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+    },
+    {
+      "url": "http://localhost:3180/angelcare-marketplace/ar",
+      "message": "Failed to load resource: the server responded with a status of 400 (Bad Request)"
+    },
+    {
+      "url": "http://localhost:3180/jobkix/en",
+      "message": "Failed to load resource: the server responded with a status of 400 (Bad Request)"
+    }
+  ],
+  "failure": {
+    "message": "page.waitForFunction: Timeout 60000ms exceeded.",
+    "stack": "page.waitForFunction: Timeout 60000ms exceeded.\n    at /Users/user/Desktop/angelcare-platform/apps/marketplace-web/scripts/jobkix/navigation.cjs:14:1107",
+    "document": {
+      "url": "http://localhost:3180/jobkix/ar",
+      "lang": "ar",
+      "dir": "rtl",
+      "icons": [
+        {
+          "url": "/jobkix/brand/jobkix-favicon-32.png",
+          "html": "<link rel=\"shortcut icon\" href=\"/jobkix/brand/jobkix-favicon-32.png\" type=\"image/png\">"
+        },
+        {
+          "url": "/favicon.ico?603d046c9a6fdfbb",
+          "html": "<link rel=\"icon\" href=\"/favicon.ico?603d046c9a6fdfbb\" type=\"image/x-icon\" sizes=\"16x16\">"
+        },
+        {
+          "url": "/jobkix/brand/jobkix-favicon-16.png",
+          "html": "<link rel=\"icon\" href=\"/jobkix/brand/jobkix-favicon-16.png\" sizes=\"16x16\" type=\"image/png\">"
+        },
+        {
+          "url": "/jobkix/brand/jobkix-favicon-32.png",
+          "html": "<link rel=\"icon\" href=\"/jobkix/brand/jobkix-favicon-32.png\" sizes=\"32x32\" type=\"image/png\">"
+        },
+        {
+          "url": "/jobkix/brand/jobkix-favicon-48.png",
+          "html": "<link rel=\"icon\" href=\"/jobkix/brand/jobkix-favicon-48.png\" sizes=\"48x48\" type=\"image/png\">"
+        },
+        {
+          "url": "/jobkix/brand/jobkix-icon-180.png",
+          "html": "<link rel=\"apple-touch-icon\" href=\"/jobkix/brand/jobkix-icon-180.png\" sizes=\"180x180\" type=\"image/png\">"
+        }
+      ]
+    }
+  },
+  "scope": "Actual local Next app; synthetic services. Icon descriptors/lifecycle checked in Chromium; no OS/browser-chrome favicon paint claim."
+}

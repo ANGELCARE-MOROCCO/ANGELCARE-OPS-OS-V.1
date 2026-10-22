@@ -1,0 +1,37 @@
+{
+  "repositoryManifest": "scope-manifest.json",
+  "packageOwnedSourceFiles": [
+    {
+      "path": "install.mjs",
+      "before": "NEW",
+      "intendedChange": "Guarded installation/verification/rollback or isolated fixture testing",
+      "contractClause": "14,15",
+      "protectedBehavior": "Filesystem targets restricted to payload scope; later edits protected",
+      "sha256": "8a80ef6837bdd09ae8f11ce67e3790853452318cfcfd2c4027b2657afa86c0f5"
+    },
+    {
+      "path": "verify.mjs",
+      "before": "NEW",
+      "intendedChange": "Guarded installation/verification/rollback or isolated fixture testing",
+      "contractClause": "14,15",
+      "protectedBehavior": "Filesystem targets restricted to payload scope; later edits protected",
+      "sha256": "f20aefacc7aa966af9ab279847209621d41537558b822e0b587524fc0f84293e"
+    },
+    {
+      "path": "rollback.mjs",
+      "before": "NEW",
+      "intendedChange": "Guarded installation/verification/rollback or isolated fixture testing",
+      "contractClause": "14,15",
+      "protectedBehavior": "Filesystem targets restricted to payload scope; later edits protected",
+      "sha256": "89f43efc771a589087065b35da60e7af3950bb74a8032b45aa2b472b817f2f56"
+    },
+    {
+      "path": "test-installer.mjs",
+      "before": "NEW",
+      "intendedChange": "Guarded installation/verification/rollback or isolated fixture testing",
+      "contractClause": "14,15",
+      "protectedBehavior": "Filesystem targets restricted to payload scope; later edits protected",
+      "sha256": "a8f22e5a84a769ff8803f90584f79f3d848314bfa46dfaff6e38ef9592da2471"
+    }
+  ]
+}

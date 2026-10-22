@@ -1,0 +1,24 @@
+{
+  "recordedAt": "2026-10-22T01:11:59.238Z",
+  "sourceAtStart": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 352,
+    "digest": "b9228842ed1389be4a93dd531b984d38aa4ed98ab15d08993ce4245a960fa324"
+  },
+  "sourceAtEnd": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 352,
+    "digest": "b9228842ed1389be4a93dd531b984d38aa4ed98ab15d08993ce4245a960fa324"
+  },
+  "checks": [],
+  "renders": [],
+  "errors": [],
+  "expectedNetworkErrors": [],
+  "failure": {
+    "message": "page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3180/jobkix/en/employers?origin=GB&destination=CA&reach=abroad\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3180/jobkix/en/employers?origin=GB&destination=CA&reach=abroad\", waiting until \"domcontentloaded\"\u001b[22m\n",
+    "stack": "page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3180/jobkix/en/employers?origin=GB&destination=CA&reach=abroad\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3180/jobkix/en/employers?origin=GB&destination=CA&reach=abroad\", waiting until \"domcontentloaded\"\u001b[22m\n\n    at /Users/user/Desktop/angelcare-platform/apps/marketplace-web/scripts/jobkix/employer-worlds.cjs:12:14"
+  },
+  "scope": "Actual authorized local Next routes, existing SQL public projections/eligibility and native private save commands. Synthetic Auth/storage/trust/editorial fixtures; deliberate RPC interruption. No hosted-service, approved real employer media/content, full family-language acceptance or production certification."
+}

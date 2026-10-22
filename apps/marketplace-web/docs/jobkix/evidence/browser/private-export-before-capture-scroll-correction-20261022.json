@@ -1,0 +1,264 @@
+{
+  "recordedAt": "2026-10-22T00:50:31.199Z",
+  "sourceAtStart": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 349,
+    "digest": "98bc408cb02ab0d7d28dc1e825b70e97f15bcf9da74e7046a8ce9a950f37cad5"
+  },
+  "sourceAtEnd": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 349,
+    "digest": "98bc408cb02ab0d7d28dc1e825b70e97f15bcf9da74e7046a8ce9a950f37cad5"
+  },
+  "checks": [
+    {
+      "name": "anonymous export denied without an attachment",
+      "status": "PASS"
+    },
+    {
+      "name": "canonical export returns current actor data with private subject-bound headers",
+      "status": "PASS"
+    },
+    {
+      "name": "another identity receives its own export only",
+      "status": "PASS"
+    },
+    {
+      "name": "real SQL dependency failure creates no error download and retains authored settings",
+      "status": "PASS"
+    },
+    {
+      "name": "explicit retry produces one valid actual JSON download with honest readiness feedback",
+      "status": "PASS"
+    },
+    {
+      "name": "pending export blocks duplicate activation until the real response",
+      "status": "PASS"
+    },
+    {
+      "name": "unmount aborts the held actual export response before any download",
+      "status": "PASS"
+    },
+    {
+      "name": "seven-language candidate and hirer export actions use the current actor and keyboard downloads",
+      "status": "PASS",
+      "renders": 28,
+      "downloadedLocaleActions": 14
+    }
+  ],
+  "renders": [
+    {
+      "screen": "C13",
+      "locale": "en",
+      "width": 360,
+      "image": "C13-en-360-private-export.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "C13",
+      "locale": "en",
+      "width": 1440,
+      "image": "C13-en-1440-private-export.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "C13",
+      "locale": "fr",
+      "width": 360,
+      "image": "C13-fr-360-private-export.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "C13",
+      "locale": "fr",
+      "width": 1440,
+      "image": "C13-fr-1440-private-export.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "C13",
+      "locale": "es",
+      "width": 360,
+      "image": "C13-es-360-private-export.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "C13",
+      "locale": "es",
+      "width": 1440,
+      "image": "C13-es-1440-private-export.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "C13",
+      "locale": "hi",
+      "width": 360,
+      "image": "C13-hi-360-private-export.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "C13",
+      "locale": "hi",
+      "width": 1440,
+      "image": "C13-hi-1440-private-export.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "C13",
+      "locale": "tl",
+      "width": 360,
+      "image": "C13-tl-360-private-export.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "C13",
+      "locale": "tl",
+      "width": 1440,
+      "image": "C13-tl-1440-private-export.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "C13",
+      "locale": "id",
+      "width": 360,
+      "image": "C13-id-360-private-export.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "C13",
+      "locale": "id",
+      "width": 1440,
+      "image": "C13-id-1440-private-export.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "C13",
+      "locale": "ar",
+      "width": 360,
+      "image": "C13-ar-360-private-export.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "C13",
+      "locale": "ar",
+      "width": 1440,
+      "image": "C13-ar-1440-private-export.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "H16",
+      "locale": "en",
+      "width": 360,
+      "image": "H16-en-360-private-export.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "H16",
+      "locale": "en",
+      "width": 1440,
+      "image": "H16-en-1440-private-export.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "H16",
+      "locale": "fr",
+      "width": 360,
+      "image": "H16-fr-360-private-export.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "H16",
+      "locale": "fr",
+      "width": 1440,
+      "image": "H16-fr-1440-private-export.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "H16",
+      "locale": "es",
+      "width": 360,
+      "image": "H16-es-360-private-export.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "H16",
+      "locale": "es",
+      "width": 1440,
+      "image": "H16-es-1440-private-export.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "H16",
+      "locale": "hi",
+      "width": 360,
+      "image": "H16-hi-360-private-export.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "H16",
+      "locale": "hi",
+      "width": 1440,
+      "image": "H16-hi-1440-private-export.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "H16",
+      "locale": "tl",
+      "width": 360,
+      "image": "H16-tl-360-private-export.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "H16",
+      "locale": "tl",
+      "width": 1440,
+      "image": "H16-tl-1440-private-export.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "H16",
+      "locale": "id",
+      "width": 360,
+      "image": "H16-id-360-private-export.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "H16",
+      "locale": "id",
+      "width": 1440,
+      "image": "H16-id-1440-private-export.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "H16",
+      "locale": "ar",
+      "width": 360,
+      "image": "H16-ar-360-private-export.png",
+      "status": "PASS"
+    },
+    {
+      "screen": "H16",
+      "locale": "ar",
+      "width": 1440,
+      "image": "H16-ar-1440-private-export.png",
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "expectedNetworkErrors": [
+    {
+      "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+      "location": {
+        "url": "http://localhost:3180/api/jobkix/account/export",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    }
+  ],
+  "failure": null,
+  "scope": "Actual authorized local Next runtime, current export HTTP handler, SQL/RLS and real Chromium download bytes. Synthetic Auth/storage adapters and deliberately interrupted RPC transport. No hosted-service, full-family/language acceptance, retention/erasure completion or production certification."
+}

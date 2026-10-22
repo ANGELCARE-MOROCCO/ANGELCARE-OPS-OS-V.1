@@ -1,0 +1,23 @@
+{
+  "recordedAt": "2026-10-21T23:09:56.285Z",
+  "results": [
+    {
+      "status": "fulfilled",
+      "value": {
+        "forged": false,
+        "status": 200,
+        "html": "<html lang=\"en\">",
+        "jobkixIcons": false
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "forged": true,
+        "status": 200,
+        "html": "<html lang=\"ar\" dir=\"rtl\">",
+        "jobkixIcons": false
+      }
+    }
+  ]
+}

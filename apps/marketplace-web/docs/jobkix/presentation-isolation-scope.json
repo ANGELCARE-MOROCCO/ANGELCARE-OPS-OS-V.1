@@ -1,0 +1,271 @@
+{
+  "recordedAt": "2026-10-21T23:16:51.480993+00:00",
+  "dependency": "app/layout.tsx receives request-local JOBKIX document hints through existing proxy integration. Public non-JOBKIX routes did not sanitize incoming copies.",
+  "beforeEvidence": "docs/jobkix/evidence/presentation-header-preflight.json",
+  "files": [
+    {
+      "path": "proxy.ts",
+      "sha256Before": "0c8069f054858114aea85dcc3b8150aefbf22edd547a6654f5ae9ca6615db7bd",
+      "intendedChange": "Sanitize JOBKIX-only presentation hints on non-JOBKIX requests, forwarding every other header unchanged; cover routes which can render the root document while preserving all existing URL/authentication decisions.",
+      "requirements": [
+        8,
+        9,
+        10,
+        13,
+        24,
+        27,
+        29,
+        31
+      ],
+      "protectedBehavior": "No URL, redirect target, cookie/session/role/tenant/country rule or existing private authorization decision changes. No new configuration, secret, service or runtime dependency. Only JOBKIX-owned presentation hints are removed outside their world."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/presentation-context.ts",
+      "sha256Before": "3f6963e4ff94a46d35cbcf451cfbb37d5e783a3635837c6d4d0d612e1d13cf47",
+      "intendedChange": "Centralize removal of the two owned hint headers; retain the existing strict path/locale parser.",
+      "requirements": [
+        8,
+        9,
+        10,
+        13,
+        24,
+        27,
+        29,
+        31
+      ],
+      "protectedBehavior": "No URL, redirect target, cookie/session/role/tenant/country rule or existing private authorization decision changes. No new configuration, secret, service or runtime dependency. Only JOBKIX-owned presentation hints are removed outside their world."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/session-proxy.ts",
+      "sha256Before": "06bb8f8bfd1647ad9593344d4d96a5358963a58db71ae2219fa38afe7a87982b",
+      "intendedChange": "Reuse the owned hint sanitizer before setting hints from the actual JOBKIX request pathname.",
+      "requirements": [
+        8,
+        9,
+        10,
+        13,
+        24,
+        27,
+        29,
+        31
+      ],
+      "protectedBehavior": "No URL, redirect target, cookie/session/role/tenant/country rule or existing private authorization decision changes. No new configuration, secret, service or runtime dependency. Only JOBKIX-owned presentation hints are removed outside their world."
+    },
+    {
+      "path": "scripts/jobkix/domain.test.cjs",
+      "sha256Before": "3b0466115e2a397667f8676cb0aa5cda63d316c6a3df01b06238b05ac1029ce2",
+      "intendedChange": "Verify that owned hints are removed while cookies, country, host, origin and unrelated routing headers remain intact.",
+      "requirements": [
+        8,
+        9,
+        10,
+        13,
+        24,
+        27,
+        29,
+        31
+      ],
+      "protectedBehavior": "No URL, redirect target, cookie/session/role/tenant/country rule or existing private authorization decision changes. No new configuration, secret, service or runtime dependency. Only JOBKIX-owned presentation hints are removed outside their world."
+    },
+    {
+      "path": "scripts/jobkix/presentation-routing.test.cjs",
+      "sha256Before": "NEW",
+      "intendedChange": "Execute real proxy decision code with actual NextRequest/NextResponse and isolated session-adapter boundaries; validate matcher coverage and preserve protected branch decisions.",
+      "requirements": [
+        8,
+        9,
+        10,
+        13,
+        24,
+        27,
+        29,
+        31
+      ],
+      "protectedBehavior": "No URL, redirect target, cookie/session/role/tenant/country rule or existing private authorization decision changes. No new configuration, secret, service or runtime dependency. Only JOBKIX-owned presentation hints are removed outside their world."
+    },
+    {
+      "path": "scripts/jobkix/presentation.cjs",
+      "sha256Before": "NEW",
+      "intendedChange": "Actual local HTTP baseline/forged-header comparisons across JOBKIX and surrounding worlds, document attributes, redirects and native icon descriptors.",
+      "requirements": [
+        8,
+        9,
+        10,
+        13,
+        24,
+        27,
+        29,
+        31
+      ],
+      "protectedBehavior": "No URL, redirect target, cookie/session/role/tenant/country rule or existing private authorization decision changes. No new configuration, secret, service or runtime dependency. Only JOBKIX-owned presentation hints are removed outside their world."
+    },
+    {
+      "path": "scripts/jobkix/capture-evidence.cjs",
+      "sha256Before": "3fc4725a9ed75082d32f92b88e490b3690345cdcf6b987d2cd8c14bd864d0fad",
+      "intendedChange": "Include the focused proxy-routing regression in the scoped source gate.",
+      "requirements": [
+        8,
+        9,
+        10,
+        13,
+        24,
+        27,
+        29,
+        31
+      ],
+      "protectedBehavior": "No URL, redirect target, cookie/session/role/tenant/country rule or existing private authorization decision changes. No new configuration, secret, service or runtime dependency. Only JOBKIX-owned presentation hints are removed outside their world."
+    },
+    {
+      "path": "scripts/jobkix/checkpoint-progress.cjs",
+      "sha256Before": "e06d793a63d86c2c847b2930acf60884923965354955dbc14e5155852920df1e",
+      "intendedChange": "Include executed presentation-isolation evidence in checkpoints.",
+      "requirements": [
+        8,
+        9,
+        10,
+        13,
+        24,
+        27,
+        29,
+        31
+      ],
+      "protectedBehavior": "No URL, redirect target, cookie/session/role/tenant/country rule or existing private authorization decision changes. No new configuration, secret, service or runtime dependency. Only JOBKIX-owned presentation hints are removed outside their world."
+    },
+    {
+      "path": "docs/jobkix/shared-file-register.json",
+      "sha256Before": "55e6fe34b377ff53bc346a2bb725b2eb29037f29ffbe60828907dd7c510245f3",
+      "intendedChange": "Register the narrowly justified additional proxy integration purpose without changing its original HEAD baseline hash.",
+      "requirements": [
+        8,
+        9,
+        10,
+        13,
+        24,
+        27,
+        29,
+        31
+      ],
+      "protectedBehavior": "No URL, redirect target, cookie/session/role/tenant/country rule or existing private authorization decision changes. No new configuration, secret, service or runtime dependency. Only JOBKIX-owned presentation hints are removed outside their world."
+    },
+    {
+      "path": "docs/jobkix/evidence/presentation-header-preflight.json",
+      "sha256Before": "NEW",
+      "intendedChange": "Retain the executed before-change observation: Marketplace HTML en became ar/RTL under forged JOBKIX hint headers.",
+      "requirements": [
+        8,
+        9,
+        10,
+        13,
+        24,
+        27,
+        29,
+        31
+      ],
+      "protectedBehavior": "No URL, redirect target, cookie/session/role/tenant/country rule or existing private authorization decision changes. No new configuration, secret, service or runtime dependency. Only JOBKIX-owned presentation hints are removed outside their world."
+    },
+    {
+      "path": "docs/jobkix/evidence/presentation-routing-baseline.json",
+      "sha256Before": "NEW",
+      "intendedChange": "Record actual pre-change HTTP routing decisions without credentials, private data or environment values.",
+      "requirements": [
+        8,
+        9,
+        10,
+        13,
+        24,
+        27,
+        29,
+        31
+      ],
+      "protectedBehavior": "No URL, redirect target, cookie/session/role/tenant/country rule or existing private authorization decision changes. No new configuration, secret, service or runtime dependency. Only JOBKIX-owned presentation hints are removed outside their world."
+    },
+    {
+      "path": "app/layout.tsx",
+      "sha256Before": "c33d3388310b914e34492ea0a56a6075757bd80429f47b9770cd6c440041ff21",
+      "intendedChange": "Restore original global metadata authority. Keep canonical JOBKIX request hints limited to server document language/direction; route metadata owns JOBKIX identity and icons.",
+      "requirements": [
+        8,
+        9,
+        10,
+        13,
+        18,
+        27,
+        29,
+        31
+      ],
+      "protectedBehavior": "Global favicon bytes, Marketplace metadata service, existing native child metadata, authentication, cookie and routing authorities remain unchanged."
+    },
+    {
+      "path": "app/jobkix/[locale]/layout.tsx",
+      "sha256Before": "77b86e78b4726cc3212059df9aa698b237be8b992fa5157169e50d5d47976159",
+      "intendedChange": "Own full JOBKIX social/application metadata and icons in its native localized route boundary, preserving the original global metadata service.",
+      "requirements": [
+        8,
+        9,
+        10,
+        13,
+        18,
+        27,
+        29,
+        31
+      ],
+      "protectedBehavior": "Global favicon bytes, Marketplace metadata service, existing native child metadata, authentication, cookie and routing authorities remain unchanged."
+    },
+    {
+      "path": "scripts/jobkix/navigation.cjs",
+      "sha256Before": "04a1a23a2a0d75a25e319eea719e46992ddcf60b51d42dbd4196b581f27c3516",
+      "intendedChange": "Exercise settled cross-world entry/back/forward using explicit actual route assertions and native metadata descriptors; record isolated shared-adapter failures separately from JOBKIX errors.",
+      "requirements": [
+        8,
+        9,
+        10,
+        13,
+        18,
+        27,
+        29,
+        31
+      ],
+      "protectedBehavior": "Global favicon bytes, Marketplace metadata service, existing native child metadata, authentication, cookie and routing authorities remain unchanged."
+    },
+    {
+      "path": "scripts/jobkix/brand.test.cjs",
+      "sha256Before": "131190919c794a5200dd88aa8ab1687d360f2b6935673bf772774499cbebd7b8",
+      "intendedChange": "Execute the native route metadata function for all seven languages and verify complete brand descriptors at the route boundary.",
+      "requirements": [
+        8,
+        9,
+        10,
+        13,
+        18,
+        27,
+        29,
+        31
+      ],
+      "protectedBehavior": "Global favicon bytes, Marketplace metadata service, existing native child metadata, authentication, cookie and routing authorities remain unchanged."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/MarketplaceEntry.tsx",
+      "sha256Before": "aad3a9c159513381148d644299f3443f6ff297b09b929d6110daf34ccae5ad56",
+      "intendedChange": "Use a native document navigation for the independent JOBKIX brand-world shortcut so each world receives its own server document and metadata. Preserve English destination, logo, accessibility, placement and current cookies.",
+      "requirements": [
+        10,
+        11,
+        18,
+        29
+      ],
+      "protectedBehavior": "No storefront registry, shared header design, session, country or other navigation changes."
+    },
+    {
+      "path": "docs/jobkix/presentation-preserved-routing-baseline.txt",
+      "sha256Before": "NEW",
+      "intendedChange": "Preserve the actual pre-isolation proxy source as non-compilation test input, for native matcher/dispatch comparisons on route-prefix edges.",
+      "requirements": [
+        8,
+        9,
+        27,
+        29
+      ],
+      "protectedBehavior": "Verify original matched authentication/redirect scope and all unrecognized path behavior; no native permissions change."
+    }
+  ]
+}

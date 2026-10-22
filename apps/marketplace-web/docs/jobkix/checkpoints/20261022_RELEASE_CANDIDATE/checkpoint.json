@@ -1,0 +1,67 @@
+{
+  "recordedAt": "2026-10-22T02:29:31.817498+00:00",
+  "state": "SOURCE_CANDIDATE_DELIVERED_PRODUCTION_ACTIVATION_BLOCKED",
+  "sourceBaseline": "d655c0f99c8891deb08471bc0e83f5d0cfb1fa89",
+  "sourceImplementation": "PARTIAL_VERIFIED_CHECKPOINT_ALREADY_IN_REPOSITORY",
+  "verification": {
+    "commands": 16,
+    "reportedNodeTests": 223,
+    "typescriptRoots": 214,
+    "transitiveFiles": 1100,
+    "diagnostics": 0,
+    "sourceFiles": 354,
+    "sourceHashDrift": [],
+    "report": "docs/jobkix/evidence/source-verification.json"
+  },
+  "package": {
+    "path": "/Users/user/Downloads/ANGELCARE_JOBKIX_RELEASE_CANDIDATE_20261022.zip",
+    "bytes": 531954611,
+    "sha256": "4eb405b3e8bfe643a73f31e73142df72dc973e3517c9c7da7abdb656edd9fed8",
+    "payloadFiles": 1051,
+    "validationReceipt": "/Users/user/Downloads/ANGELCARE_JOBKIX_RELEASE_CANDIDATE_20261022.validation.json",
+    "checks": [
+      "ZIP_INTEGRITY_AND_SAFE_EXTRACTION",
+      "EVERY_ARCHIVE_FILE_HASH",
+      "EVERY_PAYLOAD_FILE_HASH_AND_SCOPE",
+      "ACTUAL_PAYLOAD_PARTIAL_FAILURE_EXACT_RECOVERY",
+      "SHIPPED_INSTALL_SUCCESS",
+      "SHIPPED_VERIFY_SUCCESS",
+      "IDEMPOTENT_REAPPLICATION",
+      "ROLLBACK_PROTECTS_LATER_EDITS",
+      "SHIPPED_ROLLBACK_EXACT_BASELINE_RESTORATION"
+    ],
+    "storage": "CONFIRMED",
+    "classification": "SOURCE_PACKAGE_VERIFICATION_NOT_PRODUCT_OR_PRODUCTION_ACCEPTANCE"
+  },
+  "currentRepository": "All 1051 packaged targets verified identical; no installer mutation required.",
+  "instructions": {
+    "apply": "/Users/user/Downloads/JOBKIX_APPLY_SOURCE_CANDIDATE_20261022.txt",
+    "rollback": "/Users/user/Downloads/JOBKIX_ROLLBACK_SOURCE_CANDIDATE_20261022.txt",
+    "status": "/Users/user/Downloads/JOBKIX_RELEASE_STATUS_20261022.txt"
+  },
+  "standby": [
+    "Email delivery and worker activation",
+    "Hosted external-service verification and provisioning"
+  ],
+  "coreOpenItems": [
+    "Reviewed terms/privacy disclosure at registration under attribution-only P26 instruction",
+    "Retention/erasure fulfillment and holds",
+    "Complete essential family/state/authorization and original full visual/language acceptance"
+  ],
+  "originalCounts": {
+    "partialFamilies": 73,
+    "acceptedFamilies": 0,
+    "verifiedCompleteLanguageCells": 0,
+    "requiredLanguageCells": 455,
+    "partiallyComparedIndividualPublicFronts": 14,
+    "requiredPublicFronts": 27,
+    "fullyVisuallyAcceptedPublicFronts": 0
+  },
+  "executedEndToEnd": "Dated partial A/B/D/H local UI/API/SQL flow retained in browser/journey.json. Full A\u2013H not accepted. No new browser runtime was started for package-only changes.",
+  "databaseEvidence": "28 authored migrations and actual command/RLS tests executed only in isolated PGlite; no hosted/storage/SMTP/independent-session certification.",
+  "nextExecutableAction": "Resolve the core open items before live recruitment activation. Email/external-service work is on user-requested standby. Source release actions require a later explicit instruction.",
+  "LOCAL_APPLICATION_BUILD": "FORBIDDEN_NOT_INVOKED",
+  "PRODUCTION_SQL": "NOT_EXECUTED",
+  "GIT_RELEASE_ACTIONS": "NOT_EXECUTED",
+  "DEPLOYMENT": "NOT_EXECUTED"
+}

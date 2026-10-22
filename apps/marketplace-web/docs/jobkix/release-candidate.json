@@ -1,0 +1,62 @@
+{
+  "recordedAt": "2026-10-22T02:18:26.630535+00:00",
+  "classification": "BASIC_SOURCE_RELEASE_CANDIDATE_NOT_PRODUCTION_APPROVAL",
+  "requestedBy": "User amendment: complete basic and necessary; email and external-service work on standby; prepare release now.",
+  "source": "Already implemented directly in current repository. No ZIP needs applying here.",
+  "sourceVerification": "docs/jobkix/evidence/source-verification.json",
+  "archiveValidation": "Adjacent final ZIP .validation.json; independent post-archive receipt with actual bytes and SHA-256.",
+  "standby": [
+    {
+      "id": "email-delivery",
+      "status": "STANDBY",
+      "detail": "Native renderer and durable queue implementation retained; no SMTP/inbox, hosted Auth email or worker activation claimed."
+    },
+    {
+      "id": "hosted-integrations",
+      "status": "STANDBY",
+      "detail": "Hosted Auth/storage/proxy and independent database-session verification deferred. No configuration changed."
+    }
+  ],
+  "coreActivationBlockers": [
+    {
+      "id": "registration-disclosure",
+      "status": "BLOCKED",
+      "detail": "Attribution-only P26 does not display current reviewed terms/privacy required by registration. Validation is retained; no consent bypass."
+    },
+    {
+      "id": "privacy-fulfillment",
+      "status": "NOT_IMPLEMENTED",
+      "detail": "Native private export and review requests exist; retention/erasure execution and holds are unfinished."
+    },
+    {
+      "id": "essential-acceptance",
+      "status": "INCOMPLETE",
+      "detail": "Partial connected application/recruitment workflows are tested; complete original family/state/language/visual and A\u2013H acceptance is not established."
+    }
+  ],
+  "originalContractCounts": {
+    "familiesWithPartialSource": 73,
+    "fullyAcceptedFamilies": 0,
+    "verifiedCompleteUserLanguageCells": 0,
+    "requiredUserLanguageCells": 455,
+    "partiallyIndividuallyComparedPublicFronts": 14,
+    "requiredPublicFronts": 27,
+    "fullyVisuallyAcceptedPublicFronts": 0
+  },
+  "productionGo": "BLOCKED",
+  "releaseActions": "NOT_AUTHORIZED_THIS_TURN",
+  "LOCAL_APPLICATION_BUILD": "FORBIDDEN_NOT_INVOKED",
+  "PRODUCTION_SQL": "NOT_EXECUTED",
+  "GIT_RELEASE_ACTIONS": "NOT_EXECUTED",
+  "DEPLOYMENT": "NOT_EXECUTED",
+  "executedSourceGate": {
+    "recordedAt": "2026-10-22T02:22:20.680Z",
+    "commands": 16,
+    "passingCommands": 16,
+    "reportedNodeTests": 223,
+    "sourceFiles": 354,
+    "typescriptRoots": 214,
+    "typescriptTransitiveFiles": 1100,
+    "typescriptDiagnostics": 0
+  }
+}

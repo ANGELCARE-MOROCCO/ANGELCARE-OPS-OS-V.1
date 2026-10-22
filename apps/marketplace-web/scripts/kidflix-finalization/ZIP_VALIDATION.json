@@ -1,0 +1,68 @@
+{
+  "archive": "ANGELCARE_KIDFLIX_INTERNATIONAL_FINALIZATION_20261020.zip",
+  "sha256": "995e2f95028d768c8f0169cc007099998c38c99637ae6a7ea130a13033e88216",
+  "bytes": 148972524,
+  "integrity": "PASS",
+  "freshExtraction": "PASS",
+  "payloadFilesVerified": 149,
+  "packageFilesVerified": 210,
+  "shippedInstallerScenarios": 10,
+  "installVerificationIdempotenceRollback": "PASS",
+  "rollbackRestoresBaselineExactly": "PASS",
+  "installedFixtureChangesOnly": "No original checkout or live database modified",
+  "extractedPackage": "/private/tmp/kidflix-finalization-20261020/zip-extracted-final/ANGELCARE_KIDFLIX_INTERNATIONAL_FINALIZATION_20261020",
+  "command": "node /private/tmp/kidflix-finalization-20261020/zip-extracted-final/ANGELCARE_KIDFLIX_INTERNATIONAL_FINALIZATION_20261020/test-installer.mjs /private/tmp/kidflix-finalization-20261020/baseline/angelcare-platform",
+  "results": [
+    {
+      "name": "successful installation, shipped verification, idempotent application, shipped rollback exact restoration",
+      "status": "PASS"
+    },
+    {
+      "name": "source conflict refuses all writes",
+      "status": "PASS"
+    },
+    {
+      "name": "new-file collision refuses all writes",
+      "status": "PASS"
+    },
+    {
+      "name": "corrupt payload refuses all writes",
+      "status": "PASS"
+    },
+    {
+      "name": "path traversal manifest refused",
+      "status": "PASS"
+    },
+    {
+      "name": "symlink target and ancestor refused",
+      "status": "PASS"
+    },
+    {
+      "name": "simulated partial write failure restores exact baseline",
+      "status": "PASS"
+    },
+    {
+      "name": "conflicting concurrent change detected and protected during partial restore",
+      "status": "PASS"
+    },
+    {
+      "name": "rollback preflights all targets and refuses later edit without mutation",
+      "status": "PASS"
+    },
+    {
+      "name": "identity mismatch refuses installation",
+      "status": "PASS"
+    }
+  ],
+  "SOURCE_IMPLEMENTATION": "PASS",
+  "VERIFICATION": "PASS (offline adapters; no live database or production success claimed)",
+  "PACKAGE": "PASS",
+  "DELIVERY": "PASS (retrievable local workspace archive)",
+  "archivePath": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web/scripts/kidflix-finalization/ANGELCARE_KIDFLIX_INTERNATIONAL_FINALIZATION_20261020.zip",
+  "compositions": 67,
+  "heroMobileExports": 51,
+  "browserChecks": 329,
+  "supplementalNavigationChecks": 7,
+  "offlineBehaviorChecks": 126,
+  "typescriptErrors": 0
+}

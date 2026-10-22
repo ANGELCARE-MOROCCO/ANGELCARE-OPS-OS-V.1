@@ -1,0 +1,145 @@
+{
+  "requirement": [
+    24,
+    26,
+    29
+  ],
+  "change": "Guard native command forms until hydrated and use POST fallback; preserve ordinary GET search/navigation, existing command validation/permissions and native admin grammar.",
+  "files": [
+    {
+      "path": "angelcare-marketplace/jobkix/client/AccountControls.tsx",
+      "sha256": "464cb61ef1a667a28837e8b22067e1e32ab3e8ace5e6fe8ddb311eaba6edf4a9",
+      "forms": 4
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/ApplicationActions.tsx",
+      "sha256": "229e053b48a133fce8fabfba6eb441d2e65198ed28315ae2e442957f35ddeddb",
+      "forms": 1
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/ApplicationWizard.tsx",
+      "sha256": "771d21f14711a90fb4d5b21ee8532af41ea992e0c22fc82c11331920ca47b5a9",
+      "forms": 1
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/AuthForm.tsx",
+      "sha256": "137971acad3188a6e406bc180bc042f40bdb95d3e1275582bdb2c8f6b6e5d34f",
+      "forms": 1
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/CaseForms.tsx",
+      "sha256": "48ae79d2c2f47e2b6cc14db3a54c46ed7f2906ff61b7c1d8147c675c0f1b815f",
+      "forms": 2
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/Conversation.tsx",
+      "sha256": "48843f28de685ab741dbdab41d734ff125f1c17d57a5e241435c3dbb69694d67",
+      "forms": 1
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/DocumentLibrary.tsx",
+      "sha256": "d6a32a2455e6a16631787e5c3b31e18df64a9069df5285b0b2459b6bc9474e67",
+      "forms": 1
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/GuestCaseForm.tsx",
+      "sha256": "840434d488a2b2e6661f49ccaa98e62c53fe8a9176d78fb67491389c06d1ce32",
+      "forms": 2
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/InvitationAcceptance.tsx",
+      "sha256": "ee65c09141243c9e435625846a03d58d43e8370db4d4ba36a5ca1b4999f7d566",
+      "forms": 1
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/OrganizationEditor.tsx",
+      "sha256": "122870ca60140596a5c41313fd0bd1d6c3f1ef5896ca1dc616c8fd9346e4de36",
+      "forms": 1
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/Pipeline.tsx",
+      "sha256": "18bd9af07b9d393b16f385e078bb86616cdaae79117b9b48e722fd09e9b2ca8d",
+      "forms": 1
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/ProfileEditor.tsx",
+      "sha256": "71d76dbd516a1db7823a9cfaac17b7240405e3ce84f525eb20b7d47f73551aed",
+      "forms": 1
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/RecruiterStage.tsx",
+      "sha256": "90b4b93b986192cd056acdf74af14ef3ac19642404b33377a309dabfe13c754d",
+      "forms": 1
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/RecruitmentForms.tsx",
+      "sha256": "8bacedb1f0e9471ad7102feb7d90389eaa0bc5df0ef01c1d9fe7dd0555308d0f",
+      "forms": 3
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/ReputationForm.tsx",
+      "sha256": "7c468c2bb68a5b7105b58d844bc467dfdcb54f638961f8382dfd00f040f94ee8",
+      "forms": 1
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/SavedItemActions.tsx",
+      "sha256": "6812961c5f8b84a9031b2410523265ec5d929c4bbeb4728e19d2ae305cf18b5c",
+      "forms": 1
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/SearchResults.tsx",
+      "sha256": "8c5dbd7170508f59da39266eed4675c10b9280c2b0116c51883780b191cd73cd",
+      "forms": 2
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/SiteEditor.tsx",
+      "sha256": "97bca09742590918e8310d399a80477143d19cfd5817d174f88ab25a1dec0361",
+      "forms": 1
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/TalentForms.tsx",
+      "sha256": "b25967bc93c0cd500b9736525af008ab9167a74589ce630430293d3c17e3bc7d",
+      "forms": 2
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/TeamForms.tsx",
+      "sha256": "14cafbf21eefc743c6603e14199b3641f8a45b6113d02fe4692440348248e233",
+      "forms": 2
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/VacancyEditor.tsx",
+      "sha256": "538895d3569904e568035f53cd08ac099ee4dd1950815d95c82bbfdc60d561bd",
+      "forms": 1
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/VacancyPublication.tsx",
+      "sha256": "311d4402f8928ea29914ca95717325c561a94f344cbff6d681aeefe2f1661eb3",
+      "forms": 1
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/admin/EditorialEditor.tsx",
+      "sha256": "770bc038851fa2e8fb6a1efd535938295d7f8b5eea6c61837fd7b6998dd52847",
+      "forms": 1
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/admin/EmployerMediaReview.tsx",
+      "sha256": "3a53bf6f674554729c84d3f56582a40673ba45b667f92682967a4099b4239e01",
+      "forms": 1
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/admin/OperationsQueue.tsx",
+      "sha256": "21a426fc5c901fcc9849cdca8ae521c5093e50aa81398c4c804dc9849605ada9",
+      "forms": 1
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/admin/TaxonomyEditor.tsx",
+      "sha256": "f2c1752baa9f3ea769eeb8bd38f7a0cbeba136539a115bab7d8c91ea16191a56",
+      "forms": 1
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/admin/Workspace.tsx",
+      "sha256": "1e25244d7c3d548ba81a3c11f1ab280a02fed8aea1edd135fb96c203845e4f2d",
+      "forms": 1
+    }
+  ]
+}

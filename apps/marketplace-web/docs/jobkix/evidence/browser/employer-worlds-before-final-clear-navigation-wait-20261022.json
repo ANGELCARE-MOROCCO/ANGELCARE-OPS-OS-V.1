@@ -1,0 +1,50 @@
+{
+  "recordedAt": "2026-10-22T01:28:10.141Z",
+  "mode": "focused-state-polish",
+  "sourceAtStart": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 352,
+    "digest": "80989cd2d9ee047fbc99238d4bab90c91b91160161e57f167c8713926400950f"
+  },
+  "sourceAtEnd": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 352,
+    "digest": "80989cd2d9ee047fbc99238d4bab90c91b91160161e57f167c8713926400950f"
+  },
+  "checks": [
+    {
+      "name": "all six native employer filters precede type discovery and real approved results",
+      "status": "PASS"
+    },
+    {
+      "name": "actual native GET combines employer filters while retaining origin destination and reach",
+      "status": "PASS"
+    },
+    {
+      "name": "employer-type discovery preserves independent context and selected native filters",
+      "status": "PASS"
+    },
+    {
+      "name": "clear removes native employer filters while retaining discovery country context",
+      "status": "PASS"
+    },
+    {
+      "name": "real zero-result state retains the query and a functional clear action",
+      "status": "PASS"
+    },
+    {
+      "name": "native directory dependency failure retains controls and independent discovery; explicit retry recovers",
+      "status": "PASS"
+    }
+  ],
+  "renders": [],
+  "errors": [],
+  "expectedNetworkErrors": [],
+  "failure": {
+    "message": "Expected values to be strictly equal:\n\n0 !== 2\n",
+    "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n0 !== 2\n\n    at /Users/user/Desktop/angelcare-platform/apps/marketplace-web/scripts/jobkix/employer-worlds.cjs:19:928"
+  },
+  "scope": "Actual authorized local Next routes, existing SQL public projections/eligibility and native private save commands. Synthetic Auth/storage/trust/editorial fixtures; deliberate RPC interruption. No hosted-service, approved real employer media/content, full family-language acceptance or production certification."
+}

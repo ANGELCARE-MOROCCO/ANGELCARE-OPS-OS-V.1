@@ -1,0 +1,101 @@
+{
+  "recordedAt": "2026-10-21T13:46:01.332Z",
+  "scope": "Actual UI/API/isolated SQL recruitment flow; synthetic local GoTrue and storage fixtures",
+  "checks": [
+    {
+      "name": "candidate native sign-in API/cookie/session",
+      "status": "PASS"
+    },
+    {
+      "name": "application.submit",
+      "status": "PASS",
+      "httpStatus": 200,
+      "result": {
+        "id": "fc9cc395-4310-4139-9041-bef794be38fc",
+        "state": "submitted",
+        "receipt": "JK-EB76270CEF874354BBE5434489E97CCD",
+        "version": 1,
+        "replayed": false
+      }
+    },
+    {
+      "name": "message.send",
+      "status": "PASS",
+      "httpStatus": 200,
+      "result": {
+        "id": "f88d4da6-1199-49b0-a60e-e2a7f119e259",
+        "state": "recorded",
+        "version": 1,
+        "replayed": false
+      }
+    },
+    {
+      "name": "hirer native sign-in API/cookie/session",
+      "status": "PASS"
+    },
+    {
+      "name": "application.stage",
+      "status": "PASS",
+      "httpStatus": 200,
+      "result": {
+        "id": "fc9cc395-4310-4139-9041-bef794be38fc",
+        "state": "under_review",
+        "version": 2,
+        "replayed": false
+      }
+    },
+    {
+      "name": "application.stage",
+      "status": "PASS",
+      "httpStatus": 200,
+      "result": {
+        "id": "fc9cc395-4310-4139-9041-bef794be38fc",
+        "state": "shortlisted",
+        "version": 3,
+        "replayed": false
+      }
+    },
+    {
+      "name": "application.stage",
+      "status": "PASS",
+      "httpStatus": 200,
+      "result": {
+        "id": "fc9cc395-4310-4139-9041-bef794be38fc",
+        "state": "interview",
+        "version": 4,
+        "replayed": false
+      }
+    },
+    {
+      "name": "interview.propose",
+      "status": "PASS",
+      "httpStatus": 200,
+      "result": {
+        "id": "89f1548d-0944-472a-9d97-090f163e8010",
+        "state": "proposed",
+        "version": 1,
+        "replayed": false
+      }
+    },
+    {
+      "name": "interview.respond",
+      "status": "PASS",
+      "httpStatus": 200,
+      "result": {
+        "id": "89f1548d-0944-472a-9d97-090f163e8010",
+        "state": "scheduled",
+        "version": 2,
+        "replayed": false
+      }
+    }
+  ],
+  "consoleErrors": [],
+  "failure": {
+    "message": "locator.selectOption: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('heading', { name: 'Update application stage', exact: true }).locator('..').locator('select')\u001b[22m\n\u001b[2m    - locator resolved to <select required=\"\">…</select>\u001b[22m\n\u001b[2m  - attempting select option action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible and enabled\u001b[22m\n\u001b[2m      - did not find some options\u001b[22m\n\u001b[2m    - retrying select option action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible and enabled\u001b[22m\n\u001b[2m      - did not find some options\u001b[22m\n\u001b[2m    - retrying select option action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    60 × waiting for element to be visible and enabled\u001b[22m\n\u001b[2m       - did not find some options\u001b[22m\n\u001b[2m     - retrying select option action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n",
+    "stack": "locator.selectOption: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('heading', { name: 'Update application stage', exact: true }).locator('..').locator('select')\u001b[22m\n\u001b[2m    - locator resolved to <select required=\"\">…</select>\u001b[22m\n\u001b[2m  - attempting select option action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible and enabled\u001b[22m\n\u001b[2m      - did not find some options\u001b[22m\n\u001b[2m    - retrying select option action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible and enabled\u001b[22m\n\u001b[2m      - did not find some options\u001b[22m\n\u001b[2m    - retrying select option action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    60 × waiting for element to be visible and enabled\u001b[22m\n\u001b[2m       - did not find some options\u001b[22m\n\u001b[2m     - retrying select option action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n    at stage (/Users/user/Desktop/angelcare-platform/apps/marketplace-web/scripts/jobkix/journey.cjs:18:240)\n    at async run (/Users/user/Desktop/angelcare-platform/apps/marketplace-web/scripts/jobkix/journey.cjs:23:3)"
+  },
+  "limitations": [
+    "Not hosted Auth, email delivery, independent multi-session DB concurrency or production certification.",
+    "Individual workflow and family acceptance remains separate."
+  ]
+}

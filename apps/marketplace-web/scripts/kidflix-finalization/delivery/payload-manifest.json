@@ -1,0 +1,1380 @@
+{
+  "format": 1,
+  "application": "angelcare-marketplace-web",
+  "packageJsonSha256": "b67d6353baeb098e99fc6ae3242bdcca92bdfc9903df070a3107caee915fbf91",
+  "sourceArchives": [
+    {
+      "archive": "ANGELCARE_REPO_20261020_090124_PART_01_OF_04.zip",
+      "size": 101340171,
+      "sha256": "f98bfa5d7cde9236d0892ab0a60865bc055e668a589fa8e433316465f344ed4f",
+      "entries": 9879,
+      "expanded_bytes": 465840078
+    },
+    {
+      "archive": "ANGELCARE_REPO_20261020_090124_PART_02_OF_04.zip",
+      "size": 96958167,
+      "sha256": "1623694c7de993a6491cccff2b1029fb5581428dadc7f432b9bd5010cc419462",
+      "entries": 9881,
+      "expanded_bytes": 465840079
+    },
+    {
+      "archive": "ANGELCARE_REPO_20261020_090124_PART_03_OF_04.zip",
+      "size": 99132326,
+      "sha256": "59e5877835baa58c818e0ac006b9b79a4f55689dca03e79048840e6c6bdd0ce5",
+      "entries": 9998,
+      "expanded_bytes": 465840076
+    },
+    {
+      "archive": "ANGELCARE_REPO_20261020_090124_PART_04_OF_04.zip",
+      "size": 103340688,
+      "sha256": "7bdce36d1c65480080c5bffaea219b29eabca398e03a4f66ad707797d3cdef0b",
+      "entries": 9880,
+      "expanded_bytes": 465840077
+    }
+  ],
+  "files": [
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/catalogue.ts",
+      "before": "8806cd0907a98a290f561f0d71874031332f96bb63bfa5abe969dca59fac6585",
+      "intendedChange": "Add validated gallery editions and migrate only exact packaged defaults",
+      "contractClause": "06,07,08,10",
+      "protectedBehavior": "Catalogue eligibility and custom artwork",
+      "after": "307f6a7e0aa7869577bec1c23f2157fdad21819482eb2fbf24477e222d824628",
+      "bytes": 21009
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/Home.tsx",
+      "before": "9973c4318376b100ec73344bab212ecb296df7184682e603006dc4e13f707e71",
+      "intendedChange": "Integrate shared gallery and strengthen editorial composition",
+      "contractClause": "05,08",
+      "protectedBehavior": "Published-resource shelves and section order",
+      "after": "21c8565ec58ce61b5921aaaa60240b9f1034ccd8abd4b056a81154e38deb2e41",
+      "bytes": 27936
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/Shell.tsx",
+      "before": "7047fe339429d02b20c02e55cb0463b81dd12488d030b20fea41e9f6797549da",
+      "intendedChange": "KidFlix header/footer and navigation lifecycle",
+      "contractClause": "05,11",
+      "protectedBehavior": "Language routing, anonymous saved items, AngelCare links",
+      "after": "4088efa465a3cf573a4849662b86ad2c5f91f818810ae8730e9aa74b1588d416",
+      "bytes": 10304
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/kidflix.module.css",
+      "before": "214c3b4d4bdb03c513bbc83518bca80d5840db3d01c447d392b5d37a25fb25dd",
+      "intendedChange": "Scoped premium responsive styling",
+      "contractClause": "05,12",
+      "protectedBehavior": "Keyboard focus and RTL",
+      "after": "038548ecac0aed52b32c72be457dc7d68be7eb930c4cf96fb384aa8767b3e0b7",
+      "bytes": 82167
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/journey/Discovery.tsx",
+      "before": "38911849af0a985170b490aad8c76011f004a63310fcffe3c050e44204ea03b9",
+      "intendedChange": "Illustrated six-choice native discovery launcher",
+      "contractClause": "05,09,11",
+      "protectedBehavior": "Filters, language checks, query context",
+      "after": "7065ddb6250293c8205381e5fb1c30b6b4e148de300e1af982b6a2c4ba442a4e",
+      "bytes": 2869
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/HomeStudio.tsx",
+      "before": "f783f210e5621d3bf6e98bc6a3b2acba90de641c1cd3aa67edca45ac873cc22b",
+      "intendedChange": "Native gallery editor, normalized reload, real catalogue preview",
+      "contractClause": "10",
+      "protectedBehavior": "Reviewed draft and publication protections",
+      "after": "2fc53ec4c14ce89243e6a0c4746f4959a75248bdb9903b84e911689896058846",
+      "bytes": 24512
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/admin-service.ts",
+      "before": "26da107ac20e8975276bf347ff2bd29cf54e590ea6b960a086359ce33b9a12cd",
+      "intendedChange": "Validate stable scene media bindings; authorized read-only preview",
+      "contractClause": "10",
+      "protectedBehavior": "Authorization, edition hashing, native references",
+      "after": "11e0a45909ac2d62186b54f9561fbbc23fe9e4111b3763bfee8c9f0324f2cbca",
+      "bytes": 7765
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/server.ts",
+      "before": "a4fbbbb39dcf909b4dd7dbaacd9331eb7fe43ef6f524f4ad15d66e1eb5730399",
+      "intendedChange": "Preserve successful homepage data when independent reads fail",
+      "contractClause": "09",
+      "protectedBehavior": "Existing catalogue and edition authority",
+      "after": "74943cc4a23af5d8f8860e31d52404d184b8b5f632b940cba711dba11e043856",
+      "bytes": 9174
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/detail/Media.tsx",
+      "before": "97a4820ea120e974e256a528e2e00fd2b7deb0f9e026bbb9452116f9d4279314",
+      "intendedChange": "Real media buffering state feedback",
+      "contractClause": "11",
+      "protectedBehavior": "Access, errors, playback progress",
+      "after": "e78b713f74a670f7ca287cb287324f16319c50f58a6d421ed1187acc660139f9",
+      "bytes": 15710
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/storefronts/model.ts",
+      "before": "068e1ea9597195e82736cb1f07cd9e1601f3999c78f18d8546d5a6a449b4270e",
+      "intendedChange": "Gallery validation and legacy compatibility",
+      "contractClause": "07,08,10",
+      "protectedBehavior": "Native family and edition validation",
+      "after": "ee749d0b951927e527d7b88d52ddc53937f159f766e8daf396562e3f7f30ac89",
+      "bytes": 10196
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/storefronts/themes.ts",
+      "before": "76722f07d16131531428a404ba2b19b47f8a166532333f208378714a6f2709c5",
+      "intendedChange": "New editorial defaults",
+      "contractClause": "05,07",
+      "protectedBehavior": "Custom artwork preservation",
+      "after": "733929d4574abe1a0e20716d4a95f648f6bb3de396480a7ba4d797f73fdc64f7",
+      "bytes": 14695
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/storefronts/Opening.tsx",
+      "before": "58dded5fdcf870fafe7408325ef2c9d5a28db56507e54c92d028a5f72d300aa9",
+      "intendedChange": "Shared image-led gallery in sixteen openings",
+      "contractClause": "05,08",
+      "protectedBehavior": "Native guide and catalogue links",
+      "after": "a130df00bd47b04de9c24002323a8d520096fb9f0421d776c635e0a5035b4ccc",
+      "bytes": 1512
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/storefronts/storefronts.module.css",
+      "before": "569e7029e555ce44c036091ec804165be5228685925d14daadde162c04f97e5a",
+      "intendedChange": "Responsive gallery opening composition",
+      "contractClause": "05,12",
+      "protectedBehavior": "Storefront filters and RTL",
+      "after": "03a9e06f5bd2f3e30968aef8fa0f77ef6009aa269abcb6e51e840a95d4ec4c78",
+      "bytes": 34191
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/storefronts/admin-service.ts",
+      "before": "51ec68594045dedbec05eb51f43e01ea5f5861886b331892a8180780cf2b075a",
+      "intendedChange": "Resolve stable scene bindings through native validation",
+      "contractClause": "10",
+      "protectedBehavior": "Publication guard and retained references",
+      "after": "5adb6dcc676f94e4016319fc72315297c2bc5234ce9ca45dd7529db87e91a9a1",
+      "bytes": 11592
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/storefronts/StorefrontStudio.tsx",
+      "before": "9a384855006e1ad6855605034519dc11714e9b04fed4ed7ccfa1b01dda77275c",
+      "intendedChange": "Reuse native gallery editor and normalize saved edition",
+      "contractClause": "10",
+      "protectedBehavior": "Permissions, draft hashes, family selections",
+      "after": "b959e5ddc2538c8f835006e4d401641091193d569b146dfdaf19cbf08489ad34",
+      "bytes": 16820
+    },
+    {
+      "path": "apps/marketplace-web/app/kidflix/[locale]/loading.tsx",
+      "before": "751b3c702f7a3c77bb1f733c900a822a6867013f8f0ece6be2a36b685cfb1f9f",
+      "intendedChange": "Branded localized route loading",
+      "contractClause": "05,11",
+      "protectedBehavior": "Route lifecycle",
+      "after": "9963b76406c8ba6ca4cff3c2b59d277fb4eb6f051eb92a3e83e446fffab3fc70",
+      "bytes": 658
+    },
+    {
+      "path": "apps/marketplace-web/app/kidflix/[locale]/error.tsx",
+      "before": "a5a68e4a0b441a40779194dff6811b931e4e1be7f2c3d30822800d7ac3bf9ef1",
+      "intendedChange": "Branded route error with retry and lifecycle signal",
+      "contractClause": "05,11",
+      "protectedBehavior": "Retry recovery",
+      "after": "c110aeb58119a42877b6d6788d2f8cfd7cc4c57564e57d2b97fcf149ef49d884",
+      "bytes": 858
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/digital-customer-experience/repository.ts",
+      "before": "6490bba7035af4506a8c966a0c59407e23f71822bdfc97ddffa930534152bb3a",
+      "intendedChange": "One kidflix_home_preview read dispatch to existing KidFlix service",
+      "contractClause": "02,10",
+      "protectedBehavior": "All other DCE commands and authorization",
+      "after": "a3c1294b4699fd3a248701208b79ff6a5f3c660b86d46354d3916d2ec078af25",
+      "bytes": 103362
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/gallery-contract.ts",
+      "before": "NEW",
+      "intendedChange": "Validated gallery model and stable binding helpers",
+      "contractClause": "05\u201313",
+      "protectedBehavior": "Scope-contained integration; no production side effects",
+      "scopeRevision": "Portable module names avoid case-insensitive Gallery.tsx/Navigation.tsx collisions.",
+      "after": "6f6c4137070becca7086f0ab9f4188bb4804a2479c4a56d80c7963de98715002",
+      "bytes": 4823
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/editorial.ts",
+      "before": "NEW",
+      "intendedChange": "Owned scene catalogue and exact legacy defaults",
+      "contractClause": "05\u201313",
+      "protectedBehavior": "Scope-contained integration; no production side effects",
+      "after": "3b3e8815eafa0a69add554582f2ba1ac41115d19675300d3ff205fcb79bb456a",
+      "bytes": 35130
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/Gallery.tsx",
+      "before": "NEW",
+      "intendedChange": "Shared decoded-image gallery with coherent timer",
+      "contractClause": "05\u201313",
+      "protectedBehavior": "Scope-contained integration; no production side effects",
+      "after": "37a3e6f797c7eb430b19c74b18edb93ee7fb3d02a104725149e4db7aefba7c68",
+      "bytes": 7169
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/GalleryEditor.tsx",
+      "before": "NEW",
+      "intendedChange": "Native DCE scene editor using current controls",
+      "contractClause": "05\u201313",
+      "protectedBehavior": "Scope-contained integration; no production side effects",
+      "after": "ae0683f1d649e419e659a3548c787d6c001db45b27cf181c4bd01dae78c871cf",
+      "bytes": 5032
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/gallery.module.css",
+      "before": "NEW",
+      "intendedChange": "Gallery controls, crossfade and stable dimensions",
+      "contractClause": "05\u201313",
+      "protectedBehavior": "Scope-contained integration; no production side effects",
+      "after": "655ecd2c36d7102b708361226dbd8d08d681282f56921240588e7a37cb14263a",
+      "bytes": 1949
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/Navigation.tsx",
+      "before": "NEW",
+      "intendedChange": "KidFlix-owned navigation lifecycle component",
+      "contractClause": "05\u201313",
+      "protectedBehavior": "Scope-contained integration; no production side effects",
+      "after": "4011c2f41c73e38374138d06b6cf3317d6f267482a99286c96e1327b8772f51e",
+      "bytes": 3756
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/navigation-events.ts",
+      "before": "NEW",
+      "intendedChange": "Programmatic navigation signals",
+      "contractClause": "05\u201313",
+      "protectedBehavior": "Scope-contained integration; no production side effects",
+      "scopeRevision": "Portable module names avoid case-insensitive Gallery.tsx/Navigation.tsx collisions.",
+      "after": "76dbe124ae8d46cfb3330915eac480c1f82b37f3287fe57a6e7340d14df533f0",
+      "bytes": 703
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/kidflix/Launcher.tsx",
+      "before": "NEW",
+      "intendedChange": "Six illustrated choices and native filters",
+      "contractClause": "05\u201313",
+      "protectedBehavior": "Scope-contained integration; no production side effects",
+      "after": "95d1ac83ecc4f822a6462a128648af0d4a8a1725bae90496245f794899881ec3",
+      "bytes": 3654
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/kidflix-official-optimized.webp",
+      "before": "NEW",
+      "intendedChange": "Lossless optimized derivative of official logo; footer white using CSS only",
+      "contractClause": "05\u201313",
+      "protectedBehavior": "Scope-contained integration; no production side effects",
+      "after": "612ab01741b83946f09ec8abf5119653cdc6f4ac5cfeb35b4c3f0d3fcc478e69",
+      "bytes": 97020
+    },
+    {
+      "path": "apps/marketplace-web/scripts/kidflix-finalization/check-types.cjs",
+      "before": "NEW",
+      "intendedChange": "Marketplace-scoped TypeScript gate",
+      "contractClause": "05\u201313",
+      "protectedBehavior": "Scope-contained integration; no production side effects",
+      "after": "35d51d25b6a472949017141730909c712c506e157c345e8d5ac925fa1c7bdc11",
+      "bytes": 1371
+    },
+    {
+      "path": "apps/marketplace-web/scripts/kidflix-finalization/verify-behavior.cjs",
+      "before": "NEW",
+      "intendedChange": "Isolated native command and model checks",
+      "contractClause": "05\u201313",
+      "protectedBehavior": "Scope-contained integration; no production side effects",
+      "after": "cbabf92566779feb2f777d81c2652898b6028c7bc092a046f49765ede759e119",
+      "bytes": 12361
+    },
+    {
+      "path": "apps/marketplace-web/scripts/kidflix-finalization/preview.cjs",
+      "before": "NEW",
+      "intendedChange": "Isolated actual-component browser harness; explicit offline adapter",
+      "contractClause": "05\u201313",
+      "protectedBehavior": "Scope-contained integration; no production side effects",
+      "after": "15a075659c1b39827760fa25b6a1ee7f8cf8af31236ed41f141ef3a08d8e9aa0",
+      "bytes": 10378
+    },
+    {
+      "path": "apps/marketplace-web/scripts/kidflix-finalization/browser.cjs",
+      "before": "NEW",
+      "intendedChange": "Responsive and behavioral browser verification",
+      "contractClause": "05\u201313",
+      "protectedBehavior": "Scope-contained integration; no production side effects",
+      "after": "184225e22f99ca338bdbde0d5fbb91a46e4628203594d461c7893c4f4b976e23",
+      "bytes": 19456
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/home-1.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork home-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "2a2c2f1f4c37c650f5ba56d68aca4c2add116fd82d8040ebf1e8bc07abbe86c2",
+      "bytes": 461452
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/home-1-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork home-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "c98c77c776ca6370db222b7bdfcc9c81c9c47d3c31d2aeec98cec420a3b3c761",
+      "bytes": 214884
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/home-2.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork home-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "dea91eb1432f9d56d96e39b48315278356120209bf62a66eea40d7a2c15d94d0",
+      "bytes": 327066
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/home-2-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork home-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "fc963d4f4fa6b2de5ebaffe3643eed6fb92844ad224183c08847b54db68b16bd",
+      "bytes": 148630
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/home-3.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork home-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "31a7ccc43c4db02bc8522081fbd9d77a2d289ff002b7d1cc218ca807466e743a",
+      "bytes": 415978
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/home-3-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork home-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "802e5f465e776fcf22b63dcaf19d6caacc08d107d33121eb4e6caeac54c0232e",
+      "bytes": 183342
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/documents-1.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork documents-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "3805e7d819f8b89ac7ac75a53fb520ff8338affa06e9e9bb833c0bb084b374f5",
+      "bytes": 334594
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/documents-1-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork documents-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "32b2c29899cff1c4e5b82d38723eafe1febcccde62d297178a067608e9af1385",
+      "bytes": 150424
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/documents-2.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork documents-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "6c8d5bac90531aa289b2035aac736b8acfe6a15369cc33ed59d09aa622d77d18",
+      "bytes": 362452
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/documents-2-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork documents-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "2b29824482a800cf52e7159adb1d164e912dda3dbba730fd0591725689ce70eb",
+      "bytes": 174892
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/documents-3.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork documents-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "593a73796097ff1cce4387371b978635311d9ea3f4d8d17aa07b0112d46cc57d",
+      "bytes": 363422
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/documents-3-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork documents-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "c3fffc85c0276ca23f6390c44d7daff62fb5479262cbe03dd331e713335c362a",
+      "bytes": 154514
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/documents-tile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original tile artwork documents-tile",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "7c911955e0a10c5f900885a6b543d5bf7eb8aff5753f521918097bbe89170c70",
+      "bytes": 293494
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/printables-1.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork printables-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "c06df3ad9ba4c621c905b3c2a7d9623a74791afdeb3833a0546f94a96acc66b8",
+      "bytes": 308574
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/printables-1-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork printables-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "6ea51aa97ce8dd1889b4ca50818d28711f049049d3bbe28cbfe63eff5c483bb1",
+      "bytes": 146134
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/printables-2.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork printables-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "16d032b3ba816c8cd4dcdeddb0c92b4d4e4350e0758c5b02cbf091d76de4dec8",
+      "bytes": 396874
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/printables-2-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork printables-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "e999f61f8829ae17e6bb69c2c53983ab53b5af8a0d60630a3071abbbf8bd601d",
+      "bytes": 181010
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/printables-3.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork printables-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "e096054b29618390b76dc334eab71cec1693d5f45e2a9b46810eb3998d9e5a19",
+      "bytes": 347574
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/printables-3-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork printables-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "02d48c4b83182e7ef4f74386f3256ef505b683728bb7cf6cb0b4c48926203325",
+      "bytes": 167654
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/printables-tile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original tile artwork printables-tile",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "280213ba2557d321da2bea476dbaf7aa7a1ba51efe9f70078a4a48b1913c29f9",
+      "bytes": 238130
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/stories-1.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork stories-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "7bd7c74f828c8fa60bf6cf2670bf4cf72b62d807872bf08f1bafe1c7b0eb4817",
+      "bytes": 389228
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/stories-1-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork stories-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "e0d189c68be9a82f48a3795df26b520ac609a0f12897bfd8c69f0eb0f3b22e17",
+      "bytes": 185080
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/stories-2.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork stories-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "2030d27ba48d5a8cbc01f4f559951b0c1c511178b56130736cbb64c3cd350833",
+      "bytes": 359730
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/stories-2-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork stories-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "1d3b380d47e581568692b900cc4e3d12ad73c51ee136078b4bab1e43ca4d9981",
+      "bytes": 152280
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/stories-3.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork stories-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "153e7e96d2421d5562ee728210ae37aee7ce3301eb5d6f53e065ec2272edc05e",
+      "bytes": 300470
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/stories-3-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork stories-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "9fa0558e055a60494f7166bcc14824ddb03a7099947ff537095a59c4a3c98dca",
+      "bytes": 146234
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/stories-tile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original tile artwork stories-tile",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "5dddfef683ea0ad7775b6a59939d73763a21d8b6de9f142bd9424881f0d48ed5",
+      "bytes": 330668
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/learning-1.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork learning-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "4f1e0b6e56af18bfb24e7614a2b54c7f1f6307743ac7d4fe36881eebe26a43f3",
+      "bytes": 364036
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/learning-1-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork learning-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "d397e20206ae703d4c9a07c2e9343edcfdd3c5faa66b259c7e21a83fa88597a4",
+      "bytes": 165268
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/learning-2.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork learning-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "5443552ac812babe77caed2f84d506e79e12a0b425689c3680030a3642ada03e",
+      "bytes": 477280
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/learning-2-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork learning-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "acb89dc203516386180aef8e41b4ecc52e0baf16e16b4a74bb33d4966cf02f04",
+      "bytes": 204450
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/learning-3.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork learning-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "14885689b1970005716fc13cf7aa089ab792f325c81f2c4de64f8f6cb3f2e5f3",
+      "bytes": 342328
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/learning-3-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork learning-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "8e5f7c5453f843bf8397bd8b48a472142dae350d437e039434cb0faeffc903f8",
+      "bytes": 150232
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/learning-tile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original tile artwork learning-tile",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "e0a87c34f7520408634bf0daf97e64e9e55f8a733d55a11b7e4dfd464aa7bc94",
+      "bytes": 288598
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/video-1.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork video-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "98843529d07118c87bb87ebb27dede33eb515cfd44996e07db051c62a1cd376e",
+      "bytes": 270292
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/video-1-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork video-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "14b74a22a24044c2ab1a15f8b9ace6fb56f7781bc8d271d8dd77483c350972da",
+      "bytes": 125054
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/video-2.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork video-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "ac2c63392b23a2249d7e1e9ef659a41d57782e0e2ce57c29b2cf8a1adc957f33",
+      "bytes": 344894
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/video-2-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork video-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "d997df7f18fecf25ca48a95fbbe324b6fe270deec4b95300429c2b4b490b1ad0",
+      "bytes": 166738
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/video-3.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork video-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "94d78664d72628cbfb0687a538a6aaa1bcd6eed7796b8511883e2e426260b070",
+      "bytes": 298648
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/video-3-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork video-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "81e4de1bbb3460872301080fe37f32e57f8bb893e6da39c7ddfad1458570c453",
+      "bytes": 128994
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/video-tile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original tile artwork video-tile",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "21a5fd9db9dcdcdb9b09446aca741429591cbfb86ceb3e46e386a9e3cff23ad5",
+      "bytes": 311144
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/audio-1.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork audio-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "7cc2002d765e0c0a957ceafba1b1ef018a837db739d6961269d315cd8f9f2fd1",
+      "bytes": 373574
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/audio-1-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork audio-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "ccf9f717c29f2f9bc1e508e21cd174dc71771f89190fbabbad161d954f57cf66",
+      "bytes": 176740
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/audio-2.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork audio-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "66d2b720b3020c9c576b8b4dfc311c595a42cd42a21e483bbc039692d4485b4b",
+      "bytes": 445542
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/audio-2-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork audio-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "d6f2a7e54cf6a98dc3d7de4f88239c285113b4dca682d06f8820fdf8d4e7ea25",
+      "bytes": 188850
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/audio-3.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork audio-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "6e89b6ec577fdd700857a97a4eeab19aea5e7bdab896962c262c1ab054c26c87",
+      "bytes": 318226
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/audio-3-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork audio-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "33ad08e6dfccddd950ed866107fb783a48eb0d3423ba6a7a277b552fd2ff5385",
+      "bytes": 151008
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/audio-tile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original tile artwork audio-tile",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "cbac54baa26b5927e8d3106cc4214d2499afabae8c2dc76915500e9ed3100318",
+      "bytes": 328862
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/visual-cards-1.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork visual-cards-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "c0996e016d6a357caa7625ad0887aadc29d65534af894455f863b4a697106779",
+      "bytes": 391676
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/visual-cards-1-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork visual-cards-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "6792e52d039ceb19570e7153e019cba11af1ac4e4be494971d9bd81869e0da55",
+      "bytes": 161208
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/visual-cards-2.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork visual-cards-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "ce90ffc8c12a599f4fd950efc6a4adc4a4c4c95dbc4facd379967127e0d60989",
+      "bytes": 329776
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/visual-cards-2-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork visual-cards-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "c94651d05601fac809ef18a94119bf9370331fc7c578182dcaefc9891e1bfea8",
+      "bytes": 157962
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/visual-cards-3.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork visual-cards-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "d0c783584050d072dbb1298cff56e806acf901da5b58c69740dc4f6fd03319e8",
+      "bytes": 387096
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/visual-cards-3-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork visual-cards-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "86d24fc083a4a64a5e8bb4a0dd2e2e82566e363bf800ac953a5358cef2d9c2c5",
+      "bytes": 167490
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/visual-cards-tile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original tile artwork visual-cards-tile",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "aa9369cacc775eae03b803ff5da515d90d6855e955d716a684537792767084a6",
+      "bytes": 241888
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/presentations-1.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork presentations-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "c0ba6b0c8bd3eece50462dccc0df06551b3cbfea2e21a2c037d52b2dd32b9a5a",
+      "bytes": 306194
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/presentations-1-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork presentations-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "5f077797a773eef242de909cb2a13ba8b3dc37b4d1d18ba6f3a49fc1e2040c84",
+      "bytes": 148126
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/presentations-2.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork presentations-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "91f53644ed0e490e952f967085eb76ceaf1b15e1f68cc123d004623a88561f84",
+      "bytes": 410982
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/presentations-2-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork presentations-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "4298dadf9262b61d09f1ce727ee11fb0af89accf600461dafa42b65d47e0aee6",
+      "bytes": 179512
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/presentations-3.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork presentations-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "44b1f6acbd452f4795446be14d62fa10746e24918708c54a0161de663238ff26",
+      "bytes": 400334
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/presentations-3-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork presentations-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "e48ae2d07874bd0afb30c70c5fd293228d5fd6e06503e97c53ac6a6121ce78fe",
+      "bytes": 190998
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/presentations-tile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original tile artwork presentations-tile",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "e09c66501332be3e46c446eeedbd6f2f6e1523395a57ebc9b07561dd23ca2344",
+      "bytes": 265888
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/assessments-1.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork assessments-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "9b87cb0f3d637dcd4cf6117c5cfbbcc04c6d4b5689937f0ea6a0c748cf389de6",
+      "bytes": 238664
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/assessments-1-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork assessments-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "4942ef610ba73c51dcd2711adbc60008d924a68c90028cdbd348f15e14abf8a3",
+      "bytes": 121744
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/assessments-2.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork assessments-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "0ebe32b9e5f8b8f979fff8365adfff3d1a6fb37ee4cda057d0720d61feb61089",
+      "bytes": 478394
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/assessments-2-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork assessments-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "24e591e1cb52338ffee627854012b8f91f38a09e5a4da8915369b3217b01e9eb",
+      "bytes": 212146
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/assessments-3.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork assessments-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "1daa0ffe24d947482d99a455c29ca760b25849fc21761afdb3a1616b0a39d27e",
+      "bytes": 300898
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/assessments-3-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork assessments-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "fe44d4952d29f1b0893c668e32bd6c92c799c4c9e31ccb0e422e3f6acfe5e5fb",
+      "bytes": 122024
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/assessments-tile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original tile artwork assessments-tile",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "bfbdfa1e9cde5cee2cfc5d325f4aa3f8c77942c5d7651c00b47a4b98897184c0",
+      "bytes": 296998
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/activities-1.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork activities-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "2a4849d2814e1064e41dc46fcca35de8108bd363c973cf7be9cb46d21b7000da",
+      "bytes": 276760
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/activities-1-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork activities-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "fd634f7b96c729c3f7c20bc2089af8cd7b749ae6416a6ad867e13562ecf5ffa1",
+      "bytes": 132934
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/activities-2.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork activities-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "13da8b703184437e157f7047e6cac5b1e5ae0c4db237e42db83e3d69a23b8591",
+      "bytes": 457044
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/activities-2-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork activities-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "6a3b0d8df11629afc64977dcac6c410ccfe223a3c06c930a32d5b8a073e9ed42",
+      "bytes": 230684
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/activities-3.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork activities-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "f0826dd9ca339db41940d59300b1242d209287e79441f30d6cacd91fef624c56",
+      "bytes": 241118
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/activities-3-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork activities-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "117af9dc7f49c175cee9e0a8610371e8765b0d4f44f84595d6a710731fa8c566",
+      "bytes": 114362
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/activities-tile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original tile artwork activities-tile",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "721750f2b726585c26dc8e7a076e545f8727d49877cdcf1cf430e575b50c6b0e",
+      "bytes": 207932
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/tools-1.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork tools-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "686f6327de52b98c6f16cb5e042dd04edda4dabf735ca6699315be7229d7fe96",
+      "bytes": 267454
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/tools-1-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork tools-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "0f06b3bf3ac1df0076241078fffbf367b0a09dbc108e662f12e60893929983f0",
+      "bytes": 115128
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/tools-2.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork tools-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "12749e5d388f0c25d11711be6bd9cccd25deb22f434286abfb040e7e0db681ad",
+      "bytes": 319450
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/tools-2-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork tools-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "30d665e6ea66eb4805ab90daeeafaf1d83293d440dff3b1d66ed6bd3ea737e96",
+      "bytes": 146948
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/tools-3.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork tools-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "47db17a7e0e0014b21974fa54f706a58c259f952e19089f7bd2ba7529a97fb42",
+      "bytes": 259436
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/tools-3-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork tools-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "994db02a592d1ba37d63a26d4b7c71cbda2781541a0c6b04d0fd560759d5b73d",
+      "bytes": 125952
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/tools-tile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original tile artwork tools-tile",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "4e981de5ed375d97d21582d4606ab40a195b6c96e3e67ec6c71c57ae08df82e8",
+      "bytes": 246402
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/planners-1.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork planners-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "f907be5f1206801db13188e3a6f8f644f05e00938929f8b3b89aa846d0a9ea16",
+      "bytes": 369568
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/planners-1-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork planners-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "9be6229b82364d5c22a0d70c4ef9e302fdfb29714f3a0fd37c3e9e881538534c",
+      "bytes": 159868
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/planners-2.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork planners-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "b9760a4e6760335b05f2df28aae3bf1f2bb6a31d2eff0be3b9ca0b9057098030",
+      "bytes": 390708
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/planners-2-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork planners-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "03303484d4c19aeb21c39eb5fa7322fc7f3466279f00631996c17667b8cd40a9",
+      "bytes": 180482
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/planners-3.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork planners-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "2a8a7de1ba912df6c0e2cc68af231301247491f35c268fd7267242acdf928834",
+      "bytes": 320928
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/planners-3-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork planners-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "509360bd5f18dfeaa09c443f580fec6a83ccc61995981135bd4128d95735bc10",
+      "bytes": 120572
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/planners-tile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original tile artwork planners-tile",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "9b970569538693f087fe2d171b00230c60b275cf3e306165f2739d7a25534b13",
+      "bytes": 292552
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/forms-1.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork forms-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "99680387081686871fcddb01ef285f5db667f4836f971fb54e6947f22036ca7b",
+      "bytes": 292496
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/forms-1-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork forms-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "7d3e02c53ae33621a03da1933601318c82f67d032ce56ecafb631346c9ecef4b",
+      "bytes": 122682
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/forms-2.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork forms-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "d8c038ea88c6bc3734ed1d668f8365af9907cb5a223de6da05b5644be92a3e14",
+      "bytes": 470636
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/forms-2-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork forms-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "3ec7931c9246e8db305b14fa8122f089227647c4a9fad55b88f7332fc35e1ffe",
+      "bytes": 223724
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/forms-3.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork forms-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "a3e8711bd959dc7016c9ac2a1bae296b10ff03dd2176b279ea92e7afaebcdba8",
+      "bytes": 301318
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/forms-3-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork forms-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "238da9a91836e7d76a1fe72f28d7d6d3338300c0c599953ca3144e2eeb86aa60",
+      "bytes": 112740
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/forms-tile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original tile artwork forms-tile",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "f4a02c9317b0c6ac4907a75c8dafd867695d9f7b59cdf3ea13b8063fab4710c7",
+      "bytes": 332880
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/community-1.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork community-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "084eeaec77d0b5421e3d61c6db516326738b69425c7321a3623c80309b90620e",
+      "bytes": 343256
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/community-1-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork community-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "05937e19cd6b3d21ad5c49c656d1f898fd6a8cc8361e6dedf85417872f81367a",
+      "bytes": 160696
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/community-2.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork community-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "e25f64ccf0ac6f3abb1e5417d4a99eac30d2423c1ff3c90cf3abd23a972865c0",
+      "bytes": 425586
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/community-2-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork community-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "242c2a5509cd5cc98312578907c3bfae54572a2a2f2350821b5e258a79811e5f",
+      "bytes": 187900
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/community-3.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork community-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "8e025db16438fe2ac5a70d87752ba8dc33b30c562ce44ee8d4c8754447638821",
+      "bytes": 422714
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/community-3-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork community-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "1431d5c93a55158722f7480d62747f09eb18b86e55cbcd3cd34d3c25c68a4613",
+      "bytes": 195410
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/community-tile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original tile artwork community-tile",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "df5706fba61fb5509d7ea0cf2f223c5396afbcab18153757447994aac549b3bd",
+      "bytes": 303872
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/commerce-1.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork commerce-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "f5347cc5989be2d67817b2fd50121894858af63ed9d6f8def4eddc0c337e1131",
+      "bytes": 347628
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/commerce-1-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork commerce-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "c9f08057b8fd56cfaff5c99092e81ca99939bbed2db3b1a4ee57c06d22eddc02",
+      "bytes": 138556
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/commerce-2.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork commerce-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "863a9f1b16d322680deb6ccf559c78e0dda4d9892d34a2813a02fe59f9b5c733",
+      "bytes": 366604
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/commerce-2-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork commerce-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "087545cec3c245590f4bb1447094767807f041e8a85dc825bdd36b8a948ac624",
+      "bytes": 176566
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/commerce-3.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork commerce-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "958a468017077ec90f6e74e79a5f7ca3bb95b8b0355a04671c7c78bfba133ef0",
+      "bytes": 367728
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/commerce-3-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork commerce-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "ba761798959699174177ec40efdc4834e3250f96297fc93bd4e44cc9f6bdbb2e",
+      "bytes": 148718
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/commerce-tile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original tile artwork commerce-tile",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "da7c2547035062210c11c55cbbeec6fa28be25d844339141f1fcbe4f04f9e428",
+      "bytes": 231612
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/bundles-1.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork bundles-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "f86cb31095c6ee3f425f5f4b9da5554af4464774bba8a04b11b1f3bf513efe59",
+      "bytes": 377908
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/bundles-1-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork bundles-1",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "a4b841f2836a56d27b85a268b8fe4e63e35de5fa2b00893de8dd8b20246e3fd8",
+      "bytes": 152246
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/bundles-2.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork bundles-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "805a561069b9772e275b2bb085a00b3b242afaaa5d0c7062fe27b6e2d26d0564",
+      "bytes": 454092
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/bundles-2-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork bundles-2",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "0045077829c7d844deedb488107ddc832554c0389708555a556207fa1f1d8273",
+      "bytes": 212372
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/bundles-3.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork bundles-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "b7824a663711223baa59f0000849784f5068c4da4dd0274ef7f673da213bcfe2",
+      "bytes": 436814
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/bundles-3-mobile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original hero artwork bundles-3",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "4d9dbd3bf216d2ebfd24393d81eadc82d229853e29c94245fcbadc8f914ec315",
+      "bytes": 196716
+    },
+    {
+      "path": "apps/marketplace-web/public/kidflix/international-20261020/bundles-tile.webp",
+      "before": "NEW",
+      "intendedChange": "Optimized original tile artwork bundles-tile",
+      "contractClause": "06",
+      "protectedBehavior": "Editorial imagery only; canonical resource media preserved",
+      "after": "705f561cd36ef243a3e303f0f83b96bec97f28bdfa33043690cf1fa8f107a692",
+      "bytes": 319290
+    }
+  ]
+}

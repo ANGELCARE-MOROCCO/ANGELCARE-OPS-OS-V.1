@@ -1,10 +1,11 @@
-import { hasMarketplacePermission } from '../auth/context'
+import { hasMarketplacePermission, hasMarketplaceWorkspaceAccess } from '../auth/context'
 import type { ReactNode } from 'react'
 import type { MarketplaceRequestContext } from '../domain/types'
 import { ADMIN_WORKSPACE_REGISTRY } from '../admin-excellence/workspace-registry'
 import { getAdminShellSnapshot } from '../admin-shell/repository'
 import type { AdminShellWorkspace } from '../admin-shell/types'
 import { AdminShellChrome } from './AdminShellChrome'
+import { ADMIN_AREAS as JOBKIX_AREAS } from '../jobkix/admin-contract'
 
 const SANILA_WORKSPACES: AdminShellWorkspace[] = [
   { href: '/angelcare-marketplace/admin/sanila', domain: 'sanila', label: 'SANILA · Commandement', dynamic: false },
@@ -58,7 +59,7 @@ export async function AdminShell({ context, children }: { context: MarketplaceRe
       canHotline={hasMarketplacePermission(context,'marketplace.hotline.view')}
       canDce={canDce}
       snapshot={snapshot}
-      workspaces={workspaces(canDce)}
+      workspaces={[...workspaces(canDce), ...JOBKIX_AREAS.filter(area=>hasMarketplaceWorkspaceAccess(context,area.workspace)).map(area=>({href:'/angelcare-marketplace/admin/jobkix/'+area.slug,domain:'jobkix',label:'JOBKIX · '+area.name[context.locale],dynamic:false}))]}
     >
       {children}
     </AdminShellChrome>

@@ -1,0 +1,34 @@
+{
+  "adapter": "Actual navigation component, synthetic clicks with default navigation cancelled after capture; no external request",
+  "checks": 7,
+  "results": [
+    {
+      "name": "external origin",
+      "status": "PASS"
+    },
+    {
+      "name": "download",
+      "status": "PASS"
+    },
+    {
+      "name": "new tab",
+      "status": "PASS"
+    },
+    {
+      "name": "unrelated target",
+      "status": "PASS"
+    },
+    {
+      "name": "mailto",
+      "status": "PASS"
+    },
+    {
+      "name": "outside KidFlix shell",
+      "status": "PASS"
+    },
+    {
+      "name": "modified click",
+      "status": "PASS"
+    }
+  ]
+}

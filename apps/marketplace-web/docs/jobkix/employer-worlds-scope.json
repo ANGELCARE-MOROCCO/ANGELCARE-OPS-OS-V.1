@@ -1,0 +1,283 @@
+{
+  "recordedAt": "2026-10-22T00:57:22.737787+00:00",
+  "screenIds": [
+    "P11",
+    "P12"
+  ],
+  "relatedRegression": [
+    "P01",
+    "P02",
+    "C02"
+  ],
+  "references": [
+    "docs/jobkix/references/P11.png",
+    "docs/jobkix/references/P12.png"
+  ],
+  "blueprintPagesInspected": [
+    6,
+    21,
+    23
+  ],
+  "referenceDecisions": [
+    "Original full-page P11/P12 and existing rendered desktop views inspected before editing.",
+    "Use seven canonical employer kinds and sixteen employment settings; no unsupported organization-size filter or invented counts, companies, awards, staff testimonials, video or guarantees.",
+    "Actual employer imagery requires its existing native approval. Absent imagery uses a purposeful factual identity layout, never unrelated stock or generated employer representation.",
+    "Keep all native job filters available in an explicit disclosure when embedded; filtering navigates to the existing jobs authority."
+  ],
+  "files": [
+    {
+      "path": "angelcare-marketplace/jobkix/pages/Employers.tsx",
+      "sha256Before": "20cd772238c3929650a84fe8bcfdee5c948ddb2200613e14f38683cbc76880a7",
+      "intendedChange": "Bring all six native directory filters into the opening command before type discovery; improve factual profile hierarchy, compact native job filtering, moderated review bindings and actual recovery/context destinations.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing public employer and query-time recruitment eligibility, native media rights/approval, editorial publication/hash/language protection, private addresses/identities, native saved searches and other product worlds are preserved."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/employer-query.ts",
+      "sha256Before": "0808f93d072d300e3b1d58eb78d13ba53c7ca78d4a88018f7b13e750e0296d41",
+      "intendedChange": "Centralize safe native employer/context parameters for GET forms, type navigation, clear and retry links.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing public employer and query-time recruitment eligibility, native media rights/approval, editorial publication/hash/language protection, private addresses/identities, native saved searches and other product worlds are preserved."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/employer-world.ts",
+      "sha256Before": "NEW",
+      "intendedChange": "Validate approved employer edition media against the existing native approval IDs, preserving factual text and excluding generic editorial images from real workplace representation.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing public employer and query-time recruitment eligibility, native media rights/approval, editorial publication/hash/language protection, private addresses/identities, native saved searches and other product worlds are preserved."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/employer-copy.ts",
+      "sha256Before": "a7203510c5f4a8599e090d7e324476c0c6abcd8fa91fe1d8337e577401b48584",
+      "intendedChange": "Add complete seven-language directory/profile headings, practical discovery, review and share labels.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing public employer and query-time recruitment eligibility, native media rights/approval, editorial publication/hash/language protection, private addresses/identities, native saved searches and other product worlds are preserved."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/EmployerActions.tsx",
+      "sha256Before": "05067bf4a954a84200aa2330f0adfa7c2d14df841f53c73ad8b43caecbb66a23",
+      "intendedChange": "Use accurate employer-specific share text and preserve owned native save/report behavior.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing public employer and query-time recruitment eligibility, native media rights/approval, editorial publication/hash/language protection, private addresses/identities, native saved searches and other product worlds are preserved."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/SearchResults.tsx",
+      "sha256Before": "cdf86b10286b02e0e7d922462684650707f327a3eabfd0c18015e6c8035cf900",
+      "intendedChange": "Add opt-in compact employer embedding: retain every existing filter/action in a keyboard-accessible disclosure and display employer name instead of raw organization UUID. Default search/studio behavior unchanged.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing public employer and query-time recruitment eligibility, native media rights/approval, editorial publication/hash/language protection, private addresses/identities, native saved searches and other product worlds are preserved."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/jobkix.module.css",
+      "sha256Before": "93bb9d2119bdb8613bfbfd11ba3e9518a5eb00afecc82b0c3ae3cae51ad0f3cf",
+      "intendedChange": "Owned responsive employer command, factual identity/profile and compact results hierarchy; preserve existing default styles.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing public employer and query-time recruitment eligibility, native media rights/approval, editorial publication/hash/language protection, private addresses/identities, native saved searches and other product worlds are preserved."
+    },
+    {
+      "path": "scripts/jobkix/employer-worlds.test.cjs",
+      "sha256Before": "NEW",
+      "intendedChange": "Test native context parameters, query validation and approved-only employer image bindings.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing public employer and query-time recruitment eligibility, native media rights/approval, editorial publication/hash/language protection, private addresses/identities, native saved searches and other product worlds are preserved."
+    },
+    {
+      "path": "scripts/jobkix/employer-worlds.cjs",
+      "sha256Before": "NEW",
+      "intendedChange": "Verify actual employer directory/profile filtering, context/recovery, private-field exclusions, compact filters, moderated reviews and seven-language responsive rendering.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing public employer and query-time recruitment eligibility, native media rights/approval, editorial publication/hash/language protection, private addresses/identities, native saved searches and other product worlds are preserved."
+    },
+    {
+      "path": "scripts/jobkix/capture-evidence.cjs",
+      "sha256Before": "1afa91c01618de1e08e6f91009d9a85d7d405db4a8d006cf0361cd8931eece62",
+      "intendedChange": "Add focused employer-world domain checks to the scoped source gate.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing public employer and query-time recruitment eligibility, native media rights/approval, editorial publication/hash/language protection, private addresses/identities, native saved searches and other product worlds are preserved."
+    },
+    {
+      "path": "scripts/jobkix/checkpoint-progress.cjs",
+      "sha256Before": "af5f0b824ac085552c4f8d6cede405c17f1824041bd388bacce2a75463f706cf",
+      "intendedChange": "Include actual focused employer browser evidence without inflating family acceptance.",
+      "requirements": [
+        4,
+        12,
+        13,
+        16,
+        17,
+        18,
+        21,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        31
+      ],
+      "protectedBehavior": "Existing public employer and query-time recruitment eligibility, native media rights/approval, editorial publication/hash/language protection, private addresses/identities, native saved searches and other product worlds are preserved."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/components/Discovery.tsx",
+      "sha256Before": "ba7ef8b522bf5739ca9473d881f523f80f43a41d2412c9b3bbe06eecab10215b",
+      "intendedChange": "Add an optional original-language annotation for employer-authored opening descriptions; all other callers retain existing default behavior.",
+      "requirements": [
+        13,
+        16,
+        24,
+        29
+      ],
+      "protectedBehavior": "No content translation, query, publication, media or existing caller behavior changes."
+    }
+  ]
+}

@@ -1,0 +1,238 @@
+{
+  "recordedAt": "2026-10-21T15:53:34.144Z",
+  "sourceAtStart": {
+    "algorithm": "sha256",
+    "files": 272,
+    "digest": "c7b780b9246f5f82e74bcdb027b0a3958fd5ec6a91b5152deea9b255e7999a3f"
+  },
+  "sourceAtEnd": {
+    "algorithm": "sha256",
+    "files": 272,
+    "digest": "c7b780b9246f5f82e74bcdb027b0a3958fd5ec6a91b5152deea9b255e7999a3f"
+  },
+  "checks": [
+    {
+      "name": "P01 native filters available",
+      "status": "PASS",
+      "locale": "en",
+      "width": 360
+    },
+    {
+      "name": "P02 canonical apply and supporting sidebar available",
+      "status": "PASS",
+      "locale": "en",
+      "width": 360
+    },
+    {
+      "name": "P01 native filters available",
+      "status": "PASS",
+      "locale": "en",
+      "width": 390
+    },
+    {
+      "name": "P02 canonical apply and supporting sidebar available",
+      "status": "PASS",
+      "locale": "en",
+      "width": 390
+    },
+    {
+      "name": "P01 native filters available",
+      "status": "PASS",
+      "locale": "en",
+      "width": 768
+    },
+    {
+      "name": "P02 canonical apply and supporting sidebar available",
+      "status": "PASS",
+      "locale": "en",
+      "width": 768
+    },
+    {
+      "name": "P01 native filters available",
+      "status": "PASS",
+      "locale": "en",
+      "width": 1024
+    },
+    {
+      "name": "P02 canonical apply and supporting sidebar available",
+      "status": "PASS",
+      "locale": "en",
+      "width": 1024
+    },
+    {
+      "name": "P01 native filters available",
+      "status": "PASS",
+      "locale": "en",
+      "width": 1440
+    },
+    {
+      "name": "P02 canonical apply and supporting sidebar available",
+      "status": "PASS",
+      "locale": "en",
+      "width": 1440
+    },
+    {
+      "name": "P01 native filters available",
+      "status": "PASS",
+      "locale": "en",
+      "width": 1920
+    },
+    {
+      "name": "P02 canonical apply and supporting sidebar available",
+      "status": "PASS",
+      "locale": "en",
+      "width": 1920
+    },
+    {
+      "name": "P01 native filters available",
+      "status": "PASS",
+      "locale": "ar",
+      "width": 360
+    },
+    {
+      "name": "P02 canonical apply and supporting sidebar available",
+      "status": "PASS",
+      "locale": "ar",
+      "width": 360
+    },
+    {
+      "name": "P01 native filters available",
+      "status": "PASS",
+      "locale": "ar",
+      "width": 390
+    },
+    {
+      "name": "P02 canonical apply and supporting sidebar available",
+      "status": "PASS",
+      "locale": "ar",
+      "width": 390
+    },
+    {
+      "name": "P01 native filters available",
+      "status": "PASS",
+      "locale": "ar",
+      "width": 768
+    },
+    {
+      "name": "P02 canonical apply and supporting sidebar available",
+      "status": "PASS",
+      "locale": "ar",
+      "width": 768
+    },
+    {
+      "name": "P01 native filters available",
+      "status": "PASS",
+      "locale": "ar",
+      "width": 1024
+    },
+    {
+      "name": "P02 canonical apply and supporting sidebar available",
+      "status": "PASS",
+      "locale": "ar",
+      "width": 1024
+    },
+    {
+      "name": "P01 native filters available",
+      "status": "PASS",
+      "locale": "ar",
+      "width": 1440
+    },
+    {
+      "name": "P02 canonical apply and supporting sidebar available",
+      "status": "PASS",
+      "locale": "ar",
+      "width": 1440
+    },
+    {
+      "name": "P01 native filters available",
+      "status": "PASS",
+      "locale": "ar",
+      "width": 1920
+    },
+    {
+      "name": "P02 canonical apply and supporting sidebar available",
+      "status": "PASS",
+      "locale": "ar",
+      "width": 1920
+    },
+    {
+      "name": "P01 native filters available",
+      "status": "PASS",
+      "locale": "hi",
+      "width": 360
+    },
+    {
+      "name": "P02 canonical apply and supporting sidebar available",
+      "status": "PASS",
+      "locale": "hi",
+      "width": 360
+    },
+    {
+      "name": "P01 native filters available",
+      "status": "PASS",
+      "locale": "hi",
+      "width": 390
+    },
+    {
+      "name": "P02 canonical apply and supporting sidebar available",
+      "status": "PASS",
+      "locale": "hi",
+      "width": 390
+    },
+    {
+      "name": "P01 native filters available",
+      "status": "PASS",
+      "locale": "hi",
+      "width": 768
+    },
+    {
+      "name": "P02 canonical apply and supporting sidebar available",
+      "status": "PASS",
+      "locale": "hi",
+      "width": 768
+    },
+    {
+      "name": "P01 native filters available",
+      "status": "PASS",
+      "locale": "hi",
+      "width": 1024
+    },
+    {
+      "name": "P02 canonical apply and supporting sidebar available",
+      "status": "PASS",
+      "locale": "hi",
+      "width": 1024
+    },
+    {
+      "name": "P01 native filters available",
+      "status": "PASS",
+      "locale": "hi",
+      "width": 1440
+    },
+    {
+      "name": "P02 canonical apply and supporting sidebar available",
+      "status": "PASS",
+      "locale": "hi",
+      "width": 1440
+    },
+    {
+      "name": "P01 native filters available",
+      "status": "PASS",
+      "locale": "hi",
+      "width": 1920
+    },
+    {
+      "name": "P02 canonical apply and supporting sidebar available",
+      "status": "PASS",
+      "locale": "hi",
+      "width": 1920
+    },
+    {
+      "name": "mobile keyboard disclosure and native filter navigation preserve values",
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "failure": null,
+  "scope": "Actual local Next UI, native filter/application destinations and isolated SQL. No complete visual/reference/accessibility acceptance or hosted-service certification."
+}

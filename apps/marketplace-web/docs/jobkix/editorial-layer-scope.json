@@ -1,0 +1,36 @@
+{
+  "screens": [
+    "P03",
+    "P04",
+    "P05",
+    "P06",
+    "P07",
+    "P08",
+    "P09",
+    "P10"
+  ],
+  "referencesInspected": [
+    "docs/jobkix/references/P03.png",
+    "docs/jobkix/references/P04.png"
+  ],
+  "observedDefect": "P04 desktop hero paints in viewport but is omitted by Chromium full-page rendering despite decode and positive dimensions. The editorial opening uses negative stacking layers.",
+  "files": [
+    {
+      "path": "angelcare-marketplace/jobkix/jobkix.module.css",
+      "sha256Before": "9db9dba60ec7adb0e8d3459c2e23498e42ba551fdd8118f8e21ca7cf891b9a07",
+      "intendedChange": "Use explicit nonnegative image/overlay/content stacking within the owned editorial opening to preserve image painting and clickable foregrounds.",
+      "requirements": [
+        4,
+        17,
+        28,
+        29
+      ],
+      "protectedBehavior": "Only owned JOBKIX editorial opening layers. Preserve custom images, sources, crops, logical RTL positioning, taxonomy, data and all shared styles."
+    }
+  ],
+  "evidenceRequired": [
+    "Actual English/Arabic desktop/mobile P04 captures",
+    "All affected public fronts desktop/mobile rendering",
+    "Scoped CSS and TypeScript checks"
+  ]
+}

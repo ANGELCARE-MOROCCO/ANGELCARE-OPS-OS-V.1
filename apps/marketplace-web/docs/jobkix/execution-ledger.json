@@ -1,0 +1,517 @@
+{
+  "mission": "JOBKIX complete source implementation",
+  "baseline": "d655c0f99c8891deb08471bc0e83f5d0cfb1fa89",
+  "activeGate": "G7_SOURCE_CANDIDATE_PREPARATION_ORIGINAL_GATES_INCOMPLETE",
+  "gates": {
+    "G0": {
+      "status": "PASS",
+      "evidence": [
+        "source-baseline.json",
+        "reference-registry.json",
+        "brand-register.json",
+        "AUTHORITY_MAP.md"
+      ],
+      "remaining": []
+    },
+    "G1": {
+      "status": "IMPLEMENTED_UNVERIFIED",
+      "evidence": [
+        "angelcare-marketplace/jobkix/routes.ts",
+        "angelcare-marketplace/jobkix/taxonomy.ts",
+        "angelcare-marketplace/jobkix/i18n.ts"
+      ],
+      "remaining": [
+        "Complete copy/locale quality review and source-family acceptance reconciliation."
+      ]
+    },
+    "G2": {
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "angelcare-marketplace/jobkix/migrations/001_recruitment_records.sql",
+        "angelcare-marketplace/jobkix/migrations/002_authorization_and_queries.sql",
+        "angelcare-marketplace/jobkix/migrations/003_transactional_recruitment.sql",
+        "angelcare-marketplace/jobkix/migrations/005_workspace_operations.sql",
+        "angelcare-marketplace/jobkix/migrations/006_native_administration.sql",
+        "angelcare-marketplace/jobkix/migrations/007_private_document_commands.sql",
+        "angelcare-marketplace/jobkix/migrations/008_public_discovery.sql",
+        "angelcare-marketplace/jobkix/migrations/009_editorial_media_bindings.sql",
+        "angelcare-marketplace/jobkix/migrations/010_resource_bookmarks.sql",
+        "angelcare-marketplace/jobkix/migrations/011_scoped_draft_recovery.sql",
+        "angelcare-marketplace/jobkix/migrations/012_hiring_receipt_recovery.sql",
+        "angelcare-marketplace/jobkix/migrations/013_recruitment_draft_recovery.sql",
+        "angelcare-marketplace/jobkix/migrations/014_scoped_panel_access.sql",
+        "angelcare-marketplace/jobkix/migrations/015_account_operations.sql",
+        "angelcare-marketplace/jobkix/migrations/016_hiring_operations.sql",
+        "angelcare-marketplace/jobkix/migrations/017_operational_delivery.sql",
+        "angelcare-marketplace/jobkix/migrations/018_private_guest_cases.sql",
+        "angelcare-marketplace/jobkix/migrations/019_public_world_queries.sql",
+        "angelcare-marketplace/jobkix/migrations/020_employer_media_approval.sql",
+        "angelcare-marketplace/jobkix/migrations/021_moderated_reputation.sql",
+        "angelcare-marketplace/jobkix/migrations/022_scheduled_recruitment_operations.sql",
+        "angelcare-marketplace/jobkix/migrations/023_pipeline_commands.sql",
+        "angelcare-marketplace/jobkix/migrations/024_native_admin_pagination.sql",
+        "angelcare-marketplace/jobkix/migrations/025_public_sitemaps.sql",
+        "angelcare-marketplace/jobkix/migrations/026_restricted_account_support.sql",
+        "angelcare-marketplace/jobkix/migrations/027_bounded_panel_selection.sql",
+        "angelcare-marketplace/jobkix/migrations/028_packaged_editorial_scenes.sql",
+        "scripts/jobkix/database.test.cjs",
+        "scripts/jobkix/panel-selection.test.cjs",
+        "scripts/jobkix/files.test.cjs"
+      ],
+      "remaining": [
+        "Hosted identity/storage and actual bytes transport verification",
+        "Hosted guest reporting, native delivery and background operations verification",
+        "Full command input/negative/concurrency coverage; PGlite does not prove independent simultaneous PostgreSQL sessions"
+      ]
+    },
+    "G3": {
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "angelcare-marketplace/jobkix/pages/Home.tsx",
+        "angelcare-marketplace/jobkix/pages/Search.tsx",
+        "angelcare-marketplace/jobkix/pages/JobDetail.tsx",
+        "angelcare-marketplace/jobkix/pages/Auth.tsx"
+      ],
+      "remaining": [
+        "Complete per-front anatomy/state and language review; individually rendered acceptance."
+      ]
+    },
+    "G4": {
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "angelcare-marketplace/jobkix/client/ApplicationWizard.tsx",
+        "angelcare-marketplace/jobkix/pages/Hirer.tsx",
+        "angelcare-marketplace/jobkix/pages/Vacancies.tsx",
+        "angelcare-marketplace/jobkix/pages/HiringApplications.tsx",
+        "angelcare-marketplace/jobkix/pages/HiringOperations.tsx",
+        "scripts/jobkix/database.test.cjs"
+      ],
+      "remaining": [
+        "Complete state/depth/recovery coverage and connected Career and Hiring Studio screens; browser journey progress in docs/jobkix/evidence/browser/journey.json"
+      ]
+    },
+    "G5": {
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "angelcare-marketplace/jobkix/pages/HiringTalent.tsx",
+        "angelcare-marketplace/jobkix/pages/HiringTeam.tsx",
+        "angelcare-marketplace/jobkix/pages/HiringAccount.tsx",
+        "angelcare-marketplace/jobkix/pages/CandidateAccount.tsx",
+        "angelcare-marketplace/jobkix/server/operational-worker.ts"
+      ]
+    },
+    "G6": {
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "angelcare-marketplace/jobkix/admin/EditorialEditor.tsx",
+        "angelcare-marketplace/jobkix/admin/Workspace.tsx",
+        "docs/jobkix/asset-register.json"
+      ],
+      "remaining": [
+        "Complete per-front depth/state coverage; current source connects every mapped family",
+        "Complete seven-language content and quality review",
+        "Remaining studio/admin states, retention/privacy fulfillment and list/selector coverage",
+        "Native logo/favicon and Marketplace shortcut rendered lifecycle/responsive acceptance",
+        "All rendered visual/responsive/accessibility review"
+      ]
+    },
+    "G7": {
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "scripts/jobkix/installer/install.mjs",
+        "scripts/jobkix/installer/verify.mjs",
+        "scripts/jobkix/installer/rollback.mjs",
+        "scripts/jobkix/installer.test.mjs"
+      ],
+      "remaining": [
+        "Complete source acceptance and all product families",
+        "Generate the real final manifest/payload and Downloads archive",
+        "Test install/verify/rollback from the final ZIP against a fresh baseline and record size/checksum"
+      ]
+    }
+  },
+  "sourceImplementation": "IN_PROGRESS",
+  "blockers": [
+    "Complete all per-front rendered reviews and connected scenario evidence; partial local checks do not establish family acceptance.",
+    "Hosted Auth/storage/email configuration and independent multi-session environment not verified.",
+    "No existing malware scanner found in inspected source. Document checks implement a static-content policy and do not certify malware freedom.",
+    "Public P26 is attribution-only by explicit user amendment. The reviewed account-consent disclosure mismatch remains unresolved; do not bypass current validation. Critical translation approval remains pending."
+  ],
+  "nextAction": "Use the actual adjacent ZIP validation receipt for archive/install/rollback and Downloads storage results. Email and hosted-service work on standby. Core blockers and original family acceptance remain recorded.",
+  "LOCAL_APPLICATION_BUILD": "FORBIDDEN_NOT_INVOKED",
+  "PRODUCTION_SQL": "NOT_EXECUTED",
+  "GIT_RELEASE_ACTIONS": "NOT_EXECUTED",
+  "DEPLOYMENT": "NOT_EXECUTED",
+  "updatedAt": "2026-10-22T02:23:01.202046+00:00",
+  "changedFileManifest": "docs/jobkix/changed-files.json",
+  "latestVerification": {
+    "recordedAt": "2026-10-22T02:22:20.680Z",
+    "checks": 16,
+    "passingChecks": 16,
+    "reportedTests": 223,
+    "sourceHashDrift": [],
+    "report": "docs/jobkix/evidence/source-verification.json",
+    "summary": "docs/jobkix/VERIFICATION_CHECKPOINT.md"
+  },
+  "LOCAL_DEVELOPMENT_TESTS": "USER_AUTHORIZED",
+  "runtimeAmendment": "docs/jobkix/EXECUTION_AMENDMENTS.md",
+  "latestBrowserVerification": [
+    {
+      "report": "docs/jobkix/evidence/browser/journey.json",
+      "recordedAt": "2026-10-21T22:25:19.450Z",
+      "checks": 15,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "scope": "runtime-and-verification-source-v2",
+        "files": 327,
+        "digest": "dc99e043b06135880c4f99e75eaa8ab7f0a2b950d3d12dcfb46163b52ea87e3d"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/runtime-security.json",
+      "recordedAt": "2026-10-21T22:27:29.084Z",
+      "checks": 13,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "scope": "runtime-and-verification-source-v2",
+        "files": 327,
+        "digest": "dc99e043b06135880c4f99e75eaa8ab7f0a2b950d3d12dcfb46163b52ea87e3d"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/responsive-behavior.json",
+      "recordedAt": "2026-10-21T15:53:34.144Z",
+      "checks": 37,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "files": 272,
+        "digest": "c7b780b9246f5f82e74bcdb027b0a3958fd5ec6a91b5152deea9b255e7999a3f"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/navigation.json",
+      "recordedAt": "2026-10-22T00:38:53.950Z",
+      "checks": 19,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 8,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "scope": "runtime-and-verification-source-v2",
+        "files": 345,
+        "digest": "d91337a75acc7c360c8d3742053bb2e8be37116f383591e147b95fe21318c5b2"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/legal-attribution.json",
+      "recordedAt": "2026-10-21T15:44:33.399Z",
+      "checks": 25,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "files": 272,
+        "digest": "c7b780b9246f5f82e74bcdb027b0a3958fd5ec6a91b5152deea9b255e7999a3f"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/public-en.json",
+      "recordedAt": "2026-10-21T16:05:07.100Z",
+      "checks": 54,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "files": 272,
+        "digest": "400da799fac7282bb384df3b0c5cdbbf5ffe2251335aecc62f40fae4c128c6f6"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/document-selection.json",
+      "recordedAt": "2026-10-21T21:18:03.089Z",
+      "checks": 13,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "files": 279,
+        "digest": "e6a87751af77f96aab5c52aec78f5118154a7c277d979a611e3723d11677e07b"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/studio-selection.json",
+      "recordedAt": "2026-10-21T22:26:34.228Z",
+      "checks": 25,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "scope": "runtime-and-verification-source-v2",
+        "files": 327,
+        "digest": "dc99e043b06135880c4f99e75eaa8ab7f0a2b950d3d12dcfb46163b52ea87e3d"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/case-document-selection.json",
+      "recordedAt": "2026-10-21T21:52:38.431Z",
+      "checks": 11,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "scope": "runtime-and-verification-source-v2",
+        "files": 323,
+        "digest": "78fc5a14b85ece7268a871d09b93f99e6eb91146f8d1265f87190054e286319f"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/panel-selection.json",
+      "recordedAt": "2026-10-21T22:23:45.870Z",
+      "checks": 14,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "scope": "runtime-and-verification-source-v2",
+        "files": 327,
+        "digest": "dc99e043b06135880c4f99e75eaa8ab7f0a2b950d3d12dcfb46163b52ea87e3d"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/public-ar.json",
+      "recordedAt": "2026-10-21T21:25:53.157Z",
+      "checks": 54,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "files": 279,
+        "digest": "e6a87751af77f96aab5c52aec78f5118154a7c277d979a611e3723d11677e07b"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/public-hi.json",
+      "recordedAt": "2026-10-21T21:37:26.516Z",
+      "checks": 54,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "scope": "runtime-and-verification-source-v2",
+        "files": 323,
+        "digest": "536233ed9b8b3b3f8809f13469d3154b0bfbf9f5370af4f2828c08fb3606142b"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/directory.json",
+      "recordedAt": "2026-10-21T21:34:48.763Z",
+      "checks": 19,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "scope": "runtime-and-verification-source-v2",
+        "files": 323,
+        "digest": "536233ed9b8b3b3f8809f13469d3154b0bfbf9f5370af4f2828c08fb3606142b"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/geography.json",
+      "recordedAt": "2026-10-22T00:25:38.431Z",
+      "checks": 9,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "scope": "runtime-and-verification-source-v2",
+        "files": 345,
+        "digest": "d62a84d5a88b886cc867d2d74c09ed7784948702bf28a7ff877edc4fb4a7ba44"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/geographic-worlds.json",
+      "recordedAt": "2026-10-22T00:14:26.535Z",
+      "checks": 8,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "scope": "runtime-and-verification-source-v2",
+        "files": 345,
+        "digest": "d62a84d5a88b886cc867d2d74c09ed7784948702bf28a7ff877edc4fb4a7ba44"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/presentation.json",
+      "recordedAt": "2026-10-22T00:36:15.655Z",
+      "checks": 22,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "scope": "runtime-and-verification-source-v2",
+        "files": 345,
+        "digest": "d91337a75acc7c360c8d3742053bb2e8be37116f383591e147b95fe21318c5b2"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/kidflix-motion.json",
+      "recordedAt": "2026-10-22T00:16:40.686Z",
+      "checks": 5,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "scope": "runtime-and-verification-source-v2",
+        "files": 345,
+        "digest": "d62a84d5a88b886cc867d2d74c09ed7784948702bf28a7ff877edc4fb4a7ba44"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/private-export.json",
+      "recordedAt": "2026-10-22T00:52:56.638Z",
+      "checks": 8,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "scope": "runtime-and-verification-source-v2",
+        "files": 349,
+        "digest": "d3f0ad6621b1c0353586ab9e3f81bf616c21fdc47cbc3a976adbeb2e5505cba5"
+      }
+    },
+    {
+      "report": "docs/jobkix/evidence/browser/employer-worlds.json",
+      "recordedAt": "2026-10-22T01:30:37.827Z",
+      "checks": 16,
+      "failure": null,
+      "errors": 0,
+      "blockedChecks": 0,
+      "externalDependencyFailures": 0,
+      "sourceAtEnd": {
+        "algorithm": "sha256",
+        "scope": "runtime-and-verification-source-v2",
+        "files": 352,
+        "digest": "1729568fbf32ea9d598ada0de4c6507c84a6076d247278592a212a228cbfa41a"
+      }
+    }
+  ],
+  "individualPublicReviews": {
+    "reviewed": 14,
+    "accepted": 0,
+    "report": "docs/jobkix/evidence/browser-reviews.json"
+  },
+  "executionState": "IN_PROGRESS",
+  "pauseReason": null,
+  "pauseVerification": {
+    "commands": 10,
+    "passed": 10,
+    "tests": 184,
+    "sourceFiles": 309,
+    "sourceHashDrift": [],
+    "localRuntime": "STOPPED",
+    "nextGeneratedDeclaration": "RESTORED"
+  },
+  "resumedAt": "2026-10-21T20:17:59.044Z",
+  "resumeCheckpoint": "docs/jobkix/checkpoints/20261021T161339Z/RESUME.md",
+  "userSteering": "2026-10-21 user cancelled restart/pause and instructed continuing the contract until green to release.",
+  "activeUnit": "country-directory-reference-fidelity",
+  "currentLocalRuntime": "STOPPED",
+  "estimatedProgress": {
+    "completeRangePercent": [
+      60,
+      65
+    ],
+    "remainingRangePercent": [
+      35,
+      40
+    ],
+    "method": "Approximate engineering work estimate, not acceptance completion or release certification."
+  },
+  "currentAcceptance": {
+    "partiallyImplementedFamilies": 73,
+    "fullyAcceptedFamilies": 0,
+    "verifiedUserLanguageCells": 0,
+    "requiredUserLanguageCells": 455,
+    "individuallyPartiallyReviewedPublicFronts": 8,
+    "visuallyAcceptedPublicFronts": 0,
+    "requiredPublicFronts": 27
+  },
+  "browserEvidenceLimitations": [
+    "Each report retains its own timestamp and source fingerprint. Historical runtime-only fingerprints differ from newer runtime-and-verification-source-v2 fingerprints. No complete final same-source browser suite has run.",
+    "A prior Studio run was reported as failing with an unexpected Next router initialization error. The separately named failed-run artifact could not be located during this checkpoint. Later Studio reports pass, but no conclusive framework root cause is established.",
+    "Latest panel, connected journey, Studio selection and security runs executed sequentially against the same runtime-and-verification-source-v2 digest. Other browser reports remain individually dated earlier snapshots."
+  ],
+  "lastCompletedFeature": {
+    "id": "bounded-interview-panel-selection",
+    "evidence": "docs/jobkix/implementation-units.json",
+    "browserChecks": 14,
+    "sqlTests": 8,
+    "familyAcceptance": "NOT_ACCEPTED"
+  },
+  "latestPresentationIsolation": {
+    "navigationChecks": 19,
+    "httpChecks": 13,
+    "kidflixBlockedChecks": 3,
+    "nativeProxyTests": 5,
+    "reports": [
+      "docs/jobkix/evidence/browser/navigation.json",
+      "docs/jobkix/evidence/browser/presentation.json",
+      "docs/jobkix/evidence/presentation-routing.log"
+    ]
+  },
+  "latestPrivateExport": "docs/jobkix/evidence/browser/private-export.json",
+  "latestEmployerVerification": "docs/jobkix/evidence/browser/employer-worlds.json",
+  "currentUserAmendment": "release-candidate.json",
+  "releasePreparation": {
+    "scope": "release-preparation-scope.json",
+    "instructions": "RELEASE_CANDIDATE.md",
+    "standby": [
+      "email-delivery",
+      "hosted-integrations"
+    ],
+    "originalContractAccepted": false,
+    "productionGo": "BLOCKED"
+  }
+}

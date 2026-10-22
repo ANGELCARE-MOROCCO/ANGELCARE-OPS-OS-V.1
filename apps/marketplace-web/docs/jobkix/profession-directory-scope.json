@@ -1,0 +1,64 @@
+{
+  "screens": [
+    "P03",
+    "P05",
+    "P06"
+  ],
+  "primaryReference": "docs/jobkix/references/P05.png",
+  "secondaryReference": "docs/jobkix/references/P06.png",
+  "blueprintPagesInspected": [
+    6,
+    16,
+    17
+  ],
+  "files": [
+    {
+      "path": "angelcare-marketplace/jobkix/discovery-copy.ts",
+      "sha256Before": "d14d5d83f65bae6339d60785fa8b60949083e972af963920dbaecc34de95c350",
+      "intendedChange": "Use an accurate seven-language directory-search action; verify native taxonomy filtering and context-preserving onward links, and render the corrected cook editorial image at desktop/mobile and RTL.",
+      "requirements": [
+        4,
+        13,
+        16,
+        18,
+        26,
+        27,
+        28,
+        29
+      ],
+      "protectedBehavior": "No canonical taxonomy, search eligibility, country/language resolution, publication or shared shell changes."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/pages/Directories.tsx",
+      "sha256Before": "57d26840735125212cadde1cb63b36296a8b56b1ca20beef45c153e6453083d1",
+      "intendedChange": "Use an accurate seven-language directory-search action; verify native taxonomy filtering and context-preserving onward links, and render the corrected cook editorial image at desktop/mobile and RTL.",
+      "requirements": [
+        4,
+        13,
+        16,
+        18,
+        26,
+        27,
+        28,
+        29
+      ],
+      "protectedBehavior": "No canonical taxonomy, search eligibility, country/language resolution, publication or shared shell changes."
+    },
+    {
+      "path": "scripts/jobkix/browser.cjs",
+      "sha256Before": "d3143edaa199a1d4ae53f2c1b837339ad6eabf2b5bec83e40b5091fa02d8f7d9",
+      "intendedChange": "Use an accurate seven-language directory-search action; verify native taxonomy filtering and context-preserving onward links, and render the corrected cook editorial image at desktop/mobile and RTL.",
+      "requirements": [
+        4,
+        13,
+        16,
+        18,
+        26,
+        27,
+        28,
+        29
+      ],
+      "protectedBehavior": "No canonical taxonomy, search eligibility, country/language resolution, publication or shared shell changes."
+    }
+  ]
+}

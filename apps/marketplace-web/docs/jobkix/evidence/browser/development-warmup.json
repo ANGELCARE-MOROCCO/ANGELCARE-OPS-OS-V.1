@@ -1,0 +1,89 @@
+{
+  "scope": "Read-only on-demand development compilation, not functional acceptance or production performance",
+  "results": [
+    {
+      "path": "/api/jobkix/account/export",
+      "method": "GET",
+      "status": 401,
+      "durationMs": 1428
+    },
+    {
+      "path": "/api/jobkix/admin/commands",
+      "method": "GET",
+      "status": 405,
+      "durationMs": 2176
+    },
+    {
+      "path": "/api/jobkix/admin/media",
+      "method": "GET",
+      "status": 401,
+      "durationMs": 809
+    },
+    {
+      "path": "/api/jobkix/auth/invalid",
+      "method": "GET",
+      "status": 405,
+      "durationMs": 985
+    },
+    {
+      "path": "/api/jobkix/cases/guest",
+      "method": "GET",
+      "status": 405,
+      "durationMs": 674
+    },
+    {
+      "path": "/api/jobkix/commands",
+      "method": "GET",
+      "status": 405,
+      "durationMs": 659
+    },
+    {
+      "path": "/api/jobkix/employers",
+      "method": "GET",
+      "status": 200,
+      "durationMs": 851
+    },
+    {
+      "path": "/api/jobkix/files/00000000-0000-4000-8000-000000000000",
+      "method": "GET",
+      "status": 503,
+      "durationMs": 3398
+    },
+    {
+      "path": "/api/jobkix/files",
+      "method": "GET",
+      "status": 405,
+      "durationMs": 820
+    },
+    {
+      "path": "/api/jobkix/interviews/00000000-0000-4000-8000-000000000000/calendar",
+      "method": "GET",
+      "status": 401,
+      "durationMs": 1217
+    },
+    {
+      "path": "/api/jobkix/operations/delivery",
+      "method": "GET",
+      "status": 405,
+      "durationMs": 1507
+    },
+    {
+      "path": "/api/jobkix/operations/tick",
+      "method": "GET",
+      "status": 405,
+      "durationMs": 941
+    },
+    {
+      "path": "/api/jobkix/search",
+      "method": "GET",
+      "status": 200,
+      "durationMs": 775
+    },
+    {
+      "path": "/api/jobkix/taxonomy",
+      "method": "GET",
+      "status": 422,
+      "durationMs": 994
+    }
+  ]
+}

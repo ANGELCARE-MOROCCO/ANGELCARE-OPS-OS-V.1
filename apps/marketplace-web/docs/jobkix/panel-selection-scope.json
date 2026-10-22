@@ -1,0 +1,275 @@
+{
+  "recordedAt": "2026-10-21T22:04:46.404183+00:00",
+  "referenceBindings": [
+    "ANGELCARE_CAREERS_2027.pdf page 12",
+    "ANGELCARE_CAREERS_2027_ENGINEERING_BLUEPRINT_R1.md sections 6/7/9",
+    "Execution contract clauses 20,23,24,26,27"
+  ],
+  "files": [
+    {
+      "path": "angelcare-marketplace/jobkix/panel-selection.ts",
+      "sha256Before": "NEW",
+      "intendedChange": "Strict application-bound panel query validation with at most 20 retained IDs.",
+      "requirements": [
+        20,
+        23,
+        24,
+        26,
+        27,
+        31
+      ],
+      "screenIds": [
+        "H09"
+      ],
+      "protectedBehavior": "Existing identity, membership/site/job scope, interview command validation, 20-person panel cap, draft CAS/idempotency, application privacy and unrelated product behavior are preserved."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/migrations/027_bounded_panel_selection.sql",
+      "sha256Before": "NEW",
+      "intendedChange": "Add a permission-checked paged panel-options RPC and share the existing native eligible-roster implementation with its compatible legacy wrapper.",
+      "requirements": [
+        20,
+        23,
+        24,
+        26,
+        27,
+        31
+      ],
+      "screenIds": [
+        "H09"
+      ],
+      "protectedBehavior": "Existing identity, membership/site/job scope, interview command validation, 20-person panel cap, draft CAS/idempotency, application privacy and unrelated product behavior are preserved."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/server/repository.ts",
+      "sha256Before": "962307481a5c2025430e27f86bed5cd78f6e2718907a3d1a3f109bb0974255b0",
+      "intendedChange": "Read the bounded native panel RPC with current session and minimal metadata; retire the app-side full-roster read.",
+      "requirements": [
+        20,
+        23,
+        24,
+        26,
+        27,
+        31
+      ],
+      "screenIds": [
+        "H09"
+      ],
+      "protectedBehavior": "Existing identity, membership/site/job scope, interview command validation, 20-person panel cap, draft CAS/idempotency, application privacy and unrelated product behavior are preserved."
+    },
+    {
+      "path": "app/api/jobkix/lookups/route.ts",
+      "sha256Before": "82b49f6e119beffc4152930672539012392fc3140585d329745481fe915d1565",
+      "intendedChange": "Dispatch the closed panels lookup kind to its application-bound native read; preserve all existing private lookup behavior.",
+      "requirements": [
+        20,
+        23,
+        24,
+        26,
+        27,
+        31
+      ],
+      "screenIds": [
+        "H09"
+      ],
+      "protectedBehavior": "Existing identity, membership/site/job scope, interview command validation, 20-person panel cap, draft CAS/idempotency, application privacy and unrelated product behavior are preserved."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/StudioRecordPicker.tsx",
+      "sha256Before": "c54685e3a87fde04e852b15ceabb0eeab4737b1e5a482018067efd4fd7258529",
+      "intendedChange": "Reuse the existing search/paging/retry/retained-ID picker for up to 20 panelists.",
+      "requirements": [
+        20,
+        23,
+        24,
+        26,
+        27,
+        31
+      ],
+      "screenIds": [
+        "H09"
+      ],
+      "protectedBehavior": "Existing identity, membership/site/job scope, interview command validation, 20-person panel cap, draft CAS/idempotency, application privacy and unrelated product behavior are preserved."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/RecruitmentForms.tsx",
+      "sha256Before": "68171bea38eccabd8abbb0ef342c9930cef146664da04a17cb314009367191da",
+      "intendedChange": "Use bounded panel selection in the native interview editor without altering commands, draft versions or receipts.",
+      "requirements": [
+        20,
+        23,
+        24,
+        26,
+        27,
+        31
+      ],
+      "screenIds": [
+        "H09"
+      ],
+      "protectedBehavior": "Existing identity, membership/site/job scope, interview command validation, 20-person panel cap, draft CAS/idempotency, application privacy and unrelated product behavior are preserved."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/pages/HiringOperations.tsx",
+      "sha256Before": "39f124ca75ec73cd74b21c7c07d885e92e9c2a5286c71a69772453f79eb5002d",
+      "intendedChange": "Resolve current and saved off-page panel IDs after recovery; keep current evaluator and interview authorities.",
+      "requirements": [
+        20,
+        23,
+        24,
+        26,
+        27,
+        31
+      ],
+      "screenIds": [
+        "H09"
+      ],
+      "protectedBehavior": "Existing identity, membership/site/job scope, interview command validation, 20-person panel cap, draft CAS/idempotency, application privacy and unrelated product behavior are preserved."
+    },
+    {
+      "path": "scripts/jobkix/domain.test.cjs",
+      "sha256Before": "71cb2f08a97ee6c0b5ccc55630722fe588bd2ab93bf6a19a9793ec75f392ddbc",
+      "intendedChange": "Exercise unsafe, duplicate, oversized and ambiguous panel selection inputs.",
+      "requirements": [
+        20,
+        23,
+        24,
+        26,
+        27,
+        31
+      ],
+      "screenIds": [
+        "H09"
+      ],
+      "protectedBehavior": "Existing identity, membership/site/job scope, interview command validation, 20-person panel cap, draft CAS/idempotency, application privacy and unrelated product behavior are preserved."
+    },
+    {
+      "path": "scripts/jobkix/panel-selection.test.cjs",
+      "sha256Before": "NEW",
+      "intendedChange": "Exercise actual SQL paging, candidate exclusion, membership/site/job/current-session denial and command rechecks.",
+      "requirements": [
+        20,
+        23,
+        24,
+        26,
+        27,
+        31
+      ],
+      "screenIds": [
+        "H09"
+      ],
+      "protectedBehavior": "Existing identity, membership/site/job scope, interview command validation, 20-person panel cap, draft CAS/idempotency, application privacy and unrelated product behavior are preserved."
+    },
+    {
+      "path": "scripts/jobkix/panel-selection.cjs",
+      "sha256Before": "NEW",
+      "intendedChange": "Actual local browser checks for off-page panel selection, draft reload, failure recovery and native interview creation.",
+      "requirements": [
+        20,
+        23,
+        24,
+        26,
+        27,
+        31
+      ],
+      "screenIds": [
+        "H09"
+      ],
+      "protectedBehavior": "Existing identity, membership/site/job scope, interview command validation, 20-person panel cap, draft CAS/idempotency, application privacy and unrelated product behavior are preserved."
+    },
+    {
+      "path": "scripts/jobkix/local-database.cjs",
+      "sha256Before": "8647d2c6881802d4dceb56fa464a5cbae4cd70c38e52b551e52df2daebb3506c",
+      "intendedChange": "Add optional private panel-scale fixtures for isolated testing only; do not change production source or public discovery.",
+      "requirements": [
+        20,
+        23,
+        24,
+        26,
+        27,
+        31
+      ],
+      "screenIds": [
+        "H09"
+      ],
+      "protectedBehavior": "Existing identity, membership/site/job scope, interview command validation, 20-person panel cap, draft CAS/idempotency, application privacy and unrelated product behavior are preserved."
+    },
+    {
+      "path": "scripts/jobkix/capture-evidence.cjs",
+      "sha256Before": "a6627041d9017ebea4489fcb60ede347a6db58ac2aeefdfc693d7ba9e412ef0e",
+      "intendedChange": "Include the new isolated native panel SQL tests in the scoped source gate.",
+      "requirements": [
+        20,
+        23,
+        24,
+        26,
+        27,
+        31
+      ],
+      "screenIds": [
+        "H09"
+      ],
+      "protectedBehavior": "Existing identity, membership/site/job scope, interview command validation, 20-person panel cap, draft CAS/idempotency, application privacy and unrelated product behavior are preserved."
+    },
+    {
+      "path": "scripts/jobkix/checkpoint-progress.cjs",
+      "sha256Before": "8d374d0f65d3de4ae1cd87c0188e0491eff0d362c7c5cdbbaa041b84364eeb70",
+      "intendedChange": "Include the executed panel-selection browser report and the new migration in durable summaries.",
+      "requirements": [
+        20,
+        23,
+        24,
+        26,
+        27,
+        31
+      ],
+      "screenIds": [
+        "H09"
+      ],
+      "protectedBehavior": "Existing identity, membership/site/job scope, interview command validation, 20-person panel cap, draft CAS/idempotency, application privacy and unrelated product behavior are preserved."
+    },
+    {
+      "path": "docs/jobkix/HIRING_OPERATOR_CHECKPOINT.md",
+      "sha256Before": "6b161fb72c39579211d54c103ce18a10f29a0c955603d1d15b417f4b2c9fd0d5",
+      "intendedChange": "Document bounded team/panel selection and the retained native save/recovery behavior.",
+      "requirements": [
+        20,
+        23,
+        24,
+        26,
+        27,
+        31
+      ],
+      "screenIds": [
+        "H09"
+      ],
+      "protectedBehavior": "Existing identity, membership/site/job scope, interview command validation, 20-person panel cap, draft CAS/idempotency, application privacy and unrelated product behavior are preserved."
+    },
+    {
+      "path": "scripts/jobkix/fixture-vacancy.cjs",
+      "sha256Before": "b2362b72667913e7004a83ee0988018a74759f0e29da0f740949e621601f62e5",
+      "intendedChange": "Correct the institution-only isolated vacancy fixture to the actual published early-childhood-educator key after native validation rejected its nonexistent alias.",
+      "requirements": [
+        27,
+        31
+      ],
+      "protectedBehavior": "Verification fixture only. Native taxonomy validation, publication and production data unchanged."
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/operations-copy.ts",
+      "sha256Before": "a55736e776dfef3ffe5fda195c7bc7b2926f94bdd8a8933964661ef9837f5d8e",
+      "intendedChange": "Add accurate interview/offer revision-history headings in all seven languages, replacing the vacancy-only label found during rendered H09 review.",
+      "requirements": [
+        13,
+        20,
+        23,
+        26,
+        28
+      ],
+      "screenIds": [
+        "H09",
+        "H10"
+      ],
+      "protectedBehavior": "Copy only; native revision records, permissions and publication behavior unchanged."
+    }
+  ]
+}

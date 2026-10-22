@@ -1,0 +1,58 @@
+{
+  "recordedAt": "2026-10-22T02:18:26.630535+00:00",
+  "sourceBaseline": "d655c0f99c8891deb08471bc0e83f5d0cfb1fa89",
+  "estimatedProgress": {
+    "completeRangePercent": [
+      60,
+      65
+    ],
+    "remainingRangePercent": [
+      35,
+      40
+    ],
+    "method": "Approximate engineering work estimate, not acceptance completion or release certification. Historical estimate retained; not a current basic-release percentage."
+  },
+  "items": [
+    {
+      "id": "privacy-fulfillment",
+      "status": "IN_PROGRESS",
+      "detail": "Finish retention/erasure fulfillment and holds without inventing policy or deleting unrelated identity/product records."
+    },
+    {
+      "id": "private-collection-pagination",
+      "status": "IMPLEMENTED_UNVERIFIED",
+      "detail": "Native CV/evidence and organization/site/vacancy/pool/panel selectors are bounded. Latest panel checks exercise 250 private eligible members, native draft recovery and exact interview bindings; current evaluator lookup uses its unique interview/user key. Audit remaining private list and family-state acceptance separately."
+    },
+    {
+      "id": "search-command-copy",
+      "status": "IMPLEMENTED_UNVERIFIED",
+      "detail": "Seven-language reach, keyword and setting labels corrected without changing native filters. Connected browser copy review remains."
+    },
+    {
+      "id": "consent-disclosure",
+      "status": "BLOCKED",
+      "detail": "Public P26 must remain user-approved attribution-only. Existing registration requires reviewed terms/privacy revisions. Resolve the disclosure mismatch without silently bypassing validation."
+    },
+    {
+      "id": "full-family-quality",
+      "status": "IN_PROGRESS",
+      "detail": "73 partial source families; 0 fully accepted. Complete deep content/states/recovery/actions and visual fidelity."
+    },
+    {
+      "id": "localization-and-visual",
+      "status": "IN_PROGRESS",
+      "detail": "0/455 complete family-language cells; fourteen partial individual public comparisons (P00\u2013P12 and P26); 0/27 complete visual acceptance. Country/city and employer fronts have full seven-language/six-width sweeps plus documented final focused rerenders. Full keyboard/RTL/mobile/content/state quality review remains."
+    },
+    {
+      "id": "hosted-services-and-concurrency",
+      "status": "STANDBY",
+      "detail": "Designated isolated hosted Auth/storage/email/worker/proxy and independent simultaneous PostgreSQL-session evidence remain unavailable/unverified. No existing malware engine found; structural validation does not certify malware freedom, and no new mandatory external service has been invented. User deferred this work on 2026-10-22. Not PASS; configuration and safeguards retained."
+    },
+    {
+      "id": "final-delivery",
+      "status": "IN_PROGRESS",
+      "detail": "Source release candidate packaging, extracted installer verification and Downloads delivery in progress. Not full product acceptance."
+    }
+  ],
+  "currentReleaseScope": "release-candidate.json"
+}

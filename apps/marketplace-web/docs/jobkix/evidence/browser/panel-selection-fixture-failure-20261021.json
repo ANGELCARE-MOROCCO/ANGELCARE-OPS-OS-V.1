@@ -1,0 +1,23 @@
+{
+  "recordedAt": "2026-10-21T22:10:57.802Z",
+  "sourceAtStart": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 327,
+    "digest": "cde9dbfd86b5b0956680a130fbc22fa8f3f38fdd1e8e0761cba75187baf3a12e"
+  },
+  "sourceAtEnd": {
+    "algorithm": "sha256",
+    "scope": "runtime-and-verification-source-v2",
+    "files": 327,
+    "digest": "cde9dbfd86b5b0956680a130fbc22fa8f3f38fdd1e8e0761cba75187baf3a12e"
+  },
+  "checks": [],
+  "errors": [],
+  "expectedNetworkErrors": [],
+  "failure": {
+    "message": "{\"message\":\"INVALID_INPUT\",\"code\":\"P0001\"}\n\n400 !== 200\n",
+    "stack": "AssertionError [ERR_ASSERTION]: {\"message\":\"INVALID_INPUT\",\"code\":\"P0001\"}\n\n400 !== 200\n\n    at rpc (/Users/user/Desktop/angelcare-platform/apps/marketplace-web/scripts/jobkix/fixture-vacancy.cjs:10:272)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async freshVacancy (/Users/user/Desktop/angelcare-platform/apps/marketplace-web/scripts/jobkix/fixture-vacancy.cjs:13:14)\n    at async /Users/user/Desktop/angelcare-platform/apps/marketplace-web/scripts/jobkix/panel-selection.cjs:17:16"
+  },
+  "scope": "Actual native Next/HTTP/SQL panel reads, durable draft recovery and interview commands with 250 opt-in isolated synthetic team identities. Not hosted identity/storage, independent-session concurrency, complete family acceptance or production certification."
+}
