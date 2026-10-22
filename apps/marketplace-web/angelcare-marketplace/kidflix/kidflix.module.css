@@ -3944,3 +3944,327 @@
   scroll-behavior: auto !important;
   transition: none !important;
 }
+
+/* ANGELCARE KIDFLIX — PREMIUM HEADER V2 (2026-10-22)
+   Scoped to the existing KidFlix shell. Official logo asset is untouched.
+   Source authority: catalogue.ts INTENTS/WORLDS, SearchBox, EditionLanguage,
+   GuestProvider, existing /my and /explore journeys. */
+.root .headerV2 {
+  --kf-header-ink: #12234b;
+  background: #fff;
+  color: var(--kf-header-ink);
+  border-bottom: 1px solid #e1eaf5;
+  box-shadow: 0 7px 23px #1a356b0c;
+}
+.root .headerV2 .headerV2Utility {
+  background: linear-gradient(97deg,#f2f8ff 0%,#fcfaff 48%,#effbfb 100%);
+  border-bottom: 1px solid #e8eff8;
+  color: #334b70;
+}
+.root .headerV2 .headerV2UtilityInner {
+  max-width: 1720px;
+  padding: 9px 27px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+}
+.root .headerV2 .headerV2UtilityItem {
+  min-width: 0;
+  display: inline-flex;
+  gap: 9px;
+  align-items: center;
+  line-height: 1.4;
+  font-size: 11.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.root .headerV2 .headerV2UtilityItem + .headerV2UtilityItem {
+  border-inline-start: 1px solid #cfdaeb;
+  padding-inline-start: 22px;
+}
+.root .headerV2 .headerV2UtilityItem svg {color: #127bd7;flex: none;}
+.root .headerV2 .headerV2UtilityItem:nth-child(3) svg {color: #20a978;}
+.root .headerV2 .headerV2UtilityItem:nth-child(4) svg {color: #ed458b;}
+.root .headerV2 .headerMain {
+  display: flex;
+  max-width: 1720px;
+  min-height: 111px;
+  height: auto;
+  padding: 19px 27px;
+  gap: clamp(15px,2.25vw,36px);
+  align-items: center;
+}
+.root .headerV2 .headerV2Brand {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+.root .headerV2 .logo {
+  display: block;
+  flex: 0 0 165px;
+  transform: none;
+}
+/* Do not restyle/rebuild the official KidFlix logo image. */
+.root .headerV2 .headerV2BrandMessage {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 170px;
+  min-width: 0;
+  border-inline-start: 1px solid #e0e7f0;
+  padding-inline-start: 14px;
+  line-height: 1.4;
+}
+.root .headerV2 .headerV2BrandMessage strong {font-size: 12px; font-weight: 800; color: #213962;}
+.root .headerV2 .headerV2BrandMessage span {font-size: 11px; font-weight: 600; color: #64758e;}
+.root .headerV2 .headerSearch {
+  display: block;
+  flex: 1 1 400px;
+  max-width: none;
+  min-width: 180px;
+  margin: 0;
+}
+.root .headerV2 .headerSearch .search {
+  height: 59px;
+  min-height: 59px;
+  border: 1px solid #dce6f3;
+  border-radius: 29px;
+  background: #fff;
+  padding: 6px 7px 6px 17px;
+  box-shadow: 0 5px 17px #193e7411;
+  gap: 11px;
+}
+.root .headerV2 .headerSearch .search:focus-within {
+  border-color: #368ff2;
+  box-shadow: 0 0 0 4px #1674df14,0 5px 17px #193e7411;
+}
+.root .headerV2 .headerSearch .search > svg {color: #243d78; width: 20px; height: 20px;}
+.root .headerV2 .headerSearch .search input {font-size: 13px; color: #22365a;}
+.root .headerV2 .headerSearch .search button {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  min-width: 46px;
+  border-radius: 50%;
+  color: #fff;
+  background: linear-gradient(135deg,#008af7,#1752df);
+  box-shadow: 0 4px 10px #116adc2b;
+}
+.root .headerV2 .headerActions {
+  display: flex;
+  align-items: center;
+  flex: none;
+  margin-inline-start: 0;
+  gap: 11px;
+}
+.root .headerV2 .headerV2Saved {
+  width: auto;
+  min-width: 65px;
+  height: auto;
+  min-height: 49px;
+  padding: 8px 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 15px;
+  border: 1px solid transparent;
+  color: #ec4388 !important;
+}
+.root .headerV2 .headerV2Saved:hover {background: #fff2f8;border-color:#ffe1ed;}
+.root .headerV2 .headerV2SavedLabel {position:static;display:inline;min-width:0;padding:0;border:0;background:transparent;color:#213962;font-size:12px;font-weight:800;}
+.root .headerV2 .headerV2SavedCount {position:absolute;inset-inline-start:27px;inset-inline-end:auto;inset-block-start:0;min-width:18px;border:2px solid #fff;border-radius:10px;padding:0 4px;background:#ea4286;color:#fff;font-size:10px;line-height:16px;text-align:center;}
+.root .headerV2 .headerV2Language {display:flex;align-items:center;border-inline-start:1px solid #dce4ef;padding-inline-start:12px;min-height:43px;}
+.root .headerV2 .headerV2Language label {display:flex;align-items:center;gap:5px;}
+.root .headerV2 .headerV2Language select {border-radius:9px;border:1px solid #dbe4f0;background:#f8faff;min-height:41px;padding:7px 9px;font-size:13px;max-width:95px;}
+.root .headerV2 .headerV2CTA {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 49px;
+  padding: 11px 16px;
+  border-radius: 15px;
+  background: linear-gradient(105deg,#ff8b16 0%,#ff5115 100%);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 850;
+  white-space: nowrap;
+  box-shadow: 0 5px 15px #ff6a2830;
+}
+.root .headerV2 .headerV2CTA:hover {filter:brightness(.97);transform:translateY(-1px);}
+.root .headerV2 .nav {
+  display:flex;
+  max-width:1720px;
+  margin:0 auto;
+  padding:9px 27px 16px;
+  gap:10px;
+  align-items:stretch;
+  justify-content:space-between;
+  overflow-x:auto;
+  scrollbar-width:thin;
+  border-top:1px solid #f1f4f9;
+}
+.root .headerV2 .nav > a,
+.root .headerV2 .nav > button {
+  display:inline-flex!important;
+  flex:1 0 auto;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  gap:7px;
+  min-height:77px;
+  min-width:105px;
+  max-width:230px;
+  padding:10px 15px;
+  border-radius:14px;
+  border:1px solid transparent;
+  font-size:12px;
+  font-weight:800;
+  line-height:1.25;
+  color:#18345d;
+  text-align:center;
+  background:#e6f2ff;
+  box-shadow:0 3px 8px #17315b07;
+}
+.root .headerV2 .nav > :nth-child(1){background:#e3f1ff;color:#146ed0;}
+.root .headerV2 .nav > :nth-child(2){background:#fff0f5;color:#b83773;}
+.root .headerV2 .nav > :nth-child(3){background:#f0ecff;color:#7851c9;}
+.root .headerV2 .nav > :nth-child(4){background:#e7f5ff;color:#147dc8;}
+.root .headerV2 .nav > :nth-child(5){background:#f1edff;color:#6c3bc6;}
+.root .headerV2 .nav > :nth-child(6){background:#e9f9ef;color:#168652;}
+.root .headerV2 .nav > :nth-child(7){background:#eaf8ff;color:#168bb0;}
+.root .headerV2 .nav > :nth-child(8){background:#fff4e2;color:#ae641e;}
+.root .headerV2 .nav > :nth-child(9){background:#ecf5ff;color:#125eb5;}
+.root .headerV2 .nav > a > svg,
+.root .headerV2 .nav > button > svg {width:23px;height:23px;color:currentColor;}
+.root .headerV2 .nav > button {flex-direction:row;gap:8px;}
+.root .headerV2 .nav > button > svg:last-child {width:13px;height:13px;}
+.root .headerV2 .nav > :hover {border-color:#a9c5ee;box-shadow:0 7px 17px #17315b16;transform:translateY(-2px);}
+.root .headerV2 .nav > [aria-current="page"] {background:#176ee6;color:#fff;border-color:#176ee6;box-shadow:0 5px 16px #176ee633;}
+.root .headerV2 .headerV2WorldRail {
+  display:flex;
+  align-items:center;
+  gap:0;
+  width:100%;
+  max-width:1720px;
+  margin:0 auto;
+  border-top:1px solid #e8edf5;
+  background:#fff;
+}
+.root .headerV2 .headerV2WorldLead {
+  flex:0 0 200px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:9px;
+  padding:16px 16px 16px 27px;
+  font-size:12px;
+  font-weight:850;
+  line-height:1.45;
+  color:#1c2d53;
+  border-inline-end:1px solid #e4eaf4;
+}
+.root .headerV2 .headerV2WorldLead svg {color:#196ac6;}
+.root .headerV2 .headerV2WorldTrack {
+  display:flex;
+  align-items:stretch;
+  gap:5px;
+  overflow-x:auto;
+  overscroll-behavior-x:contain;
+  scrollbar-width:thin;
+  min-width:0;
+  flex:1;
+  padding:13px 22px 14px 10px;
+}
+.root .headerV2 .headerV2WorldItem {
+  display:flex;
+  flex:0 0 106px;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  gap:8px;
+  padding:5px 5px 6px;
+  text-align:center;
+  border-radius:13px;
+  color:#203b64;
+  transition:background .18s ease;
+}
+.root .headerV2 .headerV2WorldItem:hover,
+.root .headerV2 .headerV2WorldItem[aria-current="page"] {background:var(--tint,#f2f7ff);}
+.root .headerV2 .headerV2WorldIcon {
+  display:grid;
+  place-items:center;
+  width:47px;height:47px;
+  background:var(--tint,#edf4ff);
+  color:var(--accent,#1467d7);
+  border:1px solid color-mix(in srgb,var(--accent,#1467d7) 13%,white);
+  border-radius:50%;
+}
+.root .headerV2 .headerV2WorldLabel {
+  width:100%;
+  line-height:1.3;
+  font-size:10.5px;
+  font-weight:750;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  overflow:hidden;
+  min-height:28px;
+}
+.root .headerV2 .mega {z-index:31;max-height:min(75dvh,800px);overflow:auto;}
+.root[dir="rtl"] .headerV2 .headerV2WorldLead {padding-inline-start:27px;padding-inline-end:16px;}
+.root[dir="rtl"] .headerV2 .headerSearch .search {padding-inline-start:17px;padding-inline-end:7px;}
+
+@media (max-width:1460px) {
+  .root .headerV2 .headerV2BrandMessage {display:none;}
+  .root .headerV2 .headerMain {gap:17px;}
+  .root .headerV2 .headerV2UtilityInner {gap:10px;}
+  .root .headerV2 .headerV2UtilityItem + .headerV2UtilityItem {padding-inline-start:12px;}
+}
+@media (max-width:1100px) {
+  .root .headerV2 .headerV2UtilityItem:nth-child(4) {display:none;}
+  .root .headerV2 .headerV2CTA {display:none;}
+  .root .headerV2 .headerMain {padding-inline:20px;}
+  .root .headerV2 .nav {padding-inline:20px;}
+  .root .headerV2 .headerV2WorldLead {flex-basis:168px;padding-inline-start:20px;}
+  .root .headerV2 .headerV2WorldItem {flex-basis:98px;}
+}
+@media (max-width:780px) {
+  .root .headerV2 .headerV2UtilityInner {padding:8px 16px;}
+  .root .headerV2 .headerV2UtilityItem:nth-child(n+2) {display:none;}
+  .root .headerV2 .headerMain {display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 12px;padding:13px 16px 14px;min-height:0;}
+  .root .headerV2 .headerV2Brand {grid-column:1;grid-row:1;}
+  .root .headerV2 .headerActions {grid-column:2;grid-row:1;gap:5px;}
+  .root .headerV2 .headerSearch {grid-column:1/-1;grid-row:2;width:100%;max-width:none;min-width:0;}
+  .root .headerV2 .logo {flex:0 0 130px;width:130px;}
+  .root .headerV2 .headerV2Saved {min-width:42px;min-height:42px;padding:7px;}
+  .root .headerV2 .headerV2SavedLabel {display:none;}
+  .root .headerV2 .headerV2Language {padding-inline-start:6px;}
+  .root .headerV2 .headerV2Language label > span {display:none;}
+  .root .headerV2 .headerV2Language select {max-width:75px;}
+  .root .headerV2 .menuButton {display:grid;place-items:center;min-width:44px;min-height:44px;}
+  .root .headerV2 .headerSearch .search {min-height:51px;height:51px;}
+  .root .headerV2 .headerSearch .search button {height:40px;width:40px;min-width:40px;}
+  .root .headerV2 .nav {padding:8px 16px 12px;justify-content:flex-start;gap:8px;}
+  .root .headerV2 .nav > a,.root .headerV2 .nav > button {min-height:58px;min-width:88px;padding:8px 10px;gap:4px;font-size:11px;}
+  .root .headerV2 .nav > a > svg,.root .headerV2 .nav > button > svg {width:20px;height:20px;}
+  .root .headerV2 .headerV2WorldRail {display:block;}
+  .root .headerV2 .headerV2WorldLead {width:100%;border-inline-end:0;padding:9px 16px;border-bottom:1px solid #eff3f8;}
+  .root .headerV2 .headerV2WorldTrack {padding:7px 12px 10px;}
+  .root .headerV2 .headerV2WorldItem {flex-basis:86px;gap:5px;padding:5px 3px;}
+  .root .headerV2 .headerV2WorldIcon {width:39px;height:39px;}
+  .root .headerV2 .headerV2WorldLabel {font-size:10px;}
+  .root .headerV2 .mega {max-height:65dvh;}
+}
+@media (max-width:390px) {
+  .root .headerV2 .headerMain {gap:5px;}
+  .root .headerV2 .headerActions {gap:3px;}
+  .root .headerV2 .headerV2Language {padding-inline-start:3px;}
+}

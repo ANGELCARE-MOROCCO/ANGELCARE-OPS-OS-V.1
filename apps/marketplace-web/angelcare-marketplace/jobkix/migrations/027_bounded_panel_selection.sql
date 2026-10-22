@@ -1,9 +1,19 @@
+-- JOBKIX 027 full recovery: original migration with non-destructive CREATE OR REPLACE.
+-- Prerequisite: 026 installed; if 027 already registered, stop (do not alter).
 begin;
-do $$ begin if not exists(select 1 from public.jobkix_schema_versions where version=26) then raise exception 'JOBKIX_MIGRATION_ORDER';end if;end $$;
+do $$
+begin
+ if not exists(select 1 from public.jobkix_schema_versions where version=26) then
+  raise exception 'JOBKIX_MIGRATION_ORDER_MISSING_026';
+ end if;
+ if exists(select 1 from public.jobkix_schema_versions where version=27) then
+  raise exception 'JOBKIX_027_ALREADY_REGISTERED_DO_NOT_REINSTALL';
+ end if;
+end $$;
 
 -- One eligible-roster read, shared by the legacy projection and bounded picker.
 -- Interview commands retain their independent current-authority recheck.
-create function public.jobkix_panel_members(p_vacancy uuid) returns table(id uuid,label text,member_role text)
+create or replace function public.jobkix_panel_members(p_vacancy uuid) returns table(id uuid,label text,member_role text)
 language plpgsql stable security definer set search_path=pg_catalog,public as $$
 declare actor uuid:=public.jobkix_actor();v public.jobkix_vacancies;begin
  select * into v from public.jobkix_vacancies where public.jobkix_vacancies.id=p_vacancy;
@@ -22,7 +32,7 @@ language sql stable security definer set search_path=pg_catalog,public as $$
  from public.jobkix_panel_members(p_vacancy)
 $$;
 
-create function public.jobkix_panel_options(p_application uuid,p_page integer default 1,p_query text default '',p_selected uuid[] default '{}') returns jsonb
+create or replace function public.jobkix_panel_options(p_application uuid,p_page integer default 1,p_query text default '',p_selected uuid[] default '{}') returns jsonb
 language plpgsql stable security definer set search_path=pg_catalog,public as $$
 declare actor uuid:=public.jobkix_actor();a public.jobkix_applications;v public.jobkix_vacancies;pattern text;result jsonb;begin
  if p_application is null or p_page is null or p_page<1 or p_page>10000 or p_query is null or length(p_query)>180 or p_query~'[[:cntrl:]]'
@@ -50,3 +60,5 @@ revoke all on function public.jobkix_panel_members(uuid),public.jobkix_panel_opt
 grant execute on function public.jobkix_panel_options(uuid,integer,text,uuid[]) to authenticated;
 insert into public.jobkix_schema_versions(version) values(27);
 commit;
+
+select version, 'INSTALLED' as status from public.jobkix_schema_versions where version in (26,27) order by version;

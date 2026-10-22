@@ -52,11 +52,13 @@ export function SearchBox({
   );
 }
 function Header({ locale }: { locale: Locale }) {
-  const pathname=usePathname(), query=useSearchParams();
-  const [menu, setMenu] = useState(false),
-    ref = useRef<HTMLDivElement>(null),
-    button = useRef<HTMLButtonElement>(null),
-    guest = useGuest();
+  const pathname = usePathname();
+  const query = useSearchParams();
+  const [menu, setMenu] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const button = useRef<HTMLButtonElement>(null);
+  const guest = useGuest();
+
   useEffect(() => {
     if (!menu) return;
     const esc = (e: KeyboardEvent) => {
@@ -70,8 +72,9 @@ function Header({ locale }: { locale: Locale }) {
         ref.current &&
         !ref.current.contains(e.target as Node) &&
         !button.current?.contains(e.target as Node)
-      )
+      ) {
         setMenu(false);
+      }
     };
     document.addEventListener("keydown", esc);
     document.addEventListener("pointerdown", outside);
@@ -80,74 +83,120 @@ function Header({ locale }: { locale: Locale }) {
       document.removeEventListener("pointerdown", outside);
     };
   }, [menu]);
+
+  const toggleWorlds = (target: HTMLButtonElement) => {
+    button.current = target;
+    setMenu((open) => !open);
+  };
+
   return (
-    <header className={s.header}>
+    <header className={`${s.header} ${s.headerV2}`}>
+      <div className={s.headerV2Utility}>
+        <div className={s.headerV2UtilityInner}>
+          <span className={s.headerV2UtilityItem}>
+            <I name="Globe" size={15} />
+            {tr([
+              "A world of discovery for children and families",
+              "Un monde de découvertes pour enfants et familles",
+              "عالم من الاكتشاف للأطفال والعائلات",
+            ], locale)}
+          </span>
+          <span className={s.headerV2UtilityItem}>
+            <I name="Compass" size={15} />
+            {copy("worlds", locale)}
+          </span>
+          <span className={s.headerV2UtilityItem}>
+            <I name="ShieldCheck" size={15} />
+            {copy("noAccount", locale)}
+          </span>
+          <span className={s.headerV2UtilityItem}>
+            <I name="Heart" size={15} />
+            {copy("together", locale)}
+          </span>
+        </div>
+      </div>
+
       <div className={s.headerMain}>
-        <Link
-          href={path(locale)}
-          className={s.logo}
-          aria-label={`KidFlix · ${copy("home", locale)}`}
-        >
-          <img
-            src="/kidflix/kidflix-official-optimized.webp"
-            width={174}
-            height={70}
-            alt="KidFlix"
-            fetchPriority="high"
-          />
-        </Link>
+        <div className={s.headerV2Brand}>
+          <Link
+            href={path(locale)}
+            className={s.logo}
+            aria-label={`KidFlix · ${copy("home", locale)}`}
+          >
+            <img
+              src="/kidflix/kidflix-official-optimized.webp"
+              width={174}
+              height={70}
+              alt="KidFlix"
+              fetchPriority="high"
+            />
+          </Link>
+          <div className={s.headerV2BrandMessage}>
+            <strong>{copy("little", locale)}</strong>
+            <span>{copy("together", locale)}</span>
+          </div>
+        </div>
+
         <div className={s.headerSearch}>
           <SearchBox locale={locale} />
         </div>
+
         <div className={s.headerActions}>
-          <EditionLanguage locale={locale} />
           <Link
             href={path(locale, "/my")}
-            className={s.savedButton}
+            className={`${s.savedButton} ${s.headerV2Saved}`}
             aria-label={j("my", locale)}
           >
-            <I name="Bookmark" />
+            <I name="Bookmark" size={23} />
+            <span className={s.headerV2SavedLabel}>{copy("savedShort", locale)}</span>
             {guest.ready && guest.saved.length > 0 ? (
-              <span>{guest.saved.length}</span>
+              <span className={s.headerV2SavedCount}>{guest.saved.length}</span>
             ) : null}
+          </Link>
+          <div className={s.headerV2Language}>
+            <EditionLanguage locale={locale} />
+          </div>
+          <Link className={s.headerV2CTA} href={path(locale, "/explore")}>
+            {copy("explore", locale)}
+            <I name="ArrowRight" size={17} />
           </Link>
           <button
             ref={button}
             className={s.menuButton}
             aria-expanded={menu}
             aria-controls="kidflix-world-menu"
-            onClick={(e) => {
-              button.current = e.currentTarget;
-              setMenu((v) => !v);
-            }}
+            onClick={(e) => toggleWorlds(e.currentTarget)}
             aria-label={copy("worlds", locale)}
           >
             <I name={menu ? "X" : "Menu"} />
           </button>
         </div>
       </div>
+
       <nav
         className={s.nav}
-        aria-label={tr(
-          ["Main navigation", "Navigation principale", "التنقل الرئيسي"],
-          locale,
-        )}
+        aria-label={tr([
+          "Main navigation",
+          "Navigation principale",
+          "التنقل الرئيسي",
+        ], locale)}
       >
-        <Link href={path(locale)} aria-current={pathname===path(locale)?"page":undefined}>
+        <Link href={path(locale)} aria-current={pathname === path(locale) ? "page" : undefined}>
           <I name="Sun" />
           <span>{copy("home", locale)}</span>
         </Link>
         {INTENTS.map(([key, icon, label]) => (
-          <Link key={key} href={path(locale, "/explore?intent=" + key)} aria-current={query.get("intent")===key?"page":undefined}>
+          <Link
+            key={key}
+            href={path(locale, "/explore?intent=" + key)}
+            aria-current={pathname === path(locale, "/explore") && query.get("intent") === key ? "page" : undefined}
+          >
             <I name={icon} />
             <span>{tr(label, locale)}</span>
           </Link>
         ))}
         <button
-          onClick={(e) => {
-            button.current = e.currentTarget;
-            setMenu((v) => !v);
-          }}
+          onClick={(e) => toggleWorlds(e.currentTarget)}
           aria-expanded={menu}
           aria-controls="kidflix-world-menu"
         >
@@ -156,6 +205,41 @@ function Header({ locale }: { locale: Locale }) {
           <I name="ChevronDown" size={13} />
         </button>
       </nav>
+
+      <div className={s.headerV2WorldRail}>
+        <Link href={path(locale, "/explore")} className={s.headerV2WorldLead}>
+          <span>
+            {tr([
+              "Explore the KidFlix worlds",
+              "Explorez les univers KidFlix",
+              "استكشف عوالم كيدفليكس",
+            ], locale)}
+          </span>
+          <I name="ChevronRight" size={19} />
+        </Link>
+        <div
+          className={s.headerV2WorldTrack}
+          role="navigation"
+          aria-label={copy("worlds", locale)}
+        >
+          {WORLDS.map((world) => (
+            <Link
+              key={world.key}
+              href={path(locale, "/explore/" + world.key)}
+              className={s.headerV2WorldItem}
+              aria-current={pathname === path(locale, "/explore/" + world.key) ? "page" : undefined}
+              style={{
+                "--accent": world.color,
+                "--tint": world.tint,
+              } as React.CSSProperties}
+            >
+              <span className={s.headerV2WorldIcon}><I name={world.icon} size={21} /></span>
+              <span className={s.headerV2WorldLabel}>{tr(world.title, locale)}</span>
+            </Link>
+          ))}
+        </div>
+      </div>
+
       {menu ? (
         <div ref={ref} id="kidflix-world-menu" className={s.mega}>
           <div className={s.megaIntro}>
@@ -174,17 +258,13 @@ function Header({ locale }: { locale: Locale }) {
               <Link
                 href={path(locale, "/explore/" + w.key)}
                 key={w.key}
-                style={
-                  {
-                    "--accent": w.color,
-                    "--tint": w.tint,
-                  } as React.CSSProperties
-                }
+                style={{
+                  "--accent": w.color,
+                  "--tint": w.tint,
+                } as React.CSSProperties}
                 onClick={() => setMenu(false)}
               >
-                <span>
-                  <I name={w.icon} />
-                </span>
+                <span><I name={w.icon} /></span>
                 {tr(w.title, locale)}
                 <I name="ChevronRight" size={14} />
               </Link>
@@ -195,6 +275,7 @@ function Header({ locale }: { locale: Locale }) {
     </header>
   );
 }
+
 function Footer({ locale }: { locale: Locale }) {
   const groups = [
     [
