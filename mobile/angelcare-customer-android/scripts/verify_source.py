@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""R5.1 TWA startup splash + R5 IVR and signing preservation. Static checks only."""
+"""R5.2 approved launcher icon + R5.1 TWA startup splash + R5 IVR and signing preservation. Static checks only."""
 from pathlib import Path
 from xml.etree import ElementTree as ET
 import re
@@ -42,7 +42,7 @@ assert 'angelcare_official_wordmark' in source
 assert (main/'res/drawable-nodpi/angelcare_official_wordmark.png').is_file()
 assert 'https://my.angelcarehub.com/angelcare-marketplace/fr' in (main/'res/values/strings.xml').read_text()
 s=(root/'app/build.gradle').read_text()
-assert re.search(r'versionCode\s+6',s) and re.search(r"versionName\s+'0.5.1'",s)
+assert re.search(r'versionCode\s+7',s) and re.search(r"versionName\s+'0.5.2'",s)
 assert "keyAlias 'angelcare-preview'" in s
 assert "applicationIdSuffix '.preview'" in s
 assert 'signingConfig signingConfigs.angelcarePreview' in s
@@ -81,3 +81,26 @@ print('R5_HOTLINE_MICROPHONE=MARKETPLACE_WEB_LIVEKIT_AUTHORITY_ONLY')
 print('R5_NOTIFICATION_CONSENT=CONFIGURED_FCM_ONLY')
 print('R5_SIGNING_FINGERPRINT_PRESERVED=PASS')
 print('LOCAL_BUILD=NOT_INVOKED')
+
+# R5.2 user-selected real image: adaptive 26+ and legacy PNG layers.
+import hashlib,struct
+approved=root/'assets/APPROVED_ANGELCARE_R5_2_ICON_SOURCE.png'
+expected=(root/'assets/APPROVED_ANGELCARE_R5_2_ICON_SOURCE.sha256').read_text().split()[0]
+assert hashlib.sha256(approved.read_bytes()).hexdigest()==expected, 'APPROVED_ICON_SOURCE_DRIFT'
+def png_size(p):
+    b=p.read_bytes()
+    assert b[:8]==b'\x89PNG\r\n\x1a\n',p
+    return struct.unpack('>II',b[16:24])
+assert png_size(approved)==(1254,1254)
+for q,size in [('mdpi',48),('hdpi',72),('xhdpi',96),('xxhdpi',144),('xxxhdpi',192)]:
+    assert png_size(main/f'res/mipmap-{q}/ic_launcher.png')==(size,size),q
+assert png_size(main/'res/drawable-nodpi/angelcare_approved_adaptive_foreground.png')==(432,432)
+root_icon=ET.parse(main/'res/mipmap-anydpi-v26/ic_launcher.xml').getroot()
+assert root_icon.tag=='adaptive-icon'
+assert root_icon.find('background').get(android+'drawable')=='@color/angelcare_splash_white'
+assert root_icon.find('foreground').get(android+'drawable')=='@drawable/angelcare_approved_adaptive_foreground'
+assert application.get(android+'icon')=='@mipmap/ic_launcher'
+assert application.get(android+'roundIcon')=='@mipmap/ic_launcher'
+print('R5_2_SELECTED_USER_ICON=PASS')
+print('R5_2_ADAPTIVE_ICON=PASS')
+print('R5_2_ANDROID_ONLY_NO_MARKETPLACE_LAYOUT_CHANGES=PASS')
