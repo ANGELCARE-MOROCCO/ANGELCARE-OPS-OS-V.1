@@ -1,0 +1,69 @@
+plugins {
+    id 'com.android.application'
+}
+
+// Stable signing identity remains off-repo. R4 NEVER generates a disposable debug key.
+def previewKeystorePath = System.getenv('ANGELCARE_PREVIEW_KEYSTORE_PATH')
+def previewKeystorePassword = System.getenv('ANGELCARE_PREVIEW_KEYSTORE_PASSWORD')
+// These four CLIENT configuration fields are injected from encrypted GitHub Actions secrets.
+// They are not service-account credentials. When absent, native push enrollment is disabled.
+def publicString = { String name ->
+    def v = System.getenv(name) ?: ''
+    if (!(v ==~ /[A-Za-z0-9._:\-]{0,200}/)) {
+        throw new GradleException("R4_INVALID_FIREBASE_CLIENT_CONFIGURATION: " + name)
+    }
+    return '"' + v + '"'
+}
+
+android {
+    namespace 'com.angelcare.marketplace'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId 'com.angelcare.marketplace'
+        minSdk 24
+        targetSdk 36
+        versionCode 8
+        versionName '0.5.3'
+        buildConfigField 'String', 'FCM_PROJECT_ID', publicString('ANGELCARE_FCM_PROJECT_ID')
+        buildConfigField 'String', 'FCM_APP_ID', publicString('ANGELCARE_FCM_APP_ID')
+        buildConfigField 'String', 'FCM_API_KEY', publicString('ANGELCARE_FCM_API_KEY')
+        buildConfigField 'String', 'FCM_SENDER_ID', publicString('ANGELCARE_FCM_SENDER_ID')
+    }
+    buildFeatures { buildConfig true }
+
+    signingConfigs {
+        angelcarePreview {
+            if (!previewKeystorePath || !previewKeystorePassword) {
+                throw new GradleException('ANGELCARE_PREVIEW_SIGNING_MISSING: restore GitHub Actions signing secrets; no fallback to a runner key')
+            }
+            storeFile file(previewKeystorePath)
+            storeType 'pkcs12'
+            storePassword previewKeystorePassword
+            keyAlias 'angelcare-preview'
+            keyPassword previewKeystorePassword
+        }
+    }
+    buildTypes {
+        debug {
+            applicationIdSuffix '.preview'
+            versionNameSuffix '-preview'
+            debuggable true
+            signingConfig signingConfigs.angelcarePreview
+        }
+        release {
+            minifyEnabled false
+            // Production signing is a separate approval gate. No release APK is published by R4.
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.7.4'
+    implementation platform('com.google.firebase:firebase-bom:35.0.2')
+    implementation 'com.google.firebase:firebase-messaging'
+}
