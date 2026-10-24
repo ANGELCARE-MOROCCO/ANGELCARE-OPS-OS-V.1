@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""R5.2 approved launcher icon + R5.1 TWA startup splash + R5 IVR and signing preservation. Static checks only."""
+"""R5.3 outer Android mask only + R5.1 TWA startup splash + R5 IVR and signing preservation. Static checks only."""
 from pathlib import Path
 from xml.etree import ElementTree as ET
 import re
@@ -42,7 +42,7 @@ assert 'angelcare_official_wordmark' in source
 assert (main/'res/drawable-nodpi/angelcare_official_wordmark.png').is_file()
 assert 'https://my.angelcarehub.com/angelcare-marketplace/fr' in (main/'res/values/strings.xml').read_text()
 s=(root/'app/build.gradle').read_text()
-assert re.search(r'versionCode\s+7',s) and re.search(r"versionName\s+'0.5.2'",s)
+assert re.search(r'versionCode\s+8',s) and re.search(r"versionName\s+'0.5.3'",s)
 assert "keyAlias 'angelcare-preview'" in s
 assert "applicationIdSuffix '.preview'" in s
 assert 'signingConfig signingConfigs.angelcarePreview' in s
@@ -104,3 +104,16 @@ assert application.get(android+'roundIcon')=='@mipmap/ic_launcher'
 print('R5_2_SELECTED_USER_ICON=PASS')
 print('R5_2_ADAPTIVE_ICON=PASS')
 print('R5_2_ANDROID_ONLY_NO_MARKETPLACE_LAYOUT_CHANGES=PASS')
+
+# R5.3: hardcoded squircle/shadow removed, Android OEM mask is the only outer shape.
+def png_color_type(path):
+    b=path.read_bytes()
+    assert b[:8]==b'\x89PNG\r\n\x1a\n'
+    return b[25]
+foreground=main/'res/drawable-nodpi/angelcare_approved_adaptive_foreground.png'
+assert png_color_type(foreground)==6, 'R5_3_FOREGROUND_MUST_BE_RGBA_WITH_ALPHA'
+assert png_size(root/'assets/ANGELCARE_R5_3_LOGO_ONLY_TRANSPARENT.png')==(895,487)
+assert png_color_type(root/'assets/ANGELCARE_R5_3_LOGO_ONLY_TRANSPARENT.png')==6
+assert (root/'assets/APPROVED_ANGELCARE_R5_2_ICON_SOURCE.png').is_file(), 'PRESERVE_USER_APPROVED_ORIGINAL'
+print('R5_3_HARDCODED_SQUIRCLE_REMOVED=PASS')
+print('R5_3_NATIVE_ADAPTIVE_MASK_OWNS_OUTER_CORNER=PASS')
