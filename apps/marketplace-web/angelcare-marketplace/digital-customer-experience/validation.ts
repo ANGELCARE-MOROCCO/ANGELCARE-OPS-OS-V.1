@@ -32,6 +32,13 @@ export function capabilityIssues(
       message: [en, "À corriger : " + en, "يلزم التصحيح: " + en],
       severity: "error",
     });
+  if(record.family === "documents") {
+    for(const key of ["documentUses","documentGrades","documentThemes","documentNeeds"]) {
+      const definition=family?.fields.find(f=>f.key===key),value=d[key];
+      if(value!==undefined&&typeof value!=="string") add(key,"DOCUMENT_CLASSIFICATION","Document classifications must use the native selections.");
+      else if(typeof value==="string"&&value.split(/\r?\n/).filter(Boolean).some(v=>!definition?.options?.includes(v))) add(key,"DOCUMENT_CLASSIFICATION","Choose only the available document classifications.");
+    }
+  }
   if (number(d.definitionVersion, 1) > DEFINITION_VERSION)
     add(
       "definitionVersion",

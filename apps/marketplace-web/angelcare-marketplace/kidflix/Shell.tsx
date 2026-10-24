@@ -1,5 +1,5 @@
 "use client";
-import {useSearchParams} from "next/navigation";
+import {usePathname,useSearchParams} from "next/navigation";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { WORLDS, path, tr, type Locale } from "./catalogue";
@@ -8,8 +8,11 @@ import { I } from "./Icons";
 import { GuestProvider } from "./continuity";
 import s from "./kidflix.module.css";
 import r from "./reference-shell.module.css";
+import {DocumentsHeader,DocumentsFooter,DocumentsSettingsProvider} from "./documents/DocumentShell";
 import { ReferenceFooter } from "./ReferenceFooter";
 import { PremiumHeader } from "./PremiumHeader";
+import {HomeHeader,HomeFooter} from "./home-reference/HomeShell";
+import hs from "./home-reference/home.module.css";
 import { Navigation } from "./Navigation";
 import { navigateKidFlix } from "./navigation-events";
 import { interpretSearch } from "./journey/contract";
@@ -61,14 +64,16 @@ function Header({ locale }: { locale: Locale }) {
 function Content({
   locale,
   children,
+  variant,
 }: {
   locale: Locale;
   children: ReactNode;
+  variant?:"documents"|"home";
 }) {
-  const personal = usePersonal();
+  const personal = usePersonal(),pathname=usePathname(),home=variant==="home"||/^\/kidflix\/(en|fr|ar)\/?$/.test(pathname||""),documents=variant==="documents"||/^\/kidflix\/(en|fr|ar)\/explore\/documents\/?$/.test(pathname||"");
   return (
     <div
-      className={`${s.root} ${r.shell}`}
+      className={`${s.root} ${r.shell} ${home?hs.homeShell:""}`}
       lang={locale}
       dir={locale === "ar" ? "rtl" : "ltr"}
       data-kidflix-shell
@@ -79,7 +84,7 @@ function Content({
           locale,
         )}
       </a>
-      <Header locale={locale} />
+      {home?<HomeHeader locale={locale}/>:documents?<DocumentsHeader locale={locale}/>:<Header locale={locale} />}
       <main id="kidflix-content">
         {personal.error ? (
           <p className={js.notice} role="status">
@@ -88,7 +93,7 @@ function Content({
         ) : null}
         {children}
       </main>
-      <ReferenceFooter locale={locale} />
+      {home?<HomeFooter locale={locale}/>:documents?<DocumentsFooter locale={locale}/>:<ReferenceFooter locale={locale} />}
       <Navigation locale={locale} />
     </div>
   );
@@ -96,13 +101,15 @@ function Content({
 export function KidFlixShell({
   locale,
   children,
+  variant,
 }: {
   locale: Locale;
   children: ReactNode;
+  variant?:"documents"|"home";
 }) {
   return (
     <GuestProvider>
-      <Content locale={locale}>{children}</Content>
+      <DocumentsSettingsProvider><Content locale={locale} variant={variant}>{children}</Content></DocumentsSettingsProvider>
     </GuestProvider>
   );
 }

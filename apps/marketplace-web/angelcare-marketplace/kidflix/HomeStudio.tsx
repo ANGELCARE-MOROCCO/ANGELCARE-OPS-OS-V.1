@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import {
   defaultHome,
   normalizeEdition,
-  SECTIONS,
   WORLDS,
   locales,
   tr,
@@ -31,11 +30,16 @@ import {
 } from "../digital-customer-experience/components/ui";
 import s from "../digital-customer-experience/components/workspace.module.css";
 import { KidFlixDefaults } from "./journey/Operator";
+import {homeScenes,HOME_SECTIONS as SECTIONS} from "./home-reference/content";
+function referenceEdition(value: unknown,locale: Locale): HomeEdition {
+ const edition=normalizeEdition(value,locale);
+ return {...edition,sections:edition.sections.filter(key=>(SECTIONS as readonly string[]).includes(key)),gallery:homeScenes(edition)};
+}
 export function KidFlixHomeStudio() {
   const { locale, boot, notify } = useUI(),
     q = useQuery<any>({ op: "kidflix_home" }, null),
     [language, setLanguage] = useState<Locale>("en"),
-    [edition, setEdition] = useState<HomeEdition>(defaultHome("en").edition),
+    [edition, setEdition] = useState<HomeEdition>(()=>referenceEdition(defaultHome("en").edition,"en")),
     [host, setHost] = useState("my.angelcarehub.com"),
     [record, setRecord] = useState<any>(null),
     [draftHash, setHash] = useState(""),
@@ -60,7 +64,7 @@ export function KidFlixHomeStudio() {
     const r = q.value.record;
     setRecord(r);
     setEdition(
-      normalizeEdition(r?.data?.draft?.[language]?.edition || defaultHome(language).edition, language),
+      referenceEdition(r?.data?.draft?.[language]?.edition || defaultHome(language).edition, language),
     );
     setHost(r?.data?.draftHost || r?.data?.liveHost || "my.angelcarehub.com");
     setHash(q.value.draftHashes?.[language] || "");
@@ -395,9 +399,9 @@ export function KidFlixHomeStudio() {
           <p className={s.subtitle}>
             <T
               v={[
-                "Inventory sections disappear when no resources are published. Gateways remain useful.",
-                "Les sections de catalogue disparaissent sans ressource publiée. Les passerelles restent utiles.",
-                "تختفي أقسام المحتوى عند عدم وجود موارد منشورة وتبقى بوابات الاكتشاف مفيدة.",
+                "Published resources use their real previews. Otherwise, illustrated topic searches keep discovery useful.",
+                "Les ressources publiées montrent leurs vrais aperçus. Les recherches illustrées restent disponibles.",
+                "تعرض الموارد المنشورة معايناتها الحقيقية، وتبقى بطاقات البحث المصوّرة مفيدة للاكتشاف.",
               ]}
             />
           </p>
@@ -670,7 +674,7 @@ export function KidFlixHomeStudio() {
           </p>
           {previewError?<div role="alert">{previewError}<Button onClick={()=>void showPreview()}><T v={["Retry","Réessayer","حاول مجدداً"]}/></Button></div>:null}
           {previewBusy?<p role="status">KidFlix…</p>:null}
-          <KidFlixShell locale={language}>
+          <KidFlixShell locale={language} variant="home">
             <KidFlixHome
               locale={language}
               config={{

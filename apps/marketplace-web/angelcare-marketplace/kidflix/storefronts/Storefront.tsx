@@ -1,4 +1,6 @@
-'use client';
+"use client";
+import {previewDocuments}from "../documents/model";
+import {DocumentsStorefront}from "../documents/DocumentsStorefront";
 import {Fragment,useEffect,useRef,useState,type CSSProperties}from 'react';
 import Link from 'next/link';
 import {path,world,WORLDS,tr,type Locale}from '../catalogue';
@@ -50,6 +52,7 @@ function Quick({item,locale,onClose}:{item:Item;locale:Locale;onClose:()=>void})
 
 /** Added publisher body. Native resource, catalogue, preview and form behavior remains inside NativeStorefront. */
 export function Storefront(props:Parameters<typeof NativeStorefront>[0]){
+ if(props.family==='documents'&&props.initial.documents)return <DocumentsStorefront preview={Boolean(props.previewEdition)} locale={props.locale} initial={props.previewEdition?previewDocuments(props.initial.documents,props.previewEdition,props.initial.documentsPortraits):props.initial.documents} initialFilters={props.initialFilters}/>;
  const nativeWorld=world(props.family)!;
  return <PublisherFrame family={props.family} locale={props.locale} accent={nativeWorld.color} tint={nativeWorld.tint}><NativeStorefront {...props}/></PublisherFrame>;
 }

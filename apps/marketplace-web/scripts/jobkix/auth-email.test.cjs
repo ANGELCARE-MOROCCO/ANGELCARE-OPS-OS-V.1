@@ -22,6 +22,15 @@ test('JOBKIX dispatcher preserves every existing customer email body byte for by
   assert.equal(jobkix.jobkixAuthLocale(input),null);const {link,...message}=current.composeAuthEmail(input,config);assert.equal(crypto.createHash('sha256').update(JSON.stringify(message)).digest('hex'),baseline.cases[locale+':'+action]);
  }
 });
+test('employer confirmation emails retain explicit role even when returning to a public page',()=>{
+ for(const locale of ['en','fr','es','hi','tl','id','ar']){
+  const input=job(locale),destination=new URL(input.payload.email_data.redirect_to);destination.searchParams.set('intent','hirer');input.payload.email_data.redirect_to=destination.href;
+  const message=jobkix.composeJobkixAuthEmail(input,config);
+  // The delivered JOBKIX link is in the authored body; native.link retains native authority.
+  const delivered=new URL(message.text.match(/https:\/\/[^\s]+/)[0]);
+  assert.equal(delivered.searchParams.get('intent'),'hirer');assert.equal(delivered.searchParams.get('next'),destination.searchParams.get('next'));
+ }
+});
 test('JOBKIX rendering rejects unsafe origins, tokens, unrelated callbacks and mismatched actions',()=>{
  let input=job('en');input.payload.email_data.redirect_to='https://attacker.invalid/jobkix/en/auth/callback';assert.throws(()=>jobkix.composeJobkixAuthEmail(input,config),/REDIRECT_NOT_ALLOWED/);
  input=job('en');input.payload.email_data.token_hash='bad';assert.throws(()=>jobkix.composeJobkixAuthEmail(input,config),/TOKEN_HASH_INVALID/);

@@ -1,3 +1,4 @@
+import {USES as DOCUMENT_USES,GRADES as DOCUMENT_GRADES,THEMES as DOCUMENT_THEMES,NEEDS as DOCUMENT_NEEDS,SUBJECTS as DOCUMENT_SUBJECTS,USE_KEYS}from "../kidflix/documents/model";
 import { enrichDetailExperience } from "./detail-experience";
 import { actionCapabilities } from "./action-contract";
 import { SUBTYPES } from "./reference-model";
@@ -133,6 +134,11 @@ const additions: Record<
 > = {
   documents: {
     fields: [
+      {...field("documentUses","Document uses","Usages du document","استخدامات الوثيقة","textarea"),options:USE_KEYS,optionLabels:Object.fromEntries([...DOCUMENT_USES,{key:'routines',title:['Routines','Routines','الروتين'] as const}].map(x=>[x.key,x.title])),hint:["Select all verified uses. No classification is inferred from the title.","Sélectionnez les usages vérifiés. Aucun classement déduit du titre.","حدد الاستخدامات المؤكدة. لا يستنتج التصنيف من العنوان."]},
+      {...field("documentGrades","Published grade levels","Niveaux scolaires publiés","المستويات الدراسية المنشورة","textarea"),options:DOCUMENT_GRADES.map(x=>x.key),optionLabels:Object.fromEntries(DOCUMENT_GRADES.map(x=>[x.key,x.title]))},
+      {...field("documentThemes","Document themes and seasons","Thèmes et saisons","مواضيع الوثيقة ومواسمها","textarea"),options:DOCUMENT_THEMES.map(x=>x.key),optionLabels:Object.fromEntries(DOCUMENT_THEMES.map(x=>[x.key,x.title]))},
+      {...field("documentNeeds","Document purposes","Besoins couverts","احتياجات الوثيقة","textarea"),options:DOCUMENT_NEEDS.map(x=>x.key),optionLabels:Object.fromEntries(DOCUMENT_NEEDS.map(x=>[x.key,x.title]))},
+      select("documentSubject","Document subject","Matière documentaire","مادة الوثيقة",DOCUMENT_SUBJECTS.map(x=>x.key),{optionLabels:Object.fromEntries(DOCUMENT_SUBJECTS.map(x=>[x.key,x.title]))}),
       select(
         "readingWidth",
         "Reading width",

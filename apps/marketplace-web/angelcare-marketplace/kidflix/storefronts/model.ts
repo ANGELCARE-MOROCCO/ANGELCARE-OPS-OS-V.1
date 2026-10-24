@@ -1,3 +1,4 @@
+import {normalizeTestimonials,normalizeDocumentSocialLinks,type DocumentsData}from "../documents/model";
 import {LEGACY_THEMES} from "./publisher-legacy";
 import {publisherProfile,say} from "./publisher-content";
 import {normalizePublisherImages,publisherBindingSlot,upgradeFactoryGallery} from "./publisher-assets";
@@ -9,6 +10,8 @@ export const SECTIONS = ['collections','subjects','catalogue','guide','related']
 export type Section = typeof SECTIONS[number];
 export const REFERENCE_STOREFRONT_ORDER:Section[]=['catalogue','collections','subjects','guide','related'];
 export interface Edition extends PublisherImages {
+  documentsTestimonials?:Record<string,unknown>[];
+  documentsSocialLinks?:Record<string,string>;
   gallery:Scene[];
   eyebrow:string; headline:string; description:string; hero:string; heroAlt:string;
   guidance:string; guidanceAlt:string; guidanceTitle:string; guidanceBody:string;
@@ -18,7 +21,7 @@ export interface Edition extends PublisherImages {
 }
 export type Facts = { counts:Record<string,number>; formats:string[]; narration:boolean; captions:boolean; transcript:boolean; editable:boolean; certificate:boolean };
 export type Item = Resource & { facts:Facts };
-export interface StorefrontData { catalogue:Omit<Catalogue,'rows'> & {rows:Item[]}; facets:Record<string,string[]>; edition:Edition; configured:boolean; curated:Item[]; }
+export interface StorefrontData { catalogue:Omit<Catalogue,'rows'> & {rows:Item[]}; facets:Record<string,string[]>; edition:Edition; configured:boolean; curated:Item[]; documents?:DocumentsData; documentsPortraits?:Record<string,string>; }
 export const familyKey=(family:string)=>'kidflix-storefront-'+family;
 export const keyOK=(s:string)=>/^[a-z0-9][a-z0-9._-]{1,119}$/.test(s);
 export const titles:Record<Section,Tri>={collections:['Handpicked discoveries','Découvertes choisies','اكتشافات مختارة'],subjects:['Follow your curiosity','Suivez votre curiosité','اتبع فضولك'],catalogue:['Your next discovery starts here','Votre prochaine découverte commence ici','اكتشافك القادم يبدأ هنا'],guide:['Make it your kind of moment','À chacun sa belle découverte','لحظتك الجميلة بطريقتك'],related:['Keep the discovery going','Prolongez la découverte','واصل الاكتشاف']};
@@ -61,6 +64,7 @@ export function normalize(v:unknown,locale:Locale,family:string):Edition {
  const allKeys=new Set([...(Array.isArray(x.featured)?x.featured:[]),...(Array.isArray(x.collections)?x.collections:[]).flatMap((c:any)=>Array.isArray(c.keys)?c.keys:[])]);if(allKeys.size>96)throw Error('Choose at most 96 unique resources for one edition.');
  const old=LEGACY_THEMES[family],profile=publisherProfile(family);
  if(old){if(edition.eyebrow===tr(old.tag,locale))edition.eyebrow='KidFlix · '+tr(w.short,locale);if(edition.headline===tr(old.title,locale))edition.headline=say(profile.title,locale);if(edition.description===tr(old.body,locale))edition.description=say(profile.intro,locale);if(edition.guidanceTitle===tr(old.tips[0],locale))edition.guidanceTitle=say(profile.steps[0],locale);if(edition.guidanceBody===tr(old.body,locale))edition.guidanceBody=say(profile.intro,locale);}
+ if(family==='documents'){edition.documentsTestimonials=normalizeTestimonials(x.documentsTestimonials);edition.documentsSocialLinks=normalizeDocumentSocialLinks(x.documentsSocialLinks);}
  return {...edition,...normalizePublisherImages(x,edition.mediaBindings,family,locale,safeImage)} as Edition;
 }
 export const blankFacts=():Facts=>({counts:{},formats:[],narration:false,captions:false,transcript:false,editable:false,certificate:false});

@@ -16,7 +16,7 @@ export function customerReturnTo(value: unknown, locale: CatalogLocale): string 
     for (let i = 0; i < 6; i++) { const next = decodeURIComponent(decoded); if (next === decoded) break; decoded = next }
     if (/[\\\u0000-\u0020\u007f]/.test(decoded) || decoded.includes('//') || /%[\da-f]{2}/i.test(decoded)) return fallback
     const normalized = new URL(decoded, 'https://customer.invalid')
-    const allowed = /^\/angelcare-marketplace\/(fr|en|ar)(?:\/|$)/
+    const allowed = /^(?:\/angelcare-marketplace\/(fr|en|ar)(?:\/|$)|\/kidflix\/(en|fr|ar)\/(?:explore\/documents|saved|my)\/?$)/
     const forbidden = /^\/angelcare-marketplace\/(fr|en|ar)\/(auth|admin|provider|trainer|workspace|access-denied)(?:\/|$)/
     if (!candidate.startsWith('/') || url.origin !== 'https://customer.invalid' || normalized.origin !== url.origin || !allowed.test(url.pathname) || !allowed.test(normalized.pathname) || forbidden.test(url.pathname) || forbidden.test(normalized.pathname)) return fallback
     return url.pathname + url.search
@@ -28,7 +28,7 @@ export function customerAuthHref(locale: CatalogLocale, mode: CustomerAuthMode |
 }
 
 export function customerLocaleReturnTo(value: unknown, locale: CatalogLocale): string {
-  return customerReturnTo(value, locale).replace(/^\/angelcare-marketplace\/(fr|en|ar)(?=\/|$)/, `/angelcare-marketplace/${locale}`)
+  return customerReturnTo(value, locale).replace(/^\/kidflix\/(fr|en|ar)(?=\/|$)/, `/kidflix/${locale}`).replace(/^\/angelcare-marketplace\/(fr|en|ar)(?=\/|$)/, `/angelcare-marketplace/${locale}`)
 }
 
 export function passwordChecks(value: string): readonly boolean[] {

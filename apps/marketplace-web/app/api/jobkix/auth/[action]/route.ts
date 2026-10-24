@@ -4,6 +4,7 @@ import { requestJson,requestOrigin,failure,PRIVATE_HEADERS } from '@/angelcare-m
 import { locale,text } from '@/angelcare-marketplace/jobkix/validation';
 import { href,safeReturnTo } from '@/angelcare-marketplace/jobkix/routes';
 import { accountTerms } from '@/angelcare-marketplace/jobkix/server/repository';
+import { authContext } from '@/angelcare-marketplace/jobkix/auth-navigation';
 export const runtime='nodejs';
 export const dynamic='force-dynamic';
 export async function POST(request:Request,{params}:{params:Promise<{action:string}>}){
@@ -11,12 +12,13 @@ export async function POST(request:Request,{params}:{params:Promise<{action:stri
   const {action}=await params,input=await requestJson(request,16000),lang=locale(input.locale);
   const intent=input.intent==='hirer'?'hirer':'candidate';
   const next=safeReturnTo(input.returnTo,lang,intent==='hirer'?'hiring':'career');
-  const callback=new URL(href(lang,'auth/callback'),requestOrigin(request));callback.searchParams.set('next',next);
+  const callback=new URL(href(lang,'auth/callback'),requestOrigin(request));callback.search=authContext(lang,intent,next).toString();
   const client=await createUserClient();
   const email=()=>{const value=text(input.email,'email',3,320).toLowerCase();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))throw new JobkixFault('INVALID_INPUT',{email:'email'});return value;};
   const password=()=>text(input.password,'password',12,200);
   let error:{status?:number;code?:string}|null=null;
   if(action==='sign-up'){
+   callback.searchParams.set('type','signup');
    if(input.accepted!==true||input.adultConfirmed!==true)throw new JobkixFault('INVALID_INPUT',{accepted:'consent_required'});
    const terms=await accountTerms(lang);if(!terms)throw new JobkixFault('DEPENDENCY_UNAVAILABLE');if(input.consentRevision!==terms.revision)throw new JobkixFault('VERSION_CONFLICT');
    const result=await client.auth.signUp({email:email(),password:password(),options:{emailRedirectTo:callback.href,data:{full_name:text(input.fullName,'fullName',1,180),jobkix_locale:lang,jobkix_intent:intent,jobkix_account_consent_revision:terms.revision}}});error=result.error;
@@ -30,9 +32,11 @@ export async function POST(request:Request,{params}:{params:Promise<{action:stri
     return Response.json({ok:true,next:account.data?next:href(lang,'onboarding',new URLSearchParams({intent,next}))},{headers:PRIVATE_HEADERS});
    }
   }else if(action==='recovery'){
-   callback.searchParams.set('next',href(lang,'auth/reset'));
+   callback.searchParams.set('type','recovery');
+   callback.searchParams.set('next',href(lang,'auth/reset',authContext(lang,intent,next)));
    const result=await client.auth.resetPasswordForEmail(email(),{redirectTo:callback.href});error=result.error;
   }else if(action==='resend'){
+   callback.searchParams.set('type','signup');
    const result=await client.auth.resend({type:'signup',email:email(),options:{emailRedirectTo:callback.href}});error=result.error;
   }else if(action==='reset'){
    const actor=await client.auth.getUser();if(actor.error||!actor.data.user)throw new JobkixFault('AUTHENTICATION_REQUIRED');

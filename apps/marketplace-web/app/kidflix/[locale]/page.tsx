@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { isLocale } from "@/angelcare-marketplace/kidflix/catalogue";
 import { loadHome } from "@/angelcare-marketplace/kidflix/server";
+import { loadDocuments } from "@/angelcare-marketplace/kidflix/documents/server";
 import { KidFlixHome } from "@/angelcare-marketplace/kidflix/Home";
 export const dynamic = "force-dynamic";
 export async function generateMetadata({
@@ -32,6 +33,6 @@ export default async function HomePage({
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const h = await headers(),
-    value = await loadHome(h.get("host") || "", locale);
-  return <KidFlixHome locale={locale} {...value} />;
+    [value,documents] = await Promise.all([loadHome(h.get("host") || "", locale),loadDocuments(h.get("host") || "",locale)]);
+  return <KidFlixHome locale={locale} {...value} documents={documents} />;
 }

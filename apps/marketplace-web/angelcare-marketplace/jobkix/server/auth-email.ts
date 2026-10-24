@@ -2,7 +2,7 @@ import { composeAuthEmail,escapeHtml,type AuthEmailJob,type EmailConfig } from '
 import { isLocale,type Locale } from '../contracts';
 import { e } from '../experience-copy';
 import { t,direction } from '../i18n';
-import { safeReturnTo } from '../routes';
+import { authIntent,authContext } from '../auth-navigation';
 /** Dispatch only explicit JOBKIX callback journeys. Other identity contexts retain their renderer. */
 export function jobkixAuthLocale(job:AuthEmailJob):Locale|null {
  try{const destination=new URL(job.payload.email_data.redirect_to||'');const match=/^\/jobkix\/([^/]+)\/auth\/callback$/.exec(destination.pathname);return match&&isLocale(match[1])?match[1]:null;}catch{return null;}
@@ -24,7 +24,7 @@ export function composeJobkixAuthEmail(job:AuthEmailJob,config:EmailConfig){
  if(!native.link)throw Error('AUTH_EMAIL_JOBKIX_LINK_MISSING');
  const token=new URL(native.link).searchParams.get('token');if(!token)throw Error('AUTH_EMAIL_JOBKIX_LINK_MISSING');
  const callback=new URL(destination.pathname,destination.origin);
- callback.searchParams.set('next',safeReturnTo(destination.searchParams.get('next'),locale));
+ callback.search=authContext(locale,authIntent(destination.searchParams.get('intent'),destination.searchParams.get('next')),destination.searchParams.get('next')).toString();
  callback.searchParams.set('token_hash',token);callback.searchParams.set('type',job.action);
  const link=callback.href;
  const label=job.action==='recovery'?t(locale,'resetPassword'):job.action==='signup'?e(locale,'confirmation'):t(locale,'continue');

@@ -1,3 +1,4 @@
+import {loadDocuments}from "../documents/server";
 import {bindingURL} from "../gallery-contract";
 import { createHash } from "node:crypto";
 import { createServiceClient } from "@/lib/supabase/server";
@@ -62,7 +63,11 @@ export async function kidflixStorefrontPreview(c:Context,family:string,locale:Lo
  authorize(c,'view');if(!world(family)||!isLocale(locale))throw new MarketplaceError('VALIDATION_ERROR','Choose a native family and language.');
  const home=await kidflixRead(c),host=home.record?.data?.liveHost;
  if(!host)return {catalogue:{...emptyCatalogue},facets:{},edition:defaults(family,locale),configured:false,curated:[]};
- return getStorefront(host,locale,family);
+ const value=await getStorefront(host,locale,family);if(family!=='documents')return value;
+ const record=await current(c,family),ids=[...new Set<string>((record?.data?.draft?.[locale]?.edition?.documentsTestimonials||[]).map((t:any)=>t.portraitAssetId).filter(Boolean))];
+ const resolved=await Promise.allSettled(ids.map(async id=>{const result=await native(c,'media',{id});const a=result.rows?.find((v:any)=>v.id===id);return a?.mime?.startsWith('image/')&&(!a.expiresAt||Date.parse(a.expiresAt)>Date.now())?[id,a.url]as const:null;}));
+ const portraits=Object.fromEntries(resolved.flatMap(r=>r.status==='fulfilled'&&r.value?[r.value]:[]));
+ return{...value,documents:await loadDocuments(host,locale),documentsPortraits:portraits};
 }
 export async function kidflixStorefrontSelection(c:Context,family:string,locale:Locale,raw:string){
  authorize(c,'view');const keys=raw?raw.split(','):[];
@@ -167,7 +172,7 @@ export async function kidflixStorefrontCommand(c: Context, cmd: any) {
     mediaIds = [
       ...new Set(
         selectedEditions.flatMap(
-          (v) => Object.values(obj(obj(v).mediaBindings)) as string[],
+          (v:any) => [...Object.values(obj(obj(v).mediaBindings)),...(Array.isArray(v.documentsTestimonials)?v.documentsTestimonials.map((t:any)=>t.portraitAssetId).filter(Boolean):[])] as string[],
         ),
       ),
     ];
@@ -193,8 +198,12 @@ export async function kidflixStorefrontCommand(c: Context, cmd: any) {
         );
     }
   }
+  if(family==='documents'&&(action==='kidflix_storefront_save'||action==='kidflix_storefront_publish')) {
+    const selected=obj(action==='kidflix_storefront_save'?draft[locale]:live[locale]).edition;
+    for(const t of selected.documentsTestimonials||[]) if(t.portraitAssetId) {const result=await native(c,'media',{id:t.portraitAssetId});const asset=result.rows?.find((v:any)=>v.id===t.portraitAssetId);if(!asset?.mime?.startsWith('image/')||(asset.expiresAt&&Date.parse(asset.expiresAt)<=Date.now()))throw new MarketplaceError('DEPENDENCY_BLOCKED','Choose a current approved native portrait.');}
+  }
   const db = await createServiceClient();
-  const keys=[...new Set(selectedEditions.flatMap((e:any)=>[...(e.featured||[]),...(e.collections||[]).flatMap((g:any)=>g.keys||[])]))];
+  const keys=[...new Set(selectedEditions.flatMap((e:any)=>[...(e.featured||[]),...(e.collections||[]).flatMap((g:any)=>g.keys||[]),...(e.documentsTestimonials||[]).map((t:any)=>t.resourceKey).filter(Boolean)]))];
   const references:string[]=[];
   if(keys.length){
     let q=db.from('ac_dce_records').select('id,key,family,kind,lifecycle').in('key',keys).eq('family',family).in('kind',['experience','bundle']).neq('lifecycle','archived');
@@ -202,7 +211,7 @@ export async function kidflixStorefrontCommand(c: Context, cmd: any) {
     const found=await q;if(found.error||keys.some(k=>!found.data?.some((r:any)=>r.key===k)))throw new MarketplaceError('DEPENDENCY_BLOCKED','Every selected resource must belong to this native family and scope.');
     references.push(...found.data.map((r:any)=>r.id));
     if(action==='kidflix_storefront_publish'){
-      const selected=obj(live[locale]).edition,required=[...new Set([...(selected.featured||[]),...(selected.collections||[]).flatMap((g:any)=>g.keys||[])])];
+      const selected=obj(live[locale]).edition,required=[...new Set([...(selected.featured||[]),...(selected.collections||[]).flatMap((g:any)=>g.keys||[]),...(selected.documentsTestimonials||[]).map((t:any)=>t.resourceKey).filter(Boolean)])];
       const ids=found.data.filter((r:any)=>required.includes(r.key)).map((r:any)=>r.id);
       if(ids.length){const e=await db.from('ac_dce_editions').select('record_id,active_release_id').eq('locale',locale).in('record_id',ids);
       if(e.error||ids.some((id:string)=>!e.data?.some((v:any)=>v.record_id===id&&v.active_release_id)))throw new MarketplaceError('DEPENDENCY_BLOCKED','Publish each curated resource in this language before publishing its storefront.');

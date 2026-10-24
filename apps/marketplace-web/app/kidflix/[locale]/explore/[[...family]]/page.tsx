@@ -1,3 +1,6 @@
+import {DocumentsStorefront}from "@/angelcare-marketplace/kidflix/documents/DocumentsStorefront";
+import {loadDocuments}from "@/angelcare-marketplace/kidflix/documents/server";
+import {documentFilters}from "@/angelcare-marketplace/kidflix/documents/model";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import {
@@ -39,6 +42,7 @@ export default async function ExplorePage({
     };
   } catch {}
   const h = await headers();
+  if(family==="documents"){let documentInput;try{documentInput=documentFilters(source);}catch{notFound();}return <DocumentsStorefront locale={locale} initial={await loadDocuments(h.get("host")||"",locale,documentInput)} initialFilters={documentInput}/>;}
   if(family){const initial=await loadStorefront(h.get("host")||"",locale,family,f);return <Storefront family={family} locale={locale} initial={initial} initialFilters={f}/>;}
   let initial;
   try {

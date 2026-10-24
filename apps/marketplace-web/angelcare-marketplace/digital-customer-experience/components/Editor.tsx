@@ -828,6 +828,10 @@ export function Editor({
         };
     }
     const label = tr(def.label, locale);
+    if (def.type === "textarea" && def.key.startsWith("document") && def.options?.length) {
+      const selected = text(value).split(/\r?\n/).filter(Boolean);
+      return <Field path={path || def.key} label={label} hint={def.hint && tr(def.hint,locale)}><div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))",gap:8}}>{def.options.map(option=><label key={option} style={{display:"flex",alignItems:"center",gap:7,fontSize:13,padding:8,border:"1px solid #dce6f2",borderRadius:7}}><input type="checkbox" disabled={readOnly} checked={selected.includes(option)} onChange={e=>onChange((e.target.checked?[...selected,option]:selected.filter(v=>v!==option)).join('\n'))}/>{def.optionLabels?.[option]?tr(def.optionLabels[option],locale):option}</label>)}</div></Field>;
+    }
     if (def.type === "toggle")
       return (
         <div data-dce-path={path || def.key}>
