@@ -1,8 +1,9 @@
 "use client";
+import p from "./production.module.css";
 import { explainIssue } from "../operator-guidance";
 import { EditionMedia, EditionAdvertising } from "./OperatorDesk";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   certificatePolicy,
   OUTCOMES,
@@ -40,6 +41,8 @@ export function DeliveryStudio({
   dirty,
   readOnly,
   onChange,
+  focusPath,
+  onLocate,
 }: {
   record: Partial<DceRecord>;
   language: Locale;
@@ -47,6 +50,8 @@ export function DeliveryStudio({
   dirty: boolean;
   readOnly: boolean;
   onChange: (patch: Data) => void;
+  focusPath?: string;
+  onLocate?: (path: string) => void;
 }) {
   const { locale, boot, refresh, notify, preview, open } = useUI(),
     [tab, setTab] = useState("editions"),
@@ -60,6 +65,10 @@ export function DeliveryStudio({
     mutate = useReceiptMutation(),
     d = object(record.data),
     policy = certificatePolicy(d);
+  useEffect(() => {
+    if (focusPath?.startsWith("outputs")) setTab("actions");
+    else if (focusPath?.startsWith("certificatePolicy")) setTab("certificate");
+  }, [focusPath]);
   const q = useQuery<any>(
       record.id
         ? { op: "master_editions", id: record.id, revision: record.revision }
@@ -202,6 +211,82 @@ export function DeliveryStudio({
                 />
               </div>
             )}
+            <div className={p.bulkReceipt}>
+              <strong>
+                <T
+                  v={[
+                    "Selected-language production path",
+                    "Parcours de production de la langue sélectionnée",
+                    "مسار إنتاج اللغة المحددة",
+                  ]}
+                />
+              </strong>
+              <div className={p.pipeline}>
+                {[
+                  [
+                    Boolean(record.id) && !dirty,
+                    ["Saved revision", "Version enregistrée", "نسخة محفوظة"],
+                  ],
+                  [
+                    !dirty && ready.value.validation?.valid,
+                    ["Native checks", "Contrôles natifs", "الفحوص الأصلية"],
+                  ],
+                  [
+                    !dirty &&
+                      ["review", "approved", "published"].includes(
+                        selected?.state,
+                      ),
+                    ["Review", "Revue", "المراجعة"],
+                  ],
+                  [
+                    !dirty &&
+                      (selected?.approvalCurrent ||
+                        selected?.state === "published"),
+                    ["Approval", "Approbation", "الاعتماد"],
+                  ],
+                ].map(([done, label], i) => (
+                  <span key={i}>
+                    {done ? "✓" : "○"} {tr(label as any, locale)}
+                  </span>
+                ))}
+              </div>
+              <p>
+                {selected?.activeReleaseId
+                  ? tr(
+                      [
+                        "A published edition exists. Working-draft changes follow a new review; they do not replace the live release automatically.",
+                        "Une édition publiée existe. Les modifications du brouillon nécessitent une nouvelle revue ; elles ne remplacent pas automatiquement la version publique.",
+                        "توجد نسخة منشورة. تتطلب تغييرات المسودة مراجعة جديدة ولا تستبدل الإصدار العام تلقائياً.",
+                      ],
+                      locale,
+                    )
+                  : tr(
+                      [
+                        "No active language release is reported. A prepared or approved draft is not a public publication.",
+                        "Aucune édition active n’est signalée. Un brouillon préparé ou approuvé n’est pas une publication publique.",
+                        "لم يبلغ عن إصدار لغوي نشط. المسودة المحضرة أو المعتمدة ليست نشراً عاماً.",
+                      ],
+                      locale,
+                    )}
+              </p>
+              {!boot.actor.rights.publish && (
+                <p>
+                  <T
+                    v={[
+                      "Your role can prepare the dossier. Approval, release and scheduling require the native publishing permission.",
+                      "Votre rôle permet la préparation. L’approbation, la publication et la planification nécessitent la permission native de publication.",
+                      "يمكن لدورك تحضير الملف. يتطلب الاعتماد والنشر والجدولة إذن النشر الأصلي.",
+                    ]}
+                  />
+                </p>
+              )}
+            </div>
+            <EditionChangeReview
+              record={record}
+              language={language}
+              dirty={dirty}
+              onLocate={onLocate}
+            />
             <div className={s.scenarioGrid}>
               {q.value.rows.map((e: any) => (
                 <button
@@ -288,12 +373,14 @@ export function DeliveryStudio({
                         · {explainIssue(record, e, locale).message}{" "}
                         <Button
                           onClick={() =>
-                            record.id &&
-                            open(
-                              record.id,
-                              explainIssue(record, e, locale).tab,
-                              language,
-                            )
+                            onLocate
+                              ? onLocate(e.path)
+                              : record.id &&
+                                open(
+                                  record.id,
+                                  explainIssue(record, e, locale).tab,
+                                  language,
+                                )
                           }
                         >
                           <T
@@ -488,6 +575,7 @@ export function DeliveryStudio({
               ))}
             </div>
             <Switch
+              path={"downloadAllowed"}
               disabled={readOnly}
               value={d.downloadAllowed === true}
               onChange={(downloadAllowed) => onChange({ downloadAllowed })}
@@ -514,6 +602,7 @@ export function DeliveryStudio({
             }
             actions={
               <Button
+                path="outputs"
                 disabled={readOnly}
                 icon="Plus"
                 onClick={() =>
@@ -537,9 +626,14 @@ export function DeliveryStudio({
             }
           >
             {array(d.outputs).map((o) => (
-              <section className={s.rowCard} key={text(o.id)}>
+              <section
+                className={s.rowCard}
+                key={text(o.id)}
+                data-dce-path={"outputs." + text(o.id)}
+              >
                 <div className={s.formGrid}>
                   <Field
+                    path={"outputs." + text(o.id) + ".label"}
                     label={
                       <T
                         v={["Public label", "Libellé public", "التسمية العامة"]}
@@ -570,7 +664,10 @@ export function DeliveryStudio({
                       }
                     />
                   </Field>
-                  <Field label="Format">
+                  <Field
+                    path={"outputs." + text(o.id) + ".mime"}
+                    label="Format"
+                  >
                     <select
                       disabled={readOnly}
                       value={text(o.mime)}
@@ -583,6 +680,7 @@ export function DeliveryStudio({
                     </select>
                   </Field>
                   <Field
+                    path={"outputs." + text(o.id) + ".scope"}
                     label={
                       <T
                         v={[
@@ -613,6 +711,7 @@ export function DeliveryStudio({
                 </div>
                 <div className={s.actions}>
                   <Button
+                    path={"outputs." + text(o.id) + ".assetId"}
                     disabled={readOnly}
                     icon="Folder"
                     onClick={() => setPicker({ type: "media", id: text(o.id) })}
@@ -626,6 +725,7 @@ export function DeliveryStudio({
                     />
                   </Button>
                   <Switch
+                    path={"outputs." + text(o.id) + ".enabled"}
                     disabled={readOnly}
                     value={
                       object(object(o.locales)[language]).enabled !== undefined
@@ -703,6 +803,7 @@ export function DeliveryStudio({
           }
         >
           <Switch
+            path={"certificatePolicy.enabled"}
             disabled={readOnly}
             value={policy.enabled === true}
             onChange={(enabled) => patchPolicy({ enabled })}
@@ -727,6 +828,7 @@ export function DeliveryStudio({
           </p>
           <div className={s.formGrid}>
             <Field
+              path={"certificatePolicy.evidence"}
               label={
                 <T
                   v={["Evidence required", "Preuve demandée", "الدليل المطلوب"]}
@@ -747,6 +849,7 @@ export function DeliveryStudio({
               </select>
             </Field>
             <Field
+              path={"certificatePolicy.minimumScore"}
               label={
                 <T
                   v={[
@@ -768,7 +871,10 @@ export function DeliveryStudio({
                 }
               />
             </Field>
-            <Field label={<T v={["Issuer", "Émetteur", "الجهة المصدرة"]} />}>
+            <Field
+              path={"certificatePolicy.issuer"}
+              label={<T v={["Issuer", "Émetteur", "الجهة المصدرة"]} />}
+            >
               <input
                 disabled={readOnly}
                 value={text(policy.issuer)}
@@ -776,6 +882,7 @@ export function DeliveryStudio({
               />
             </Field>
             <Field
+              path={"certificatePolicy.followUpDays"}
               label={
                 <T
                   v={[
@@ -799,6 +906,7 @@ export function DeliveryStudio({
             </Field>
           </div>
           <Switch
+            path={"certificatePolicy.requiresCompletion"}
             disabled={readOnly}
             value={policy.requiresCompletion === true}
             onChange={(requiresCompletion) =>
@@ -837,6 +945,7 @@ export function DeliveryStudio({
             <>
               <OutputName id={text(policy.assessmentId)} type="record" />
               <Button
+                path={"certificatePolicy.assessmentId"}
                 icon="Search"
                 disabled={readOnly}
                 onClick={() => setPicker({ type: "record" })}
@@ -911,5 +1020,113 @@ function OutputName({
       {q.value.mime && <Badge>{q.value.mime}</Badge>}
       {q.error && <p role="alert">{q.error}</p>}
     </div>
+  );
+}
+
+function EditionChangeReview({
+  record,
+  language,
+  dirty,
+  onLocate,
+}: {
+  record: Partial<DceRecord>;
+  language: Locale;
+  dirty: boolean;
+  onLocate?: (path: string) => void;
+}) {
+  const { locale } = useUI(),
+    [expanded, setExpanded] = useState(false),
+    [page, setPage] = useState(0);
+  const q = useQuery<any>(
+    expanded && record.id
+      ? {
+          op: "master_edition_comparison",
+          id: record.id,
+          locale: language,
+          revision: record.revision,
+        }
+      : { op: "reference", type: "record" },
+    { changes: [], activeRelease: null },
+  );
+  useEffect(() => setPage(0), [language, record.revision]);
+  return (
+    <details onToggle={(e) => setExpanded(e.currentTarget.open)}>
+      <summary>
+        <T
+          v={[
+            "Compare saved draft with the active language release",
+            "Comparer le brouillon enregistré avec l’édition publiée",
+            "مقارنة المسودة المحفوظة بالإصدار اللغوي النشط",
+          ]}
+        />
+      </summary>
+      {expanded && (
+        <State {...q} retry={q.reload}>
+          {dirty && (
+            <p>
+              <T
+                v={[
+                  "Save your local changes to include them in this comparison.",
+                  "Enregistrez les modifications locales pour les inclure dans cette comparaison.",
+                  "احفظ التغييرات المحلية لتضمينها في هذه المقارنة.",
+                ]}
+              />
+            </p>
+          )}
+          {q.value.activeRelease ? (
+            <>
+              <p>
+                r{q.value.activeRelease.revision} → r{q.value.workingRevision} ·{" "}
+                {q.value.changes.length}
+                {q.value.truncated ? "+" : ""}{" "}
+                <T
+                  v={[
+                    "changed positions; private values are not displayed",
+                    "emplacements modifiés ; les valeurs privées ne sont pas affichées",
+                    "مواضع تغيرت؛ لا تعرض القيم الخاصة",
+                  ]}
+                />
+              </p>
+              {q.value.changes
+                .slice(page * 30, page * 30 + 30)
+                .map((change: any) => (
+                  <p key={change.path}>
+                    <code>{change.path}</code> · {change.change}{" "}
+                    {onLocate && change.change !== "removed" && (
+                      <Button onClick={() => onLocate(change.path)}>
+                        <T v={["Inspect", "Inspecter", "فحص"]} />
+                      </Button>
+                    )}
+                  </p>
+                ))}
+              <div className={s.actions}>
+                <Button
+                  disabled={page === 0}
+                  onClick={() => setPage((v) => v - 1)}
+                >
+                  <T v={["Previous", "Précédent", "السابق"]} />
+                </Button>
+                <Button
+                  disabled={(page + 1) * 30 >= q.value.changes.length}
+                  onClick={() => setPage((v) => v + 1)}
+                >
+                  <T v={["Next", "Suivant", "التالي"]} />
+                </Button>
+              </div>
+            </>
+          ) : (
+            <p>
+              <T
+                v={[
+                  "There is no active language release to compare.",
+                  "Aucune édition linguistique active à comparer.",
+                  "لا يوجد إصدار لغوي نشط للمقارنة.",
+                ]}
+              />
+            </p>
+          )}
+        </State>
+      )}
+    </details>
   );
 }

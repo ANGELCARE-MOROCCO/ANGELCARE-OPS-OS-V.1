@@ -1,3 +1,4 @@
+import { changedDefinitionPaths } from "./production-model";
 import {
   gradeBridge,
   gradeClassification,
@@ -385,6 +386,50 @@ export async function masterRead(c: Context, input: Record<string, unknown>) {
           activeReleaseId: e?.active_release_id || null,
         };
       }),
+    };
+  }
+  if (op === "master_edition_comparison") {
+    const r = await record(c, text(input.id)),
+      l = language(input.locale);
+    const e = await checked(
+      scoped(db.from("ac_dce_editions").select("active_release_id"), c)
+        .eq("record_id", r.id)
+        .eq("locale", l)
+        .maybeSingle(),
+    );
+    if (!e?.active_release_id)
+      return { activeRelease: null, changes: [], truncated: false };
+    const release = await checked(
+      scoped(
+        db
+          .from("ac_dce_releases")
+          .select("id,state,revision,published_at,snapshot,manifest"),
+        c,
+      )
+        .eq("id", e.active_release_id)
+        .eq("record_id", r.id)
+        .maybeSingle(),
+    );
+    if (
+      !release ||
+      release.state !== "published" ||
+      release.manifest?.editionLocale !== l
+    )
+      throw new MarketplaceError(
+        "DEPENDENCY_BLOCKED",
+        "The active language release is unavailable.",
+      );
+    return {
+      activeRelease: {
+        id: release.id,
+        revision: release.revision,
+        publishedAt: release.published_at,
+      },
+      workingRevision: r.revision,
+      ...changedDefinitionPaths(
+        editionDefinition(release.snapshot, l),
+        editionDefinition(r, l),
+      ),
     };
   }
   if (op === "master_readiness")

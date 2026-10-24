@@ -1,6 +1,7 @@
 "use client";
 import { translationCoverage, labelValue } from "../management";
-import { useState } from "react";
+import p from "./production.module.css";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
@@ -21,9 +22,11 @@ import {
   Panel,
   State,
   T,
-  useUI,useWorkingState,
+  useUI,
+  useWorkingState,
   useQuery,
   mutate,
+  query,
 } from "./ui";
 import { ExperienceCard } from "./Dashboard";
 import s from "./workspace.module.css";
@@ -44,15 +47,22 @@ export function Registry({
 }) {
   const { locale, boot, open, create, notify, refresh } = useUI(),
     params = useSearchParams(),
-    [q, setQ] = useWorkingState("registry."+kind+".q",""),
-    [family, setFamily] = useWorkingState("registry."+kind+".family",
+    [q, setQ] = useWorkingState("registry." + kind + ".q", ""),
+    [family, setFamily] = useWorkingState(
+      "registry." + kind + ".family",
       initialFamily || params?.get("family") || "",
     ),
-    [lifecycle, setLifecycle] = useWorkingState("registry."+kind+".state",""),
-    [page, setPage] = useWorkingState("registry."+kind+".page",1),
-    [view, setView] = useWorkingState("registry."+kind+".layout",mode),
+    [lifecycle, setLifecycle] = useWorkingState(
+      "registry." + kind + ".state",
+      "",
+    ),
+    [page, setPage] = useWorkingState("registry." + kind + ".page", 1),
+    [view, setView] = useWorkingState("registry." + kind + ".layout", mode),
     [selected, setSelected] = useState<string[]>([]),
-    [busy, setBusy] = useState(false);
+    [busy, setBusy] = useState(false),
+    [receipts, setReceipts] = useState<
+      { id: string; title: string; ok: boolean; message: string }[]
+    >([]);
   const canWrite = canWriteKind(boot.actor.rights, kind),
     canCreate =
       canWrite && !["case", "contribution", "run", "grant"].includes(kind);
@@ -69,6 +79,44 @@ export function Registry({
     },
     { rows: [], total: 0, page: 1, pageSize: 24 },
   );
+  useEffect(() => {
+    setSelected([]);
+  }, [page, family, q, lifecycle, kind]);
+  async function checkSelected() {
+    setBusy(true);
+    const results = [];
+    for (const id of selected) {
+      const r = request.value.rows.find((r) => r.id === id);
+      try {
+        const result = await query<any>({
+          op: "master_readiness",
+          id,
+          locale,
+          revision: r?.revision,
+        });
+        if (!result.validation)
+          throw Error("Readiness result is not available.");
+        results.push({
+          id,
+          title: r?.title || id,
+          ok: Boolean(result.validation?.valid),
+          message:
+            String(result.validation?.errors?.length || 0) +
+            " · " +
+            tr(["blockers", "blocages", "عوائق"], locale),
+        });
+      } catch (error) {
+        results.push({
+          id,
+          title: r?.title || id,
+          ok: false,
+          message: (error as Error).message,
+        });
+      }
+    }
+    setReceipts(results);
+    setBusy(false);
+  }
   async function archive() {
     if (!selected.length) return;
     if (
@@ -87,16 +135,37 @@ export function Registry({
     setBusy(true);
     let done = 0;
     const errors: string[] = [];
+    const results: {
+      id: string;
+      title: string;
+      ok: boolean;
+      message: string;
+    }[] = [];
     for (const id of selected) {
       const r = request.value.rows.find((r) => r.id === id);
       try {
-        await mutate({ action: "archive", id, revision: r?.revision });
+        if (!r)
+          throw Error("Selection changed. Select the visible record again.");
+        await mutate({ action: "archive", id, revision: r.revision });
+        results.push({
+          id,
+          title: r.title,
+          ok: true,
+          message: tr(["Archived", "Archivé", "تمت الأرشفة"], locale),
+        });
         done++;
       } catch (e) {
         errors.push((e as Error).message);
+        results.push({
+          id,
+          title: r?.title || id,
+          ok: false,
+          message: (e as Error).message,
+        });
       }
     }
-    setSelected([]);
+    setReceipts(results);
+    setSelected(results.filter((r) => !r.ok).map((r) => r.id));
     setBusy(false);
     notify(
       `${done} ${tr(["archived", "archivés", "مؤرشف"], locale)}${errors.length ? " · " + errors[0] : ""}`,
@@ -157,9 +226,32 @@ export function Registry({
           <option value="">
             {tr(["All states", "Tous les états", "كل الحالات"], locale)}
           </option>
-          {(kind==='experience'?['released','draft','review','approved','scheduled','archived']:kind==='case'?['open','assigned','waiting_customer','resolved','closed']:kind==='contribution'?['pending','approved','hidden','rejected']:['draft','review','approved','archived']).map((v) => (
+          {(kind === "experience"
+            ? [
+                "released",
+                "draft",
+                "review",
+                "approved",
+                "scheduled",
+                "archived",
+              ]
+            : kind === "case"
+              ? ["open", "assigned", "waiting_customer", "resolved", "closed"]
+              : kind === "contribution"
+                ? ["pending", "approved", "hidden", "rejected"]
+                : ["draft", "review", "approved", "archived"]
+          ).map((v) => (
             <option value={v} key={v}>
-              {v==='draft'&&kind==='experience'?tr(['Working drafts · may have live editions','Brouillons de travail · éditions publiées possibles','مسودات عمل · قد توجد نسخ منشورة'],locale):labelValue(v, locale)}
+              {v === "draft" && kind === "experience"
+                ? tr(
+                    [
+                      "Working drafts · may have live editions",
+                      "Brouillons de travail · éditions publiées possibles",
+                      "مسودات عمل · قد توجد نسخ منشورة",
+                    ],
+                    locale,
+                  )
+                : labelValue(v, locale)}
             </option>
           ))}
         </select>
@@ -193,10 +285,45 @@ export function Registry({
               ]}
             />
           </Button>
+          {["experience", "content", "template", "bundle"].includes(kind) && (
+            <Button disabled={busy} onClick={checkSelected}>
+              <T
+                v={[
+                  "Check selected readiness",
+                  "Contrôler la préparation sélectionnée",
+                  "فحص جاهزية الملفات المحددة",
+                ]}
+              />
+            </Button>
+          )}
           <Button onClick={() => setSelected([])}>
             <T v={["Clear selection", "Annuler la sélection", "مسح التحديد"]} />
           </Button>
         </div>
+      )}
+      {receipts.length > 0 && (
+        <section className={p.bulkReceipt} aria-live="polite">
+          <strong>
+            <T
+              v={[
+                "Operation receipts",
+                "Reçus des opérations",
+                "إيصالات العمليات",
+              ]}
+            />
+          </strong>
+          {receipts.map((result, i) => (
+            <p key={result.id + i}>
+              <Badge tone={result.ok ? "green" : "orange"}>
+                {result.ok ? "✓" : "!"}
+              </Badge>{" "}
+              <strong>{result.title}</strong> · {result.message}{" "}
+              <Button onClick={() => open(result.id, "delivery")}>
+                <T v={["Open dossier", "Ouvrir le dossier", "فتح الملف"]} />
+              </Button>
+            </p>
+          ))}
+        </section>
       )}
       <Panel>
         <State {...request} retry={request.reload}>

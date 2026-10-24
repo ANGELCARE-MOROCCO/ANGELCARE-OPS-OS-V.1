@@ -474,6 +474,7 @@ export const SECTIONS = [
   "continuity",
   "closing",
 ] as const;
+export const REFERENCE_HOME_SECTION_ORDER = ["worlds","today","printables","grownups","activities","bundles","ages","skills","new","learning","storytime","challenge","visual-cards","tools","video","continuity","closing"] as const;
 export interface HomeConfig {
   locale: Locale;
   edition: HomeEdition;
@@ -518,7 +519,7 @@ export const defaultHome = (locale: Locale): HomeConfig => ({
     familyOrder: WORLDS.map((w) => w.key),
     familyImages: {},
     mediaBindings: {},
-    sections: [...SECTIONS],
+    sections: [...REFERENCE_HOME_SECTION_ORDER],
     adSlots: [],
     startsAt: "",
     endsAt: "",
@@ -626,7 +627,7 @@ export function normalizeEdition(v: unknown, l: Locale): HomeEdition {
           /^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(id),
       ),
     ) as Record<string, string>,
-    sections: list("sections", SECTIONS),
+    sections: JSON.stringify(x.sections) === JSON.stringify(SECTIONS) ? [...REFERENCE_HOME_SECTION_ORDER] : list("sections", SECTIONS),
     adSlots: list("adSlots", [
       "after-worlds",
       "after-printables",

@@ -364,6 +364,7 @@ export function Button({
   type = "button",
   title,
   ariaLabel,
+  path,
 }: {
   children: ReactNode;
   icon?: string;
@@ -373,10 +374,12 @@ export function Button({
   type?: "button" | "submit";
   title?: string;
   ariaLabel?: string;
+  path?: string;
 }) {
   return (
     <button
       type={type}
+      data-dce-path={path}
       title={title}
       aria-label={ariaLabel}
       onClick={onClick}
@@ -519,14 +522,16 @@ export function Switch({
   value,
   onChange,
   disabled,
+  path,
 }: {
   label: ReactNode;
   value: boolean;
   onChange: (v: boolean) => void;
   disabled?: boolean;
+  path?: string;
 }) {
   return (
-    <label className={s.switch}>
+    <label className={s.switch} data-dce-path={path}>
       <input
         type="checkbox"
         checked={value}
@@ -545,6 +550,7 @@ export function Dialog({
   onClose,
   wide = false,
   drawer = false,
+  workspace = false,
 }: {
   title: ReactNode;
   children: ReactNode;
@@ -552,6 +558,7 @@ export function Dialog({
   onClose: () => void;
   wide?: boolean;
   drawer?: boolean;
+  workspace?: boolean;
 }) {
   const { locale } = useUI();
   const ref = useRef<HTMLDialogElement>(null);
@@ -571,7 +578,7 @@ export function Dialog({
       aria-labelledby={id}
       lang={locale}
       dir={locale === "ar" ? "rtl" : "ltr"}
-      className={`${s.dialog} ${wide ? s.wide : ""} ${drawer ? s.drawer : ""}`}
+      className={`${s.dialog} ${wide ? s.wide : ""} ${drawer ? s.drawer : ""} ${workspace ? s.workspaceDialog : ""}`}
       onCancel={(e) => {
         e.preventDefault();
         onClose();

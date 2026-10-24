@@ -1,4 +1,5 @@
 "use client";
+import { ImportSourceStudio, TASK_LABELS } from "./ImportSourceStudio";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { FAMILIES } from "../registry";
@@ -25,7 +26,7 @@ import { Editor } from "./Editor";
 import { BatchProgress } from "./OperatorDesk";
 import s from "./workspace.module.css";
 export function Imports() {
-  const { locale, boot, notify, refresh } = useUI(),
+  const { locale, boot, notify, refresh, open: openDossier } = useUI(),
     params = useSearchParams(),
     context = params?.get("context") || "",
     [family, setFamily] = useWorkingState(
@@ -34,10 +35,13 @@ export function Imports() {
     ),
     [task, setTask] = useWorkingState<ImportTask>(
       "imports." + context + ".task",
-      "create",
+      TASKS.includes(params?.get("task") as ImportTask)
+        ? (params!.get("task") as ImportTask)
+        : "create",
     ),
     [collection, setCollection] = useState("root"),
     [source, setSource] = useState(""),
+    [mappedSource, setMappedSource] = useState(""),
     [name, setName] = useState(""),
     [batch, setBatch] = useWorkingState("imports." + context + ".batch", ""),
     [jobId, setJobId] = useWorkingState(
@@ -74,6 +78,7 @@ export function Imports() {
     setExportCursor("");
     setExportBoundary("");
     setExportPart(1);
+    setMappedSource("");
   }, [scopeFamily, task, part, context]);
   async function pack() {
     try {
@@ -84,16 +89,6 @@ export function Imports() {
         collection: part,
       });
       download(p.fileName, p.csv, "text/csv;charset=utf-8");
-      download(
-        p.fileName.replace(".csv", "-EXAMPLE.csv"),
-        p.exampleCsv,
-        "text/csv;charset=utf-8",
-      );
-      download(
-        p.fileName.replace(".csv", "-GUIDE.md"),
-        p.guideMarkdown,
-        "text/markdown;charset=utf-8",
-      );
     } catch (e) {
       setError((e as Error).message);
     }
@@ -106,8 +101,8 @@ export function Imports() {
         action: "operator_batch_create",
         family: scopeFamily,
         task,
-        source,
-        sourceName: name,
+        source: mappedSource || source,
+        sourceName: name || scopeFamily + "-" + task + "-paste.csv",
       });
       setBatch(b.batch.id);
       setJobId("");
@@ -187,7 +182,9 @@ export function Imports() {
                 onChange={(e) => setTask(e.target.value as ImportTask)}
               >
                 {TASKS.map((t) => (
-                  <option key={t}>{t}</option>
+                  <option key={t} value={t}>
+                    {tr(TASK_LABELS[t], locale)}
+                  </option>
                 ))}
               </select>
             </Field>
@@ -241,9 +238,9 @@ export function Imports() {
             <Button icon="Download" onClick={pack}>
               <T
                 v={[
-                  "CSV + example + readable guide",
-                  "CSV + exemple + guide lisible",
-                  "CSV + مثال + دليل واضح",
+                  "Download category template",
+                  "Télécharger le modèle de catégorie",
+                  "تنزيل نموذج الفئة",
                 ]}
               />
             </Button>
@@ -297,13 +294,39 @@ export function Imports() {
           title={
             <T
               v={[
-                "2 · Save a resumable preparation",
-                "2 · Enregistrer une préparation reprenable",
-                "2 · حفظ تحضير قابل للاستئناف",
+                "2 · Load and name your source",
+                "2 · Charger et nommer la source",
+                "2 · تحميل المصدر وتسميته",
               ]}
             />
           }
         >
+          <Field
+            label={
+              <T
+                v={[
+                  "Source / batch name",
+                  "Nom de la source / du lot",
+                  "اسم المصدر أو الدفعة",
+                ]}
+              />
+            }
+          >
+            <input
+              value={name}
+              maxLength={160}
+              disabled={busy}
+              onChange={(e) => setName(e.target.value)}
+              placeholder={tr(
+                [
+                  "Name this import for later recovery",
+                  "Nommer cet import pour le retrouver",
+                  "تسمية هذا الاستيراد لاستعادته لاحقاً",
+                ],
+                locale,
+              )}
+            />
+          </Field>
           <input
             type="file"
             aria-label="Import CSV"
@@ -317,6 +340,7 @@ export function Imports() {
                   return;
                 }
                 setName(f.name);
+                setMappedSource("");
                 setSource(await f.text());
               }
             }}
@@ -325,19 +349,7 @@ export function Imports() {
             {name} · {source.length.toLocaleString()}{" "}
             <T v={["characters", "caractères", "حرف"]} />
           </p>
-          <Button
-            kind="primary"
-            disabled={!source || busy || !boot.actor.rights.manage}
-            onClick={prepare}
-          >
-            <T
-              v={[
-                "Save preparation source",
-                "Enregistrer la source de préparation",
-                "حفظ مصدر التحضير",
-              ]}
-            />
-          </Button>
+
           <p className={s.notice}>
             <T
               v={[
@@ -348,6 +360,44 @@ export function Imports() {
             />
           </p>
         </Panel>
+      </div>
+      <ImportSourceStudio
+        source={source}
+        onSource={(value) => {
+          setSource(value);
+          setMappedSource("");
+        }}
+        family={scopeFamily}
+        task={task}
+        collection={part}
+        busy={busy}
+        onReady={setMappedSource}
+      />
+      <div className={s.actions}>
+        <Button
+          kind="primary"
+          disabled={!source || busy || !boot.actor.rights.manage}
+          onClick={prepare}
+        >
+          <T
+            v={[
+              "Save preparation source",
+              "Enregistrer la source de préparation",
+              "حفظ مصدر التحضير",
+            ]}
+          />
+        </Button>
+        {mappedSource && (
+          <Badge tone="green">
+            <T
+              v={[
+                "Mapped source selected for this batch",
+                "Source associée sélectionnée pour ce lot",
+                "تم اختيار المصدر المرتبط لهذه الدفعة",
+              ]}
+            />
+          </Badge>
+        )}
       </div>
       {error && (
         <p role="alert" className={`${s.notice} ${s.alertError}`}>
@@ -374,7 +424,16 @@ export function Imports() {
               setJobId("");
             }}
           >
-            <option value="">Choose…</option>
+            <option value="">
+              {tr(
+                [
+                  "Choose a saved batch…",
+                  "Choisir un lot enregistré…",
+                  "اختيار دفعة محفوظة…",
+                ],
+                locale,
+              )}
+            </option>
             {batches.value.rows.map((b: any) => (
               <option key={b.id} value={b.id}>
                 {b.source_name} · {b.state}
@@ -420,10 +479,24 @@ export function Imports() {
               <table className={s.table}>
                 <thead>
                   <tr>
-                    <th>Source rows</th>
-                    <th>Dossier</th>
-                    <th>Validation / dependencies</th>
-                    <th>Before → after</th>
+                    <th>
+                      <T v={["Source rows", "Lignes source", "صفوف المصدر"]} />
+                    </th>
+                    <th>
+                      <T v={["Dossier", "Dossier", "الملف"]} />
+                    </th>
+                    <th>
+                      <T
+                        v={[
+                          "Validation / dependencies",
+                          "Validation / dépendances",
+                          "التحقق والاعتماديات",
+                        ]}
+                      />
+                    </th>
+                    <th>
+                      <T v={["Before → after", "Avant → après", "قبل ← بعد"]} />
+                    </th>
                     <th />
                   </tr>
                 </thead>
@@ -451,7 +524,15 @@ export function Imports() {
                         </Badge>
                         <p>{r.issues?.join(" · ") || r.error}</p>
                         <details>
-                          <summary>Reference mapping / readiness</summary>
+                          <summary>
+                            <T
+                              v={[
+                                "Reference mapping / readiness",
+                                "Références et préparation",
+                                "ربط المراجع والجاهزية",
+                              ]}
+                            />
+                          </summary>
                           {r.prepared.dependencyPlan?.map(
                             (d: any, i: number) => (
                               <p key={"dependency" + i}>
@@ -474,6 +555,36 @@ export function Imports() {
                       </td>
                       <td>
                         <div className={s.actions}>
+                          {r.state === "applied" && r.after_snapshot?.id && (
+                            <Button
+                              onClick={() =>
+                                openDossier(r.after_snapshot.id, "overview")
+                              }
+                            >
+                              <T
+                                v={[
+                                  "Open resulting dossier",
+                                  "Ouvrir le dossier créé",
+                                  "فتح الملف الناتج",
+                                ]}
+                              />
+                            </Button>
+                          )}
+                          {r.state === "applied" && r.after_snapshot?.id && (
+                            <Button
+                              onClick={() =>
+                                openDossier(r.after_snapshot.id, "delivery")
+                              }
+                            >
+                              <T
+                                v={[
+                                  "Review language edition",
+                                  "Revoir l’édition linguistique",
+                                  "مراجعة النسخة اللغوية",
+                                ]}
+                              />
+                            </Button>
+                          )}
                           {["invalid", "ready", "failed", "conflict"].includes(
                             r.state,
                           ) && (

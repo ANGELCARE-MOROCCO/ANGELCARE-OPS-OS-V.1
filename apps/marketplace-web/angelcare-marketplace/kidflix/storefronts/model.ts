@@ -7,6 +7,7 @@ import { normalizeGallery, galleryBindings, type Scene } from "../gallery-contra
 import { WORLDS, tr, world, safeImage, type Locale, type Tri, type Resource, type Catalogue } from '../catalogue';
 export const SECTIONS = ['collections','subjects','catalogue','guide','related'] as const;
 export type Section = typeof SECTIONS[number];
+export const REFERENCE_STOREFRONT_ORDER:Section[]=['catalogue','collections','subjects','guide','related'];
 export interface Edition extends PublisherImages {
   gallery:Scene[];
   eyebrow:string; headline:string; description:string; hero:string; heroAlt:string;
@@ -37,14 +38,14 @@ export const labels = {
   lessons:['lessons','leçons','دروس'],episodes:['episodes','épisodes','حلقات'],segments:['segments','séquences','مقاطع'],
   save:['Save discovery','Garder cette découverte','احفظ الاكتشاف'],saved:['Saved','Enregistré','محفوظ'],pages:['pages','pages','صفحات'],cards:['cards','cartes','بطاقات'],units:['chapters','chapitres','فصول'],questions:['questions','questions','أسئلة'],frames:['slides','diapositives','شرائح'],steps:['steps','étapes','خطوات'],items:['parts','parties','أجزاء'],modules:['modules','modules','وحدات'],
 } satisfies Record<string,Tri>;
-export const L=(key:keyof typeof labels,l:Locale)=>tr(labels[key],l);
+export const L=(key:keyof typeof labels,l:Locale)=>tr(labels[key]||labels.items,l);
 export function normalize(v:unknown,locale:Locale,family:string):Edition {
  const w=world(family); if(!w)throw Error('Unknown family');
  const x=v&&typeof v==='object'&&!Array.isArray(v)?v as Record<string,any>:{};
  const text=(k:string,max:number,d='')=>typeof x[k]==='string'?x[k].trim().slice(0,max):d;
  const list=(value:unknown,max=96)=>Array.isArray(value)?[...new Set(value.filter((s):s is string=>typeof s==='string'&&keyOK(s)))].slice(0,max):[];
  let gallery=normalizeGallery(x.gallery,family,{hero:text("hero",2048,legacyWorldImages[family]),alt:text("heroAlt",300),bound:Boolean(x.mediaBindings?.hero)});
- const edition:Edition={...normalizePublisherImages({}, {},family,locale,safeImage),gallery,eyebrow:text('eyebrow',100,'KidFlix · '+tr(w.short,locale)),headline:text('headline',180,tr(w.title,locale)),description:text('description',600,tr(w.invitation,locale)),hero:text('hero',2048,w.image),heroAlt:text('heroAlt',300),guidance:text('guidance',2048,w.image),guidanceAlt:text('guidanceAlt',300),guidanceTitle:text('guidanceTitle',180,tr(titles.guide,locale)),guidanceBody:text('guidanceBody',700,tr(w.description,locale)),sections:Array.isArray(x.sections)?[...new Set(x.sections.filter((k:any)=>SECTIONS.includes(k))) ] as Section[]:[...SECTIONS],density:x.density==='compact'?'compact':'comfortable',preview:x.preview==='images'?'images':'cover',featured:list(x.featured),collections:[],startsAt:text('startsAt',40),endsAt:text('endsAt',40),mediaBindings:{},adSlots:Array.isArray(x.adSlots)?[...new Set(x.adSlots.filter((s:any)=>['after-opening','after-catalogue','before-guidance'].includes(s))) ] as string[]:[]};
+ const edition:Edition={...normalizePublisherImages({}, {},family,locale,safeImage),gallery,eyebrow:text('eyebrow',100,'KidFlix · '+tr(w.short,locale)),headline:text('headline',180,tr(w.title,locale)),description:text('description',600,tr(w.invitation,locale)),hero:text('hero',2048,w.image),heroAlt:text('heroAlt',300),guidance:text('guidance',2048,w.image),guidanceAlt:text('guidanceAlt',300),guidanceTitle:text('guidanceTitle',180,tr(titles.guide,locale)),guidanceBody:text('guidanceBody',700,tr(w.description,locale)),sections:JSON.stringify(x.sections)===JSON.stringify(SECTIONS)?[...REFERENCE_STOREFRONT_ORDER]:Array.isArray(x.sections)?[...new Set(x.sections.filter((k:any)=>SECTIONS.includes(k))) ] as Section[]:[...REFERENCE_STOREFRONT_ORDER],density:x.density==='compact'?'compact':'comfortable',preview:x.preview==='images'?'images':'cover',featured:list(x.featured),collections:[],startsAt:text('startsAt',40),endsAt:text('endsAt',40),mediaBindings:{},adSlots:Array.isArray(x.adSlots)?[...new Set(x.adSlots.filter((s:any)=>['after-opening','after-catalogue','before-guidance'].includes(s))) ] as string[]:[]};
  for(const k of ['hero','guidance'] as const)if(!safeImage(edition[k]))throw Error('Choose a valid image URL');
  for(const k of ['startsAt','endsAt'] as const)if(edition[k]&&!Number.isFinite(Date.parse(edition[k])))throw Error('Use a valid publication time');
  if(edition.startsAt&&edition.endsAt&&Date.parse(edition.endsAt)<=Date.parse(edition.startsAt))throw Error('End must follow start');

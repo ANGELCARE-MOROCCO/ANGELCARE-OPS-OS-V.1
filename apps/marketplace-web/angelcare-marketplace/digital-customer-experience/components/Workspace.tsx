@@ -1,4 +1,5 @@
 "use client";
+import { ProductionLaunchpad } from "./ProductionLaunchpad";
 import { DiscoveryStudio } from "./DiscoveryStudio";
 import { CoverageCockpit, FeatureReadiness } from "./OperatorDesk";
 
@@ -650,6 +651,17 @@ export function Workspace({
               }
             >
               <ProfessionalWorkspace key={module} module={module}>
+                {[
+                  "dashboard",
+                  "experiences",
+                  "content",
+                  "imports",
+                  "media",
+                  "editions",
+                  "bundles",
+                  "templates",
+                  "publication",
+                ].includes(module) && <ProductionLaunchpad module={module} />}
                 {body}
               </ProfessionalWorkspace>
             </Suspense>

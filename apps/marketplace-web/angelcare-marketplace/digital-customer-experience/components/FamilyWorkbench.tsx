@@ -1,4 +1,5 @@
 "use client";
+import { retiredCapability } from "../production-model";
 import { ClassificationEditor } from "./ClassificationEditor";
 import { QuestionControls } from "./QuestionControls";
 import { DEPTH_FIELDS } from "../experience-depth";
@@ -65,7 +66,9 @@ export function FamilyWorkbench({
   const { locale } = useUI(),
     [collectionKey, setCollection] = useState(family.collections[0]?.key || ""),
     [selectedId, setSelected] = useState(""),
-    [section, setSection] = useState("compose");
+    [section, setSection] = useState("compose"),
+    [unitSearch, setUnitSearch] = useState(""),
+    [unitPage, setUnitPage] = useState(1);
   const collection =
       family.collections.find((c) => c.key === collectionKey) ||
       family.collections[0],
@@ -73,6 +76,28 @@ export function FamilyWorkbench({
     selected = rows.find((r) => r.id === selectedId) || rows[0],
     mode = modeContract(family, data),
     compatibility = compatibleDefinition(family.key, data);
+  const filteredRows = rows
+    .map((row, index) => ({ row, index }))
+    .filter(
+      ({ row }) =>
+        !unitSearch ||
+        [
+          row.title,
+          row.label,
+          row.prompt,
+          row.front,
+          row.id,
+          ...Object.values(object(object(row.locales)[language])),
+        ]
+          .map((value) => (typeof value === "string" ? value : ""))
+          .join(" ")
+          .toLocaleLowerCase()
+          .includes(unitSearch.toLocaleLowerCase()),
+    );
+  const outlinePage = Math.min(
+    unitPage,
+    Math.max(1, Math.ceil(filteredRows.length / 30)),
+  );
   useEffect(() => {
     setCollection(family.collections[0]?.key || "");
     setSelected("");
@@ -87,11 +112,17 @@ export function FamilyWorkbench({
         row = /^\d+$/.test(parts[1])
           ? list[Number(parts[1])]
           : list.find((r) => r.id === parts[1]);
-      if (row) setSelected(text(row.id));
+      if (row) {
+        setSelected(text(row.id));
+        setUnitSearch("");
+        setUnitPage(Math.floor(list.indexOf(row) / 30) + 1);
+      }
       setSection("compose");
     } else setSection("configure");
   }, [focusPath]);
   const chooseCollection = (key: string) => {
+    setUnitSearch("");
+    setUnitPage(1);
     setCollection(key);
     setSelected("");
   };
@@ -127,6 +158,8 @@ export function FamilyWorkbench({
       row.kind = "video";
     onChange({ [collection.key]: [...rows, row] });
     setSelected(text(row.id));
+    setUnitSearch("");
+    setUnitPage(Math.floor(rows.length / 30) + 1);
   }
   const specialTitle: Record<string, readonly [string, string, string]> = {
     learning: [
@@ -175,9 +208,9 @@ export function FamilyWorkbench({
       "بناء المسار",
     ],
     community: [
-      "Trust and contribution rules",
-      "Règles de confiance et contribution",
-      "قواعد الثقة والمساهمة",
+      "Knowledge archive editor",
+      "Éditeur des archives de connaissances",
+      "محرر أرشيف المعرفة",
     ],
   };
   return (
@@ -307,6 +340,7 @@ export function FamilyWorkbench({
               {family.fields
                 .filter(
                   (def) =>
+                    !retiredCapability(family.key, def.key) &&
                     (!def.modes || def.modes.includes(mode?.engine || "")) &&
                     !DEPTH_FIELDS.some((x) => x.key === def.key) &&
                     !(
@@ -390,44 +424,101 @@ export function FamilyWorkbench({
                     <T v={["Add", "Ajouter", "إضافة"]} />
                   </Button>
                 </div>
-                {rows.map((row, index) => (
-                  <button
-                    className={s.outlineItem}
-                    aria-current={selected?.id === row.id ? "true" : undefined}
-                    key={text(row.id)}
-                    onClick={() => setSelected(text(row.id))}
-                  >
-                    <span>{String(index + 1).padStart(2, "0")}</span>
-                    <div>
-                      <strong>
-                        {text(object(object(row.locales)[language]).title) ||
-                          text(object(object(row.locales)[language]).label) ||
-                          text(row.title) ||
-                          text(row.label) ||
-                          text(row.prompt) ||
-                          tr(
-                            [
-                              "Untitled unit",
-                              "Unité sans titre",
-                              "وحدة بلا عنوان",
-                            ],
-                            locale,
-                          )}
-                      </strong>
-                      <small>
-                        {text(row.module) ||
-                          text(row.kind) ||
-                          text(row.type) ||
-                          text(row.condition) ||
-                          text(row.id)}
-                      </small>
-                    </div>
-                    <Icon
-                      name={row.required ? "LockKeyhole" : family.icon}
-                      size={15}
+                <input
+                  aria-label={tr(
+                    [
+                      "Search content units",
+                      "Rechercher les unités",
+                      "البحث في وحدات المحتوى",
+                    ],
+                    locale,
+                  )}
+                  placeholder={tr(
+                    [
+                      "Title or stable unit ID…",
+                      "Titre ou identifiant stable…",
+                      "العنوان أو المعرف الثابت…",
+                    ],
+                    locale,
+                  )}
+                  value={unitSearch}
+                  onChange={(e) => {
+                    setUnitSearch(e.target.value);
+                    setUnitPage(1);
+                  }}
+                />
+                {unitSearch && (
+                  <small>
+                    <T
+                      v={[
+                        "Search filters the outline; the selected unit remains open.",
+                        "La recherche filtre le plan ; l’unité sélectionnée reste ouverte.",
+                        "يصفّي البحث المخطط وتبقى الوحدة المحددة مفتوحة.",
+                      ]}
                     />
-                  </button>
-                ))}
+                  </small>
+                )}
+                {filteredRows
+                  .slice((outlinePage - 1) * 30, outlinePage * 30)
+                  .map(({ row, index }) => (
+                    <button
+                      className={s.outlineItem}
+                      aria-current={
+                        selected?.id === row.id ? "true" : undefined
+                      }
+                      key={text(row.id)}
+                      onClick={() => setSelected(text(row.id))}
+                    >
+                      <span>{String(index + 1).padStart(2, "0")}</span>
+                      <div>
+                        <strong>
+                          {text(object(object(row.locales)[language]).title) ||
+                            text(object(object(row.locales)[language]).label) ||
+                            text(row.title) ||
+                            text(row.label) ||
+                            text(row.prompt) ||
+                            tr(
+                              [
+                                "Untitled unit",
+                                "Unité sans titre",
+                                "وحدة بلا عنوان",
+                              ],
+                              locale,
+                            )}
+                        </strong>
+                        <small>
+                          {text(row.module) ||
+                            text(row.kind) ||
+                            text(row.type) ||
+                            text(row.condition) ||
+                            text(row.id)}
+                        </small>
+                      </div>
+                      <Icon
+                        name={row.required ? "LockKeyhole" : family.icon}
+                        size={15}
+                      />
+                    </button>
+                  ))}
+                {filteredRows.length > 30 && (
+                  <Pager
+                    page={outlinePage}
+                    total={filteredRows.length}
+                    size={30}
+                    onPage={setUnitPage}
+                  />
+                )}
+                {rows.length > 0 && filteredRows.length === 0 && (
+                  <p role="status">
+                    <T
+                      v={[
+                        "No unit matches this search.",
+                        "Aucune unité ne correspond.",
+                        "لا توجد وحدة مطابقة للبحث.",
+                      ]}
+                    />
+                  </p>
+                )}
                 {!rows.length && (
                   <Empty
                     title={

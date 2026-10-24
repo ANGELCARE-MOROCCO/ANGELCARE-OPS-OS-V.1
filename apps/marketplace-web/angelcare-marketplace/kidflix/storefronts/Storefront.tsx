@@ -3,14 +3,17 @@ import {Fragment,useEffect,useRef,useState,type CSSProperties}from 'react';
 import Link from 'next/link';
 import {path,world,WORLDS,tr,type Locale}from '../catalogue';
 import {I}from '../Icons';
-import {PublisherOpening as Opening,PublisherFrame,PublisherArtwork} from "./PublisherEditorial";
-import {PublisherSection} from "./PublisherSection";
+import {ReferenceOpening as Opening,ReferenceFrame as PublisherFrame,ReferenceStorefrontSection as PublisherSection} from "./ReferenceStorefront";
+import {ReferenceCard} from "../ReferenceCards";
+import {PublisherArtwork} from "./PublisherEditorial";
+
 import {publisherRelatedCover} from "./publisher-assets";
-import {Card,FactsView,Modal}from './elements';
+import {FactsView,Modal}from './elements';
 import {theme}from './themes';
 import {L,titles,optionText,type StorefrontData,type Item,type Edition}from './model';
 import s from './storefronts.module.css';
 import {PageAd} from '../journey/Runtime';
+function Card({item,locale,onPreview}:{item:Item;locale:Locale;onPreview:(item:Item)=>void;index?:number}){return <ReferenceCard resource={item} locale={locale} onPreview={onPreview}/>;}
 const fields=['subject','skill','age','format','audience','difficulty','duration']as const;
 const allowed=new Set(['q','subject','skill','age','format','audience','difficulty','duration','sort','page']);
 function clean(input:Record<string,string>){return Object.fromEntries(Object.entries(input).filter(([k,v])=>allowed.has(k)&&v));}
@@ -32,7 +35,7 @@ function NativeStorefront({family,locale,initial,initialFilters={},previewEditio
   return null;
  };
  return <div className={`${s.world} ${s[t.layout]}`} style={{'--accent':w.color,'--tint':w.tint}as CSSProperties} dir={locale==='ar'?'rtl':'ltr'} data-storefront={family}>
-  <Opening family={family} locale={locale} edition={edition} onGuide={onGuide}/><nav className={s.sectionNav} aria-label={L('browse',locale)}><a href="#discover"><I name={w.icon} size={17}/>{L('browse',locale)}</a><button onClick={onGuide}><I name="Compass" size={17}/>{L('guide',locale)}</button><Link href={path(locale,'/my')}><I name="Bookmark" size={17}/>{L('saved',locale)}</Link></nav>
+  <Opening family={family} locale={locale} edition={edition} onGuide={onGuide} total={data.catalogue.total} onSearch={query=>{setSearch(query);setValues(values=>({...values,q:query,page:"1"}));document.getElementById("discover")?.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});}}/><nav className={s.sectionNav} aria-label={L('browse',locale)}><a href="#discover"><I name={w.icon} size={17}/>{L('browse',locale)}</a><button onClick={onGuide}><I name="Compass" size={17}/>{L('guide',locale)}</button><Link href={path(locale,'/my')}><I name="Bookmark" size={17}/>{L('saved',locale)}</Link></nav>
   {edition.adSlots.includes('after-opening')?<PageAd locale={locale} family={family} slot="after-opening"/>:null}{edition.sections.map(section=><Fragment key={section}>{section==='guide'&&edition.adSlots.includes('before-guidance')?<PageAd locale={locale} family={family} slot="before-guidance"/>:null}<PublisherSection section={section} family={family} locale={locale} edition={edition} onSearch={query=>{setSearch(query);setValues(values=>({...values,q:query,page:'1'}));document.getElementById('discover')?.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches||document.documentElement.dataset.kidflixMotion==='no'?'auto':'smooth'});}}>{render(section)}</PublisherSection>{section==='catalogue'&&edition.adSlots.includes('after-catalogue')?<PageAd locale={locale} family={family} slot="after-catalogue"/>:null}</Fragment>)}{quick?<Quick item={quick} locale={locale} onClose={()=>setQuick(null)}/>:null}
   {guide?<Modal title={L('guide',locale)} locale={locale} onClose={()=>setGuide(false)}><p className={s.modalIntro}>{L('private',locale)}</p>{facets.length?<div className={s.guideFields}>{facets.map(k=><label key={k}>{L(k,locale)}<select aria-label={L(k,locale)} value={draft[k]||''} onChange={e=>setDraft(v=>({...v,[k]:e.target.value}))}><option value="">{L('all',locale)}</option>{data.facets[k].map(v=><option value={v} key={v}>{optionText(k,v,locale)}</option>)}</select></label>)}</div>:<p>{L('emptyBody',locale)}</p>}<div className={s.actions}><button className={s.primary} onClick={()=>{setValues({...clean(draft),page:'1'});setGuide(false);document.getElementById('discover')?.scrollIntoView({behavior:'smooth'});}}>{L('choose',locale)}<I name="ArrowRight" size={17}/></button><button className={s.secondary} onClick={()=>setGuide(false)}>{L('close',locale)}</button></div></Modal>:null}
  </div>;

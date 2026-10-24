@@ -124,6 +124,7 @@ export function operatorTemplate(
           "title",
           "summary",
           "instructions",
+          "body",
           ...f.fields.filter((x) => x.localized).map((x) => x.key),
         ].map((k) => l + "_" + k),
       ),
@@ -245,7 +246,7 @@ export function operatorTemplate(
       .map(([k, v]) => `**${k}**: ${v}`)
       .join(
         "\n\n",
-      )}\n\n| Column | EN / FR / AR | Type | Required | Allowed values / native file |\n|---|---|---|---|---|\n${defs.map((d) => `| ${d.key} | ${d.label.join(" / ")} | ${d.type} | ${d.required ? "yes" : "no"} | ${(d.options||[]).join(", ")} ${(d.mime||[]).join(", ")} ${d.reference||""} |`).join("\n")}\n`,
+      )}\n\n| Column | EN / FR / AR | Type | Required | Allowed values / native file |\n|---|---|---|---|---|\n${defs.map((d) => `| ${d.key} | ${d.label.join(" / ")} | ${d.type} | ${d.required ? "yes" : "no"} | ${(d.options || []).join(", ")} ${(d.mime || []).join(", ")} ${d.reference || ""} |`).join("\n")}\n`,
     collection: part,
   };
 }

@@ -1,11 +1,13 @@
 "use client";
+import Link from "next/link";
+import p from "./production.module.css";
 import { useSearchParams } from "next/navigation";
 import { references } from "../model";
 
 import { uploadConcurrency } from "../management";
 import { Registry } from "./Registry";
 import { useEffect, useRef, useState } from "react";
-import { tr, type Data } from "../types";
+import { BASE, tr, type Data } from "../types";
 import {
   Badge,
   Button,
@@ -55,9 +57,19 @@ export function MediaLibrary() {
     { rows: [], total: 0 },
   );
   useEffect(() => () => controller.current?.abort(), []);
-  async function upload(files: FileList | null) {
-    if (!files?.length) return;
+  const retainedFiles = useRef<File[]>([]);
+  async function upload(files: FileList | File[] | null, retry = false) {
+    if (!files?.length || busy) return;
     const list = [...files];
+    const indices = retry
+      ? uploads
+          .map((u, i) =>
+            ["failed", "cancelled", "queued"].includes(u.status) ? i : -1,
+          )
+          .filter((i) => i >= 0)
+      : list.map((_, i) => i);
+    if (!indices.length) return;
+    retainedFiles.current = list;
     if (list.length > 100) {
       notify(
         tr(
@@ -73,8 +85,14 @@ export function MediaLibrary() {
       return;
     }
     setBusy(true);
-    setUploads(
-      list.map((f) => ({ name: f.name, status: "queued", progress: 0 })),
+    setUploads((old) =>
+      retry
+        ? old.map((u, i) =>
+            indices.includes(i)
+              ? { ...u, status: "queued", error: undefined, progress: 0 }
+              : u,
+          )
+        : list.map((f) => ({ name: f.name, status: "queued", progress: 0 })),
     );
     const abort = new AbortController();
     controller.current = abort;
@@ -82,8 +100,8 @@ export function MediaLibrary() {
     const update = (i: number, p: Partial<Upload>) =>
       setUploads((u) => u.map((v, n) => (n === i ? { ...v, ...p } : v)));
     const run = async () => {
-      while (next < list.length && !abort.signal.aborted) {
-        const i = next++,
+      while (next < indices.length && !abort.signal.aborted) {
+        const i = indices[next++],
           file = list[i];
         const inferred: Record<string, string> = {
           mp3: "audio/mpeg",
@@ -183,6 +201,12 @@ export function MediaLibrary() {
     await Promise.all(
       Array.from({ length: uploadConcurrency(boot.settings) }, () => run()),
     );
+    if (abort.signal.aborted)
+      setUploads((old) =>
+        old.map((u) =>
+          u.status === "queued" ? { ...u, status: "cancelled" } : u,
+        ),
+      );
     setBusy(false);
     controller.current = null;
     q.reload();
@@ -259,7 +283,17 @@ export function MediaLibrary() {
             />
           }
         >
-          <div className={s.uploadZone}>
+          <div
+            className={p.uploadDrop}
+            onDragOver={(e) => {
+              if (boot.actor.rights.media && !busy) e.preventDefault();
+            }}
+            onDrop={(e) => {
+              e.preventDefault();
+              if (boot.actor.rights.media && !busy)
+                void upload(e.dataTransfer.files);
+            }}
+          >
             <Icon name="CloudUpload" size={32} />
             <p>
               <T
@@ -295,9 +329,9 @@ export function MediaLibrary() {
             <small>
               <T
                 v={[
-                  "Maximum two concurrent uploads; originals and published files remain protected.",
-                  "Deux uploads simultanés maximum ; fichiers publiés protégés.",
-                  "رفعتان متوازيتان كحد أقصى. الملفات المنشورة محمية.",
+                  "Concurrency follows native settings. Retry keeps the selected files only while this workspace stays open.",
+                  "Le parallélisme suit les réglages natifs. La reprise conserve les fichiers sélectionnés tant que cet espace reste ouvert.",
+                  "يتبع التوازي الإعدادات الأصلية. تحتفظ إعادة المحاولة بالملفات أثناء بقاء هذه المساحة مفتوحة فقط.",
                 ]}
               />
             </small>
@@ -313,6 +347,43 @@ export function MediaLibrary() {
               />
             </Button>
           )}
+          {!busy &&
+            uploads.some((u) =>
+              ["failed", "cancelled", "queued"].includes(u.status),
+            ) && (
+              <Button
+                disabled={
+                  !retainedFiles.current.length || !boot.actor.rights.media
+                }
+                onClick={() => upload(retainedFiles.current, true)}
+              >
+                <T
+                  v={[
+                    "Retry failed / cancelled files",
+                    "Réessayer les fichiers échoués / annulés",
+                    "إعادة محاولة الملفات الفاشلة أو الملغاة",
+                  ]}
+                />
+              </Button>
+            )}
+          {context && (
+            <Link
+              href={
+                BASE +
+                "/imports?context=" +
+                encodeURIComponent(context) +
+                "&task=media"
+              }
+            >
+              <T
+                v={[
+                  "Prepare media associations for this dossier",
+                  "Préparer les associations média de ce dossier",
+                  "تحضير روابط الوسائط لهذا الملف",
+                ]}
+              />
+            </Link>
+          )}
           {uploads.map((u, i) => (
             <div className={s.rowCard} key={i}>
               <strong>{u.name}</strong>
@@ -327,10 +398,43 @@ export function MediaLibrary() {
               >
                 {u.status}
               </Badge>
-              <div className={s.progress}>
-                <i style={{ width: u.progress + "%" }} />
-              </div>
-              {u.assetId && <small className={s.longText}>{u.assetId}</small>}
+              <progress
+                aria-label={u.name + " · " + u.status}
+                max={1}
+                value={["ready", "existing"].includes(u.status) ? 1 : undefined}
+              />
+              {u.assetId && (
+                <>
+                  <small className={s.longText}>{u.assetId}</small>
+                  <Button
+                    onClick={async () => {
+                      try {
+                        await navigator.clipboard.writeText(u.assetId!);
+                        notify(
+                          tr(
+                            [
+                              "Native asset ID copied",
+                              "Identifiant média copié",
+                              "تم نسخ معرف الوسائط",
+                            ],
+                            locale,
+                          ),
+                        );
+                      } catch {
+                        notify(u.assetId!);
+                      }
+                    }}
+                  >
+                    <T
+                      v={[
+                        "Copy native asset ID",
+                        "Copier l’identifiant média",
+                        "نسخ معرف الوسائط",
+                      ]}
+                    />
+                  </Button>
+                </>
+              )}
               {u.error && <p role="alert">{u.error}</p>}
             </div>
           ))}
@@ -493,7 +597,17 @@ export function MediaLibrary() {
                 </div>
                 <strong>{r.title}</strong>
                 <small>
-                  {r.mime} · {(r.size / 1024 / 1024).toFixed(2)} MB
+                  {r.mime} ·{" "}
+                  {Number.isFinite(Number(r.size)) && Number(r.size) > 0
+                    ? (Number(r.size) / 1024 / 1024).toFixed(2) + " MB"
+                    : tr(
+                        [
+                          "Size unavailable",
+                          "Taille indisponible",
+                          "الحجم غير متاح",
+                        ],
+                        locale,
+                      )}
                 </small>
                 <small>
                   {r.status} · {r.rights || "rights not classified"}

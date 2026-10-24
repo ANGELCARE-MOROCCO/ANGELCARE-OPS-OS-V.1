@@ -7,6 +7,8 @@ import { copy } from "./copy";
 import { I } from "./Icons";
 import { GuestProvider } from "./continuity";
 import s from "./kidflix.module.css";
+import r from "./reference-shell.module.css";
+import { ReferenceFooter } from "./ReferenceFooter";
 import { PremiumHeader } from "./PremiumHeader";
 import { Navigation } from "./Navigation";
 import { navigateKidFlix } from "./navigation-events";
@@ -56,103 +58,6 @@ function Header({ locale }: { locale: Locale }) {
   return <PremiumHeader locale={locale} search={<SearchBox key={locale + ":" + initial} locale={locale} initial={initial}/>}/>;
 }
 
-function Footer({ locale }: { locale: Locale }) {
-  const groups = [
-    [
-      "footerLearn",
-      ["stories", "documents", "learning", "audio", "video", "presentations"],
-    ],
-    [
-      "footerPlay",
-      [
-        "printables",
-        "activities",
-        "assessments",
-        "visual-cards",
-        "tools",
-        "bundles",
-      ],
-    ],
-    ["footerGrown", ["planners", "forms", "community", "commerce"]],
-  ] as const;
-  return (
-    <footer className={s.footer}>
-      <div className={s.footerTop}>
-        <div className={s.footerBrand}>
-          <Link href={path(locale)}>
-            <img
-              src="/kidflix/kidflix-official-optimized.webp"
-              width={195}
-              height={78}
-              alt="KidFlix"
-              loading="lazy"
-            />
-          </Link>
-          <p>{copy("footerText", locale)}</p>
-          <span className={s.footerStamp}>
-            <I name="Heart" />
-            {copy("together", locale)}
-          </span>
-          <Link
-            href={`/angelcare-marketplace/${locale}`}
-            className={s.marketplace}
-          >
-            {copy("marketplace", locale)} <I name="ArrowUpRight" size={16} />
-          </Link>
-        </div>
-        {groups.map(([title, keys]) => (
-          <div className={s.footerGroup} key={title}>
-            <h3>{copy(title, locale)}</h3>
-            {keys.map((k) => (
-              <Link key={k} href={path(locale, "/explore/" + k)}>
-                {tr(WORLDS.find((w) => w.key === k)!.title, locale)}
-              </Link>
-            ))}
-          </div>
-        ))}
-        <div className={s.footerNote}>
-          <div className={s.footerStar}>
-            <I name="Sun" size={39} />
-          </div>
-          <h3>
-            {tr(
-              [
-                "Stay curious. Grow together.",
-                "Restez curieux. Grandissons ensemble.",
-                "ابقَ فضولياً. لننمُ معاً.",
-              ],
-              locale,
-            )}
-          </h3>
-          <p>{copy("noAccount", locale)}</p>
-          <Link href={path(locale, "/about")}>
-            {copy("about", locale)}
-            <I name="ArrowRight" size={16} />
-          </Link>
-          <span className={s.footerShapes} aria-hidden="true">
-            ✦ · ✧
-          </span>
-        </div>
-      </div>
-      <div className={s.footerBottom}>
-        <span>© {new Date().getFullYear()} KidFlix · AngelCare</span>
-        <div>
-          <Link href={path(locale, "/privacy")}>{copy("privacy", locale)}</Link>
-          <Link href={path(locale, "/accessibility")}>
-            {copy("access", locale)}
-          </Link>
-          <span>
-            {locale === "en"
-              ? "English"
-              : locale === "fr"
-                ? "Français"
-                : "العربية"}
-          </span>
-        </div>
-      </div>
-    </footer>
-  );
-}
 function Content({
   locale,
   children,
@@ -163,7 +68,7 @@ function Content({
   const personal = usePersonal();
   return (
     <div
-      className={s.root}
+      className={`${s.root} ${r.shell}`}
       lang={locale}
       dir={locale === "ar" ? "rtl" : "ltr"}
       data-kidflix-shell
@@ -183,7 +88,7 @@ function Content({
         ) : null}
         {children}
       </main>
-      <Footer locale={locale} />
+      <ReferenceFooter locale={locale} />
       <Navigation locale={locale} />
     </div>
   );

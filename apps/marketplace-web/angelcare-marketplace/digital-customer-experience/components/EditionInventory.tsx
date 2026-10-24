@@ -1,5 +1,6 @@
 "use client";
-import { useState, type ReactNode } from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState, type ReactNode } from "react";
 import { FAMILIES } from "../registry";
 import { tr, type Locale } from "../types";
 import {
@@ -17,12 +18,19 @@ import {
 import s from "./workspace.module.css";
 export function EditionInventory({ children }: { children: ReactNode }) {
   const { locale, open } = useUI(),
-    [view, setView] = useWorkingState("editions.view", "dossiers"),
-    [lang, setLang] = useWorkingState<Locale>("editions.language","ar"),
-    [state, setState] = useWorkingState("editions.state","all"),
-    [family, setFamily] = useWorkingState("editions.family",""),
-    [search, setSearch] = useWorkingState("editions.search",""),
-    [page, setPage] = useWorkingState("editions.page",1);
+    params = useSearchParams(),
+    [view, setView] = useWorkingState(
+      "editions.view",
+      params?.get("editionView") === "editions" ? "editions" : "dossiers",
+    ),
+    [lang, setLang] = useWorkingState<Locale>("editions.language", "ar"),
+    [state, setState] = useWorkingState("editions.state", "all"),
+    [family, setFamily] = useWorkingState("editions.family", ""),
+    [search, setSearch] = useWorkingState("editions.search", ""),
+    [page, setPage] = useWorkingState("editions.page", 1);
+  useEffect(() => {
+    if (params?.get("editionView") === "editions") setView("editions");
+  }, [params?.get("editionView")]);
   const q = useQuery<any>(
     view === "editions"
       ? {

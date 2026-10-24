@@ -1,5 +1,6 @@
 "use client";
-import { useState, type ReactNode } from "react";
+import { experienceGroup } from "../production-model";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   DEPTH_COLLECTIONS,
   DEPTH_FIELDS,
@@ -64,6 +65,7 @@ export function ExperienceStudio({
   readOnly,
   onChange,
   renderField,
+  focusPath,
 }: {
   record: Partial<DceRecord>;
   family: Family;
@@ -72,6 +74,7 @@ export function ExperienceStudio({
   readOnly: boolean;
   onChange: (patch: Data) => void;
   renderField: RenderField;
+  focusPath?: string;
 }) {
   const { locale } = useUI(),
     [tab, setTab] = useState("brief"),
@@ -79,6 +82,9 @@ export function ExperienceStudio({
     [complete, setComplete] = useState(true),
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false);
+  useEffect(() => {
+    if (focusPath) setTab(experienceGroup(focusPath.split(".")[0]));
+  }, [focusPath]);
   const keys: Record<string, string[]> = {
     detail: [
       "detailSections",
@@ -236,6 +242,7 @@ export function ExperienceStudio({
           readOnly={readOnly}
           onChange={onChange}
           renderField={renderField}
+          focusPath={focusPath}
         />
       )}
       {tab === "results" && (

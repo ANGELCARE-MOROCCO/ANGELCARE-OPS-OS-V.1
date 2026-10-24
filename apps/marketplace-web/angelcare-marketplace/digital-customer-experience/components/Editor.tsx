@@ -1,4 +1,10 @@
 "use client";
+import { ROOT_FIELDS } from "../dossier-fields";
+import { useRouter } from "next/navigation";
+import p from "./production.module.css";
+import { BASE } from "../types";
+import { DossierStudio } from "./DossierStudio";
+import { issueDestination } from "../production-model";
 import { useServerDraft } from "./useServerDraft";
 import { ExperienceStudio } from "./ExperienceStudio";
 import { DEPTH_COLLECTIONS } from "../experience-depth";
@@ -64,10 +70,12 @@ export function Picker({
   onClose,
   kind,
   mime,
+  family,
 }: {
   type: "media" | "offers" | "record" | "staff" | "customers";
   kind?: string;
   mime?: string[];
+  family?: string;
   onSelect: (id: string) => void;
   onClose: () => void;
 }) {
@@ -79,6 +87,7 @@ export function Picker({
       op: type === "record" ? "list" : "native",
       type,
       kind: kind || undefined,
+      family: family || undefined,
       page,
       pageSize: 30,
       q: search,
@@ -201,9 +210,16 @@ export function NewExperience({
   onChoose: (family: string) => void;
   onClose: () => void;
 }) {
-  const { locale, boot, create, notify } = useUI();
-  const [templateFamily, setTemplateFamily] = useState(""),
-    [templateBusy, setTemplateBusy] = useState(false);
+  const { locale, boot, create, notify } = useUI(),
+    router = useRouter();
+  const [method, setMethod] = useState("manual"),
+    [templateFamily, setTemplateFamily] = useState(""),
+    [templateBusy, setTemplateBusy] = useState(false),
+    [language, setLanguage] = useState<Locale>(
+      authoringLocales(boot.settings).includes(locale)
+        ? locale
+        : authoringLocales(boot.settings)[0],
+    );
   return (
     <Dialog
       wide
@@ -211,54 +227,164 @@ export function NewExperience({
       title={
         <T
           v={[
-            "Create a digital experience",
-            "Créer une expérience numérique",
-            "إنشاء تجربة رقمية",
+            "Create your next experience",
+            "Créer votre prochaine expérience",
+            "إنشاء تجربتك التالية",
           ]}
         />
       }
     >
       <div className={s.root}>
-        <p className={s.subtitle}>
-          <T
-            v={[
-              "Choose the customer activity. Topics and commerce references are assigned separately.",
-              "Choisissez l’activité client. Thèmes et références commerciales sont distincts.",
-              "اختر نشاط العميل. المواضيع والمراجع التجارية مستقلة.",
-            ]}
-          />
-        </p>
-        <div className={s.notice}>
-          <T
-            v={[
-              "Each start opens the exact native editor. Add the required source material, review outputs and inspect the selected language before publishing.",
-              "Chaque départ ouvre l’éditeur natif exact. Ajoutez les sources requises, vérifiez les sorties et la langue avant publication.",
-              "يفتح كل بدء المحرر الأصلي المناسب. أضف المصادر المطلوبة وراجع المخرجات واللغة قبل النشر.",
-            ]}
-          />
-        </div>
-        <div className={s.actions}>
-          {authoringFamilies(boot.settings).map((f) => (
-            <Button
-              key={f.key}
-              disabled={templateBusy}
-              onClick={() => setTemplateFamily(f.key)}
-            >
-              {tr(f.name, locale)} ·{" "}
+        <section className={p.importStudio}>
+          <span className={p.eyebrow}>CONTENT 360 · PRODUCTION STUDIO</span>
+          <h3>
+            <T
+              v={[
+                "Choose how you want to start",
+                "Choisissez votre point de départ",
+                "اختر طريقة البدء",
+              ]}
+            />
+          </h3>
+          <div className={p.segment}>
+            {[
+              [
+                "manual",
+                ["Create manually", "Créer manuellement", "إنشاء يدوياً"],
+              ],
+              [
+                "template",
+                [
+                  "Use a published template",
+                  "Utiliser un modèle publié",
+                  "استخدام نموذج منشور",
+                ],
+              ],
+              [
+                "import",
+                [
+                  "Import structured content",
+                  "Importer un contenu structuré",
+                  "استيراد محتوى منظم",
+                ],
+              ],
+            ].map(([key, label]) => (
+              <button
+                key={key as string}
+                type="button"
+                aria-pressed={method === key}
+                onClick={() => setMethod(key as string)}
+              >
+                {tr(
+                  label as unknown as readonly [string, string, string],
+                  locale,
+                )}
+              </button>
+            ))}
+          </div>
+          <p className={p.muted}>
+            {tr(
+              method === "manual"
+                ? [
+                    "Select a category to open its dedicated editor. Required fields and source files are checked before publication.",
+                    "Choisissez une catégorie pour ouvrir son éditeur dédié. Les champs et fichiers requis sont vérifiés avant publication.",
+                    "اختر فئة لفتح محررها المخصص. يتم التحقق من الحقول والملفات المطلوبة قبل النشر.",
+                  ]
+                : method === "template"
+                  ? [
+                      "A template must have an active published edition in the selected language. It prepares a new draft, never a publication.",
+                      "Le modèle doit avoir une édition publiée active dans la langue sélectionnée. Il prépare un brouillon, jamais une publication.",
+                      "يجب أن يكون للنموذج إصدار منشور نشط باللغة المختارة. يحضر مسودة جديدة وليس نشراً.",
+                    ]
+                  : [
+                      "Prepare CSV columns, map fields, correct rows and follow a resumable native batch. Importing drafts does not upload missing files or publish resources.",
+                      "Préparez les colonnes CSV, associez les champs, corrigez et suivez un lot natif reprenable. L’import ne téléverse pas les fichiers manquants et ne publie pas les ressources.",
+                      "حضّر أعمدة CSV واربط الحقول وصحح الصفوف وتابع دفعة أصلية قابلة للاستئناف. لا يرفع استيراد المسودات الملفات المفقودة ولا ينشر الموارد.",
+                    ],
+              locale,
+            )}
+          </p>
+          {method === "template" && (
+            <label>
               <T
                 v={[
-                  "from published template",
-                  "depuis un modèle publié",
-                  "من قالب منشور",
+                  "Template edition language",
+                  "Langue de l’édition modèle",
+                  "لغة إصدار النموذج",
                 ]}
               />
-            </Button>
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value as Locale)}
+              >
+                {authoringLocales(boot.settings).map((l) => (
+                  <option key={l} value={l}>
+                    {l.toUpperCase()}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
+        </section>
+        <div className={s.choiceGrid}>
+          {authoringFamilies(boot.settings).map((f) => (
+            <button
+              type="button"
+              key={f.key}
+              className={s.choice}
+              disabled={templateBusy}
+              onClick={() => {
+                if (method === "manual") onChoose(f.key);
+                else if (method === "template") setTemplateFamily(f.key);
+                else {
+                  router.push(
+                    BASE +
+                      "/imports?family=" +
+                      encodeURIComponent(f.key) +
+                      "&task=create",
+                  );
+                  onClose();
+                }
+              }}
+            >
+              <span
+                className={s.familyDot}
+                style={{ color: f.color, background: f.color + "15" }}
+              >
+                <Icon name={f.icon} size={24} />
+              </span>
+              <strong>{tr(f.name, locale)}</strong>
+              <p>{tr(f.description, locale)}</p>
+              <small>
+                {tr(
+                  method === "manual"
+                    ? [
+                        "Open category editor →",
+                        "Ouvrir l’éditeur dédié →",
+                        "فتح محرر الفئة ←",
+                      ]
+                    : method === "template"
+                      ? [
+                          "Choose a source template →",
+                          "Choisir un modèle source →",
+                          "اختيار نموذج مصدر ←",
+                        ]
+                      : [
+                          "Prepare this category’s import →",
+                          "Préparer l’import de cette catégorie →",
+                          "تحضير استيراد هذه الفئة ←",
+                        ],
+                  locale,
+                )}
+              </small>
+            </button>
           ))}
         </div>
         {templateFamily && (
           <Picker
             type="record"
             kind="template"
+            family={templateFamily}
             onClose={() => setTemplateFamily("")}
             onSelect={async (id) => {
               setTemplateBusy(true);
@@ -267,7 +393,7 @@ export function NewExperience({
                   op: "operator_template",
                   id,
                   family: templateFamily,
-                  locale,
+                  locale: language,
                 });
                 create("experience", templateFamily, r.prepared);
                 onClose();
@@ -279,507 +405,10 @@ export function NewExperience({
             }}
           />
         )}
-        <div className={s.choiceGrid}>
-          {authoringFamilies(boot.settings).map((f) => (
-            <button
-              key={f.key}
-              className={s.choice}
-              onClick={() => onChoose(f.key)}
-            >
-              <span
-                className={s.familyDot}
-                style={{ color: f.color, background: f.color + "15" }}
-              >
-                <Icon name={f.icon} size={24} />
-              </span>
-              <strong>{tr(f.name, locale)}</strong>
-              <p>
-                {f.modes.length}{" "}
-                <T v={["viewer modes", "modes de lecture", "أوضاع عرض"]} />
-              </p>
-              <p>{tr(f.description, locale)}</p>
-              <strong>
-                {tr(
-                  (
-                    {
-                      documents: [
-                        "Publish a PDF or page reader",
-                        "Publier un PDF ou lecteur de pages",
-                        "نشر PDF أو قارئ صفحات",
-                      ],
-                      assessments: [
-                        "Build questions and local results",
-                        "Créer des questions et résultats locaux",
-                        "إنشاء أسئلة ونتائج محلية",
-                      ],
-                      flashcards: [
-                        "Assemble a card set",
-                        "Assembler un jeu de cartes",
-                        "تجميع مجموعة بطاقات",
-                      ],
-                      learning: [
-                        "Build a course and optional certificate",
-                        "Créer un cours et certificat facultatif",
-                        "إنشاء دورة وشهادة اختيارية",
-                      ],
-                      activities: [
-                        "Build a native interactive activity",
-                        "Créer une activité interactive native",
-                        "إنشاء نشاط تفاعلي أصلي",
-                      ],
-                    } as Record<string, any>
-                  )[f.key] || f.description,
-                  locale,
-                )}
-              </strong>
-            </button>
-          ))}
-        </div>
       </div>
     </Dialog>
   );
 }
-const ROOT_FIELDS: Partial<Record<Kind, Definition[]>> = {
-  topic: [
-    {
-      key: "parentId",
-      label: message("Parent topic", "Thème parent", "الموضوع الأصلي"),
-      type: "reference",
-    },
-    {
-      key: "icon",
-      label: message("Icon", "Icône", "الرمز"),
-      type: "select",
-      options: [
-        "Heart",
-        "BookOpen",
-        "Leaf",
-        "Palette",
-        "GraduationCap",
-        "Baby",
-        "School",
-        "Stethoscope",
-      ],
-    },
-    {
-      key: "color",
-      label: message("Accent colour", "Couleur d’accent", "اللون"),
-      type: "text",
-    },
-    {
-      key: "sortOrder",
-      label: message("Order", "Ordre", "الترتيب"),
-      type: "number",
-      min: 0,
-      max: 9999,
-    },
-    {
-      key: "visible",
-      label: message(
-        "Visible in topic discovery",
-        "Visible dans les thèmes",
-        "ظاهر في المواضيع",
-      ),
-      type: "toggle",
-    },
-  ],
-  content: [
-    {
-      key: "body",
-      label: message("Content body", "Corps éditorial", "المحتوى"),
-      type: "textarea",
-    },
-    {
-      key: "source",
-      label: message("Source / attribution", "Source / attribution", "المصدر"),
-      type: "text",
-    },
-    {
-      key: "rights",
-      label: message("Rights", "Droits", "الحقوق"),
-      type: "select",
-      options: [
-        "owned",
-        "licensed",
-        "permission",
-        "public_domain",
-        "unverified",
-      ],
-    },
-  ],
-  asset: [
-    {
-      key: "nativeAssetId",
-      label: message(
-        "Native vault file",
-        "Fichier du coffre natif",
-        "ملف الخزنة الأصلي",
-      ),
-      type: "reference",
-    },
-    {
-      key: "rights",
-      label: message("Rights", "Droits", "الحقوق"),
-      type: "select",
-      options: [
-        "owned",
-        "licensed",
-        "permission",
-        "public_domain",
-        "unverified",
-      ],
-    },
-    {
-      key: "accessibleText",
-      label: message(
-        "Accessible transcript / text",
-        "Texte accessible / transcription",
-        "نص يمكن الوصول إليه",
-      ),
-      type: "textarea",
-    },
-    {
-      key: "downloadAllowed",
-      label: message(
-        "Download allowed",
-        "Téléchargement permis",
-        "التنزيل مسموح",
-      ),
-      type: "toggle",
-    },
-    {
-      key: "printAllowed",
-      label: message("Print allowed", "Impression permise", "الطباعة مسموحة"),
-      type: "toggle",
-    },
-  ],
-  offer_link: [
-    {
-      key: "nativeId",
-      label: message(
-        "Canonical native offer",
-        "Offre native canonique",
-        "العرض الأصلي",
-      ),
-      type: "reference",
-    },
-    {
-      key: "role",
-      label: message("Commercial role", "Rôle commercial", "الدور التجاري"),
-      type: "select",
-      options: ["related", "required", "complementary", "included"],
-    },
-    {
-      key: "action",
-      label: message("Native action", "Action native", "الإجراء الأصلي"),
-      type: "select",
-      options: ["details", "purchase", "booking", "enrolment", "enquiry"],
-    },
-    {
-      key: "entitlementSource",
-      label: message(
-        "Entitlement authority",
-        "Autorité des droits",
-        "مرجع الأهلية",
-      ),
-      type: "select",
-      options: ["native"],
-    },
-  ],
-  access_policy: [
-    {
-      key: "scope",
-      label: message("Policy scope", "Périmètre de politique", "نطاق السياسة"),
-      type: "select",
-      options: ["direct", "world", "family", "topic", "template", "experience"],
-    },
-    {
-      key: "targetId",
-      label: message("Policy target", "Cible de politique", "هدف السياسة"),
-      type: "text",
-    },
-    {
-      key: "print",
-      label: message("Print policy", "Politique d’impression", "سياسة الطباعة"),
-      type: "select",
-      options: ["permitted", "disabled"],
-    },
-    {
-      key: "use",
-      label: message(
-        "Use policy",
-        "Politique d’utilisation",
-        "سياسة الاستخدام",
-      ),
-      type: "select",
-      options: ["free"],
-    },
-    {
-      key: "download",
-      label: message("Download policy", "Téléchargement", "سياسة التنزيل"),
-      type: "select",
-      options: ["permitted", "disabled"],
-    },
-    {
-      key: "contribute",
-      label: message("Contribution policy", "Contribuer", "سياسة المساهمة"),
-      type: "select",
-      options: ["account", "moderated", "disabled"],
-    },
-    {
-      key: "expiresAt",
-      label: message(
-        "Expiry · ISO timestamp",
-        "Expiration · ISO",
-        "الانتهاء · ISO",
-      ),
-      type: "text",
-    },
-    {
-      key: "nativeId",
-      label: message(
-        "Recognized native entitlement offer",
-        "Offre native pour les droits",
-        "عرض الأهلية الأصلي",
-      ),
-      type: "reference",
-    },
-  ],
-  ad_connection: [
-    {
-      key: "publisherId",
-      label: message(
-        "Publisher ID · ca-pub-…",
-        "ID éditeur · ca-pub-…",
-        "معرّف الناشر",
-      ),
-      type: "text",
-    },
-    {
-      key: "account",
-      label: message(
-        "Google account resource",
-        "Ressource du compte Google",
-        "مرجع حساب Google",
-      ),
-      type: "text",
-    },
-    {
-      key: "site",
-      label: message("Approved site domain", "Domaine du site", "نطاق الموقع"),
-      type: "text",
-    },
-    {
-      key: "verification",
-      label: message("Provider status", "Statut fournisseur", "حالة المزوّد"),
-      type: "select",
-      options: ["not_verified", "pending", "verified", "rejected"],
-    },
-  ],
-  ad_unit: [
-    {
-      key: "providerName",
-      label: message(
-        "Google resource name",
-        "Nom de ressource Google",
-        "مرجع Google",
-      ),
-      type: "text",
-    },
-    {
-      key: "unitId",
-      label: message(
-        "Numeric ad unit ID",
-        "ID numérique de l’unité",
-        "معرّف الوحدة الرقمي",
-      ),
-      type: "text",
-    },
-    {
-      key: "formatId",
-      label: message(
-        "Atlas classification",
-        "Classification Atlas",
-        "تصنيف الأطلس",
-      ),
-      type: "select",
-      options: AD_FORMATS.map((f) => f.id),
-    },
-    {
-      key: "providerState",
-      label: message(
-        "Last observed state",
-        "Dernier état observé",
-        "آخر حالة مرصودة",
-      ),
-      type: "select",
-      options: ["unknown", "ACTIVE", "ARCHIVED"],
-    },
-    {
-      key: "localEnabled",
-      label: message(
-        "Local serving enabled",
-        "Diffusion locale autorisée",
-        "السماح بالعرض المحلي",
-      ),
-      type: "toggle",
-    },
-  ],
-  ad_policy: [
-    {
-      key: "enabled",
-      label: message(
-        "Allow this placement",
-        "Autoriser ce placement",
-        "السماح بهذا الموضع",
-      ),
-      type: "toggle",
-    },
-    {
-      key: "scope",
-      label: message("Rule scope", "Périmètre", "نطاق القاعدة"),
-      type: "select",
-      options: [
-        "world",
-        "family",
-        "topic",
-        "template",
-        "experience",
-        "edition",
-        "release",
-        "journey",
-        "zone",
-      ],
-    },
-    {
-      key: "targetId",
-      label: message("Target key / ID", "Clé / ID cible", "معرّف الهدف"),
-      type: "text",
-    },
-    {
-      key: "formatId",
-      label: message(
-        "Atlas classification",
-        "Classification Atlas",
-        "تصنيف الأطلس",
-      ),
-      type: "select",
-      options: AD_FORMATS.map((f) => f.id),
-    },
-    {
-      key: "zone",
-      label: message("Placement zone", "Zone de placement", "موضع الإعلان"),
-      type: "select",
-      options: [...new Set(AD_FORMATS.flatMap((f) => [...f.zones]))],
-    },
-    {
-      key: "unitId",
-      label: message(
-        "Google unit ID",
-        "ID de l’unité Google",
-        "معرّف وحدة Google",
-      ),
-      type: "text",
-    },
-    {
-      key: "consentRequired",
-      label: message(
-        "Consent required",
-        "Consentement requis",
-        "الموافقة مطلوبة",
-      ),
-      type: "toggle",
-    },
-    {
-      key: "childTreatment",
-      label: message(
-        "Child-directed treatment",
-        "Traitement destiné aux enfants",
-        "معاملة المحتوى الموجّه للأطفال",
-      ),
-      type: "toggle",
-    },
-    {
-      key: "minimumSpacing",
-      label: message(
-        "Minimum spacing · pixels",
-        "Espacement minimal · pixels",
-        "المسافة الدنيا · بكسل",
-      ),
-      type: "number",
-      min: 200,
-      max: 5000,
-    },
-    {
-      key: "maximumCount",
-      label: message(
-        "Maximum placements",
-        "Nombre maximal",
-        "الحد الأقصى للمواضع",
-      ),
-      type: "number",
-      min: 0,
-      max: 10,
-    },
-    {
-      key: "frequencyMinutes",
-      label: message(
-        "Frequency · minutes",
-        "Fréquence · minutes",
-        "التكرار · دقائق",
-      ),
-      type: "number",
-      min: 1,
-      max: 1440,
-    },
-    {
-      key: "priority",
-      label: message(
-        "Priority in this scope",
-        "Priorité dans le périmètre",
-        "الأولوية في النطاق",
-      ),
-      type: "number",
-      min: 0,
-      max: 1000,
-    },
-  ],
-  setting: WORLD_FIELDS,
-  case: [
-    {
-      key: "assignedTo",
-      label: message(
-        "Assigned native staff",
-        "Opérateur natif assigné",
-        "الموظف الأصلي المكلّف",
-      ),
-      type: "reference",
-      reference: "staff",
-    },
-    {
-      key: "priority",
-      label: message("Priority", "Priorité", "الأولوية"),
-      type: "select",
-      options: ["low", "normal", "high", "urgent"],
-    },
-    {
-      key: "resolution",
-      label: message(
-        "Resolution / next step",
-        "Résolution / prochaine étape",
-        "الحل / الخطوة القادمة",
-      ),
-      type: "textarea",
-    },
-  ],
-  contribution: [
-    {
-      key: "moderationReason",
-      label: message("Decision reason", "Motif de décision", "سبب القرار"),
-      type: "textarea",
-    },
-  ],
-};
 const localizedFields = new Set([
   "title",
   "text",
@@ -850,12 +479,14 @@ export function Editor({
     } | null>(null),
     [validation, setValidation] = useState<Validation | null>(null),
     [focusPath, setFocusPath] = useState(""),
+    [focusToken, setFocusToken] = useState(0),
     [binding, setBinding] = useState<Data>({}),
     [schedule, setSchedule] = useState(""),
     [restoreDraft, setRestoreDraft] = useState<Partial<DceRecord> | null>(null),
     [remote, setRemote] = useState<DceRecord | null>(null),
     [choices, setChoices] = useState<Record<string, "mine" | "latest">>({});
-  const editorTabsId = useId();
+  const editorTabsId = useId(),
+    editorSurface = useRef<HTMLDivElement>(null);
   const baseline = useRef<Partial<DceRecord>>(draft),
     saveReceipt = useRef<{ payload: string; id: string } | null>(null),
     recoveryBaseline = useRef<Partial<DceRecord>>({});
@@ -1081,6 +712,7 @@ export function Editor({
       );
       onSaved?.(result.record);
       await refresh();
+      return result.record as DceRecord;
     } catch (e) {
       setError((e as Error).message);
       if (
@@ -1327,6 +959,47 @@ export function Editor({
       </Field>
     );
   }
+  function locateControl(path: string) {
+    const target = issueDestination(path, f, d, draft.kind);
+    if (target.language) setLang(target.language);
+    setFocusPath(target.path);
+    setFocusToken((value) => value + 1);
+    setTab(target.section);
+  }
+  useEffect(() => {
+    const root = editorSurface.current;
+    if (!root || !focusPath) return;
+    const focus = () => {
+      const node = Array.from(
+        root.querySelectorAll<HTMLElement>("[data-dce-path]"),
+      ).find((n) => n.dataset.dcePath === focusPath);
+      if (!node || !node.getClientRects().length) return false;
+      const control = node.matches("input,textarea,select,button")
+        ? node
+        : node.querySelector<HTMLElement>("input,textarea,select,button");
+      node.scrollIntoView({ block: "center" });
+      control?.focus();
+      return Boolean(control);
+    };
+    const observer = new MutationObserver(() => {
+      if (focus()) observer.disconnect();
+    });
+    const frame = requestAnimationFrame(() => {
+      if (!focus())
+        observer.observe(root, {
+          childList: true,
+          subtree: true,
+          attributes: true,
+          attributeFilter: ["hidden", "class"],
+        });
+    });
+    const timeout = setTimeout(() => observer.disconnect(), 2500);
+    return () => {
+      cancelAnimationFrame(frame);
+      clearTimeout(timeout);
+      observer.disconnect();
+    };
+  }, [focusPath, focusToken, tab, lang]);
   const allTabs = [
     [
       "experience",
@@ -1397,7 +1070,7 @@ export function Editor({
   );
   return (
     <Dialog
-      drawer
+      workspace
       title={
         <span>
           {draft.title ||
@@ -1471,7 +1144,11 @@ export function Editor({
         </>
       }
     >
-      <div className={s.root} dir={locale === "ar" ? "rtl" : "ltr"}>
+      <div
+        ref={editorSurface}
+        className={s.root}
+        dir={locale === "ar" ? "rtl" : "ltr"}
+      >
         {error && (
           <div className={`${s.notice} ${s.alertError}`} role="alert">
             {error}
@@ -1527,856 +1204,79 @@ export function Editor({
           </div>
         )}
         <State loading={loading} error="" retry={() => {}}>
-          <div className={s.splitTabs}>
-            <Badge tone={draft.lifecycle === "approved" ? "green" : "blue"}>
-              {draft.lifecycle || "draft"} · {draft.kind}
-            </Badge>
-            <select
-              aria-label="Content language"
-              value={lang}
-              onChange={(e) => setLang(e.target.value as Locale)}
-            >
-              {(["fr", "en", "ar"] as Locale[])
-                .filter(
-                  (l) =>
-                    Boolean(draft.id) ||
-                    authoringLocales(boot.settings).includes(l),
-                )
-                .map((l) => (
-                  <option value={l} key={l}>
-                    {l.toUpperCase()}
-                  </option>
-                ))}
-            </select>
-          </div>
-          <div
-            className={s.tabs}
-            role="tablist"
-            onKeyDown={handleTablistKeyDown}
+          <DossierStudio
+            record={draft}
+            language={lang}
+            dirty={dirty}
+            readOnly={readOnly}
+            busy={busy}
+            tabs={tabs}
+            active={tab}
+            onNavigate={setTab}
+            onLocate={locateControl}
+            onSave={save}
+            onChange={dataPatch}
           >
-            {tabs.map(([key, label]) => (
-              <button
-                role="tab"
-                id={`${editorTabsId}-tab-${key}`}
-                aria-controls={`${editorTabsId}-panel`}
-                tabIndex={tab === key ? 0 : -1}
-                aria-selected={tab === key}
-                key={key}
-                className={s.tab}
-                onClick={() => setTab(key)}
+            <div className={s.splitTabs}>
+              <Badge tone={draft.lifecycle === "approved" ? "green" : "blue"}>
+                {draft.lifecycle || "draft"} · {draft.kind}
+              </Badge>
+              <select
+                aria-label="Content language"
+                value={lang}
+                onChange={(e) => setLang(e.target.value as Locale)}
               >
-                {tr(label, locale)}
-              </button>
-            ))}
-          </div>
-          <div
-            role="tabpanel"
-            id={`${editorTabsId}-panel`}
-            aria-labelledby={`${editorTabsId}-tab-${tab}`}
-            tabIndex={0}
-          >
-            {tab === "connections" && draft.id && (
-              <DossierConnections
-                id={draft.id}
-                beforeNavigate={() => {
-                  if (dirty) retainDraft();
-                  return (
-                    !dirty ||
-                    confirm(
-                      tr(
-                        message(
-                          "Your draft is retained. Leave this editor?",
-                          "Votre brouillon est conservé. Quitter cet éditeur ?",
-                          "المسودة محفوظة. مغادرة المحرر؟",
-                        ),
-                        locale,
-                      ),
-                    )
-                  );
-                }}
-              />
-            )}
-            {serverDraft.status && serverDraft.status !== "✓" && (
-              <p role="status">{serverDraft.status}</p>
-            )}
-            {tab === "experience" && f && (
-              <ExperienceStudio
-                record={draft}
-                family={f}
-                data={d}
-                language={lang}
-                readOnly={readOnly}
-                onChange={dataPatch}
-                renderField={field}
-              />
-            )}
-            {tab === "delivery" && (
-              <DeliveryStudio
-                record={draft}
-                language={lang}
-                onLanguage={setLang}
-                dirty={dirty}
-                readOnly={readOnly}
-                onChange={dataPatch}
-              />
-            )}
-            {tab === "overview" && (
-              <>
-                <div className={s.formGrid}>
-                  <Field
-                    label={
-                      <T v={["Stable key", "Clé stable", "المعرّف الثابت"]} />
-                    }
-                    hint={
-                      <T
-                        v={[
-                          "Immutable after first save",
-                          "Immuable après sauvegarde",
-                          "لا يتغير بعد الحفظ",
-                        ]}
-                      />
-                    }
-                  >
-                    <input
-                      value={draft.key || ""}
-                      disabled={readOnly || Boolean(draft.id)}
-                      onChange={(e) => patch({ key: e.target.value })}
-                    />
-                  </Field>
-                  <Field
-                    label={
-                      <T
-                        v={[
-                          "Staff dossier title",
-                          "Titre opérateur",
-                          "عنوان الملف الداخلي",
-                        ]}
-                      />
-                    }
-                  >
-                    <input
-                      value={draft.title || ""}
-                      disabled={readOnly}
-                      onChange={(e) => patch({ title: e.target.value })}
-                    />
-                  </Field>
-                  <Field
-                    label={
-                      <T
-                        v={[
-                          "Localized title",
-                          "Titre traduit",
-                          "العنوان المترجم",
-                        ]}
-                      />
-                    }
-                  >
-                    <input
-                      data-dce-path="title"
-                      value={text(object(object(d.locales)[lang]).title)}
-                      disabled={readOnly}
-                      onChange={(e) => localePatch("title", e.target.value)}
-                    />
-                  </Field>
-                  <Field label={<T v={["Audience", "Public", "الجمهور"]} />}>
-                    <select
-                      value={draft.audience || "parent"}
-                      disabled={readOnly}
-                      onChange={(e) => patch({ audience: e.target.value })}
-                    >
-                      {[
-                        "child",
-                        "parent",
-                        "educator",
-                        "professional",
-                        "school",
-                      ].map((v) => (
-                        <option key={v}>{v}</option>
-                      ))}
-                    </select>
-                  </Field>
-                  <Field label={<T v={["Summary", "Résumé", "الملخص"]} />}>
-                    <textarea
-                      value={text(object(object(d.locales)[lang]).summary)}
-                      disabled={readOnly}
-                      onChange={(e) => localePatch("summary", e.target.value)}
-                    />
-                  </Field>
-                  <Field
-                    label={
-                      <T
-                        v={[
-                          "Instructions / accessibility",
-                          "Instructions / accessibilité",
-                          "التعليمات / الوصول",
-                        ]}
-                      />
-                    }
-                  >
-                    <textarea
-                      value={text(object(object(d.locales)[lang]).instructions)}
-                      disabled={readOnly}
-                      onChange={(e) =>
-                        localePatch("instructions", e.target.value)
-                      }
-                    />
-                  </Field>
-                  {["experience", "template"].includes(draft.kind || "") && (
-                    <Field
-                      label={
-                        <T
-                          v={["Viewer mode", "Mode de lecture", "وضع العرض"]}
-                        />
-                      }
-                    >
-                      <select
-                        data-dce-path="mode"
-                        disabled={readOnly}
-                        value={text(d.mode)}
-                        onChange={(e) =>
-                          dataPatch({
-                            mode: e.target.value,
-                            ...(f?.key === "learning" &&
-                            e.target.value === "Assessment-linked learning path"
-                              ? { completion: "assessment_pass" }
-                              : {}),
-                          })
-                        }
-                      >
-                        {f?.modes.map((m) => (
-                          <option key={m}>{m}</option>
-                        ))}
-                      </select>
-                    </Field>
-                  )}
-                  {field(
-                    {
-                      key: "topic",
-                      label: message(
-                        "Child/family topic",
-                        "Thème enfant/famille",
-                        "موضوع الأطفال والأسرة",
-                      ),
-                      type: "reference",
-                    },
-                    draft.topic,
-                    (v) => patch({ topic: text(v) || null }),
-                  )}
-                  {field(
-                    {
-                      key: "ageMin",
-                      label: message(
-                        "Minimum age",
-                        "Âge minimal",
-                        "العمر الأدنى",
-                      ),
-                      type: "number",
-                      min: 0,
-                      max: 25,
-                    },
-                    d.ageMin,
-                    (v) => dataPatch({ ageMin: v }),
-                  )}
-                  {field(
-                    {
-                      key: "ageMax",
-                      label: message(
-                        "Maximum age",
-                        "Âge maximal",
-                        "العمر الأعلى",
-                      ),
-                      type: "number",
-                      min: 0,
-                      max: 25,
-                    },
-                    d.ageMax,
-                    (v) => dataPatch({ ageMax: v }),
-                  )}
-                </div>
-                <div className={s.sectionTitle}>
-                  <h3>
-                    <T
-                      v={[
-                        "Authored languages · each releases independently",
-                        "Langues rédigées · publication indépendante",
-                        "لغات مؤلفة · نشر مستقل",
-                      ]}
-                    />
-                  </h3>
-                </div>
-                <div className={s.checkOptions}>
-                  {(["fr", "en", "ar"] as Locale[]).map((l) => (
-                    <label key={l}>
-                      <input
-                        type="checkbox"
-                        disabled={readOnly}
-                        checked={
-                          Array.isArray(d.requiredLocales) &&
-                          d.requiredLocales.includes(l)
-                        }
-                        onChange={(e) =>
-                          dataPatch({
-                            requiredLocales: e.target.checked
-                              ? [...((d.requiredLocales as string[]) || []), l]
-                              : ((d.requiredLocales as string[]) || []).filter(
-                                  (x) => x !== l,
-                                ),
-                          })
-                        }
-                      />
-                      {l.toUpperCase()}{" "}
-                      <Badge
-                        tone={
-                          text(object(object(d.locales)[l]).title)
-                            ? "green"
-                            : "orange"
-                        }
-                      >
-                        {text(object(object(d.locales)[l]).title) ? "✓" : "—"}
-                      </Badge>
-                    </label>
+                {(["fr", "en", "ar"] as Locale[])
+                  .filter(
+                    (l) =>
+                      Boolean(draft.id) ||
+                      authoringLocales(boot.settings).includes(l),
+                  )
+                  .map((l) => (
+                    <option value={l} key={l}>
+                      {l.toUpperCase()}
+                    </option>
                   ))}
-                </div>
-                <div className={s.notice} style={{ marginTop: 15 }}>
-                  <Icon name="ShieldCheck" />
-                  <T
-                    v={[
-                      "Private fields stay in staff records. Media, native offers and customer identities keep their existing authorities.",
-                      "Les champs privés restent internes. Médias, offres et identités conservent leurs autorités natives.",
-                      "تبقى الحقول الخاصة داخلية. تحتفظ الوسائط والعروض والهويات بمرجعيتها الأصلية.",
-                    ]}
-                  />
-                </div>
-              </>
-            )}
-            {tab === "content" && (
-              <>
-                {draft.family === "activities" && (
-                  <HtmlActivityEditor
-                    data={d}
-                    language={lang}
-                    onChange={dataPatch}
-                    disabled={readOnly}
-                  />
-                )}{" "}
-                {draft.kind === "setting" && draft.key === "world-defaults" && (
-                  <>
-                    <div className={s.checkOptions}>
-                      {FAMILIES.map((f) => (
-                        <label key={f.key}>
-                          <input
-                            type="checkbox"
-                            disabled={readOnly}
-                            checked={authoringFamilies(d).some(
-                              (v) => v.key === f.key,
-                            )}
-                            onChange={(e) =>
-                              dataPatch({
-                                familySelectionConfigured: true,
-                                enabledFamilies: e.target.checked
-                                  ? [
-                                      ...authoringFamilies(d).map((v) => v.key),
-                                      f.key,
-                                    ]
-                                  : authoringFamilies(d)
-                                      .filter((v) => v.key !== f.key)
-                                      .map((v) => v.key),
-                              })
-                            }
-                          />
-                          {tr(f.name, locale)}
-                        </label>
-                      ))}
-                    </div>
-                    <div className={s.sectionTitle}>
-                      <h3>
-                        <T
-                          v={[
-                            "Enabled authoring languages",
-                            "Langues de création actives",
-                            "لغات التأليف المفعلة",
-                          ]}
-                        />
-                      </h3>
-                    </div>
-                    <div className={s.checkOptions}>
-                      {["fr", "en", "ar"].map((value) => (
-                        <label key={value}>
-                          <input
-                            disabled={readOnly}
-                            type="checkbox"
-                            checked={
-                              !Array.isArray(d.enabledLocales) ||
-                              d.enabledLocales.includes(value)
-                            }
-                            onChange={(e) =>
-                              dataPatch({
-                                enabledLocales: e.target.checked
-                                  ? [
-                                      ...((d.enabledLocales as string[]) || [
-                                        "fr",
-                                        "en",
-                                        "ar",
-                                      ]),
-                                      value,
-                                    ]
-                                  : (
-                                      (d.enabledLocales as string[]) || [
-                                        "fr",
-                                        "en",
-                                        "ar",
-                                      ]
-                                    ).filter((l) => l !== value),
-                              })
-                            }
-                          />
-                          {value.toUpperCase()}
-                        </label>
-                      ))}
-                    </div>
-                    <p className={s.subtitle}>
-                      <T
-                        v={[
-                          "The official AngelCare logo is fixed. These defaults govern new definitions; existing authored settings retain their values. Retention declares policy and never purges data automatically.",
-                          "Le logo officiel reste fixe. Ces valeurs s’appliquent aux nouvelles définitions ; les dossiers existants gardent leurs réglages. La rétention ne supprime jamais les données automatiquement.",
-                          "الشعار الرسمي ثابت. تطبق القيم على التعريفات الجديدة مع احتفاظ السجلات الحالية بإعداداتها. لا يحذف الاحتفاظ البيانات تلقائياً.",
-                        ]}
-                      />
-                    </p>
-                  </>
-                )}
-                {draft.kind === "setting" &&
-                draft.key === "dce-protected-receiver" ? (
-                  <>
-                    <Switch
-                      disabled={readOnly}
-                      label={
-                        <T
-                          v={[
-                            "Protected receiver enabled",
-                            "Réception protégée activée",
-                            "الاستقبال المحمي مفعل",
-                          ]}
-                        />
-                      }
-                      value={d.enabled === true}
-                      onChange={(v) => dataPatch({ enabled: v })}
-                    />
-                    <p>dce_private_v1 · PDF/JPEG/PNG/WebP · 20 MiB · S:</p>
-                  </>
-                ) : f ||
-                  ["bundle", "content", "asset"].includes(draft.kind || "") ? (
-                  <FamilyWorkbench
-                    family={
-                      f ||
-                      (draft.kind === "content"
-                        ? CONTENT_WORKBENCH
-                        : draft.kind === "asset"
-                          ? MEDIA_WORKBENCH
-                          : familyByKey("bundles")!)
-                    }
-                    data={d}
-                    language={lang}
-                    readOnly={readOnly}
-                    onChange={dataPatch}
-                    renderField={field}
-                    focusPath={focusPath}
-                  />
-                ) : (
-                  <div className={s.formGrid}>
-                    {(ROOT_FIELDS[draft.kind || "experience"] || []).map(
-                      (def) => (
-                        <div key={def.key} data-dce-path={def.key}>
-                          {field(
-                            def,
-                            localizedFields.has(def.key)
-                              ? (object(object(d.locales)[lang])[def.key] ??
-                                  d[def.key])
-                              : d[def.key],
-                            (v) => {
-                              if (
-                                localizedFields.has(def.key) &&
-                                typeof v === "string"
-                              )
-                                localePatch(def.key, v);
-                              else dataPatch({ [def.key]: v });
-                            },
-                          )}
-                        </div>
-                      ),
-                    )}
-                  </div>
-                )}
-              </>
-            )}
-
-            {tab === "media" && (
-              <>
-                <div className={s.formGrid}>
-                  {field(
-                    {
-                      key: "coverAssetId",
-                      label: message(
-                        "Editorial cover from the native vault",
-                        "Couverture éditoriale du coffre natif",
-                        "غلاف تحريري من الخزنة الأصلية",
-                      ),
-                      type: "reference",
-                    },
-                    d.coverAssetId,
-                    (v) => dataPatch({ coverAssetId: v }),
-                  )}
-                  {field(
-                    {
-                      key: "accessibleText",
-                      label: message(
-                        "Accessible description",
-                        "Description accessible",
-                        "وصف يمكن الوصول إليه",
-                      ),
-                      type: "textarea",
-                    },
-                    object(object(d.locales)[lang]).accessibleText,
-                    (v) => localePatch("accessibleText", text(v)),
-                  )}
-                </div>
-                <div className={s.notice}>
-                  <T
-                    v={[
-                      "Bind source files in the authoring units. The Media Library uploads through the existing S: vault. Private form attachments must use a private receiving authority.",
-                      "Liez les sources dans les unités. La bibliothèque utilise le coffre S: existant. Les pièces privées restent dans leur réception protégée.",
-                      "اربط الملفات في الوحدات. تستخدم المكتبة خزنة S: الحالية. المرفقات الخاصة تتطلب استقبالاً محمياً.",
-                    ]}
-                  />
-                </div>
-                <div className={s.rowCard}>
-                  {draft.kind === "asset" && draft.id && (
-                    <Button
-                      icon="ScanLine"
-                      disabled={busy || dirty || !boot.actor.rights.media}
-                      onClick={() => act("process_media")}
-                    >
-                      <T
-                        v={[
-                          "Process source metadata",
-                          "Traiter les métadonnées source",
-                          "معالجة بيانات المصدر",
-                        ]}
-                      />
-                    </Button>
-                  )}
-                  {draft.kind === "asset" && (
-                    <div className={s.rowCard}>
-                      <Badge
-                        tone={
-                          d.processingState === "ready"
-                            ? "green"
-                            : d.processingState === "failed"
-                              ? "pink"
-                              : "orange"
-                        }
-                      >
-                        {text(d.processingState) || "not_inspected"}
-                      </Badge>
-                      <pre className={s.mono}>
-                        {JSON.stringify(d.processingMetadata || {}, null, 2)}
-                      </pre>
-                      {d.processingError && (
-                        <p role="alert">{text(d.processingError)}</p>
-                      )}
-                    </div>
-                  )}
-                  <h3>
-                    <T
-                      v={[
-                        "Current bindings",
-                        "Liens actuels",
-                        "الروابط الحالية",
-                      ]}
-                    />
-                  </h3>
-                  {references(d).media.map((id) => (
-                    <p key={id} className={s.mono}>
-                      {id}
-                    </p>
-                  ))}
-                </div>
-              </>
-            )}
-            {tab === "design" && (
-              <CompositionCanvas
-                data={d}
-                family={{
-                  ...f!,
-                  collections: f!.collections.filter(
-                    (c) => c.key !== "outputs",
-                  ),
-                }}
-                readOnly={readOnly}
-                onChange={dataPatch}
-                renderField={field}
-              />
-            )}
-            {tab === "journey" && (
-              <JourneyCanvas
-                data={d}
-                onChange={dataPatch}
-                readOnly={readOnly}
-                renderField={field}
-                onAuthor={() => setTab("content")}
-              />
-            )}
-
-            {tab === "access" && (
-              <>
-                <div className={s.formGrid}>
-                  {field(
-                    {
-                      key: "accessPolicyId",
-                      label: message(
-                        "Access policy",
-                        "Politique d’accès",
-                        "سياسة الوصول",
-                      ),
-                      type: "reference",
-                    },
-                    d.accessPolicyId,
-                    (v) => dataPatch({ accessPolicyId: v }),
-                  )}
-                  {field(
-                    {
-                      key: "visibility",
-                      label: message(
-                        "Access classification",
-                        "Classification d’accès",
-                        "تصنيف الوصول",
-                      ),
-                      type: "select",
-                      options: ["free"],
-                    },
-                    d.visibility,
-                    (v) => dataPatch({ visibility: v }),
-                  )}
-                  {field(
-                    {
-                      key: "downloadAllowed",
-                      label: message(
-                        "Download allowed",
-                        "Téléchargement autorisé",
-                        "التنزيل مسموح",
-                      ),
-                      type: "toggle",
-                    },
-                    d.downloadAllowed,
-                    (v) => dataPatch({ downloadAllowed: v }),
-                  )}
-                  {field(
-                    {
-                      key: "printAllowed",
-                      label: message(
-                        "Print allowed",
-                        "Impression autorisée",
-                        "الطباعة مسموحة",
-                      ),
-                      type: "toggle",
-                    },
-                    d.printAllowed,
-                    (v) => dataPatch({ printAllowed: v }),
-                  )}
-                </div>
-                <div className={s.sectionTitle}>
-                  <h3>
-                    <T
-                      v={[
-                        "Family capabilities",
-                        "Capacités de la famille",
-                        "قدرات العائلة",
-                      ]}
-                    />
-                  </h3>
-                </div>
-                <div className={s.checkOptions}>
-                  {f?.actions
-                    .filter(
-                      (action) =>
-                        !(
-                          ["forms", "community"].includes(draft.family || "") &&
-                          [
-                            "upload",
-                            "submit",
-                            "confirm",
-                            "track_status",
-                            "comment",
-                            "review",
-                            "rate",
-                            "like",
-                            "report",
-                          ].includes(action)
+              </select>
+            </div>
+            <div id={`${editorTabsId}-panel`}>
+              {tab === "connections" && draft.id && (
+                <DossierConnections
+                  id={draft.id}
+                  beforeNavigate={() => {
+                    if (dirty) retainDraft();
+                    return (
+                      !dirty ||
+                      confirm(
+                        tr(
+                          message(
+                            "Your draft is retained. Leave this editor?",
+                            "Votre brouillon est conservé. Quitter cet éditeur ?",
+                            "المسودة محفوظة. مغادرة المحرر؟",
+                          ),
+                          locale,
                         ),
-                    )
-                    .map((action) => (
-                      <label key={action}>
-                        <input
-                          type="checkbox"
-                          disabled={readOnly}
-                          checked={
-                            Array.isArray(d.actions) &&
-                            d.actions.includes(action)
-                          }
-                          onChange={(e) =>
-                            dataPatch({
-                              actions: e.target.checked
-                                ? [...((d.actions as string[]) || []), action]
-                                : ((d.actions as string[]) || []).filter(
-                                    (x) => x !== action,
-                                  ),
-                            })
-                          }
-                        />
-                        {f.capabilities?.find((c) => c.id === action)
-                          ? tr(
-                              f.capabilities.find((c) => c.id === action)!
-                                .label,
-                              locale,
-                            )
-                          : action}
-                      </label>
-                    ))}
-                </div>
-                {draft.kind === "access_policy" && (
-                  <div className={s.checkOptions}>
-                    {[
-                      "child",
-                      "parent",
-                      "educator",
-                      "professional",
-                      "school",
-                    ].map((a) => (
-                      <label key={a}>
-                        <input
-                          type="checkbox"
-                          disabled={readOnly}
-                          checked={
-                            Array.isArray(d.audiences) &&
-                            d.audiences.includes(a)
-                          }
-                          onChange={(e) =>
-                            dataPatch({
-                              audiences: e.target.checked
-                                ? [...((d.audiences as string[]) || []), a]
-                                : ((d.audiences as string[]) || []).filter(
-                                    (v) => v !== a,
-                                  ),
-                            })
-                          }
-                        />
-                        {a}
-                      </label>
-                    ))}
-                  </div>
-                )}
-                {draft.kind === "ad_policy" && (
-                  <>
-                    <div className={s.sectionTitle}>
-                      <h3>
-                        <T
-                          v={[
-                            "Eligible audiences, languages and devices",
-                            "Publics, langues et appareils éligibles",
-                            "الجماهير واللغات والأجهزة المؤهلة",
-                          ]}
-                        />
-                      </h3>
-                    </div>
-                    {[
-                      [
-                        "audiences",
-                        [
-                          "child",
-                          "parent",
-                          "educator",
-                          "professional",
-                          "school",
-                        ],
-                      ],
-                      ["allowedLocales", ["fr", "en", "ar"]],
-                      ["devices", ["desktop", "mobile"]],
-                      ["regions", ["MA", "FR", "US", "CA", "GB", "AE", "SA"]],
-                    ].map(([key, options]) => (
-                      <div className={s.checkOptions} key={key as string}>
-                        {(options as string[]).map((v) => (
-                          <label key={v}>
-                            <input
-                              type="checkbox"
-                              checked={
-                                Array.isArray(d[key as string]) &&
-                                (d[key as string] as string[]).includes(v)
-                              }
-                              disabled={readOnly}
-                              onChange={(e) =>
-                                dataPatch({
-                                  [key as string]: e.target.checked
-                                    ? [
-                                        ...((d[key as string] as string[]) ||
-                                          []),
-                                        v,
-                                      ]
-                                    : (
-                                        (d[key as string] as string[]) || []
-                                      ).filter((x) => x !== v),
-                                })
-                              }
-                            />
-                            {v}
-                          </label>
-                        ))}
-                      </div>
-                    ))}
-                  </>
-                )}
-                {draft.kind === "ad_connection" && (
-                  <div className={s.checkOptions}>
-                    {["adsense", "offerwall", "afs", "h5", "video_stack"].map(
-                      (v) => (
-                        <label key={v}>
-                          <input
-                            type="checkbox"
-                            checked={
-                              Array.isArray(d.programs) &&
-                              d.programs.includes(v)
-                            }
-                            disabled={readOnly}
-                            onChange={(e) =>
-                              dataPatch({
-                                programs: e.target.checked
-                                  ? [...((d.programs as string[]) || []), v]
-                                  : ((d.programs as string[]) || []).filter(
-                                      (x) => x !== v,
-                                    ),
-                              })
-                            }
-                          />
-                          {v}
-                        </label>
-                      ),
-                    )}
-                  </div>
-                )}
-                <div className={s.notice} style={{ marginTop: 18 }}>
-                  <T
-                    v={[
-                      "Recognized customer grants and payment outcomes are read from native issuers. No policy creates a purchase or reward by itself.",
-                      "Les droits reconnus et paiements viennent des autorités natives. Une politique ne crée pas d’achat ni de récompense.",
-                      "تأتي الأهلية والمدفوعات من الجهات الأصلية. السياسة لا تنشئ شراءً أو مكافأة.",
-                    ]}
-                  />
-                </div>
-              </>
-            )}
-            {tab === "validation" &&
-              (["experience", "content", "template", "bundle"].includes(
-                draft.kind || "",
-              ) ? (
+                      )
+                    );
+                  }}
+                />
+              )}
+              {serverDraft.status && serverDraft.status !== "✓" && (
+                <p role="status">{serverDraft.status}</p>
+              )}
+              {tab === "experience" && f && (
+                <ExperienceStudio
+                  record={draft}
+                  family={f}
+                  data={d}
+                  language={lang}
+                  readOnly={readOnly}
+                  onChange={dataPatch}
+                  renderField={field}
+                  focusPath={focusPath}
+                />
+              )}
+              {tab === "delivery" && (
                 <DeliveryStudio
                   record={draft}
                   language={lang}
@@ -2384,351 +1284,1108 @@ export function Editor({
                   dirty={dirty}
                   readOnly={readOnly}
                   onChange={dataPatch}
+                  focusPath={focusPath}
+                  onLocate={locateControl}
                 />
-              ) : (
+              )}
+              {tab === "overview" && (
                 <>
-                  <div className={s.toolbar}>
-                    <Button
-                      icon="ScanLine"
-                      onClick={() => act("validate")}
-                      disabled={busy || !draft.id || dirty}
-                    >
-                      <T
-                        v={[
-                          "Validate saved revision",
-                          "Valider la version enregistrée",
-                          "تحقق من النسخة المحفوظة",
-                        ]}
-                      />
-                    </Button>
-                    <Button
-                      icon="Eye"
-                      onClick={() =>
-                        draft.id && preview(draft.id, undefined, lang)
-                      }
-                      disabled={!draft.id || dirty}
-                    >
-                      <T
-                        v={[
-                          "Open protected preview",
-                          "Ouvrir l’aperçu protégé",
-                          "افتح المعاينة المحمية",
-                        ]}
-                      />
-                    </Button>
-                    <Badge tone={validation?.valid ? "green" : "orange"}>
-                      {validation
-                        ? validation.valid
-                          ? "READY"
-                          : "BLOCKED"
-                        : "NOT_CHECKED"}
-                    </Badge>
-                  </div>
-                  {validation && (
-                    <>
-                      {[...validation.errors, ...validation.warnings].map(
-                        (issue, i) => (
-                          <button
-                            className={s.rowCard}
-                            style={{ width: "100%", textAlign: "start" }}
-                            key={i}
-                            onClick={() => {
-                              const parts = issue.path.split("."),
-                                c = (f?.collections || []).find(
-                                  (c) => c.key === parts[0],
-                                );
-                              let target = issue.path;
-                              if (c && /^\d+$/.test(parts[1])) {
-                                const row = array(d[c.key])[Number(parts[1])];
-                                if (row)
-                                  target = [
-                                    c.key,
-                                    text(row.id),
-                                    ...parts.slice(2),
-                                  ].join(".");
-                              }
-                              const language = target.match(
-                                /locales\.(fr|en|ar)\./,
-                              )?.[1];
-                              if (language) setLang(language as Locale);
-                              target = target.replace(
-                                /\.?locales\.(fr|en|ar)\./,
-                                "",
-                              );
-                              setFocusPath(issue.path);
-                              setTab(
-                                issue.path.startsWith("locales") ||
-                                  [
-                                    "mode",
-                                    "ageMin",
-                                    "ageMax",
-                                    "topic",
-                                  ].includes(parts[0])
-                                  ? "overview"
-                                  : "content",
-                              );
-                              setTimeout(() => {
-                                const node = Array.from(
-                                  document.querySelectorAll<HTMLElement>(
-                                    "[data-dce-path]",
-                                  ),
-                                ).find((n) => n.dataset.dcePath === target);
-                                node?.scrollIntoView({ block: "center" });
-                                if (
-                                  node?.matches("input,textarea,select,button")
-                                )
-                                  node.focus();
-                                else
-                                  node
-                                    ?.querySelector<HTMLElement>(
-                                      "input,textarea,select,button",
-                                    )
-                                    ?.focus();
-                              }, 120);
-                            }}
-                          >
-                            <Badge
-                              tone={
-                                issue.severity === "error" ? "pink" : "orange"
-                              }
-                            >
-                              {issue.code}
-                            </Badge>{" "}
-                            <strong>{issue.path}</strong>
-                            <p>{tr(issue.message, locale)}</p>
-                          </button>
-                        ),
-                      )}
-                      {validation.valid && (
-                        <div className={s.result}>
-                          <T
-                            v={[
-                              "Saved definition passes current dependencies.",
-                              "La définition enregistrée valide ses dépendances.",
-                              "نجحت النسخة المحفوظة في فحص الاعتماديات.",
-                            ]}
-                          />
-                        </div>
-                      )}
-                    </>
-                  )}
-                  <div className={s.sectionTitle}>
-                    <h3>
-                      <T
-                        v={[
-                          "Approval and immutable release",
-                          "Approbation et release immuable",
-                          "الموافقة والإصدار الثابت",
-                        ]}
-                      />
-                    </h3>
-                  </div>
-                  <div className={s.actions}>
-                    <Button
-                      disabled={busy || dirty || !draft.id || readOnly}
-                      onClick={() => act("review")}
-                      icon="Send"
-                    >
-                      <T
-                        v={[
-                          "Send for review",
-                          "Soumettre en revue",
-                          "إرسال للمراجعة",
-                        ]}
-                      />
-                    </Button>
-                    <Button
-                      disabled={
-                        busy ||
-                        dirty ||
-                        draft.lifecycle !== "review" ||
-                        !boot.actor.rights.publish
-                      }
-                      onClick={() => act("approve")}
-                      icon="BadgeCheck"
-                    >
-                      <T v={["Approve", "Approuver", "اعتماد"]} />
-                    </Button>
-                    <Button
-                      disabled={
-                        busy ||
-                        dirty ||
-                        draft.lifecycle !== "approved" ||
-                        !boot.actor.rights.publish
-                      }
-                      onClick={() => act("release")}
-                      kind="primary"
-                      icon="Rocket"
-                    >
-                      <T
-                        v={[
-                          "Release revision",
-                          "Publier la version",
-                          "نشر النسخة",
-                        ]}
-                      />
-                    </Button>
-                  </div>
-                  <div className={s.formGrid} style={{ marginTop: 14 }}>
+                  <div className={s.formGrid}>
                     <Field
+                      path="key"
                       label={
+                        <T v={["Stable key", "Clé stable", "المعرّف الثابت"]} />
+                      }
+                      hint={
                         <T
                           v={[
-                            "Schedule · world timezone",
-                            "Planifier · fuseau du monde",
-                            "الجدولة · المنطقة الزمنية للعالم",
+                            "Immutable after first save",
+                            "Immuable après sauvegarde",
+                            "لا يتغير بعد الحفظ",
                           ]}
                         />
                       }
                     >
                       <input
-                        type="datetime-local"
-                        title={worldTimeZone(boot.settings)}
-                        value={schedule}
-                        onChange={(e) => setSchedule(e.target.value)}
+                        value={draft.key || ""}
+                        disabled={readOnly || Boolean(draft.id)}
+                        onChange={(e) => patch({ key: e.target.value })}
                       />
                     </Field>
-                    <Button
-                      disabled={
-                        busy ||
-                        dirty ||
-                        !schedule ||
-                        draft.lifecycle !== "approved" ||
-                        !boot.actor.rights.publish
+                    <Field
+                      path="staffTitle"
+                      label={
+                        <T
+                          v={[
+                            "Staff dossier title",
+                            "Titre opérateur",
+                            "عنوان الملف الداخلي",
+                          ]}
+                        />
                       }
-                      onClick={() => {
-                        try {
-                          void act("schedule", {
-                            scheduledAt: zonedDateInput(
-                              schedule,
-                              worldTimeZone(boot.settings),
-                            ),
-                          });
-                        } catch (e) {
-                          setError((e as Error).message);
-                        }
-                      }}
-                      icon="CalendarClock"
                     >
+                      <input
+                        value={draft.title || ""}
+                        disabled={readOnly}
+                        onChange={(e) => patch({ title: e.target.value })}
+                      />
+                    </Field>
+                    <Field
+                      label={
+                        <T
+                          v={[
+                            "Localized title",
+                            "Titre traduit",
+                            "العنوان المترجم",
+                          ]}
+                        />
+                      }
+                    >
+                      <input
+                        data-dce-path="title"
+                        value={text(object(object(d.locales)[lang]).title)}
+                        disabled={readOnly}
+                        onChange={(e) => localePatch("title", e.target.value)}
+                      />
+                    </Field>
+                    <Field
+                      path="audience"
+                      label={<T v={["Audience", "Public", "الجمهور"]} />}
+                    >
+                      <select
+                        value={draft.audience || "parent"}
+                        disabled={readOnly}
+                        onChange={(e) => patch({ audience: e.target.value })}
+                      >
+                        {[
+                          "child",
+                          "parent",
+                          "educator",
+                          "professional",
+                          "school",
+                        ].map((v) => (
+                          <option key={v}>{v}</option>
+                        ))}
+                      </select>
+                    </Field>
+                    <Field
+                      path="summary"
+                      label={<T v={["Summary", "Résumé", "الملخص"]} />}
+                    >
+                      <textarea
+                        value={text(object(object(d.locales)[lang]).summary)}
+                        disabled={readOnly}
+                        onChange={(e) => localePatch("summary", e.target.value)}
+                      />
+                    </Field>
+                    <Field
+                      path="instructions"
+                      label={
+                        <T
+                          v={[
+                            "Instructions / accessibility",
+                            "Instructions / accessibilité",
+                            "التعليمات / الوصول",
+                          ]}
+                        />
+                      }
+                    >
+                      <textarea
+                        value={text(
+                          object(object(d.locales)[lang]).instructions,
+                        )}
+                        disabled={readOnly}
+                        onChange={(e) =>
+                          localePatch("instructions", e.target.value)
+                        }
+                      />
+                    </Field>
+                    <Field
+                      path="body"
+                      label={
+                        <T
+                          v={[
+                            "Main editorial text",
+                            "Texte éditorial principal",
+                            "النص التحريري الرئيسي",
+                          ]}
+                        />
+                      }
+                    >
+                      <textarea
+                        rows={6}
+                        disabled={readOnly}
+                        value={text(object(object(d.locales)[lang]).body)}
+                        onChange={(e) => localePatch("body", e.target.value)}
+                      />
+                    </Field>
+                    {["experience", "template"].includes(draft.kind || "") && (
+                      <Field
+                        label={
+                          <T
+                            v={["Viewer mode", "Mode de lecture", "وضع العرض"]}
+                          />
+                        }
+                      >
+                        <select
+                          data-dce-path="mode"
+                          disabled={readOnly}
+                          value={text(d.mode)}
+                          onChange={(e) =>
+                            dataPatch({
+                              mode: e.target.value,
+                              ...(f?.key === "learning" &&
+                              e.target.value ===
+                                "Assessment-linked learning path"
+                                ? { completion: "assessment_pass" }
+                                : {}),
+                            })
+                          }
+                        >
+                          {f?.modes.map((m) => (
+                            <option key={m}>{m}</option>
+                          ))}
+                        </select>
+                      </Field>
+                    )}
+                    {field(
+                      {
+                        key: "topic",
+                        label: message(
+                          "Child/family topic",
+                          "Thème enfant/famille",
+                          "موضوع الأطفال والأسرة",
+                        ),
+                        type: "reference",
+                      },
+                      draft.topic,
+                      (v) => patch({ topic: text(v) || null }),
+                    )}
+                    {field(
+                      {
+                        key: "ageMin",
+                        label: message(
+                          "Minimum age",
+                          "Âge minimal",
+                          "العمر الأدنى",
+                        ),
+                        type: "number",
+                        min: 0,
+                        max: 25,
+                      },
+                      d.ageMin,
+                      (v) => dataPatch({ ageMin: v }),
+                    )}
+                    {field(
+                      {
+                        key: "ageMax",
+                        label: message(
+                          "Maximum age",
+                          "Âge maximal",
+                          "العمر الأعلى",
+                        ),
+                        type: "number",
+                        min: 0,
+                        max: 25,
+                      },
+                      d.ageMax,
+                      (v) => dataPatch({ ageMax: v }),
+                    )}
+                  </div>
+                  <div className={s.sectionTitle}>
+                    <h3>
                       <T
                         v={[
-                          "Schedule approved revision",
-                          "Planifier la version approuvée",
-                          "جدولة النسخة المعتمدة",
+                          "Authored languages · each releases independently",
+                          "Langues rédigées · publication indépendante",
+                          "لغات مؤلفة · نشر مستقل",
                         ]}
                       />
-                    </Button>
+                    </h3>
+                  </div>
+                  <div className={s.checkOptions}>
+                    {(["fr", "en", "ar"] as Locale[]).map((l) => (
+                      <label key={l}>
+                        <input
+                          type="checkbox"
+                          disabled={readOnly}
+                          checked={
+                            Array.isArray(d.requiredLocales) &&
+                            d.requiredLocales.includes(l)
+                          }
+                          onChange={(e) =>
+                            dataPatch({
+                              requiredLocales: e.target.checked
+                                ? [
+                                    ...((d.requiredLocales as string[]) || []),
+                                    l,
+                                  ]
+                                : (
+                                    (d.requiredLocales as string[]) || []
+                                  ).filter((x) => x !== l),
+                            })
+                          }
+                        />
+                        {l.toUpperCase()}{" "}
+                        <Badge
+                          tone={
+                            text(object(object(d.locales)[l]).title)
+                              ? "green"
+                              : "orange"
+                          }
+                        >
+                          {text(object(object(d.locales)[l]).title) ? "✓" : "—"}
+                        </Badge>
+                      </label>
+                    ))}
                   </div>
                   <div className={s.notice} style={{ marginTop: 15 }}>
+                    <Icon name="ShieldCheck" />
                     <T
                       v={[
-                        "Publishing saves a DCE release manifest. Public viewers are a separate Chapter 2 activation. Draft edits never overwrite an active release.",
-                        "La publication crée un manifeste DCE. Les pages publiques sont activées au chapitre 2. Un brouillon n’écrase pas une release active.",
-                        "يحفظ النشر بيان إصدار DCE. تفعيل العرض العام في الفصل الثاني. لا تكتب المسودة فوق الإصدار الفعال.",
+                        "Private fields stay in staff records. Media, native offers and customer identities keep their existing authorities.",
+                        "Les champs privés restent internes. Médias, offres et identités conservent leurs autorités natives.",
+                        "تبقى الحقول الخاصة داخلية. تحتفظ الوسائط والعروض والهويات بمرجعيتها الأصلية.",
                       ]}
                     />
                   </div>
                 </>
-              ))}
-            {tab === "team" && draft.id && !dirty && (
-              <DossierTeam
-                id={draft.id}
-                onCommitted={(r) => {
-                  setDraft(r);
-                  baseline.current = structuredClone(r);
-                  setDirty(false);
-                }}
-              />
-            )}
-            {tab === "team" && dirty && (
-              <p className={s.notice}>
-                <T
-                  v={[
-                    "Save your local changes before opening shared editing.",
-                    "Enregistrez les modifications locales avant l’édition partagée.",
-                    "احفظ التغييرات المحلية قبل فتح التحرير المشترك.",
-                  ]}
-                />
-              </p>
-            )}
-            {tab === "history" && draft.id && (
-              <>
-                <div className={s.actions}>
-                  <Button
-                    disabled={
-                      busy || readOnly || Boolean(draft.published_release_id)
-                    }
-                    onClick={() => {
-                      if (
-                        confirm(
-                          tr(
-                            message(
-                              "Archive this dossier? Active dependencies remain protected.",
-                              "Archiver ce dossier ? Les dépendances restent protégées.",
-                              "أرشفة الملف؟ الاعتماديات تبقى محمية.",
-                            ),
-                            locale,
-                          ),
-                        )
-                      )
-                        act("archive");
-                    }}
-                    icon="Archive"
-                  >
-                    <T v={["Archive", "Archiver", "أرشفة"]} />
-                  </Button>
-                  <Button
-                    disabled={
-                      busy ||
-                      !boot.actor.rights.purge ||
-                      !["archived", "closed", "rejected"].includes(
-                        draft.lifecycle || "",
-                      )
-                    }
-                    kind="danger"
-                    onClick={() => {
-                      if (
-                        confirm(
-                          tr(
-                            message(
-                              "Permanently delete this eligible dossier? The server blocks live releases and dependencies.",
-                              "Supprimer définitivement ce dossier éligible ? Les liens et releases bloquent la suppression.",
-                              "حذف هذا الملف المؤهل نهائياً؟ يمنع الخادم حذف الملفات المرتبطة.",
-                            ),
-                            locale,
-                          ),
-                        )
-                      )
-                        act("delete");
-                    }}
-                    icon="Trash2"
-                  >
+              )}
+              {tab === "content" && (
+                <>
+                  {draft.family === "activities" && (
+                    <HtmlActivityEditor
+                      data={d}
+                      language={lang}
+                      onChange={dataPatch}
+                      disabled={readOnly}
+                    />
+                  )}{" "}
+                  {draft.kind === "setting" &&
+                    draft.key === "world-defaults" && (
+                      <>
+                        <div className={s.checkOptions}>
+                          {FAMILIES.map((f) => (
+                            <label key={f.key}>
+                              <input
+                                type="checkbox"
+                                disabled={readOnly}
+                                checked={authoringFamilies(d).some(
+                                  (v) => v.key === f.key,
+                                )}
+                                onChange={(e) =>
+                                  dataPatch({
+                                    familySelectionConfigured: true,
+                                    enabledFamilies: e.target.checked
+                                      ? [
+                                          ...authoringFamilies(d).map(
+                                            (v) => v.key,
+                                          ),
+                                          f.key,
+                                        ]
+                                      : authoringFamilies(d)
+                                          .filter((v) => v.key !== f.key)
+                                          .map((v) => v.key),
+                                  })
+                                }
+                              />
+                              {tr(f.name, locale)}
+                            </label>
+                          ))}
+                        </div>
+                        <div className={s.sectionTitle}>
+                          <h3>
+                            <T
+                              v={[
+                                "Enabled authoring languages",
+                                "Langues de création actives",
+                                "لغات التأليف المفعلة",
+                              ]}
+                            />
+                          </h3>
+                        </div>
+                        <div className={s.checkOptions}>
+                          {["fr", "en", "ar"].map((value) => (
+                            <label key={value}>
+                              <input
+                                disabled={readOnly}
+                                type="checkbox"
+                                checked={
+                                  !Array.isArray(d.enabledLocales) ||
+                                  d.enabledLocales.includes(value)
+                                }
+                                onChange={(e) =>
+                                  dataPatch({
+                                    enabledLocales: e.target.checked
+                                      ? [
+                                          ...((d.enabledLocales as string[]) || [
+                                            "fr",
+                                            "en",
+                                            "ar",
+                                          ]),
+                                          value,
+                                        ]
+                                      : (
+                                          (d.enabledLocales as string[]) || [
+                                            "fr",
+                                            "en",
+                                            "ar",
+                                          ]
+                                        ).filter((l) => l !== value),
+                                  })
+                                }
+                              />
+                              {value.toUpperCase()}
+                            </label>
+                          ))}
+                        </div>
+                        <p className={s.subtitle}>
+                          <T
+                            v={[
+                              "The official AngelCare logo is fixed. These defaults govern new definitions; existing authored settings retain their values. Retention declares policy and never purges data automatically.",
+                              "Le logo officiel reste fixe. Ces valeurs s’appliquent aux nouvelles définitions ; les dossiers existants gardent leurs réglages. La rétention ne supprime jamais les données automatiquement.",
+                              "الشعار الرسمي ثابت. تطبق القيم على التعريفات الجديدة مع احتفاظ السجلات الحالية بإعداداتها. لا يحذف الاحتفاظ البيانات تلقائياً.",
+                            ]}
+                          />
+                        </p>
+                      </>
+                    )}
+                  {draft.kind === "setting" &&
+                  draft.key === "dce-protected-receiver" ? (
+                    <>
+                      <Switch
+                        disabled={readOnly}
+                        label={
+                          <T
+                            v={[
+                              "Protected receiver enabled",
+                              "Réception protégée activée",
+                              "الاستقبال المحمي مفعل",
+                            ]}
+                          />
+                        }
+                        value={d.enabled === true}
+                        onChange={(v) => dataPatch({ enabled: v })}
+                      />
+                      <p>dce_private_v1 · PDF/JPEG/PNG/WebP · 20 MiB · S:</p>
+                    </>
+                  ) : f ||
+                    ["bundle", "content", "asset"].includes(
+                      draft.kind || "",
+                    ) ? (
+                    <FamilyWorkbench
+                      family={
+                        f ||
+                        (draft.kind === "content"
+                          ? CONTENT_WORKBENCH
+                          : draft.kind === "asset"
+                            ? MEDIA_WORKBENCH
+                            : familyByKey("bundles")!)
+                      }
+                      data={d}
+                      language={lang}
+                      readOnly={readOnly}
+                      onChange={dataPatch}
+                      renderField={field}
+                      focusPath={focusPath}
+                    />
+                  ) : (
+                    <div className={s.formGrid}>
+                      {(ROOT_FIELDS[draft.kind || "experience"] || []).map(
+                        (def) => (
+                          <div key={def.key} data-dce-path={def.key}>
+                            {field(
+                              def,
+                              localizedFields.has(def.key)
+                                ? (object(object(d.locales)[lang])[def.key] ??
+                                    d[def.key])
+                                : d[def.key],
+                              (v) => {
+                                if (
+                                  localizedFields.has(def.key) &&
+                                  typeof v === "string"
+                                )
+                                  localePatch(def.key, v);
+                                else dataPatch({ [def.key]: v });
+                              },
+                            )}
+                          </div>
+                        ),
+                      )}
+                    </div>
+                  )}
+                </>
+              )}
+
+              {tab === "media" && (
+                <>
+                  <div className={s.formGrid}>
+                    {field(
+                      {
+                        key: "coverAssetId",
+                        label: message(
+                          "Editorial cover from the native vault",
+                          "Couverture éditoriale du coffre natif",
+                          "غلاف تحريري من الخزنة الأصلية",
+                        ),
+                        type: "reference",
+                      },
+                      d.coverAssetId,
+                      (v) => dataPatch({ coverAssetId: v }),
+                    )}
+                    {field(
+                      {
+                        key: "accessibleText",
+                        label: message(
+                          "Accessible description",
+                          "Description accessible",
+                          "وصف يمكن الوصول إليه",
+                        ),
+                        type: "textarea",
+                      },
+                      object(object(d.locales)[lang]).accessibleText,
+                      (v) => localePatch("accessibleText", text(v)),
+                    )}
+                  </div>
+                  <div className={s.notice}>
                     <T
                       v={[
-                        "Delete permanently",
-                        "Supprimer définitivement",
-                        "حذف نهائي",
+                        "Bind source files in the authoring units. The Media Library uploads through the existing S: vault. Private form attachments must use a private receiving authority.",
+                        "Liez les sources dans les unités. La bibliothèque utilise le coffre S: existant. Les pièces privées restent dans leur réception protégée.",
+                        "اربط الملفات في الوحدات. تستخدم المكتبة خزنة S: الحالية. المرفقات الخاصة تتطلب استقبالاً محمياً.",
                       ]}
                     />
-                  </Button>
-                </div>
-                <History
+                  </div>
+                  <div className={s.rowCard}>
+                    {draft.kind === "asset" && draft.id && (
+                      <Button
+                        icon="ScanLine"
+                        disabled={busy || dirty || !boot.actor.rights.media}
+                        onClick={() => act("process_media")}
+                      >
+                        <T
+                          v={[
+                            "Process source metadata",
+                            "Traiter les métadonnées source",
+                            "معالجة بيانات المصدر",
+                          ]}
+                        />
+                      </Button>
+                    )}
+                    {draft.kind === "asset" && (
+                      <div className={s.rowCard}>
+                        <Badge
+                          tone={
+                            d.processingState === "ready"
+                              ? "green"
+                              : d.processingState === "failed"
+                                ? "pink"
+                                : "orange"
+                          }
+                        >
+                          {text(d.processingState) || "not_inspected"}
+                        </Badge>
+                        <pre className={s.mono}>
+                          {JSON.stringify(d.processingMetadata || {}, null, 2)}
+                        </pre>
+                        {d.processingError && (
+                          <p role="alert">{text(d.processingError)}</p>
+                        )}
+                      </div>
+                    )}
+                    <h3>
+                      <T
+                        v={[
+                          "Current bindings",
+                          "Liens actuels",
+                          "الروابط الحالية",
+                        ]}
+                      />
+                    </h3>
+                    {references(d).media.map((id) => (
+                      <p key={id} className={s.mono}>
+                        {id}
+                      </p>
+                    ))}
+                  </div>
+                </>
+              )}
+              {tab === "design" && (
+                <CompositionCanvas
+                  data={d}
+                  family={{
+                    ...f!,
+                    collections: f!.collections.filter(
+                      (c) => c.key !== "outputs",
+                    ),
+                  }}
+                  readOnly={readOnly}
+                  onChange={dataPatch}
+                  renderField={field}
+                />
+              )}
+              {tab === "journey" && (
+                <JourneyCanvas
+                  data={d}
+                  onChange={dataPatch}
+                  readOnly={readOnly}
+                  renderField={field}
+                  onAuthor={() => setTab("content")}
+                />
+              )}
+
+              {tab === "access" && (
+                <>
+                  <div className={s.formGrid}>
+                    {field(
+                      {
+                        key: "accessPolicyId",
+                        label: message(
+                          "Access policy",
+                          "Politique d’accès",
+                          "سياسة الوصول",
+                        ),
+                        type: "reference",
+                      },
+                      d.accessPolicyId,
+                      (v) => dataPatch({ accessPolicyId: v }),
+                    )}
+                    {field(
+                      {
+                        key: "visibility",
+                        label: message(
+                          "Access classification",
+                          "Classification d’accès",
+                          "تصنيف الوصول",
+                        ),
+                        type: "select",
+                        options: ["free"],
+                      },
+                      d.visibility,
+                      (v) => dataPatch({ visibility: v }),
+                    )}
+                    {field(
+                      {
+                        key: "downloadAllowed",
+                        label: message(
+                          "Download allowed",
+                          "Téléchargement autorisé",
+                          "التنزيل مسموح",
+                        ),
+                        type: "toggle",
+                      },
+                      d.downloadAllowed,
+                      (v) => dataPatch({ downloadAllowed: v }),
+                    )}
+                    {field(
+                      {
+                        key: "printAllowed",
+                        label: message(
+                          "Print allowed",
+                          "Impression autorisée",
+                          "الطباعة مسموحة",
+                        ),
+                        type: "toggle",
+                      },
+                      d.printAllowed,
+                      (v) => dataPatch({ printAllowed: v }),
+                    )}
+                  </div>
+                  <div className={s.sectionTitle}>
+                    <h3>
+                      <T
+                        v={[
+                          "Family capabilities",
+                          "Capacités de la famille",
+                          "قدرات العائلة",
+                        ]}
+                      />
+                    </h3>
+                  </div>
+                  <div className={s.checkOptions}>
+                    {f?.actions
+                      .filter(
+                        (action) =>
+                          !(
+                            ["forms", "community"].includes(
+                              draft.family || "",
+                            ) &&
+                            [
+                              "upload",
+                              "submit",
+                              "confirm",
+                              "track_status",
+                              "comment",
+                              "review",
+                              "rate",
+                              "like",
+                              "report",
+                            ].includes(action)
+                          ),
+                      )
+                      .map((action) => (
+                        <label key={action}>
+                          <input
+                            type="checkbox"
+                            disabled={readOnly}
+                            checked={
+                              Array.isArray(d.actions) &&
+                              d.actions.includes(action)
+                            }
+                            onChange={(e) =>
+                              dataPatch({
+                                actions: e.target.checked
+                                  ? [...((d.actions as string[]) || []), action]
+                                  : ((d.actions as string[]) || []).filter(
+                                      (x) => x !== action,
+                                    ),
+                              })
+                            }
+                          />
+                          {f.capabilities?.find((c) => c.id === action)
+                            ? tr(
+                                f.capabilities.find((c) => c.id === action)!
+                                  .label,
+                                locale,
+                              )
+                            : action}
+                        </label>
+                      ))}
+                  </div>
+                  {draft.kind === "access_policy" && (
+                    <div className={s.checkOptions}>
+                      {[
+                        "child",
+                        "parent",
+                        "educator",
+                        "professional",
+                        "school",
+                      ].map((a) => (
+                        <label key={a}>
+                          <input
+                            type="checkbox"
+                            disabled={readOnly}
+                            checked={
+                              Array.isArray(d.audiences) &&
+                              d.audiences.includes(a)
+                            }
+                            onChange={(e) =>
+                              dataPatch({
+                                audiences: e.target.checked
+                                  ? [...((d.audiences as string[]) || []), a]
+                                  : ((d.audiences as string[]) || []).filter(
+                                      (v) => v !== a,
+                                    ),
+                              })
+                            }
+                          />
+                          {a}
+                        </label>
+                      ))}
+                    </div>
+                  )}
+                  {draft.kind === "ad_policy" && (
+                    <>
+                      <div className={s.sectionTitle}>
+                        <h3>
+                          <T
+                            v={[
+                              "Eligible audiences, languages and devices",
+                              "Publics, langues et appareils éligibles",
+                              "الجماهير واللغات والأجهزة المؤهلة",
+                            ]}
+                          />
+                        </h3>
+                      </div>
+                      {[
+                        [
+                          "audiences",
+                          [
+                            "child",
+                            "parent",
+                            "educator",
+                            "professional",
+                            "school",
+                          ],
+                        ],
+                        ["allowedLocales", ["fr", "en", "ar"]],
+                        ["devices", ["desktop", "mobile"]],
+                        ["regions", ["MA", "FR", "US", "CA", "GB", "AE", "SA"]],
+                      ].map(([key, options]) => (
+                        <div className={s.checkOptions} key={key as string}>
+                          {(options as string[]).map((v) => (
+                            <label key={v}>
+                              <input
+                                type="checkbox"
+                                checked={
+                                  Array.isArray(d[key as string]) &&
+                                  (d[key as string] as string[]).includes(v)
+                                }
+                                disabled={readOnly}
+                                onChange={(e) =>
+                                  dataPatch({
+                                    [key as string]: e.target.checked
+                                      ? [
+                                          ...((d[key as string] as string[]) ||
+                                            []),
+                                          v,
+                                        ]
+                                      : (
+                                          (d[key as string] as string[]) || []
+                                        ).filter((x) => x !== v),
+                                  })
+                                }
+                              />
+                              {v}
+                            </label>
+                          ))}
+                        </div>
+                      ))}
+                    </>
+                  )}
+                  {draft.kind === "ad_connection" && (
+                    <div className={s.checkOptions}>
+                      {["adsense", "offerwall", "afs", "h5", "video_stack"].map(
+                        (v) => (
+                          <label key={v}>
+                            <input
+                              type="checkbox"
+                              checked={
+                                Array.isArray(d.programs) &&
+                                d.programs.includes(v)
+                              }
+                              disabled={readOnly}
+                              onChange={(e) =>
+                                dataPatch({
+                                  programs: e.target.checked
+                                    ? [...((d.programs as string[]) || []), v]
+                                    : ((d.programs as string[]) || []).filter(
+                                        (x) => x !== v,
+                                      ),
+                                })
+                              }
+                            />
+                            {v}
+                          </label>
+                        ),
+                      )}
+                    </div>
+                  )}
+                  <div className={s.notice} style={{ marginTop: 18 }}>
+                    <T
+                      v={[
+                        "Recognized customer grants and payment outcomes are read from native issuers. No policy creates a purchase or reward by itself.",
+                        "Les droits reconnus et paiements viennent des autorités natives. Une politique ne crée pas d’achat ni de récompense.",
+                        "تأتي الأهلية والمدفوعات من الجهات الأصلية. السياسة لا تنشئ شراءً أو مكافأة.",
+                      ]}
+                    />
+                  </div>
+                </>
+              )}
+              {tab === "validation" &&
+                (["experience", "content", "template", "bundle"].includes(
+                  draft.kind || "",
+                ) ? (
+                  <DeliveryStudio
+                    record={draft}
+                    language={lang}
+                    onLanguage={setLang}
+                    dirty={dirty}
+                    readOnly={readOnly}
+                    onChange={dataPatch}
+                  />
+                ) : (
+                  <>
+                    <div className={s.toolbar}>
+                      <Button
+                        icon="ScanLine"
+                        onClick={() => act("validate")}
+                        disabled={busy || !draft.id || dirty}
+                      >
+                        <T
+                          v={[
+                            "Validate saved revision",
+                            "Valider la version enregistrée",
+                            "تحقق من النسخة المحفوظة",
+                          ]}
+                        />
+                      </Button>
+                      <Button
+                        icon="Eye"
+                        onClick={() =>
+                          draft.id && preview(draft.id, undefined, lang)
+                        }
+                        disabled={!draft.id || dirty}
+                      >
+                        <T
+                          v={[
+                            "Open protected preview",
+                            "Ouvrir l’aperçu protégé",
+                            "افتح المعاينة المحمية",
+                          ]}
+                        />
+                      </Button>
+                      <Badge tone={validation?.valid ? "green" : "orange"}>
+                        {validation
+                          ? validation.valid
+                            ? "READY"
+                            : "BLOCKED"
+                          : "NOT_CHECKED"}
+                      </Badge>
+                    </div>
+                    {validation && (
+                      <>
+                        {[...validation.errors, ...validation.warnings].map(
+                          (issue, i) => (
+                            <button
+                              className={s.rowCard}
+                              style={{ width: "100%", textAlign: "start" }}
+                              key={i}
+                              onClick={() => locateControl(issue.path)}
+                            >
+                              <Badge
+                                tone={
+                                  issue.severity === "error" ? "pink" : "orange"
+                                }
+                              >
+                                {issue.code}
+                              </Badge>{" "}
+                              <strong>{issue.path}</strong>
+                              <p>{tr(issue.message, locale)}</p>
+                            </button>
+                          ),
+                        )}
+                        {validation.valid && (
+                          <div className={s.result}>
+                            <T
+                              v={[
+                                "Saved definition passes current dependencies.",
+                                "La définition enregistrée valide ses dépendances.",
+                                "نجحت النسخة المحفوظة في فحص الاعتماديات.",
+                              ]}
+                            />
+                          </div>
+                        )}
+                      </>
+                    )}
+                    <div className={s.sectionTitle}>
+                      <h3>
+                        <T
+                          v={[
+                            "Approval and immutable release",
+                            "Approbation et release immuable",
+                            "الموافقة والإصدار الثابت",
+                          ]}
+                        />
+                      </h3>
+                    </div>
+                    <div className={s.actions}>
+                      <Button
+                        disabled={busy || dirty || !draft.id || readOnly}
+                        onClick={() => act("review")}
+                        icon="Send"
+                      >
+                        <T
+                          v={[
+                            "Send for review",
+                            "Soumettre en revue",
+                            "إرسال للمراجعة",
+                          ]}
+                        />
+                      </Button>
+                      <Button
+                        disabled={
+                          busy ||
+                          dirty ||
+                          draft.lifecycle !== "review" ||
+                          !boot.actor.rights.publish
+                        }
+                        onClick={() => act("approve")}
+                        icon="BadgeCheck"
+                      >
+                        <T v={["Approve", "Approuver", "اعتماد"]} />
+                      </Button>
+                      <Button
+                        disabled={
+                          busy ||
+                          dirty ||
+                          draft.lifecycle !== "approved" ||
+                          !boot.actor.rights.publish
+                        }
+                        onClick={() => act("release")}
+                        kind="primary"
+                        icon="Rocket"
+                      >
+                        <T
+                          v={[
+                            "Release revision",
+                            "Publier la version",
+                            "نشر النسخة",
+                          ]}
+                        />
+                      </Button>
+                    </div>
+                    <div className={s.formGrid} style={{ marginTop: 14 }}>
+                      <Field
+                        label={
+                          <T
+                            v={[
+                              "Schedule · world timezone",
+                              "Planifier · fuseau du monde",
+                              "الجدولة · المنطقة الزمنية للعالم",
+                            ]}
+                          />
+                        }
+                      >
+                        <input
+                          type="datetime-local"
+                          title={worldTimeZone(boot.settings)}
+                          value={schedule}
+                          onChange={(e) => setSchedule(e.target.value)}
+                        />
+                      </Field>
+                      <Button
+                        disabled={
+                          busy ||
+                          dirty ||
+                          !schedule ||
+                          draft.lifecycle !== "approved" ||
+                          !boot.actor.rights.publish
+                        }
+                        onClick={() => {
+                          try {
+                            void act("schedule", {
+                              scheduledAt: zonedDateInput(
+                                schedule,
+                                worldTimeZone(boot.settings),
+                              ),
+                            });
+                          } catch (e) {
+                            setError((e as Error).message);
+                          }
+                        }}
+                        icon="CalendarClock"
+                      >
+                        <T
+                          v={[
+                            "Schedule approved revision",
+                            "Planifier la version approuvée",
+                            "جدولة النسخة المعتمدة",
+                          ]}
+                        />
+                      </Button>
+                    </div>
+                    <div className={s.notice} style={{ marginTop: 15 }}>
+                      <T
+                        v={[
+                          "Publishing saves a DCE release manifest. Public viewers are a separate Chapter 2 activation. Draft edits never overwrite an active release.",
+                          "La publication crée un manifeste DCE. Les pages publiques sont activées au chapitre 2. Un brouillon n’écrase pas une release active.",
+                          "يحفظ النشر بيان إصدار DCE. تفعيل العرض العام في الفصل الثاني. لا تكتب المسودة فوق الإصدار الفعال.",
+                        ]}
+                      />
+                    </div>
+                  </>
+                ))}
+              {tab === "team" && draft.id && !dirty && (
+                <DossierTeam
                   id={draft.id}
-                  onRestore={(r) => {
-                    setDraft((old) => ({
-                      ...r,
-                      id: old.id,
-                      revision: old.revision,
-                      lifecycle: old.lifecycle,
-                      published_release_id: old.published_release_id,
-                    }));
-                    setDirty(true);
-                    setTab("overview");
+                  onCommitted={(r) => {
+                    setDraft(r);
+                    baseline.current = structuredClone(r);
+                    setDirty(false);
                   }}
                 />
-              </>
-            )}
-          </div>
+              )}
+              {tab === "team" && dirty && (
+                <p className={s.notice}>
+                  <T
+                    v={[
+                      "Save your local changes before opening shared editing.",
+                      "Enregistrez les modifications locales avant l’édition partagée.",
+                      "احفظ التغييرات المحلية قبل فتح التحرير المشترك.",
+                    ]}
+                  />
+                </p>
+              )}
+              {tab === "history" && draft.id && (
+                <>
+                  <div className={s.actions}>
+                    <Button
+                      disabled={
+                        busy || readOnly || Boolean(draft.published_release_id)
+                      }
+                      onClick={() => {
+                        if (
+                          confirm(
+                            tr(
+                              message(
+                                "Archive this dossier? Active dependencies remain protected.",
+                                "Archiver ce dossier ? Les dépendances restent protégées.",
+                                "أرشفة الملف؟ الاعتماديات تبقى محمية.",
+                              ),
+                              locale,
+                            ),
+                          )
+                        )
+                          act("archive");
+                      }}
+                      icon="Archive"
+                    >
+                      <T v={["Archive", "Archiver", "أرشفة"]} />
+                    </Button>
+                    <Button
+                      disabled={
+                        busy ||
+                        !boot.actor.rights.purge ||
+                        !["archived", "closed", "rejected"].includes(
+                          draft.lifecycle || "",
+                        )
+                      }
+                      kind="danger"
+                      onClick={() => {
+                        if (
+                          confirm(
+                            tr(
+                              message(
+                                "Permanently delete this eligible dossier? The server blocks live releases and dependencies.",
+                                "Supprimer définitivement ce dossier éligible ? Les liens et releases bloquent la suppression.",
+                                "حذف هذا الملف المؤهل نهائياً؟ يمنع الخادم حذف الملفات المرتبطة.",
+                              ),
+                              locale,
+                            ),
+                          )
+                        )
+                          act("delete");
+                      }}
+                      icon="Trash2"
+                    >
+                      <T
+                        v={[
+                          "Delete permanently",
+                          "Supprimer définitivement",
+                          "حذف نهائي",
+                        ]}
+                      />
+                    </Button>
+                  </div>
+                  <History
+                    id={draft.id}
+                    onRestore={(r) => {
+                      setDraft((old) => ({
+                        ...r,
+                        id: old.id,
+                        revision: old.revision,
+                        lifecycle: old.lifecycle,
+                        published_release_id: old.published_release_id,
+                      }));
+                      setDirty(true);
+                      setTab("overview");
+                    }}
+                  />
+                </>
+              )}
+            </div>
+          </DossierStudio>
         </State>
       </div>
       {remote &&

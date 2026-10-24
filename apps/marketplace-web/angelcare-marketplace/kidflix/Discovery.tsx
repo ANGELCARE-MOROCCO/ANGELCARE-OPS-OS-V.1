@@ -1,4 +1,6 @@
 "use client";
+import { ReferenceCard } from "./ReferenceCards";
+import ref from "./reference.module.css";
 import Link from "next/link";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
@@ -21,93 +23,14 @@ export const ageText = (r: Resource, l: Locale) =>
     ? `${r.ageMin}–${r.ageMax} ${copy("years", l)}`
     : "";
 export function ResourceCard({
-  resource: r,
+  resource,
   locale,
-  large = false,
 }: {
   resource: Resource;
   locale: Locale;
   large?: boolean;
 }) {
-  const w = world(r.family)!,
-    guest = useGuest(),
-    saved = guest.saved.includes(r.key);
-  return (
-    <article
-      className={`${s.resourceCard} ${large ? s.largeCard : ""}`}
-      style={{ "--accent": w.color, "--tint": w.tint } as React.CSSProperties}
-    >
-      <div className={s.cardMedia}>
-        <Link href={path(locale, "/experience/" + r.key)} aria-label={r.title}>
-          {r.image ? (
-            <img
-              src={r.image}
-              alt={r.imageAlt}
-              loading="lazy"
-              width={440}
-              height={300}
-            />
-          ) : (
-            <div className={s.noCover}>
-              <I name={w.icon} size={50} />
-              <span>{tr(w.short, locale)}</span>
-            </div>
-          )}
-          <span className={s.mediaGradient} />
-        </Link>
-        <span className={s.cardFamily}>
-          <I name={w.icon} size={13} />
-          {tr(w.short, locale)}
-        </span>
-        <button
-          className={s.heart}
-          onClick={() => guest.toggle(r.key)}
-          aria-pressed={saved}
-          aria-label={copy(saved ? "unsave" : "save", locale)}
-        >
-          <I name="Bookmark" size={17} />
-        </button>
-        {r.formats.length ? (
-          <div className={s.formats}>
-            {r.formats.slice(0, 3).map((f) => (
-              <span key={f}>{f}</span>
-            ))}
-          </div>
-        ) : null}
-      </div>
-      <div className={s.cardBody}>
-        <Link
-          href={path(locale, "/experience/" + r.key)}
-          className={s.cardTitle}
-        >
-          {r.title}
-        </Link>
-        {large && r.summary ? <p>{r.summary}</p> : null}
-        <div className={s.cardFacts}>
-          {ageText(r, locale) ? (
-            <span>{ageText(r, locale)}</span>
-          ) : r.subject ? (
-            <span>{r.subject}</span>
-          ) : (
-            <span>{copy("free", locale)}</span>
-          )}
-          {r.duration && r.duration > 0 ? (
-            <span>
-              <I name="Clock" size={12} />
-              {r.duration} {copy("mins", locale)}
-            </span>
-          ) : null}
-          <Link
-            className={s.cardArrow}
-            href={path(locale, "/experience/" + r.key)}
-            aria-label={`${copy("open", locale)} · ${r.title}`}
-          >
-            <I name="ArrowRight" size={14} />
-          </Link>
-        </div>
-      </div>
-    </article>
-  );
+  return <ReferenceCard resource={resource} locale={locale} />;
 }
 export function WorldCard({
   w,
@@ -131,8 +54,16 @@ export function WorldCard({
       <div className={s.worldImage}>
         <img
           src={image || w.image}
-          srcSet={mobileImage && mobileImage !== (image || w.image) ? `${mobileImage} 420w, ${image || w.image} 800w` : undefined}
-          sizes={mobileImage ? "(max-width:760px) 45vw, (max-width:1100px) 30vw, 23vw" : undefined}
+          srcSet={
+            mobileImage && mobileImage !== (image || w.image)
+              ? `${mobileImage} 420w, ${image || w.image} 800w`
+              : undefined
+          }
+          sizes={
+            mobileImage
+              ? "(max-width:760px) 45vw, (max-width:1100px) 30vw, 23vw"
+              : undefined
+          }
           alt=""
           width={260}
           height={160}
@@ -302,10 +233,12 @@ export function SavedDiscoveries({
   locale,
   recent = false,
   compact = false,
+  dense = false,
 }: {
   locale: Locale;
   recent?: boolean;
   compact?: boolean;
+  dense?: boolean;
 }) {
   const guest = useGuest(),
     keys = recent ? guest.recent : guest.saved,
@@ -317,7 +250,7 @@ export function SavedDiscoveries({
     );
   if (compact && (!guest.ready || !keys.length)) return null;
   return (
-    <section className={s.section}>
+    <section className={`${s.section} ${dense ? ref.savedSection : ""}`}>
       <SectionTitle
         title={copy(recent ? "continue" : "saved", locale)}
         sub={copy("stored", locale)}
@@ -332,7 +265,15 @@ export function SavedDiscoveries({
       ) : q.error ? (
         <ReadFailure locale={locale} />
       ) : q.data.rows.length && keys.length ? (
-        <Shelf rows={q.data.rows} locale={locale} />
+        dense ? (
+          <div className={ref.sixGrid}>
+            {q.data.rows.map((r) => (
+              <ReferenceCard key={r.id} resource={r} locale={locale} />
+            ))}
+          </div>
+        ) : (
+          <Shelf rows={q.data.rows} locale={locale} />
+        )
       ) : (
         <div className={s.empty}>
           <I name="Heart" size={35} />
@@ -388,7 +329,7 @@ export function Explorer({
     const url = new URL(location.href);
     url.search = "";
     Object.entries(values).forEach(([k, v]) => {
-      if (v && k !== "family") url.searchParams.set(k, v);
+      if (v && (k !== "family" || !family)) url.searchParams.set(k, v);
     });
     history.replaceState(null, "", url);
   }, [values]);

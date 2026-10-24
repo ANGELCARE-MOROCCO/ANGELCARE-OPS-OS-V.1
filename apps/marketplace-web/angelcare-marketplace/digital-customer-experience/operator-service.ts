@@ -34,6 +34,8 @@ export async function operatorRead(c: Context, input: Record<string, unknown>) {
   const db = await createServiceClient(),
     op = text(input.op),
     page = Math.max(1, Math.floor(Number(input.page) || 1));
+  if (op === "operator_mapping_profiles")
+    return (await import("./mapping-service")).readMappingProfiles(c, input);
   if (op === "operator_features")
     return checked(db.rpc("ac_dce_r6_features", {}));
   if (op === "operator_coverage") {
@@ -236,6 +238,8 @@ export async function operatorCommand(c: Context, cmd: Command) {
     );
   }
   authorize(c, "manage");
+  if (cmd.action === "operator_mapping_save")
+    return (await import("./mapping-service")).saveMappingProfile(c, cmd);
   const rpc = (action: string, id: string, revision: number, data: Data = {}) =>
     checked(
       db.rpc("ac_dce_r6_batch", {

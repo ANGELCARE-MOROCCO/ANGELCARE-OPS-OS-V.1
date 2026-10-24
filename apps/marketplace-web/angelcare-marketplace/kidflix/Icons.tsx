@@ -1,5 +1,7 @@
 import {
   BookOpen,
+  CircleCheck,
+  Pause, Calculator, FlaskConical, Palette, Pencil, Flame,
   Printer,
   Sparkles,
   GraduationCap,
@@ -47,6 +49,8 @@ import {
 } from "lucide-react";
 const icons = {
   BookOpen,
+  CircleCheck,
+  Pause, Calculator, FlaskConical, Palette, Pencil, Flame,
   Printer,
   Sparkles,
   GraduationCap,
