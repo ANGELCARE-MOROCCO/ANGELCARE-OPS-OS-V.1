@@ -85,6 +85,14 @@ export function ResourceSurface({
 }) {
   const { m, d, state, update, locale } = props,
     c = capability(m),
+    readingUnits = rows(d.units),
+    readingMarks: string[] = Array.isArray(state.readingMarks)
+      ? state.readingMarks
+          .map((n: string | number) =>
+            typeof n === "number" ? str(readingUnits[n]?.id) : n,
+          )
+          .filter(Boolean)
+      : [],
     [classroom, setClassroom] = useState(false),
     [size, setSize] = useState(1),
     [spacing, setSpacing] = useState(1.7),
@@ -164,10 +172,9 @@ export function ResourceSurface({
                 update({
                   readingMarks: [
                     ...new Set([
-                      ...(Array.isArray(state.readingMarks)
-                        ? state.readingMarks
-                        : []),
-                      Number(state.index) || 0,
+                      ...readingMarks,
+                      str(state.readerUnitId) ||
+                        str(readingUnits[Number(state.index) || 0]?.id),
                     ]),
                   ].slice(0, 100),
                 })
@@ -175,17 +182,21 @@ export function ResourceSurface({
             >
               {j("bookmark", locale)}
             </button>
-            {(Array.isArray(state.readingMarks) ? state.readingMarks : []).map(
-              (n: number) => (
-                <button
-                  key={n}
-                  className={s.chip}
-                  onClick={() => update({ index: n })}
-                >
-                  {j("bookmark", locale)} {n + 1}
-                </button>
-              ),
-            )}
+            {readingMarks.map((n: string) => (
+              <button
+                key={n}
+                className={s.chip}
+                onClick={() =>
+                  update({
+                    index: readingUnits.findIndex((u) => u.id === n),
+                    readerUnitId: n,
+                  })
+                }
+              >
+                {j("bookmark", locale)}{" "}
+                {readingUnits.findIndex((u) => u.id === n) + 1}
+              </button>
+            ))}
           </div>
         ) : null}
       </div>

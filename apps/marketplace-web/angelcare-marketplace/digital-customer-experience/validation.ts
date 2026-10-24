@@ -1,3 +1,4 @@
+import { detailExperienceIssues } from "./detail-experience";
 import { depthIssues } from "./experience-depth";
 import { activeField, translationCoverage } from "./localisation";
 import {
@@ -42,6 +43,8 @@ export function capabilityIssues(
   if (!family || !["experience", "template", "bundle"].includes(record.kind))
     return issues;
   issues.push(...depthIssues(d, family));
+  if (record.kind !== "template")
+    issues.push(...detailExperienceIssues(family, d));
   const draftTemplate = record.kind === "template",
     mode = modeContract(family, d),
     requiredLocales = (

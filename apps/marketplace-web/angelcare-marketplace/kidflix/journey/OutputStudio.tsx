@@ -170,6 +170,7 @@ export function OutputStudio({
       <button
         className={s.button}
         aria-expanded={expanded}
+        disabled={busy}
         onClick={() => setExpanded((v) => !v)}
       >
         {j("select", locale)}
@@ -199,6 +200,7 @@ export function OutputStudio({
               <label className={s.check}>
                 <input
                   type="checkbox"
+                  disabled={busy}
                   checked={selected.includes(f.id)}
                   onChange={(e) => {
                     setSelected((a) =>
@@ -245,6 +247,7 @@ export function OutputStudio({
               <label className={s.field}>
                 {j("pages", locale)}
                 <input
+                  disabled={busy}
                   placeholder="1-3,5"
                   aria-label={j("pages", locale) + " · " + f.title}
                   value={ranges[f.id] || ""}
@@ -259,6 +262,7 @@ export function OutputStudio({
           <p className={s.status}>{j("paperHelp", locale)}</p>
           <div className={s.actions}>
             <select
+              disabled={busy}
               aria-label={j("paper", locale)}
               value={paper}
               onChange={(e) => {
@@ -272,6 +276,7 @@ export function OutputStudio({
             <label className={s.check}>
               <input
                 type="checkbox"
+                disabled={busy}
                 checked={landscape}
                 onChange={(e) => {
                   setLandscape(e.target.checked);

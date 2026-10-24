@@ -210,7 +210,8 @@ export function Learning(props: PlayerProps) {
           <h2>{t("completed", locale)}</h2>
         </div>
       ) : null}
-      {obj(d.certificatePolicy).enabled === true &&
+      {!props.preview &&
+      obj(d.certificatePolicy).enabled === true &&
       (!Array.isArray(d.certificatePolicy.locales) ||
         d.certificatePolicy.locales.includes(locale)) ? (
         <div className={s.certificate}>

@@ -1,0 +1,1478 @@
+{
+  "version": "R5",
+  "editorialOnly": true,
+  "items": [
+    {
+      "family": "documents",
+      "role": "context",
+      "path": "/kidflix/detail-r5/documents/context.webp",
+      "mobilePath": "/kidflix/detail-r5/documents/context-mobile.webp",
+      "alt": {
+        "en": "Picture reference sheets connect a city street, kitchen, airport, wardrobe and public places with everyday objects.",
+        "fr": "Des fiches illustrées relient rue, cuisine, aéroport, vêtements et lieux publics à des objets du quotidien.",
+        "ar": "أوراق مصوّرة تربط الشارع والمطبخ والمطار والملابس والأماكن العامة بأشياء يومية."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 282470,
+        "sha256": "88da461ce38fbdd7b8e3742ffd64ef7f23f78f13cdf3d9d75c508d20003f7c9c"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 87288,
+        "sha256": "3b3eda8c0c1c9015d6e89ca87dae5ab2b9eb26ae0e4a2da9fa9dca431923d28d"
+      }
+    },
+    {
+      "family": "documents",
+      "role": "method",
+      "path": "/kidflix/detail-r5/documents/method.webp",
+      "mobilePath": "/kidflix/detail-r5/documents/method-mobile.webp",
+      "alt": {
+        "en": "An open classroom reference pairs an empty activity room with art supplies, books, plants and organized storage.",
+        "fr": "Un guide ouvert associe une salle d’activité vide au matériel créatif, aux livres, aux plantes et au rangement.",
+        "ar": "مرجع مفتوح يجمع غرفة أنشطة خالية مع أدوات الرسم والكتب والنباتات والتخزين المنظم."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 239928,
+        "sha256": "1c4978dd7d2e299d3b05e5344d48540e2bbb8645feea9ae28a770105e182c1f5"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 79502,
+        "sha256": "b0ad23fcf403719ba6b83304ebb6755ece6b5c7cc74d7fdaf7f3ec95b298f498"
+      }
+    },
+    {
+      "family": "documents",
+      "role": "application",
+      "path": "/kidflix/detail-r5/documents/application.webp",
+      "mobilePath": "/kidflix/detail-r5/documents/application-mobile.webp",
+      "alt": {
+        "en": "An inquiry folio brings together mountain landscapes, transport, energy, construction and blank note panels.",
+        "fr": "Un dossier d’exploration réunit paysages de montagne, transports, énergie, construction et espaces de notes vierges.",
+        "ar": "ملف استكشاف يجمع مناظر جبلية والنقل والطاقة والبناء ومساحات ملاحظات فارغة."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 214578,
+        "sha256": "4379244a95c0ddd92b6738fb0e681991d3046f8012122c59f8b8cac7ef877167"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 65106,
+        "sha256": "d6e8b99950155d8ad31faadd440452badc8641dede0c7a12bdfdddd7bd9afe12"
+      }
+    },
+    {
+      "family": "documents",
+      "role": "extension",
+      "path": "/kidflix/detail-r5/documents/extension.webp",
+      "mobilePath": "/kidflix/detail-r5/documents/extension-mobile.webp",
+      "alt": {
+        "en": "A reference board shows an empty library, classroom, playground and building entrance beside a blank note margin.",
+        "fr": "Un tableau de référence présente bibliothèque, classe, aire de jeux et entrée de bâtiment vides, avec une marge vierge.",
+        "ar": "لوحة مرجعية تعرض مكتبة وصفاً وملعباً ومدخل مبنى خالية مع هامش ملاحظات فارغ."
+      },
+      "master": {
+        "width": 1000,
+        "height": 1250,
+        "bytes": 282616,
+        "sha256": "12b00c3921012d3be7dbb9a54c6ab116841ec24f4003721049abe6b812e60975"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 800,
+        "bytes": 117696,
+        "sha256": "fd280c43ec9b93b6a842c5e64f8ca0269ead209d007f84a6653dca8c53bf5df3"
+      }
+    },
+    {
+      "family": "printables",
+      "role": "context",
+      "path": "/kidflix/detail-r5/printables/context.webp",
+      "mobilePath": "/kidflix/detail-r5/printables/context-mobile.webp",
+      "alt": {
+        "en": "A printable ten-frame sheet shows one, three and five blue counters, surrounded by additional counter cards.",
+        "fr": "Une fiche à cadres de dix représente un, trois et cinq jetons bleus, entourée d’autres cartes à jetons.",
+        "ar": "ورقة إطارات من عشر خانات تعرض عداداً وثلاثة وخمسة عدادات زرقاء مع بطاقات إضافية."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 94668,
+        "sha256": "ef5e24337a01bf878ed757b66c164b4216933e0776b158b1f628c8f79ac3d47b"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 36722,
+        "sha256": "84216951b014a1a9b8dcf61f0e07501ff6a0c07a4b72683b00512d8e5f333a92"
+      }
+    },
+    {
+      "family": "printables",
+      "role": "method",
+      "path": "/kidflix/detail-r5/printables/method.webp",
+      "mobilePath": "/kidflix/detail-r5/printables/method-mobile.webp",
+      "alt": {
+        "en": "Six continuous tracing paths run from start dots to square endpoints on a large preparation sheet.",
+        "fr": "Six tracés continus relient des points de départ à des carrés d’arrivée sur une grande fiche.",
+        "ar": "ستة مسارات متصلة تمتد من نقاط البداية إلى مربعات النهاية على ورقة كبيرة."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 90086,
+        "sha256": "33cea61367fb55fc210ec733be579fafd91ee38745b297f92c902f2cd60f2b7c"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 29356,
+        "sha256": "b07e24e832c6d37eecaa6c0ea9ecbb3c86a6f31889293bf8bb29a5cbdea7de0c"
+      }
+    },
+    {
+      "family": "printables",
+      "role": "application",
+      "path": "/kidflix/detail-r5/printables/application.webp",
+      "mobilePath": "/kidflix/detail-r5/printables/application-mobile.webp",
+      "alt": {
+        "en": "House and room pictures are paired with furniture, utensils and household-object cards for language exploration.",
+        "fr": "Des images de maisons et de pièces accompagnent des cartes de meubles, ustensiles et objets domestiques.",
+        "ar": "صور منازل وغرف ترافق بطاقات الأثاث والأواني والأشياء المنزلية لاستكشاف اللغة."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 285772,
+        "sha256": "596757ba8dd6ba9c9bdd0d5e21c8fcaea2d3ccfd509c5a46f8c9283b23936928"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 88152,
+        "sha256": "0116d18165cef797ac8e90978f2040105cea715b18680cb6338e979ab9a86e83"
+      }
+    },
+    {
+      "family": "printables",
+      "role": "extension",
+      "path": "/kidflix/detail-r5/printables/extension.webp",
+      "mobilePath": "/kidflix/detail-r5/printables/extension-mobile.webp",
+      "alt": {
+        "en": "A closed comparison folder displays long and short pencils, large and small cups, and wide and narrow ribbons.",
+        "fr": "Un dossier fermé illustre des crayons longs et courts, des tasses grandes et petites, et des rubans larges et étroits.",
+        "ar": "غلاف مقارنة يعرض أقلاماً طويلة وقصيرة وأكواباً كبيرة وصغيرة وأشرطة عريضة وضيقة."
+      },
+      "master": {
+        "width": 1000,
+        "height": 1000,
+        "bytes": 133206,
+        "sha256": "6e87902d1bda9777b703c9311c129c2a55a207ae20036fb7132f94bfadc7482c"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 640,
+        "bytes": 42730,
+        "sha256": "6db3084a3676d4dae4949d2b211fc9f253f9ebfd2aa10ae2678a9a1bb6f5bba1"
+      }
+    },
+    {
+      "family": "stories",
+      "role": "context",
+      "path": "/kidflix/detail-r5/stories/context.webp",
+      "mobilePath": "/kidflix/detail-r5/stories/context-mobile.webp",
+      "alt": {
+        "en": "A wordless illustrated book follows the same blue umbrella through a rainy street and several everyday settings.",
+        "fr": "Un album sans texte suit le même parapluie bleu dans une rue pluvieuse et plusieurs lieux du quotidien.",
+        "ar": "كتاب مصوّر بلا نص يتتبع المظلة الزرقاء نفسها في شارع ممطر وأماكن يومية مختلفة."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 262358,
+        "sha256": "038415dc70c38f7615acd88b549654efdb9e89294e072672b7ead9bf6deabf59"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 77166,
+        "sha256": "a3a51ce4b9d67be70779305c5bc3c03e47e7331829f33947a4b484bef9f901af"
+      }
+    },
+    {
+      "family": "stories",
+      "role": "method",
+      "path": "/kidflix/detail-r5/stories/method.webp",
+      "mobilePath": "/kidflix/detail-r5/stories/method-mobile.webp",
+      "alt": {
+        "en": "An accordion of weather pictures moves from sunshine through clouds and rain to clearer skies.",
+        "fr": "Un accordéon d’images météo passe du soleil aux nuages et à la pluie, puis à un ciel plus clair.",
+        "ar": "سلسلة صور مطوية تنتقل من الشمس إلى الغيوم والمطر ثم سماء أكثر صفاءً."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 129806,
+        "sha256": "fce60d5b1c9a3e078dd9a93efeaa21804f252e684b58f301ef19b6e4d3e715ab"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 41350,
+        "sha256": "742de093e70f00cdbe479aefd9284533b2009e6a52d466c8c08e82145ee1020c"
+      }
+    },
+    {
+      "family": "stories",
+      "role": "application",
+      "path": "/kidflix/detail-r5/stories/application.webp",
+      "mobilePath": "/kidflix/detail-r5/stories/application-mobile.webp",
+      "alt": {
+        "en": "An open picture book shows rain over mountain hills, a flowing stream and a lake in one continuous landscape.",
+        "fr": "Un album ouvert montre pluie sur les collines, ruisseau et lac dans un paysage continu.",
+        "ar": "كتاب صور مفتوح يعرض مطراً فوق التلال وجدولاً وبحيرة ضمن منظر طبيعي متصل."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 331594,
+        "sha256": "6c22479856812aa37a1b2f9b4f8250c03b247b7e607981d17a462886cfb2c1dc"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 90044,
+        "sha256": "cfa4265862694d5a2b541748213a75b9f77fdc08e47679b60015a29e8f278602"
+      }
+    },
+    {
+      "family": "stories",
+      "role": "extension",
+      "path": "/kidflix/detail-r5/stories/extension.webp",
+      "mobilePath": "/kidflix/detail-r5/stories/extension-mobile.webp",
+      "alt": {
+        "en": "Three picture cards show an orange backpack empty, packed with a blue book and green bottle, then closed.",
+        "fr": "Trois cartes montrent un sac orange vide, rempli d’un livre bleu et d’une bouteille verte, puis fermé.",
+        "ar": "ثلاث بطاقات تعرض حقيبة برتقالية فارغة ثم بداخلها كتاب أزرق وقنينة خضراء ثم مغلقة."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 134296,
+        "sha256": "52753fdfc1b8f31a132aa1c56a3b875766070b2f7d641be55d675f09a56b4ae0"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 37582,
+        "sha256": "417a0840e7152851b86040bee213c8e377bb5e804ce903ca708ffcffd1fc55ab"
+      }
+    },
+    {
+      "family": "learning",
+      "role": "context",
+      "path": "/kidflix/detail-r5/learning/context.webp",
+      "mobilePath": "/kidflix/detail-r5/learning/context-mobile.webp",
+      "alt": {
+        "en": "A spiral learning book pairs ten-frame quantities of one, three and five with physical counters and blocks.",
+        "fr": "Un cahier à spirale associe les quantités un, trois et cinq en cadres de dix à des jetons et des blocs.",
+        "ar": "كتاب تعلّم حلزوني يربط كميات واحد وثلاثة وخمسة ضمن إطارات عشرية بعدادات وقطع ملموسة."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 98524,
+        "sha256": "b2fae26f23a537d9faf811d84a32d7c14d8424942117c64e2e57860f658c0d00"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 39102,
+        "sha256": "444ff3c6a1382d5c402558578700b1322d8d80a5ee1f912a4dfb35133e795b10"
+      }
+    },
+    {
+      "family": "learning",
+      "role": "method",
+      "path": "/kidflix/detail-r5/learning/method.webp",
+      "mobilePath": "/kidflix/detail-r5/learning/method-mobile.webp",
+      "alt": {
+        "en": "Material-reference cards group examples of wood, glass, paper, metal, fabric and plastic.",
+        "fr": "Des cartes de référence regroupent des exemples de bois, verre, papier, métal, tissu et plastique.",
+        "ar": "بطاقات مرجعية تجمع أمثلة من الخشب والزجاج والورق والمعدن والنسيج والبلاستيك."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 146846,
+        "sha256": "f3f8b009a12d4a1fa059c06bcbc7dbbb0ff028f397b6b806bca644796aa40181"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 48810,
+        "sha256": "0eb35579e8d1850d089d24eeda0c3adc718cf3f77a0816b6e48df1da1b9c32ee"
+      }
+    },
+    {
+      "family": "learning",
+      "role": "application",
+      "path": "/kidflix/detail-r5/learning/application.webp",
+      "mobilePath": "/kidflix/detail-r5/learning/application-mobile.webp",
+      "alt": {
+        "en": "An inquiry book cover combines mountain landscapes, mineral textures, crystals, a prism and a magnifying glass.",
+        "fr": "Une couverture d’exploration combine paysages montagneux, textures minérales, cristaux, prisme et loupe.",
+        "ar": "غلاف استكشاف يجمع مناظر جبلية وملمس المعادن والبلورات وموشوراً وعدسة مكبرة."
+      },
+      "master": {
+        "width": 1000,
+        "height": 1000,
+        "bytes": 313358,
+        "sha256": "e61c21a7aef043cf5558b71b8cf15321d91b8660d1d3ffb7d40e709bde610fe8"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 640,
+        "bytes": 118748,
+        "sha256": "76b1bb966721198c11a49b976a33564ed9bcedceaa1516427649a07ac63ab3b9"
+      }
+    },
+    {
+      "family": "learning",
+      "role": "extension",
+      "path": "/kidflix/detail-r5/learning/extension.webp",
+      "mobilePath": "/kidflix/detail-r5/learning/extension-mobile.webp",
+      "alt": {
+        "en": "Six observation pictures show stone, glass, fabric, wood, a metal spoon and folded paper.",
+        "fr": "Six images d’observation présentent pierre, verre, tissu, bois, cuillère métallique et papier plié.",
+        "ar": "ست صور للملاحظة تعرض حجراً وزجاجاً ونسيجاً وخشباً وملعقة معدنية وورقاً مطوياً."
+      },
+      "master": {
+        "width": 1000,
+        "height": 1250,
+        "bytes": 153066,
+        "sha256": "2cc23cc26b219715335bf78adde7b873021de3f6c469eabf3a776ea841d17d71"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 800,
+        "bytes": 55328,
+        "sha256": "03d69d9e13c7be5f8f00da3cb9482b3ae13e1e54fdd7eecbe24cbee546041ec0"
+      }
+    },
+    {
+      "family": "video",
+      "role": "context",
+      "path": "/kidflix/detail-r5/video/context.webp",
+      "mobilePath": "/kidflix/detail-r5/video/context-mobile.webp",
+      "alt": {
+        "en": "A measurement reference places a marked zero-to-ten ruler among pictures of ordinary classroom objects.",
+        "fr": "Une référence de mesure place une règle graduée de zéro à dix parmi des objets de classe ordinaires.",
+        "ar": "مرجع قياس يضع مسطرة مدرّجة من صفر إلى عشرة بين صور أدوات صفية يومية."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 113626,
+        "sha256": "12f248352860d588200a4170935e4032ca489ece7f6fda7b46ef9d824243e3a2"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 36298,
+        "sha256": "8514c577064e76e4d03dd62ab9f4112fed580c7b909203e9cd4e86e8cfc02a5f"
+      }
+    },
+    {
+      "family": "video",
+      "role": "method",
+      "path": "/kidflix/detail-r5/video/method.webp",
+      "mobilePath": "/kidflix/detail-r5/video/method-mobile.webp",
+      "alt": {
+        "en": "A three-panel demonstration shows mixed wooden blocks, metal spoons and fabric becoming separate material groups.",
+        "fr": "Trois panneaux montrent un mélange de blocs en bois, cuillères métalliques et tissus réparti en groupes de matières.",
+        "ar": "ثلاث لوحات تعرض قطع خشب وملاعق معدنية وأقمشة مختلطة ثم مفصولة إلى مجموعات."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 214292,
+        "sha256": "71224c6e0a8f17427b40480da1c646fa014eb6365693bff9b48fad3fa4ea94f2"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 62142,
+        "sha256": "87177500636c7f331ce1efe3acfaefbbd16b467910d6ced6542e5ce3ffad9a6b"
+      }
+    },
+    {
+      "family": "video",
+      "role": "application",
+      "path": "/kidflix/detail-r5/video/application.webp",
+      "mobilePath": "/kidflix/detail-r5/video/application-mobile.webp",
+      "alt": {
+        "en": "Three demonstration frames show a sphere, cube and cylinder casting shadows under a lamp.",
+        "fr": "Trois vues de démonstration montrent sphère, cube et cylindre projetant leur ombre sous une lampe.",
+        "ar": "ثلاث لقطات توضيحية تعرض كرة ومكعباً وأسطوانة تلقي ظلالاً تحت مصباح."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 123970,
+        "sha256": "40f62f2b09eaa69954ec394885c75f283103b56e04f8de9bbdb297abb1aca67a"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 28526,
+        "sha256": "5511af4fe1a09000b4f36857f390d8f7d8b6d266a31862be9023246c0fc3349f"
+      }
+    },
+    {
+      "family": "video",
+      "role": "extension",
+      "path": "/kidflix/detail-r5/video/extension.webp",
+      "mobilePath": "/kidflix/detail-r5/video/extension-mobile.webp",
+      "alt": {
+        "en": "A paper-folding reference shows a square, half-width rectangle and quarter square linked in sequence.",
+        "fr": "Une référence de pliage montre un carré, un rectangle de demi-largeur et un quart de carré en séquence.",
+        "ar": "مرجع لطي الورق يعرض مربعاً ثم مستطيلاً بنصف العرض ثم ربع مربع بالتتابع."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 124778,
+        "sha256": "866cc5bae61d1be3ad03f2b782d5a058660b432de05310f37bb5f80a3fd1172c"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 19226,
+        "sha256": "7bd569a563d712ceaf94c9ff970ac325e40f9645a5f3cec0a24332ceb7fd4d03"
+      }
+    },
+    {
+      "family": "audio",
+      "role": "context",
+      "path": "/kidflix/detail-r5/audio/context.webp",
+      "mobilePath": "/kidflix/detail-r5/audio/context-mobile.webp",
+      "alt": {
+        "en": "A drum, metal triangle and handbell are paired with matching instrument picture cards.",
+        "fr": "Un tambour, un triangle métallique et une clochette accompagnent leurs cartes illustrées correspondantes.",
+        "ar": "طبل ومثلث معدني وجرس يدوي مع بطاقات صور مطابقة للآلات."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 140266,
+        "sha256": "100449747ea2db401ac8a7861389c4d7d824d7136c48d184dcf1aadc862a1240"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 33806,
+        "sha256": "cfa5ad41a6ccd3f6681bf0f6814e0d53a524f73fd90b23b4134f45898f4e3ddb"
+      }
+    },
+    {
+      "family": "audio",
+      "role": "method",
+      "path": "/kidflix/detail-r5/audio/method.webp",
+      "mobilePath": "/kidflix/detail-r5/audio/method-mobile.webp",
+      "alt": {
+        "en": "Listening prompt cards show a kettle, toaster, running tap, bird, car and crumpled paper beside a small speaker.",
+        "fr": "Des cartes d’écoute représentent bouilloire, grille-pain, robinet, oiseau, voiture et papier froissé près d’une enceinte.",
+        "ar": "بطاقات للاستماع تعرض غلاية ومحمصة وصنبوراً جارياً وطائراً وسيارة وورقاً مجعداً بجانب مكبر صوت."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 146068,
+        "sha256": "a3748c38ac3d1e32731f41aa66d2607349f440650ca8f11c3924b87fd8bc290e"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 43832,
+        "sha256": "1aeabcd45a2664ca5ae92cf41e7777965ac2ae39c7bea73051c82de53ed21777"
+      }
+    },
+    {
+      "family": "audio",
+      "role": "application",
+      "path": "/kidflix/detail-r5/audio/application.webp",
+      "mobilePath": "/kidflix/detail-r5/audio/application-mobile.webp",
+      "alt": {
+        "en": "A harbour listening companion shows a lighthouse, moored boats, underwater life and a quayside detail.",
+        "fr": "Un support d’écoute sur le port présente phare, bateaux amarrés, vie sous-marine et détail du quai.",
+        "ar": "رفيق استماع عن الميناء يعرض منارة وقوارب راسية وحياة تحت الماء وتفصيلاً من الرصيف."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 259402,
+        "sha256": "6c71d8d037155d1e7fdf6c723b1ad9545d35b6cd8887f75169c70116bdb3c31e"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 75488,
+        "sha256": "2621b639041dbd219d3ba3c86d61fdfdd50c30020891f2bdd3373d0aab4fd021"
+      }
+    },
+    {
+      "family": "audio",
+      "role": "extension",
+      "path": "/kidflix/detail-r5/audio/extension.webp",
+      "mobilePath": "/kidflix/detail-r5/audio/extension-mobile.webp",
+      "alt": {
+        "en": "A rain-and-city companion pairs a riverside skyline with puddle rings and rain falling from a roof.",
+        "fr": "Un support pluie et ville associe une silhouette urbaine au bord de l’eau, des flaques et la pluie sur un toit.",
+        "ar": "رفيق عن المطر والمدينة يجمع مشهداً عمرانياً قرب الماء ودوائر البرك ومطراً يسقط من سقف."
+      },
+      "master": {
+        "width": 1000,
+        "height": 1000,
+        "bytes": 257766,
+        "sha256": "9ce825a48250eec1f8e3f0eaf9bad1d76106b079a7bf4446726e50f40eb649b9"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 640,
+        "bytes": 104544,
+        "sha256": "6f0b8179e3270637ad77952f81e947c6f6d4a524efde67805ee5140538e0bd66"
+      }
+    },
+    {
+      "family": "visual-cards",
+      "role": "context",
+      "path": "/kidflix/detail-r5/visual-cards/context.webp",
+      "mobilePath": "/kidflix/detail-r5/visual-cards/context-mobile.webp",
+      "alt": {
+        "en": "Four tool cards pair hammer, screwdriver, scissors and adjustable wrench with examples of their functions.",
+        "fr": "Quatre cartes associent marteau, tournevis, ciseaux et clé réglable à des exemples de leur fonction.",
+        "ar": "أربع بطاقات تربط المطرقة ومفك البراغي والمقص والمفتاح القابل للتعديل بأمثلة لاستخدامها."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 121536,
+        "sha256": "46edd039fba95d4116c215634e3764b16a111564ce527eaa72d050a8d7213400"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 42070,
+        "sha256": "73405d669bdde452e6f366fd5f501c9e38b40e6c047f35e38421e9bce0574268"
+      }
+    },
+    {
+      "family": "visual-cards",
+      "role": "method",
+      "path": "/kidflix/detail-r5/visual-cards/method.webp",
+      "mobilePath": "/kidflix/detail-r5/visual-cards/method-mobile.webp",
+      "alt": {
+        "en": "A stack of place cards shows a home, school, playground, shop, park bench and library.",
+        "fr": "Un jeu de cartes de lieux présente maison, école, aire de jeux, magasin, banc de parc et bibliothèque.",
+        "ar": "مجموعة بطاقات أماكن تعرض منزلاً ومدرسة وملعباً ومتجراً ومقعد حديقة ومكتبة."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 220286,
+        "sha256": "7756105174fdadeb6606b091d6203e0d9e38b8e6e0b31e94766901da64eb0698"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 74448,
+        "sha256": "afeb783aa8e4c101405b6594df015c4fcc6eb15f5a211fd8afd504603d9a93d1"
+      }
+    },
+    {
+      "family": "visual-cards",
+      "role": "application",
+      "path": "/kidflix/detail-r5/visual-cards/application.webp",
+      "mobilePath": "/kidflix/detail-r5/visual-cards/application-mobile.webp",
+      "alt": {
+        "en": "Comparison cards display rough and smooth surfaces, flexible materials and rigid objects.",
+        "fr": "Des cartes de comparaison présentent surfaces rugueuses ou lisses, matières souples et objets rigides.",
+        "ar": "بطاقات مقارنة تعرض أسطحاً خشنة وملساء ومواد مرنة وأشياء صلبة."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 147442,
+        "sha256": "50ada78b73fa83165d2065d35b6cfb8ac82c6ca23589fd331bff13a3f6230f52"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 47132,
+        "sha256": "16bd3989b5a7ff56eb65a765aa2946a2a7918baa4d8a812b0dfa5311287d274f"
+      }
+    },
+    {
+      "family": "visual-cards",
+      "role": "extension",
+      "path": "/kidflix/detail-r5/visual-cards/extension.webp",
+      "mobilePath": "/kidflix/detail-r5/visual-cards/extension-mobile.webp",
+      "alt": {
+        "en": "Three routine cards show the same blue umbrella open and wet, folded to dry, then stored in a stand.",
+        "fr": "Trois cartes de routine montrent le même parapluie bleu mouillé et ouvert, plié pour sécher puis rangé.",
+        "ar": "ثلاث بطاقات روتين تعرض المظلة الزرقاء نفسها مفتوحة ومبللة ثم مطوية لتجف ثم موضوعة في حامل."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 132804,
+        "sha256": "aa822f2fc0f46dd43cc835b02efd1ec6cfdd15c27343b2c08967da62845279ac"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 37280,
+        "sha256": "7053c285f6ebfc0fefc38455b504987d1a2ad32d13cb0ee7bd245d4de15b1a11"
+      }
+    },
+    {
+      "family": "presentations",
+      "role": "context",
+      "path": "/kidflix/detail-r5/presentations/context.webp",
+      "mobilePath": "/kidflix/detail-r5/presentations/context-mobile.webp",
+      "alt": {
+        "en": "Teaching panels compare the lengths of blocks, pencils, ribbons and cords, alongside different containers.",
+        "fr": "Des panneaux comparent la longueur de blocs, crayons, rubans et cordons, à côté de différents récipients.",
+        "ar": "لوحات تعليمية تقارن أطوال قطع وأقلام وأشرطة وحبال إلى جانب أوعية مختلفة."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 156546,
+        "sha256": "d03d1562ffa38d4dd8924eea4a47a3c10d29554d4ec450165677a6993853bb76"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 47960,
+        "sha256": "e4bb686feaccc402118e340416a172d263ec26c0c8b42e678e8f4c5883de7cae"
+      }
+    },
+    {
+      "family": "presentations",
+      "role": "method",
+      "path": "/kidflix/detail-r5/presentations/method.webp",
+      "mobilePath": "/kidflix/detail-r5/presentations/method-mobile.webp",
+      "alt": {
+        "en": "A three-stage instruction sheet shows school materials before packing, inside a backpack and ready in a closed bag.",
+        "fr": "Une fiche en trois étapes présente le matériel scolaire avant rangement, dans le sac puis dans le sac fermé.",
+        "ar": "ورقة إرشاد من ثلاث مراحل تعرض الأدوات قبل التعبئة ثم داخل الحقيبة ثم الحقيبة مغلقة."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 190814,
+        "sha256": "d3e1e8929421c774e56576313ddabf0917edad55c5b84f55821aa7f33176620d"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 51546,
+        "sha256": "c6c391b00661ba48d8186021be48171b5039a1d644c8466273e38f8260e1ae46"
+      }
+    },
+    {
+      "family": "presentations",
+      "role": "application",
+      "path": "/kidflix/detail-r5/presentations/application.webp",
+      "mobilePath": "/kidflix/detail-r5/presentations/application-mobile.webp",
+      "alt": {
+        "en": "A material-observation presentation pairs rocks, wood, metal, glass, plastic and fabric with close textures.",
+        "fr": "Une présentation d’observation associe roches, bois, métal, verre, plastique et tissu à leurs textures rapprochées.",
+        "ar": "عرض لملاحظة المواد يجمع الصخور والخشب والمعدن والزجاج والبلاستيك والنسيج مع تفاصيل ملمسها."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 192098,
+        "sha256": "38d2115aa0f53bf1024dcf6d8d57671ad56801350427f798fd39f138015ddce4"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 56342,
+        "sha256": "36bec39434688498e33d90c1431b33fc337ea53ea738880cf1e1d0bb7b5eaa95"
+      }
+    },
+    {
+      "family": "presentations",
+      "role": "extension",
+      "path": "/kidflix/detail-r5/presentations/extension.webp",
+      "mobilePath": "/kidflix/detail-r5/presentations/extension-mobile.webp",
+      "alt": {
+        "en": "Discussion visuals show a library, building ramp, learning room, bus entrance and other empty everyday environments.",
+        "fr": "Des visuels de discussion montrent bibliothèque, rampe de bâtiment, salle d’apprentissage, entrée de bus et lieux vides.",
+        "ar": "صور للنقاش تعرض مكتبة ومنحدر مبنى وغرفة تعلّم ومدخل حافلة وأماكن يومية خالية."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 285552,
+        "sha256": "7d40447303adb0dbdd7c49ddc5d4738a3550e900445365cc0c7e3536c01be131"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 81324,
+        "sha256": "53097854e8c05406599d1cb12649cf3855ab3ae07a9f3d8aa9312cae161c606a"
+      }
+    },
+    {
+      "family": "assessments",
+      "role": "context",
+      "path": "/kidflix/detail-r5/assessments/context.webp",
+      "mobilePath": "/kidflix/detail-r5/assessments/context-mobile.webp",
+      "alt": {
+        "en": "A quantity-comparison sheet and physical ten-frame cards each show one, three and five counters.",
+        "fr": "Une fiche de comparaison et des cartes à cadres de dix représentent chacune un, trois et cinq jetons.",
+        "ar": "ورقة مقارنة وبطاقات إطارات عشرية تعرض كل منها عداداً وثلاثة وخمسة عدادات."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 116524,
+        "sha256": "a6292236b8d6c0fd997dd7b22e9db8b68e1198fc2632a35d08d67c2b36662815"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 43830,
+        "sha256": "f142003ce289e369a46494ddcad1edf2a30c3ee61edace8805f554b019de6985"
+      }
+    },
+    {
+      "family": "assessments",
+      "role": "method",
+      "path": "/kidflix/detail-r5/assessments/method.webp",
+      "mobilePath": "/kidflix/detail-r5/assessments/method-mobile.webp",
+      "alt": {
+        "en": "A visual sequence shows a square folded into a half-width rectangle and then a quarter square, beside a blank response card.",
+        "fr": "Une séquence visuelle montre un carré plié en rectangle de demi-largeur puis en quart de carré, avec une carte réponse vierge.",
+        "ar": "تسلسل بصري يعرض مربعاً يطوى إلى مستطيل بنصف العرض ثم ربع مربع مع بطاقة إجابة فارغة."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 68282,
+        "sha256": "bd0e652f9c22786bf6c3b39a59d90bb16170083ea51116567ee39a6a63996e21"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 19066,
+        "sha256": "2d45d3f5cd53d7fccebd791e1dc8fc693c0f32a47b557b221ff3bef3d0ec1a2f"
+      }
+    },
+    {
+      "family": "assessments",
+      "role": "application",
+      "path": "/kidflix/detail-r5/assessments/application.webp",
+      "mobilePath": "/kidflix/detail-r5/assessments/application-mobile.webp",
+      "alt": {
+        "en": "Three comparison cards pair pencils and ribbons in progressively longer lengths.",
+        "fr": "Trois cartes de comparaison associent crayons et rubans de longueurs croissantes.",
+        "ar": "ثلاث بطاقات مقارنة تجمع أقلاماً وأشرطة بأطوال متزايدة."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 109978,
+        "sha256": "a47de7af56c8e46f2692a021e01261d3e79b57054297cf3f5577538d5b530be2"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 35076,
+        "sha256": "e5b22384c2428ba1937c127dea0d3eb40f0f39860ab53dee49bbdca84e78eb05"
+      }
+    },
+    {
+      "family": "assessments",
+      "role": "extension",
+      "path": "/kidflix/detail-r5/assessments/extension.webp",
+      "mobilePath": "/kidflix/detail-r5/assessments/extension-mobile.webp",
+      "alt": {
+        "en": "An object-discrimination sheet asks for visual matching among key, umbrella, book and bottle pictures.",
+        "fr": "Une fiche de discrimination visuelle propose d’associer les images de clé, parapluie, livre et bouteille.",
+        "ar": "ورقة تمييز بصري تعرض مطابقة صور مفتاح ومظلة وكتاب وقنينة."
+      },
+      "master": {
+        "width": 1000,
+        "height": 1000,
+        "bytes": 79996,
+        "sha256": "a2de657fa6d63e5013dbc3e4e7a06852b8ec9a3b47e4bf875d442fb55ca935c9"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 640,
+        "bytes": 24836,
+        "sha256": "b1938558a5b43d7328fd839f7b306e2f95f639ab5345d68d79bec2e2f73089c3"
+      }
+    },
+    {
+      "family": "activities",
+      "role": "context",
+      "path": "/kidflix/detail-r5/activities/context.webp",
+      "mobilePath": "/kidflix/detail-r5/activities/context-mobile.webp",
+      "alt": {
+        "en": "A sorting tray and reference book organize ordinary buttons, blocks, caps, utensils and other tactile materials.",
+        "fr": "Un plateau de tri et un livre de référence organisent boutons, blocs, bouchons, ustensiles et matières à manipuler.",
+        "ar": "صينية فرز وكتاب مرجعي ينظمان أزراراً وقطعاً وأغطية وأواني ومواد ملموسة أخرى."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 169460,
+        "sha256": "59a51dce3ada8aeefa9873c2e5fd835aae917ec0c44c3f043ff8f7dd54fc545d"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 53646,
+        "sha256": "7d58694cfcc73762c34bb773a0cebad22003e2f9d044c5609a9131d2ed814da2"
+      }
+    },
+    {
+      "family": "activities",
+      "role": "method",
+      "path": "/kidflix/detail-r5/activities/method.webp",
+      "mobilePath": "/kidflix/detail-r5/activities/method-mobile.webp",
+      "alt": {
+        "en": "Three preparation cards show baking ingredients, mixed batter and batter portioned into a muffin tray.",
+        "fr": "Trois cartes de préparation montrent ingrédients, pâte mélangée et pâte répartie dans un moule à muffins.",
+        "ar": "ثلاث بطاقات تحضير تعرض مكونات الخَبز ثم عجيناً مخلوطاً ثم العجين موزعاً في قالب."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 177672,
+        "sha256": "bd704d72e0618db1d54cabf265264a19f67b95e1119d6b4c1167d3728f0f8ea9"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 56796,
+        "sha256": "28e3cb76dddf9fe9409f1631f86b132dd5d2ad665fe41271bb96f6b868592a32"
+      }
+    },
+    {
+      "family": "activities",
+      "role": "application",
+      "path": "/kidflix/detail-r5/activities/application.webp",
+      "mobilePath": "/kidflix/detail-r5/activities/application-mobile.webp",
+      "alt": {
+        "en": "A construction reference brings together real-world bridges and buildings with small models and ordinary building materials.",
+        "fr": "Une référence de construction réunit ponts et bâtiments réels, petites maquettes et matériaux ordinaires.",
+        "ar": "مرجع بناء يجمع جسوراً ومباني من العالم الواقعي مع نماذج صغيرة ومواد بناء عادية."
+      },
+      "master": {
+        "width": 1000,
+        "height": 1000,
+        "bytes": 247472,
+        "sha256": "f8b916515721fa19189e8ec2ee02412066d0b851f92787dfd89a9fb606104c8f"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 640,
+        "bytes": 102300,
+        "sha256": "30c563c7cc1f0d4d46762183c14a3794fcbff8596e94263a4ab0545e4338582d"
+      }
+    },
+    {
+      "family": "activities",
+      "role": "extension",
+      "path": "/kidflix/detail-r5/activities/extension.webp",
+      "mobilePath": "/kidflix/detail-r5/activities/extension-mobile.webp",
+      "alt": {
+        "en": "A wooden-block bridge is surrounded by cards showing several different small bridge arrangements.",
+        "fr": "Un pont en blocs de bois est entouré de cartes montrant plusieurs petites constructions de ponts.",
+        "ar": "جسر من قطع خشبية تحيط به بطاقات تعرض ترتيبات مختلفة لجسور صغيرة."
+      },
+      "master": {
+        "width": 1000,
+        "height": 1000,
+        "bytes": 144858,
+        "sha256": "4833e54452c6d75ae2965151791afb4cd2b110ff1223fd3d357f2e0db986c193"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 640,
+        "bytes": 55710,
+        "sha256": "db4707ec799e6d83c907b39069297731f133259e1dbff57d9a2a908e9cef3a06"
+      }
+    },
+    {
+      "family": "tools",
+      "role": "context",
+      "path": "/kidflix/detail-r5/tools/context.webp",
+      "mobilePath": "/kidflix/detail-r5/tools/context-mobile.webp",
+      "alt": {
+        "en": "An open measurement book shows a zero-to-ten ruler, pencil, sphere, cubes and part of a toy car.",
+        "fr": "Un livre de mesure ouvert présente règle de zéro à dix, crayon, sphère, cubes et partie d’une voiture jouet.",
+        "ar": "كتاب قياس مفتوح يعرض مسطرة من صفر إلى عشرة وقلمًا وكرة ومكعبات وجزءاً من سيارة لعبة."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 109044,
+        "sha256": "b672a62d3d6608a6b3d27a39b9caefa5962222b7950d77b036534b964c93b086"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 31642,
+        "sha256": "88c95275f49ef89cb3a6cec79a1b68c0fa45d4ff90df3495246dc7b6699b8c05"
+      }
+    },
+    {
+      "family": "tools",
+      "role": "method",
+      "path": "/kidflix/detail-r5/tools/method.webp",
+      "mobilePath": "/kidflix/detail-r5/tools/method-mobile.webp",
+      "alt": {
+        "en": "Three equal-length fraction bars show a whole, one half shaded and one quarter shaded.",
+        "fr": "Trois bandes de même longueur présentent un entier, une moitié colorée et un quart coloré.",
+        "ar": "ثلاثة أشرطة متساوية الطول تعرض كلاً كاملاً ونصفاً مظللاً وربعاً مظللاً."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 98258,
+        "sha256": "11dc3fc133de85b49ec1d26e956d60278885c6fd661a45df4d55235c7f3d17f7"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 29284,
+        "sha256": "4b9dc1d140178b4b7b5865abde58df1e39579cdf6744bd2afac5414c6dde5e07"
+      }
+    },
+    {
+      "family": "tools",
+      "role": "application",
+      "path": "/kidflix/detail-r5/tools/application.webp",
+      "mobilePath": "/kidflix/detail-r5/tools/application-mobile.webp",
+      "alt": {
+        "en": "A material-sorting tool groups metal, wood, glass and stone objects with mixed sets on separate cards.",
+        "fr": "Un outil de tri regroupe objets en métal, bois, verre et pierre, avec des ensembles mélangés sur d’autres cartes.",
+        "ar": "أداة فرز تجمع أشياء من المعدن والخشب والزجاج والحجر مع مجموعات مختلطة على بطاقات منفصلة."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 132262,
+        "sha256": "6d504657aefb1e55532fa884f30615e6df22dc29e11713d74cd0b98a68904c65"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 41882,
+        "sha256": "ea6b060162951aa4c757e1fa8f40f2d60681f2ec3a466305a181ec57336ab1f3"
+      }
+    },
+    {
+      "family": "tools",
+      "role": "extension",
+      "path": "/kidflix/detail-r5/tools/extension.webp",
+      "mobilePath": "/kidflix/detail-r5/tools/extension-mobile.webp",
+      "alt": {
+        "en": "A routine sequence shows a blue backpack empty, packed and closed, with an hourglass beside the cards.",
+        "fr": "Une séquence de routine montre un sac bleu vide, rempli puis fermé, avec un sablier à côté.",
+        "ar": "تسلسل روتين يعرض حقيبة زرقاء فارغة ثم ممتلئة ثم مغلقة مع ساعة رملية بجانب البطاقات."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 135058,
+        "sha256": "518bd558730a54b94440a281561d6bae4b184fa20ca0fe397ea9f6b2aa7358f0"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 38038,
+        "sha256": "867c88e5de6819589cbf308a1f5ce1bbdfdc23a7f3f54676b0337c42eda65260"
+      }
+    },
+    {
+      "family": "planners",
+      "role": "context",
+      "path": "/kidflix/detail-r5/planners/context.webp",
+      "mobilePath": "/kidflix/detail-r5/planners/context-mobile.webp",
+      "alt": {
+        "en": "An open planning book pairs a blank seven-column grid with books and pencils.",
+        "fr": "Un carnet de planification ouvert associe une grille vierge à sept colonnes à des livres et crayons.",
+        "ar": "دفتر تخطيط مفتوح يجمع شبكة فارغة من سبعة أعمدة مع كتب وأقلام."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 110946,
+        "sha256": "9df3a7d68350ccaca5e983f3d8c0ab32cfd0928e1680356da4a7a755e3adf98b"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 38230,
+        "sha256": "6b614d0a6e48f0b6324bde4e0fe0c20cf8a5426b352af6c6991c051dd9c4ae66"
+      }
+    },
+    {
+      "family": "planners",
+      "role": "method",
+      "path": "/kidflix/detail-r5/planners/method.webp",
+      "mobilePath": "/kidflix/detail-r5/planners/method-mobile.webp",
+      "alt": {
+        "en": "A preparation folio displays a magnet, mixed small objects, wooden blocks and blank planning fields.",
+        "fr": "Un dossier de préparation présente aimant, petits objets variés, blocs de bois et champs de planification vierges.",
+        "ar": "ملف تحضير يعرض مغناطيساً وأشياء صغيرة متنوعة وقطع خشب وخانات تخطيط فارغة."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 170124,
+        "sha256": "4c211fa2b7eb2b31e9002f08a250e08d0c6b65bb006036d69e8dad8856c4bfa2"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 54134,
+        "sha256": "713e76d5d4015cde68b1bf9d594d4d3de9c23f653cd747a32eb4cf05fda812cd"
+      }
+    },
+    {
+      "family": "planners",
+      "role": "application",
+      "path": "/kidflix/detail-r5/planners/application.webp",
+      "mobilePath": "/kidflix/detail-r5/planners/application-mobile.webp",
+      "alt": {
+        "en": "An observation folio contrasts scattered blocks and a cleared room beside organized materials and blank notes.",
+        "fr": "Un dossier d’observation compare blocs dispersés et salle dégagée, avec matériel rangé et espaces de notes vierges.",
+        "ar": "ملف ملاحظة يقارن قطعاً مبعثرة وغرفة مرتبة إلى جانب مواد منظمة وملاحظات فارغة."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 128770,
+        "sha256": "b024ee3c50c93bff82b89d42f9632fa2740aaa72cd50b10a01e7c06e09b8d5a3"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 35000,
+        "sha256": "f8d9ea8fd88394b441dd8c782f81feeb288f88b21051d9926c7be9ce117e9e3e"
+      }
+    },
+    {
+      "family": "planners",
+      "role": "extension",
+      "path": "/kidflix/detail-r5/planners/extension.webp",
+      "mobilePath": "/kidflix/detail-r5/planners/extension-mobile.webp",
+      "alt": {
+        "en": "A blank reading checklist accompanies illustrated books about coasts, streets and mountain landscapes.",
+        "fr": "Une liste de lecture vierge accompagne des livres illustrés sur côtes, rues et paysages montagneux.",
+        "ar": "قائمة قراءة فارغة ترافق كتباً مصورة عن السواحل والشوارع والمناظر الجبلية."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 198376,
+        "sha256": "6cb140e3538d275577da26c5a15bcd25df1abe66587def3d229205d3cbea7552"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 53688,
+        "sha256": "e2c92c8c9ce277068232f4d38ebd1db1a926792ad2b96555878eb275fc224bfb"
+      }
+    },
+    {
+      "family": "forms",
+      "role": "context",
+      "path": "/kidflix/detail-r5/forms/context.webp",
+      "mobilePath": "/kidflix/detail-r5/forms/context-mobile.webp",
+      "alt": {
+        "en": "An open reflection folio pairs blank response boxes with an empty reading nook and organized resource shelf.",
+        "fr": "Un dossier de réflexion ouvert associe cases vierges, coin lecture vide et étagère de ressources organisée.",
+        "ar": "ملف تأمل مفتوح يجمع خانات إجابة فارغة مع ركن قراءة خالٍ ورف موارد منظم."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 119916,
+        "sha256": "77c4c89860e0ac878e168987a00d831d46afd9eb6abb25737c90473d4b891098"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 33844,
+        "sha256": "0f4fa6b88101ead838ffd99e9508ee52bc52e58dd9bca9ef552914e6b0bfa5b1"
+      }
+    },
+    {
+      "family": "forms",
+      "role": "method",
+      "path": "/kidflix/detail-r5/forms/method.webp",
+      "mobilePath": "/kidflix/detail-r5/forms/method-mobile.webp",
+      "alt": {
+        "en": "Six preference-discussion pictures show a library, courtyard, construction table, listening corner, drawing materials and storage.",
+        "fr": "Six images de préférences présentent bibliothèque, cour, table de construction, coin écoute, dessin et rangement.",
+        "ar": "ست صور لمناقشة التفضيلات تعرض مكتبة وساحة وطاولة بناء وركن استماع وأدوات رسم وتخزين."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 207600,
+        "sha256": "67efcffa1634fd04600d633845ed11805caaac94b5b6fec1b9b6072208b0fd55"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 64444,
+        "sha256": "5ac38e73b25edb804df950732dc38608ba0a1ad81b9b3e9cfdd229ccfdba0b67"
+      }
+    },
+    {
+      "family": "forms",
+      "role": "application",
+      "path": "/kidflix/detail-r5/forms/application.webp",
+      "mobilePath": "/kidflix/detail-r5/forms/application-mobile.webp",
+      "alt": {
+        "en": "A private reflection spread pairs ordinary wooden components and a simple bridge with blank observation panels.",
+        "fr": "Une double page de réflexion privée associe pièces en bois et pont simple à des panneaux d’observation vierges.",
+        "ar": "صفحتا تأمل خاص تجمعان قطعاً خشبية وجسراً بسيطاً مع مساحات ملاحظة فارغة."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 64716,
+        "sha256": "7ba7841da2c102fcad128000293a625ac5d0a720975396d1c5a4e33fdc1bca9b"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 19184,
+        "sha256": "29af8108ae2b8bf5f81c18c77536fa815db03236ef8576e417418693aa8ea0f8"
+      }
+    },
+    {
+      "family": "forms",
+      "role": "extension",
+      "path": "/kidflix/detail-r5/forms/extension.webp",
+      "mobilePath": "/kidflix/detail-r5/forms/extension-mobile.webp",
+      "alt": {
+        "en": "A reflection kit combines blank note cards with close material pictures of wood, metal and fabric.",
+        "fr": "Un kit de réflexion combine cartes de notes vierges et images rapprochées de bois, métal et tissu.",
+        "ar": "مجموعة تأمل تجمع بطاقات ملاحظات فارغة وصوراً مقربة للخشب والمعدن والنسيج."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 127366,
+        "sha256": "3e34676f08e7545233c860186b3718f96fe02cebc7b0af267d361f858e835a4d"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 35370,
+        "sha256": "95fb3e67b1dbdd390ad8aa700fc9c67167664f21b189fa5afd73817de5aac034"
+      }
+    },
+    {
+      "family": "community",
+      "role": "context",
+      "path": "/kidflix/detail-r5/community/context.webp",
+      "mobilePath": "/kidflix/detail-r5/community/context-mobile.webp",
+      "alt": {
+        "en": "A published reference book compares an empty home reading space with an empty educational library.",
+        "fr": "Un ouvrage de référence compare un espace de lecture domestique vide à une bibliothèque éducative vide.",
+        "ar": "كتاب مرجعي يقارن مساحة قراءة منزلية خالية بمكتبة تعليمية خالية."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 189734,
+        "sha256": "6aac32f62f0199e0e0d3dcaed22ce5a6d119fd28ec102514649866f29934d75c"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 53600,
+        "sha256": "abfc8df7ac0cf810fbdf307bffbae6f15100167ffc623e691073fc3edd1bbe54"
+      }
+    },
+    {
+      "family": "community",
+      "role": "method",
+      "path": "/kidflix/detail-r5/community/method.webp",
+      "mobilePath": "/kidflix/detail-r5/community/method-mobile.webp",
+      "alt": {
+        "en": "A six-card topic index shows library, entrance, storage, backpack, block table and quiet corner.",
+        "fr": "Un index de six cartes présente bibliothèque, entrée, rangement, sac, table de blocs et coin calme.",
+        "ar": "فهرس من ست بطاقات يعرض مكتبة ومدخلاً وتخزيناً وحقيبة وطاولة قطع وركناً هادئاً."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 167034,
+        "sha256": "0720e4ece6ae7859287951de386b9a3c53a451162527df17bca4d2f062d98f48"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 44916,
+        "sha256": "8faf8317819a768c54bb1ba7edface1c05af8c01134007daf0a7d3851d660fa2"
+      }
+    },
+    {
+      "family": "community",
+      "role": "application",
+      "path": "/kidflix/detail-r5/community/application.webp",
+      "mobilePath": "/kidflix/detail-r5/community/application-mobile.webp",
+      "alt": {
+        "en": "Three panels compare storing related books and learning materials on shelves, in a portable box and in drawers.",
+        "fr": "Trois panneaux comparent le rangement de livres et supports liés sur étagères, dans une boîte mobile et dans des tiroirs.",
+        "ar": "ثلاث لوحات تقارن تخزين الكتب ومواد التعلم على رفوف وفي صندوق متنقل وفي أدراج."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 161962,
+        "sha256": "55c59e2807a7eff05daeaef221af750d114b37a27cabba005648619462f53b30"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 44692,
+        "sha256": "704bb64800540db9f2f96238f2fcced8e474b605f24daa9d5fbdbc09e5b57c42"
+      }
+    },
+    {
+      "family": "community",
+      "role": "extension",
+      "path": "/kidflix/detail-r5/community/extension.webp",
+      "mobilePath": "/kidflix/detail-r5/community/extension-mobile.webp",
+      "alt": {
+        "en": "A perspective-comparison folio pairs an empty courtyard and a quiet indoor reading corner with blank note areas.",
+        "fr": "Un dossier de comparaison associe cour vide et coin lecture intérieur calme à des espaces de notes vierges.",
+        "ar": "ملف مقارنة يجمع ساحة خالية وركن قراءة داخلياً هادئاً مع مساحات ملاحظات فارغة."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 189464,
+        "sha256": "d539592557f75eb8983bff3fbbbc44af75561bf4633b527e930034adcc948821"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 55564,
+        "sha256": "c4bc2b0d8f680848fc5290728891b8e21bf2f4bcbde64322450d81be7b4235e7"
+      }
+    },
+    {
+      "family": "commerce",
+      "role": "context",
+      "path": "/kidflix/detail-r5/commerce/context.webp",
+      "mobilePath": "/kidflix/detail-r5/commerce/context-mobile.webp",
+      "alt": {
+        "en": "A transport resource display combines an open book, closed cover, picture cards and a blank preparation sheet.",
+        "fr": "Un ensemble sur les transports combine livre ouvert, couverture fermée, cartes illustrées et fiche de préparation vierge.",
+        "ar": "عرض موارد عن النقل يجمع كتاباً مفتوحاً وغلافاً مغلقاً وبطاقات صور وورقة تحضير فارغة."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 244248,
+        "sha256": "96c6e84d4cf679b970d62196c46f7318f37c076a034134bc8fb60443a01919b4"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 73546,
+        "sha256": "b7f9799cca7a5867866a73a735975c5beea8cdd04213dc9e997f32edadcdcbea"
+      }
+    },
+    {
+      "family": "commerce",
+      "role": "method",
+      "path": "/kidflix/detail-r5/commerce/method.webp",
+      "mobilePath": "/kidflix/detail-r5/commerce/method-mobile.webp",
+      "alt": {
+        "en": "A geometry kit pairs a matching sheet and shape cards with a wooden sphere, cube and triangular solid.",
+        "fr": "Un kit de géométrie associe fiche et cartes de formes à une sphère, un cube et un solide triangulaire en bois.",
+        "ar": "مجموعة هندسة تجمع ورقة مطابقة وبطاقات أشكال مع كرة ومكعب ومجسم مثلثي من الخشب."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 117966,
+        "sha256": "e3c2795efe6c938b8f80380003cfdd04501fec48ba51af336958b030244d716b"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 32006,
+        "sha256": "107cc6d1cacef540d4a055ac11fc5f9d62554297d4c0c76b82e2a6814db4f461"
+      }
+    },
+    {
+      "family": "commerce",
+      "role": "application",
+      "path": "/kidflix/detail-r5/commerce/application.webp",
+      "mobilePath": "/kidflix/detail-r5/commerce/application-mobile.webp",
+      "alt": {
+        "en": "The same autumn bridge scene appears as a book spread, picture card and large reference print.",
+        "fr": "La même scène de pont en automne apparaît dans un livre, sur une carte et en grand tirage de référence.",
+        "ar": "مشهد الجسر الخريفي نفسه يظهر في كتاب وبطاقة وصورة مرجعية كبيرة."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 214394,
+        "sha256": "a171aea6dbb983a16df44c173032e5966c89bd89bb52a0d2b3685893dede5eda"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 62300,
+        "sha256": "0bc1d3fdb02951948baab7f27291debd7a6177df6778cc08f72657d08cc2b59c"
+      }
+    },
+    {
+      "family": "commerce",
+      "role": "extension",
+      "path": "/kidflix/detail-r5/commerce/extension.webp",
+      "mobilePath": "/kidflix/detail-r5/commerce/extension-mobile.webp",
+      "alt": {
+        "en": "A bridge-construction resource display includes wooden parts, three picture references, blank notes and an amber folder.",
+        "fr": "Un ensemble de construction de pont comprend pièces en bois, trois références illustrées, notes vierges et dossier ambré.",
+        "ar": "عرض موارد لبناء جسر يضم قطع خشب وثلاث صور مرجعية وملاحظات فارغة وملفاً كهرمانياً."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 63218,
+        "sha256": "c0eb24ab7d8966e36ac60a5323b31f4eb93fa17d38f40f95d3143676e57cf99b"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 18646,
+        "sha256": "464cb689486d09ee3d68cd55ac1a9ba5f4e2af7684f1b1513f4d5d20b37d5e8d"
+      }
+    },
+    {
+      "family": "bundles",
+      "role": "context",
+      "path": "/kidflix/detail-r5/bundles/context.webp",
+      "mobilePath": "/kidflix/detail-r5/bundles/context-mobile.webp",
+      "alt": {
+        "en": "A connected harbour set includes an illustrated book, broad landscape foldout and six transport-and-infrastructure cards.",
+        "fr": "Un ensemble lié sur le port comprend livre illustré, grand dépliant paysager et six cartes de transports et infrastructures.",
+        "ar": "مجموعة مترابطة عن الميناء تضم كتاباً مصوراً ومشهداً مطوياً واسعاً وست بطاقات للنقل والبنية التحتية."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 285574,
+        "sha256": "d4451e17e006244c1780ae6f3c83e1846a926e0cb578dd54bc684989ca26cd83"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 80446,
+        "sha256": "4509e80b119d1cc0640f9b485b41c367479ff863eac4c038c4dd564f318380cf"
+      }
+    },
+    {
+      "family": "bundles",
+      "role": "method",
+      "path": "/kidflix/detail-r5/bundles/method.webp",
+      "mobilePath": "/kidflix/detail-r5/bundles/method-mobile.webp",
+      "alt": {
+        "en": "A mixed-format planning spread combines a blank seven-column grid, picture book, blocks and listening cards.",
+        "fr": "Une double page de planification réunit grille vierge à sept colonnes, album, blocs et cartes d’écoute.",
+        "ar": "صفحتا تخطيط متعددتا الصيغ تجمعان شبكة فارغة من سبعة أعمدة وكتاب صور وقطعاً وبطاقات استماع."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 90492,
+        "sha256": "455393bbfd478254cb326ddeac4e69e022cab532e455ed5ada359777dd0bf023"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 29470,
+        "sha256": "357d30c204b6685573883af5138f718cdd17de9c1227edd52fdad40995fac95b"
+      }
+    },
+    {
+      "family": "bundles",
+      "role": "application",
+      "path": "/kidflix/detail-r5/bundles/application.webp",
+      "mobilePath": "/kidflix/detail-r5/bundles/application-mobile.webp",
+      "alt": {
+        "en": "A language resource family links library, kitchen and station scenes with ordinary object cards and a related cover.",
+        "fr": "Une famille de supports de langage relie bibliothèque, cuisine et gare à des cartes d’objets et une couverture associée.",
+        "ar": "مجموعة موارد لغوية تربط مشاهد مكتبة ومطبخ ومحطة ببطاقات أشياء يومية وغلاف مرتبط."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 200770,
+        "sha256": "0b26e108e8e0f46c94efe53c42d69e871135e9877eb2ec1b39e805a2d7bb1f92"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 62454,
+        "sha256": "4c834f6b6aefce7d1abb71dad29c1697bc83d88a61e8dee6171d713526a92233"
+      }
+    },
+    {
+      "family": "bundles",
+      "role": "extension",
+      "path": "/kidflix/detail-r5/bundles/extension.webp",
+      "mobilePath": "/kidflix/detail-r5/bundles/extension-mobile.webp",
+      "alt": {
+        "en": "A material-and-measurement set shows wooden solids, a zero-to-ten ruler and wood, glass and fabric reference cards.",
+        "fr": "Un ensemble matières et mesure présente solides en bois, règle de zéro à dix et cartes de bois, verre et tissu.",
+        "ar": "مجموعة مواد وقياس تعرض مجسمات خشبية ومسطرة من صفر إلى عشرة وبطاقات للخشب والزجاج والنسيج."
+      },
+      "master": {
+        "width": 1200,
+        "height": 800,
+        "bytes": 145188,
+        "sha256": "b4541aef8b36141e000cd75873c1924e6cfd6ae21edad2aadfac51d5ba58bf53"
+      },
+      "mobile": {
+        "width": 640,
+        "height": 427,
+        "bytes": 41636,
+        "sha256": "97e0fb2048d42b455c3367560c3efff8f71f1e76928aa281e7e60c39ff7b168a"
+      }
+    }
+  ]
+}

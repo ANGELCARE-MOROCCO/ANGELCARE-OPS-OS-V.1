@@ -1,5 +1,8 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { useNativeCheck, BridgeLaboratory } from "./experience/Interactions";
+import { tr } from "../catalogue";
+import x from "./experience/experience.module.css";
 import { activityDocument } from "../../digital-customer-experience/html-activity";
 import {
   asset,
@@ -30,8 +33,21 @@ export function Assessment({
   engine,
   state,
   update,
+  runAction,
 }: PlayerProps) {
-  const questions = rows(d.questions),
+  const allQuestions = rows(d.questions),
+    order: string[] = Array.isArray(state.questionOrder)
+      ? state.questionOrder
+      : [],
+    questions =
+      order.length === allQuestions.length &&
+      new Set(order).size === allQuestions.length &&
+      order.every((id) => allQuestions.some((q) => q.id === id))
+        ? order.map((id) => allQuestions.find((q) => q.id === id)!)
+        : allQuestions,
+    reviewed: string[] = Array.isArray(state.reviewIds) ? state.reviewIds : [],
+    checks = obj(state.questionChecks),
+    check = useNativeCheck({ m, d, locale, engine, state, update, runAction }),
     index = clampIndex(state.index, questions.length),
     answers = obj(state.answers),
     result = obj(state.grade),
@@ -72,19 +88,25 @@ export function Assessment({
     setError(false);
     controller.current = new AbortController();
     try {
-      const grade = await action(
-        m.key,
-        locale,
-        m.releaseId,
-        "grade",
-        { answers: latest.current.answers },
-        controller.current.signal,
-      );
+      const grade = runAction
+        ? await runAction(
+            "grade",
+            { answers: latest.current.answers },
+            controller.current.signal,
+          )
+        : await action(
+            m.key,
+            locale,
+            m.releaseId,
+            "grade",
+            { answers: latest.current.answers },
+            controller.current.signal,
+          );
       update({
         grade,
         score: grade.percent,
-        outcomeReceipt:grade.outcomeReceipt,
-        completionReceipt:grade.completionReceipt,
+        outcomeReceipt: grade.outcomeReceipt,
+        completionReceipt: grade.completionReceipt,
         skills: grade.skills,
         complete: true,
         started: false,
@@ -102,7 +124,16 @@ export function Assessment({
     if (started && timed && seconds === 0 && !graded && !error) void finish();
   }, [seconds, started, timed, graded, error]);
   function start() {
+    const ids = allQuestions.map((q) => q.id);
+    if (d.shuffle === true)
+      for (let i = ids.length - 1; i > 0; i--) {
+        const n = Math.floor(Math.random() * (i + 1));
+        [ids[i], ids[n]] = [ids[n], ids[i]];
+      }
     update({
+      questionOrder: ids,
+      reviewIds: [],
+      questionChecks: {},
       started: true,
       grade: null,
       complete: false,
@@ -129,7 +160,7 @@ export function Assessment({
             ]
           : labels.map((label, i) => ({ label, value: keys[i] || String(i) }));
     return (
-      <fieldset key={id} className={s.question}>
+      <fieldset key={id} id={"r5-question-" + id} className={s.question}>
         <legend>{local(q, "prompt", locale)}</legend>
         {q.assetId ? (
           <Source m={m} id={q.assetId} alt={local(q, "prompt", locale)} />
@@ -186,6 +217,70 @@ export function Assessment({
             }
           />
         )}
+        <div className={x.actions}>
+          <Button
+            aria-pressed={reviewed.includes(id)}
+            onClick={() =>
+              update({
+                reviewIds: reviewed.includes(id)
+                  ? reviewed.filter((v) => v !== id)
+                  : [...reviewed, id],
+              })
+            }
+          >
+            {tr(
+              ["Mark for review", "Marquer pour révision", "ضع علامة للمراجعة"],
+              locale,
+            )}{" "}
+            {reviewed.includes(id) ? "★" : "☆"}
+          </Button>
+          {d.feedbackPolicy === "immediate" && !graded ? (
+            <Button
+              disabled={check.busy || busy || !str(answers[id])}
+              onClick={() =>
+                void check.run(
+                  "check_question",
+                  { questionId: id, answer: str(answers[id]) },
+                  (r) =>
+                    update({
+                      questionChecks: {
+                        ...checks,
+                        [id]: { ...r, answer: str(answers[id]) },
+                      },
+                    }),
+                )
+              }
+            >
+              {tr(
+                [
+                  "Check this answer",
+                  "Vérifier cette réponse",
+                  "تحقق من هذه الإجابة",
+                ],
+                locale,
+              )}
+            </Button>
+          ) : null}
+        </div>
+        {obj(checks[id]).answer === answers[id] &&
+        rows(obj(checks[id]).results).length ? (
+          <div role="status" className={x.feedback}>
+            {rows(obj(checks[id]).results).map((r) => (
+              <p key={r.id}>
+                {r.correct ? "✓" : "↻"}{" "}
+                {r.explanation ||
+                  tr(
+                    [
+                      r.correct ? "Correct" : "Try again",
+                      r.correct ? "Correct" : "Réessayez",
+                      r.correct ? "صحيح" : "حاول مجدداً",
+                    ],
+                    locale,
+                  )}
+              </p>
+            ))}
+          </div>
+        ) : null}
       </fieldset>
     );
   }
@@ -229,6 +324,39 @@ export function Assessment({
             value={(answered / questions.length) * 100}
             label={answered + " / " + questions.length}
           />
+          <nav
+            className={x.questionMap}
+            aria-label={tr(
+              [
+                "Question map: answered, unanswered and review markers",
+                "Carte des questions : réponses et repères de révision",
+                "خريطة الأسئلة: الإجابات وعلامات المراجعة",
+              ],
+              locale,
+            )}
+          >
+            {questions.map((q, i) => (
+              <button
+                key={q.id}
+                aria-current={index === i ? "step" : undefined}
+                data-answered={!!str(answers[q.id])}
+                onClick={() => {
+                  update({ index: i });
+                  document
+                    .getElementById("r5-question-" + q.id)
+                    ?.scrollIntoView({ block: "center" });
+                }}
+                aria-label={`${i + 1} · ${str(answers[q.id]) ? t("answered", locale) : tr(["Unanswered", "Sans réponse", "بلا إجابة"], locale)}${reviewed.includes(q.id) ? " ★" : ""}`}
+              >
+                {i + 1}
+                {reviewed.includes(q.id)
+                  ? " ★"
+                  : str(answers[q.id])
+                    ? " ✓"
+                    : ""}
+              </button>
+            ))}
+          </nav>
           {engine === "practice"
             ? questions.map(question)
             : question(questions[index])}
@@ -291,17 +419,26 @@ export function Assessment({
           )}
         </div>
       ) : null}
+      {check.error ? <ErrorNote locale={locale} /> : null}
       {error ? <ErrorNote locale={locale} retry={() => void finish()} /> : null}
     </div>
   );
 }
-export function Activities({
+export function Activities(props: PlayerProps) {
+  return props.d.engine === "bridge" ? (
+    <BridgeLaboratory {...props} />
+  ) : (
+    <NativeActivities {...props} />
+  );
+}
+function NativeActivities({
   m,
   d,
   locale,
   engine,
   state,
   update,
+  runAction,
 }: PlayerProps) {
   const tasks = rows(d.tasks),
     type = str(d.engine),
@@ -352,14 +489,16 @@ export function Activities({
     setError(false);
     controller.current = new AbortController();
     try {
-      const result = await action(
-        m.key,
-        locale,
-        m.releaseId,
-        "activity",
-        { input },
-        controller.current.signal,
-      );
+      const result = runAction
+        ? await runAction("activity", { input }, controller.current.signal)
+        : await action(
+            m.key,
+            locale,
+            m.releaseId,
+            "activity",
+            { input },
+            controller.current.signal,
+          );
       setFeedback(result.correct);
       const patch: Row = { attempts: attempts + 1 };
       if (pair) {

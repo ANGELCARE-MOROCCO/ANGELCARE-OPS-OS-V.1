@@ -1,4 +1,7 @@
 "use client";
+import { DetailExperience } from "./experience";
+import { ExperienceOpening } from "./experience/Primitives";
+import x from "./experience/experience.module.css";
 import { LoveProvider, SocialToolbar } from "./Social";
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -73,6 +76,10 @@ const PLAYER: Record<string, React.ComponentType<PlayerProps>> = {
   commerce: Commerce,
   bundles: Bundles,
 };
+export function NativeDetailPlayer(p: PlayerProps) {
+  const Player = PLAYER[p.m.family];
+  return Player ? <Player {...p} /> : <Empty locale={p.locale} />;
+}
 export function Detail({
   locale,
   value,
@@ -132,7 +139,7 @@ function DetailReady({
   return (
     <LoveProvider resourceKey={m.key} locale={locale}>
       <article
-        className={`${s.detail} ${s["world_" + m.family]}`}
+        className={`${s.detail} ${s["world_" + m.family]} ${x.experienceRoot}`}
         dir={locale === "ar" ? "rtl" : "ltr"}
         style={{ "--accent": w.color, "--tint": w.tint } as CSSProperties}
         aria-labelledby={titleId}
@@ -154,39 +161,15 @@ function DetailReady({
             ← {t("backToJourney", locale)}
           </Link>
         ) : null}
-        <header className={s.detailHeading}>
-          <div>
-            <div className={s.kickers}>
-              <span className={s.free}>{t("free", locale)}</span>
-              <span>
-                <I name={w.icon} size={15} />
-                {tr(w.title, locale)}
-              </span>
-            </div>
-            <h1 id={titleId}>{m.title}</h1>
-            {summary ? <p>{summary}</p> : null}
-            <div className={s.facts}>
-              {facts.map((fact, i) => (
-                <span key={i}>
-                  <I name={fact.icon} size={16} />
-                  {fact.label}
-                </span>
-              ))}
-            </div>
-          </div>
-          <div className={s.headingActions}>
-            <Button
-              icon="Bookmark"
-              onClick={() => {
-                guest.toggle(m.key);
-                if (!saved) emitVisitor(m.key, locale, m.releaseId, "bookmark");
-              }}
-              aria-pressed={saved}
-            >
-              {t(saved ? "saved" : "save", locale)}
-            </Button>
-          </div>
-        </header>
+        <ExperienceOpening
+          p={props}
+          titleId={titleId}
+          saved={saved}
+          onSave={() => {
+            guest.toggle(m.key);
+            if (!saved) emitVisitor(m.key, locale, m.releaseId, "bookmark");
+          }}
+        />
         <SocialToolbar resourceKey={m.key} title={m.title} locale={locale} />
         <AdSlot m={m} locale={locale} zone="after_intro" />
         {progress.error ? (
@@ -203,16 +186,7 @@ function DetailReady({
             </div>
           </div>
         ) : null}
-        <div
-          className={
-            outputs.length &&
-            ["visual-cards", "printables", "documents", "stories"].includes(
-              m.family,
-            )
-              ? s.mainWithFiles
-              : s.mainOnly
-          }
-        >
+        <DetailExperience {...props} files={<Files {...props} />}>
           <section
             id="kidflix-experience-player"
             className={s.playerSurface}
@@ -228,15 +202,7 @@ function DetailReady({
               </div>
             )}
           </section>
-          {outputs.length &&
-          ["visual-cards", "printables", "documents", "stories"].includes(
-            m.family,
-          ) ? (
-            <aside className={s.filesRail}>
-              <Files {...props} />
-            </aside>
-          ) : null}
-        </div>
+        </DetailExperience>
         <Dossier {...props} />
         <PrivateTools {...props} />
         <MissedPractice {...props} />
@@ -247,11 +213,6 @@ function DetailReady({
         <Outcome {...props} />
         {progress.state.complete ? (
           <AdSlot m={m} locale={locale} zone="after_completion" />
-        ) : null}
-        {!["visual-cards", "printables", "documents", "stories"].includes(
-          m.family,
-        ) && outputs.length ? (
-          <Files {...props} />
         ) : null}
         {d.continuityPolicy !== "none" && progress.ready ? (
           <div className={s.continuity}>
@@ -266,6 +227,26 @@ function DetailReady({
             </Button>
           </div>
         ) : null}
+        <div className={x.repeatActions}>
+          <Button
+            icon="Bookmark"
+            aria-pressed={saved}
+            onClick={() => {
+              guest.toggle(m.key);
+              if (!saved) emitVisitor(m.key, locale, m.releaseId, "bookmark");
+            }}
+          >
+            {t(saved ? "saved" : "save", locale)}
+          </Button>
+          <a href="#kidflix-experience-player" className={x.secondary}>
+            {t("open", locale)} ↑
+          </a>
+          {outputs.length ? (
+            <a href="#r5-published-files" className={x.secondary}>
+              {t("files", locale)} ↑
+            </a>
+          ) : null}
+        </div>
         <SocialToolbar
           resourceKey={m.key}
           title={m.title}

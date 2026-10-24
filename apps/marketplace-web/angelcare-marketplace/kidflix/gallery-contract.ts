@@ -25,8 +25,8 @@ function point(v: unknown): Point {
   if (typeof p.x !== "number" || typeof p.y !== "number" || !Number.isFinite(p.x) || !Number.isFinite(p.y) || p.x < 0 || p.x > 100 || p.y < 0 || p.y > 100) throw Error("Focal points must be numbers between 0 and 100.");
   return { x: p.x, y: p.y };
 }
-export function validateGallery(value: unknown): Scene[] {
-  if (!Array.isArray(value) || value.length < 3 || value.length > 6) throw Error("Choose three to six distinct gallery scenes.");
+export function validateGallery(value: unknown, maxScenes: 6 | 12 = 6): Scene[] {
+  if (!Array.isArray(value) || value.length < 3 || value.length > maxScenes) throw Error(`Choose three to ${maxScenes} distinct gallery scenes.`);
   const ids = new Set<string>(), sources = new Set<string>();
   return value.map(v => {
     const x = record(v), descriptions = record(x.descriptions);
@@ -42,7 +42,7 @@ export function validateGallery(value: unknown): Scene[] {
   });
 }
 export function normalizeGallery(value: unknown, world: string, legacy: { hero: string; mobile?: string; alt?: string; bound?: boolean }): Scene[] {
-  if (value !== undefined) return validateGallery(value);
+  if (value !== undefined) return validateGallery(value, world === "home" ? 12 : 6);
   const defaults = defaultGallery(world);
   const packaged = world === "home" ? "/kidflix/hero.jpg" : legacyWorldImages[world];
   if (!legacy.hero || (!legacy.bound && (legacy.hero === packaged || legacy.hero === defaults[0].desktop))) return defaults;

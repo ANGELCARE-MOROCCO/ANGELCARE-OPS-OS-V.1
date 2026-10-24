@@ -17,7 +17,7 @@ import {
 import { Reading } from "./Reading";
 import { local, t } from "./copy";
 import s from "./detail.module.css";
-export function Tools({ d, locale, engine, state, update }: PlayerProps) {
+export function Tools({ m, d, locale, engine, state, update }: PlayerProps) {
   const inputs = rows(d.inputs),
     values = obj(state.values),
     result = obj(state.calculation),
@@ -41,7 +41,7 @@ export function Tools({ d, locale, engine, state, update }: PlayerProps) {
       <section className={s.toolInputs}>
         <h2>{t("calculate", locale)}</h2>
         {inputs.map((i) => (
-          <label key={i.id}>
+          <label key={i.id} id={"r5-item-tools-" + i.id}>
             <span>
               {local(i, "label", locale)}{" "}
               {local(i, "unit", locale) ? (
@@ -156,7 +156,16 @@ export function Tools({ d, locale, engine, state, update }: PlayerProps) {
 }
 export function Planners(props: PlayerProps) {
   const { m, d, locale, engine, state, update } = props,
-    items = rows(d.items),
+    sourceItems = rows(d.items),
+    order: string[] = Array.isArray(state.plannerOrder)
+      ? state.plannerOrder
+      : [],
+    items =
+      order.length === sourceItems.length &&
+      new Set(order).size === sourceItems.length &&
+      order.every((id) => sourceItems.some((i) => i.id === id))
+        ? order.map((id) => sourceItems.find((i) => i.id === id)!)
+        : sourceItems,
     values = obj(state.values);
   if (engine === "print" && rows(d.units).length) return <Reading {...props} />;
   if (!items.length) return <Empty locale={locale} />;
@@ -186,6 +195,8 @@ export function Planners(props: PlayerProps) {
         {items.map((item) => (
           <article
             key={item.id}
+            id={"r5-item-planners-" + item.id}
+            tabIndex={-1}
             className={`${s.plannerItem} ${values[item.id] === true ? s.checked : ""}`}
           >
             {item.assetId ? (
@@ -327,7 +338,11 @@ export function Questionnaire({
           />
         ) : null}
         {visible.map((f) => (
-          <label key={f.id} className={s.personalField}>
+          <label
+            key={f.id}
+            id={"r5-item-forms-" + f.id}
+            className={s.personalField}
+          >
             <span>
               {local(f, "label", locale)}
               {f.required ? " *" : ""}

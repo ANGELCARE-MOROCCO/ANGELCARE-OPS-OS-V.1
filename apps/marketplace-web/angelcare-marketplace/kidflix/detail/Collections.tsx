@@ -6,7 +6,7 @@ import {
   blankContinuity,
   journeyProgress,
 } from "../../digital-customer-experience/continuity";
-import { path } from "../catalogue";
+import { path, tr } from "../catalogue";
 import { obj, rows, str, restoreDetailProgress, type Row } from "./model";
 import { progressKey } from "./progress";
 import {
@@ -19,16 +19,23 @@ import {
 } from "./shared";
 import { local, t } from "./copy";
 import s from "./detail.module.css";
-export function Community({ m, d, locale }: PlayerProps) {
+export function Community({ m, d, locale, state, update }: PlayerProps) {
   const [search, setSearch] = useState(""),
-    rules = rows(d.rules).filter(
-      (r) =>
-        !search ||
-        [local(r, "title", locale), local(r, "text", locale)]
-          .join(" ")
-          .toLocaleLowerCase(locale)
-          .includes(search.toLocaleLowerCase(locale)),
-    );
+    [markedOnly, setMarkedOnly] = useState(false),
+    [expanded, setExpanded] = useState<string[]>([]),
+    marks: string[] = Array.isArray(state.archiveMarks)
+      ? state.archiveMarks
+      : [],
+    rules = rows(d.rules)
+      .filter((r) => !markedOnly || marks.includes(r.id))
+      .filter(
+        (r) =>
+          !search ||
+          [local(r, "title", locale), local(r, "text", locale)]
+            .join(" ")
+            .toLocaleLowerCase(locale)
+            .includes(search.toLocaleLowerCase(locale)),
+      );
   return (
     <div className={s.community}>
       <Editorial m={m} data={d} locale={locale} />
@@ -42,11 +49,66 @@ export function Community({ m, d, locale }: PlayerProps) {
           />
         </label>
       ) : null}
+      <div className={s.controls}>
+        <Button
+          aria-pressed={markedOnly}
+          onClick={() => setMarkedOnly((v) => !v)}
+        >
+          {tr(
+            ["My marked entries", "Mes entrées marquées", "مدخلاتي المحفوظة"],
+            locale,
+          )}{" "}
+          · {marks.length}
+        </Button>
+        <Button onClick={() => setExpanded(rules.map((r) => r.id))}>
+          {tr(
+            ["Expand results", "Déplier les résultats", "توسيع النتائج"],
+            locale,
+          )}
+        </Button>
+        <Button onClick={() => setExpanded([])}>
+          {tr(
+            ["Collapse results", "Replier les résultats", "طي النتائج"],
+            locale,
+          )}
+        </Button>
+      </div>
       <div className={s.knowledgeGrid}>
         {rules.map((r) => (
-          <details key={r.id} className={s.knowledge}>
+          <details
+            key={r.id}
+            id={"r5-item-community-" + r.id}
+            className={s.knowledge}
+            open={expanded.includes(r.id)}
+            onToggle={(e) => {
+              const open = e.currentTarget.open;
+              setExpanded((old) =>
+                open && !old.includes(r.id)
+                  ? [...old, r.id]
+                  : !open && old.includes(r.id)
+                    ? old.filter((id) => id !== r.id)
+                    : old,
+              );
+            }}
+          >
             <summary>{local(r, "title", locale)}</summary>
             <p>{local(r, "text", locale)}</p>
+            <Button
+              aria-pressed={marks.includes(r.id)}
+              onClick={() =>
+                update({
+                  archiveMarks: marks.includes(r.id)
+                    ? marks.filter((id) => id !== r.id)
+                    : [...marks, r.id],
+                })
+              }
+            >
+              {tr(
+                ["Keep this entry", "Garder cette entrée", "احفظ هذا المدخل"],
+                locale,
+              )}{" "}
+              {marks.includes(r.id) ? "✓" : "+"}
+            </Button>
           </details>
         ))}
       </div>
@@ -110,12 +172,22 @@ export function Commerce({ m, d, locale }: PlayerProps) {
     </div>
   );
 }
-export function Bundles({ m, d, locale, state, update, engine }: PlayerProps) {
-  const steps = rows(d.steps),
+export function Bundles({
+  m,
+  d,
+  locale,
+  state,
+  update,
+  engine,
+  preview,
+}: PlayerProps) {
+  const steps = rows(d.steps).map((step) =>
+      d.completion === "all_steps" ? { ...step, required: true } : step,
+    ),
     completed = Array.isArray(state.completed) ? state.completed : [],
     bindings = obj(m.bindings.records),
     readChild = (child: Row) => {
-      if (!child.id) return false;
+      if (preview || !child.id) return false;
       const data = obj(child.definition),
         store =
           data.continuityPolicy === "device" ? localStorage : sessionStorage;
@@ -135,17 +207,33 @@ export function Bundles({ m, d, locale, state, update, engine }: PlayerProps) {
   useEffect(() => {
     function check() {
       const active = steps
-          .filter((step) => readChild(obj(bindings[step.experienceId])))
+          .filter(
+            (step) =>
+              step.completion !== "manual" &&
+              readChild(obj(bindings[step.experienceId])),
+          )
           .map((step) => step.id),
-        next = [...new Set([...completed, ...active])];
-      if (next.length !== completed.length) update({ completed: next });
+        next = [
+          ...new Set([
+            ...completed.filter((id: string) =>
+              steps.some(
+                (step) => step.id === id && step.completion === "manual",
+              ),
+            ),
+            ...active,
+          ]),
+        ];
+      if (JSON.stringify(next) !== JSON.stringify(completed))
+        update({ completed: next });
     }
     check();
     window.addEventListener("focus", check);
     window.addEventListener("storage", check);
+    window.addEventListener("kidflix:progress", check);
     return () => {
       window.removeEventListener("focus", check);
       window.removeEventListener("storage", check);
+      window.removeEventListener("kidflix:progress", check);
     };
   }, [JSON.stringify(steps), JSON.stringify(completed)]);
   const continuity = { ...blankContinuity(), completed },

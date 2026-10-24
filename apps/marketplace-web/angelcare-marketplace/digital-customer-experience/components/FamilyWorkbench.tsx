@@ -1,4 +1,5 @@
 "use client";
+import { ClassificationEditor } from "./ClassificationEditor";
 import { QuestionControls } from "./QuestionControls";
 import { DEPTH_FIELDS } from "../experience-depth";
 import { modeExplanation } from "../operator-guidance";
@@ -667,8 +668,18 @@ export function FamilyWorkbench({
                               def.key
                             }
                           >
-                            {def.key === "unitId" ||
-                            def.key === "conditionTarget" ? (
+                            {collection.key === "cards" &&
+                            def.key === "answer" ? (
+                              <ClassificationEditor
+                                data={data}
+                                value={selected.answer}
+                                locale={locale}
+                                readOnly={readOnly}
+                                onChange={(value) => patchRow(def, value)}
+                              />
+                            ) : def.key === "unitId" ||
+                              def.key === "ruleId" ||
+                              def.key === "conditionTarget" ? (
                               <Field label={tr(def.label, locale)}>
                                 <select
                                   disabled={readOnly}
@@ -682,12 +693,15 @@ export function FamilyWorkbench({
                                     data[
                                       def.key === "unitId"
                                         ? "units"
-                                        : collection.key
+                                        : def.key === "ruleId"
+                                          ? "sortRules"
+                                          : collection.key
                                     ],
                                   )
                                     .filter(
                                       (u) =>
                                         def.key === "unitId" ||
+                                        def.key === "ruleId" ||
                                         u.id !== selected.id,
                                     )
                                     .map((u) => (

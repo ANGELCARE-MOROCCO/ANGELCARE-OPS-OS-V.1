@@ -13,6 +13,12 @@ import { asset, obj, rows, str, type Row } from "./model";
 import { local, t } from "./copy";
 import s from "./detail.module.css";
 export interface PlayerProps {
+  preview?: boolean;
+  runAction?: (
+    operation: string,
+    input: Row,
+    signal?: AbortSignal,
+  ) => Promise<Row>;
   m: Row;
   d: Row;
   locale: Locale;

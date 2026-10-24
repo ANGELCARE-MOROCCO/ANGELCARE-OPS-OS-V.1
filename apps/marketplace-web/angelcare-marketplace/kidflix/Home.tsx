@@ -1,5 +1,8 @@
 "use client";
-import { Gallery } from "./Gallery";
+import { HomeArtwork } from "./HomeArtwork";
+import { HomeHero } from "./HomeHero";
+import { HOME_ART_ROOT, HOME_WORLD_KEYS, homeWorldImage, homeAgeImage, homeMobileImage, homeIntentWorld } from "./home-imagery";
+import h from "./home-imagery.module.css";
 import { GuidedDiscovery } from "./journey/Discovery";
 import { PageAd } from "./journey/Runtime";
 import Link from "next/link";
@@ -79,7 +82,7 @@ function AdPosition({
     <PageAd locale={locale} slot={slot} />
   ) : null;
 }
-function FamilyFeature({ family, locale }: { family: string; locale: Locale }) {
+function FamilyFeature({ family, locale, image }: { family: string; locale: Locale; image?: string }) {
   const w = world(family)!;
   return (
     <Link
@@ -87,7 +90,7 @@ function FamilyFeature({ family, locale }: { family: string; locale: Locale }) {
       href={path(locale, "/explore/" + family)}
       style={{ "--accent": w.color, "--tint": w.tint } as React.CSSProperties}
     >
-      <img src={w.image} alt="" width={650} height={420} loading="lazy" />
+      <HomeArtwork className={h.familyArt} src={image || homeWorldImage(family)} alt="" width={650} height={420} loading="lazy" />
       <div>
         <span className={s.editorialTag}>
           <I name={w.icon} size={14} />
@@ -111,6 +114,7 @@ function ResourceSection({
   locale,
   tint = false,
   adSlots = [],
+  image,
 }: {
   title: string;
   sub: string;
@@ -120,11 +124,13 @@ function ResourceSection({
   locale: Locale;
   tint?: boolean;
   adSlots?: string[];
+  image?: string;
 }) {
   if (!rows.length) return null;
   const w = world(family)!;
   return (
     <section
+      data-kidflix-section={family}
       className={`${s.section} ${tint ? s.tintedSection : ""}`}
       style={{ "--accent": w.color, "--tint": w.tint } as React.CSSProperties}
     >
@@ -137,6 +143,10 @@ function ResourceSection({
         accent={w.color}
         tag={copy("free", locale)}
       />
+      {image ? <div className={h.editorialLead}>
+        <div><strong>{tr(w.invitation, locale)}</strong><p>{tr(w.description, locale)}</p></div>
+        <HomeArtwork src={image} alt="" width={800} height={533} loading="lazy"/>
+      </div> : null}
       <Shelf rows={rows.slice(0, 6)} locale={locale} />
       <AdPosition
         locale={locale}
@@ -180,11 +190,14 @@ export function KidFlixHome({
           r.ageMax >= n,
       ),
     );
+  const homeImage = (key: string) => homeWorldImage(key, e.familyImages[key], Boolean(e.mediaBindings["family:" + key]));
+  const homeImages = Object.fromEntries(HOME_WORLD_KEYS.map(key => [key, homeImage(key)]));
   return (
+    <div className={h.home} data-home-publisher="r2">
     <HomeSequence order={e.sections}>
       <section className={s.hero} aria-labelledby="kidflix-hero-heading">
-        <div className={s.heroImage}>
-          <Gallery scenes={e.gallery} locale={locale} label={e.headline} />
+        <div className={`${s.heroImage} ${h.heroMedia}`}>
+          <HomeHero scenes={e.gallery} locale={locale} images={homeImages} />
           <div className={s.heroPhotoBadge}>
             <span>
               <I name="Heart" size={19} />
@@ -196,7 +209,7 @@ export function KidFlixHome({
             <I name="Sparkles" size={18} />
           </div>
         </div>
-        <div className={s.heroCopy}>
+        <div className={`${s.heroCopy} ${h.heroText}`}>
           <span className={s.heroEyebrow}>
             <span /> {e.eyebrow}
           </span>
@@ -211,11 +224,11 @@ export function KidFlixHome({
           <p>{e.description}</p>
           <SearchBox locale={locale} large />
           <div className={s.heroCTA}>
-            <Link className={s.primary} href="#kidflix-worlds">
+            <Link className={s.primary} href={visible("worlds") ? "#kidflix-worlds" : path(locale, "/explore")}>
               {copy("explore", locale)}
               <I name="ArrowRight" size={18} />
             </Link>
-            <Link className={s.heroSecondary} href="#kidflix-today">
+            <Link className={s.heroSecondary} href={visible("today") ? "#kidflix-today" : path(locale, "/explore")}>
               {copy("today", locale)}
               <I name="ArrowUpRight" size={16} />
             </Link>
@@ -309,7 +322,7 @@ export function KidFlixHome({
           </Link>
         </aside>
       </section>
-      <GuidedDiscovery locale={locale} />
+      <GuidedDiscovery locale={locale} homeImages={homeImages} />
       <div className={s.intentDock}>
         {INTENTS.map(([key, icon, label], i) => (
           <Link
@@ -329,9 +342,7 @@ export function KidFlixHome({
               } as React.CSSProperties
             }
           >
-            <span>
-              <I name={icon} size={25} />
-            </span>
+            <HomeArtwork className={h.intentArt} src={homeImage(homeIntentWorld[key])} alt="" width={160} height={110} loading="lazy"/>
             <strong>{tr(label, locale)}</strong>
           </Link>
         ))}
@@ -359,7 +370,8 @@ export function KidFlixHome({
               <WorldCard
                 key={w.key}
                 w={w}
-                image={e.familyImages[w.key]}
+                image={homeImage(w.key)}
+                mobileImage={homeMobileImage(homeImage(w.key))}
                 count={catalogue.counts[w.key]}
                 locale={locale}
               />
@@ -434,7 +446,7 @@ export function KidFlixHome({
                   ]
                 : WORLDS.filter((w) => w.intent.includes(intent)).slice(0, 3)
               ).map((w) => (
-                <FamilyFeature key={w.key} family={w.key} locale={locale} />
+                <FamilyFeature key={w.key} family={w.key} locale={locale} image={homeImage(w.key)} />
               ))}
             </div>
           )}
@@ -476,8 +488,8 @@ export function KidFlixHome({
                   } as React.CSSProperties
                 }
               >
-                <img
-                  src={WORLDS[[9, 6, 10, 7, 3, 8][i % 6]].image}
+                <HomeArtwork
+                  src={homeAgeImage(age)}
                   alt=""
                   loading="lazy"
                   width={300}
@@ -566,6 +578,7 @@ export function KidFlixHome({
           sub={copy("printSub", locale)}
           icon="Printer"
           family="printables"
+          image={homeImage("printables")}
           rows={group("printables")}
           locale={locale}
           adSlots={e.adSlots}
@@ -593,7 +606,7 @@ export function KidFlixHome({
                   } as React.CSSProperties
                 }
               >
-                <FamilyFeature family={f} locale={locale} />
+                <FamilyFeature family={f} locale={locale} image={homeImage(f)} />
                 {group(f).length ? (
                   <div className={s.storyMini}>
                     {group(f)
@@ -638,15 +651,7 @@ export function KidFlixHome({
           className={`${s.section} ${s.challenge}`}
         >
           <div className={s.challengeArt} aria-hidden="true">
-            <div>
-              <I name="Zap" size={75} />
-              <span className={s.challengeStar}>✦</span>
-              <span className={s.challengeDot} />
-              <span className={s.challengeBadge}>
-                <I name="Star" size={19} />
-                KIDFLIX
-              </span>
-            </div>
+            <HomeArtwork className={h.challengePicture} src={HOME_ART_ROOT + "/hero-06-challenges.png"} alt="" width={600} height={500} loading="lazy"/>
           </div>
           <div className={s.challengeCopy}>
             <span className={s.eyebrow}>{copy("little", locale)}</span>
@@ -697,6 +702,7 @@ export function KidFlixHome({
           sub={tr(world("activities")!.description, locale)}
           icon="Puzzle"
           family="activities"
+          image={homeImage("activities")}
           rows={group("activities")}
           locale={locale}
         />
@@ -707,6 +713,7 @@ export function KidFlixHome({
           sub={copy("learnSub", locale)}
           icon="GraduationCap"
           family="learning"
+          image={homeImage("learning")}
           rows={group("learning")}
           locale={locale}
         />
@@ -717,6 +724,7 @@ export function KidFlixHome({
           sub={copy("cardsSub", locale)}
           icon="Layers"
           family="visual-cards"
+          image={homeImage("visual-cards")}
           rows={group("visual-cards")}
           locale={locale}
           tint
@@ -727,7 +735,7 @@ export function KidFlixHome({
           <SectionTitle
             title={copy("toolsTitle", locale)}
             sub={copy("toolsSub", locale)}
-            icon="WandSparkles"
+            icon="SlidersHorizontal"
             locale={locale}
             accent="#119184"
           />
@@ -745,9 +753,7 @@ export function KidFlixHome({
                     } as React.CSSProperties
                   }
                 >
-                  <span className={s.toolMedallion}>
-                    <I name={w.icon} size={37} />
-                  </span>
+                  <HomeArtwork className={h.toolArt} src={homeImage(f)} alt="" width={600} height={360} loading="lazy"/>
                   <h3>{tr(w.title, locale)}</h3>
                   <p>{tr(w.description, locale)}</p>
                   <span className={s.toolArrow}>
@@ -817,7 +823,7 @@ export function KidFlixHome({
           ) : (
             <div className={s.grownGateways}>
               {["documents", "community", "commerce"].map((f) => (
-                <FamilyFeature family={f} locale={locale} key={f} />
+                <FamilyFeature family={f} locale={locale} key={f} image={homeImage(f)} />
               ))}
             </div>
           )}
@@ -829,6 +835,7 @@ export function KidFlixHome({
           sub={copy("bundleSub", locale)}
           icon="Route"
           family="bundles"
+          image={homeImage("bundles")}
           rows={group("bundles")}
           locale={locale}
           adSlots={e.adSlots}
@@ -866,8 +873,8 @@ export function KidFlixHome({
           className={`${s.section} ${s.closing}`}
         >
           <div className={s.closingImage}>
-            <img
-              src="/kidflix/international-20261020/home-2.webp"
+            <HomeArtwork className={h.closingArt}
+              src={HOME_ART_ROOT + "/hero-12-bundles.png"}
               alt=""
               loading="lazy"
               width={600}
@@ -915,5 +922,6 @@ export function KidFlixHome({
         </span>
       </div>
     </HomeSequence>
+    </div>
   );
 }

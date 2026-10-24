@@ -68,6 +68,10 @@ export async function preparePack(
   landscape: boolean,
   signal: AbortSignal,
   progress: (n: number) => void,
+  options: {
+    normalisePdf?: boolean;
+    imageTone?: "colour" | "grayscale" | "low_ink";
+  } = {},
 ) {
   if (!files.length || files.length > LIMITS.packFiles)
     throw Error("FILE_COUNT_LIMIT");
@@ -85,18 +89,44 @@ export async function preparePack(
       const native = await PDFDocument.load(source.bytes),
         ids = pageSelection(file.selection, native.getPageCount());
       if (pages + ids.length > LIMITS.packPages) throw Error("PAGE_LIMIT");
-      for (const p of await pdf.copyPages(native, ids)) {
-        pdf.addPage(p);
-        pages++;
-      }
+      if (options.normalisePdf) {
+        const dims = paper === "Letter" ? [612, 792] : [595.28, 841.89],
+          w = landscape ? dims[1] : dims[0],
+          h = landscape ? dims[0] : dims[1];
+        for (const id of ids) {
+          const embedded = await pdf.embedPage(native.getPage(id)),
+            page = pdf.addPage([w, h]),
+            scale = Math.min(
+              (w - 48) / embedded.width,
+              (h - 48) / embedded.height,
+            );
+          page.drawPage(embedded, {
+            x: (w - embedded.width * scale) / 2,
+            y: (h - embedded.height * scale) / 2,
+            width: embedded.width * scale,
+            height: embedded.height * scale,
+          });
+          pages++;
+        }
+      } else
+        for (const p of await pdf.copyPages(native, ids)) {
+          pdf.addPage(p);
+          pages++;
+        }
     } else if (["image/png", "image/jpeg"].includes(file.mime)) {
       if (pageSelection(file.selection, 1).length !== 1)
         throw Error("INVALID_PAGE_SELECTION");
       if (++pages > LIMITS.packPages) throw Error("PAGE_LIMIT");
+      const converted = await printImage(
+        source.bytes,
+        file.mime,
+        options.imageTone || "colour",
+        signal,
+      );
       const img =
-          file.mime === "image/png"
-            ? await pdf.embedPng(source.bytes)
-            : await pdf.embedJpg(source.bytes),
+          converted.mime === "image/png"
+            ? await pdf.embedPng(converted.bytes)
+            : await pdf.embedJpg(converted.bytes),
         dims = paper === "Letter" ? [612, 792] : [595.28, 841.89],
         w = landscape ? dims[1] : dims[0],
         h = landscape ? dims[0] : dims[1],
@@ -118,4 +148,57 @@ export async function preparePack(
     blob: new Blob([bytes as BlobPart], { type: "application/pdf" }),
     pages,
   };
+}
+
+async function printImage(
+  bytes: Uint8Array,
+  mime: string,
+  tone: string,
+  signal: AbortSignal,
+) {
+  if (tone === "colour") return { bytes, mime };
+  if (signal.aborted) throw new DOMException("Aborted", "AbortError");
+  const bitmap = await createImageBitmap(
+    new Blob([bytes as BlobPart], { type: mime }),
+  );
+  try {
+    const scale = Math.min(1, 3200 / Math.max(bitmap.width, bitmap.height)),
+      canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+    canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+    const ctx = canvas.getContext("2d");
+    if (!ctx) throw Error("IMAGE_PROCESSING_UNAVAILABLE");
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    const data = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < data.data.length; i += 4) {
+      const gray = Math.round(
+          0.2126 * data.data[i] +
+            0.7152 * data.data[i + 1] +
+            0.0722 * data.data[i + 2],
+        ),
+        value =
+          tone === "low_ink"
+            ? gray > 200
+              ? 255
+              : Math.round(60 + gray * 0.72)
+            : gray;
+      data.data[i] = data.data[i + 1] = data.data[i + 2] = value;
+    }
+    ctx.putImageData(data, 0, 0);
+    const blob = await new Promise<Blob>((resolve, reject) =>
+      canvas.toBlob(
+        (b) => (b ? resolve(b) : reject(Error("IMAGE_PROCESSING_UNAVAILABLE"))),
+        "image/png",
+      ),
+    );
+    if (signal.aborted) throw new DOMException("Aborted", "AbortError");
+    return {
+      bytes: new Uint8Array(await blob.arrayBuffer()),
+      mime: "image/png",
+    };
+  } finally {
+    bitmap.close();
+  }
 }

@@ -14,12 +14,14 @@ import {
   Button,
   Empty,
   ErrorNote,
+  Modal,
   Pager,
   Source,
   type PlayerProps,
 } from "./shared";
 import { local, t } from "./copy";
 import s from "./detail.module.css";
+import { TimedTranscript, Waveform } from "./experience/MediaTools";
 import { j } from "../journey/copy";
 import { usePersonal } from "../journey/store";
 export function MediaPlayer({
@@ -52,6 +54,9 @@ export function MediaPlayer({
       "image/",
     ),
     id = str(unit.id) || str(unit.assetId),
+    startAt = Math.max(0, num(unit.startSeconds)),
+    endAt = num(unit.endSeconds) > startAt ? num(unit.endSeconds) : Infinity,
+    boundaryReported = useRef(false),
     latest = useRef({ state, update, onComplete });
   latest.current = { state, update, onComplete };
   const [playing, setPlaying] = useState(false),
@@ -110,7 +115,10 @@ export function MediaPlayer({
       setFailed(false);
     },
     onWaiting: () => setBuffering(true),
-    onStalled: () => { if(ref.current && !ref.current.paused && !ref.current.ended) setBuffering(true); },
+    onStalled: () => {
+      if (ref.current && !ref.current.paused && !ref.current.ended)
+        setBuffering(true);
+    },
     onSeeking: () => setBuffering(true),
     onSeeked: () => setBuffering(false),
     onCanPlay: () => setBuffering(false),
@@ -127,6 +135,11 @@ export function MediaPlayer({
       setFailed(true);
       setPlaying(false);
     },
+    onDurationChange: () => {
+      const node = ref.current;
+      if (node && Number.isFinite(node.duration) && node.duration > 0)
+        setDuration(node.duration);
+    },
     onLoadedMetadata: () => {
       const n = ref.current;
       if (!n) return;
@@ -135,12 +148,26 @@ export function MediaPlayer({
       );
       const saved = num(obj(latest.current.state.positions?.[id]).position);
       if (saved > 0 && Number.isFinite(n.duration) && saved < n.duration - 1)
-        n.currentTime = saved;
+        n.currentTime = Math.min(Math.max(startAt, saved), endAt);
+      else if (startAt < n.duration) n.currentTime = startAt;
     },
     onTimeUpdate: () => {
       const n = ref.current;
       if (!n) return;
       setPosition(n.currentTime);
+      if (Number.isFinite(n.duration) && n.duration > 0)
+        setDuration(n.duration);
+      if (
+        n.currentTime >= endAt &&
+        !boundaryReported.current &&
+        !n.paused &&
+        !n.seeking
+      ) {
+        boundaryReported.current = true;
+        n.pause();
+        finish();
+      }
+      if (n.currentTime < endAt - 0.1) boundaryReported.current = false;
       if (Date.now() - last.current > 3000) {
         last.current = Date.now();
         remember();
@@ -148,7 +175,9 @@ export function MediaPlayer({
       if (
         d.completionPolicy === "threshold" &&
         n.duration > 0 &&
-        (n.currentTime / n.duration) * 100 >= num(d.completionPercent, 90)
+        ((n.currentTime - startAt) / (Math.min(endAt, n.duration) - startAt)) *
+          100 >=
+          num(d.completionPercent, 90)
       )
         if (!thresholdReported.current) {
           thresholdReported.current = true;
@@ -168,7 +197,10 @@ export function MediaPlayer({
   }
   if (!a) return <Empty locale={locale} />;
   const tracks = rows(d.captions).filter(
-    (c) => c.captionAssetId && asset(m, c.captionAssetId, "text/"),
+    (c) =>
+      (!c.unitId || c.unitId === unit.id) &&
+      c.captionAssetId &&
+      asset(m, c.captionAssetId, "text/"),
   );
   return (
     <div
@@ -243,8 +275,8 @@ export function MediaPlayer({
         <div className={s.scrub}>
           <input
             type="range"
-            min={0}
-            max={duration || 1}
+            min={Math.min(startAt, duration || startAt)}
+            max={Math.min(endAt, duration || Math.max(1, startAt))}
             step={0.1}
             value={Math.min(position, duration || 1)}
             aria-label={t("seek", locale)}
@@ -295,7 +327,16 @@ export function MediaPlayer({
           </select>
         </label>
       </div>
-      {buffering && !failed ? <p role="status" data-kidflix-buffering><span aria-hidden="true">◌</span> {locale === "ar" ? "جارٍ تجهيز الوسائط…" : locale === "fr" ? "Préparation du média…" : "Preparing your media…"}</p> : null}
+      {buffering && !failed ? (
+        <p role="status" data-kidflix-buffering>
+          <span aria-hidden="true">◌</span>{" "}
+          {locale === "ar"
+            ? "جارٍ تجهيز الوسائط…"
+            : locale === "fr"
+              ? "Préparation du média…"
+              : "Preparing your media…"}
+        </p>
+      ) : null}
       {failed ? (
         <ErrorNote
           message={t("mediaError", locale)}
@@ -330,6 +371,31 @@ export function MediaPlayer({
           </label>
         </div>
       ) : null}
+      {!video ? (
+        <Waveform
+          url={a.url}
+          locale={locale}
+          position={position}
+          duration={duration}
+          seek={(seconds) => {
+            if (ref.current) ref.current.currentTime = seconds;
+          }}
+        />
+      ) : null}
+      <TimedTranscript
+        m={m}
+        d={d}
+        unit={unit}
+        locale={locale}
+        position={position}
+        seek={(seconds) => {
+          if (ref.current)
+            ref.current.currentTime = Math.max(
+              startAt,
+              Math.min(endAt, seconds),
+            );
+        }}
+      />
       {rows(d.chapters).length ? (
         <div className={s.chapterPills}>
           {rows(d.chapters)
@@ -337,9 +403,23 @@ export function MediaPlayer({
             .map((c) => (
               <Button
                 key={c.id}
+                aria-current={
+                  position >= num(c.startSeconds) &&
+                  !rows(d.chapters).some(
+                    (other) =>
+                      (!other.unitId || other.unitId === unit.id) &&
+                      num(other.startSeconds) > num(c.startSeconds) &&
+                      position >= num(other.startSeconds),
+                  )
+                    ? "true"
+                    : undefined
+                }
                 onClick={() => {
                   if (ref.current)
-                    ref.current.currentTime = num(c.startSeconds);
+                    ref.current.currentTime = Math.max(
+                      startAt,
+                      Math.min(endAt, num(c.startSeconds)),
+                    );
                 }}
               >
                 {time(num(c.startSeconds))} · {local(c, "title", locale)}
@@ -454,7 +534,32 @@ export function Presentations(props: PlayerProps) {
     frames = rows(d.frames),
     index = clampIndex(state.index, frames.length),
     frame = frames[index],
-    [playing, setPlaying] = useState(false);
+    [playing, setPlaying] = useState(false),
+    [focus, setFocus] = useState(false),
+    [zoom, setZoom] = useState(1),
+    stageRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    function keys(e: KeyboardEvent) {
+      if (
+        document.fullscreenElement !== stageRef.current ||
+        !(d.navigationAllowed !== false || engine !== "autoplay") ||
+        ["INPUT", "TEXTAREA", "SELECT"].includes(
+          (e.target as HTMLElement)?.tagName,
+        )
+      )
+        return;
+      if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+        e.preventDefault();
+        const delta =
+          (e.key === "ArrowRight" ? 1 : -1) * (locale === "ar" ? -1 : 1);
+        update({
+          index: Math.max(0, Math.min(frames.length - 1, index + delta)),
+        });
+      }
+    }
+    document.addEventListener("keydown", keys);
+    return () => document.removeEventListener("keydown", keys);
+  }, [index, frames.length, d.navigationAllowed, engine, locale]);
   useEffect(() => {
     if (!playing || !frames.length) return;
     const timer = setTimeout(
@@ -468,8 +573,15 @@ export function Presentations(props: PlayerProps) {
     return () => clearTimeout(timer);
   }, [playing, index, frames.length, frame?.seconds, d.defaultSeconds, d.loop]);
   return frame ? (
-    <div className={s.presentation}>
-      <div className={s.slide}>
+    <div className={s.presentation} ref={stageRef}>
+      <div
+        className={s.slide}
+        style={{
+          transform: `scale(${zoom})`,
+          transformOrigin: "center top",
+          marginBottom: (zoom - 1) * 260,
+        }}
+      >
         <Source m={m} id={frame.assetId} alt={local(frame, "title", locale)} />
         <div>
           <h2>{local(frame, "title", locale)}</h2>
@@ -480,6 +592,37 @@ export function Presentations(props: PlayerProps) {
         <aside className={s.callout}>{frame.publicNoteText}</aside>
       ) : null}
       <div className={s.controls}>
+        <Button onClick={() => setFocus(true)}>{t("focus", locale)}</Button>
+        <Button
+          onClick={() => {
+            if (stageRef.current?.requestFullscreen)
+              void stageRef.current
+                .requestFullscreen()
+                .catch(() => setFocus(true));
+            else setFocus(true);
+          }}
+        >
+          {locale === "fr"
+            ? "Présenter en plein écran"
+            : locale === "ar"
+              ? "عرض بملء الشاشة"
+              : "Present fullscreen"}
+        </Button>
+        <Button
+          disabled={zoom <= 1}
+          aria-label={t("zoomOut", locale)}
+          onClick={() => setZoom((v) => Math.max(1, v - 0.25))}
+        >
+          −
+        </Button>
+        <output>{Math.round(zoom * 100)}%</output>
+        <Button
+          disabled={zoom >= 1.5}
+          aria-label={t("zoomIn", locale)}
+          onClick={() => setZoom((v) => Math.min(1.5, v + 0.25))}
+        >
+          +
+        </Button>
         {engine === "autoplay" ? (
           <Button primary onClick={() => setPlaying((v) => !v)}>
             {t(playing ? "pause" : "autoplay", locale)}
@@ -494,6 +637,32 @@ export function Presentations(props: PlayerProps) {
           />
         ) : null}
       </div>
+      {focus ? (
+        <Modal
+          title={local(frame, "title", locale) || m.title}
+          locale={locale}
+          onClose={() => setFocus(false)}
+        >
+          <Source
+            m={m}
+            id={frame.assetId}
+            alt={local(frame, "title", locale)}
+          />
+          <h2>{local(frame, "title", locale)}</h2>
+          <p>{local(frame, "text", locale)}</p>
+          {frame.publicNotes === true && str(frame.publicNoteText) ? (
+            <p>{frame.publicNoteText}</p>
+          ) : null}
+          {d.navigationAllowed !== false || engine !== "autoplay" ? (
+            <Pager
+              index={index}
+              count={frames.length}
+              locale={locale}
+              onChange={(i) => update({ index: i })}
+            />
+          ) : null}
+        </Modal>
+      ) : null}
       <div className={s.thumbs}>
         {frames.map((f, i) => (
           <button

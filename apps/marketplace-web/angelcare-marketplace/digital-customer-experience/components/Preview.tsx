@@ -11,7 +11,23 @@ import {
   type DceRecord,
   type Locale,
 } from "../types";
-import { calculate, scoreQuestions, graphErrors, safeHref } from "../model";
+import {
+  gradeBridge,
+  gradeClassification,
+  gradeSoundPair,
+  gradeTaskActivity,
+} from "../detail-interactions";
+import { DetailExperience } from "../../kidflix/detail/experience";
+import { ExperienceOpening } from "../../kidflix/detail/experience/Primitives";
+import { NativeDetailPlayer } from "../../kidflix/detail/Detail";
+import rx from "../../kidflix/detail/experience/experience.module.css";
+import {
+  publicManifest,
+  calculate,
+  scoreQuestions,
+  graphErrors,
+  safeHref,
+} from "../model";
 import { availableNodes, blankContinuity } from "../continuity";
 import { familyByKey } from "../registry";
 import {
@@ -222,6 +238,20 @@ export function PreviewWindow({
             }
             locale={selected}
             device={device}
+            onDetailAction={
+              releaseId
+                ? (operation, input) =>
+                    import("./ui").then(({ mutate }) =>
+                      mutate({
+                        action: "master_preview_detail",
+                        releaseId,
+                        locale: selected,
+                        operation,
+                        input,
+                      }),
+                    )
+                : undefined
+            }
             onActivity={
               releaseId
                 ? (input) =>
@@ -260,7 +290,9 @@ export function RuntimePreview({
   onGrade,
   onActivity,
   onExperienceState,
+  onDetailAction,
 }: {
+  onDetailAction?: (operation: string, input: Data) => Promise<any>;
   onExperienceState?: (state: Data) => void;
   record: DceRecord | null;
   bindings?: Data;
@@ -273,7 +305,8 @@ export function RuntimePreview({
 }) {
   const stateListener = useRef(onExperienceState);
   stateListener.current = onExperienceState;
-  const [personal, setPersonal] = useState<Data>({}),
+  const [detailLayout, setDetailLayout] = useState(true),
+    [personal, setPersonal] = useState<Data>({}),
     [restored, setRestored] = useState<Data>({}),
     [generation, setGeneration] = useState(0);
   const onPersonal = useCallback(
@@ -360,6 +393,79 @@ export function RuntimePreview({
         <EditorialBlocks data={data} bindings={bindings} locale={locale} />
       </article>
     );
+  if (family && detailLayout) {
+    const detailProps = {
+      preview: true,
+      m: {
+        ...publicManifest(record, bindings),
+        title,
+        bindings,
+        releaseId: "",
+      },
+      d: data,
+      locale,
+      engine: mode?.engine || "",
+      state: personal,
+      update: onPersonal,
+      runAction: async (operation: string, input: any) => {
+        const values = object(input.input);
+        if (operation === "grade")
+          return onGrade
+            ? onGrade(object(input.answers) as Record<string, string>)
+            : scoreQuestions(
+                array(data.questions),
+                object(input.answers) as Record<string, string>,
+              );
+        if (operation === "check_question") {
+          if (onDetailAction) return onDetailAction(operation, input);
+          const q = array(data.questions).find(
+            (q) => q.id === input.questionId,
+          );
+          if (!q || data.feedbackPolicy !== "immediate")
+            throw Error("INVALID_OPERATION");
+          return scoreQuestions([q], { [text(q.id)]: String(input.answer) });
+        }
+        if (operation === "activity" && data.engine !== "bridge")
+          return onActivity
+            ? onActivity(values)
+            : gradeTaskActivity(data, values);
+        if (onDetailAction) return onDetailAction(operation, values);
+        return operation === "sort_cards"
+          ? gradeClassification(data, values)
+          : operation === "match_audio"
+            ? gradeSoundPair(data, values)
+            : gradeBridge(data, values);
+      },
+    };
+    stage = <NativeDetailPlayer {...detailProps} />;
+    stage = (
+      <div className={rx.experienceRoot} dir={locale === "ar" ? "rtl" : "ltr"}>
+        <ExperienceOpening
+          p={detailProps}
+          titleId={"r5-staff-preview-" + record.id}
+          saved={bookmarked}
+          onSave={() => setBookmarked((v) => !v)}
+        />
+        <DetailExperience
+          {...detailProps}
+          files={
+            <p>
+              {tr(
+                [
+                  "File availability is inspected in the native output controls below.",
+                  "La disponibilité des fichiers est inspectée dans les contrôles natifs ci-dessous.",
+                  "تُفحص الملفات المتاحة في أدوات الإخراج الأصلية أدناه.",
+                ],
+                locale,
+              )}
+            </p>
+          }
+        >
+          <div id="kidflix-experience-player">{stage}</div>
+        </DetailExperience>
+      </div>
+    );
+  }
   const actions = [
       ...new Set([
         ...(Array.isArray(data.actions)
@@ -410,6 +516,47 @@ export function RuntimePreview({
       dir={locale === "ar" ? "rtl" : "ltr"}
       lang={locale}
     >
+      {family ? (
+        <div
+          className={s.previewActions}
+          role="group"
+          aria-label={tr(
+            ["Preview layout", "Disposition de l’aperçu", "تخطيط المعاينة"],
+            locale,
+          )}
+        >
+          <button
+            type="button"
+            className={s.button}
+            onClick={() => setDetailLayout(true)}
+            aria-pressed={detailLayout}
+          >
+            {tr(
+              [
+                "KidFlix detail experience",
+                "Expérience détaillée KidFlix",
+                "تجربة كيدفليكس التفصيلية",
+              ],
+              locale,
+            )}
+          </button>
+          <button
+            type="button"
+            className={s.button}
+            onClick={() => setDetailLayout(false)}
+            aria-pressed={!detailLayout}
+          >
+            {tr(
+              [
+                "Authored layout inspector",
+                "Inspecteur de composition éditée",
+                "فاحص التخطيط المحرر",
+              ],
+              locale,
+            )}
+          </button>
+        </div>
+      ) : null}
       <div className={s.previewHead}>
         <div>
           <Badge tone="purple">
@@ -585,7 +732,8 @@ export function RuntimePreview({
           <p>{notice.message}</p>
         </div>
       ))}
-      {sections.length > 0 &&
+      {!detailLayout &&
+        sections.length > 0 &&
         sections.some(
           (section) => section.condition && section.condition !== "always",
         ) && (
@@ -623,7 +771,7 @@ export function RuntimePreview({
             />
           </details>
         )}
-      {sections.length ? (
+      {sections.length && !detailLayout ? (
         <div
           key={generation}
           id="dce-experience-stage"

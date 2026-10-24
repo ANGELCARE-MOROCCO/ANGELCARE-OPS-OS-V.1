@@ -1,4 +1,5 @@
-import { defaultGallery, worldTile, legacyWorldImages } from "./editorial";
+import { worldTile, legacyWorldImages } from "./editorial";
+import { defaultHomeGallery, isFactoryHomeGallery } from "./home-imagery";
 import { normalizeGallery, galleryBindings, type Scene } from "./gallery-contract";
 /** Public KidFlix vocabulary. Keys remain the native DCE family keys. */
 export type Locale = "en" | "fr" | "ar";
@@ -484,7 +485,7 @@ export const defaultHome = (locale: Locale): HomeConfig => ({
   published: false,
   revision: 0,
   edition: {
-    gallery: defaultGallery("home"),
+    gallery: defaultHomeGallery(),
     eyebrow: tr(
       [
         "A little curiosity. Endless possibilities.",
@@ -509,16 +510,9 @@ export const defaultHome = (locale: Locale): HomeConfig => ({
       ],
       locale,
     ),
-    hero: defaultGallery("home")[0].desktop,
-    heroMobile: defaultGallery("home")[0].mobile,
-    heroAlt: tr(
-      [
-        "A mother and child exploring a creative activity together.",
-        "Une mère et son enfant découvrent ensemble une activité créative.",
-        "أم وطفلها يكتشفان نشاطاً إبداعياً معاً.",
-      ],
-      locale,
-    ),
+    hero: defaultHomeGallery()[0].desktop,
+    heroMobile: defaultHomeGallery()[0].mobile,
+    heroAlt: defaultHomeGallery()[0].descriptions[locale],
     featured: [],
     hidden: [],
     familyOrder: WORLDS.map((w) => w.key),
@@ -568,7 +562,11 @@ export function normalizeEdition(v: unknown, l: Locale): HomeEdition {
     for (const [k, u] of Object.entries(x.familyImages)) {
       if (world(k) && safeImage(u)) images[k] = u;
     }
-  const gallery = normalizeGallery(x.gallery, "home", {hero: typeof x.hero === "string" ? x.hero : d.hero, mobile: typeof x.heroMobile === "string" ? x.heroMobile : "", alt: typeof x.heroAlt === "string" ? x.heroAlt : "", bound: Boolean((x.mediaBindings as Record<string,unknown> | undefined)?.hero)});
+  const customMobile = typeof x.heroMobile === "string" && Boolean(x.heroMobile) && x.heroMobile !== d.heroMobile && x.heroMobile !== "/kidflix/international-20261020/home-1-mobile.webp";
+  const boundHero = Boolean((x.mediaBindings as Record<string, unknown> | undefined)?.hero || (x.mediaBindings as Record<string, unknown> | undefined)?.heroMobile || customMobile);
+  const factoryLegacyHero = !boundHero && (!x.heroMobile || x.heroMobile === d.heroMobile || x.heroMobile === "/kidflix/international-20261020/home-1-mobile.webp") && (x.hero === undefined || x.hero === d.hero || x.hero === "/kidflix/hero.jpg" || x.hero === "/kidflix/international-20261020/home-1.webp");
+  const homeGallery = isFactoryHomeGallery(x.gallery, x.mediaBindings) || (x.gallery === undefined && factoryLegacyHero) ? d.gallery : x.gallery;
+  const gallery = normalizeGallery(homeGallery, "home", {hero: typeof x.hero === "string" ? x.hero : d.hero, mobile: typeof x.heroMobile === "string" ? x.heroMobile : "", alt: typeof x.heroAlt === "string" ? x.heroAlt : "", bound: boundHero});
   const e = {
     ...d,
     gallery,

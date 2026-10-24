@@ -28,6 +28,10 @@ type RenderField = (
   path?: string,
 ) => ReactNode;
 const groups = [
+  [
+    "detail",
+    ["Detail experience", "Expérience détaillée", "التجربة التفصيلية"],
+  ],
   ["brief", ["Educational brief", "Dossier pédagogique", "الملف التربوي"]],
   [
     "kidflix",
@@ -76,6 +80,13 @@ export function ExperienceStudio({
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false);
   const keys: Record<string, string[]> = {
+    detail: [
+      "detailSections",
+      "sortRules",
+      "sortGroups",
+      "soundItems",
+      "bridgeChallenges",
+    ],
     results: ["resultBands", "recommendations"],
     exports: ["exportLayouts"],
     discovery: ["discoveryPlacements"],

@@ -663,7 +663,7 @@ export function validateRecord(
     );
   if (
     f?.key === "activities" &&
-    !["matching", "memory", "sequence", "sorting", "choice"].includes(
+    !["matching", "memory", "sequence", "sorting", "choice", "bridge"].includes(
       text(d.engine),
     )
   )
@@ -1136,6 +1136,7 @@ export function publicManifest(record: DceRecord, bindings: Data): Data {
   if (family)
     for (const c of family.collections) {
       const keys = [
+        "id",
         "publicNoteText",
         ...c.fields
           .filter((f) => f.classification !== "private")
@@ -1229,7 +1230,7 @@ export function publicManifest(record: DceRecord, bindings: Data): Data {
     contract: CONTRACT,
     id: record.id,
     key: record.key,
-    family: record.family,
+    family: family?.key || record.family,
     audience: record.audience,
     revision: record.revision,
     definition: removePrivate(clone),

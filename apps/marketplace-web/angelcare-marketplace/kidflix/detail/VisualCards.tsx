@@ -12,7 +12,7 @@ import {
 } from "./shared";
 import { local, t } from "./copy";
 import s from "./detail.module.css";
-import {j} from "../journey/copy";
+import { j } from "../journey/copy";
 export function VisualCards({
   m,
   d,
@@ -21,9 +21,17 @@ export function VisualCards({
   state,
   update,
 }: PlayerProps) {
-  const allCards=rows(d.cards),
-    selected=Array.isArray(state.studyIds)?state.studyIds:[],
-    original=allCards.filter(c=>(!selected.length||selected.includes(c.id))&&(!state.reviewOnly||!Array.isArray(state.known)||!state.known.includes(c.id))),
+  const allCards = rows(d.cards),
+    selected: string[] | null = Array.isArray(state.studyIds)
+      ? state.studyIds
+      : null,
+    original = allCards.filter(
+      (c) =>
+        (selected === null || selected.includes(c.id)) &&
+        (!state.reviewOnly ||
+          !Array.isArray(state.known) ||
+          !state.known.includes(c.id)),
+    ),
     index = clampIndex(state.index, original.length),
     [flipped, setFlipped] = useState(false),
     [zoom, setZoom] = useState(1),
@@ -60,7 +68,24 @@ export function VisualCards({
     setFlipped(false);
     update({ index: i });
   }
-  if (!card) return <><Button onClick={()=>update({studyIds:[],reviewOnly:false,index:0,cardOrder:[]})}>{j("all",locale)}</Button><Empty locale={locale}/></>;
+  if (!card)
+    return (
+      <>
+        <Button
+          onClick={() =>
+            update({
+              studyIds: null,
+              reviewOnly: false,
+              index: 0,
+              cardOrder: [],
+            })
+          }
+        >
+          {j("all", locale)}
+        </Button>
+        <Empty locale={locale} />
+      </>
+    );
   const canTurn =
       engine === "study" &&
       (asset(m, card.backAssetId, "image/") || str(card.back)),
@@ -82,7 +107,66 @@ export function VisualCards({
     );
   return (
     <div className={s.cardAtelier}>
-      {d.kidflixPractice!==false?<details className={s.disclosure}><summary>{j("subset",locale)}</summary><div className={s.controls}><Button aria-pressed={!state.reviewOnly} onClick={()=>update({reviewOnly:false,index:0,cardOrder:[]})}>{j("all",locale)}</Button><Button aria-pressed={state.reviewOnly===true} onClick={()=>update({reviewOnly:true,index:0,cardOrder:[]})}>{j("review",locale)}</Button><Button onClick={()=>{const ids=original.map(c=>c.id);for(let i=ids.length-1;i>0;i--){const n=Math.floor(Math.random()*(i+1));[ids[i],ids[n]]=[ids[n],ids[i]];}update({cardOrder:ids,index:0});}}>{j("shuffle",locale)}</Button></div><div className={s.controls}>{allCards.map(c=><label key={c.id}><input type="checkbox" checked={!selected.length||selected.includes(c.id)} onChange={e=>{let ids=selected.length?[...selected]:allCards.map(x=>x.id);ids=e.target.checked?[...new Set([...ids,c.id])]:ids.filter(id=>id!==c.id);update({studyIds:ids.length?ids:[],index:0,cardOrder:[]});}}/>{local(c,"title",locale)}</label>)}</div></details>:null}
+      {d.kidflixPractice !== false ? (
+        <details className={s.disclosure}>
+          <summary>{j("subset", locale)}</summary>
+          <div className={s.controls}>
+            <Button
+              aria-pressed={!state.reviewOnly}
+              onClick={() =>
+                update({ reviewOnly: false, index: 0, cardOrder: [] })
+              }
+            >
+              {j("all", locale)}
+            </Button>
+            <Button
+              aria-pressed={state.reviewOnly === true}
+              onClick={() =>
+                update({ reviewOnly: true, index: 0, cardOrder: [] })
+              }
+            >
+              {j("review", locale)}
+            </Button>
+            <Button
+              onClick={() => {
+                const ids = original.map((c) => c.id);
+                for (let i = ids.length - 1; i > 0; i--) {
+                  const n = Math.floor(Math.random() * (i + 1));
+                  [ids[i], ids[n]] = [ids[n], ids[i]];
+                }
+                update({ cardOrder: ids, index: 0 });
+              }}
+            >
+              {j("shuffle", locale)}
+            </Button>
+          </div>
+          <div className={s.controls}>
+            {allCards.map((c) => (
+              <label key={c.id}>
+                <input
+                  type="checkbox"
+                  checked={selected === null || selected.includes(c.id)}
+                  onChange={(e) => {
+                    let ids =
+                      selected !== null
+                        ? [...selected]
+                        : allCards.map((x) => x.id);
+                    ids = e.target.checked
+                      ? [...new Set([...ids, c.id])]
+                      : ids.filter((id) => id !== c.id);
+                    update({
+                      studyIds: ids.length ? ids : [],
+                      index: 0,
+                      cardOrder: [],
+                    });
+                  }}
+                />
+                {local(c, "title", locale)}
+              </label>
+            ))}
+          </div>
+        </details>
+      ) : null}
       {engine === "gallery" || engine === "lightbox" ? (
         <div
           className={s.visualGrid}
@@ -166,9 +250,19 @@ export function VisualCards({
           </div>
           {engine === "study" ? (
             <Progress
-              value={(known.length / cards.length) * 100}
+              value={
+                (known.filter((id: string) => cards.some((c) => c.id === id))
+                  .length /
+                  cards.length) *
+                100
+              }
               label={
-                known.length + " / " + cards.length + " " + t("marked", locale)
+                known.filter((id: string) => cards.some((c) => c.id === id))
+                  .length +
+                " / " +
+                cards.length +
+                " " +
+                t("marked", locale)
               }
             />
           ) : null}

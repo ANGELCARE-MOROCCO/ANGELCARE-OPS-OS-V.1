@@ -30,38 +30,50 @@ export function Reading(props: PlayerProps) {
           .toLocaleLowerCase(locale)
           .includes(search.toLocaleLowerCase(locale)),
     ),
-    index = clampIndex(state.index, units.length),
-    unit = units[index],
+    index =
+      state.readerUnitId && all.some((u) => u.id === state.readerUnitId)
+        ? all.findIndex((u) => u.id === state.readerUnitId)
+        : clampIndex(state.index, all.length),
+    unit = all[index],
     profile = story ? storyProfile(m) : null;
+  function select(i: number) {
+    const next = all[clampIndex(i, all.length)];
+    if (next) update({ index: i, readerUnitId: next.id });
+  }
   useEffect(() => {
-    if (engine !== "slideshow" || !playing || units.length < 2) return;
+    if (engine !== "slideshow" || !playing || all.length < 2) return;
     const timer = setTimeout(
       () => {
-        if (index + 1 < units.length) update({ index: index + 1 });
+        if (index + 1 < all.length) select(index + 1);
         else setPlaying(false);
       },
       Math.max(1, num(unit?.duration, num(d.pageSeconds, 8))) * 1000,
     );
     return () => clearTimeout(timer);
-  }, [playing, index, units.length, engine, unit?.duration, d.pageSeconds]);
+  }, [playing, index, all.length, engine, unit?.duration, d.pageSeconds]);
   // Story reading and listening are separate presentations. A narration binding alone never enables audio in a reading mode.
   if (story && profile?.narration) {
     const id = str(d.narrationAssetId) || str(unit?.narrationAssetId),
-      audioUnit = { id: id || m.id, assetId: id, title: m.title };
+      audioUnit = {
+        ...unit,
+        id: d.narrationAssetId ? id : unit?.id || id || m.id,
+        assetId: id,
+        title: m.title,
+      };
     return (
       <div className={s.listeningStory}>
         <MediaPlayer
-          key={id}
+          key={id + (d.narrationAssetId ? ":whole" : ":" + unit?.id)}
           {...props}
           d={{ ...d, transcript: "" }}
           unit={audioUnit}
         />
-        {!d.narrationAssetId && units.length > 1 ? (
+        {!d.narrationAssetId && all.length > 1 ? (
           <Pager
             index={index}
-            count={units.length}
+            count={all.length}
             locale={locale}
-            onChange={(i) => update({ index: i })}
+            onChange={select}
           />
         ) : null}
       </div>
@@ -111,7 +123,6 @@ export function Reading(props: PlayerProps) {
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
-                update({ index: 0 });
               }}
               placeholder={t("search", locale)}
               aria-label={t("search", locale)}
@@ -145,15 +156,15 @@ export function Reading(props: PlayerProps) {
         </div>
       </div>
       <div className={s.readerLayout}>
-        {units.length > 1 ? (
+        {all.length > 1 ? (
           <aside className={s.pageList}>
             {units.map((u, i) => (
               <button
                 key={u.id}
-                aria-current={i === index ? "page" : undefined}
-                onClick={() => update({ index: i })}
+                aria-current={u.id === unit?.id ? "page" : undefined}
+                onClick={() => select(all.findIndex((x) => x.id === u.id))}
               >
-                <span>{i + 1}</span>
+                <span>{all.findIndex((x) => x.id === u.id) + 1}</span>
                 {asset(m, u.assetId, "image/") ? (
                   <Source
                     m={m}
@@ -172,13 +183,33 @@ export function Reading(props: PlayerProps) {
           {engine === "rich" || !unit ? (
             <Editorial m={m} data={d} locale={locale} />
           ) : null}
-          {unit&&rows(d.storyChoices).filter(c=>c.unitId===unit.id).length?<div className={s.controls}>{rows(d.storyChoices).filter(c=>c.unitId===unit.id&&units.some(u=>u.id===c.nextUnitId)).map(c=><Button key={c.id} onClick={()=>update({index:units.findIndex(u=>u.id===c.nextUnitId)})}>{local(c,"label",locale)||local(c,"title",locale)}</Button>)}</div>:null}
-          {unit && units.length > 1 ? (
+          {unit &&
+          rows(d.storyChoices).filter((c) => c.unitId === unit.id).length ? (
+            <div className={s.controls}>
+              {rows(d.storyChoices)
+                .filter(
+                  (c) =>
+                    c.unitId === unit.id &&
+                    all.some((u) => u.id === c.nextUnitId),
+                )
+                .map((c) => (
+                  <Button
+                    key={c.id}
+                    onClick={() =>
+                      select(all.findIndex((u) => u.id === c.nextUnitId))
+                    }
+                  >
+                    {local(c, "label", locale) || local(c, "title", locale)}
+                  </Button>
+                ))}
+            </div>
+          ) : null}
+          {unit && all.length > 1 ? (
             <Pager
               index={index}
-              count={units.length}
+              count={all.length}
               locale={locale}
-              onChange={(i) => update({ index: i })}
+              onChange={select}
             />
           ) : null}
         </section>
@@ -197,12 +228,12 @@ export function Reading(props: PlayerProps) {
       {focus ? (
         <Modal title={m.title} locale={locale} onClose={() => setFocus(false)}>
           {reader}
-          {units.length > 1 ? (
+          {all.length > 1 ? (
             <Pager
               index={index}
-              count={units.length}
+              count={all.length}
               locale={locale}
-              onChange={(i) => update({ index: i })}
+              onChange={select}
             />
           ) : null}
         </Modal>

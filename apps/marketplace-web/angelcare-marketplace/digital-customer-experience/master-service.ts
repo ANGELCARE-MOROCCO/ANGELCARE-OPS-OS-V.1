@@ -1,3 +1,8 @@
+import {
+  gradeBridge,
+  gradeClassification,
+  gradeSoundPair,
+} from "./detail-interactions";
 import { FAMILIES } from "./registry";
 import { createHash, randomUUID } from "node:crypto";
 import { createServiceClient } from "@/lib/supabase/server";
@@ -459,6 +464,61 @@ export async function masterCommand(c: Context, cmd: Command) {
       language(cmd.locale),
     );
   const db = await createServiceClient();
+  if (cmd.action === "master_preview_detail") {
+    if (!isId(cmd.releaseId))
+      throw new MarketplaceError(
+        "VALIDATION_ERROR",
+        "Choose an authored release.",
+      );
+    const z = await checked(
+      scoped(db.from("ac_dce_releases").select("*"), c)
+        .eq("id", cmd.releaseId)
+        .maybeSingle(),
+    );
+    if (!z) throw new MarketplaceError("NOT_FOUND", "Release not found.");
+    const d = editionProjection(
+        z.snapshot,
+        language(
+          cmd.locale ||
+            z.manifest.editionLocale ||
+            z.snapshot.data.defaultLocale,
+        ),
+      ).data,
+      input = object(cmd.input);
+    if (
+      cmd.operation === "check_question" &&
+      ["assessments", "learning"].includes(z.snapshot.family) &&
+      d.feedbackPolicy === "immediate"
+    ) {
+      const q = array(d.questions).find((q) => q.id === input.questionId);
+      if (!q || typeof input.answer !== "string" || input.answer.length > 4000)
+        throw new MarketplaceError(
+          "VALIDATION_ERROR",
+          "Choose a declared question and answer.",
+        );
+      return {
+        ...scoreQuestions([q], { [text(q.id)]: input.answer }),
+        preview: true,
+        recorded: false,
+      };
+    }
+    const result =
+      cmd.operation === "sort_cards" && z.snapshot.family === "visual-cards"
+        ? gradeClassification(d, input)
+        : cmd.operation === "match_audio" && z.snapshot.family === "audio"
+          ? gradeSoundPair(d, input)
+          : cmd.operation === "activity" &&
+              z.snapshot.family === "activities" &&
+              d.engine === "bridge"
+            ? gradeBridge(d, input)
+            : null;
+    if (!result)
+      throw new MarketplaceError(
+        "VALIDATION_ERROR",
+        "Choose an operation available for this release.",
+      );
+    return { ...result, preview: true, recorded: false };
+  }
   if (cmd.action === "master_preview_activity") {
     if (!isId(cmd.releaseId))
       throw new MarketplaceError(
@@ -488,6 +548,8 @@ export async function masterCommand(c: Context, cmd: Command) {
       ids = Array.isArray(input.targetIds)
         ? input.targetIds.filter((x): x is string => typeof x === "string")
         : tasks.map((t) => text(t.id));
+    if (d.engine === "bridge")
+      return { ...gradeBridge(d, input), preview: true, recorded: false };
     if (
       tasks.length > 500 ||
       [...Object.keys(values), ...selected, ...pair, ...ids].some(

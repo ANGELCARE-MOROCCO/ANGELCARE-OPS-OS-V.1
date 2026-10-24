@@ -1,5 +1,11 @@
 import { contextualRecommendations } from "../../digital-customer-experience/experience-depth";
 import "server-only";
+import {
+  gradeClassification,
+  gradeSoundPair,
+  gradeBridge,
+  gradeTaskActivity,
+} from "../../digital-customer-experience/detail-interactions";
 import { createServiceClient } from "@/lib/supabase/server";
 import {
   getExperience,
@@ -19,6 +25,7 @@ import {
   str,
   num,
   publishedReferences,
+  restoreOutputIdentities,
   cleanPublic,
   type Row,
   type DetailValue,
@@ -66,8 +73,29 @@ export async function getDetail(
     manifest: Row,
     depth = 0,
     ancestors = new Set<string>(),
+    releaseId = value!.releaseId,
   ): Promise<Row> {
-    const out = cleanPublic(publicDetail(manifest)) as Row;
+    let publicManifest = manifest;
+    if (
+      rows(obj(manifest.definition).outputs).some((output) => !str(output.id))
+    ) {
+      const edition = await checked(
+        scope(
+          db
+            .from("ac_dce_releases")
+            .select("snapshot")
+            .eq("id", releaseId)
+            .eq("state", "published"),
+          root,
+        ).maybeSingle(),
+      );
+      if (edition?.snapshot)
+        publicManifest = restoreOutputIdentities(
+          manifest,
+          obj(editionProjection(edition.snapshot, locale).data),
+        );
+    }
+    const out = cleanPublic(publicDetail(publicManifest)) as Row;
     const defaults = home.edition.familyTools?.[manifest.family] || {};
     out.definition = {
       ...out.definition,
@@ -167,6 +195,7 @@ export async function getDetail(
               z.manifest,
               depth + 1,
               new Set([...ancestors, r.id]),
+              z.id,
             )),
             key: r.key,
             kind: r.kind,
@@ -254,7 +283,7 @@ export async function related(
     if (!str(d.subject)) return { rows: [], total: 0, page: p, pageSize: 24 };
     catalogue = await getCatalogue(host, locale, {
       subject: d.subject,
-      ...(m.audience ? {audience:m.audience}:{}),
+      ...(m.audience ? { audience: m.audience } : {}),
       notFamily: m.family,
       page: p,
     });
@@ -316,48 +345,7 @@ export async function related(
     hasMore: p * 24 < catalogue.total,
   };
 }
-export function gradeActivity(d: Row, input: Row) {
-  const tasks = rows(d.tasks),
-    values = obj(input.values),
-    selected = Array.isArray(input.selected) ? input.selected : [],
-    pair = Array.isArray(input.pair) ? input.pair : [],
-    targets = Array.isArray(input.targetIds)
-      ? input.targetIds
-      : tasks.map((t) => t.id);
-  if (
-    tasks.length > 500 ||
-    [...Object.keys(values), ...selected, ...pair, ...targets].some(
-      (id) => typeof id !== "string" || !tasks.some((t) => t.id === id),
-    ) ||
-    Object.values(values).some((v) => typeof v !== "string" || v.length > 4000)
-  )
-    throw Error("INVALID_CHOICES");
-  let correct = false;
-  if (["matching", "memory"].includes(str(d.engine)))
-    correct =
-      pair.length === 2 &&
-      pair[0] !== pair[1] &&
-      !!str(tasks.find((t) => t.id === pair[0])?.answer) &&
-      str(tasks.find((t) => t.id === pair[0])?.answer) ===
-        str(tasks.find((t) => t.id === pair[1])?.answer);
-  else if (d.engine === "sequence")
-    correct =
-      selected.length === tasks.length &&
-      new Set(selected).size === tasks.length &&
-      selected.every(
-        (id, i) =>
-          str(tasks.find((t) => t.id === id)?.answer) === String(i + 1),
-      );
-  else
-    correct =
-      targets.length > 0 &&
-      targets.every(
-        (id) =>
-          Object.hasOwn(values, id) &&
-          values[id] === tasks.find((t) => t.id === id)?.answer,
-      );
-  return { correct };
-}
+export const gradeActivity = gradeTaskActivity;
 export async function publicAction(
   host: string,
   key: string,
@@ -405,7 +393,23 @@ export async function publicAction(
     };
   }
   if (input.operation === "activity" && record.family === "activities")
-    return gradeActivity(d, obj(input.input));
+    return d.engine === "bridge"
+      ? gradeBridge(d, obj(input.input))
+      : gradeActivity(d, obj(input.input));
+  if (input.operation === "sort_cards" && record.family === "visual-cards")
+    return gradeClassification(d, obj(input.input));
+  if (input.operation === "match_audio" && record.family === "audio")
+    return gradeSoundPair(d, obj(input.input));
+  if (
+    input.operation === "check_question" &&
+    ["learning", "assessments"].includes(record.family || "") &&
+    d.feedbackPolicy === "immediate"
+  ) {
+    const q = rows(d.questions).find((q) => q.id === input.questionId);
+    if (!q || typeof input.answer !== "string" || input.answer.length > 4000)
+      throw Error("INVALID_CHOICES");
+    return scoreQuestions([q], { [q.id]: input.answer });
+  }
   if (
     input.operation === "certificate_attempt" &&
     record.family === "learning"

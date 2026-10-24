@@ -113,11 +113,13 @@ export function WorldCard({
   w,
   locale,
   image,
+  mobileImage,
   count,
 }: {
   w: World;
   locale: Locale;
   image?: string;
+  mobileImage?: string;
   count?: number;
 }) {
   return (
@@ -129,6 +131,8 @@ export function WorldCard({
       <div className={s.worldImage}>
         <img
           src={image || w.image}
+          srcSet={mobileImage && mobileImage !== (image || w.image) ? `${mobileImage} 420w, ${image || w.image} 800w` : undefined}
+          sizes={mobileImage ? "(max-width:760px) 45vw, (max-width:1100px) 30vw, 23vw" : undefined}
           alt=""
           width={260}
           height={160}

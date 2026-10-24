@@ -168,6 +168,10 @@ export function publishedReferences(m: Row) {
         ]),
         ...rows(d.sections).map((r) => str(r.contentId)),
         ...rows(d.blocks).map((r) => str(r.contentId)),
+        ...rows(d.detailSections).flatMap((r) => [
+          str(r.contentId),
+          str(r.experienceId),
+        ]),
         ...rows(d.resultBands).map((r) => str(r.experienceId)),
         str(d.certificatePolicy?.assessmentId),
         str(d.contentId),
@@ -249,6 +253,22 @@ export function restoreDetailProgress(
       "personalVersions",
       "readingMarks",
       "studyIds",
+      "archiveMarks",
+      "preparationChecks",
+      "plannerOrder",
+      "observations",
+      "readerUnitId",
+      "questionOrder",
+      "reviewIds",
+      "questionChecks",
+      "sortRuleId",
+      "sortPlacements",
+      "sortGrades",
+      "soundInvestigation",
+      "bridgeChallengeId",
+      "bridgeDrafts",
+      "bridgePassed",
+      "bridgeTests",
     ])
       delete state[key];
     state.started = false;
@@ -259,4 +279,31 @@ export function restoreDetailProgress(
     return { ...restored, state };
   }
   return restored;
+}
+
+/** Repair identities omitted by older manifest projection, using only the same immutable published edition. No files or permissions are added. */
+export function restoreOutputIdentities(
+  manifest: Row,
+  publishedData: Row,
+): Row {
+  const outputs = rows(obj(manifest.definition).outputs),
+    source = rows(publishedData.outputs);
+  return {
+    ...manifest,
+    definition: {
+      ...obj(manifest.definition),
+      outputs: outputs.map((output) => {
+        if (str(output.id)) return output;
+        const matches = source.filter(
+          (row) =>
+            str(row.id) &&
+            row.assetId === output.assetId &&
+            row.mime === output.mime &&
+            str(row.scope) === str(output.scope) &&
+            row.enabled !== false,
+        );
+        return matches.length === 1 ? { ...output, id: matches[0].id } : output;
+      }),
+    },
+  };
 }
