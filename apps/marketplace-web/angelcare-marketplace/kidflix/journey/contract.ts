@@ -182,7 +182,14 @@ export type Activity = {
   started: boolean;
   prepared?: boolean;
 };
+export type LibraryProfile = {
+  name: string;
+  role: "family" | "educator" | "learner" | "professional";
+  goal: string;
+  interests: string[];
+};
 export type Personal = {
+  profile: LibraryProfile;
   version: 3;
   saved: { key: string; at: number }[];
   recent: { key: string; at: number }[];
@@ -199,6 +206,7 @@ export type Personal = {
 };
 export const blankPersonal = (): Personal => ({
   version: 3,
+  profile: { name: "", role: "family", goal: "", interests: [] },
   saved: [],
   recent: [],
   queue: [],
@@ -239,6 +247,42 @@ export function parsePersonal(raw: unknown, now = Date.now()): Personal {
       .filter((x, i, a) => a.findIndex((y) => y.key === x.key) === i)
       .slice(0, max)
       .map((x) => ({ key: x.key as string, at: x.at as number }));
+  const profile = obj(p.profile),
+    text = (v: unknown, max: number) =>
+      str(v)
+        .replace(/[\u0000-\u001f\u007f]/g, "")
+        .trim()
+        .slice(0, max);
+  const families = [
+    "documents",
+    "printables",
+    "stories",
+    "learning",
+    "video",
+    "audio",
+    "visual-cards",
+    "presentations",
+    "assessments",
+    "activities",
+    "tools",
+    "planners",
+    "forms",
+    "community",
+    "commerce",
+    "bundles",
+  ];
+  b.profile = {
+    name: text(profile.name, 60),
+    goal: text(profile.goal, 120),
+    role: ["family", "educator", "learner", "professional"].includes(
+      profile.role,
+    )
+      ? profile.role
+      : "family",
+    interests: cleanKeys(profile.interests, 16).filter((k) =>
+      families.includes(k),
+    ),
+  };
   b.saved = entries(p.saved, LIMITS.saved);
   b.recent = entries(p.recent, LIMITS.recent);
   b.queue = cleanKeys(p.queue);

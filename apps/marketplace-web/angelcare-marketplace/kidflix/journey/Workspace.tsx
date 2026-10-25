@@ -7,56 +7,20 @@ import { cleanKeys, LIMITS, sessionLink, type Collection } from "./contract";
 import { j } from "./copy";
 import { I } from "../Icons";
 import s from "./journey.module.css";
-export function useResources(keys: string[], locale: Locale) {
-  const [data, set] = useState<Resource[]>([]),
-    [busy, setBusy] = useState(false),
-    [error, setError] = useState(false),
-    [retry, refresh] = useState(0),
-    signature = JSON.stringify(keys);
-  useEffect(() => {
-    const controller = new AbortController();
-    set([]);
-    setError(false);
-    if (!keys.length) {
-      setBusy(false);
-      return;
-    }
-    setBusy(true);
-    (async () => {
-      const all: Resource[] = [];
-      for (let i = 0; i < keys.length; i += 100) {
-        const chunk = keys.slice(i, i + 100);
-        for (let page = 1; page <= Math.ceil(chunk.length / 24); page++) {
-          const q = new URLSearchParams({
-              locale,
-              keys: chunk.join(","),
-              page: String(page),
-            }),
-            r = await fetch("/api/kidflix/discovery?" + q, {
-              signal: controller.signal,
-              cache: "no-store",
-            });
-          if (!r.ok) throw Error("READ_FAILED");
-          const value = await r.json();
-          all.push(...value.rows);
-        }
-      }
-      if (!controller.signal.aborted)
-        set([...new Map(all.map((r) => [r.key, r])).values()]);
-    })()
-      .catch(() => {
-        if (!controller.signal.aborted) setError(true);
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) setBusy(false);
-      });
-    return () => controller.abort();
-  }, [signature, locale, retry]);
-  return { data, busy, error, retry: () => refresh((v) => v + 1) };
-}
-export function Workspace({ locale }: { locale: Locale }) {
+import {collectionId} from "../personal/library-model";
+import { useLibraryResources as useResources } from "../personal/useLibraryResources";
+export { useLibraryResources as useResources } from "../personal/useLibraryResources";
+export function Workspace({
+  locale,
+  initialTab = "session",
+  embedded = false,
+}: {
+  locale: Locale;
+  initialTab?: string;
+  embedded?: boolean;
+}) {
   const p = usePersonal(),
-    [tab, setTab] = useState("session"),
+    [tab, setTab] = useState(initialTab),
     [name, setName] = useState(""),
     [message, setMessage] = useState(""),
     [shared, setShared] = useState<string[]>([]),
@@ -74,7 +38,7 @@ export function Workspace({ locale }: { locale: Locale }) {
       (c) => c.id === selectedCollection,
     ),
     keys =
-      tab === "session"
+      tab === "preferences" ? [] : tab === "session"
         ? p.data.queue
         : tab === "saved"
           ? p.data.saved.map((x) => x.key)
@@ -130,7 +94,7 @@ export function Workspace({ locale }: { locale: Locale }) {
   function create() {
     if (!name.trim() || p.data.collections.length >= LIMITS.collections) return;
     const c: Collection = {
-      id: crypto.randomUUID(),
+      id: collectionId(),
       name: name.trim().slice(0, 80),
       keys: [],
     };
@@ -212,20 +176,24 @@ export function Workspace({ locale }: { locale: Locale }) {
   }
   return (
     <article className={s.workspace}>
-      <span className={s.eyebrow}>KIDFLIX · {j("device", locale)}</span>
-      <h1 className={s.title}>{j("my", locale)}</h1>
-      <div className={s.facts}>
-        <span className={s.count}>
-          {p.data.saved.length} · {j("saved", locale)}
-        </span>
-        <span className={s.count}>
-          {p.data.queue.length} · {j("session", locale)}
-        </span>
-        <span className={s.count}>
-          {p.data.activity.filter((x) => x.complete).length} ·{" "}
-          {j("complete", locale)}
-        </span>
-      </div>
+      {!embedded ? (
+        <>
+          <span className={s.eyebrow}>KIDFLIX · {j("device", locale)}</span>
+          <h1 className={s.title}>{j("my", locale)}</h1>
+          <div className={s.facts}>
+            <span className={s.count}>
+              {p.data.saved.length} · {j("saved", locale)}
+            </span>
+            <span className={s.count}>
+              {p.data.queue.length} · {j("session", locale)}
+            </span>
+            <span className={s.count}>
+              {p.data.activity.filter((x) => x.complete).length} ·{" "}
+              {j("complete", locale)}
+            </span>
+          </div>
+        </>
+      ) : null}
       {p.error ? (
         <p role="alert" className={s.notice}>
           {j("storage", locale)}
@@ -246,7 +214,7 @@ export function Workspace({ locale }: { locale: Locale }) {
           </button>
         </section>
       ) : null}
-      <div className={s.tabs}>
+      <div className={s.tabs} hidden={embedded}>
         {(
           [
             "session",

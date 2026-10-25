@@ -313,3 +313,15 @@
 @media(max-width:1100px){.employerDirectoryOpening .editorialOpeningCopy{max-width:58%}.employerCommand{padding:18px}.employerGuidance{gap:14px}.employerGuidance article{padding:22px}.employerAbout{grid-template-columns:minmax(0,1.4fr) minmax(260px,1fr);gap:24px}.embeddedEmployerResults .filterDisclosure>form{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:767px){.employerDirectoryOpening .editorialOpeningCopy{max-width:none;padding-block:24px 28px}.employerDirectoryOpening .editorialOpening>picture{width:100%}.employerDirectoryOpening .editorialOpeningCopy h1{font-size:38px}.employerCommand{padding:18px}.employerCommandFilters{grid-template-columns:minmax(0,1fr)}.employerCommandFilters>.nativeTaxonomyFilter>summary{margin-block-start:0}.employerCommand .inlineActions{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}.employerCommand .inlineActions .textLink{min-height:44px;display:flex;align-items:center;justify-content:center}.employerGuidance,.employerAbout,.employerReviewGrid{grid-template-columns:minmax(0,1fr)}.employerIdentityActions{align-items:start;flex-direction:column;gap:18px}.employerProfileOpening .editorialWithoutImage .editorialOpeningCopy{padding-block:24px 30px}.employerProfileHeader .panel{padding:22px}.embeddedEmployerResults .filterDisclosure>form{grid-template-columns:minmax(0,1fr);gap:16px}.employerAbout>aside{display:block}.employerGuidance h3{font-size:22px}}
 @media(prefers-reduced-motion:reduce){.employerTypes> a{transition:none}}
+
+/* JOBKIX GOOGLE AUTH R1: Google-produced complete official sample button artwork.
+   Never redraw/recolour the Google icon or invent alternative Google branding. */
+.googleAuthArea{margin-block:20px 24px;min-width:0}
+.googleAuthButton{box-sizing:border-box;width:100%;min-height:48px;display:flex;align-items:center;justify-content:center;text-decoration:none!important;border-radius:999px;background:transparent;cursor:pointer;transition:filter .15s}
+.googleAuthButton img{display:block;width:auto;max-width:100%;height:48px;object-fit:contain}
+.googleAuthButton:hover:not([aria-disabled='true']){box-shadow:0 2px 8px #1f1f1f14}
+.googleAuthButton:active:not([aria-disabled='true']){box-shadow:0 1px 4px #1f1f1f1a}
+.googleAuthButton:focus-visible{outline:3px solid #4e43ef;outline-offset:3px}
+.googleAuthButton[aria-disabled='true']{opacity:.55;cursor:not-allowed}
+.googleAuthDivider{display:flex;align-items:center;gap:14px;margin-block:22px 0;color:var(--muted);font-size:12px;font-weight:500;text-align:center}
+.googleAuthDivider:before,.googleAuthDivider:after{content:'';height:1px;background:var(--line);flex:1;min-width:14px}

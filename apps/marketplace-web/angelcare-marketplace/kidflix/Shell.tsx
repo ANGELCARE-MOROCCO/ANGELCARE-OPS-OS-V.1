@@ -11,6 +11,8 @@ import r from "./reference-shell.module.css";
 import {DocumentsHeader,DocumentsFooter,DocumentsSettingsProvider} from "./documents/DocumentShell";
 import { ReferenceFooter } from "./ReferenceFooter";
 import { PremiumHeader } from "./PremiumHeader";
+import {CategoryHeader,CategoryFooter} from "./storefront-reference/CategoryShell";
+import {FAMILIES as REFERENCE_FAMILIES} from "./storefront-reference/model";
 import {HomeHeader,HomeFooter} from "./home-reference/HomeShell";
 import hs from "./home-reference/home.module.css";
 import { Navigation } from "./Navigation";
@@ -65,12 +67,15 @@ function Content({
   locale,
   children,
   variant,
+  categoryFamily,
 }: {
   locale: Locale;
   children: ReactNode;
   variant?:"documents"|"home";
+  categoryFamily?:string;
 }) {
   const personal = usePersonal(),pathname=usePathname(),home=variant==="home"||/^\/kidflix\/(en|fr|ar)\/?$/.test(pathname||""),documents=variant==="documents"||/^\/kidflix\/(en|fr|ar)\/explore\/documents\/?$/.test(pathname||"");
+  const category=categoryFamily||pathname?.match(/^\/kidflix\/(?:en|fr|ar)\/explore\/([^/]+)\/?$/)?.[1],referenceCategory=category&&REFERENCE_FAMILIES.includes(category)?category:null;
   return (
     <div
       className={`${s.root} ${r.shell} ${home?hs.homeShell:""}`}
@@ -84,7 +89,7 @@ function Content({
           locale,
         )}
       </a>
-      {home?<HomeHeader locale={locale}/>:documents?<DocumentsHeader locale={locale}/>:<Header locale={locale} />}
+      {home?<HomeHeader locale={locale}/>:documents?<DocumentsHeader locale={locale}/>:referenceCategory?<CategoryHeader locale={locale} family={referenceCategory}/>:<Header locale={locale} />}
       <main id="kidflix-content">
         {personal.error ? (
           <p className={js.notice} role="status">
@@ -93,7 +98,7 @@ function Content({
         ) : null}
         {children}
       </main>
-      {home?<HomeFooter locale={locale}/>:documents?<DocumentsFooter locale={locale}/>:<ReferenceFooter locale={locale} />}
+      {home?<HomeFooter locale={locale}/>:documents?<DocumentsFooter locale={locale}/>:referenceCategory?<CategoryFooter locale={locale} family={referenceCategory}/>:<ReferenceFooter locale={locale} />}
       <Navigation locale={locale} />
     </div>
   );
@@ -102,14 +107,16 @@ export function KidFlixShell({
   locale,
   children,
   variant,
+  categoryFamily,
 }: {
   locale: Locale;
   children: ReactNode;
   variant?:"documents"|"home";
+  categoryFamily?:string;
 }) {
   return (
     <GuestProvider>
-      <DocumentsSettingsProvider><Content locale={locale} variant={variant}>{children}</Content></DocumentsSettingsProvider>
+      <DocumentsSettingsProvider><Content locale={locale} variant={variant} categoryFamily={categoryFamily}>{children}</Content></DocumentsSettingsProvider>
     </GuestProvider>
   );
 }

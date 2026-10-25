@@ -12,6 +12,7 @@ import { getCatalogue, filters } from "@/angelcare-marketplace/kidflix/server";
 import { Explorer } from "@/angelcare-marketplace/kidflix/Discovery";
 import {Storefront}from "@/angelcare-marketplace/kidflix/storefronts/Storefront";
 import {loadStorefront}from "@/angelcare-marketplace/kidflix/storefronts/server";
+import {cleanFilters}from "@/angelcare-marketplace/kidflix/storefront-reference/model";
 export const dynamic = "force-dynamic";
 export default async function ExplorePage({
   params,
@@ -43,7 +44,7 @@ export default async function ExplorePage({
   } catch {}
   const h = await headers();
   if(family==="documents"){let documentInput;try{documentInput=documentFilters(source);}catch{notFound();}return <DocumentsStorefront locale={locale} initial={await loadDocuments(h.get("host")||"",locale,documentInput)} initialFilters={documentInput}/>;}
-  if(family){const initial=await loadStorefront(h.get("host")||"",locale,family,f);return <Storefront family={family} locale={locale} initial={initial} initialFilters={f}/>;}
+  if(family){let categoryFilters;try{categoryFilters=cleanFilters(source,family);}catch{notFound();}const initial=await loadStorefront(h.get("host")||"",locale,family,categoryFilters);return <Storefront family={family} locale={locale} initial={initial} initialFilters={categoryFilters}/>;}
   let initial;
   try {
     initial = await getCatalogue(h.get("host") || "", locale, {

@@ -1,0 +1,533 @@
+@font-face {
+  font-family: KidFlixPersonal;
+  src: url("/kidflix/home-reference-r2/Nunito-Variable.ttf") format("truetype");
+  font-weight: 200 1000;
+  font-display: swap;
+}
+.footer {
+  --ink: #17314f;
+  --muted: #52657b;
+  font-family: KidFlixPersonal, Arial, sans-serif;
+  color: var(--ink);
+  background: #fff;
+  border-top: 1px solid #dce7ef;
+  font-size: 14px;
+  line-height: 1.6;
+  isolation: isolate;
+  text-align: start;
+  clear: both;
+  margin-top: 42px;
+}
+.footer * {
+  box-sizing: border-box;
+}
+.footer a {
+  color: inherit;
+  text-decoration: none;
+}
+.footer a:focus-visible,
+.footer button:focus-visible,
+.footer input:focus-visible,
+.footer select:focus-visible {
+  outline: 3px solid #0087be;
+  outline-offset: 4px;
+}
+.footer h2,
+.footer h3,
+.footer p {
+  margin: 0;
+}
+.footer svg {
+  flex-shrink: 0;
+}
+.footer .personalBand {
+  display: flex;
+  align-items: center;
+  gap: 23px;
+  padding: 30px max(28px, calc((100% - 1260px) / 2));
+  background: linear-gradient(105deg, #e3faff, #eff0ff 64%, #fff0f6);
+  border-block: 1px solid #d8ebf5;
+}
+.footer .bandIcon {
+  width: 66px;
+  height: 66px;
+  border-radius: 22px;
+  display: grid;
+  place-items: center;
+  color: #007ca9;
+  background: #fff;
+  box-shadow: 0 5px 0 #b8e8f3;
+  flex-shrink: 0;
+  transform: rotate(-5deg);
+}
+.footer .personalBand h2 {
+  font-size: 25px;
+  font-weight: 950;
+  letter-spacing: -0.5px;
+}
+.footer .personalBand p {
+  max-width: 660px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.footer .kicker {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: 1.2px;
+  color: #0080ad;
+}
+.footer .bandActions {
+  margin-inline-start: auto;
+  flex-shrink: 0;
+  display: grid;
+  gap: 8px;
+}
+.footer .bandActions > a:last-child {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  justify-content: center;
+}
+.footer .bandActions > a:last-child span {
+  color: var(--muted);
+}
+.footer .primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: 11px;
+  padding: 12px 19px;
+  background: #008dc1;
+  color: white !important;
+  box-shadow: 0 4px 0 #00729c;
+  font-weight: 900;
+}
+.footer .main {
+  max-width: 1316px;
+  margin: auto;
+  padding: 42px 28px 36px;
+  display: grid;
+  grid-template-columns: 1.3fr 1.1fr 1.15fr 0.95fr 1.05fr;
+  gap: 30px;
+}
+.footer .logoPlate {
+  display: inline-flex;
+  background: #14344e;
+  border-radius: 13px;
+  padding: 3px 14px;
+  margin-bottom: 17px;
+  box-shadow: 0 3px 0 #091d32;
+}
+.footer .logoPlate img {
+  display: block;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+.footer .brand h3 {
+  font-size: 16px;
+  line-height: 1.4;
+  font-weight: 950;
+  max-width: 220px;
+}
+.footer .brand p {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 12px 0 16px;
+  max-width: 240px;
+}
+.footer .marketplace {
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 850;
+  color: #007ca9 !important;
+}
+.footer .links h3 {
+  font-size: 13px;
+  font-weight: 950;
+  margin-bottom: 14px;
+  color: #183c59;
+}
+.footer .links a {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  color: #52657b;
+  padding: 5px 0;
+  line-height: 1.45;
+  min-height: 30px;
+}
+.footer .links a svg {
+  opacity: 0;
+  transform: translateY(2px);
+}
+.footer .links a:hover,
+.footer .links a[aria-current] {
+  color: #007fae;
+}
+.footer .links a:hover svg {
+  opacity: 1;
+}
+.footer .communityRow {
+  max-width: 1260px;
+  margin: 0 auto 28px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  border-top: 1px solid #e3eaf1;
+  padding-top: 26px;
+}
+.footer .socialPanel,
+.footer .newsletter {
+  padding: 23px 26px;
+  border-radius: 17px;
+}
+.footer .socialPanel {
+  background: #f3f8fc;
+  border: 1px solid #e5edf4;
+}
+.footer .newsletter {
+  background: linear-gradient(115deg, #fff8ed, #fff1f5);
+  border: 1px solid #f8e6da;
+}
+.footer .communityRow h3 {
+  font-size: 21px;
+  font-weight: 950;
+  margin: 5px 0;
+}
+.footer .communityRow p {
+  font-size: 12px;
+  color: var(--muted);
+}
+.footer .socials {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 9px;
+  margin: 19px 0 15px;
+}
+.footer .socials > a,
+.footer .socials > span {
+  min-width: 0;
+  background: white;
+  border: 1px solid #dde8ef;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px 7px;
+  font-weight: 850;
+  font-size: 11px;
+  box-shadow: 0 3px 0 #e0e9ef;
+}
+.footer .socials > a:hover {
+  border-color: #00a4cf;
+  transform: translateY(-2px);
+}
+.footer .socials img {
+  object-fit: contain;
+  flex-shrink: 0;
+}
+.footer .socials > a > svg {
+  display: none;
+}
+.footer .communityLink {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #007ca9 !important;
+  font-size: 12px;
+  font-weight: 850;
+}
+.footer .emailRow {
+  display: flex;
+  border-radius: 11px;
+  margin: 17px 0 10px;
+  background: #fff;
+  border: 1px solid #e0d6d2;
+  overflow: hidden;
+  min-height: 44px;
+}
+.footer .emailRow input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 12px;
+  color: #17314f;
+}
+.footer .emailRow button {
+  border: 0;
+  color: #fff;
+  background: #ec3776;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  font: inherit;
+  font-weight: 900;
+  font-size: 12px;
+  cursor: pointer;
+}
+.footer .emailRow button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.footer .consent {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 10px;
+  color: #596471;
+  line-height: 1.5;
+}
+.footer .consent input {
+  accent-color: #008dc1;
+  margin-top: 2px;
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+}
+.footer .consent a {
+  text-decoration: underline;
+}
+.footer .success {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 13px;
+  color: #00665c;
+}
+.footer .success p {
+  flex: 1;
+  min-width: 180px;
+}
+.footer .success button {
+  border: 0;
+  background: white;
+  padding: 6px 9px;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  text-decoration: underline;
+  border-radius: 7px;
+}
+.footer .error {
+  color: #ab1c50 !important;
+  margin-top: 9px !important;
+  font-weight: 800;
+}
+.footer .bottom {
+  border-top: 1px solid #e1e9ef;
+  background: #f7fafd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 17px max(28px, calc((100% - 1260px) / 2));
+  font-size: 11px;
+  color: #65738a;
+}
+.footer .bottom > div,
+.footer .bottom a,
+.footer .bottom label {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.footer .bottom > div {
+  gap: 23px;
+  flex-wrap: wrap;
+}
+.footer .bottom select {
+  border: 0;
+  background: transparent;
+  color: #17314f;
+  font: inherit;
+  cursor: pointer;
+  padding: 5px;
+}
+.footer .srOnly {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+@media (min-width: 1500px) {
+  .footer {
+    margin-top: 54px;
+  }
+}
+@media (max-width: 1100px) {
+  .footer .main {
+    gap: 22px;
+    grid-template-columns: 1.25fr 1fr 1fr;
+  }
+  .footer .brand {
+    grid-row: span 2;
+  }
+  .footer .communityRow {
+    margin-inline: 28px;
+  }
+  .footer .socials {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .footer .personalBand p {
+    max-width: 440px;
+  }
+  .footer .bandActions {
+    max-width: 230px;
+  }
+  .footer .personalBand h2 {
+    font-size: 23px;
+  }
+}
+@media (max-width: 700px) {
+  .footer {
+    margin-top: 26px;
+  }
+  .footer .personalBand {
+    padding: 24px 20px;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .footer .bandIcon {
+    width: 49px;
+    height: 49px;
+    border-radius: 15px;
+  }
+  .footer .personalBand > div:nth-child(2) {
+    flex: 1;
+    min-width: 210px;
+  }
+  .footer .kicker {
+    font-size: 9px;
+    letter-spacing: 0.6px;
+  }
+  .footer .personalBand h2 {
+    font-size: 23px;
+  }
+  .footer .personalBand p {
+    font-size: 12px;
+    margin-top: 5px;
+  }
+  .footer .bandActions {
+    margin-inline-start: 0;
+    max-width: none;
+    width: 100%;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .footer .main {
+    padding: 27px 20px;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 20px;
+  }
+  .footer .brand {
+    grid-column: 1/-1;
+    grid-row: auto;
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 0 18px;
+    align-items: center;
+  }
+  .footer .logoPlate {
+    padding: 1px 9px;
+    grid-row: span 2;
+    align-self: start;
+    margin-bottom: 0;
+  }
+  .footer .logoPlate img {
+    width: 132px;
+    height: 60px;
+  }
+  .footer .brand h3 {
+    font-size: 14px;
+  }
+  .footer .brand p {
+    margin: 5px 0 0;
+    font-size: 11px;
+  }
+  .footer .marketplace {
+    grid-column: 2;
+    margin-top: 8px;
+    font-size: 10px;
+  }
+  .footer .links h3 {
+    font-size: 13px;
+    margin-bottom: 9px;
+  }
+  .footer .links a {
+    font-size: 12px;
+    min-height: 32px;
+  }
+  .footer .communityRow {
+    grid-template-columns: 1fr;
+    margin: 0 20px 20px;
+    gap: 15px;
+    padding-top: 20px;
+  }
+  .footer .socialPanel,
+  .footer .newsletter {
+    padding: 20px;
+  }
+  .footer .socials {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .footer .socials > a,
+  .footer .socials > span {
+    justify-content: flex-start;
+    padding: 10px 14px;
+    font-size: 12px;
+  }
+  .footer .communityRow h3 {
+    font-size: 21px;
+  }
+  .footer .bottom {
+    padding: 16px 20px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .footer .bottom > div {
+    gap: 15px;
+    font-size: 10px;
+  }
+  .footer .emailRow button {
+    padding-inline: 12px;
+  }
+  .footer .primary {
+    padding: 11px 14px;
+  }
+  .footer .communityLink {
+    font-size: 11px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .footer * {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+@media print {
+  .footer {
+    display: none;
+  }
+}

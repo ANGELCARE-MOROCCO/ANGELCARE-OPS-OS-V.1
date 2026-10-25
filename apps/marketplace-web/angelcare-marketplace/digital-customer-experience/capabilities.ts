@@ -1,3 +1,4 @@
+import {classificationChoices,FOCUS} from "../kidflix/storefront-reference/taxonomy";
 import {USES as DOCUMENT_USES,GRADES as DOCUMENT_GRADES,THEMES as DOCUMENT_THEMES,NEEDS as DOCUMENT_NEEDS,SUBJECTS as DOCUMENT_SUBJECTS,USE_KEYS}from "../kidflix/documents/model";
 import { enrichDetailExperience } from "./detail-experience";
 import { actionCapabilities } from "./action-contract";
@@ -1176,6 +1177,8 @@ export function enrichFamily(base: Family): Family {
     }
   };
   merge(fields, extra.fields || []);
+  if(FOCUS[base.key])for(const [key,label] of [["storefrontFocus",["Learning focus","Objectifs d’apprentissage","مجالات التعلم"]],["storefrontThemes",["Themes & seasons","Thèmes & saisons","الموضوعات والمواسم"]],["storefrontNeeds",["Usage needs","Besoins d’usage","احتياجات الاستخدام"]],["storefrontQuick",["Verified usage features","Usages vérifiés","خصائص الاستخدام المؤكدة"]]] as const){const choices=classificationChoices(base.key,key);merge(fields,[{key,label,type:"textarea",classification:"public",options:choices.map(c=>c.key),optionLabels:Object.fromEntries(choices.map(c=>[c.key,c.title])),hint:["Select only verified classifications. Nothing is inferred from resource titles.","Sélectionnez uniquement les classements vérifiés. Aucun classement déduit du titre.","اختر التصنيفات المؤكدة فقط. لا يستنتج شيء من عناوين الموارد."]}]);}
+
   const subtypes = SUBTYPES[base.key]?.authored;
   if (subtypes)
     fields.unshift(

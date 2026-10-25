@@ -1,0 +1,43 @@
+'use client';
+import {useEffect,useRef,useState} from 'react';
+import Link from 'next/link';
+import {ArrowRight,CheckCircle2,ClipboardCopy,Clock3,ExternalLink,FileClock,GitBranch,Info,LockKeyhole,ShieldAlert,X} from 'lucide-react';
+import {nativeHref,type SourceArea} from './contracts';
+import type {SafeRow} from './server';
+import {useCommand} from '../../client/commands';
+import c from './dossier.module.css';
+const transitions:Record<string,readonly string[]>={reported:['triaged','under_review'],triaged:['under_review','needs_information'],under_review:['needs_information','action','no_action','resolved'],needs_information:['under_review','resolved'],appealed:['under_review','action','no_action','resolved'],action:['resolved'],no_action:['resolved']};
+function badge(s:string){return s.replaceAll('_',' ').replace(/\b[a-z]/g,v=>v.toUpperCase());}
+const readFields=(r:SafeRow):[string,string][]=>[
+ ['Record reference',r.id],['Title',r.title],['Current state',r.state],['Record type',r.type],['Country',r.country],['Locale',r.locale],['Public organization',r.organization],['Created',r.createdAt],['Updated',r.updatedAt],['Expected version',r.version===null?'Not provided':String(r.version)]
+ ];
+export function DossierR2({record,source,canAudit,onClose,onUpdated}:{record:SafeRow;source:SourceArea;canAudit:boolean;onClose:()=>void;onUpdated:()=>void}){
+ const [section,setSection]=useState<'Summary'|'Relationships'|'Decision'|'Timeline'>('Summary');
+ const [note,setNote]=useState(''),[next,setNext]=useState(transitions[record.state]?.[0]||''),[visibility,setVisibility]=useState('internal');
+ const command=useCommand('/api/jobkix/admin/commands');const closeRef=useRef<HTMLButtonElement>(null);
+ useEffect(()=>{closeRef.current?.focus();const key=(e:KeyboardEvent)=>{if(e.key==='Escape')onClose();};document.addEventListener('keydown',key);return ()=>document.removeEventListener('keydown',key);},[onClose]);
+ const canAct=(source==='vacancies'||source==='cases')&&record.version!==null;
+ const options=transitions[record.state]||[];
+ const fields=readFields(record);
+ async function decide(action:string){
+  if(!canAct||note.trim().length<20||note.trim().length>4000)return;
+  if(action==='vacancy.approve'&&record.state!=='pending_review')return;
+  if(action==='case.advance'&&!options.includes(next))return;
+  if(!window.confirm(`Confirm ${action} for the current record?\n\n${record.title}\nRevision ${record.version}\n\nYour written reason will be submitted to the existing audited authority.`))return;
+  const payload:Record<string,unknown>={id:record.id,note:note.trim()};
+  if(action==='case.advance'){payload.state=next;payload.visibility=visibility;}
+  const response=await command.run(action,payload,record.version!);
+  if(response){onUpdated();onClose();}
+ }
+ return <div className={c.scrim} role="presentation" onMouseDown={onClose}><div className={c.drawer} role="dialog" aria-modal="true" aria-label={`JOBKIX dossier: ${record.title}`} onMouseDown={e=>e.stopPropagation()}>
+  <header className={c.head}><div className={c.kicker}>JOBKIX · RESTRICTED OPERATOR DOSSIER</div><button className={c.close} type="button" onClick={onClose} ref={closeRef} aria-label="Close dossier"><X size={18}/></button><h2>{record.title}</h2><div className={c.headStatus}><span>{badge(source)}</span><span>{badge(record.state)}</span><span>Version {record.version===null?'N/A':record.version}</span></div></header>
+  <nav className={c.tabs} aria-label="Dossier navigation">{(['Summary','Relationships','Decision','Timeline'] as const).map(t=><button key={t} className={section===t?c.current:''} aria-current={section===t?'page':undefined} onClick={()=>setSection(t)} type="button">{t}</button>)}</nav>
+  <main className={c.body}>
+   {section==='Summary'?<><div className={c.banner}><ShieldAlert size={18}/><span>This console projects only safe operational metadata. Restricted evidence and private attachments remain in their original authorities.</span></div><h3>Source-backed record facts</h3><div className={c.factList}>{fields.filter(([,v])=>!!v).map(([k,v])=><div key={k}><span>{k}</span><strong>{v}</strong></div>)}</div><div className={c.actionStrip}><button type="button" onClick={()=>navigator.clipboard?.writeText(record.id)}><ClipboardCopy size={15}/> Copy reference</button><Link href={nativeHref(source)}><ExternalLink size={15}/> Original record</Link></div></>:null}
+   {section==='Relationships'?<><h3>Record relationships</h3><p className={c.muted}>Only associations present in the safe server projection are listed here. There is no automatic unrestricted traversal of other accounts.</p><div className={c.factList}>{[['Source authority',badge(source)],['Country',record.country||'Not projected'],['Organization',record.organization||'Not projected'],['Record category',record.type||'Not projected']].map(([k,v])=><div key={k}><span>{k}</span><strong>{v}</strong></div>)}</div><div className={c.relate}><GitBranch size={18}/><div><strong>Related operational decisions</strong><p>For linked evidence, applications or user accounts, use the native authority with purpose-scoped access.</p></div><Link href={nativeHref(source)}>Open <ArrowRight size={14}/></Link></div></>:null}
+   {section==='Decision'?<><h3>Audited action center</h3>{canAct?<><div className={c.banner}><LockKeyhole size={17}/><span>Actions are sent only to the existing JOBKIX admin-command endpoint, retaining native role checks, expected-version concurrency protection and idempotency.</span></div>{source==='cases'&&options.length?<div className={c.selectors}><label>Next case state<select value={next} onChange={e=>setNext(e.target.value)}>{options.map(s=><option value={s} key={s}>{badge(s)}</option>)}</select></label><label>Event visibility<select value={visibility} onChange={e=>setVisibility(e.target.value)}><option value="internal">Internal only</option><option value="reporter">Reporter-visible</option></select></label></div>:null}<label className={c.note}>Decision rationale (at least 20 characters)<textarea value={note} onChange={e=>setNote(e.target.value)} minLength={20} maxLength={4000} placeholder="State the specific basis for the decision and reference approved evidence; do not paste personal data unnecessarily."/></label>{command.error?<div className={c.error} role="alert">{command.error.code}: the action was not confirmed. Review your permissions, record version and permitted transition.</div>:null}<div className={c.decideButtons}>{source==='vacancies'?<><button type="button" disabled={command.pending||note.trim().length<20||record.state!=='pending_review'} onClick={()=>decide('vacancy.approve')}>Approve pending vacancy</button><button type="button" disabled={command.pending||note.trim().length<20} onClick={()=>decide('vacancy.return')}>Return for changes</button><button type="button" disabled={command.pending||note.trim().length<20} onClick={()=>decide('vacancy.suspend')}>Suspend vacancy</button></>:options.length?<button type="button" disabled={command.pending||note.trim().length<20||!options.includes(next)} onClick={()=>decide('case.advance')}>Record authorized case decision</button>:<p className={c.muted}>This case state has no supported next transition here.</p>}</div></>:<div className={c.banner}><Info size={17}/><span>No supported inline decision for this record/source, or the version is unavailable. Continue to the native screen for authorized management.</span></div>}<Link className={c.nativeLink} href={nativeHref(source)}>Native {source} authority <ExternalLink size={14}/></Link></>:null}
+   {section==='Timeline'?<><h3>Observed record chronology</h3><p className={c.muted}>Only the creation/update stamps in this safe record projection are available. A complete immutable decision ledger is retrieved through D08 when your operator access permits.</p><div className={c.timeline}>{[['Created',record.createdAt],['Last updated',record.updatedAt]].filter(([,t])=>t).map(([name,t])=><div key={name}><span><Clock3 size={15}/></span><div><strong>{name}</strong><small>{t}</small></div></div>)}</div>{canAudit?<Link className={c.nativeLink} href={nativeHref('audit')}><FileClock size={15}/> Open D08 audit authority <ArrowRight size={14}/></Link>:<div className={c.banner}><LockKeyhole size={15}/> Audit detail requires D08 permission.</div>}</>:null}
+  </main>
+  <footer className={c.foot}><div><CheckCircle2 size={16}/> Protected by existing native JOBKIX administration</div><button type="button" onClick={onClose}>Close dossier</button></footer>
+ </div></div>;
+}

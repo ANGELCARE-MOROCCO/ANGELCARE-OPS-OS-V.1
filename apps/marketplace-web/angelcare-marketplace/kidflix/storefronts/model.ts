@@ -1,3 +1,4 @@
+import type {ReferenceMetadata} from "../storefront-reference/model";
 import {normalizeTestimonials,normalizeDocumentSocialLinks,type DocumentsData}from "../documents/model";
 import {LEGACY_THEMES} from "./publisher-legacy";
 import {publisherProfile,say} from "./publisher-content";
@@ -20,8 +21,8 @@ export interface Edition extends PublisherImages {
   startsAt:string; endsAt:string; mediaBindings:Record<string,string>; adSlots:string[];
 }
 export type Facts = { counts:Record<string,number>; formats:string[]; narration:boolean; captions:boolean; transcript:boolean; editable:boolean; certificate:boolean };
-export type Item = Resource & { facts:Facts };
-export interface StorefrontData { catalogue:Omit<Catalogue,'rows'> & {rows:Item[]}; facets:Record<string,string[]>; edition:Edition; configured:boolean; curated:Item[]; documents?:DocumentsData; documentsPortraits?:Record<string,string>; }
+export type Item = Resource & { facts:Facts; previewImages?:{url:string;alt:string}[]; discovery?:ReferenceMetadata };
+export interface StorefrontData { catalogue:Omit<Catalogue,'rows'> & {rows:Item[]}; facets:Record<string,string[]>; edition:Edition; configured:boolean; curated:Item[]; setupRequired?:boolean; documents?:DocumentsData; documentsPortraits?:Record<string,string>; }
 export const familyKey=(family:string)=>'kidflix-storefront-'+family;
 export const keyOK=(s:string)=>/^[a-z0-9][a-z0-9._-]{1,119}$/.test(s);
 export const titles:Record<Section,Tri>={collections:['Handpicked discoveries','Découvertes choisies','اكتشافات مختارة'],subjects:['Follow your curiosity','Suivez votre curiosité','اتبع فضولك'],catalogue:['Your next discovery starts here','Votre prochaine découverte commence ici','اكتشافك القادم يبدأ هنا'],guide:['Make it your kind of moment','À chacun sa belle découverte','لحظتك الجميلة بطريقتك'],related:['Keep the discovery going','Prolongez la découverte','واصل الاكتشاف']};

@@ -1,5 +1,6 @@
 'use client';
 import { CommandForm } from './CommandForm';
+import { GoogleSignIn } from './GoogleSignIn';
 import { useEffect,useRef,useState,type FormEvent,type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -37,6 +38,7 @@ export function AuthForm({locale,mode,intent,next,consentRevision,consentDocumen
  return <section className={s.authCard}><span className={s.eyebrow}>JOBKIX · {t(locale,intent)}</span><h2>{title}</h2>
   {confirmation?<p>{e(locale,'confirmationHelp')}</p>:null}{linkFailed?<p className={s.notice} role="alert">{errorText(locale,'AUTHENTICATION_REQUIRED')}</p>:null}
   {blocked?<p className={s.notice} role="alert">{t(locale,'noPublishedContent')}</p>:null}
+  <GoogleSignIn locale={locale} intent={intent} next={next} disabled={blocked}/>
   <CommandForm locale={locale} onSubmit={submit} aria-busy={pending}>
    {signup||onboarding?<label className={s.field}>{t(locale,'fullName')}<input name="fullName" autoComplete="name" maxLength={180} required defaultValue={initialName} aria-invalid={Boolean(fault?.fields.fullName||fault?.fields.displayName)}/></label>:null}
    {!onboarding&&!reset?<label className={s.field}>{t(locale,'email')}<input name="email" type="email" autoComplete="email" dir="ltr" maxLength={254} required aria-invalid={Boolean(fault?.fields.email)}/></label>:null}

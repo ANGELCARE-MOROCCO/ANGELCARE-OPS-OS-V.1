@@ -1,3 +1,4 @@
+import {FOCUS,classificationChoices} from "../kidflix/storefront-reference/taxonomy";
 import { detailExperienceIssues } from "./detail-experience";
 import { depthIssues } from "./experience-depth";
 import { activeField, translationCoverage } from "./localisation";
@@ -32,6 +33,7 @@ export function capabilityIssues(
       message: [en, "À corriger : " + en, "يلزم التصحيح: " + en],
       severity: "error",
     });
+  if(record.family&&FOCUS[record.family])for(const key of ["storefrontFocus","storefrontThemes","storefrontNeeds","storefrontQuick"]){const v=d[key],allowed=classificationChoices(record.family,key).map(c=>c.key);if(v!==undefined&&(typeof v!=="string"||v.length>8000||v.split(/\r?\n/).filter(Boolean).some(s=>!allowed.includes(s))))add(key,"STOREFRONT_CLASSIFICATION","Choose only the available verified storefront classifications.");}
   if(record.family === "documents") {
     for(const key of ["documentUses","documentGrades","documentThemes","documentNeeds"]) {
       const definition=family?.fields.find(f=>f.key===key),value=d[key];

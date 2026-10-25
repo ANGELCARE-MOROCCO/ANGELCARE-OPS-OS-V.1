@@ -239,10 +239,4 @@ export function HomeHeader({ locale }: { locale: Locale }) {
     </header>
   );
 }
-export function HomeFooter({ locale }: { locale: Locale }) {
-  return (
-    <div className={s.footer} data-home-reference-footer>
-      <DocumentsFooter locale={locale} />
-    </div>
-  );
-}
+export function HomeFooter({locale}:{locale:Locale}){return <DocumentsFooter locale={locale}/>;}

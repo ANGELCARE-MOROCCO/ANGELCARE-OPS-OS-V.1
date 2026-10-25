@@ -1,0 +1,42 @@
+{
+  "project": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web",
+  "changes": [
+    {
+      "path": "angelcare-marketplace/jobkix/client/AuthForm.tsx",
+      "bytes": 6410,
+      "sha256": "1659c4db6b16b40ae3ce60a0e6f72e0fb3399efa2db6317a4d9919869b6fb3d0",
+      "existing": true
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/jobkix.module.css",
+      "bytes": 94829,
+      "sha256": "725a9b861f3f18e18837a99a9749428b1cd7d7e23f77e05cc50b185c09670efa",
+      "existing": true
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/client/GoogleSignIn.tsx",
+      "bytes": 1831,
+      "sha256": "2996d82388796f307f40d31e1b4dc297627dee5635705a11f03e484ec2e25728",
+      "existing": false
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/server/google-oauth.ts",
+      "bytes": 5307,
+      "sha256": "455147f351437741e6e771b845d8751b10e315a9a853f86227be4ae0156adae9",
+      "existing": false
+    },
+    {
+      "path": "app/api/jobkix/auth/google/route.ts",
+      "bytes": 186,
+      "sha256": "c23c5016dc46a4c4940767bc83e21fe8e91292e45593c2abd7322bf97fa279dc",
+      "existing": false
+    },
+    {
+      "path": "app/api/jobkix/auth/google/callback/route.ts",
+      "bytes": 192,
+      "sha256": "6077d0a7258730ec2e7e6cefc92d5ffb3367fe574c97d6cd4d7bcf2ebdcd7f9f",
+      "existing": false
+    }
+  ],
+  "installedAt": "2026-10-25T14:28:38.614Z"
+}

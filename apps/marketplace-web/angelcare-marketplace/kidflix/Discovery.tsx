@@ -2,6 +2,7 @@
 import { ReferenceCard } from "./ReferenceCards";
 import ref from "./reference.module.css";
 import Link from "next/link";
+import {PersonalLibrary,PersonalShelf} from "./personal/PersonalLibrary";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   path,
@@ -229,65 +230,7 @@ export function useCatalogue(
   }, [locale, key, retry, skip]);
   return { data, busy, error, reload: () => setRetry((v) => v + 1) };
 }
-export function SavedDiscoveries({
-  locale,
-  recent = false,
-  compact = false,
-  dense = false,
-}: {
-  locale: Locale;
-  recent?: boolean;
-  compact?: boolean;
-  dense?: boolean;
-}) {
-  const guest = useGuest(),
-    keys = recent ? guest.recent : guest.saved,
-    q = useCatalogue(
-      locale,
-      { keys: keys.join(","), page: "1" },
-      emptyCatalogue,
-      !guest.ready || !keys.length,
-    );
-  if (compact && (!guest.ready || !keys.length)) return null;
-  return (
-    <section className={`${s.section} ${dense ? ref.savedSection : ""}`}>
-      <SectionTitle
-        title={copy(recent ? "continue" : "saved", locale)}
-        sub={copy("stored", locale)}
-        icon={recent ? "Clock" : "Heart"}
-        locale={locale}
-        href={compact ? path(locale, "/saved") : undefined}
-      />
-      {q.busy ? (
-        <div className={s.readLoading} role="status">
-          {copy("loading", locale)}
-        </div>
-      ) : q.error ? (
-        <ReadFailure locale={locale} />
-      ) : q.data.rows.length && keys.length ? (
-        dense ? (
-          <div className={ref.sixGrid}>
-            {q.data.rows.map((r) => (
-              <ReferenceCard key={r.id} resource={r} locale={locale} />
-            ))}
-          </div>
-        ) : (
-          <Shelf rows={q.data.rows} locale={locale} />
-        )
-      ) : (
-        <div className={s.empty}>
-          <I name="Heart" size={35} />
-          <h2>{copy("noneSaved", locale)}</h2>
-          <p>{copy("emptySub", locale)}</p>
-          <Link className={s.primary} href={path(locale, "/explore")}>
-            {copy("explore", locale)}
-            <I name="ArrowRight" size={17} />
-          </Link>
-        </div>
-      )}
-    </section>
-  );
-}
+export function SavedDiscoveries({locale,recent=false,compact=false,dense=false}:{locale:Locale;recent?:boolean;compact?:boolean;dense?:boolean}){return compact?<PersonalShelf locale={locale} recent={recent} dense={dense}/>:<PersonalLibrary locale={locale} initialTab={recent?"recent":"saved"}/>;}
 const AUDIENCES = [
   ["child", ["Children", "Enfants", "الأطفال"]],
   ["parent", ["Parents", "Parents", "الآباء"]],

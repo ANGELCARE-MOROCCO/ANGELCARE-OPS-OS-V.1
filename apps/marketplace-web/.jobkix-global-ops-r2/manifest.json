@@ -1,0 +1,64 @@
+{
+  "version": "R2",
+  "createdAt": "2026-10-25T16:50:34.900Z",
+  "appRoot": "marketplace-web",
+  "backups": ".jobkix-global-ops-r2/backups",
+  "files": [
+    {
+      "relative": "angelcare-marketplace/jobkix/admin/global-operations/Screen.tsx",
+      "oldHash": "d7c8f91a6affe80f56d362c5bf5d6c22e3a389b6c3187b3a1618a9b3af97a05a",
+      "newHash": "69d4dc05fcc649ae08fa0af22680a05a29ccf0ac19082fc5f254235e244afae0",
+      "status": "UPGRADE",
+      "size": 23902,
+      "name": "Screen.tsx"
+    },
+    {
+      "relative": "angelcare-marketplace/jobkix/admin/global-operations/operations.module.css",
+      "oldHash": "0cde434974a51f29041f3bba80254ea9b2fc886eedbcf7e37ec3817b677adfed",
+      "newHash": "11abddb275fad6861566a4245e0db69f3a9615e2200d4887099abd2e1140c7b3",
+      "status": "UPGRADE",
+      "size": 22281,
+      "name": "operations.module.css"
+    },
+    {
+      "relative": "angelcare-marketplace/jobkix/admin/global-operations/TabRegistry.ts",
+      "oldHash": null,
+      "newHash": "b3943a0842caa31027fc139193f205ff6c883c1b05cb1404d18d59fc8ec05af7",
+      "status": "CREATE",
+      "size": 19901,
+      "name": "TabRegistry.ts"
+    },
+    {
+      "relative": "angelcare-marketplace/jobkix/admin/global-operations/DeepWorkspace.tsx",
+      "oldHash": null,
+      "newHash": "f1e4be2cfe1b720aa2a64501a26292278648c395aec9d5c2473fe7f6901f3c8f",
+      "status": "CREATE",
+      "size": 12460,
+      "name": "DeepWorkspace.tsx"
+    },
+    {
+      "relative": "angelcare-marketplace/jobkix/admin/global-operations/deep.module.css",
+      "oldHash": null,
+      "newHash": "ec7fb487d078b9c553985cabf6e36079c58701dfe17499f8c0faadacb9e0f8b4",
+      "status": "CREATE",
+      "size": 8251,
+      "name": "deep.module.css"
+    },
+    {
+      "relative": "angelcare-marketplace/jobkix/admin/global-operations/DossierR2.tsx",
+      "oldHash": null,
+      "newHash": "fcd7ed742e0e9cc9cf8efca84ca908611d83961367e1da931c27842d406a4110",
+      "status": "CREATE",
+      "size": 8517,
+      "name": "DossierR2.tsx"
+    },
+    {
+      "relative": "angelcare-marketplace/jobkix/admin/global-operations/dossier.module.css",
+      "oldHash": null,
+      "newHash": "14e5b0d90401cc3d457a04a5fd536508349ecaf2066a418f6128eed9db2a6b88",
+      "status": "CREATE",
+      "size": 4226,
+      "name": "dossier.module.css"
+    }
+  ]
+}

@@ -1,3 +1,5 @@
+import {FOCUS} from "../storefront-reference/taxonomy";
+import {referenceFactoryGallery} from "../storefront-reference/factory";
 import {defaultGallery,legacyWorldImages,legacyGuidanceImages,worldTile} from '../editorial';
 import {art,publisherProfile,say,type PublisherLocale} from './publisher-content';
 import type {PublisherScene} from './PublisherGallery';
@@ -13,7 +15,8 @@ export function upgradeFactoryGallery(gallery:PublisherScene[],bindings:Record<s
  if(Object.keys(bindings).some(k=>k==='hero'||k==='heroMobile'||k.startsWith('scene:')))return gallery;
  const factory=defaultGallery(family);
  const identity=(s:PublisherScene)=>[s.id,s.desktop,s.mobile,s.descriptions.en,s.descriptions.fr,s.descriptions.ar,s.focal.x,s.focal.y,s.mobileFocal.x,s.mobileFocal.y];
- return JSON.stringify(gallery.map(identity))===JSON.stringify(factory.map(identity))?publisherGallery(family):gallery;
+ const matches=[factory,publisherGallery(family)].some(deck=>JSON.stringify(gallery.map(identity))===JSON.stringify(deck.map(identity)));
+ return matches?(FOCUS[family]?referenceFactoryGallery(family):publisherGallery(family)):gallery;
 }
 export function defaultImageDescription(_family:string,role:PublisherImageSlot,locale:PublisherLocale){
  const descriptions={cover:['Illustrated editorial resource cover and coordinated materials.','Couverture éditoriale illustrée et supports coordonnés.','غلاف تحريري مصور ومواد متناسقة.'],guidance:['Educational reference materials arranged to prepare a practical session.','Supports pédagogiques organisés pour préparer une séance pratique.','مواد مرجعية تعليمية مرتبة للتحضير لجلسة عملية.'],reference:['Editorial reference board organizing complementary educational materials.','Planche de référence éditoriale regroupant des supports pédagogiques complémentaires.','لوحة مرجعية تحريرية تنظم مواد تعليمية متكاملة.'],detail:['Close-up of practical resource materials and their structure.','Vue rapprochée des supports pratiques et de leur structure.','صورة قريبة للمواد العملية وبنيتها.']} as const;

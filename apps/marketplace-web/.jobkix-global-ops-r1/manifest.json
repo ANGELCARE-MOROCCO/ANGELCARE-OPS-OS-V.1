@@ -1,0 +1,41 @@
+{
+  "version": "R1",
+  "routeRoot": "app/angelcare-marketplace/(protected)/admin/jobkix/ops",
+  "files": [
+    {
+      "path": "angelcare-marketplace/jobkix/admin/global-operations/contracts.ts",
+      "sha256": "e1824523e1077baea516afc44d8b84a91a7c4011b5796a8fcb5a7605ec824fb5",
+      "bytes": 4280
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/admin/global-operations/server.ts",
+      "sha256": "104c2a6cdb79b0bb163a1395b4eaada02c616311d5de71d9823a45334c547a9e",
+      "bytes": 4718
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/admin/global-operations/Screen.tsx",
+      "sha256": "d7c8f91a6affe80f56d362c5bf5d6c22e3a389b6c3187b3a1618a9b3af97a05a",
+      "bytes": 27261
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/admin/global-operations/Specialist.tsx",
+      "sha256": "ca4bc35636fc544e352522da56aed5f6c708f211503a0dc24bec33d9b0be95a2",
+      "bytes": 9850
+    },
+    {
+      "path": "angelcare-marketplace/jobkix/admin/global-operations/operations.module.css",
+      "sha256": "0cde434974a51f29041f3bba80254ea9b2fc886eedbcf7e37ec3817b677adfed",
+      "bytes": 21727
+    },
+    {
+      "path": "app/angelcare-marketplace/(protected)/admin/jobkix/ops/[workspace]/page.tsx",
+      "sha256": "7e8479e9825febf1c461bfbb3b8fcfdb6118d703fa31148e7a47c0d34c77803f",
+      "bytes": 912
+    },
+    {
+      "path": "app/angelcare-marketplace/(protected)/admin/jobkix/ops/page.tsx",
+      "sha256": "fa7c4c1fdfb8c1479e3dbec6a5d0f9d438e22218a1bf56590e3561e028335cbd",
+      "bytes": 153
+    }
+  ]
+}
