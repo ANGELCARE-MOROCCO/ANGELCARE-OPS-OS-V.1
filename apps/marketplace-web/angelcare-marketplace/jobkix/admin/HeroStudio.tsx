@@ -1,7 +1,7 @@
 'use client';
 import {useEffect,useMemo,useRef,useState} from 'react';
 import {useRouter,useSearchParams} from 'next/navigation';
-import {ArrowRight,CheckCircle2,ChevronDown,ExternalLink,FileImage,Globe2,Layers3,LayoutDashboard,Monitor,MoveDown,MoveUp,Play,Plus,RotateCcw,Save,Search,ShieldCheck,SlidersHorizontal,Smartphone,Sparkles,Trash2,Upload,Versions,X} from 'lucide-react';
+import {ArrowRight,CheckCircle2,ChevronDown,ExternalLink,FileImage,Globe2,Layers3,LayoutDashboard,Monitor,MoveDown,MoveUp,Play,Plus,RotateCcw,Save,Search,ShieldCheck,SlidersHorizontal,Smartphone,Sparkles,Trash2,Upload,History as HistoryIcon,X} from 'lucide-react';
 import {HeroSlideshow} from '../hero/HeroSlideshow';
 import {EMPTY_HERO,HERO_FRONTS,HERO_GROUPS,HERO_ROOT,placementFromPublicUrl,validPlacement,type HeroDocument,type HeroSlide,type HeroTransition} from '../hero/contracts';
 import c from './hero-studio.module.css';
@@ -44,7 +44,7 @@ export function HeroStudio(){
  const matched=frontIds.filter(id=>HERO_FRONTS[id].title.toLowerCase().includes(search.toLowerCase())||id.toLowerCase().includes(search.toLowerCase()));
  return <section className={c.studio} aria-label="JOBKIX Public Hero Studio">
   <div className={c.head}><div><div className={c.kicker}><Sparkles size={13}/> JOBKIX / PUBLIC EXPERIENCE / PRO MAX 6</div><h1>Hero & Slideshow Studio</h1><p>Choose a page. Design its images. Publish with confidence.</p></div><a className={c.publicLink} href={slugUrl(placement)} target="_blank" rel="noopener noreferrer"><ExternalLink size={16}/> Open public page</a></div>
-  <nav className={c.nav} aria-label="Hero Studio navigation">{([['pages','Public Pages',LayoutDashboard],['editor','Hero Editor',Layers3],['library','Media Library',FileImage],['history','History & Rollback',Versions]] as const).map(([id,label,Icon])=><button key={id} type="button" aria-current={view===id?'page':undefined} className={view===id?c.current:''} onClick={()=>setView(id)}><Icon size={17}/>{label}</button>)}</nav>
+  <nav className={c.nav} aria-label="Hero Studio navigation">{([['pages','Public Pages',LayoutDashboard],['editor','Hero Editor',Layers3],['library','Media Library',FileImage],['history','History & Rollback',HistoryIcon]] as const).map(([id,label,Icon])=><button key={id} type="button" aria-current={view===id?'page':undefined} className={view===id?c.current:''} onClick={()=>setView(id)}><Icon size={17}/>{label}</button>)}</nav>
   {error?<div className={c.error} role="alert"><span>{error}</span><button type="button" onClick={()=>setError('')} aria-label="Dismiss error"><X size={17}/></button></div>:null}
   {notice?<div className={c.notice} role="status"><CheckCircle2 size={17}/>{notice}</div>:null}
   {busy&&!data?<div className={c.wait} role="status">Loading your authorized Hero Studio...</div>:null}

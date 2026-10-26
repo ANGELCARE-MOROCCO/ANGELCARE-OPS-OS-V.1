@@ -524,9 +524,9 @@
 [data-jobkix-employer-pm5] .status{border:1px solid #cfe5e1;background:#eaf7f2;color:#20775f;border-radius:6px;padding:6px 9px;font-size:10px;font-weight:790;line-height:1.25;white-space:normal;text-transform:capitalize}
 [data-jobkix-employer-pm5] .notice{background:#edf4ff;border:1px solid #d4e4fc;color:#335c95;border-radius:8px;padding:12px 14px;font-size:11px;line-height:1.6;margin-block:10px}
 [data-jobkix-employer-pm5] .field{font-size:11px;font-weight:770;color:#465f7f;gap:7px;min-width:0}
-[data-jobkix-employer-pm5] :is(input:not([type=checkbox]):not([type=radio]),select,textarea){font-size:12px;min-height:41px;border:1px solid #d9e3f1;background:#fff;border-radius:7px;color:#203951;max-width:100%;padding:9px 12px}
-[data-jobkix-employer-pm5] :is(input,select,textarea):focus-visible{outline:3px solid #a4c5fa;outline-offset:1px;border-color:#3379ec}
-[data-jobkix-employer-pm5] label{color:#485f7f}
+.root [data-jobkix-employer-pm5] :is(input:not([type=checkbox]):not([type=radio]),select,textarea){font-size:12px;min-height:41px;border:1px solid #d9e3f1;background:#fff;border-radius:7px;color:#203951;max-width:100%;padding:9px 12px}
+.root [data-jobkix-employer-pm5] :is(input,select,textarea):focus-visible{outline:3px solid #a4c5fa;outline-offset:1px;border-color:#3379ec}
+.root [data-jobkix-employer-pm5] label{color:#485f7f}
 [data-jobkix-employer-pm5] .formGrid{gap:15px;align-items:end}
 [data-jobkix-employer-pm5] .studioFilters{background:#fff;border:1px solid #dfe7f3;border-radius:11px;box-shadow:0 6px 22px #123b6b08;gap:12px;padding:19px}
 [data-jobkix-employer-pm5] .resultsHeader{display:flex;align-items:center;gap:14px;justify-content:space-between;background:#eaf1fb;border:1px solid #dce7f7;border-radius:9px;padding:11px 16px}
@@ -581,7 +581,7 @@
 [data-jobkix-employer-pm5] .studioMetrics span{font-size:11px;color:#72839e}
 [data-jobkix-employer-pm5] .studioWelcome{background:linear-gradient(105deg,#e6f2ff,#fff);border-color:#cfe1f8}
 [data-jobkix-employer-pm5] .studioWelcome h2{font-size:25px;color:#153d72}
-[data-jobkix-employer-pm5] details>summary{min-height:34px;font-weight:760;color:#235ba5;cursor:pointer}
+.root [data-jobkix-employer-pm5] details>summary{min-height:34px;font-weight:760;color:#235ba5;cursor:pointer}
 [data-jobkix-employer-pm5] .chips{gap:7px;display:flex;flex-wrap:wrap}
 [data-jobkix-employer-pm5] .chip{background:#ebf3ff;border:1px solid #d5e6fb;color:#2963ab;border-radius:5px;padding:5px 8px;font-size:10px}
 [data-jobkix-employer-pm5] .organizationSelector{background:#fff;box-shadow:none;border:0;padding:0}
@@ -617,8 +617,8 @@
 [data-jobkix-candidate-pm5] .notice{background:#eef5ff;border:1px solid #d7e6f9;color:#46698e;font-size:11px;line-height:1.65;border-radius:9px;padding:13px 16px}
 [data-jobkix-candidate-pm5] .chip{background:#e9f4ff;color:#2769af;border:1px solid #cee5fb;border-radius:6px;padding:5px 9px;font-size:10px;font-weight:790}
 [data-jobkix-candidate-pm5] .field{font-size:11px;font-weight:770;color:#4b6787;gap:7px;min-width:0}
-[data-jobkix-candidate-pm5] :is(input:not([type=checkbox]):not([type=radio]),select,textarea){max-width:100%;min-height:42px;border-radius:8px;background:#fff;border:1px solid #d9e5f4;color:#294567;padding:9px 12px;font-size:12px}
-[data-jobkix-candidate-pm5] :is(input,textarea,select):focus-visible{outline:3px solid #a1c6fb;border-color:#3b83eb;outline-offset:1px}
+.root [data-jobkix-candidate-pm5] :is(input:not([type=checkbox]):not([type=radio]),select,textarea){max-width:100%;min-height:42px;border-radius:8px;background:#fff;border:1px solid #d9e5f4;color:#294567;padding:9px 12px;font-size:12px}
+.root [data-jobkix-candidate-pm5] :is(input,textarea,select):focus-visible{outline:3px solid #a1c6fb;border-color:#3b83eb;outline-offset:1px}
 [data-jobkix-candidate-pm5] .formGrid{gap:14px;align-items:end}
 [data-jobkix-candidate-pm5] .sectionHeading{align-items:center;gap:16px;margin-bottom:13px}
 [data-jobkix-candidate-pm5] .sectionHeading h2{color:#194370;font-size:18px}
@@ -641,7 +641,7 @@
 [data-jobkix-candidate-pm5] .blockedOrganization{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:15px;border:1px solid #e0e9f6;background:#fafcff;border-radius:9px}
 [data-jobkix-candidate-pm5] .blockedOrganization>div{min-width:0}
 [data-jobkix-candidate-pm5] .blockedOrganization h3{margin-block:6px!important}
-[data-jobkix-candidate-pm5] details>summary{cursor:pointer;min-height:37px;font-size:12px;font-weight:770;color:#2b68b5}
+.root [data-jobkix-candidate-pm5] details>summary{cursor:pointer;min-height:37px;font-size:12px;font-weight:770;color:#2b68b5}
 [data-jobkix-candidate-pm5] .tableWrap{overflow:auto;border-radius:10px;border:1px solid #e2eaf5}
 [data-jobkix-candidate-pm5] .table{min-width:700px}
 [data-jobkix-candidate-pm5] .table th{font-size:10px;padding:12px 13px;background:#f1f7ff;color:#6780a0;text-transform:uppercase;letter-spacing:.04em}
