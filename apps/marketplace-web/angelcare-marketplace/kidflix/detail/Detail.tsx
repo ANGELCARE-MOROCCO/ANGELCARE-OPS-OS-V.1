@@ -1,6 +1,5 @@
 "use client";
-import { DetailExperience } from "./experience";
-import { ExperienceOpening } from "./experience/Primitives";
+import { DetailWorkspace } from "./workspace/Workspace";
 import x from "./experience/experience.module.css";
 import { LoveProvider, SocialToolbar } from "./Social";
 import Link from "next/link";
@@ -12,7 +11,6 @@ import { I } from "../Icons";
 import { selectResult } from "../../digital-customer-experience/experience-depth";
 import {
   asset,
-  capabilityFacts,
   definition,
   engineFor,
   obj,
@@ -115,8 +113,6 @@ function DetailReady({
     engine = engineFor(m.family, d),
     Player = PLAYER[m.family],
     outputs = readyOutputs(m),
-    summary = local(d, "summary", locale),
-    facts = capabilityFacts(m, locale),
     saved = guest.saved.includes(m.key),
     titleId = useId();
   useEffect(() => {
@@ -139,7 +135,7 @@ function DetailReady({
   return (
     <LoveProvider resourceKey={m.key} locale={locale}>
       <article
-        className={`${s.detail} ${s["world_" + m.family]} ${x.experienceRoot}`}
+        className={`${s.detail} ${s["world_" + m.family]} ${s.reference}`}
         dir={locale === "ar" ? "rtl" : "ltr"}
         style={{ "--accent": w.color, "--tint": w.tint } as CSSProperties}
         aria-labelledby={titleId}
@@ -161,17 +157,6 @@ function DetailReady({
             ← {t("backToJourney", locale)}
           </Link>
         ) : null}
-        <ExperienceOpening
-          p={props}
-          titleId={titleId}
-          saved={saved}
-          onSave={() => {
-            guest.toggle(m.key);
-            if (!saved) emitVisitor(m.key, locale, m.releaseId, "bookmark");
-          }}
-        />
-        <SocialToolbar resourceKey={m.key} title={m.title} locale={locale} />
-        <AdSlot m={m} locale={locale} zone="after_intro" />
         {progress.error ? (
           <p role="status" className={s.callout}>
             {t("storage", locale)}
@@ -186,14 +171,17 @@ function DetailReady({
             </div>
           </div>
         ) : null}
-        <DetailExperience {...props} files={<Files {...props} />}>
+        <DetailWorkspace p={props} titleId={titleId} saved={saved} onSave={() => {
+          guest.toggle(m.key);
+          if (!saved) emitVisitor(m.key, locale, m.releaseId, "bookmark");
+        }} files={<Files {...props} />}>
           <section
             id="kidflix-experience-player"
             className={s.playerSurface}
             aria-busy={!progress.ready}
           >
             {progress.ready ? (
-              <ResourceSurface props={props}>
+              <ResourceSurface props={props} compact>
                 <Player {...props} />
               </ResourceSurface>
             ) : (
@@ -202,7 +190,9 @@ function DetailReady({
               </div>
             )}
           </section>
-        </DetailExperience>
+        </DetailWorkspace>
+        <DiscoveryRails m={m} locale={locale} context={{score: progress.state.score ?? progress.state.assessment?.score, complete: progress.state.complete === true}} />
+        <AdSlot m={m} locale={locale} zone="after_intro" />
         <Dossier {...props} />
         <PrivateTools {...props} />
         <MissedPractice {...props} />
@@ -253,14 +243,7 @@ function DetailReady({
           locale={locale}
           lower
         />
-        <DiscoveryRails
-          m={m}
-          locale={locale}
-          context={{
-            score: progress.state.score ?? progress.state.assessment?.score,
-            complete: progress.state.complete === true,
-          }}
-        />
+
       </article>
     </LoveProvider>
   );

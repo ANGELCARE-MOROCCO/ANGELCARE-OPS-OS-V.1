@@ -27,12 +27,14 @@ export async function AuthPage({locale,screen,search}:{locale:Locale;screen:stri
   let session;try{session=await getJobkixSession();}catch(error){return <Empty locale={locale} problem title={errorText(locale,dependencyError(error).code)}/>;}
   if(session.state==='anonymous'&&(mode==='onboarding'||mode==='reset'))redirect(href(locale,intent+'/sign-in',new URLSearchParams({next:invitationReturn||href(locale,mode==='reset'?'auth/reset':'onboarding',new URLSearchParams({intent,next}))})));
   if(session.state==='verification_pending'&&mode!=='confirmation'&&mode!=='recovery')redirect(href(locale,'auth/confirmation',new URLSearchParams({intent,next:invitationReturn||next})));
+  if(session.state==='pathway_review')return <Empty locale={locale} problem title={errorText(locale,'ACCOUNT_RESTRICTED')} description="This account requires pathway review. Contact JOBKIX support; your existing data remains protected."/>;
+  if(session.state==='active'&&hasInvitation&&session.pathway!=='hirer')redirect(href(locale,'career',new URLSearchParams({pathway:'rejected'})));
   if(session.state==='active'&&hasInvitation){try{const record=await invitationPreview(invitationId,invitationToken);return <div className={s.authLayout}><InvitationAcceptance locale={locale} record={record} token={invitationToken} timezone={session.timezone}/></div>;}catch(error){return <Empty locale={locale} problem title={errorText(locale,dependencyError(error).code)}/>;}}
   if(session.state==='restricted'&&mode==='onboarding')return <Empty locale={locale} problem title={errorText(locale,'ACCOUNT_RESTRICTED')}/>;
-  if(session.state==='active'&&(mode==='sign-in'||mode==='sign-up'||mode==='confirmation'))redirect(next);
+  if(session.state==='active'&&(mode==='sign-in'||mode==='sign-up'||mode==='confirmation'))redirect(href(locale,session.pathway==='candidate'?'career':'hiring',session.pathway!==intent?new URLSearchParams({pathway:'rejected'}):undefined));
   if(session.state==='onboarding'&&(mode==='sign-in'||mode==='sign-up'||mode==='confirmation'))redirect(href(locale,'onboarding',new URLSearchParams({intent,next})));
   if(mode==='onboarding'&&(session.state==='onboarding'||session.state==='active')){
-   if(session.state==='active'&&intent==='hirer')redirect(next);
+   if(session.state==='active')redirect(href(locale,session.pathway==='candidate'?'career':'hiring',session.pathway!==intent?new URLSearchParams({pathway:'rejected'}):undefined));
    let hasProfile=false;
    try{
     const client=await createUserClient(),user=await client.auth.getUser();

@@ -8,6 +8,7 @@ import { object, uuid,integer,text } from '../validation';
 import { dependencyError } from './http';
 import { requireJobkixSession,getJobkixSession } from './identity';
 import { WORKSPACE_ACTIONS } from './command-input';
+import { isCommandAllowed } from '../account-pathway';
 import { resolveEditorialImages } from './editorial-media';
 import { DOCUMENT_SELECTION_PAGE_SIZE,documentSelectionQuery,selectableDocumentRow,caseDocumentQuery,selectableEvidenceRow,type DocumentSelectionResult } from '../document-selection';
 import { studioSelectionRequest,studioSelectionResult,studioRecord,type StudioSelectionRequest,type StudioSelectionRecord,type StudioSelectionResult } from '../studio-selection';
@@ -166,7 +167,7 @@ export async function executeCommand(action:string,payload:Record<string,unknown
    return object(await rpc('jobkix_restricted_case_command',{p_action:action,p_payload:payload,p_expected_version:version,p_idempotency_key:key}));
   }
  }
- if(action!=='account.initialize')await requireJobkixSession();
+ if(action!=='account.initialize'){const session=await requireJobkixSession();if(!isCommandAllowed(session.pathway,action,payload))throw new JobkixFault('FORBIDDEN');}
  if(action==='resource.save')return object(await rpc('jobkix_save_resource',{p_document:payload.documentId,p_locale:payload.locale,p_saved:payload.saved,p_collection:payload.collection,p_expected_version:version,p_idempotency_key:key}));
  return object(await rpc(WORKSPACE_ACTIONS.has(action)?'jobkix_workspace_command':'jobkix_command',{p_action:action,p_payload:payload,p_expected_version:version,p_idempotency_key:key}));
 }

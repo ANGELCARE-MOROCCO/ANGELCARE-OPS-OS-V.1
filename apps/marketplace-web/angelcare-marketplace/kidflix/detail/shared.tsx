@@ -13,6 +13,7 @@ import { asset, obj, rows, str, type Row } from "./model";
 import { local, t } from "./copy";
 import s from "./detail.module.css";
 export interface PlayerProps {
+  openPlayer?: () => void;
   preview?: boolean;
   runAction?: (
     operation: string,

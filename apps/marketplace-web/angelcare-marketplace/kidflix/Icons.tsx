@@ -1,5 +1,6 @@
 import {
   BookOpen,
+  Maximize, Minimize, Share2, Image, Users, Languages, Target, Info, Monitor, CalendarDays, ClipboardCheck, LockKeyhole, BookmarkCheck, Package, LayoutGrid,
   CircleCheck,
   Pause, Calculator, FlaskConical, Palette, Pencil, Flame,
   Printer,
@@ -49,6 +50,7 @@ import {
 } from "lucide-react";
 const icons = {
   BookOpen,
+  Maximize, Minimize, Share2, Image, Users, Languages, Target, Info, Monitor, CalendarDays, ClipboardCheck, LockKeyhole, BookmarkCheck, Package, LayoutGrid,
   CircleCheck,
   Pause, Calculator, FlaskConical, Palette, Pencil, Flame,
   Printer,

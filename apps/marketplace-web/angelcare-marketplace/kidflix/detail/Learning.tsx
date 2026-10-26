@@ -1,4 +1,5 @@
 "use client";
+import { clientId } from "./client-id";
 import { useEffect, useRef, useState } from "react";
 import {
   availableNodes,
@@ -254,8 +255,8 @@ function Certificate({ m, d, locale, state }: PlayerProps) {
     [receipt, setReceipt] = useState(""),
     attempt = useRef(""),
     ids = useRef({
-      evidence: crypto.randomUUID(),
-      request: crypto.randomUUID(),
+      evidence: clientId(),
+      request: clientId(),
       hash: "",
     }),
     controller = useRef<AbortController | null>(null);
@@ -269,7 +270,7 @@ function Certificate({ m, d, locale, state }: PlayerProps) {
     try {
       const hash = JSON.stringify(details);
       if (hash !== ids.current.hash) {
-        ids.current.request = crypto.randomUUID();
+        ids.current.request = clientId();
         ids.current.hash = hash;
       }
       if (!attempt.current) {

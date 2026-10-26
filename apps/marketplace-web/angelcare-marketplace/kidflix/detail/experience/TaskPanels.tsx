@@ -1,4 +1,5 @@
 "use client";
+import { clientId } from "../client-id";
 import Link from "next/link";
 import { useState } from "react";
 import { path, tr } from "../../catalogue";
@@ -72,6 +73,7 @@ export function ReadingIndex({ p }: { p: PlayerProps }) {
                 <Button
                   onClick={() => {
                     update({ index: units.indexOf(u), readerUnitId: u.id });
+                    p.openPlayer?.();
                     document
                       .getElementById("kidflix-experience-player")
                       ?.scrollIntoView();
@@ -126,6 +128,7 @@ export function StoryRoute({ p }: { p: PlayerProps }) {
               <Button
                 onClick={() => {
                   update({ index: units.indexOf(to), readerUnitId: to.id });
+                  p.openPlayer?.();
                   document
                     .getElementById("kidflix-experience-player")
                     ?.scrollIntoView();
@@ -212,6 +215,7 @@ export function CurriculumMap({ p }: { p: PlayerProps }) {
                   }
                   onClick={() => {
                     update({ index: units.indexOf(u) });
+                    p.openPlayer?.();
                     document
                       .getElementById("kidflix-experience-player")
                       ?.scrollIntoView();
@@ -289,7 +293,7 @@ export function ObservationDesk({ p }: { p: PlayerProps }) {
               observations: [
                 ...notes,
                 {
-                  id: crypto.randomUUID(),
+                  id: clientId(),
                   text: draft.trim(),
                   unitId: unit?.id || "",
                   at: position,
@@ -460,6 +464,7 @@ export function ScenarioLedger({ p }: { p: PlayerProps }) {
                         toolResult: null,
                         complete: false,
                       });
+                      p.openPlayer?.();
                       document
                         .getElementById("kidflix-experience-player")
                         ?.scrollIntoView();

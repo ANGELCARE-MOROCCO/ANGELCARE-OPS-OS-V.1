@@ -4,6 +4,7 @@ import type { Locale } from '../contracts';
 import type { ReactNode } from 'react';
 import { APPLICATION_STATUS,applicationStatus } from '../application-copy';
 import { studioSession } from '../server/studio-session';
+import { pathwayNotice } from '../pathway-notice';
 import { studioRows,studioPage,searchVacancies,type DataRow,type SearchResult } from '../server/repository';
 import { dependencyError } from '../server/http';
 import { Notifications } from '../components/Notifications';
@@ -38,7 +39,7 @@ export async function CandidatePage({locale,screen,id,search}:{locale:Locale;scr
  const session=await studioSession(locale,'candidate',href(locale,path,routeQuery));
  const profiles=await studioRows('profile',{user_id:session.userId});if(!profiles[0])redirect(href(locale,'onboarding',new URLSearchParams({intent:'candidate',next:href(locale,path,routeQuery)})));
  const profile=profiles[0],title=screenName(screen,locale);
- const wrap=(children:ReactNode)=><StudioShell locale={locale} mode="candidate" screenId={screen} title={title}>{queryValue(search,'next')?<Link className={s.textLink} href={safeReturnTo(queryValue(search,'next'),locale)}>{t(locale,'back')}</Link>:null}{children}</StudioShell>;
+ const wrap=(children:ReactNode)=><StudioShell locale={locale} mode="candidate" screenId={screen} title={title}>{queryValue(search,'pathway')==='rejected'?<p className={s.notice} role="status">{pathwayNotice(locale)}</p>:null}{queryValue(search,'next')?<Link className={s.textLink} href={safeReturnTo(queryValue(search,'next'),locale)}>{t(locale,'back')}</Link>:null}{children}</StudioShell>;
  let page=1;try{page=integer(Number(queryValue(search,'page')||1),'page',1,10000);}catch{return wrap(<Empty locale={locale} problem title={errorText(locale,'INVALID_INPUT')}/>);}
  if(['C10','C11','C12','C13','C14'].includes(screen))return wrap(<CandidateAccount locale={locale} screen={screen} session={session} profile={profile} search={search} page={page} path={path}/>);
  if(screen==='C02'){const params=new URLSearchParams();for(const [key,value] of Object.entries(search)){if(Array.isArray(value))for(const item of value)params.append(key,item);else if(value!==undefined)params.set(key,value);}let filters;try{filters=readFilters(params);}catch{return wrap(<Empty locale={locale} problem title={errorText(locale,'INVALID_INPUT')}/>);}let savedSearch:DataRow|null=null;const savedId=queryValue(search,'editSearch');if(savedId){try{uuid(savedId);}catch{return wrap(<Empty locale={locale} problem title={errorText(locale,'INVALID_INPUT')}/>);}savedSearch=(await studioRows('alerts',{id:savedId,user_id:session.userId}))[0]||null;if(!savedSearch)notFound();}const result=await searchVacancies(filters).then(value=>({value,error:null}),error=>({value:null,error:dependencyError(error).code}));return wrap(<><SearchCommand key={params.toString()} locale={locale} filters={filters} target="career/discovery" savedSearchId={savedSearch?str(savedSearch,'id'):undefined}/><SearchResults locale={locale} filters={filters} initialResult={result.value} initialError={result.error} studio savedSearch={savedSearch}/></>);}

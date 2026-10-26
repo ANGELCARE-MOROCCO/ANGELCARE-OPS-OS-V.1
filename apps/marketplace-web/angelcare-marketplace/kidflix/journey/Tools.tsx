@@ -79,9 +79,11 @@ export function SessionActions({ m, locale }: { m: Row; locale: Locale }) {
 export function ResourceSurface({
   props,
   children,
+  compact = false,
 }: {
   props: PlayerProps;
   children: ReactNode;
+  compact?: boolean;
 }) {
   const { m, d, state, update, locale } = props,
     c = capability(m),
@@ -94,6 +96,7 @@ export function ResourceSurface({
           .filter(Boolean)
       : [],
     [classroom, setClassroom] = useState(false),
+    [toolsOpen, setToolsOpen] = useState(false),
     [size, setSize] = useState(1),
     [spacing, setSpacing] = useState(1.7),
     [ruler, setRuler] = useState(false),
@@ -125,7 +128,8 @@ export function ResourceSurface({
   );
   return (
     <>
-      <div className={s.surface}>
+      {compact ? <button type="button" className={s.button} data-workspace-session-toggle aria-expanded={toolsOpen} onClick={() => setToolsOpen(v => !v)}>{tr(["Session & reading tools", "Séance et confort de lecture", "أدوات الجلسة والقراءة"], locale)} {toolsOpen ? "−" : "+"}</button> : null}
+      <div className={s.surface} hidden={compact && !toolsOpen}>
         <div className={s.toolbar}>
           <SessionActions m={m} locale={locale} />
           {c.classroom ? (

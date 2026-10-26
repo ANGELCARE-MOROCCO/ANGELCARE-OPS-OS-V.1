@@ -1,4 +1,5 @@
 "use client";
+import { clientId } from "./client-id";
 import { useEffect, useRef, useState } from "react";
 import { useNativeCheck, BridgeLaboratory } from "./experience/Interactions";
 import { tr } from "../catalogue";
@@ -457,7 +458,7 @@ function NativeActivities({
     controller = useRef<AbortController | null>(null),
     locked = useRef(false),
     attempts = num(state.attempts),
-    [channel] = useState(() => crypto.randomUUID().replaceAll("-", ""));
+    [channel] = useState(() => clientId().replaceAll("-", ""));
   const challenge = engine === "challenge",
     deadline = num(state.deadline),
     remaining = deadline

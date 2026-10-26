@@ -232,7 +232,7 @@ function Shelf({
       );
       if (!response.ok) throw Error("DISCOVERY_UNAVAILABLE");
       const value = await response.json();
-      if (!Array.isArray(value.rows) || value.page !== next)
+      if (!Array.isArray(value.rows) || value.page !== next || value.rows.some((r: Row) => !r || !str(r.key) || !str(r.title) || !world(str(r.family)) || !Array.isArray(r.formats) || r.formats.some((format: unknown) => typeof format !== "string")))
         throw Error("INVALID_PAGE");
       const offset = rail.current?.scrollLeft || 0;
       setItems((old) => [

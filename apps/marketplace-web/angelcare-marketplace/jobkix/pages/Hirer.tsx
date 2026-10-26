@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
 import type { Locale } from '../contracts';
 import { studioSession } from '../server/studio-session';
+import { pathwayNotice } from '../pathway-notice';
 import { hiringContext,hiringCapability } from '../server/hiring-context';
 import { studioRows,studioPage,hiringReceipt,type DataRow } from '../server/repository';
 import { dependencyError } from '../server/http';
@@ -35,7 +36,7 @@ export async function HirerPage({locale,screen,id,search}:{locale:Locale;screen:
  const org=search.new==='1'&&screen==='H13'?null:context.organization,organizationId=org?str(org,'id'):null;
  const navParams=organizationId?new URLSearchParams({organization:organizationId}):undefined;
  const selector=context.organizations.total?<form method="get" action={href(locale,screen==='H04'?'hiring/vacancies':path)} className={s.organizationSelector}><StudioFormSelection key={session.userId+':'+organizationId} locale={locale} kind="organizations" label={t(locale,'organizationContext')} initial={context.organizations} value={organizationId||''} name="organization" required/><button className={`${s.button} ${s.secondary}`} type="submit">{t(locale,'continue')}</button></form>:null;
- const wrap=(children:ReactNode)=><StudioShell key={session.userId+':'+organizationId} locale={locale} mode="hirer" screenId={screen} title={screenName(screen,locale)} organizationId={organizationId||undefined} context={selector}>{children}</StudioShell>;
+ const wrap=(children:ReactNode)=><StudioShell key={session.userId+':'+organizationId} locale={locale} mode="hirer" screenId={screen} title={screenName(screen,locale)} organizationId={organizationId||undefined} context={selector}>{search.pathway==='rejected'?<p className={s.notice} role="status">{pathwayNotice(locale)}</p>:null}{children}</StudioShell>;
  if(screen==='H13'){
   if(!org){const drafts=await studioRows('drafts',{user_id:session.userId,kind:'organization',draft_key:'new-organization'});return wrap(<><SectionHeading title={h(locale,'organizationTitle')} description={h(locale,'organizationHelp')}/><OrganizationEditor locale={locale} organization={null} privateRecord={null} draft={drafts[0]||null}/></>);}
   const selectedSite=typeof search.site==='string'?uuid(search.site):null,sitesPage=integer(Number(search.sitesPage||1),'sitesPage',1,10000),siteKey='site:'+str(org,'id')+':'+(selectedSite||'new');
