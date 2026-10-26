@@ -33,20 +33,13 @@ export async function AuthPage({locale,screen,search}:{locale:Locale;screen:stri
   if(session.state==='restricted'&&mode==='onboarding')return <Empty locale={locale} problem title={errorText(locale,'ACCOUNT_RESTRICTED')}/>;
   if(session.state==='active'&&(mode==='sign-in'||mode==='sign-up'||mode==='confirmation'))redirect(href(locale,session.pathway==='candidate'?'career':'hiring',session.pathway!==intent?new URLSearchParams({pathway:'rejected'}):undefined));
   if(session.state==='onboarding'&&(mode==='sign-in'||mode==='sign-up'||mode==='confirmation'))redirect(href(locale,'onboarding',new URLSearchParams({intent,next})));
-  if(mode==='onboarding'&&(session.state==='onboarding'||session.state==='active')){
-   if(session.state==='active')redirect(href(locale,session.pathway==='candidate'?'career':'hiring',session.pathway!==intent?new URLSearchParams({pathway:'rejected'}):undefined));
-   let hasProfile=false;
+  if(mode==='onboarding'&&session.state==='onboarding'){
    try{
     const client=await createUserClient(),user=await client.auth.getUser();
     const name=user.data.user?.user_metadata?.full_name;initialName=typeof name==='string'?name.slice(0,180):'';
-    if(session.state==='active'){
-     const profile=await client.from('jobkix_candidates').select('id').eq('user_id',session.userId).maybeSingle();
-     if(profile.error)throw profile.error;hasProfile=Boolean(profile.data);
-    }
    }catch(error){
     return <Empty locale={locale} problem title={errorText(locale,dependencyError(error).code)}/>;
    }
-   if(hasProfile)redirect(next);
   }
  }
  let terms=null;try{if(mode==='sign-up'||mode==='onboarding')terms=await accountTerms(locale);}catch{/* Display the unavailable publication state; do not accept unreviewed terms. */}
