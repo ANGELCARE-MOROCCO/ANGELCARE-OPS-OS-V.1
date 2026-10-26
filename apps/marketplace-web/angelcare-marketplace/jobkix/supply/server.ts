@@ -4,6 +4,7 @@ import {createServiceClient} from '@/lib/supabase/server';
 import {hasMarketplaceWorkspaceAccess,requireMarketplaceApiContext} from '@/angelcare-marketplace/auth/context';
 import {JobkixFault} from '../contracts';
 import {sourceInput,normalizeVacancy,type SourceInput} from './contracts';
+import {collectInlineApi} from './inline-api';
 
 type Row=Record<string,unknown>;
 const fail=(message:string):never=>{throw new Error(message)};
@@ -17,6 +18,36 @@ export async function supplyAdmin(){const c=await requireMarketplaceApiContext('
 export const workerAuthorized=(key:string)=>{const expected=process.env.JOBKIX_SUPPLY_WORKER_KEY||'';if(expected.length<32||key.length!==expected.length)return false;return timingSafeEqual(Buffer.from(key),Buffer.from(expected))};
 async function event(action:string,actor:string,details:Row={}){const db=await createServiceClient();const {error}=await db.from('jobkix_supply_events').insert({actor,action,source_id:details.source_id||null,mission_id:details.mission_id||null,vacancy_id:details.vacancy_id||null,data:details.data||{}});if(error)fail('Supply audit write failed: '+error.message)}
 const mandatory=async(result:{error?:{message:string}|null})=>{if(result.error)fail('Supply storage error: '+result.error.message)};
+
+type InlineApiSource={country:string;endpoint:string;config:unknown;credential_cipher?:string|null;credential_header?:string|null};
+async function runInlineApiMission(id:string,source:InlineApiSource):Promise<{id:string;state:'completed';processed:number;accepted:number;rejected:number}>{
+ const db=await createServiceClient(),worker='internal-api-'+randomBytes(8).toString('hex');
+ const now=new Date();
+ const claim=await db.from('jobkix_supply_missions').update({
+  state:'running',worker_id:worker,started_at:now.toISOString(),updated_at:now.toISOString(),
+  attempts:1,lease_until:new Date(now.getTime()+120000).toISOString()
+ }).eq('id',id).eq('state','queued').is('worker_id',null).select('id').maybeSingle();
+ await mandatory(claim);
+ if(!claim.data)throw Error('Mission was already claimed, cancelled or completed. Refresh Live Missions.');
+ try{
+  const credential=source.credential_cipher?unseal(source.credential_cipher):'';
+  const items=await collectInlineApi({endpoint:source.endpoint,country:source.country,config:source.config,
+   credential,credentialHeader:source.credential_header||''});
+  const result=await workerBatch(worker,{missionId:id,items});
+  if(items.length>0&&result.accepted===0)throw Error('No valid vacancies after mapping. Check title and URL fields, then retry.');
+  await workerFinish(worker,{missionId:id,success:true});
+  return {id,state:'completed',processed:result.processed,accepted:result.accepted,rejected:result.rejected};
+ }catch(error){
+  const reason=error instanceof Error?error.message:String(error);
+  try{await workerFinish(worker,{missionId:id,success:false,error:reason});}
+  catch{
+   await db.from('jobkix_supply_missions').update({state:'failed',ended_at:new Date().toISOString(),error_message:reason.slice(0,450)})
+    .eq('id',id).eq('worker_id',worker).eq('state','running');
+  }
+  throw Error('API collection failed: '+reason);
+ }
+}
+
 export async function adminRead(section:string,params:URLSearchParams){await supplyAdmin();const db=await createServiceClient();const id=params.get('id');
  if(section==='overview'){
   const tables=['jobkix_supply_sources','jobkix_supply_missions','jobkix_supply_vacancies'] as const;
@@ -49,10 +80,17 @@ export async function adminCommand(body:Row):Promise<unknown>{const actor=await 
  if(a==='source.test'){const p=sourceInput(body.source);return {valid:true,engine:p.kind,details:p.kind==='api'?'JSON/RSS field mapping configured':p.kind==='scrapy'?'CSS selectors configured':'JobSpy board parameters configured',note:'Configuration validation only; remote collection is verified by a real mission.'};}
  if(a==='vacancy.batch'){const ids=Array.isArray(body.items)?body.items:[];if(ids.length<1||ids.length>20)fail('Choose 1–20 records');const results=[];for(const item of ids){if(!item||typeof item!=='object')fail('Invalid batch record');const record=item as Row;results.push(await adminCommand({action:'vacancy.decide',id:record.id,version:record.version,decision:body.decision}));}return {changed:results.length,rows:results};}
  if(a==='mission.start'){
-  const id=uuid(body.sourceId),source=await db.from('jobkix_supply_sources').select('id,name,kind,country,endpoint,config,version,enabled,approved,publication_mode').eq('id',id).maybeSingle();await mandatory(source);
+  const id=uuid(body.sourceId),source=await db.from('jobkix_supply_sources').select('id,name,kind,country,endpoint,config,version,enabled,approved,publication_mode,credential_cipher,credential_header').eq('id',id).maybeSingle();await mandatory(source);
   if(!source.data?.approved||!source.data.enabled)throw new Error('Source is not enabled and approved');
-  const ongoing=await db.from('jobkix_supply_missions').select('id').eq('source_id',id).in('state',['queued','running']).limit(1);await mandatory(ongoing);if(ongoing.data?.length)fail('A mission is already queued or running for this source');
-  const result=await db.from('jobkix_supply_missions').insert({source_id:id,country:source.data.country,config_snapshot:{kind:source.data.kind,endpoint:source.data.endpoint,config:source.data.config,publication_mode:source.data.publication_mode},source_version:source.data.version,created_by:user}).select('id,state').single();await mandatory(result);await event('mission.queued',user,{source_id:id,mission_id:result.data!.id});return result.data;
+  if(source.data.kind!=='api')throw Error('This engine is not available in the current Marketplace deployment. Only bounded JSON API collection is enabled.');
+  const ongoing=await db.from('jobkix_supply_missions').select('id,state').eq('source_id',id).in('state',['queued','running']).order('created_at',{ascending:true}).limit(1);await mandatory(ongoing);
+  if(ongoing.data?.length){
+   if(ongoing.data[0].state==='queued')return runInlineApiMission(ongoing.data[0].id,source.data);
+   throw Error('A mission is already running for this source. See Live Missions.');
+  }
+  const result=await db.from('jobkix_supply_missions').insert({source_id:id,country:source.data.country,config_snapshot:{kind:source.data.kind,endpoint:source.data.endpoint,config:source.data.config,publication_mode:source.data.publication_mode},source_version:source.data.version,created_by:user}).select('id,state').single();await mandatory(result);
+  await event('mission.queued',user,{source_id:id,mission_id:result.data!.id});
+  return runInlineApiMission(result.data!.id,source.data);
  }
  if(a==='mission.cancel'){
   const id=uuid(body.id),result=await db.from('jobkix_supply_missions').update({state:'cancelled',ended_at:new Date().toISOString()}).eq('id',id).in('state',['queued','running']).select('id,state').maybeSingle();await mandatory(result);if(!result.data)throw new Error('Only queued/running missions can be cancelled');await event('mission.cancelled',user,{mission_id:id});return result.data;
