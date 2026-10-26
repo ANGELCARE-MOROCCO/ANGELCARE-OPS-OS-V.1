@@ -84,7 +84,7 @@
 .brand {
   flex: 0 0 156px;
 }
-.brand img {
+.brand :is(img,[data-imagery-art]) {
   display: block;
   width: 156px;
   height: 65px;
@@ -618,7 +618,7 @@
   background: #f5f9ff;
   overflow: hidden;
 }
-.resourceCover img {
+.resourceCover :is(img,[data-imagery-art]) {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -915,7 +915,7 @@
   .brand {
     flex-basis: 126px;
   }
-  .brand img {
+  .brand :is(img,[data-imagery-art]) {
     width: 126px;
     height: 53px;
   }
@@ -1110,7 +1110,7 @@
   .brand {
     flex-basis: 110px;
   }
-  .brand img {
+  .brand :is(img,[data-imagery-art]) {
     width: 110px;
   }
   .account svg {
@@ -1236,7 +1236,7 @@
   .brand {
     flex-basis: 108px;
   }
-  .brand img {
+  .brand :is(img,[data-imagery-art]) {
     width: 108px;
     height: 45px;
   }
@@ -1543,7 +1543,7 @@
   z-index: 0;
 }
 
-.promo > img {
+.promo > :is(img,[data-imagery-art]) {
   position: absolute;
   inset: 0;
   width: 100%;

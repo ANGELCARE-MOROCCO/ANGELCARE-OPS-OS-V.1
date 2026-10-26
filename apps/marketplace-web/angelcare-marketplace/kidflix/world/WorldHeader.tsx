@@ -1,4 +1,5 @@
 "use client";
+import {Artwork} from "../imagery/Runtime";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import {
@@ -18,7 +19,7 @@ import { discoveryHref, localizedHref, routeFamily } from "./model";
 import s from "./shell.module.css";
 export function CategoryMark({ index }: { index: number }) {
   return (
-    <span
+    <Artwork kind="sprite" slot={`shared.header.category.${WORLDS[index].key}`} section="Shared category navigation" label={WORLDS[index].title[0]}
       className={s.categoryMark}
       aria-hidden="true"
       style={{

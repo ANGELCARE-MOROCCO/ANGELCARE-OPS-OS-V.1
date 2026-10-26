@@ -1,4 +1,5 @@
 "use client";
+import {Artwork} from "../imagery/Runtime";
 import type { CSSProperties } from "react";
 import { I } from "../Icons";
 import { ART } from "./model";
@@ -9,11 +10,13 @@ export {
   useWorldSettings as useDocumentsSettings,
 } from "../world/Settings";
 export function ArtIcon({
+  slot,
   index,
   nav = false,
   className = "",
   size,
 }: {
+  slot?:string;
   index: number;
   nav?: boolean;
   className?: string;
@@ -28,7 +31,7 @@ export function ArtIcon({
   const columns = nav ? 4 : 6,
     rows = nav ? 4 : 5;
   return (
-    <span
+    <Artwork kind="sprite" slot={slot}
       aria-hidden="true"
       className={`${s.artIcon} ${className}`}
       style={

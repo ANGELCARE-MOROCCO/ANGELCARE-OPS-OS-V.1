@@ -1,4 +1,5 @@
 "use client";
+import {Artwork,HeroPlacement} from "../imagery/Runtime";
 import Link from "next/link";
 import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 import { path, tr, world, WORLDS, type Locale, type Tri } from "../catalogue";
@@ -41,40 +42,7 @@ import {
   type ReferenceItem,
 } from "./model";
 import s from "./reference.module.css";
-const focusArtByFamily: Record<string, number[]> = {
-  printables: [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
-  stories: [18, 6, 8, 13, 10, 11, 21, 13, 14, 4, 16, 28],
-  learning: [28, 6, 8, 9, 10, 17, 12, 13, 14, 4, 16, 28],
-  video: [27, 6, 8, 9, 10, 11, 12, 13, 14, 4, 16, 21],
-  audio: [26, 6, 18, 26, 10, 28, 11, 13, 14, 33, 16, 21],
-  "visual-cards": [8, 6, 0, 9, 10, 11, 30, 13, 14, 4, 16, 21],
-  presentations: [29, 6, 18, 19, 10, 11, 21, 13, 14, 5, 16, 28],
-  assessments: [8, 6, 18, 9, 10, 11, 30, 20, 14, 4, 16, 28],
-  activities: [6, 21, 18, 9, 10, 11, 12, 13, 14, 1, 16, 28],
-  tools: [9, 33, 32, 9, 10, 11, 32, 13, 20, 17, 1, 28],
-  planners: [33, 21, 8, 19, 5, 17, 21, 13, 14, 4, 16, 1],
-  forms: [34, 21, 17, 30, 8, 4, 25, 13, 14, 33, 16, 28],
-  community: [21, 6, 8, 30, 10, 28, 21, 13, 14, 4, 16, 5],
-  commerce: [17, 6, 8, 9, 10, 11, 12, 13, 14, 4, 16, 28],
-  bundles: [35, 6, 8, 9, 10, 11, 17, 13, 14, 33, 16, 28],
-};
-const nativeArt: Record<string, number[]> = {
-  printables: [0, 1, 2, 3, 4, 5],
-  stories: [18, 14, 8, 1, 6, 25],
-  learning: [28, 1, 10, 13, 23, 17],
-  video: [27, 13, 11, 10, 23, 25],
-  audio: [26, 18, 14, 28, 1, 22],
-  "visual-cards": [8, 0, 10, 13, 4, 6],
-  presentations: [29, 29, 18, 28, 5, 19],
-  assessments: [30, 28, 22, 11, 17, 31],
-  activities: [31, 10, 13, 1, 23, 11],
-  tools: [9, 33, 10, 32, 15, 16],
-  planners: [33, 19, 4, 5, 1, 23],
-  forms: [17, 33, 28, 14, 34, 4],
-  community: [14, 17, 23, 30, 13, 5],
-  commerce: [5, 25, 28, 8, 15, 1],
-  bundles: [35, 35, 8, 22, 5, 23],
-};
+import {focusArtByFamily,nativeArt} from "../imagery/category-art";
 const stageChoices = STAGES.map((s) => ({ key: s.key, label: s.title }));
 function Atlas({
   sheet,
@@ -82,7 +50,9 @@ function Atlas({
   columns = 4,
   rows = 4,
   className = "",
+  slot,
 }: {
+  slot?:string;
   sheet: string;
   index: number;
   columns?: number;
@@ -90,7 +60,7 @@ function Atlas({
   className?: string;
 }) {
   return (
-    <span
+    <Artwork kind="sprite" slot={slot}
       className={`${s.atlas} ${className}`}
       aria-hidden="true"
       style={{
@@ -102,12 +72,14 @@ function Atlas({
   );
 }
 function Heading({
+  slot,
   icon,
   title,
   children,
   action,
 }: {
   icon: number;
+  slot:string;
   title: string;
   children?: ReactNode;
   action?: ReactNode;
@@ -115,7 +87,7 @@ function Heading({
   return (
     <div className={s.heading}>
       <h2>
-        <Art index={icon} />
+        <Art slot={`heading.${slot}`} index={icon} />
         {title}
       </h2>
       {children ? <small>{children}</small> : null}
@@ -178,7 +150,7 @@ function ResourceCard({
         onClick={() => guest.visit(item.key)}
       >
         {item.image ? (
-          <img
+          <img data-imagery-owner="resource-owned" data-imagery-record={item.id}
             src={item.image}
             alt={item.imageAlt || item.title}
             width={320}
@@ -529,7 +501,7 @@ export function ReferenceStorefront({
           <p>{text("searchHelp", locale)}</p>
         </div>
         {family === "printables" ? (
-          <Atlas
+          <Atlas slot="finder.papers"
             sheet="printable-packs"
             index={0}
             columns={5}
@@ -690,7 +662,7 @@ export function ReferenceStorefront({
       <div className={s.discoveryOpening}>
         {filters}
         <section className={s.section} id="subcategories">
-          <Heading
+          <Heading slot="categories"
             icon={5}
             title={text("categories", locale)}
             action={
@@ -713,14 +685,14 @@ export function ReferenceStorefront({
                   select("subtype", values.subtype === c.id ? "" : c.id)
                 }
               >
-                <Art index={nativeArt[family][i]} />
+                <Art slot={`categories.${c.id}`} index={nativeArt[family][i]} />
                 <strong>{tr(c.label, locale)}</strong>
               </button>
             ))}
           </div>
         </section>
         <section className={s.section}>
-          <Heading
+          <Heading slot="focus"
             icon={5}
             title={text("focusTitle", locale)}
             action={
@@ -743,7 +715,7 @@ export function ReferenceStorefront({
                   select("focus", values.focus === c.key ? "" : c.key)
                 }
               >
-                <Art index={focusArt[i]} />
+                <Art slot={`focus.${c.key}`} index={focusArt[i]} />
                 <strong>{tr(c.title, locale)}</strong>
               </button>
             ))}
@@ -755,7 +727,7 @@ export function ReferenceStorefront({
         id="discover"
         aria-label={text("catalogue", locale)}
       >
-        <Heading
+        <Heading slot="catalogue"
           icon={family === "printables" ? 25 : nativeArt[family][0]}
           title={text(
             family === "printables" ? "printables" : "catalogue",
@@ -793,7 +765,7 @@ export function ReferenceStorefront({
         </div>
         {error ? (
           <div className={s.empty} role="alert">
-            <Art index={34} />
+            <Art slot="catalogue.error" index={34} />
             <h3>{text("error", locale)}</h3>
             {setup ? <p>{text("setup", locale)}</p> : null}
             <button
@@ -813,7 +785,7 @@ export function ReferenceStorefront({
           </div>
         ) : (
           <div className={s.empty} role="status">
-            <Art index={nativeArt[family][0]} />
+            <Art slot="catalogue.empty" index={nativeArt[family][0]} />
             <h3>{text(busy ? "loading" : "empty", locale)}</h3>
             <p>{text("emptyHelp", locale)}</p>
             <button className={s.secondary} onClick={reset}>
@@ -842,7 +814,7 @@ export function ReferenceStorefront({
         ) : null}
       </section>
       <section className={s.section}>
-        <Heading
+        <Heading slot="needs"
           icon={5}
           title={text("needTitle", locale)}
           action={
@@ -860,7 +832,7 @@ export function ReferenceStorefront({
               onClick={() => select("need", values.need === c.key ? "" : c.key)}
               key={c.key}
             >
-              <Art
+              <Art slot={`needs.${c.key}`}
                 index={
                   family === "forms"
                     ? [34, 17, 33, 30, 25, 4][i]
@@ -875,7 +847,7 @@ export function ReferenceStorefront({
         </div>
       </section>
       <section className={`${s.section} ${s.workflow}`} id="category-workspace">
-        <Heading
+        <Heading slot="workspace"
           icon={family === "printables"?24:nativeArt[family][0]}
           title={tr(p.workflow, locale)}
           action={
@@ -911,7 +883,7 @@ export function ReferenceStorefront({
     }));
   const packs = (
     <section className={s.section} id="category-collections">
-      <Heading
+      <Heading slot="packs"
         icon={5}
         title={text(family === "printables" ? "packs" : "collections", locale)}
       >
@@ -942,13 +914,13 @@ export function ReferenceStorefront({
             }
           >
             {family === "printables" ? (
-              <Atlas sheet="printable-packs" columns={5} rows={1} index={i} />
+              <Atlas slot={`packs.${PRINT_PACKS[i].focus}`} sheet="printable-packs" columns={5} rows={1} index={i} />
             ) : (
               <div className={s.packScene}>
-                <Art index={focusArt[n]} />
+                <Art slot={`packs.${choices[n].key}.main`} index={focusArt[n]} />
                 <span>
-                  <Art index={nativeArt[family][i]} />
-                  <Art index={nativeArt[family][(i + 2) % 6]} />
+                  <Art slot={`packs.${choices[n].key}.support-a`} index={nativeArt[family][i]} />
+                  <Art slot={`packs.${choices[n].key}.support-b`} index={nativeArt[family][(i + 2) % 6]} />
                 </span>
               </div>
             )}
@@ -969,7 +941,7 @@ export function ReferenceStorefront({
   const directories = (
     <section className={`${s.section} ${s.directories}`}>
       <div>
-        <Heading icon={28} title={text("ageTitle", locale)} />
+        <Heading slot="ages" icon={28} title={text("ageTitle", locale)} />
         <div className={s.directoryGrid}>
           {stageChoices.map((c) => (
             <button key={c.key} onClick={() => select("stage", c.key)}>
@@ -982,7 +954,7 @@ export function ReferenceStorefront({
         </div>
       </div>
       <div>
-        <Heading icon={8} title={text("subjects", locale)} />
+        <Heading slot="subjects" icon={8} title={text("subjects", locale)} />
         <div className={s.directoryGrid}>
           {data.facets.subject?.length
             ? data.facets.subject.slice(0, 12).map((v) => (
@@ -998,7 +970,7 @@ export function ReferenceStorefront({
         </div>
       </div>
       <div>
-        <Heading icon={22} title={text("seasons", locale)} />
+        <Heading slot="seasons" icon={22} title={text("seasons", locale)} />
         <div className={s.seasons}>
           {THEMES.map((c, i) => (
             <button key={c.key} onClick={() => select("theme", c.key)}>
@@ -1015,7 +987,7 @@ export function ReferenceStorefront({
   const support = (
     <section className={`${s.section} ${s.support}`}>
       <div>
-        <Heading icon={24} title={text("tools", locale)} />
+        <Heading slot="tools" icon={24} title={text("tools", locale)} />
         <div className={s.toolButtons}>
           {family === "printables"
             ? [
@@ -1042,7 +1014,7 @@ export function ReferenceStorefront({
               ))
             : native.slice(0, 4).map((c, i) => (
                 <button onClick={() => select("subtype", c.id)} key={c.id}>
-                  <Art index={nativeArt[family][i]} />
+                  <Art slot={`support.tool.${c.id}`} index={nativeArt[family][i]} />
                   {tr(c.label, locale)}
                 </button>
               ))}
@@ -1057,18 +1029,18 @@ export function ReferenceStorefront({
         </div>
       </div>
       <div>
-        <Heading icon={19} title={text("progressions", locale)} />
+        <Heading slot="progressions" icon={19} title={text("progressions", locale)} />
         <div className={s.progressionTiles}>
           {[0, 3, 5, 9].map((n, i) => (
             <button key={n} onClick={() => select("focus", choices[n].key)}>
-              <Art index={[8, 19, 11, 17][i]} />
+              <Art slot={`support.progression.${choices[n].key}`} index={[8, 19, 11, 17][i]} />
               <strong>{tr(choices[n].title, locale)}</strong>
             </button>
           ))}
         </div>
       </div>
       <div>
-        <Heading
+        <Heading slot="recent"
           icon={5}
           title={text(
             values.sort === "title" || page > 1 ? "selection" : "recent",
@@ -1086,7 +1058,7 @@ export function ReferenceStorefront({
               <Link key={r.key} href={detailHref(r, locale)}>
                 {r.image ? (
                   <img
-                    src={r.image}
+                    data-imagery-owner="resource-owned" data-imagery-record={r.id} src={r.image}
                     width={100}
                     height={90}
                     alt=""
@@ -1101,7 +1073,7 @@ export function ReferenceStorefront({
           </div>
         ) : (
           <div className={s.miniEmpty}>
-            <Art index={nativeArt[family][0]} />
+            <Art slot="support.recent-empty" index={nativeArt[family][0]} />
             <span>{text("empty", locale)}</span>
             <ScrollLink>{text("viewAll", locale)}</ScrollLink>
           </div>
@@ -1160,6 +1132,7 @@ export function ReferenceStorefront({
             <I name="ArrowRight" size={18} />
           </a>
         </div>
+        <HeroPlacement src={ART+family+"-hero.png"} className={customGallery?s.heroMedia:s.printHeroArt} width={2172} height={724}>
         {customGallery ? (
           <div className={s.heroMedia}>
             <PublisherGallery
@@ -1187,6 +1160,7 @@ export function ReferenceStorefront({
             fetchPriority="high"
           />
         )}
+        </HeroPlacement>
       </section>
       <div className={s.assurances}>
         {(family === "printables"
@@ -1290,7 +1264,7 @@ export function ReferenceStorefront({
             ]
         ).map((a, i) => (
           <div key={i}>
-            <Art index={a.icon} />
+            <Art slot={`assurance.${["purpose","preview","context","inclusion","workspace"][i]}`} index={a.icon} />
             <span>
               <strong>{tr(a.label as unknown as Tri, locale)}</strong>
               <small>{tr(a.sub as unknown as Tri, locale)}</small>
@@ -1323,7 +1297,7 @@ export function ReferenceStorefront({
                       srcSet={edition[`${slot}Mobile`]}
                     />
                   ) : null}
-                  <img
+                  <Artwork slot={`editorial.${slot}`} sequence
                     src={edition[slot]}
                     alt={edition[`${slot}Alt`]}
                     width={600}
@@ -1417,7 +1391,7 @@ export function ReferenceStorefront({
               {rows.map((r) => (
                 <Link key={r.key} href={workspaceHref(r, locale)}>
                   {r.image ? (
-                    <img src={r.image} alt="" width={64} height={64} />
+                    <img data-imagery-owner="resource-owned" data-imagery-record={r.id} src={r.image} alt="" width={64} height={64} />
                   ) : (
                     <Art index={nativeArt[family][0]} />
                   )}
@@ -1535,7 +1509,7 @@ function QuickPreview({
           {image ? (
             <img src={image.url} alt={image.alt} width={640} height={480} />
           ) : r.image ? (
-            <img src={r.image} alt={r.imageAlt} width={640} height={480} />
+            <img data-imagery-owner="resource-owned" data-imagery-record={r.id} src={r.image} alt={r.imageAlt} width={640} height={480} />
           ) : (
             <p>{text("noPreview", locale)}</p>
           )}

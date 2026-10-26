@@ -7,6 +7,7 @@ import { usePersonal } from "./journey/store";
 import { j } from "./journey/copy";
 import { Navigation } from "./Navigation";
 import { KidFlixFooter } from "./personal/KidFlixFooter";
+import { ImageryProvider } from "./imagery/Runtime";
 import { WorldHeader } from "./world/WorldHeader";
 import { WorldSettingsProvider, useWorldSettings } from "./world/Settings";
 import { routeFamily } from "./world/model";
@@ -69,11 +70,11 @@ export function KidFlixShell({
 }) {
   return (
     <GuestProvider>
-      <WorldSettingsProvider locale={locale}>
+      <WorldSettingsProvider locale={locale}><ImageryProvider>
         <Content locale={locale} categoryFamily={categoryFamily}>
           {children}
         </Content>
-      </WorldSettingsProvider>
+      </ImageryProvider></WorldSettingsProvider>
     </GuestProvider>
   );
 }

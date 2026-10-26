@@ -1,0 +1,356 @@
+.scope {
+  display: contents;
+}
+.art {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  overflow: hidden;
+  isolation: isolate;
+  min-width: 0;
+  max-width: 100%;
+  width: var(--image-width, auto);
+  aspect-ratio: var(--image-aspect, auto);
+}
+.art[data-hidden="true"] {
+  visibility: hidden;
+}
+.original {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: inherit;
+}
+.originalSprite {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-size: inherit;
+  background-position: inherit;
+}
+.layer {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  border: 0 !important;
+  margin: 0 !important;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+  object-fit: cover;
+}
+.current {
+  z-index: 2;
+  animation: fade var(--transition-speed, 400ms) ease both;
+}
+.art[data-transition="slide"] .current {
+  animation-name: slide;
+}
+.art[data-transition="cut"] .current {
+  animation: none;
+}
+.art[data-slow-zoom="true"] .current {
+  animation:
+    fade var(--transition-speed) ease both,
+    zoom 20s linear forwards;
+}
+.badges {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: inherit;
+}
+.badge {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: calc(100% - 16px);
+  white-space: nowrap;
+  font:
+    800 9px/1.2 system-ui,
+    sans-serif;
+  padding: 4px 7px;
+  color: var(--badge-color);
+  background: var(--badge-bg);
+  border-radius: 20px;
+  transform: rotate(var(--badge-rotate));
+  transform-origin: center;
+  animation-duration: var(--badge-speed);
+  animation-delay: var(--badge-delay);
+  animation-iteration-count: var(--badge-repeat);
+  animation-timing-function: ease-in-out;
+}
+.badge > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.badge svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+.badge[data-size="small"] {
+  font-size: 11px;
+  padding: 5px 8px;
+}
+.badge[data-size="medium"] {
+  font-size: 13px;
+  padding: 6px 10px;
+}
+.badge[data-size="medium"] svg {
+  width: 17px;
+  height: 17px;
+}
+.badge[data-shape="sticker"] {
+  padding: 4px;
+  border-radius: 7px;
+}
+.badge[data-shape="rectangle"] {
+  border-radius: 3px;
+}
+.badge[data-shape="ribbon"] {
+  border-radius: 2px 2px 8px 2px;
+  padding-inline: 11px;
+}
+.badge[data-shape="folded"] {
+  border-radius: 2px 8px 2px 2px;
+  border-bottom: 3px solid #0002;
+}
+.badge[data-shape="seal"] {
+  border-radius: 50%;
+  aspect-ratio: 1;
+  justify-content: center;
+  white-space: normal;
+  text-align: center;
+  padding: 8px;
+}
+.badge[data-corner="top-right"] {
+  top: var(--badge-y);
+  right: var(--badge-x);
+}
+.badge[data-corner="top-left"] {
+  top: var(--badge-y);
+  left: var(--badge-x);
+}
+.badge[data-corner="bottom-right"] {
+  bottom: var(--badge-y);
+  right: var(--badge-x);
+}
+.badge[data-corner="bottom-left"] {
+  bottom: var(--badge-y);
+  left: var(--badge-x);
+}
+:global([dir="rtl"]) .badge[data-relative="true"][data-corner="top-right"] {
+  right: auto;
+  left: var(--badge-x);
+}
+:global([dir="rtl"]) .badge[data-relative="true"][data-corner="top-left"] {
+  left: auto;
+  right: var(--badge-x);
+}
+:global([dir="rtl"]) .badge[data-relative="true"][data-corner="bottom-right"] {
+  right: auto;
+  left: var(--badge-x);
+}
+:global([dir="rtl"]) .badge[data-relative="true"][data-corner="bottom-left"] {
+  left: auto;
+  right: var(--badge-x);
+}
+.badge[data-motion="pulse"] {
+  animation-name: pulse;
+}
+.badge[data-motion="glow"] {
+  animation-name: glow;
+}
+.badge[data-motion="bounce"] {
+  animation-name: bounce;
+}
+.badge[data-motion="shine"] {
+  animation-name: glow;
+  background-image: linear-gradient(
+    115deg,
+    transparent 30%,
+    #fff6 50%,
+    transparent 70%
+  );
+  background-size: 250% 100%;
+}
+.badge[data-motion="entrance"] {
+  animation-name: fade;
+  animation-iteration-count: 1;
+}
+.badge[data-motion="fire"] svg {
+  color: #ffe17d;
+  fill: #ffb020;
+  animation: fire var(--badge-speed) ease-in-out var(--badge-repeat);
+}
+.controls {
+  position: absolute;
+  z-index: 4;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: #fffe;
+  border-radius: 20px;
+  padding: 3px;
+  font: 11px system-ui;
+  color: #142d49;
+}
+.controls button {
+  border: 0;
+  background: transparent;
+  padding: 4px 9px;
+  color: inherit;
+  cursor: pointer;
+}
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.selectionLabel {
+  display: none;
+}
+.error {
+  position: absolute;
+  bottom: 0;
+  z-index: 5;
+  background: #fff2d7;
+  color: #654300;
+  font: 10px system-ui;
+  padding: 4px;
+}
+:global([data-imagery-editing="true"]) [data-imagery-slot] {
+  outline: 1px dashed #22a5dc;
+  cursor: crosshair;
+}
+:global([data-imagery-editing="true"]) [data-imagery-selected="true"] {
+  outline: 3px solid #009de5;
+  outline-offset: 1px;
+}
+:global([data-imagery-editing="true"]) .art:hover .selectionLabel,
+:global([data-imagery-selected="true"]) .selectionLabel {
+  display: block;
+  position: absolute;
+  z-index: 6;
+  top: 0;
+  left: 0;
+  background: #008fcc;
+  color: white;
+  max-width: 100%;
+  overflow: hidden;
+  font: 10px system-ui;
+  padding: 3px 5px;
+  pointer-events: none;
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes slide {
+  from {
+    opacity: 0;
+    translate: 10% 0;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@keyframes zoom {
+  to {
+    scale: 1.06;
+  }
+}
+@keyframes pulse {
+  50% {
+    scale: 1.04;
+  }
+}
+@keyframes glow {
+  50% {
+    filter: brightness(1.18);
+    background-position: 100% 50%;
+  }
+}
+@keyframes bounce {
+  50% {
+    translate: 0 -2px;
+  }
+}
+@keyframes fire {
+  50% {
+    scale: 0.9 1.1;
+    filter: brightness(1.2);
+  }
+}
+@media (max-width: 650px) {
+  .badge[data-mobile-hide="true"] {
+    display: none;
+  }
+  .badge[data-size="medium"] {
+    font-size: 11px;
+    padding: 5px 7px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .badge,
+  .badge svg,
+  .current {
+    animation: none !important;
+  }
+}
+:global([data-kidflix-motion="no"]) .badge,
+:global([data-kidflix-motion="no"]) .badge svg {
+  animation: none !important;
+}
+.art:has(> .layer) > .originalSprite {
+  visibility: hidden;
+}
+.art > .originalSprite {
+  position: absolute;
+  inset: 0;
+}
+.art[data-imagery-kind="sprite"] {
+  aspect-ratio: auto;
+}
+.art[data-imagery-kind="sprite"] > .originalSprite:not(:has(*)) {
+  position: static;
+}
+.art {
+  width: auto;
+  aspect-ratio: auto;
+}
+.art[data-imagery-kind="image"] {
+  width: var(--image-width, auto);
+  aspect-ratio: var(--image-aspect, auto);
+}
+@keyframes pulse {
+  50% {
+    scale: calc(1 + 0.04 * var(--badge-intensity, 1));
+  }
+}
+@keyframes bounce {
+  50% {
+    translate: 0 calc(-2px * var(--badge-intensity, 1));
+  }
+}
+.badge[data-motion="fire"] svg {
+  animation-delay: var(--badge-delay);
+  animation-iteration-count: var(--badge-repeat);
+}

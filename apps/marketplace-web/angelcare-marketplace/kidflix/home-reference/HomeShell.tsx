@@ -1,7 +1,10 @@
 "use client";
+import {Artwork} from "../imagery/Runtime";
 import { ART } from "./content";
 import s from "./home.module.css";
 export function Atlas({
+  slot,
+  sequence,
   sheet,
   cell,
   columns = 4,
@@ -9,6 +12,8 @@ export function Atlas({
   className = "",
   label,
 }: {
+  slot?:string;
+  sequence?:boolean;
   sheet: string;
   cell: number;
   columns?: number;
@@ -41,7 +46,7 @@ export function Atlas({
   const width = bounds ? bounds.x[column + 1] - bounds.x[column] - 4 : 1;
   const height = bounds ? bounds.y[row + 1] - bounds.y[row] - 4 : 1;
   return (
-    <span
+    <Artwork kind="sprite" slot={slot} sequence={sequence}
       className={`${s.atlas} ${className}`}
       role={label ? "img" : undefined}
       aria-label={label}

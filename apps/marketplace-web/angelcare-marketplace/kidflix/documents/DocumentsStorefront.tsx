@@ -1,4 +1,5 @@
 "use client";
+import {Artwork,HeroPlacement} from "../imagery/Runtime";
 import Link from "next/link";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { tr, path, type Locale, type Tri } from "../catalogue";
@@ -59,12 +60,14 @@ const audience = (key: string, l: Locale) =>
     professional: tr(["Professionals", "Professionnels", "المهنيون"], l),
   })[key] || key;
 function Heading({
+  slot,
   icon,
   title,
   children,
   action,
 }: {
   icon: number;
+  slot:string;
   title: string;
   children?: ReactNode;
   action?: ReactNode;
@@ -72,7 +75,7 @@ function Heading({
   return (
     <div className={s.sectionHeading}>
       <h2>
-        <ArtIcon index={icon} />
+        <ArtIcon slot={`heading.${slot}`} index={icon} />
         {title}
       </h2>
       {children ? <span>{children}</span> : null}
@@ -145,7 +148,7 @@ function DocumentCard({
         onClick={() => guest.visit(resource.key)}
       >
         {resource.image ? (
-          <img
+          <img data-imagery-owner="resource-owned" data-imagery-record={resource.id}
             src={resource.image}
             alt={resource.imageAlt || resource.title}
             loading="lazy"
@@ -489,7 +492,7 @@ export function DocumentsStorefront({
       dir={locale === "ar" ? "rtl" : "ltr"}
     >
       <section className={s.hero} aria-labelledby="documents-title">
-        <img
+        <Artwork slot="opening.hero" sequence
           className={s.heroArt}
           src={ART + (locale === "en" ? "hero.png" : `hero-${locale}.png`)}
           alt=""
@@ -499,7 +502,7 @@ export function DocumentsStorefront({
         />
         <div className={s.heroCopy}>
           <div className={s.heroKicker}>
-            <ArtIcon index={0} />
+            <ArtIcon slot="opening.kicker" index={0} />
             {tr(["DOCUMENTS", "DOCUMENTS", "الوثائق"], locale)}
           </div>
           <h1 id="documents-title">
@@ -565,14 +568,14 @@ export function DocumentsStorefront({
       </section>
       <div className={s.assurances}>
         <div>
-          <ArtIcon index={0} />
+          <ArtIcon slot="assurance.inventory" index={0} />
           <span>
             <b>{count(data.inventoryTotal, locale)}</b>
             {tr(["Documents", "Documents", "وثائق"], locale)}
           </span>
         </div>
         <div>
-          <ArtIcon index={23} />
+          <ArtIcon slot="assurance.collections" index={23} />
           <span>
             <b>{tr(["100% Free", "100 % gratuit", "مجاني بالكامل"], locale)}</b>
             {tr(
@@ -582,7 +585,7 @@ export function DocumentsStorefront({
           </span>
         </div>
         <div>
-          <ArtIcon index={24} />
+          <ArtIcon slot="assurance.formats" index={24} />
           <span>
             <b>{tr(["For Teachers,", "Enseignants,", "للمعلمين،"], locale)}</b>
             {tr(
@@ -596,14 +599,14 @@ export function DocumentsStorefront({
           </span>
         </div>
         <div>
-          <ArtIcon index={25} />
+          <ArtIcon slot="assurance.downloads" index={25} />
           <span>
             <b>{count(data.downloadTotal, locale)}</b>
             {tr(["Downloads", "Téléchargements", "تنزيلات"], locale)}
           </span>
         </div>
         <div>
-          <ArtIcon index={29} />
+          <ArtIcon slot="assurance.quality" index={29} />
           <span>
             <b>{tr(["Made for", "Pensé pour", "مصمم من أجل"], locale)}</b>
             {tr(
@@ -623,7 +626,7 @@ export function DocumentsStorefront({
         aria-labelledby="documents-search-title"
       >
         <div className={s.searchHeading}>
-          <ArtIcon index={26} />
+          <ArtIcon slot="assurance.offline" index={26} />
           <div>
             <h2 id="documents-search-title" tabIndex={-1}>
               {t("search", locale)}
@@ -651,8 +654,8 @@ export function DocumentsStorefront({
               locale,
             )}
           </span>
-          <ArtIcon index={0} />
-          <ArtIcon index={15} />
+          <ArtIcon slot="finder.documents" index={0} />
+          <ArtIcon slot="finder.season" index={15} />
         </div>
         <form
           className={s.documentSearch}
@@ -916,7 +919,7 @@ export function DocumentsStorefront({
         </p>
       ) : null}
       <section className={s.section} data-documents-section="categories">
-        <Heading
+        <Heading slot="categories"
           icon={0}
           title={tr(
             [
@@ -952,7 +955,7 @@ export function DocumentsStorefront({
               aria-pressed={filters.subtype === x.key}
               onClick={() => choose("subtype", x.key)}
             >
-              <ArtIcon index={x.icon} />
+              <ArtIcon slot={`categories.subtype.${x.key}`} index={x.icon} />
               {tr(x.title, locale)}
             </button>
           ))}
@@ -965,7 +968,7 @@ export function DocumentsStorefront({
               aria-pressed={filters.use === x.key}
               onClick={() => choose("use", x.key)}
             >
-              <ArtIcon index={x.icon} />
+              <ArtIcon slot={`categories.use.${x.key}`} index={x.icon} />
               <strong>{tr(x.title, locale)}</strong>
             </button>
           ))}
@@ -976,7 +979,7 @@ export function DocumentsStorefront({
         id="documents-results"
         data-documents-section="resources"
       >
-        <Heading
+        <Heading slot="catalogue"
           icon={0}
           title={tr(
             [
@@ -1045,7 +1048,7 @@ export function DocumentsStorefront({
             </div>
           ) : !busy && !error ? (
             <div className={s.empty}>
-              <ArtIcon index={0} size={55} />
+              <ArtIcon slot="catalogue.empty" index={0} size={55} />
               <h3>{t("empty", locale)}</h3>
               <p>
                 {tr(
@@ -1090,7 +1093,7 @@ export function DocumentsStorefront({
         ) : null}
       </section>
       <section className={s.section} data-documents-section="needs">
-        <Heading
+        <Heading slot="needs"
           icon={30}
           title={tr(
             ["Browse by Need", "Explorer selon vos besoins", "تصفح حسب الحاجة"],
@@ -1119,7 +1122,7 @@ export function DocumentsStorefront({
               aria-pressed={filters.need === x.key}
               onClick={() => choose("need", x.key)}
             >
-              <ArtIcon index={x.icon} />
+              <ArtIcon slot={`needs.${x.key}`} index={x.icon} />
               <strong>{tr(x.title, locale)}</strong>
               <p>{tr(x.body!, locale)}</p>
             </button>
@@ -1127,7 +1130,7 @@ export function DocumentsStorefront({
         </div>
       </section>
       <section className={s.packs} data-documents-section="packs">
-        <Heading
+        <Heading slot="packs"
           icon={23}
           title={tr(
             [
@@ -1171,7 +1174,7 @@ export function DocumentsStorefront({
                     >
                       {r.image ? (
                         <img
-                          src={r.image}
+                          data-imagery-owner="resource-owned" data-imagery-record={r.id} src={r.image}
                           alt={r.title}
                           loading="lazy"
                           width={200}
@@ -1193,7 +1196,7 @@ export function DocumentsStorefront({
           </div>
         ) : (
           <div className={s.packEmpty}>
-            <ArtIcon index={23} />
+            <ArtIcon slot="packs.empty" index={23} />
             <p>
               {tr(
                 [
@@ -1215,7 +1218,7 @@ export function DocumentsStorefront({
       </section>
       <div className={s.discoveryPanels} data-documents-section="directories">
         <section>
-          <Heading
+          <Heading slot="ages"
             icon={12}
             title={tr(
               [
@@ -1258,7 +1261,7 @@ export function DocumentsStorefront({
           </small>
         </section>
         <section>
-          <Heading
+          <Heading slot="subjects"
             icon={14}
             title={tr(
               ["Browse by Subject", "Par matière", "حسب المادة"],
@@ -1283,7 +1286,7 @@ export function DocumentsStorefront({
           </div>
         </section>
         <section>
-          <Heading
+          <Heading slot="seasons"
             icon={15}
             title={tr(
               [
@@ -1306,7 +1309,7 @@ export function DocumentsStorefront({
                 aria-pressed={filters.theme === x.key}
                 onClick={() => choose("theme", x.key)}
               >
-                <ArtIcon index={x.icon} />
+                <ArtIcon slot={`seasons.${x.key}`} index={x.icon} />
                 <strong>{tr(x.title, locale)}</strong>
               </button>
             ))}
@@ -1315,7 +1318,7 @@ export function DocumentsStorefront({
       </div>
       <div className={s.lowerPanels} data-documents-section="activity">
         <section>
-          <Heading
+          <Heading slot="rankings"
             icon={7}
             title={tr(
               [
@@ -1344,7 +1347,7 @@ export function DocumentsStorefront({
                   <Link href={documentDetailHref(r)}>
                     {r.image ? (
                       <img
-                        src={r.image}
+                        data-imagery-owner="resource-owned" data-imagery-record={r.id} src={r.image}
                         alt=""
                         width={40}
                         height={35}
@@ -1372,7 +1375,7 @@ export function DocumentsStorefront({
           )}
         </section>
         <section>
-          <Heading
+          <Heading slot="feedback"
             icon={13}
             title={tr(
               [
@@ -1434,7 +1437,7 @@ export function DocumentsStorefront({
             </>
           ) : (
             <div className={s.testimonialEmpty}>
-              <ArtIcon index={14} />
+              <ArtIcon slot="feedback.empty" index={14} />
               <p>
                 {tr(
                   [
@@ -1449,7 +1452,7 @@ export function DocumentsStorefront({
           )}
         </section>
         <section>
-          <Heading
+          <Heading slot="today"
             icon={25}
             title={tr(
               [
@@ -1481,7 +1484,7 @@ export function DocumentsStorefront({
                 <Link key={r.key} href={documentDetailHref(r)}>
                   {r.image ? (
                     <img
-                      src={r.image}
+                      data-imagery-owner="resource-owned" data-imagery-record={r.id} src={r.image}
                       alt=""
                       width={110}
                       height={130}
@@ -1630,7 +1633,7 @@ export function DocumentsStorefront({
                         );
                       }}
                     >
-                      <ArtIcon index={x.icon} />
+                      <ArtIcon slot={`directory.${directory}.${x.key}`} index={x.icon} />
                       <strong>{tr(x.title, locale)}</strong>
                       <I name="ArrowRight" />
                     </button>

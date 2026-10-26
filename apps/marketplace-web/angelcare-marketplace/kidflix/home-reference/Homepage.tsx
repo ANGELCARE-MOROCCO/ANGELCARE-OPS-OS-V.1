@@ -1,4 +1,5 @@
 "use client";
+import {Artwork,HeroPlacement} from "../imagery/Runtime";
 import Link from "next/link";
 import { useEffect, type ReactNode } from "react";
 import {
@@ -78,7 +79,7 @@ function Section({
     </section>
   );
 }
-function Topic({ tile, locale }: { tile: Tile; locale: Locale }) {
+function Topic({ tile, locale, slot }: { tile: Tile; locale: Locale; slot:string }) {
   return (
     <Link
       className={s.topic}
@@ -86,7 +87,7 @@ function Topic({ tile, locale }: { tile: Tile; locale: Locale }) {
       data-home-topic={tile.id}
       data-editorial-art
     >
-      <Atlas
+      <Atlas slot={`${slot}.topic.${tile.id}`}
         sheet={tile.sheet}
         cell={tile.cell}
         rows={tile.sheet === "pathways" ? 2 : 4}
@@ -112,7 +113,7 @@ function ResourceCard({ r, locale }: { r: Resource; locale: Locale }) {
         href={path(locale, "/experience/" + r.key)}
       >
         {r.image ? (
-          <img
+          <img data-imagery-owner="resource-owned" data-imagery-record={r.id}
             src={r.image}
             width={420}
             height={380}
@@ -188,11 +189,13 @@ function Shelf({
   tiles,
   locale,
   count = 6,
+  slot,
 }: {
   rows: Resource[];
   tiles: Tile[];
   locale: Locale;
   count?: number;
+  slot:string;
 }) {
   return (
     <div className={count === 4 ? s.four : s.six}>
@@ -202,7 +205,7 @@ function Shelf({
             .map((r) => <ResourceCard key={r.key} r={r} locale={locale} />)
         : tiles
             .slice(0, count)
-            .map((tile) => <Topic key={tile.id} tile={tile} locale={locale} />)}
+            .map((tile) => <Topic slot={slot} key={tile.id} tile={tile} locale={locale} />)}
     </div>
   );
 }
@@ -264,7 +267,7 @@ export function ReferenceHome({
             >
               <b>{WORLDS.findIndex((x) => x.key === w.key) + 1}</b>
               {customFamilyImage(e, w.key) ? (
-                <img
+                <Artwork slot={`worlds.category.${w.key}`}
                   className={s.customCategory}
                   src={customFamilyImage(e, w.key)}
                   width={65}
@@ -273,7 +276,7 @@ export function ReferenceHome({
                   loading="lazy"
                 />
               ) : (
-                <Atlas
+                <Atlas slot={`worlds.category.${w.key}`}
                   sheet="icons"
                   cell={WORLDS.findIndex((x) => x.key === w.key)}
                 />
@@ -301,7 +304,7 @@ export function ReferenceHome({
         to={href(locale)}
         locale={locale}
       >
-        <Shelf rows={featured} tiles={keep(TOPICS)} locale={locale} />
+        <Shelf slot="today" rows={featured} tiles={keep(TOPICS)} locale={locale} />
       </Section>
     ),
     printables: (
@@ -321,7 +324,7 @@ export function ReferenceHome({
           to={href(locale, { audience: "educator", sort: "new" })}
           locale={locale}
         >
-          <Shelf
+          <Shelf slot="printables.teachers"
             rows={rows
               .filter((r) => r.audience === "educator")
               .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))}
@@ -345,7 +348,7 @@ export function ReferenceHome({
           to={href(locale, { age: "5" })}
           locale={locale}
         >
-          <Shelf
+          <Shelf slot="printables.learners"
             rows={rows.filter(
               (r) =>
                 r.ageMin !== null &&
@@ -377,7 +380,7 @@ export function ReferenceHome({
           to={href(locale, { audience: "parent" })}
           locale={locale}
         >
-          <Shelf
+          <Shelf slot="grownups.professional"
             rows={rows.filter((r) => r.audience === "parent")}
             tiles={keep([TOPICS[12], TOPICS[13], TOPICS[14], TOPICS[8]])}
             locale={locale}
@@ -399,7 +402,7 @@ export function ReferenceHome({
           to={href(locale, {}, "planners")}
           locale={locale}
         >
-          <Shelf
+          <Shelf slot="grownups.planners"
             rows={forFamily("planners")}
             tiles={keep([TOPICS[5], TOPICS[3], TOPICS[7], TOPICS[9]])}
             locale={locale}
@@ -425,7 +428,7 @@ export function ReferenceHome({
         to={href(locale, {}, "bundles")}
         locale={locale}
       >
-        <Shelf
+        <Shelf slot="bundles"
           rows={forFamily("bundles")}
           tiles={keep(PACKS)}
           locale={locale}
@@ -452,7 +455,7 @@ export function ReferenceHome({
           <div className={s.ages}>
             {AGES.map((a, i) => (
               <Link key={a.title[0]} href={href(locale, { age: a.age })}>
-                <Atlas sheet="portraits" cell={i} rows={2} />
+                <Atlas slot={`ages.stage.${a.age||"all"}`} sheet="portraits" cell={i} rows={2} />
                 <strong>{tr(a.title, locale)}</strong>
                 <small>{tr(a.caption, locale)}</small>
               </Link>
@@ -538,7 +541,7 @@ export function ReferenceHome({
       >
         <div className={s.seasons}>
           {keep(SEASONS).map((tile) => (
-            <Topic key={tile.id} tile={tile} locale={locale} />
+            <Topic slot="new.season" key={tile.id} tile={tile} locale={locale} />
           ))}
         </div>
       </Section>
@@ -563,7 +566,7 @@ export function ReferenceHome({
           {keep(PATHWAYS)
             .slice(0, 6)
             .map((tile) => (
-              <Topic key={tile.id} tile={tile} locale={locale} />
+              <Topic slot="learning.pathway" key={tile.id} tile={tile} locale={locale} />
             ))}
         </div>
       </Section>
@@ -655,7 +658,7 @@ export function ReferenceHome({
           to={href(locale, { sort: "new" })}
           locale={locale}
         >
-          <Shelf
+          <Shelf slot="continuity.discoveries"
             rows={rows.filter((r) => r.formats.length)}
             tiles={keep([TOPICS[15], TOPICS[14], TOPICS[2], TOPICS[4]])}
             locale={locale}
@@ -693,7 +696,7 @@ export function ReferenceHome({
     >
       <section className={s.opening} aria-labelledby="kidflix-home-title">
         <div className={s.hero}>
-          <ReferenceGallery scenes={scene} locale={locale} />
+          <HeroPlacement src={scene[0]?.desktop} style={{position:"absolute",inset:0,width:"100%",height:"100%"}}><ReferenceGallery scenes={scene} locale={locale} /></HeroPlacement>
           <div className={s.heroCopy}>
             {e.eyebrow !== baseline.eyebrow ? <small>{e.eyebrow}</small> : null}
             <h1 id="kidflix-home-title">
@@ -838,14 +841,14 @@ export function ReferenceHome({
                 href={href(locale, {}, p.family)}
               >
                 {customFamilyImage(e, p.family) ? (
-                  <img
+                  <Artwork slot={`opening.promo.${p.id}`} sequence
                     src={customFamilyImage(e, p.family)}
                     alt=""
                     width={800}
                     height={533}
                   />
                 ) : (
-                  <Atlas sheet="collections-01" cell={p.cell} />
+                  <Atlas slot={`opening.promo.${p.id}`} sequence sheet="collections-01" cell={p.cell} />
                 )}
                 <div>
                   <h2>{tr(p.title, locale)}</h2>

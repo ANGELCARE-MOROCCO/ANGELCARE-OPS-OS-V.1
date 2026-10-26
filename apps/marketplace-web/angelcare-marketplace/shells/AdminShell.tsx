@@ -59,7 +59,7 @@ export async function AdminShell({ context, children }: { context: MarketplaceRe
       canHotline={hasMarketplacePermission(context,'marketplace.hotline.view')}
       canDce={canDce}
       snapshot={snapshot}
-      workspaces={[...workspaces(canDce), ...JOBKIX_AREAS.filter(area=>hasMarketplaceWorkspaceAccess(context,area.workspace)).map(area=>({href:'/angelcare-marketplace/admin/jobkix/'+area.slug,domain:'jobkix',label:'JOBKIX · '+area.name[context.locale],dynamic:false})), ...(hasMarketplaceWorkspaceAccess(context,'jobkix.editorial')?[{href:'/angelcare-marketplace/admin/jobkix/hero-studio',domain:'jobkix',label:'JOBKIX · Hero & Slideshow Studio',dynamic:false}]:[])]}
+      workspaces={[...workspaces(canDce), ...JOBKIX_AREAS.filter(area=>hasMarketplaceWorkspaceAccess(context,area.workspace)).map(area=>({href:'/angelcare-marketplace/admin/jobkix/'+area.slug,domain:'jobkix',label:'JOBKIX · '+area.name[context.locale],dynamic:false})), ...(hasMarketplaceWorkspaceAccess(context,'jobkix.vacancies')?[{href:'/angelcare-marketplace/admin/jobkix/strategic-supply',domain:'jobkix',label:'JOBKIX · Strategic Supply Command',dynamic:false}]:[]), ...(hasMarketplaceWorkspaceAccess(context,'jobkix.editorial')?[{href:'/angelcare-marketplace/admin/jobkix/hero-studio',domain:'jobkix',label:'JOBKIX · Hero & Slideshow Studio',dynamic:false}]:[])]}
     >
       {children}
     </AdminShellChrome>

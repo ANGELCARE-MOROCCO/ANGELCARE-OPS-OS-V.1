@@ -1,0 +1,7 @@
+import {notFound} from 'next/navigation';
+import Link from 'next/link';
+import {isLocale} from '@/angelcare-marketplace/jobkix/contracts';
+import {externalDetail} from '@/angelcare-marketplace/jobkix/supply/server';
+import css from '@/angelcare-marketplace/jobkix/supply/external.module.css';
+export const dynamic='force-dynamic';
+export default async function Page({params}:{params:Promise<{locale:string;id:string}>}){const {locale,id}=await params;if(!isLocale(locale))notFound();const job=await externalDetail(id);if(!job)notFound();return <main className={css.section}><div className={css.wrap}><p><Link href={`/jobkix/${locale}/discovered-jobs`}>← External opportunities</Link></p><article className={css.card} style={{maxWidth:820,marginTop:24}}><span className={css.type}>EXTERNAL VACANCY · {job.source_name}</span><h1>{job.title}</h1><h2>{job.company||'Employer information on source website'}</h2><p>{[job.city,job.country].filter(Boolean).join(' · ')}</p>{job.salary_text?<p>{job.salary_text}</p>:null}{job.publication_mode==='full'&&job.description?<div style={{whiteSpace:'pre-wrap',lineHeight:1.8}}>{job.description}</div>:null}<p>Job details and availability are maintained by the original publisher. JOBKIX is not the employer and does not receive the application.</p><a href={job.canonical_url} target="_blank" rel="noopener noreferrer nofollow" className={css.action}>View and apply on the original website ↗</a></article></div></main>}

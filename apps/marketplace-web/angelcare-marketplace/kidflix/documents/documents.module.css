@@ -37,9 +37,9 @@
   color: inherit;
   text-decoration: none;
 }
-.page img,
-.header img,
-.footer img {
+.page :is(img,[data-imagery-art]),
+.header :is(img,[data-imagery-art]),
+.footer :is(img,[data-imagery-art]) {
   display: block;
   max-width: 100%;
 }
@@ -824,7 +824,7 @@
   border-radius: 8px;
   background: #f2f7fb;
 }
-.previewImage > img {
+.previewImage > :is(img,[data-imagery-art]) {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -1080,7 +1080,7 @@
   transform: rotate(calc(-10deg + var(--sheet-index) * 8deg));
   overflow: hidden;
 }
-.packPreview img {
+.packPreview :is(img,[data-imagery-art]) {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -1257,7 +1257,7 @@
   min-width: 0;
   font-size: 11px;
 }
-.ranked img {
+.ranked :is(img,[data-imagery-art]) {
   width: 35px;
   height: 30px;
   border-radius: 3px;
@@ -1284,7 +1284,7 @@
   align-items: flex-start;
   gap: 10px;
 }
-.testimonialTop > img {
+.testimonialTop > :is(img,[data-imagery-art]) {
   width: 65px;
   height: 65px;
   border-radius: 50%;
@@ -1397,7 +1397,7 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 7px;
 }
-.todayGrid img {
+.todayGrid :is(img,[data-imagery-art]) {
   width: 100%;
   aspect-ratio: 0.85;
   height: auto;
@@ -1466,7 +1466,7 @@
   background: #19236b;
   border-radius: 10px;
 }
-.footerBrand img {
+.footerBrand :is(img,[data-imagery-art]) {
   height: 45px;
   width: 110px;
   object-fit: contain;
@@ -1961,7 +1961,7 @@
   .ranked a {
     font-size: 9px;
   }
-  .testimonialTop > img {
+  .testimonialTop > :is(img,[data-imagery-art]) {
     width: 47px;
     height: 47px;
   }
@@ -2481,7 +2481,7 @@
   .ranked li {
     padding: 6px 0;
   }
-  .ranked img {
+  .ranked :is(img,[data-imagery-art]) {
     width: 39px;
     height: 34px;
   }
@@ -2493,7 +2493,7 @@
   .testimonial {
     padding: 13px;
   }
-  .testimonialTop > img {
+  .testimonialTop > :is(img,[data-imagery-art]) {
     width: 65px;
     height: 65px;
   }

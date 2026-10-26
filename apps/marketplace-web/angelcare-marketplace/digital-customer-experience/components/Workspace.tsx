@@ -61,6 +61,7 @@ import { AccessWorkspace } from "./Access";
 import { Publication, Inbox, Users } from "./Operations";
 import { Insights, Logs, Utilities, Settings } from "./Insights";
 import s from "./workspace.module.css";
+const ImageryStudio = lazy(() => import("../../kidflix/imagery/Studio").then(m=>({default:m.ImageryStudio})));
 const Editor = lazy(() =>
     import("./Editor").then((m) => ({ default: m.Editor })),
   ),
@@ -284,6 +285,7 @@ export function Workspace({
       </>
     );
   else if (module === "content") body = <Registry kind="content" />;
+  else if (module === "kidflix-imagery") body = <ImageryStudio />;
   else if (module === "media") body = <MediaLibrary />;
   else if (module === "templates") body = <DesignRegistry />;
   else if (module === "journeys") body = <DesignRegistry journey />;

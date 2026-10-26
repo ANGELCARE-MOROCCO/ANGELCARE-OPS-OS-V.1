@@ -66,7 +66,7 @@
 .root p {
   margin: 0;
 }
-.root img {
+.root :is(img,[data-imagery-art]) {
   max-width: 100%;
   object-fit: cover;
 }
@@ -115,7 +115,7 @@
 .brand {
   flex: 0 0 16%;
 }
-.brand img {
+.brand :is(img,[data-imagery-art]) {
   display: block;
   width: 100%;
   height: auto;
@@ -693,7 +693,7 @@
   position: relative;
   overflow: hidden;
 }
-.cover img {
+.cover :is(img,[data-imagery-art]) {
   display: block;
   width: 100%;
   height: 100%;
@@ -1129,7 +1129,7 @@
 .miniResources a {
   min-width: 0;
 }
-.miniResources img {
+.miniResources :is(img,[data-imagery-art]) {
   width: 100%;
   height: 5.2em;
   border-radius: 5px;
@@ -1194,7 +1194,7 @@
   border-radius: 12px;
   overflow: hidden;
 }
-.customEditorial img {
+.customEditorial :is(img,[data-imagery-art]) {
   width: 100%;
   height: auto;
   display: block;
@@ -1213,7 +1213,7 @@
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 1em;
 }
-.quickPreview img {
+.quickPreview :is(img,[data-imagery-art]) {
   width: 100%;
   height: auto;
   max-height: 480px;
@@ -1238,7 +1238,7 @@
 .thumbnails button[aria-pressed="true"] {
   outline: 2px solid #008bff;
 }
-.thumbnails img {
+.thumbnails :is(img,[data-imagery-art]) {
   width: 70px;
   height: 60px;
   object-fit: cover;
@@ -1298,7 +1298,7 @@
 .workspaceChoices a > span {
   flex: 1;
 }
-.workspaceChoices img {
+.workspaceChoices :is(img,[data-imagery-art]) {
   object-fit: cover;
   border-radius: 6px;
 }
@@ -1422,7 +1422,7 @@
     flex-basis: 31%;
     order: 0;
   }
-  .brand img {
+  .brand :is(img,[data-imagery-art]) {
     max-height: 58px;
   }
   .headerSearch {
@@ -1759,7 +1759,7 @@
   .progressionTiles .artIcon {
     width: 34px;
   }
-  .miniResources img {
+  .miniResources :is(img,[data-imagery-art]) {
     height: 100px;
   }
   .miniResources strong {

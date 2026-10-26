@@ -1120,6 +1120,7 @@ async function save(c: Context, cmd: Command, trustedProvider = false) {
       "PERMISSION_DENIED",
       "Use the KidFlix homepage controls so drafts cannot overwrite live editions.",
     );
+  if (String(old?.key||cmd.record?.key||" ").startsWith("kidflix-imagery-")) throw new MarketplaceError("PERMISSION_DENIED","Use Page Imagery Studio for this configuration.");
   writable(c, kind);
   const normalized = normalizeRecord({ ...old, ...cmd.record }, old);
   if (kind === "setting" && normalized.key === "world-defaults") {
@@ -1606,6 +1607,8 @@ export async function bootstrap(c: Context, days = 30): Promise<Bootstrap> {
   };
 }
 export async function command(c: Context, cmd: Command): Promise<any> {
+  if (cmd.action.startsWith("kidflix_imagery_"))
+    return (await import("../kidflix/imagery/service")).imageryCommand(c,cmd);
   if (cmd.action.startsWith("kidflix_storefront_"))
     return (await import("../kidflix/storefronts/admin-service")).kidflixStorefrontCommand(c,cmd);
   if (cmd.action.startsWith("kidflix_"))
@@ -1613,6 +1616,8 @@ export async function command(c: Context, cmd: Command): Promise<any> {
   if (cmd.action.startsWith("depth_"))
     return (await import("./depth-service")).depthCommand(c, cmd);
   authorize(c, "view");
+  if (String(cmd.record?.key||" ").startsWith("kidflix-imagery-")) throw new MarketplaceError("PERMISSION_DENIED","Use Page Imagery Studio.");
+  if(cmd.id){const db=await createServiceClient();const reserved=await db.from("ac_dce_records").select("key").eq("id",cmd.id).maybeSingle();if(reserved.error)throw new MarketplaceError("DEPENDENCY_BLOCKED","Record authority unavailable.");if(String(reserved.data?.key||" ").startsWith("kidflix-imagery-"))throw new MarketplaceError("PERMISSION_DENIED","Use Page Imagery Studio for protected imagery operations.");}
   if (cmd.action.startsWith("operator_"))
     return (await import("./operator-service")).operatorCommand(c, cmd);
   if (cmd.action.startsWith("master_"))
@@ -2568,6 +2573,7 @@ export async function command(c: Context, cmd: Command): Promise<any> {
   throw new MarketplaceError("VALIDATION_ERROR", "Unsupported DCE command.");
 }
 export async function read(c: Context, input: Record<string, unknown>) {
+  if (input.op === "kidflix_imagery") return (await import("../kidflix/imagery/service")).imageryRead(c,String(input.page||"home"),input.history===true||input.history==="true");
   if (input.op === "kidflix_storefront_selection")
     return (await import("../kidflix/storefronts/admin-service")).kidflixStorefrontSelection(c,String(input.family||""),input.locale as any,String(input.keys||""));
   if (input.op === "kidflix_storefront_preview")

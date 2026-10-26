@@ -1,10 +1,13 @@
 "use client";
+import {Artwork} from "../imagery/Runtime";
 import { ATLAS_SIZE, ICON_RECTS } from "./artwork";
 import s from "./reference.module.css";
 export function Art({
+  slot,
   index,
   className = "",
 }: {
+  slot?:string;
   index: number;
   className?: string;
 }) {
@@ -12,7 +15,7 @@ export function Art({
     [w, h] = ATLAS_SIZE,
     side = Math.max(ww, hh);
   return (
-    <span aria-hidden="true" className={`${s.artIcon} ${className}`}>
+    <Artwork kind="sprite" slot={slot} aria-hidden="true" className={`${s.artIcon} ${className}`}>
       <span
         className={s.artInner}
         style={{
@@ -22,6 +25,6 @@ export function Art({
           backgroundPosition: `${(x / (w - ww)) * 100}% ${(y / (h - hh)) * 100}%`,
         }}
       />
-    </span>
+    </Artwork>
   );
 }

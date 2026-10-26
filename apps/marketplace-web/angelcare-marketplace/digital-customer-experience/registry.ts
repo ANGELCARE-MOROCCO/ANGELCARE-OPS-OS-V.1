@@ -1725,6 +1725,7 @@ export const FAMILIES: Family[] =
   BASE_FAMILIES.map(enrichFamily).map(deepenFamily);
 
 export const MODULES: Module[] = [
+  {key:"kidflix-imagery",label:["Page Imagery Studio","Studio des images","استوديو صور الصفحات"],group:"experience",icon:"Images",description:["Manage KidFlix page images, framing, slideshows and optional badges.","Gérer les images, cadrages, diaporamas et badges KidFlix.","إدارة صور كيدفليكس والتأطير والعروض والشارات الاختيارية."]},
   {
     key: "dashboard",
     label: ["Studio Dashboard", "Tableau de bord", "لوحة الاستوديو"],
