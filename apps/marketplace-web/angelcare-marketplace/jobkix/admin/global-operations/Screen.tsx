@@ -17,7 +17,7 @@ const workIcons=['▥','▣','◎','◇','◉','▤','⌘'];
 const fmt=(n:number|null)=>n===null?'Unavailable':new Intl.NumberFormat('en-US').format(n);
 function downloadSummary(data:OpsPayload){
  const safe=(s:string)=>'"'+String(s).replaceAll('"','""').replace(/^[=+\-@\t\r]/,'\u2019$&')+'"';
- const out=['source,total_records,loaded_rows,page',...data.sources.map(s=>[s.area,s.total===null?'':String(s.total),s.rows.length,s.page].map(safe).join(','))].join('\r\n');
+ const out=['source,total_records,loaded_rows,page',...data.sources.map(s=>[s.area,s.total===null?'':String(s.total),s.rows.length,s.page].map(value=>safe(String(value))).join(','))].join('\r\n');
  const url=URL.createObjectURL(new Blob(['\ufeff',out+'\r\n'],{type:'text/csv;charset=utf-8'}));
  const a=document.createElement('a');a.href=url;a.download=`jobkix-${data.workspace}-authorized-summary.csv`;a.click();window.setTimeout(()=>URL.revokeObjectURL(url),700);
 }
