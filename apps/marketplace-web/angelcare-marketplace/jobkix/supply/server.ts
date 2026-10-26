@@ -37,7 +37,7 @@ export async function adminRead(section:string,params:URLSearchParams){await sup
  if(section==='record'&&id){const result=await db.from('jobkix_supply_vacancies').select('*').eq('id',uuid(id)).maybeSingle();await mandatory(result);return {record:result.data};}
  throw new JobkixFault('INVALID_INPUT');
 }
-export async function adminCommand(body:Row){const actor=await supplyAdmin(),db=await createServiceClient();const a=txt(body.action),user=String(actor.actor.id);
+export async function adminCommand(body:Row):Promise<unknown>{const actor=await supplyAdmin(),db=await createServiceClient();const a=txt(body.action),user=String(actor.actor.id);
  if(a==='source.save'){
   const p=sourceInput(body.source);if(p.approved&&!hasMarketplaceWorkspaceAccess(actor,'jobkix.editorial'))throw new JobkixFault('FORBIDDEN');const changes={name:p.name,kind:p.kind,country:p.country,endpoint:p.endpoint,config:p.config,enabled:p.enabled,approved:p.approved,publication_mode:p.publicationMode,credential_header:p.credentialHeader||null,updated_by:user,updated_at:new Date().toISOString()};
   if(p.enabled&&!p.approved)fail('Approve a source before enabling');
