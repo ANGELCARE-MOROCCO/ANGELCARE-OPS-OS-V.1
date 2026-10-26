@@ -36,13 +36,23 @@ export async function readLibraryResources(
         const v = await r.json();
         if (!Array.isArray(v.rows)) throw Error("INVALID_LIBRARY_RESPONSE");
         const wanted = new Set((q.get("keys") || "").split(","));
-        return v.rows.filter(
-          (x: any) =>
-            x &&
-            wanted.has(x.key) &&
-            typeof x.title === "string" &&
-            WORLDS.some((w) => w.key === x.family),
-        ) as Resource[];
+        if (
+          v.rows.some(
+            (x: any) =>
+              !x ||
+              typeof x.key !== "string" ||
+              typeof x.title !== "string" ||
+              !x.title.trim() ||
+              !WORLDS.some((w) => w.key === x.family) ||
+              !Array.isArray(x.skills) ||
+              !x.skills.every((value: unknown) => typeof value === "string") ||
+              !Array.isArray(x.formats) ||
+              !x.formats.every((value: unknown) => typeof value === "string"),
+          )
+        ) {
+          throw Error("INVALID_LIBRARY_RESOURCE");
+        }
+        return v.rows.filter((x: Resource) => wanted.has(x.key)) as Resource[];
       }),
     );
     all.push(...batches.flat());
@@ -55,7 +65,9 @@ export function useLibraryResources(keys: string[], locale: Locale) {
     [data, set] = useState<Resource[]>([]),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(false),
-    [revision, refresh] = useState(0);
+    [revision, refresh] = useState(0),
+    [settled, setSettled] = useState("");
+  const requestKey = locale + ":" + revision + ":" + signature;
   useEffect(() => {
     const controller = new AbortController();
     set([]);
@@ -63,6 +75,7 @@ export function useLibraryResources(keys: string[], locale: Locale) {
     const ids: string[] = JSON.parse(signature);
     if (!ids.length) {
       setBusy(false);
+      setSettled(requestKey);
       return;
     }
     setBusy(true);
@@ -72,13 +85,20 @@ export function useLibraryResources(keys: string[], locale: Locale) {
       controller.abort();
       setBusy(false);
       setError(true);
+      setSettled(requestKey);
     }, 45000);
     readLibraryResources(ids, locale, controller.signal)
       .then((v) => {
-        if (!controller.signal.aborted) set(v);
+        if (!controller.signal.aborted) {
+          set(v);
+          setSettled(requestKey);
+        }
       })
       .catch(() => {
-        if (!controller.signal.aborted || timedOut) setError(true);
+        if (!controller.signal.aborted || timedOut) {
+          setError(true);
+          setSettled(requestKey);
+        }
       })
       .finally(() => {
         clearTimeout(timer);
@@ -88,6 +108,11 @@ export function useLibraryResources(keys: string[], locale: Locale) {
       clearTimeout(timer);
       controller.abort();
     };
-  }, [signature, locale, revision]);
-  return { data, busy, error, retry: () => refresh((n) => n + 1) };
+  }, [signature, locale, revision, requestKey]);
+  return {
+    data,
+    busy: busy || (keys.length > 0 && settled !== requestKey),
+    error,
+    retry: () => refresh((n) => n + 1),
+  };
 }

@@ -5,14 +5,11 @@ import { useEffect, useId, useRef, useState, type FormEvent } from "react";
 import {
   ArrowUpRight,
   ArrowRight,
-  Bookmark,
   BookOpen,
   Heart,
   Globe,
   Mail,
   ShieldCheck,
-  FolderHeart,
-  Sparkles,
 } from "lucide-react";
 import { WORLDS, path, tr, type Locale, type Tri } from "../catalogue";
 import { normalizeDocumentSocialLinks } from "../documents/model";
@@ -77,9 +74,15 @@ export function KidFlixFooter({
       data-kidflix-personal-footer
     >
       <div className={s.personalBand}>
-        <div className={s.bandIcon}>
-          <FolderHeart size={32} />
-        </div>
+        <Link className={s.brandLogo} href={path(locale)} aria-label="KidFlix">
+          <img
+            src="/kidflix/kidflix-official-optimized.webp"
+            alt="KidFlix"
+            width={174}
+            height={70}
+            loading="lazy"
+          />
+        </Link>
         <div>
           <span className={s.kicker}>
             KIDFLIX ·{" "}
@@ -122,19 +125,6 @@ export function KidFlixFooter({
       </div>
       <div className={s.main}>
         <div className={s.brand}>
-          <Link
-            className={s.logoPlate}
-            href={path(locale)}
-            aria-label="KidFlix"
-          >
-            <img
-              src="/kidflix/kidflix-official-optimized.webp"
-              alt="KidFlix"
-              width={174}
-              height={70}
-              loading="lazy"
-            />
-          </Link>
           <h3>
             {t([
               "Small discoveries. Endless possibilities.",
@@ -219,9 +209,8 @@ export function KidFlixFooter({
         </nav>
       </div>
       <div className={s.communityRow}>
-        <section className={s.socialPanel}>
+        <section className={s.community}>
           <span className={s.kicker}>
-            <Sparkles size={14} />
             {t(["LET’S STAY CONNECTED", "RESTONS EN LIEN", "لنبقَ على تواصل"])}
           </span>
           <h3>
@@ -253,7 +242,6 @@ export function KidFlixFooter({
                       height={27}
                       alt=""
                     />
-                    <span>{label}</span>
                   </>
                 );
                 return social[platform] ? (
@@ -265,11 +253,12 @@ export function KidFlixFooter({
                     aria-label={label}
                   >
                     {contents}
-                    <ArrowUpRight size={12} />
                   </a>
                 ) : (
                   <span
                     key={platform}
+                    role="img"
+                    aria-label={label}
                     title={t([
                       "Channel link not published",
                       "Lien du canal non publié",

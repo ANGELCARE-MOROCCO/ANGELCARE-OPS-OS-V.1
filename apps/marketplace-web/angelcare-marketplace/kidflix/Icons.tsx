@@ -108,6 +108,6 @@ export function I({
   className?: string;
   strokeWidth?: number;
 }) {
-  const C = icons[name as keyof typeof icons] || Sparkles;
+  const C = icons[name as keyof typeof icons] || BookOpen;
   return <C size={size} aria-hidden="true" strokeWidth={1.8} {...rest} />;
 }

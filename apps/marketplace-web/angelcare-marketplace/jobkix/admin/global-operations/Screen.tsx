@@ -1,84 +1,134 @@
 'use client';
-import {useEffect,useMemo,useState,useRef,type CSSProperties} from 'react';
+import {useCallback,useEffect,useMemo,useRef,useState,type CSSProperties} from 'react';
 import Link from 'next/link';
 import {useRouter} from 'next/navigation';
-import {ArrowRight,BarChart3,BriefcaseBusiness,CalendarDays,ChevronDown,ChevronLeft,ChevronRight,Clock3,Download,ExternalLink,FileText,Filter,Globe2,Info,LayoutDashboard,ListFilter,LockKeyhole,Menu,RefreshCw,Search,Settings2,ShieldAlert,ShieldCheck,SlidersHorizontal,Users,Workflow,} from 'lucide-react';
+import {ArrowRight,ChevronDown,ChevronRight,Download,ExternalLink,Globe2,Info,LockKeyhole,Menu,RefreshCw,Search,ShieldAlert,ShieldCheck,SlidersHorizontal,X} from 'lucide-react';
 import {WORKSPACES,operatorHref,nativeHref,workspaceFromSlug,type SourceArea} from './contracts';
 import type {OpsPayload,SafeRow} from './server';
-import css from './operations.module.css';
-import {SpecialistContent} from './Specialist';
+import {getTabSpec} from './TabRegistry';
+import {lensKeys,normalizedView,viewURL} from './ViewKeys';
 import {DeepWorkspace} from './DeepWorkspace';
 import {DossierR2} from './DossierR2';
+import {SpecialistContent} from './Specialist';
+import css from './operations.module.css';
+import r3 from './navigation-r3.module.css';
 
-type Tab={name:string;area:SourceArea|null};
-const icons=[LayoutDashboard,BriefcaseBusiness,Users,ShieldCheck,Globe2,BarChart3,Settings2];
-const intended:Record<string,{heading:string;description:string;tiles:string[];primaryLabels:string[]}>={
- executive:{heading:'Global Employment Operations',description:'Cross-domain inspection from your authorized operational sources.',tiles:['Employment pulse','Market coverage','Verification load','Case exceptions','Service reliability','Audit continuity'],primaryLabels:['Authorized audit events','Loaded records','Distinct event types','Operational domains']},
- employment:{heading:'Recruitment Operations',description:'Review and moderate vacancies using the existing versioned D02 authority.',tiles:['Vacancy control','Publication review','Expiring opportunities','Employment sectors','Recruitment exceptions','Quality oversight'],primaryLabels:['Vacancies in database','Loaded vacancies','Pending on this page','Markets on this page']},
- people:{heading:'Employer & Account Operations',description:'Privacy-limited verification overview; candidate account oversight needs its own authorized read API.',tiles:['Employer verification','Organizational identity','Account onboarding','Team scope','Account lifecycle','Privacy requests'],primaryLabels:['Verification cases','Loaded case records','Pending on this page','Employer markets']},
- trust:{heading:'Trust Operations Queue',description:'Investigate reports through native D03 authority and verify employers through D01.',tiles:['Case investigations','Employer verification','Vacancy risks','Reputation reviews','Appeals','User support'],primaryLabels:['Cases in database','Loaded cases','Open on this page','Distinct case types']},
- global:{heading:'Global Experience Authority',description:'Published editions and taxonomy reviews remain managed by existing D05 and D06 commands.',tiles:['Country worlds','Employment taxonomy','Professional terms','Editorial editions','Language quality','Publication history'],primaryLabels:['Editorial editions','Loaded editions','Locales on this page','States on this page']},
- intelligence:{heading:'Opportunity Intelligence',description:'A safe foundation for real insights; full funnels require dedicated aggregated analytics.',tiles:['Talent availability','Vacancy activity','Market balance','Recruitment outcomes','Search quality','Expansion readiness'],primaryLabels:['Authorized audit events','Loaded events','Event types','Related sources']},
- platform:{heading:'Reliability & Governance',description:'Observe actual delivery queues, failures, events and scheduled recruitment health.',tiles:['Queue monitoring','Notification delivery','Vacancy expiry','Audit trail','Configuration controls','Recovery readiness'],primaryLabels:['Delivery queue records','Visible queue records','Pending deliveries','Expired vacancies']},
-};
-const human=(value:number|null)=>value===null?'Not available':Intl.NumberFormat('en-US').format(value);
-const dangerous=(state:string)=>/critical|fraud|suspended|failed|blocked|rejected|expired|revoked/i.test(state);
-const good=(state:string)=>/approved|published|completed|verified|resolved|active|accepted|success/i.test(state);
-function statusClass(s:string){return dangerous(s)?css.bad:good(s)?css.good:/pending|review|open|processing|triaged/i.test(s)?css.warn:css.neutral;}
-function isPending(row:SafeRow){return /pending|review|reported|triaged|failed|needs_information|processing|unknown/i.test(row.state);}
-function countBy(rows:SafeRow[],fn:(row:SafeRow)=>string){const out:Record<string,number>={};for(const row of rows){const k=fn(row)||'Not specified';out[k]=(out[k]||0)+1;}return Object.entries(out).sort((a,b)=>b[1]-a[1]);}
-function breakdown(rows:SafeRow[],fn:(row:SafeRow)=>string,accent:string,title:string){const groups=countBy(rows,fn).slice(0,7),max=Math.max(1,...groups.map(x=>x[1]));return <section className={css.panel}><div className={css.panelHead}><div><h3>{title}</h3><small>Breakdown of records loaded on this page</small></div></div>{groups.length?<div className={css.bars}>{groups.map(([name,n],i)=><div key={name} className={css.barRow}><span title={name}>{name}</span><div className={css.track}><i style={{width:`${Math.max(4,n/max*100)}%`,background:i===0?accent:['#21b69a','#8865ed','#f5a623','#5b8ce9','#e65c73'][i%5]}}/></div><strong>{n}</strong></div>)}</div>:<p className={css.empty}>No records to analyze on the current page.</p>}</section>}
-function statusDonut(rows:SafeRow[],accent:string){const groups=countBy(rows,r=>r.state).slice(0,6),sum=groups.reduce((a,b)=>a+b[1],0);let progress=0;const palette=[accent,'#16b39a','#f3a321','#e15c77','#9477ed','#9db1d2'];const stops=groups.map(([,n],i)=>{const start=progress;progress+=(n/Math.max(1,sum))*100;return `${palette[i]} ${start}% ${progress}%`;}).join(', ');return <section className={css.panel}><div className={css.panelHead}><div><h3>Operational Status Composition</h3><small>Observed states, loaded records only</small></div></div><div className={css.donutContent}><div className={css.donut} style={{background:groups.length?`conic-gradient(${stops})`:'#e8eef6'}}><span><strong>{sum}</strong><small>records</small></span></div><div className={css.donutLegend}>{groups.map(([name,n],i)=><div key={name}><i style={{background:palette[i]}}/><span>{name}</span><b>{n}</b></div>)}</div></div></section>}
-function downloadSummary(data:OpsPayload){const header='source,total_records,loaded_rows,page\n';const cells=data.sources.map(s=>[s.area,s.total===null?'':String(s.total),s.rows.length,s.page].join(',')).join('\n');const blob=new Blob([header+cells+'\n'],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob);const anchor=document.createElement('a');anchor.href=url;anchor.download=`jobkix-${data.workspace}-authorized-summary.csv`;anchor.click();URL.revokeObjectURL(url);}
-function useSavedViews(slug:string){const [saved,setSaved]=useState<string[]>([]);useEffect(()=>{try{const raw=localStorage.getItem('jobkix-ops-r1-'+slug);const result=raw?JSON.parse(raw):[];setSaved(Array.isArray(result)?result.filter((s:unknown)=>typeof s==='string'):[]);}catch{setSaved([]);}},[slug]);const add=(view:string)=>{const next=[...new Set([...saved,view])].slice(-16);setSaved(next);try{localStorage.setItem('jobkix-ops-r1-'+slug,JSON.stringify(next));}catch{}};return {saved,add};}
-const CASE_NEXT:Record<string,string[]>={reported:['triaged','under_review'],triaged:['under_review','needs_information'],under_review:['needs_information','action','no_action','resolved'],needs_information:['under_review','resolved'],appealed:['under_review','action','no_action','resolved'],action:['resolved'],no_action:['resolved']};
+const workIcons=['▥','▣','◎','◇','◉','▤','⌘'];
+const fmt=(n:number|null)=>n===null?'Unavailable':new Intl.NumberFormat('en-US').format(n);
+function downloadSummary(data:OpsPayload){
+ const safe=(s:string)=>'"'+String(s).replaceAll('"','""').replace(/^[=+\-@\t\r]/,'\u2019$&')+'"';
+ const out=['source,total_records,loaded_rows,page',...data.sources.map(s=>[s.area,s.total===null?'':String(s.total),s.rows.length,s.page].map(safe).join(','))].join('\r\n');
+ const url=URL.createObjectURL(new Blob(['\ufeff',out+'\r\n'],{type:'text/csv;charset=utf-8'}));
+ const a=document.createElement('a');a.href=url;a.download=`jobkix-${data.workspace}-authorized-summary.csv`;a.click();window.setTimeout(()=>URL.revokeObjectURL(url),700);
+}
+/** R3: exactly one selected tab and one selected lens own the entire central viewport. */
 export function OperationsScreen({data,initialTab='',page=1}:{data:OpsPayload;initialTab?:string;page?:number}){
- const config=workspaceFromSlug(data.workspace)!;const router=useRouter(),{saved,add}=useSavedViews(data.workspace),meta=intended[data.workspace];
+ const config=workspaceFromSlug(data.workspace)!;
+ const router=useRouter();
+ const tabs=config.tabs.map(t=>({name:t[0],area:t[1] as SourceArea|null}));
+ const first=tabs[0].name;
+ const safeTab=tabs.some(t=>t.name===initialTab)?initialTab:first;
+ const [tab,setTab]=useState(safeTab);
+ const [view,setView]=useState(normalizedView(data.workspace,safeTab,null));
+ const [mobile,setMobile]=useState(false);
+ const [selected,setSelected]=useState<SafeRow|null>(null);
+ const [selectedArea,setSelectedArea]=useState<SourceArea|null>(null);
+ const [query,setQuery]=useState('');
+ const [saveOpen,setSaveOpen]=useState(false);
+ const [saved,setSaved]=useState<{tab:string;view:string}[]>([]);
  const searchRef=useRef<HTMLInputElement>(null);
- const tabs:Tab[]=config.tabs.map(t=>({name:t[0],area:t[1] as SourceArea|null}));
- const safeTab=tabs.some(t=>t.name===initialTab)?initialTab:tabs[0].name;
- const [tab,setTab]=useState(safeTab),[needle,setNeedle]=useState(''),[country,setCountry]=useState(''),[status,setStatus]=useState(''),[type,setType]=useState(''),[sort,setSort]=useState('newest'),[selected,setSelected]=useState<SafeRow|null>(null),[selectedArea,setSelectedArea]=useState<SourceArea|null>(null),[mobile,setMobile]=useState(false),[savedOpen,setSavedOpen]=useState(false);
- useEffect(()=>setTab(safeTab),[safeTab]);
- useEffect(()=>{const keys=(event:KeyboardEvent)=>{if((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='k'){event.preventDefault();searchRef.current?.focus();}if(event.key==='Escape'){setSelected(null);setMobile(false);}};window.addEventListener('keydown',keys);return ()=>window.removeEventListener('keydown',keys);},[]);
- const openRecord=(record:SafeRow,area:SourceArea)=>{setSelectedArea(area);setSelected(record);};
- const current=tabs.find(t=>t.name===tab)||tabs[0];const source=data.sources.find(s=>s.area===current.area)||data.sources.find(s=>s.area===config.primary)!;
- const primary=data.sources.find(s=>s.area===config.primary)!;
- const rows=source.rows;
- const countries=useMemo(()=>countBy(rows,r=>r.country).map(x=>x[0]).filter(x=>x!=='Not specified'),[rows]);
- const statuses=useMemo(()=>countBy(rows,r=>r.state).map(x=>x[0]),[rows]);
- const kinds=useMemo(()=>countBy(rows,r=>r.type).map(x=>x[0]),[rows]);
- const filtered=useMemo(()=>rows.filter(row=>(!needle||[row.id,row.title,row.state,row.type,row.country,row.organization].some(s=>s.toLowerCase().includes(needle.toLowerCase())))&&(!country||row.country===country)&&(!status||row.state===status)&&(!type||row.type===type)).sort((a,b)=>sort==='name'?a.title.localeCompare(b.title):sort==='state'?a.state.localeCompare(b.state):sort==='oldest'?a.createdAt.localeCompare(b.createdAt):b.createdAt.localeCompare(a.createdAt)),[rows,needle,country,status,type,sort]);
- const summary=[
-  {name:meta.primaryLabels[0],n:primary.total,detail:`Native ${primary.area} authority`,icon:BriefcaseBusiness},
-  {name:meta.primaryLabels[1],n:primary.rows.length,detail:`Page ${primary.page} from authorized source`,icon:FileText},
-  {name:meta.primaryLabels[2],n:data.workspace==='platform'?primary.counts?.pending??null:primary.rows.filter(isPending).length,detail:'Derived from the current loaded page',icon:Clock3},
-  {name:meta.primaryLabels[3],n:data.workspace==='platform'?primary.metadata?.expiredPublishedVacancies??null:data.workspace==='executive'||data.workspace==='intelligence'?data.sources.length:new Set(primary.rows.map(r=>r.country).filter(Boolean)).size,detail:'Derived from available authorized data',icon:Globe2},
- ];
- const setPage=(next:number)=>{const p=new URLSearchParams();if(tab!==tabs[0].name)p.set('tab',tab);p.set('page',String(next));router.push(operatorHref(data.workspace)+'?'+p.toString());};
- const navigateTab=(next:string)=>{setTab(next);setNeedle('');setCountry('');setStatus('');setType('');router.replace(operatorHref(data.workspace,next),{scroll:false});};
- const clear=()=>{setNeedle('');setCountry('');setStatus('');setType('');setSort('newest');};
- const pageTotal=source.total;
- const primaryRows=primary.rows;
- const globalPanel=<div className={css.twoCol}>{breakdown(primaryRows,r=>r.country,config.accent,'Global Footprint by Country')}{statusDonut(primaryRows,config.accent)}</div>;
- const healthPanel=data.workspace==='platform'?<div className={css.twoCol}><section className={css.panel}><div className={css.panelHead}><div><h3>Delivery Queue States</h3><small>Read from existing D07 operations authority</small></div><Link href={nativeHref('health')}>Open health authority <ArrowRight size={14}/></Link></div>{Object.entries(primary.counts||{}).length?<div className={css.queueTiles}>{Object.entries(primary.counts||{}).map(([k,v])=><div key={k}><span>{k.replaceAll('_',' ')}</span><b>{human(v)}</b></div>)}</div>:<p className={css.empty}>No queue state counters returned.</p>}</section><section className={css.panel}><div className={css.panelHead}><div><h3>Scheduled Operations</h3><small>Measured from your JOBKIX service responses</small></div></div><div className={css.queueTiles}><div><span>Expired published vacancies</span><b>{human(primary.metadata?.expiredPublishedVacancies??null)}</b></div><div><span>Pending support cases</span><b>{human(primary.metadata?.pendingCases??null)}</b></div><div><span>Saved-filter failures</span><b>{human(primary.metadata?.savedFilterFailures??null)}</b></div></div></section></div>:null;
- const modulePanel=<section className={css.panel}><div className={css.panelHead}><div><h3>{meta.heading}</h3><small>{meta.description}</small></div><span className={css.panelAnnotation}>NATIVE AUTHORITY FIRST</span></div><div className={css.moduleGrid}>{meta.tiles.map((label,i)=>{const item=data.sources[i%data.sources.length];const target=item?.area||config.primary;return <Link key={label} className={css.moduleTile} href={nativeHref(target)}><span className={css.moduleGlyph} style={{background:`${config.accent}16`,color:config.accent}}>{['▣','◎','◈','✦','⬡','⌘'][i]}</span><strong>{label}</strong><small>Inspect {target} workspace <ArrowRight size={12}/></small></Link>;})}</div></section>;
- return <div className={css.shell} style={{'--ops-accent':config.accent} as CSSProperties}>
-  <aside className={`${css.sidebar} ${mobile?css.mobileOpen:''}`} aria-label="JOBKIX operator workspaces"><Link className={css.brand} href={operatorHref('executive')}><img src="/jobkix/brand/jobkix-logo-white.png" alt="JOBKIX · Global Careers Platform" className={css.brandImg}/><span className={css.brandSub}>GLOBAL OPERATIONS</span></Link><div className={css.org}><Globe2 size={17}/><div><strong>Global Headquarters</strong><small>Operator environment</small></div><ChevronDown size={15}/></div><div className={css.sideSection}>WORKSPACES</div><nav>{WORKSPACES.map((w,i)=>{const Icon=icons[i];const accessible=data.allowed.includes(w.slug);return accessible?<Link aria-current={data.workspace===w.slug?'page':undefined} key={w.slug} className={`${css.sideNav} ${w.slug===data.workspace?css.active:''}`} href={operatorHref(w.slug)} onClick={()=>setMobile(false)}><Icon size={16}/><span>{w.number}. {w.name}</span>{w.slug===data.workspace?<b/>:null}</Link>:<span key={w.slug} className={`${css.sideNav} ${css.locked}`} title="Requires native workspace permission"><LockKeyhole size={15}/><span>{w.number}. {w.name}</span></span>;})}</nav><div className={css.sidebarRule}/><div className={css.sideSection}>OPERATOR TOOLS</div><a className={css.sideNav} href="#ops-records"><Search size={16}/>Current records</a><a className={css.sideNav} href="#ops-navigation"><SlidersHorizontal size={16}/>Workspace navigation</a><Link className={css.sideNav} href={nativeHref(config.primary)}><ShieldCheck size={16}/>Native authority</Link><div className={css.sideEnd}><div className={css.operatorAvatar}>OP</div><span><strong>Authorized operator</strong><small>Native Marketplace session</small></span></div><small className={css.restricted}>INTERNAL · RESTRICTED VIEW<br/>JOBKIX operator workspace</small></aside>
-  <div className={css.mainWrap}><header className={css.topbar}><div className={css.crumb}><button type="button" className={css.mobileToggle} onClick={()=>setMobile(!mobile)} aria-label="Toggle navigation"><Menu size={19}/></button>JOBKIX <ChevronRight size={13}/> Operations <ChevronRight size={13}/><strong>{config.name}</strong></div><div className={css.headerTools}><label className={css.headSearch}><Search size={15}/><input ref={searchRef} value={needle} onChange={e=>setNeedle(e.target.value)} placeholder="Search loaded records..." aria-label="Search visible records"/><kbd>⌘K</kbd></label><span className={css.globalIndicator}><Globe2 size={15}/> Global</span><button type="button" className={css.iconButton} onClick={()=>router.refresh()} title="Refresh authorized data"><RefreshCw size={17}/></button><span className={css.profile}>OP</span></div></header>
-  <main className={css.content}><div className={css.eyebrow}><i/> JOBKIX OPERATOR OS / WORKSPACE {config.number} / PRO MAX R2</div><div className={css.titlebar}><div><h1>{config.name}</h1><p>{config.subtitle}</p></div><div className={css.titleTools}><span className={css.sampleLabel}>Authorized source data</span><button type="button" onClick={()=>downloadSummary(data)}><Download size={15}/> Summary CSV</button><button type="button" className={css.primaryButton} onClick={()=>setSavedOpen(!savedOpen)}><SlidersHorizontal size={15}/> Saved views</button></div></div>
-  {savedOpen?<div className={css.savedPanel}><strong>Personal browser views</strong><small>Local to this browser. No server-side profile changes.</small><button type="button" onClick={()=>{add([tab,country,status,type,sort,needle].join('|'));setSavedOpen(false);}}>Save current filters</button>{saved.map((s,i)=><button key={i} type="button" onClick={()=>{const [t,c,st,k,so,q]=s.split('|');setTab(t);setCountry(c);setStatus(st);setType(k);setSort(so);setNeedle(q);setSavedOpen(false);}}>View {i+1}: {s.split('|')[0]}</button>)}</div>:null}
-  <section className={css.navBlock} id="ops-navigation"><div className={css.tabs} role="tablist" aria-label="Workspace areas">{tabs.map(t=><button role="tab" key={t.name} aria-selected={t.name===tab} type="button" className={`${css.tab} ${tab===t.name?css.tabActive:''}`} onClick={()=>navigateTab(t.name)}>{t.name}</button>)}</div><div className={css.filters}><strong><span className={css.blueDot}/> Workspace / {tab}</strong><label><CalendarDays size={14}/> Page {page}</label><label><Globe2 size={14}/> Data: authorized only</label><label><ListFilter size={14}/> Source: {source.area}</label><button type="button" onClick={clear}><RefreshCw size={13}/> Reset filters</button></div></section>
-  {data.failures.length?<div className={css.notice} role="alert"><ShieldAlert size={16}/><div>Some supplementary authorities could not be read. {data.failures.join(' ')}</div></div>:null}
-  {current.area!==null&&!data.sources.some(s=>s.area===current.area)?<div className={css.notice} role="status"><LockKeyhole size={17}/><div><strong>The selected source is outside your accessible operator scope or unavailable.</strong> Showing the primary authorized workspace instead. Open the native authority only if you have the required permission.</div></div>:null}
-  {current.area===null?<div className={css.notice} role="status"><Info size={17}/><div><strong>{tab} requires a dedicated operator read model.</strong> It is not provided by the uploaded JOBKIX source. This tab shows the linked authorized operational foundation; no candidate-private or fabricated aggregate data is presented. The underlying service must be added before this area can become fully operational.</div></div>:null}
-  <div className={css.kpis}>{summary.map((k,i)=>{const Icon=k.icon;return <article className={css.kpi} key={k.name}><div className={css.kpiTop}><span className={css.kpiIcon}><Icon size={18}/></span><span>{k.name}</span></div><strong>{human(k.n)}</strong><small>{k.detail}</small><div className={css.kpiRule} style={{width:`${[89,67,45,73][i]}%`,background:config.accent}}/></article>})}</div>
-  <div className={css.banner}><span className={css.bannerIcon}><Workflow size={28}/></span><div><strong>{meta.heading}</strong><p>{meta.description}</p></div><Link href={nativeHref(config.primary)}>Open native authority <ArrowRight size={15}/></Link></div>
-  <SpecialistContent data={data}/>
-   <DeepWorkspace data={data} tab={tab} area={current.area} onOpen={openRecord}/>
-  {healthPanel}
-  {globalPanel}
-  <section className={css.panel} id="ops-records"><div className={css.panelHead}><div><h3>{current.area===null?`Supporting ${source.area} Records`:`${tab} · Operational Records`}</h3><small>Permission-limited, projected fields • {source.total===null?'Total unavailable':`${human(source.total)} records in source`} • Loaded page {source.page}</small></div><Link href={nativeHref(source.area)}>Full native {source.area} management <ExternalLink size={14}/></Link></div><div className={css.tableFilters}><label><Search size={14}/><input placeholder="Search title, organization, state or ID" value={needle} onChange={e=>setNeedle(e.target.value)}/></label><label><Filter size={14}/><select value={country} onChange={e=>setCountry(e.target.value)}><option value="">All loaded countries</option>{countries.map(c=><option key={c}>{c}</option>)}</select></label><label><select aria-label="Filter status" value={status} onChange={e=>setStatus(e.target.value)}><option value="">All loaded statuses</option>{statuses.map(s=><option key={s}>{s}</option>)}</select></label><label><select aria-label="Filter type" value={type} onChange={e=>setType(e.target.value)}><option value="">All loaded types</option>{kinds.map(s=><option key={s}>{s}</option>)}</select></label><label><select aria-label="Sort visible results" value={sort} onChange={e=>setSort(e.target.value)}><option value="newest">Newest</option><option value="oldest">Oldest</option><option value="name">Name A–Z</option><option value="state">State</option></select></label></div><div className={css.tableScroll}><table><thead><tr><th>Record / Reference</th><th>Kind</th><th>Country</th><th>Status</th><th>Updated</th><th>Review</th></tr></thead><tbody>{filtered.map((row,i)=><tr key={`${row.id}-${i}`}><td><b>{row.title}</b><span className={css.secondaryCell}>{row.organization||row.id}</span></td><td>{row.type}</td><td>{row.country||'—'}</td><td><span className={`${css.status} ${statusClass(row.state)}`}>{row.state}</span></td><td>{row.updatedAt?row.updatedAt.slice(0,10):'—'}</td><td><button className={css.inspect} type="button" onClick={()=>openRecord(row,source.area)}>Inspect <ArrowRight size={13}/></button></td></tr>)}</tbody></table>{!filtered.length?<p className={css.empty}>No matching records on this authorized page. Change filters or open the native authority.</p>:null}</div><div className={css.tableFooter}><span>Showing {filtered.length} / {rows.length} loaded records • Page {page} • Server page size 24</span><div><button type="button" disabled={page<=1} onClick={()=>setPage(Math.max(1,page-1))}><ChevronLeft size={16}/> Previous</button><button type="button" disabled={pageTotal!==null&&page*24>=pageTotal} onClick={()=>setPage(page+1)}>Next <ChevronRight size={16}/></button></div></div></section>
-  {modulePanel}
-  <div className={css.twoCol}>{breakdown(rows,r=>r.type,config.accent,'Record Types & Specializations')}<section className={css.panel}><div className={css.panelHead}><div><h3>Operator Action Center</h3><small>Real actions are delegated to established native D01–D08 authorities</small></div></div><div className={css.actionList}>{data.sources.map(s=><Link key={s.area} href={nativeHref(s.area)}><span className={css.actionBullet} style={{background:config.accent}}/><div><strong>{s.area[0].toUpperCase()+s.area.slice(1)}</strong><small>{s.total===null?'Authorized source':`${human(s.total)} total records`} · Native controls and audit</small></div><ArrowRight size={15}/></Link>)}</div></section></div>
-  <div className={css.bottomMessage}><ShieldCheck size={21}/><div><strong>One JOBKIX control plane. Eight preserved authorities.</strong><p>All sensitive decisions remain routed through existing permission checks, version protection, auditable commands and consent boundaries. Data shown here is real only when returned by a permitted JOBKIX query.</p></div><Link href={nativeHref(config.primary)}>Manage in native admin <ArrowRight size={14}/></Link></div></main><footer className={css.footer}><strong>JOBKIX</strong><span>Global Careers Platform · Operator Console</span><div>Internal Operations · Security & Privacy · Audit</div><small>© 2026 JOBKIX · Operational UI</small></footer></div>{selected?<DossierR2 record={selected} source={selectedArea||source.area} canAudit={data.sources.some(s=>s.area==='audit')} onClose={()=>setSelected(null)} onUpdated={()=>router.refresh()}/>:null}</div>;
+ const headingRef=useRef<HTMLHeadingElement>(null);
+ const current=tabs.find(t=>t.name===tab)||tabs[0];
+ const exact=current.area===null?undefined:data.sources.find(s=>s.area===current.area);
+ const primary=data.sources.find(s=>s.area===config.primary);
+ const keys=useMemo(()=>lensKeys(data.workspace,tab),[data.workspace,tab]);
+ const selectedKey=normalizedView(data.workspace,tab,view);
+ const activeIndex=Math.max(0,keys.indexOf(selectedKey));
+ const spec=getTabSpec(data.workspace,tab);
+ const isFirst=tab===first;
+ const isFirstLens=activeIndex===0;
+ const isOverview=isFirst&&isFirstLens;
+ const viewTitle=spec?.lenses[activeIndex]||tab;
+ const canShowSource=Boolean(exact);
+ const navigate=useCallback((toTab:string,toView:string,toPage=1)=>{
+  const validTab=tabs.some(item=>item.name===toTab)?toTab:first;
+  const validView=normalizedView(data.workspace,validTab,toView);
+  setTab(validTab);setView(validView);setSelected(null);setSelectedArea(null);setQuery('');setSaveOpen(false);setMobile(false);
+  router.push(viewURL(data.workspace,validTab,validView,toPage),{scroll:true});
+  window.scrollTo({top:0,behavior:'instant'});
+  window.requestAnimationFrame(()=>headingRef.current?.focus({preventScroll:true}));
+ },[data.workspace,router,first,tabs]);
+ useEffect(()=>{
+  // URL wins over stale client tab state on hard refresh, history traversal and RSC updates.
+  const sync=()=>{
+   const url=new URL(window.location.href);
+   const requested=url.searchParams.get('tab');
+   const resolved=tabs.some(t=>t.name===requested)?requested!:first;
+   setTab(resolved);setView(normalizedView(data.workspace,resolved,url.searchParams.get('view')));
+   setSelected(null);setSelectedArea(null);setQuery('');
+  };
+  const onHistory=()=>{sync();window.scrollTo({top:0,behavior:'instant'});window.requestAnimationFrame(()=>headingRef.current?.focus({preventScroll:true}));};
+  sync();window.addEventListener('popstate',onHistory);
+  return ()=>window.removeEventListener('popstate',onHistory);
+ },[data.workspace,first,initialTab]);
+ useEffect(()=>{
+  try{
+   const raw=window.localStorage.getItem('jobkix-ops-r3-views-'+data.workspace);
+   const parsed=raw?JSON.parse(raw):[];
+   if(Array.isArray(parsed))setSaved(parsed.filter((x:unknown)=>!!x&&typeof x==='object'&&typeof (x as {tab?:unknown}).tab==='string'&&typeof (x as {view?:unknown}).view==='string').slice(-12));
+  }catch{setSaved([]);}
+ },[data.workspace]);
+ useEffect(()=>{
+  const key=(event:KeyboardEvent)=>{
+   if((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='k'){event.preventDefault();searchRef.current?.focus();}
+   if(event.key==='Escape'){setMobile(false);setSaveOpen(false);setSelected(null);}
+  };
+  window.addEventListener('keydown',key);return ()=>window.removeEventListener('keydown',key);
+ },[]);
+ const addSaved=()=>{
+  const next=[...saved.filter(s=>s.tab!==tab||s.view!==selectedKey),{tab,view:selectedKey}].slice(-12);
+  setSaved(next);setSaveOpen(false);
+  try{window.localStorage.setItem('jobkix-ops-r3-views-'+data.workspace,JSON.stringify(next));}catch{/* Preferences are browser-local and optional. */}
+ };
+ const onOpen=(record:SafeRow,area:SourceArea)=>{setSelectedArea(area);setSelected(record);};
+ return <div className={`${css.shell} ${r3.shell}`} style={{'--ops-accent':config.accent} as CSSProperties}>
+   <aside className={`${css.sidebar} ${mobile?css.mobileOpen:''} ${r3.sidebar}`} aria-label="JOBKIX operator workspaces">
+    <Link className={css.brand} href={operatorHref('executive')}><img src="/jobkix/brand/jobkix-logo-white.png" alt="JOBKIX · Global Careers Platform" className={css.brandImg}/><span className={css.brandSub}>GLOBAL OPERATIONS</span></Link>
+    <div className={css.org}><Globe2 size={17}/><div><strong>Global Headquarters</strong><small>Operator environment</small></div><ChevronDown size={15}/></div>
+    <div className={css.sideSection}>CONTROL CENTERS</div>
+    <nav>{WORKSPACES.map((w,i)=>data.allowed.includes(w.slug)?<Link key={w.slug} className={`${css.sideNav} ${w.slug===data.workspace?css.active:''}`} aria-current={w.slug===data.workspace?'page':undefined} href={operatorHref(w.slug)} onClick={()=>setMobile(false)}><span className={r3.sideGlyph} aria-hidden="true">{workIcons[i]}</span><span>{w.number}. {w.name}</span>{w.slug===data.workspace?<b/>:null}</Link>:<span key={w.slug} className={`${css.sideNav} ${css.locked}`} title="Requires native workspace permission"><LockKeyhole size={15}/><span>{w.number}. {w.name}</span></span>)}</nav>
+    <div className={css.sidebarRule}/><div className={css.sideSection}>WORKSPACE ACTIONS</div>
+    <button className={`${css.sideNav} ${r3.sideButton}`} type="button" onClick={()=>{window.scrollTo({top:0,behavior:'instant'});headingRef.current?.focus({preventScroll:true});setMobile(false);}}><SlidersHorizontal size={16}/> Active page</button>
+    <Link className={css.sideNav} href={nativeHref(config.primary)}><ShieldCheck size={16}/> Native authority</Link>
+    <div className={css.sideEnd}><div className={css.operatorAvatar}>OP</div><span><strong>Authorized operator</strong><small>Native Marketplace session</small></span></div>
+    <small className={css.restricted}>INTERNAL · RESTRICTED VIEW<br/>Permission-scoped control plane</small>
+   </aside>
+   {mobile?<button type="button" className={r3.mobileBackdrop} aria-label="Close operator menu" onClick={()=>setMobile(false)}/>:null}
+   <div className={`${css.mainWrap} ${r3.main}`}>
+    <header className={`${css.topbar} ${r3.topbar}`}>
+     <div className={css.crumb}><button type="button" className={css.mobileToggle} onClick={()=>setMobile(v=>!v)} aria-label="Toggle navigation" aria-expanded={mobile}><Menu size={19}/></button> JOBKIX <ChevronRight size={13}/> Operations <ChevronRight size={13}/><strong>{config.name}</strong></div>
+     <div className={css.headerTools}><label className={css.headSearch}><Search size={15}/><input ref={searchRef} value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search this active operator page" aria-label="Search active operator page"/><kbd>⌘K</kbd></label><span className={css.globalIndicator}><Globe2 size={15}/> Global</span><button type="button" className={css.iconButton} onClick={()=>router.refresh()} title="Refresh authorized data"><RefreshCw size={17}/></button><span className={css.profile}>OP</span></div>
+    </header>
+    <main className={`${css.content} ${r3.content}`} id="ops-main" aria-label={`${config.name} workspace`}>
+     <div className={r3.breadcrumb}>JOBKIX OPERATOR OS <ChevronRight size={12}/>{config.number} · {config.name}<ChevronRight size={12}/><strong>{tab}</strong></div>
+     <div className={`${css.titlebar} ${r3.titlebar}`}><div><span className={r3.sectionLabel}>GLOBAL OPERATIONS · {config.number} / 07</span><h1 ref={headingRef} tabIndex={-1}>{config.name}</h1><p>{config.subtitle}</p></div><div className={css.titleTools}>{isOverview?<button type="button" onClick={()=>downloadSummary(data)}><Download size={15}/> Source summary CSV</button>:null}<button type="button" className={r3.bookmarkBtn} onClick={()=>setSaveOpen(x=>!x)} aria-expanded={saveOpen}><SlidersHorizontal size={15}/> Saved views</button></div></div>
+     {saveOpen?<div className={r3.savedBox}><div className={r3.savedHead}><strong>My operator shortcuts</strong><button type="button" onClick={()=>setSaveOpen(false)} aria-label="Close saved views"><X size={16}/></button></div><p>Browser-local shortcuts only. No private records or server preferences are stored.</p><button type="button" onClick={addSaved}>Save current page: {tab} / {viewTitle}</button>{saved.map((s,i)=><button type="button" key={i} onClick={()=>navigate(s.tab,s.view)}>Open {s.tab} / {getTabSpec(data.workspace,s.tab)?.lenses[lensKeys(data.workspace,s.tab).indexOf(s.view)]||'Overview'}</button>)}</div>:null}
+     <nav className={`${css.navBlock} ${r3.navBlock}`} aria-label={`${config.name} workspace sections`}><div className={`${css.tabs} ${r3.tabRail}`} role="tablist" aria-label="Workspace primary tabs">{tabs.map(t=><button id={`ops-tab-${data.workspace}-${tabs.indexOf(t)}`} key={t.name} role="tab" type="button" aria-selected={tab===t.name} aria-controls="ops-active-view" tabIndex={tab===t.name?0:-1} className={`${css.tab} ${tab===t.name?css.tabActive:''}`} onClick={()=>navigate(t.name,normalizedView(data.workspace,t.name,null))} onKeyDown={e=>{const i=tabs.indexOf(t);const next=e.key==='ArrowRight'?(i+1)%tabs.length:e.key==='ArrowLeft'?(i-1+tabs.length)%tabs.length:e.key==='Home'?0:e.key==='End'?tabs.length-1:-1;if(next<0)return;e.preventDefault();navigate(tabs[next].name,normalizedView(data.workspace,tabs[next].name,null));window.requestAnimationFrame(()=>window.requestAnimationFrame(()=>document.getElementById(`ops-tab-${data.workspace}-${next}`)?.focus()));}}>{t.name}</button>)}</div></nav>
+     <section id="ops-active-view" role="tabpanel" aria-label={`${tab} dedicated operator page`} className={r3.viewport}>
+      <div className={r3.viewHeading}><div><span className={r3.sectionLabel}>ACTIVE WORKSPACE / {tab.toUpperCase()}</span><h2>{tab}</h2><p>{spec?.purpose||'Permission-scoped operational workspace.'}</p></div><span className={canShowSource?r3.sourceLive:r3.sourceGate}>{canShowSource?`SOURCE · ${current.area?.toUpperCase()}`:'SOURCE INTEGRATION REQUIRED'}</span></div>
+      {data.failures.length?<div role="alert" className={r3.notice}><ShieldAlert size={18}/><span>Some authorized source requests were unavailable. {data.failures.join(' ')}</span></div>:null}
+      {isOverview&&primary?<div className={r3.overviewGrid}>{[
+       ['Primary source records',primary.total,`Native ${primary.area.toUpperCase()} authority`],
+       ['Records on this page',primary.rows.length,`Server page ${primary.page}`],
+       ['Authorized sources',data.sources.length,'Permission-checked domains'],
+       ['Available operator screens',data.allowed.length,'Granted workspace scope']
+      ].map(([name,total,detail])=><div className={r3.statCard} key={String(name)}><small>{name}</small><strong>{typeof total==='number'?fmt(total):'Unavailable'}</strong><span>{detail}</span></div>)}</div>:null}
+      {isOverview?<div className={r3.overviewSpecialist}><SpecialistContent data={data}/></div>:null}
+      <DeepWorkspace key={`${data.workspace}:${tab}`} data={data} tab={tab} area={current.area} activeView={selectedKey} onViewChange={next=>navigate(tab,next)} onPageChange={next=>navigate(tab,selectedKey,next)} query={query} onOpen={onOpen}/>
+     </section>
+    </main>
+    <footer className={`${css.footer} ${r3.footer}`}><strong>JOBKIX</strong><span>Global Careers Platform · Operator Control Plane</span><div>Internal Operations · Permission-scoped access · Audited decisions</div><small>© JOBKIX · Official operator experience</small></footer>
+   </div>
+   {selected?<DossierR2 key={selected.id} record={selected} source={selectedArea||current.area||config.primary} canAudit={data.sources.some(s=>s.area==='audit')} onClose={()=>setSelected(null)} onUpdated={()=>router.refresh()}/>:null}
+  </div>;
 }

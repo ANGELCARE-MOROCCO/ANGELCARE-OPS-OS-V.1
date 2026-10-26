@@ -24,21 +24,18 @@ import {
   LayoutGrid,
   List,
   LoaderCircle,
-  MoreHorizontal,
   Play,
   Plus,
   Search,
   Settings2,
   Share2,
-  Sparkles,
   Trash2,
   Undo2,
   UserRound,
   X,
-  SlidersHorizontal,
   CalendarDays,
-  Compass,
   ShieldCheck,
+  Target,
 } from "lucide-react";
 import {
   WORLDS,
@@ -78,7 +75,7 @@ const COPY: Record<string, Tri> = {
   recent: ["Recently explored", "Explorés récemment", "استكشفت مؤخراً"],
   complete: ["Completed", "Terminés", "مكتملة"],
   prepared: ["Prepared resources", "Ressources préparées", "موارد جاهزة"],
-  profile: ["Make it yours", "À votre image", "اجعلها لك"],
+  profile: ["My profile", "Mon profil", "ملفي الشخصي"],
   preferences: [
     "Preferences & privacy",
     "Préférences et confidentialité",
@@ -137,6 +134,7 @@ const COPY: Record<string, Tri> = {
     "إعادة ضبط المرشحات",
   ],
   open: ["Open resource", "Ouvrir la ressource", "افتح المورد"],
+  review: ["Review resource", "Revoir la ressource", "راجع المورد"],
   resume: ["Continue", "Reprendre", "تابع"],
   save: ["Save resource", "Enregistrer la ressource", "احفظ المورد"],
   unsave: ["Remove from saved", "Retirer des favoris", "إزالة من المحفوظات"],
@@ -320,7 +318,18 @@ function Empty({
         <FolderHeart size={38} />
       </span>
       <h3>{tx(filtered ? "emptyFilter" : "empty", locale)}</h3>
-      <p>{tx("emptySub", locale)}</p>
+      <p>
+        {filtered
+          ? tr(
+              [
+                "Try another keyword, change a filter or reset this view.",
+                "Essayez un autre mot-clé, modifiez un filtre ou réinitialisez cette vue.",
+                "جرّب كلمة أخرى أو غيّر أحد المرشحات أو أعد ضبط هذا القسم.",
+              ],
+              locale,
+            )
+          : tx("emptySub", locale)}
+      </p>
       {filtered ? (
         <button className={s.primary} onClick={reset}>
           {tx("clearFilters", locale)}
@@ -345,6 +354,7 @@ function LibraryCard({
   onSession,
   onShare,
   onRemove,
+  visitedAt,
 }: {
   resource?: Resource;
   resourceKey: string;
@@ -358,11 +368,13 @@ function LibraryCard({
   onSession?: (keys: string[]) => void;
   onShare?: (r: Resource) => void;
   onRemove?: () => void;
+  visitedAt?: number;
 }) {
   const p = usePersonal(),
     saved = p.data.saved.some((x) => x.key === resourceKey),
     [broken, setBroken] = useState(false),
     r = resource;
+  useEffect(() => setBroken(false), [r?.image]);
   const label = activity?.complete
     ? "complete"
     : activity?.started
@@ -430,9 +442,8 @@ function LibraryCard({
           </span>
         </Link>
       ) : (
-        <div className={s.coverFallback}>
-          <Bookmark size={33} />
-          <span>{tx("unavailable", locale)}</span>
+        <div className={s.unavailableMark} aria-hidden="true">
+          <Bookmark size={22} />
         </div>
       )}
       <div className={s.cardBody}>
@@ -461,6 +472,17 @@ function LibraryCard({
           )}
         </h3>
         <p className={s.summary}>{r ? r.summary : tx("missing", locale)}</p>
+        {visitedAt ? (
+          <time
+            className={s.visited}
+            dateTime={new Date(visitedAt).toISOString()}
+          >
+            <Clock size={12} />
+            {new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(
+              visitedAt,
+            )}
+          </time>
+        ) : null}
         {r ? (
           <>
             <div className={s.meta}>
@@ -493,7 +515,11 @@ function LibraryCard({
                   <ArrowUpRight size={14} />
                 )}{" "}
                 {tx(
-                  activity?.started && !activity.complete ? "resume" : "open",
+                  activity?.complete
+                    ? "review"
+                    : activity?.started
+                      ? "resume"
+                      : "open",
                   locale,
                 )}
               </Link>
@@ -716,7 +742,9 @@ export function PersonalLibrary({
       tab === "overview"
         ? [
             ...p.data.saved.map((x) => x.key),
-            ...tabKeys(p.data, "progress", locale).slice(0, 4),
+            ...tabKeys(p.data, "progress", locale),
+            ...p.data.recent.slice(0, 8).map((x) => x.key),
+            ...p.data.queue,
             ...covers,
           ]
         : tab === "collections" && !collectionID
@@ -947,6 +975,11 @@ export function PersonalLibrary({
         resource={by.get(key)}
         locale={locale}
         activity={activity.get(key)}
+        visitedAt={
+          tab === "recent"
+            ? p.data.recent.find((item) => item.key === key)?.at
+            : undefined
+        }
         selected={selection.includes(key)}
         onSelect={
           selectable
@@ -968,10 +1001,13 @@ export function PersonalLibrary({
     );
   }
   const progress = tabKeys(p.data, "progress", locale),
+    availableProgress = progress.filter((key) => by.has(key)),
+    availableSaved = p.data.saved.filter((item) => by.has(item.key)),
+    availableRecent = p.data.recent.filter((item) => by.has(item.key)),
+    availableSession = p.data.queue.filter((key) => by.has(key)),
+    unavailableSaved = p.data.saved.length - availableSaved.length,
     nameValue = p.data.profile.name,
-    continueResource =
-      progress.map((k) => by.get(k)).find(Boolean) ||
-      p.data.saved.map((x) => by.get(x.key)).find(Boolean),
+    continueResource = by.get(availableProgress[0] || ""),
     related = relatedFamilies(resources.data, p.data.profile.interests);
   return (
     <article
@@ -982,72 +1018,108 @@ export function PersonalLibrary({
       <header className={s.hero}>
         <div className={s.heroCopy}>
           <span className={s.eyebrow}>
-            <Sparkles size={14} /> KIDFLIX · {tx("device", locale)}
+            {t([
+              "YOUR PERSONAL RESOURCE LIBRARY",
+              "VOTRE BIBLIOTHÈQUE PERSONNELLE",
+              "مكتبتك الشخصية للموارد",
+            ])}
           </span>
-          <h1>
+          <h1>{t(["My KidFlix", "Mon KidFlix", "كيدفليكس الخاص بي"])}</h1>
+          <p>
             {nameValue
               ? t([
-                  "Welcome back, " + nameValue,
-                  "Heureux de vous retrouver, " + nameValue,
-                  "مرحباً بعودتك، " + nameValue,
+                  `Welcome back, ${nameValue}. `,
+                  `Heureux de vous retrouver, ${nameValue}. `,
+                  `مرحباً بعودتك، ${nameValue}. `,
                 ])
-              : t([
-                  "A little space for your next big discovery",
-                  "Votre espace pour de grandes découvertes",
-                  "مساحتك الصغيرة لاكتشافات كبيرة",
-                ])}
-          </h1>
-          <p>
+              : ""}
             {t([
-              "Everything you save. Every learning moment you return to. A library that grows with your curiosity.",
-              "Vos favoris, vos idées et vos apprentissages à reprendre. Une bibliothèque qui grandit avec votre curiosité.",
-              "كل ما تحفظه وكل لحظة تعلّم تعود إليها. مكتبة تنمو مع فضولك.",
+              "Your resources, learning and preparation, together.",
+              "Vos ressources, apprentissages et préparations, au même endroit.",
+              "مواردك وتعلّمك وتحضيراتك في مكان واحد.",
             ])}
           </p>
           <div className={s.heroActions}>
-            {continueResource ? (
-              <Link
-                className={s.primary}
-                href={path(
-                  locale,
-                  "/experience/" + encodeURIComponent(continueResource.key),
-                )}
-              >
-                <Play size={16} />
-                {tx("resume", locale)}
-              </Link>
-            ) : (
-              <Link className={s.primary} href={path(locale, "/explore")}>
-                <Compass size={17} />
-                {tx("explore", locale)}
-              </Link>
-            )}
-            <button className={s.secondary} onClick={() => navigate("profile")}>
-              <UserRound size={16} />
-              {tx("profile", locale)}
+            <Link
+              className={s.primary}
+              href={
+                continueResource
+                  ? path(
+                      locale,
+                      "/experience/" + encodeURIComponent(continueResource.key),
+                    )
+                  : path(locale, "/explore")
+              }
+            >
+              {continueResource ? <Play size={16} /> : <Search size={16} />}
+              {tx(continueResource ? "resume" : "explore", locale)}
+            </Link>
+            <button
+              className={s.secondary}
+              onClick={() => navigate("collections")}
+            >
+              <FolderPlus size={16} />
+              {tx("collections", locale)}
+            </button>
+            <button
+              className={s.textButton}
+              onClick={() => navigate("session")}
+            >
+              <CalendarDays size={16} />
+              {tx("session", locale)}
             </button>
           </div>
+          <p className={s.storageCaption}>
+            <ShieldCheck size={13} />
+            {tx("device", locale)} ·{" "}
+            {t([
+              "No account required",
+              "Accessible sans compte",
+              "متاح دون حساب",
+            ])}
+          </p>
         </div>
-        <div className={s.heroArt} aria-hidden="true">
-          <div className={s.orbitOne} />
-          <div className={s.orbitTwo} />
-          <span className={s.floatingHeart}>
-            <Heart size={27} fill="currentColor" />
-          </span>
-          <span className={s.floatingBook}>
-            <BookOpen size={31} />
-          </span>
-          <div className={s.folderArt}>
+        {continueResource ? (
+          <Link
+            className={s.resumeSpotlight}
+            href={path(
+              locale,
+              "/experience/" + encodeURIComponent(continueResource.key),
+            )}
+          >
+            {continueResource.image ? (
+              <img src={continueResource.image} alt="" loading="eager" />
+            ) : (
+              <BookOpen size={36} />
+            )}
             <div>
-              <FolderHeart size={52} />
-              <strong>My KidFlix</strong>
-              <span>EXPLORE · SAVE · GROW</span>
+              <span>{tx("progress", locale)}</span>
+              <strong>{continueResource.title}</strong>
+              <small>
+                {tr(world(continueResource.family)!.title, locale)}
+                <ArrowRight size={15} />
+              </small>
             </div>
+          </Link>
+        ) : (
+          <div className={s.openingNote}>
+            <BookOpen size={26} />
+            <strong>
+              {t([
+                "A useful place to return to",
+                "Vos repères, à portée de main",
+                "مكان مفيد للعودة إليه",
+              ])}
+            </strong>
+            <span>
+              {t([
+                "Save resources, organize collections and prepare your next session.",
+                "Enregistrez des ressources, organisez vos collections et préparez votre prochaine séance.",
+                "احفظ الموارد ونظّم المجموعات وحضّر جلستك القادمة.",
+              ])}
+            </span>
           </div>
-          <span className={s.floatingStar}>
-            <Sparkles size={24} />
-          </span>
-        </div>
+        )}
       </header>
       <div className={s.metrics}>
         {[
@@ -1069,6 +1141,19 @@ export function PersonalLibrary({
           );
         })}
       </div>
+      <label className={s.mobileSections}>
+        <span>{t(["Your space", "Votre espace", "مساحتك"])}</span>
+        <select
+          value={tab}
+          onChange={(event) => navigate(event.target.value as LibraryTab)}
+        >
+          {TABS.map((key) => (
+            <option value={key} key={key}>
+              {tx(key, locale)}
+            </option>
+          ))}
+        </select>
+      </label>
       <div className={s.layout}>
         <aside className={s.sidebar}>
           <div className={s.sideHeading}>
@@ -1096,7 +1181,7 @@ export function PersonalLibrary({
             })}
           </nav>
           <div className={s.intention}>
-            <Sparkles size={20} />
+            <Target size={20} />
             <strong>{t(["My intention", "Mon intention", "نيّتي"])}</strong>
             <p>
               {p.data.profile.goal ||
@@ -1192,7 +1277,7 @@ export function PersonalLibrary({
             </div>
           ) : tab === "overview" ? (
             <>
-              {progress.length ? (
+              {availableProgress.length ? (
                 <section className={s.shelfSection}>
                   <div className={s.sectionHeading}>
                     <h3>
@@ -1205,7 +1290,7 @@ export function PersonalLibrary({
                     </button>
                   </div>
                   <div className={s.cardGrid}>
-                    {progress.slice(0, 4).map((k) => card(k, false))}
+                    {availableProgress.slice(0, 4).map((k) => card(k, false))}
                   </div>
                 </section>
               ) : null}
@@ -1222,14 +1307,99 @@ export function PersonalLibrary({
                     </button>
                   ) : null}
                 </div>
-                {p.data.saved.length ? (
+                {availableSaved.length ? (
                   <div className={s.cardGrid}>
-                    {p.data.saved.slice(0, 4).map((x) => card(x.key, false))}
+                    {availableSaved.slice(0, 4).map((x) => card(x.key, false))}
+                  </div>
+                ) : p.data.saved.length ? (
+                  <div className={s.unavailableNote}>
+                    <Bookmark size={18} />
+                    <p>
+                      {t([
+                        "Your saved references are kept. These resources are currently unavailable in this language.",
+                        "Vos références sont conservées. Ces ressources sont actuellement indisponibles dans cette langue.",
+                        "مراجعك المحفوظة باقية. هذه الموارد غير متاحة حالياً بهذه اللغة.",
+                      ])}
+                    </p>
+                    <button
+                      className={s.textButton}
+                      onClick={() => navigate("saved")}
+                    >
+                      {tx("viewAll", locale)}
+                      <ArrowRight size={14} />
+                    </button>
                   </div>
                 ) : (
                   <Empty locale={locale} />
                 )}
+                {unavailableSaved > 0 && availableSaved.length > 0 ? (
+                  <button
+                    className={s.unavailableLink}
+                    onClick={() => {
+                      navigate("saved");
+                      setStatus("unavailable");
+                    }}
+                  >
+                    {unavailableSaved} · {tx("unavailable", locale)}
+                    <ArrowRight size={13} />
+                  </button>
+                ) : null}
               </section>
+              {availableSession.length > 0 ? (
+                <section className={s.shelfSection}>
+                  <div className={s.sectionHeading}>
+                    <h3>
+                      <CalendarDays size={18} />
+                      {tx("session", locale)}
+                    </h3>
+                    <button onClick={() => navigate("session")}>
+                      {tx("viewAll", locale)}
+                      <ArrowRight size={14} />
+                    </button>
+                  </div>
+                  <ol className={s.sessionPreview}>
+                    {availableSession.slice(0, 4).map((key, index) => {
+                      const resource = by.get(key)!;
+                      return (
+                        <li key={key}>
+                          <span>{String(index + 1).padStart(2, "0")}</span>
+                          <Link
+                            href={path(
+                              locale,
+                              "/experience/" + encodeURIComponent(key),
+                            )}
+                          >
+                            {resource.title}
+                            <small>
+                              {tr(world(resource.family)!.title, locale)}
+                            </small>
+                          </Link>
+                          <ArrowRight size={16} />
+                        </li>
+                      );
+                    })}
+                  </ol>
+                </section>
+              ) : null}
+              {availableRecent.length > 0 ? (
+                <section className={s.shelfSection}>
+                  <div className={s.sectionHeading}>
+                    <h3>
+                      <Clock size={18} />
+                      {tx("recent", locale)}
+                    </h3>
+                    <button onClick={() => navigate("recent")}>
+                      {tx("viewAll", locale)}
+                      <ArrowRight size={14} />
+                    </button>
+                  </div>
+                  <div className={s.cardGrid}>
+                    {availableRecent
+                      .slice(0, 4)
+                      .map((item) => card(item.key, false))}
+                  </div>
+                </section>
+              ) : null}
               <section className={s.shelfSection}>
                 <div className={s.sectionHeading}>
                   <h3>
@@ -1630,6 +1800,7 @@ function CollectionBoard({
       {collections.map((c, i) => (
         <article
           className={s.collection}
+          data-library-collection={c.id}
           key={c.id}
           style={
             {
@@ -1710,7 +1881,7 @@ export function PersonalShelf({
       <div className={s.sectionHeading}>
         <div>
           <span className={s.eyebrow}>
-            <Sparkles size={13} /> {tx("device", locale)}
+            <Bookmark size={13} /> {tx("device", locale)}
           </span>
           <h2>{tx(recent ? "recent" : "saved", locale)}</h2>
         </div>

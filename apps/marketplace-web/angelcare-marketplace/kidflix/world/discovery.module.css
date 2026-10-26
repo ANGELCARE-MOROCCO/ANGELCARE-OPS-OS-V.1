@@ -1,0 +1,570 @@
+@font-face {
+  font-family: KidFlixWorld;
+  src: url("/kidflix/home-reference-r2/Nunito-Variable.ttf") format("truetype");
+  font-weight: 200 1000;
+  font-display: swap;
+}
+.explorer {
+  max-width: 1320px;
+  padding: 24px 24px 12px;
+  margin: auto;
+  color: #172568;
+  font:
+    14px/1.5 KidFlixWorld,
+    "Segoe UI",
+    Arial,
+    sans-serif;
+  text-align: start;
+}
+.explorer * {
+  box-sizing: border-box;
+}
+.explorer :is(h1, h2, p) {
+  margin: 0;
+}
+.explorer a {
+  color: inherit;
+  text-decoration: none;
+}
+.explorer :is(button, input, select) {
+  font: inherit;
+}
+.explorer button {
+  cursor: pointer;
+}
+.explorer :is(button, a, input, select):focus-visible {
+  outline: 3px solid #099dcc;
+  outline-offset: 3px;
+}
+.explorer .breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #6c7b96;
+  font-size: 10px;
+  margin-bottom: 15px;
+}
+.explorer .breadcrumb a {
+  color: #087da8;
+}
+.explorer .heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 23px;
+}
+.explorer .eyebrow {
+  font-size: 9px;
+  letter-spacing: 1px;
+  font-weight: 850;
+  color: #0086af;
+}
+.explorer .heading h1 {
+  font-size: 32px;
+  font-weight: 950;
+  letter-spacing: -0.6px;
+  line-height: 1.15;
+  margin: 6px 0 9px;
+}
+.explorer .heading p {
+  font-size: 12px;
+  color: #6b7e98;
+}
+.explorer .libraryLink {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+  color: #087eaa;
+  font-size: 12px;
+  font-weight: 800;
+}
+.explorer .directory {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 9px;
+  margin-bottom: 25px;
+}
+.explorer .directory > a {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  padding: 10px 8px;
+  background: #f4faff;
+  border: 1px solid #e2edf7;
+  border-radius: 7px;
+}
+.explorer .directory > a:nth-child(4n + 2) {
+  background: #fff5fa;
+}
+.explorer .directory > a:nth-child(4n + 3) {
+  background: #f7f3ff;
+}
+.explorer .directory > a:nth-child(4n) {
+  background: #f1faf5;
+}
+.explorer .directory > a > span:first-child {
+  width: 34px;
+  height: 34px;
+}
+.explorer .directory strong {
+  font-size: 9px;
+  font-weight: 850;
+  line-height: 1.3;
+}
+.explorer .directory > a > svg {
+  display: none;
+}
+.explorer .directory > a:hover {
+  border-color: #83c7e2;
+}
+.explorer .finder {
+  background: #edf8ff;
+  border: 1px solid #dceef8;
+  border-radius: 9px;
+  padding: 17px;
+  margin-bottom: 20px;
+}
+.explorer .finderTop {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.explorer .finderTop form {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  border: 1px solid #d1e3f0;
+  background: #fff;
+  border-radius: 6px;
+  overflow: hidden;
+  padding-inline-start: 12px;
+  gap: 8px;
+}
+.explorer .finderTop input {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+  padding: 12px 0;
+  color: #244664;
+  font-size: 12px;
+}
+.explorer .finderTop form > svg {
+  color: #008bbd;
+  flex: none;
+}
+.explorer .finderTop form > button {
+  border: 0;
+  background: #ed007e;
+  color: #fff;
+  min-height: 42px;
+  padding: 10px 26px;
+  font-size: 12px;
+  font-weight: 850;
+}
+.explorer .filterToggle {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 42px;
+  background: #fff;
+  border: 1px solid #cee3ef;
+  color: #247596;
+  border-radius: 6px;
+  padding: 9px 13px;
+  font-size: 12px;
+  font-weight: 800;
+}
+.explorer .filters {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 13px;
+}
+.explorer .filters > label {
+  display: grid;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 850;
+  color: #31577f;
+  min-width: 0;
+}
+.explorer .filters select {
+  width: 100%;
+  min-width: 0;
+  min-height: 37px;
+  border: 1px solid #d9e8f2;
+  border-radius: 5px;
+  background: #fff;
+  padding: 8px;
+  color: #425f83;
+  font-size: 11px;
+  font-weight: 600;
+}
+.explorer .purposes {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+.explorer .purposes > span {
+  font-size: 10px;
+  font-weight: 850;
+  color: #325a80;
+  margin-inline-end: 5px;
+}
+.explorer .purposes button {
+  border: 1px solid #cde7f5;
+  background: #fff;
+  color: #35688c;
+  font-size: 10px;
+  font-weight: 750;
+  border-radius: 20px;
+  padding: 6px 13px;
+}
+.explorer .purposes button[aria-pressed="true"] {
+  color: #fff;
+  background: #078bbe;
+  border-color: #078bbe;
+}
+.explorer .resultTools {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 14px;
+}
+.explorer .resultTools > p {
+  font-size: 12px;
+  font-weight: 800;
+  color: #3f6485;
+  flex: 1;
+}
+.explorer .resultTools > label {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  font-size: 10px;
+  color: #587590;
+}
+.explorer .resultTools select {
+  border: 1px solid #d5e3ee;
+  border-radius: 5px;
+  background: #fff;
+  min-width: 130px;
+  font-size: 11px;
+  color: #395e80;
+  padding: 8px;
+}
+.explorer .viewButtons {
+  display: flex;
+  gap: 3px;
+}
+.explorer .viewButtons button {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #d9e7ef;
+  border-radius: 4px;
+  background: #fff;
+  color: #67849b;
+}
+.explorer .viewButtons button[aria-pressed="true"] {
+  background: #008fc4;
+  color: #fff;
+  border-color: #008fc4;
+}
+.explorer .chips {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin-bottom: 17px;
+}
+.explorer .chips button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #eff8fd;
+  border: 1px solid #d6e9f4;
+  border-radius: 4px;
+  padding: 5px 8px;
+  color: #456d91;
+  font-size: 10px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.explorer .chips .clear {
+  background: transparent;
+  border: 0;
+  color: #b82c6b;
+  font-weight: 800;
+}
+.explorer .grid,
+.explorer .skeletons {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 15px;
+}
+.explorer .grid[aria-busy="true"] {
+  opacity: 0.65;
+}
+.explorer .grid > [data-resource-key] {
+  min-width: 0;
+}
+.explorer .list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.explorer .list > [data-resource-key] {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+}
+.explorer .list > [data-resource-key] > div:first-child {
+  min-height: 185px;
+  height: 100%;
+}
+.explorer .skeletons > span {
+  height: 260px;
+  background: linear-gradient(#f0f6fb 65%, #fafcfe 65%);
+  border: 1px solid #e1ebf3;
+  border-radius: 7px;
+}
+.explorer .empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 30px;
+  background: #f6faff;
+  border: 1px solid #dcebf5;
+  border-radius: 7px;
+}
+.explorer .empty > svg {
+  color: #3693b7;
+}
+.explorer .empty h2 {
+  font-size: 23px;
+  font-weight: 900;
+}
+.explorer .empty p {
+  font-size: 13px;
+  color: #6a8098;
+}
+.explorer .empty :is(button, a) {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 5px;
+  background: #087da9;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 10px 15px;
+}
+.failure {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #fff5f6;
+  border: 1px solid #eed8de;
+  border-radius: 7px;
+  padding: 24px;
+  color: #91384e;
+  font:
+    13px/1.5 Arial,
+    sans-serif;
+}
+.failure h2 {
+  font-size: 19px;
+  margin: 0 0 5px;
+}
+.failure p {
+  margin: 0;
+}
+.failure button {
+  margin-inline-start: auto;
+  border: 1px solid #d6a4b1;
+  border-radius: 5px;
+  background: #fff;
+  color: #91384e;
+  padding: 9px 12px;
+  font: inherit;
+  cursor: pointer;
+}
+.explorer .pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin: 24px 0 10px;
+  font-size: 12px;
+  color: #587590;
+}
+.explorer .pagination button {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid #d2e3ef;
+  background: #fff;
+  color: #2b7099;
+  border-radius: 5px;
+}
+.explorer .pagination button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+@media (min-width: 1550px) {
+  .explorer {
+    max-width: 1400px;
+  }
+}
+@media (max-width: 1100px) {
+  .explorer .directory {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .explorer .directory strong {
+    font-size: 10px;
+  }
+  .explorer .grid,
+  .explorer .skeletons {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .explorer .filters {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .explorer .list {
+    grid-template-columns: 1fr;
+  }
+  .explorer .heading h1 {
+    font-size: 29px;
+  }
+}
+@media (max-width: 760px) {
+  .explorer {
+    padding: 18px 12px 8px;
+  }
+  .explorer .heading {
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .explorer .heading h1 {
+    font-size: 26px;
+  }
+  .explorer .heading p {
+    font-size: 11px;
+  }
+  .explorer .libraryLink {
+    display: none;
+  }
+  .explorer .directory {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+    margin-bottom: 18px;
+  }
+  .explorer .directory > a {
+    flex-direction: column;
+    text-align: center;
+    padding: 9px 4px;
+    gap: 5px;
+  }
+  .explorer .directory strong {
+    font-size: 8px;
+  }
+  .explorer .directory > a > span:first-child {
+    width: 32px;
+    height: 32px;
+  }
+  .explorer .finder {
+    padding: 12px;
+  }
+  .explorer .finderTop {
+    gap: 7px;
+  }
+  .explorer .finderTop form > button {
+    padding-inline: 12px;
+    font-size: 10px;
+  }
+  .explorer .finderTop input {
+    font-size: 11px;
+  }
+  .explorer .filterToggle {
+    font-size: 0;
+    padding: 9px;
+  }
+  .explorer .filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+  }
+  .explorer .filters > label {
+    font-size: 9px;
+  }
+  .explorer .filters select {
+    font-size: 10px;
+  }
+  .explorer .purposes {
+    gap: 5px;
+  }
+  .explorer .purposes > span {
+    width: 100%;
+    margin-bottom: 2px;
+  }
+  .explorer .purposes button {
+    font-size: 9px;
+    padding: 5px 10px;
+  }
+  .explorer .resultTools {
+    gap: 9px;
+  }
+  .explorer .resultTools > label > span {
+    display: none;
+  }
+  .explorer .resultTools select {
+    min-width: 0;
+    max-width: 130px;
+    font-size: 10px;
+  }
+  .explorer .grid,
+  .explorer .skeletons {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .explorer .list {
+    grid-template-columns: 1fr;
+  }
+  .explorer .list > [data-resource-key] {
+    grid-template-columns: 110px minmax(0, 1fr);
+  }
+  .explorer .list > [data-resource-key] > div:first-child {
+    min-height: 170px;
+  }
+  .explorer .empty {
+    padding: 24px 19px;
+  }
+  .explorer .empty h2 {
+    font-size: 20px;
+  }
+  .failure {
+    flex-wrap: wrap;
+    padding: 19px;
+  }
+  .failure button {
+    margin-inline-start: 0;
+  }
+  .explorer .chips button {
+    font-size: 9px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .explorer * {
+    transition: none !important;
+  }
+}

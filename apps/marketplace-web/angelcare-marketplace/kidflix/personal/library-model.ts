@@ -1,3 +1,4 @@
+import { clientId } from "../detail/client-id";
 import { WORLDS, type Locale, type Resource } from "../catalogue";
 import { fold, type Personal } from "../journey/contract";
 export const TABS = [
@@ -97,11 +98,5 @@ export function relatedFamilies(resources: Resource[], chosen: string[]) {
 }
 
 export function collectionId() {
-  return typeof crypto !== "undefined" &&
-    typeof crypto.randomUUID === "function"
-    ? crypto.randomUUID()
-    : "collection-" +
-        Date.now().toString(36) +
-        "-" +
-        Math.random().toString(36).slice(2, 12);
+  return clientId();
 }

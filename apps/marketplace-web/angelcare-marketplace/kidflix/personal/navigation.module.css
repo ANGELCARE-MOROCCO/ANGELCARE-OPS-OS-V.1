@@ -1,0 +1,114 @@
+.navigation {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-inline-start: auto;
+  flex-shrink: 0;
+  min-width: 0;
+  grid-column: 2;
+  grid-row: 1;
+  font-family: inherit;
+  line-height: 1.25;
+}
+.navigation a {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  font-size: 13px;
+  font-weight: 750;
+  white-space: nowrap;
+  transition:
+    color 140ms,
+    background 140ms;
+}
+.saved {
+  color: #24425e !important;
+  padding: 5px 3px;
+}
+.bookmark {
+  position: relative;
+  display: flex;
+}
+.count {
+  position: absolute;
+  top: -9px;
+  inset-inline-end: -11px;
+  background: #e0006b;
+  color: #fff;
+  border: 2px solid #fff;
+  border-radius: 20px;
+  min-width: 19px;
+  padding: 1px 3px;
+  text-align: center;
+  font-size: 9px;
+  line-height: 1.2;
+}
+.space {
+  background: #087eaa;
+  color: #fff !important;
+  padding: 0 16px;
+  border-radius: 7px;
+}
+.saved:hover,
+.saved[aria-current] {
+  color: #c70060 !important;
+}
+.space:hover,
+.space[aria-current] {
+  background: #075c81;
+}
+.navigation a:focus-visible {
+  outline: 3px solid #0098cc;
+  outline-offset: 4px;
+}
+@media (max-width: 1000px) {
+  .navigation {
+    gap: 12px;
+  }
+  .navigation a {
+    font-size: 12px;
+  }
+  .space {
+    padding-inline: 12px;
+  }
+}
+@media (max-width: 700px) {
+  .navigation {
+    gap: 10px;
+  }
+  .savedLabel {
+    display: none;
+  }
+  .navigation .saved {
+    min-width: 38px;
+  }
+  .navigation .space {
+    padding-inline: 10px;
+    font-size: 11px;
+    gap: 5px;
+  }
+  .space svg {
+    width: 17px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .navigation a {
+    transition: none;
+  }
+}
+
+.mobileLabel {
+  display: none;
+}
+@media (max-width: 700px) {
+  .desktopLabel {
+    display: none;
+  }
+  .mobileLabel {
+    display: inline;
+  }
+}

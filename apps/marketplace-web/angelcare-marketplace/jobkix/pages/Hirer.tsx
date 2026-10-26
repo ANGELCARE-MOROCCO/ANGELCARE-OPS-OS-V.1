@@ -12,13 +12,14 @@ import { integer,uuid,object } from '../validation';
 import { siteIntent } from '../site-draft';
 import { StudioPagination } from '../components/StudioPagination';
 import { StudioShell } from '../components/StudioShell';
+import { EmployerCockpit } from '../components/EmployerCockpit';
 import { OrganizationEditor } from '../client/OrganizationEditor';
 import { HiringAccount } from './HiringAccount';
 import { HiringTeam } from './HiringTeam';
 import { HiringTalent } from './HiringTalent';
 import { HiringOperations } from './HiringOperations';
 import { HiringApplications } from './HiringApplications';
-import { VacancyList,NewVacancy,VacancyManagement,VacancyRow } from './Vacancies';
+import { VacancyList,NewVacancy,VacancyManagement } from './Vacancies';
 import { SiteEditor } from '../client/SiteEditor';
 import { StudioFormSelection } from '../client/StudioRecordPicker';
 import { Empty,str,SectionHeading } from '../components/Public';
@@ -56,7 +57,7 @@ export async function HirerPage({locale,screen,id,search}:{locale:Locale;screen:
  if(screen==='H04')return wrap(<VacancyManagement locale={locale} organization={org} userId={session.userId} timezone={session.timezone} id={id||''} search={search}/>);
  if(screen==='H01'){
   const [vacancies,applications,interviews,offers]=await Promise.all([studioPage('vacancies',{organization_id:str(org,'id')}),studioPage('applications',{organization_id:str(org,'id')}),studioPage('interviews',{organization_id:str(org,'id')},1,{upcoming:true}),studioPage('offers',{organization_id:str(org,'id')})]);
-  return wrap(<div className={s.stack}><section className={`${s.panel} ${s.studioWelcome}`}><span className={s.eyebrow}>{h(locale,org.kind==='household'?'household':'publicIdentity')}</span><h2>{str(org,'public_name')}</h2><p>{h(locale,'organizationHelp')}</p><div className={s.inlineActions}><Link className={s.button} href={href(locale,'hiring/vacancies/new',navParams)}>{h(locale,'createVacancy')}</Link><Link className={`${s.button} ${s.secondary}`} href={href(locale,'hiring/organization',navParams)}>{screenName('H13',locale)}</Link></div></section><div className={s.studioMetrics}>{[[h(locale,'allVacancies'),vacancies.total,'hiring/vacancies'],[h(locale,'applicationCount'),applications.total,'hiring/applications'],[h(locale,'upcomingInterviews'),interviews.total,'hiring/interviews'],[h(locale,'currentOffers'),offers.total,'hiring/offers']].map(([label,count,path])=><Link key={String(path)} href={href(locale,String(path),navParams)}><span>{label}</span><strong>{new Intl.NumberFormat(locale).format(Number(count))}</strong></Link>)}</div><OrganizationReview locale={locale} organization={org}/><section className={s.stack}><SectionHeading title={h(locale,'recentActivity')}/>{vacancies.items.length?<div className={s.vacancyList}>{vacancies.items.slice(0,4).map(vacancy=><VacancyRow key={str(vacancy,'id')} locale={locale} vacancy={vacancy} organizationId={str(org,'id')}/>)}</div>:<Empty locale={locale}><Link className={s.button} href={href(locale,'hiring/vacancies/new',navParams)}>{h(locale,'createVacancy')}</Link></Empty>}</section></div>);
+  return wrap(<><EmployerCockpit locale={locale} organizationId={str(org,'id')} organization={org} vacancies={vacancies} applications={applications} interviews={interviews} offers={offers} timezone={session.timezone}/><OrganizationReview locale={locale} organization={org}/></>);
  }
  notFound();
 }
