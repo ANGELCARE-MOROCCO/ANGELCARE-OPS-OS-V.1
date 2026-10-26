@@ -32,7 +32,7 @@ async function validateAssets(doc:HeroDocument){
  if(!ids.length)return;
  if(!ids.every(isUUID))fail('Invalid asset ID');
  const db=await createServiceClient(),{data,error}=await db.from('angelcare_marketplace_media_assets').select('id,width,height,mime_type,rights_status,rights_expires_at,status,public_url').in('id',ids);
- if(error||!data||data.length!==ids.length)fail('Media asset missing or inaccessible');
+ if(error||!data||data.length!==ids.length)throw new Error('Media asset missing or inaccessible');
  for(const a of data){
   if(a.status!=='active'||!images.includes(a.mime_type)||!['owned','licensed','public_domain'].includes(a.rights_status)||a.rights_expires_at&&Date.parse(a.rights_expires_at)<=Date.now())fail('Asset is inactive or unlicensed');
   if(!(Number(a.width)>0&&Number(a.height)>0))fail('Asset is missing validated dimensions');
@@ -51,7 +51,7 @@ export async function heroStudioCommand(payload:unknown){
  if(action==='save')doc=validateHero(p.document);
  if(action==='review'||action==='publish'||action==='restore'){
   const {data,error}=await db.from('jobkix_hero_placements').select('draft').eq('placement_key',placement).maybeSingle();
-  if(error||!data)fail('HERO_STORAGE_UNAVAILABLE');
+  if(error||!data)throw new Error('HERO_STORAGE_UNAVAILABLE');
   doc=validateHero(action==='restore'&&p.restoreRevision?await historicalDocument(db,placement,Number(p.restoreRevision)):data.draft);
  }
  if(doc)await validateAssets(doc);
@@ -69,7 +69,7 @@ export async function heroStudioCommand(payload:unknown){
 async function historicalDocument(db:Awaited<ReturnType<typeof createServiceClient>>,placement:string,revision:number){
  if(!Number.isSafeInteger(revision)||revision<1)fail('Invalid revision');
  const {data,error}=await db.from('jobkix_hero_revisions').select('snapshot').eq('placement_key',placement).eq('revision',revision).maybeSingle();
- if(error||!data?.snapshot)fail('Revision no longer available');
+ if(error||!data?.snapshot)throw new Error('Revision no longer available');
  return data.snapshot;
 }
 
