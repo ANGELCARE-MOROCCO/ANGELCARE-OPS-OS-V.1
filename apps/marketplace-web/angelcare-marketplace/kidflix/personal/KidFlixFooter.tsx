@@ -384,7 +384,7 @@ function Newsletter({ locale }: { locale: Locale }) {
     }
   }
   return (
-    <section className={s.newsletter}>
+    <section id="kidflix-newsletter" className={s.newsletter}>
       <span className={s.kicker}>
         <Mail size={14} />
         {t([

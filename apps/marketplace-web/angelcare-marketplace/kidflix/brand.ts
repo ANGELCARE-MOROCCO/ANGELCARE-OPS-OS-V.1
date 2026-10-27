@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 /** KidFlix route metadata owns these icons. Other worlds retain their metadata. */
 export function kidflixIcons(): Metadata["icons"] {
-  const base = "/kidflix/brand/favicon-r1";
+  const base = "/kidflix/brand/favicon-r2";
   return {
     icon: [
       { url: `${base}/kidflix-favicon.ico`, type: "image/x-icon" },

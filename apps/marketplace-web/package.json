@@ -286,7 +286,12 @@
     "react-leaflet": "^5.0.0",
     "@pdf-lib/fontkit": "^1.1.1",
     "exceljs": "^4.4.0",
-    "@puckeditor/core": "0.23.0"
+    "@puckeditor/core": "0.23.0",
+    "@crawlee/cheerio": "3.18.2",
+    "@crawlee/core": "3.18.2",
+    "@crawlee/utils": "3.18.2",
+    "linkinator": "8.1.0",
+    "schema-dts": "2.1.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

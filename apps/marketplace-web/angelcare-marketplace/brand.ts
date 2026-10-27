@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 
 /** Fixed AngelCare Marketplace icons, independent of published CMS icon settings. */
 export function marketplaceIcons(): Metadata['icons'] {
-  const base = '/brand/marketplace-favicon-r1'
+  const base = '/brand/marketplace-favicon-r2'
   return {
     icon: [
       { url: `${base}/angelcare-favicon.ico`, type: 'image/x-icon' },

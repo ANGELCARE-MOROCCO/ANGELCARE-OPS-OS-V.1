@@ -1,3 +1,4 @@
+import { storefrontMetadata,storefrontNativeMetadata } from '@/angelcare-marketplace/seo-power/storefronts'
 import {notFound} from 'next/navigation'
 import {GlobalPublicShell} from '@/angelcare-marketplace/public-universe/components/GlobalPublicShell'
 import {Storefront} from '@/angelcare-marketplace/catalog-discovery/components/Storefront'
@@ -9,5 +10,7 @@ export default async function Page({params,searchParams}:{params:Promise<{locale
  if(!['fr','en','ar'].includes(locale))notFound()
  const territory=typeof query.territory==='string'&&/^[A-Za-z0-9_-]{2,60}$/.test(query.territory)?query.territory:'MA-MASTER'
  const discoveryState=Object.fromEntries(['q','group','duration','available','max','sort','view','page'].map(key=>[key,typeof query[key]==='string'?query[key] as string:'']))
- return <GlobalPublicShell locale={locale as CatalogLocale} navigation={[]} variant="marketplace"><Storefront experience={await storefrontExperience({locale:locale as CatalogLocale,key:'home-services',territoryCode:territory})} discoveryState={discoveryState}/></GlobalPublicShell>
+ return <GlobalPublicShell seoPath={`/angelcare-marketplace/${locale}/home-services`} seoBase={await storefrontNativeMetadata('home-services',locale)} locale={locale as CatalogLocale} navigation={[]} variant="marketplace"><Storefront experience={await storefrontExperience({locale:locale as CatalogLocale,key:'home-services',territoryCode:territory})} discoveryState={discoveryState}/></GlobalPublicShell>
 }
+
+export async function generateMetadata({params,searchParams}:{params:Promise<{locale:string}>;searchParams?:Promise<Record<string,string|string[]|undefined>>}){const {locale}=await params;return storefrontMetadata('home-services',locale,await searchParams||{});}

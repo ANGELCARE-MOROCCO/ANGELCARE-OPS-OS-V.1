@@ -1,3 +1,4 @@
+import { storefrontMetadata,storefrontNativeMetadata } from '@/angelcare-marketplace/seo-power/storefronts'
 import {notFound} from 'next/navigation'
 import {PublicPartnerOs} from '@/angelcare-marketplace/partner-os/components/PublicPartnerOs'
 import {listPlans} from '@/angelcare-marketplace/partner-os/repository'
@@ -13,3 +14,5 @@ export default async function Page({params}:{params:Promise<{locale:string}>}){
  const [plans,storefront]=await Promise.all([listPlans(),storefrontExperience({locale:safe,key:'partner-os'})])
  return <Storefront experience={storefront} nativeContext={partnerContext(safe,plans)} nativeFallback={<PublicPartnerOs locale={safe} plans={plans}/>}/>
 }
+
+export async function generateMetadata({params,searchParams}:{params:Promise<{locale:string}>;searchParams?:Promise<Record<string,string|string[]|undefined>>}){const {locale}=await params;return storefrontMetadata('partner-os',locale,await searchParams||{});}

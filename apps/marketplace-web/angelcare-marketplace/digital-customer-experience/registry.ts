@@ -2253,6 +2253,7 @@ export const TOPIC_SEEDS = [
   },
 ] as const;
 export const GROUPS: Record<string, Tri> = {
+  primary: ["STUDIO & INVENTORY", "STUDIO & INVENTAIRE", "الاستوديو والمخزون"],
   experience: [
     "EXPERIENCE MANAGEMENT",
     "GESTION DES EXPÉRIENCES",

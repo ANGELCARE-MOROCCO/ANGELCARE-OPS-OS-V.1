@@ -16,6 +16,7 @@ import {
   type Personal,
   type Activity,
 } from "./contract";
+import { clearPersonalSections, progressStorageKey, type ClearSection, CLEAR_SECTIONS } from "../information/model";
 const KEY = "kidflix.personal.v3",
   LEGACY = "kidflix.discovery.v1";
 type Store = {
@@ -24,6 +25,7 @@ type Store = {
   error: boolean;
   change: (fn: (p: Personal) => Personal) => void;
   clear: () => Promise<void>;
+  clearSections: (sections: readonly ClearSection[]) => Promise<void>;
   toggle: (key: string) => void;
   visit: (key: string) => void;
   enqueue: (key: string) => void;
@@ -36,6 +38,7 @@ const Context = createContext<Store>({
   error: false,
   change: () => {},
   clear: async () => {},
+  clearSections: async () => {},
   toggle: () => {},
   visit: () => {},
   enqueue: () => {},
@@ -117,31 +120,31 @@ export function PersonalProvider({ children }: { children: ReactNode }) {
       ? "yes"
       : "no";
   }, [data.preferences.motion, data.preferences.lowData]);
-  async function clear() {
-    let failed = false;
-    for (const name of ["localStorage", "sessionStorage"] as const) {
-      try {
-        const storage = window[name];
-        for (let i = storage.length - 1; i >= 0; i--) {
-          const k = storage.key(i);
-          if (k?.startsWith("kidflix.")) storage.removeItem(k);
-        }
-      } catch {
-        failed = true;
+  async function clearSections(sections: readonly ClearSection[]) {
+    initialize();
+    const next = parsePersonal({ ...clearPersonalSections(latest.current, sections), updatedAt: Date.now() });
+    try {
+      localStorage.setItem(KEY, JSON.stringify(next));
+      if (sections.includes("saved") || sections.includes("recent")) localStorage.removeItem(LEGACY);
+    } catch { setError(true); throw Error("STORAGE_UNAVAILABLE"); }
+    let failed=false;
+    if (sections.includes("progress")) {
+      // Stop mounted players before their effect cleanup can flush an old state.
+      window.dispatchEvent(new Event("kidflix:cleared"));
+      for (const name of ["localStorage","sessionStorage"] as const) {
+        try { const storage=window[name]; for(let i=storage.length-1;i>=0;i--) { const key=storage.key(i); if(key && progressStorageKey(key))storage.removeItem(key); } }
+        catch { failed=true; }
       }
     }
+    latest.current=next; set(next); setError(failed);
+    if(failed)throw Error("STORAGE_UNAVAILABLE");
+  }
+  async function clear() {
+    await clearSections(CLEAR_SECTIONS);
     try {
-      if ("caches" in window)
-        for (const k of await caches.keys())
-          if (k.startsWith("kidflix-offline-")) await caches.delete(k);
-    } catch {
-      failed = true;
-    }
-    latest.current = blankPersonal();
-    set(latest.current);
-    setError(failed);
-    window.dispatchEvent(new Event("kidflix:cleared"));
-    if (failed) throw Error("STORAGE_UNAVAILABLE");
+      if ("caches" in window) for (const key of await caches.keys())
+        if(key.startsWith("kidflix-offline-"))await caches.delete(key);
+    } catch { setError(true); throw Error("STORAGE_UNAVAILABLE"); }
   }
   return (
     <Context.Provider
@@ -151,6 +154,7 @@ export function PersonalProvider({ children }: { children: ReactNode }) {
         error,
         change,
         clear,
+        clearSections,
         toggle: (key) =>
           change((p) => ({
             ...p,

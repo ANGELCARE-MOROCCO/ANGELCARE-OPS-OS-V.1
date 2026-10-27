@@ -1,0 +1,2 @@
+export async function inspectPage(project:any,path:string){return (globalThis as any).fixtureInspect(project,path);}
+export async function checkLinks(){return[{url:'https://my.angelcarehub.com/kidflix/en',state:'OK',status:200}];}

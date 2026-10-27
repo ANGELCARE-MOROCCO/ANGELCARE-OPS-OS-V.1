@@ -395,3 +395,8 @@
     flex: 1 1 100%;
   }
 }
+
+.readingSurface[data-reading-contrast="high"] { color:#000; background:#fff; }
+.readingSurface[data-reading-contrast="dark"] { color:#f5f7ff; background:#10213b; }
+.readingSurface[data-reading-contrast="high"] :is(p,h2,h3,li,blockquote),.readingSurface[data-reading-contrast="dark"] :is(p,h2,h3,li,blockquote) { color:inherit; }
+.readingSurface[data-reading-contrast="dark"] :is(article,section) { background:transparent; }

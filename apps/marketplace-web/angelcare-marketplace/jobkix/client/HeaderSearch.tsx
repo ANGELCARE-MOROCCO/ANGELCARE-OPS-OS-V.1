@@ -9,6 +9,7 @@ import type { Locale } from '../contracts';
 import { headerText } from '../header-copy';
 import { errorText } from '../i18n';
 import s from '../jobkix.module.css';
+import { announceJobkixNavigation } from './navigation-buffer-events';
 
 /** Client-only UI. Native search filters and searchHref remain the canonical authority. */
 export function HeaderSearch({locale}:{locale:Locale}){
@@ -20,7 +21,7 @@ export function HeaderSearch({locale}:{locale:Locale}){
    const form=new FormData(event.currentTarget),params=new URLSearchParams();
    for(const key of ['origin','q']){const v=form.get(key);if(typeof v==='string'&&v.trim())params.set(key,v.trim());}
    const filters=readFilters(params);
-   setInvalid(false);router.push(searchHref(locale,filters));
+   setInvalid(false);const target=searchHref(locale,filters);announceJobkixNavigation(target);router.push(target);
   }catch{setInvalid(true);}
  }
  return <div className={s.pm5SearchWrap}>

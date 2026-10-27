@@ -1,3 +1,4 @@
+import { seoMetadata, SeoEnhancements, noindex } from '@/angelcare-marketplace/seo-power/public';
 import {DocumentsStorefront}from "@/angelcare-marketplace/kidflix/documents/DocumentsStorefront";
 import {loadDocuments}from "@/angelcare-marketplace/kidflix/documents/server";
 import {documentFilters}from "@/angelcare-marketplace/kidflix/documents/model";
@@ -14,7 +15,7 @@ import {Storefront}from "@/angelcare-marketplace/kidflix/storefronts/Storefront"
 import {loadStorefront}from "@/angelcare-marketplace/kidflix/storefronts/server";
 import {cleanFilters}from "@/angelcare-marketplace/kidflix/storefront-reference/model";
 export const dynamic = "force-dynamic";
-export default async function ExplorePage({
+async function NativePage({
   params,
   searchParams,
 }: {
@@ -64,4 +65,8 @@ export default async function ExplorePage({
   );
 }
 
-export async function generateMetadata({params}:{params:Promise<{locale:string;family?:string[]}>}){const p=await params,w=world(p.family?.[0]||""),locale=isLocale(p.locale)?p.locale:"en";return{title:w?"KidFlix · "+w.title[locale==="fr"?1:locale==="ar"?2:0]:"KidFlix · Discover",description:w?.description[locale==="fr"?1:locale==="ar"?2:0]};}
+async function nativeMetadata({params}:{params:Promise<{locale:string;family?:string[]}>}){const p=await params,w=world(p.family?.[0]||""),locale=isLocale(p.locale)?p.locale:"en";return{title:w?"KidFlix · "+w.title[locale==="fr"?1:locale==="ar"?2:0]:"KidFlix · Discover",description:w?.description[locale==="fr"?1:locale==="ar"?2:0]};}
+
+type SeoPageProps={params:Promise<{locale:string;family?:string[]}>;searchParams:Promise<Record<string,string|string[]|undefined>>};
+export async function generateMetadata(props:SeoPageProps){const p=await props.params;const base=await nativeMetadata(props);return seoMetadata('kidflix',`/kidflix/${p.locale}/explore${p.family?.length?"/"+p.family.join("/"):""}`,base);}
+export default async function Page(props:SeoPageProps){const p=await props.params;const [body,base]=await Promise.all([NativePage(props),nativeMetadata(props)]);return <>{body}{!noindex(base)?<SeoEnhancements world="kidflix" path={`/kidflix/${p.locale}/explore${p.family?.length?"/"+p.family.join("/"):""}`} base={base}/>:null}</>;}

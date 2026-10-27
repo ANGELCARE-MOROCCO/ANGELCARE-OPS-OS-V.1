@@ -22,6 +22,7 @@ export function AdminShellChrome({
   permissionCount,
   canHotline,
   canDce,
+  canSeo,
   snapshot,
   workspaces,
   children,
@@ -33,6 +34,7 @@ export function AdminShellChrome({
   permissionCount: number
   canHotline?: boolean
   canDce?: boolean
+  canSeo?: boolean
   snapshot: AdminShellSnapshot
   workspaces: AdminShellWorkspace[]
   children: ReactNode
@@ -87,7 +89,7 @@ export function AdminShellChrome({
             {railCollapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
           </button>
         </div>
-        <AdminNavigation collapsed={railCollapsed} canHotline={canHotline} canDce={canDce} />
+        <AdminNavigation collapsed={railCollapsed} canHotline={canHotline} canDce={canDce} canSeo={canSeo} />
         <div className={styles.sidebarFooter}>
           <div className={styles.identityCard} title={railCollapsed ? `${actorDisplayName} · ${roleKeys.join(' · ') || 'Opérateur Marketplace'}` : undefined}>
             <div className={styles.identityAvatar} aria-hidden="true">{actorDisplayName.trim().charAt(0).toUpperCase() || 'A'}</div>

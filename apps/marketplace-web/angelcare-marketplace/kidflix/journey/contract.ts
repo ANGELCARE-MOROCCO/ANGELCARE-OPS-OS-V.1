@@ -201,6 +201,9 @@ export type Personal = {
     lowData: boolean;
     measurement: boolean;
     advertising: boolean;
+    readingSize: number;
+    readingSpacing: number;
+    readingContrast: "standard" | "high" | "dark";
   };
   updatedAt: number;
 };
@@ -217,6 +220,9 @@ export const blankPersonal = (): Personal => ({
     lowData: false,
     measurement: false,
     advertising: false,
+    readingSize: 1,
+    readingSpacing: 1.7,
+    readingContrast: "standard",
   },
   updatedAt: 0,
 });
@@ -320,6 +326,9 @@ export function parsePersonal(raw: unknown, now = Date.now()): Personal {
     lowData: p.preferences?.lowData === true,
     measurement: p.preferences?.measurement === true,
     advertising: p.preferences?.advertising === true,
+    readingSize: Number.isFinite(Number(p.preferences?.readingSize)) ? Math.min(1.8,Math.max(0.9,Number(p.preferences.readingSize))) : 1,
+    readingSpacing: Number.isFinite(Number(p.preferences?.readingSpacing)) ? Math.min(2.5,Math.max(1.4,Number(p.preferences.readingSpacing))) : 1.7,
+    readingContrast: ["high","dark"].includes(p.preferences?.readingContrast) ? p.preferences.readingContrast : "standard",
   };
   b.updatedAt = Number(p.updatedAt) || 0;
   return b;

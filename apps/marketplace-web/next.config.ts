@@ -31,12 +31,13 @@ const nextConfig: NextConfig = {
   },
 
   outputFileTracingIncludes: {
+    '/api/angelcare-marketplace/admin/seo-power': ['angelcare-marketplace/seo-power/INSTALL_SEO_POWER_R1.sql'],
     '/api/academy/cohorts/[id]/pdf': ['node_modules/@sparticuz/chromium/bin/**/*'],
     '/api/academy/programs/[id]/pdf': ['node_modules/@sparticuz/chromium/bin/**/*'],
     '/api/academy/trainers/[id]/payments/[paymentId]/receipt/pdf': ['node_modules/@sparticuz/chromium/bin/**/*'],
   },
 
-  serverExternalPackages: ['@sparticuz/chromium', 'puppeteer-core'],
+  serverExternalPackages: ['@sparticuz/chromium', 'puppeteer-core', '@crawlee/cheerio', '@crawlee/core', '@crawlee/utils', 'linkinator'],
 
   turbopack: {
     root: path.resolve(__dirname),

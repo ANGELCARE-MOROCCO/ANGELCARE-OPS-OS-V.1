@@ -17,6 +17,7 @@ on:
 permissions:
   contents: read
   packages: write
+  id-token: write
 
 env:
   TARGET_SHA: ${{ inputs.source_sha || github.sha }}
@@ -394,6 +395,54 @@ jobs:
           echo "SANILA_NAMESPACE_RENDERER=PASS"
           echo "ROOT_TO_MARKETPLACE=PASS"
           echo "============================================================"
+
+      - name: Set up Node for SEO POWER verification
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install isolated Lighthouse CI tooling
+        working-directory: apps/marketplace-web/scripts/seo-power-ci
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Audit the exact Marketplace candidate with Lighthouse CI
+        working-directory: apps/marketplace-web/scripts/seo-power-ci
+        shell: bash
+        env:
+          SEO_POWER_REPORT_ORIGIN: ${{ vars.SEO_POWER_REPORT_ORIGIN || 'https://my.angelcarehub.com' }}
+        run: |
+          set -euo pipefail
+          CID="$(docker run -d -p 127.0.0.1::3000 "${IMAGE}:${TARGET_SHA}")"
+          trap 'docker rm -f "$CID" >/dev/null 2>&1 || true' EXIT
+          PORT="$(docker port "$CID" 3000/tcp | head -1 | awk -F: '{print $NF}')"
+          export SEO_CANDIDATE_ORIGIN="http://127.0.0.1:${PORT}"
+          for N in $(seq 1 90); do
+            if curl -fsS --max-time 10 "$SEO_CANDIDATE_ORIGIN/angelcare-marketplace/fr" >/dev/null; then break; fi
+            sleep 1
+          done
+          export CHROME_PATH="$(command -v google-chrome || command -v chromium || true)"
+          test -n "$CHROME_PATH"
+          npx --no-install lhci collect --config=lighthouserc.cjs
+          set +e
+          npx --no-install lhci assert --config=lighthouserc.cjs
+          ASSERT_STATUS=$?
+          set -e
+          npx --no-install lhci upload --config=lighthouserc.cjs
+          node report.mjs
+          exit "$ASSERT_STATUS"
+
+      - name: Retain SEO POWER candidate evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seo-power-${{ env.TARGET_SHA }}
+          path: |
+            apps/marketplace-web/scripts/seo-power-ci/reports
+            apps/marketplace-web/scripts/seo-power-ci/.lighthouseci
+            apps/marketplace-web/scripts/seo-power-ci/summary.json
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 30
 
       - name: Push exact Marketplace image
         run: docker push "${IMAGE}:${TARGET_SHA}"

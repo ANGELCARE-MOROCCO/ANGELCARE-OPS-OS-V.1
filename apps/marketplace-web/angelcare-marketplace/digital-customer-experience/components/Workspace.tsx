@@ -134,7 +134,7 @@ export function Workspace({
     [initializing, setInitializing] = useState(false),
     [openNotifications, setNotifications] = useState(false);
   const latest = useRef(0);
-  const title = MODULES.find((m) => m.key === module) || MODULES[0];
+  const title = MODULES.find((m) => m.key === module) || MODULES.find((m) => m.key === "dashboard")!;
   useEffect(() => {
     setBoot(initial);
   }, [initial]);
@@ -356,14 +356,14 @@ export function Workspace({
             onClick={() => setNav(false)}
           >
             <Icon name="LayoutDashboard" />
-            <span>{tr(MODULES[0].label, locale)}</span>
+            <span>{tr(MODULES.find((m) => m.key === "dashboard")!.label, locale)}</span>
           </Link>
           {Object.entries(GROUPS).map(([key, group]) => (
             <div key={key}>
               {key !== "dashboard" && (
                 <h3 className={s.navGroup}>{tr(group, locale)}</h3>
               )}
-              {MODULES.filter((m) => m.group === key).map((m) => (
+              {MODULES.filter((m) => m.group === key && m.key !== "dashboard").map((m) => (
                 <Link
                   key={m.key}
                   href={BASE + (m.key === "dashboard" ? "" : "/" + m.key)}

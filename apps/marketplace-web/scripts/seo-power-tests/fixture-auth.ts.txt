@@ -1,0 +1,4 @@
+import {SeoFault} from '../../angelcare-marketplace/seo-power/model';
+export const ctx={actor:{id:'11111111-1111-4111-8111-111111111111',displayName:'Opérateur de vérification',sourceRole:'admin'},roleKeys:['marketplace_admin'],permissions:[],assignments:[{scopeType:'global'}],locale:'fr',workspaceKeys:['*']};
+export function hasMarketplacePermission(context:any,permission:string){return context.roleKeys.includes('marketplace_admin')||context.permissions.includes(permission);}
+export async function requireMarketplaceApiContext(){if((globalThis as any).fixtureAuthError)throw new SeoFault('AUTH_REQUIRED','Connexion requise.',401);return (globalThis as any).fixtureContext||ctx;}

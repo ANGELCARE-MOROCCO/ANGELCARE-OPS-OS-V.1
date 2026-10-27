@@ -1,0 +1,8 @@
+{
+  "name": "angelcare-seo-power-ci",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@lhci/cli": "0.15.1"
+  }
+}

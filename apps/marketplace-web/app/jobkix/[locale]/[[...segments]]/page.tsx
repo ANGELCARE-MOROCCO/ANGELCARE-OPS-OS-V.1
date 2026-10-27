@@ -1,3 +1,4 @@
+import { seoMetadata, SeoEnhancements, noindex } from '@/angelcare-marketplace/seo-power/public';
 import { notFound } from 'next/navigation';
 import { isLocale } from '@/angelcare-marketplace/jobkix/contracts';
 import { resolveScreen } from '@/angelcare-marketplace/jobkix/routes';
@@ -23,8 +24,8 @@ import { Countries,GeographicWorld,Abroad } from '@/angelcare-marketplace/jobkix
 import { PublicSupport } from '@/angelcare-marketplace/jobkix/pages/PublicSupport';
 import { Journeys } from '@/angelcare-marketplace/jobkix/pages/Journeys';
 import { HirerPage } from '@/angelcare-marketplace/jobkix/pages/Hirer';
-export async function generateMetadata({params,searchParams}:{params:Promise<{locale:string;segments?:string[]}>;searchParams:Promise<Record<string,string|string[]|undefined>>}){const {locale,segments=[]}=await params;if(!isLocale(locale))return {robots:{index:false,follow:false}};return pageMetadata(locale,segments,await searchParams);}
-export default async function JobkixPage({params,searchParams}:{params:Promise<{locale:string;segments?:string[]}>;searchParams:Promise<Record<string,string|string[]|undefined>>}){
+async function nativeMetadata({params,searchParams}:{params:Promise<{locale:string;segments?:string[]}>;searchParams:Promise<Record<string,string|string[]|undefined>>}){const {locale,segments=[]}=await params;if(!isLocale(locale))return {robots:{index:false,follow:false}};return pageMetadata(locale,segments,await searchParams);}
+async function NativePage({params,searchParams}:{params:Promise<{locale:string;segments?:string[]}>;searchParams:Promise<Record<string,string|string[]|undefined>>}){
  const {locale,segments=[]}=await params;if(!isLocale(locale))notFound();
  const route=resolveScreen(segments);if(!route)notFound();
  if(route.screen.id==='P00')return <Home locale={locale}/>;
@@ -55,3 +56,7 @@ export default async function JobkixPage({params,searchParams}:{params:Promise<{
  // Unimplemented units remain a 404 until their actual screen and workflow are connected.
  notFound();
 }
+
+type SeoPageProps={params:Promise<{locale:string;segments?:string[]}>;searchParams:Promise<Record<string,string|string[]|undefined>>};
+export async function generateMetadata(props:SeoPageProps){const p=await props.params;const base=await nativeMetadata(props);return seoMetadata('jobkix',`/jobkix/${p.locale}${p.segments?.length?"/"+p.segments.join("/"):""}`,base);}
+export default async function Page(props:SeoPageProps){const p=await props.params;const [body,base]=await Promise.all([NativePage(props),nativeMetadata(props)]);return <>{body}{!noindex(base)?<SeoEnhancements world="jobkix" path={`/jobkix/${p.locale}${p.segments?.length?"/"+p.segments.join("/"):""}`} base={base}/>:null}</>;}

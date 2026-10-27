@@ -1,3 +1,4 @@
+import { seoMetadata, SeoEnhancements, noindex } from '@/angelcare-marketplace/seo-power/public';
 import { cache } from "react";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
@@ -22,7 +23,7 @@ const load = cache(async (locale: Locale, key: string) => {
       host,
   };
 });
-export async function generateMetadata({
+async function nativeMetadata({
   params,
 }: {
   params: Promise<{ locale: string; key: string }>;
@@ -33,7 +34,7 @@ export async function generateMetadata({
   const { value, origin } = await load(locale, key);
   return experienceMetadata(value, origin, locale, key);
 }
-export default async function ExperiencePage({
+async function NativePage({
   params,
 }: {
   params: Promise<{ locale: string; key: string }>;
@@ -44,3 +45,7 @@ export default async function ExperiencePage({
   if (!value) notFound();
   return <Detail locale={locale} value={value} />;
 }
+
+type SeoPageProps={params:Promise<{locale:string;key:string}>};
+export async function generateMetadata(props:SeoPageProps){const p=await props.params;const base=await nativeMetadata(props);return seoMetadata('kidflix',`/kidflix/${p.locale}/experience/${encodeURIComponent(p.key)}`,base);}
+export default async function Page(props:SeoPageProps){const p=await props.params;const [body,base]=await Promise.all([NativePage(props),nativeMetadata(props)]);return <>{body}{!noindex(base)?<SeoEnhancements world="kidflix" path={`/kidflix/${p.locale}/experience/${encodeURIComponent(p.key)}`} base={base}/>:null}</>;}

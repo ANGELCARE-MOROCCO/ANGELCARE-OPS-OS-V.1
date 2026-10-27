@@ -63,6 +63,7 @@ export function useProgress(value: DetailValue, locale: Locale) {
   useEffect(() => {
     if (!ready || !enabled || recovery || !pending.current) return;
     const save = () => {
+      if (!pending.current) return;
       try {
         const serialized = JSON.stringify({
           contract: DEPTH_CONTRACT,

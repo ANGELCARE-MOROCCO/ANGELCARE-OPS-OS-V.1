@@ -1,0 +1,1 @@
+export async function createServiceClient(){return (globalThis as any).fixtureClient;}

@@ -1,3 +1,4 @@
+import { storefrontMetadata,storefrontNativeMetadata } from '@/angelcare-marketplace/seo-power/storefronts'
 import {PublicHealthExperience} from '@/angelcare-marketplace/b2b-verticals/components/PublicHealthExperience'
 import {publicVerticalSnapshot} from '@/angelcare-marketplace/b2b-verticals/repository'
 import {getPublishedSurface} from '@/angelcare-marketplace/total-commerce-control/repository'
@@ -15,3 +16,5 @@ export default async function Page({params}:{params:Promise<{locale:string}>}){
  ])
  return <Storefront experience={storefront} nativeContext={surfaceContext(experience)} nativeFallback={<PublicHealthExperience locale={locale} mode="health-partners" activePrograms={snapshot.activePrograms} organizations={snapshot.organizations} experience={experience}/>}/>
 }
+
+export async function generateMetadata({params,searchParams}:{params:Promise<{locale:string}>;searchParams?:Promise<Record<string,string|string[]|undefined>>}){const {locale}=await params;return storefrontMetadata('health-partners',locale,await searchParams||{});}

@@ -1,3 +1,4 @@
+import { storefrontMetadata,storefrontNativeMetadata } from '@/angelcare-marketplace/seo-power/storefronts'
 import type {MarketplaceRequestContext} from '@/angelcare-marketplace/domain/types'
 import {listPrograms} from '@/angelcare-marketplace/academy-engine/repository'
 import {getMarketplaceContext} from '@/angelcare-marketplace/auth/context'
@@ -19,3 +20,5 @@ export default async function Page({params}:{params:Promise<{locale:string}>}){
  ])
  return <Storefront experience={storefront} nativeContext={academyContext(safeLocale,programs,experience)} nativeFallback={<PublicAcademyExperience programs={programs} locale={safeLocale} experience={experience}/>}/>
 }
+
+export async function generateMetadata({params,searchParams}:{params:Promise<{locale:string}>;searchParams?:Promise<Record<string,string|string[]|undefined>>}){const {locale}=await params;return storefrontMetadata('academy',locale,await searchParams||{});}

@@ -1,0 +1,13 @@
+{
+  "name": "angelcare-seo-power-tests",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node run.mjs"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.12",
+    "esbuild": "0.28.2"
+  }
+}

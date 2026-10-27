@@ -85,6 +85,10 @@ export function ResourceSurface({
   children: ReactNode;
   compact?: boolean;
 }) {
+  const personal = usePersonal();
+  const size=personal.data.preferences.readingSize, spacing=personal.data.preferences.readingSpacing;
+  const setSize=(value:number)=>personal.change(p=>({...p,preferences:{...p.preferences,readingSize:value}}));
+  const setSpacing=(value:number)=>personal.change(p=>({...p,preferences:{...p.preferences,readingSpacing:value}}));
   const { m, d, state, update, locale } = props,
     c = capability(m),
     readingUnits = rows(d.units),
@@ -97,8 +101,6 @@ export function ResourceSurface({
       : [],
     [classroom, setClassroom] = useState(false),
     [toolsOpen, setToolsOpen] = useState(false),
-    [size, setSize] = useState(1),
-    [spacing, setSpacing] = useState(1.7),
     [ruler, setRuler] = useState(false),
     [minutes, setMinutes] = useState(10),
     [remaining, setRemaining] = useState(600),
@@ -114,7 +116,8 @@ export function ResourceSurface({
   }, [deadline]);
   const view = (
     <div
-      className={ruler ? s.ruler : undefined}
+      className={`${s.readingSurface} ${ruler ? s.ruler : ""}`}
+      data-reading-contrast={personal.data.preferences.readingContrast}
       data-kidflix-reading
       style={
         {

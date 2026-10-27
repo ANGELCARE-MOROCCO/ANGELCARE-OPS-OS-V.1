@@ -1,3 +1,4 @@
+import { seoMetadata } from '@/angelcare-marketplace/seo-power/public'
 import type { Metadata } from 'next'
 import { notFound, permanentRedirect } from 'next/navigation'
 
@@ -25,7 +26,7 @@ const legacyRouteAliases: Record<PublicLocale, Record<string, string>> = {
 
 function canonicalAlias(locale: PublicLocale, slug: string): string | null { return legacyRouteAliases[locale][slug] || null }
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug?: string[] }> }): Promise<Metadata> {
+async function nativeMetadata({ params }: { params: Promise<{ locale: string; slug?: string[] }> }): Promise<Metadata> {
   const current = await params
   if (!locales.has(current.locale)) return {}
   const locale = current.locale as PublicLocale
@@ -47,7 +48,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     if (campaign) return { title: translated(campaign.title), description: translated(campaign.subtitle), alternates: { canonical: `/angelcare-marketplace/${locale}` } }
   }
   const result = await getPublicPage({ locale, slug }).catch(() => null)
-  if (!result) return { title: 'ANGELCARE Marketplace' }
+  if (!result) return { title: 'ANGELCARE Marketplace', other:{'seo-power-body':'none'} }
   return { title: translated(result.page.seo_title || result.page.title), description: translated(result.page.seo_description || result.page.description), alternates: { canonical: result.page.canonical_url || undefined } }
 }
 
@@ -55,6 +56,8 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
   const current = await params
   if (!locales.has(current.locale)) notFound()
   const locale = current.locale as PublicLocale
+  const seoPath=`/angelcare-marketplace/${locale}${current.slug?.length?"/"+current.slug.join("/"):""}`
+  const seoBase=await nativeMetadata({params:Promise.resolve(current)})
   const slug = current.slug?.length ? publicRoutePath(current.slug) : 'accueil'
   const alias = canonicalAlias(locale, slug)
   if (alias) permanentRedirect(`/angelcare-marketplace/${locale}/${alias}`)
@@ -71,7 +74,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
     const studioHomepage = await getPublishedStudioHomepage({ locale }).catch(() => null)
     if (studioHomepage) {
       return (
-        <GlobalPublicShell locale={locale} navigation={studioHomepage.navigation} variant="marketplace">
+        <GlobalPublicShell seoPath={seoPath} seoBase={seoBase} locale={locale} navigation={studioHomepage.navigation} variant="marketplace">
           <PublicPageRenderer experience={studioHomepage} locale={locale} />
         </GlobalPublicShell>
       )
@@ -92,7 +95,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
 
     if (homepage) {
       return (
-        <GlobalPublicShell
+        <GlobalPublicShell seoPath={seoPath} seoBase={seoBase}
           locale={locale}
           navigation={homepage.navigation}
           variant="marketplace"
@@ -130,7 +133,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
           }
 
     return (
-      <GlobalPublicShell locale={locale} navigation={[]} variant="marketplace">
+      <GlobalPublicShell seoPath={seoPath} seoBase={seoBase} locale={locale} navigation={[]} variant="marketplace">
         <main
           dir={locale === 'ar' ? 'rtl' : 'ltr'}
           style={{
@@ -195,5 +198,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
 
   const result = await getPublicPage({ locale, slug }).catch(() => null)
   if (!result) notFound()
-  return <GlobalPublicShell locale={locale} navigation={result.navigation} variant={slug==='contact'?'marketplace':'standard'}><PublicPageRenderer experience={result} locale={locale}/></GlobalPublicShell>
+  return <GlobalPublicShell seoPath={seoPath} seoBase={seoBase} locale={locale} navigation={result.navigation} variant={slug==='contact'?'marketplace':'standard'}><PublicPageRenderer experience={result} locale={locale}/></GlobalPublicShell>
 }
+
+export async function generateMetadata(props:{params:Promise<{locale:string;slug?:string[]}>}):Promise<Metadata>{const p=await props.params;const base=await nativeMetadata(props);if(p.locale==='fr'&&isSanilaPublicRoute(p.slug?.join('/')||'accueil'))return base;return seoMetadata('angelcare',`/angelcare-marketplace/${p.locale}${p.slug?.length?"/"+p.slug.join("/"):""}`,base);}

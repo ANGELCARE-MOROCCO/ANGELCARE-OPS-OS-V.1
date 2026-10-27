@@ -12,6 +12,7 @@ import { t,errorText } from '../i18n';
 import { e } from '../experience-copy';
 import { readResponse,useCommand } from './commands';
 import s from '../jobkix.module.css';
+import { announceJobkixNavigation,cancelJobkixNavigation } from './navigation-buffer-events';
 export type AuthMode='sign-up'|'sign-in'|'confirmation'|'recovery'|'reset'|'onboarding';
 export function AuthForm({locale,mode,intent,next,consentRevision,consentDocuments,initialName='',linkFailed=false}:{locale:Locale;mode:AuthMode;intent:'candidate'|'hirer';next:string;consentRevision:string|null;consentDocuments?:ReactNode;initialName?:string;linkFailed?:boolean}){
  const router=useRouter(),command=useCommand(),[pending,setPending]=useState(false),[error,setError]=useState<JobkixFault|null>(null),[sent,setSent]=useState(false),[zone,setZone]=useState('UTC');
@@ -23,14 +24,15 @@ export function AuthForm({locale,mode,intent,next,consentRevision,consentDocumen
  async function submit(event:FormEvent<HTMLFormElement>){
   event.preventDefault();if(busy.current)return;busy.current=true;setPending(true);setError(null);setSent(false);
   const form=new FormData(event.currentTarget);
+  if(!confirmation&&!recovery)announceJobkixNavigation(signup?href(locale,'auth/confirmation'):next,false);
   try{
    const common={locale,intent,returnTo:next,accepted:form.get('accepted')==='on',adultConfirmed:form.get('accepted')==='on',consentRevision};
-   if(onboarding){const result=await command.run('account.initialize',{...common,displayName:String(form.get('fullName')||''),country:String(form.get('country')||'')||null,timezone:zone});if(result){router.push(intent==='hirer'&&next===href(locale,'hiring')?href(locale,'hiring/organization'):next);router.refresh();}return;}
+   if(onboarding){const result=await command.run('account.initialize',{...common,displayName:String(form.get('fullName')||''),country:String(form.get('country')||'')||null,timezone:zone});if(result){router.push(intent==='hirer'&&next===href(locale,'hiring')?href(locale,'hiring/organization'):next);router.refresh();}else cancelJobkixNavigation();return;}
    const result=await readResponse(await fetch('/api/jobkix/auth/'+(confirmation?'resend':mode),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...common,fullName:String(form.get('fullName')||''),email:String(form.get('email')||''),password:String(form.get('password')||'')})}));
-   if(confirmation||recovery){if(mounted.current)setSent(true);}
+   if(confirmation||recovery){cancelJobkixNavigation();if(mounted.current)setSent(true);}
    else if(typeof result.next==='string'){router.push(result.next);router.refresh();}
    else throw new JobkixFault('DEPENDENCY_UNAVAILABLE');
-  }catch(error){if(mounted.current)setError(error instanceof JobkixFault?error:new JobkixFault('DEPENDENCY_UNAVAILABLE'));}
+  }catch(error){cancelJobkixNavigation();if(mounted.current)setError(error instanceof JobkixFault?error:new JobkixFault('DEPENDENCY_UNAVAILABLE'));}
   finally{busy.current=false;if(mounted.current)setPending(false);}
  }
  const fault=error||command.error;

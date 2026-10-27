@@ -1,0 +1,25 @@
+/* JOBKIX native luxury micro-buffer: component-scoped, no header/footer/style overrides. */
+.overlay{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;background:rgba(15,20,34,.085);pointer-events:none}
+.buffer{position:relative;overflow:hidden;width:176px;min-height:86px;padding:13px 12px 10px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:13px;border:1px solid rgba(93,84,173,.17);background:rgba(255,255,255,.98);box-shadow:0 14px 40px rgba(33,28,85,.13),0 3px 11px rgba(37,33,70,.055);pointer-events:auto;isolation:isolate;animation:appear .26s cubic-bezier(.2,.65,.2,1) both}
+.buffer:before{position:absolute;inset:0;z-index:-1;content:"";background:radial-gradient(ellipse at 8% 8%,rgba(92,69,248,.065),transparent 57%),radial-gradient(ellipse at 95% 90%,rgba(37,202,216,.052),transparent 60%)}
+.rim{position:absolute;z-index:2;pointer-events:none;background-repeat:no-repeat;opacity:.98}
+.top,.bottom{height:1.7px;left:0;right:0;background-size:42% 100%;background-image:linear-gradient(90deg,transparent,#5547f6 14%,#3b83f6 42%,#16c8d4 67%,#fa655a 88%,transparent)}
+.left,.right{width:1.7px;top:0;bottom:0;background-size:100% 42%;background-image:linear-gradient(180deg,transparent,#5547f6 14%,#3b83f6 42%,#16c8d4 67%,#fa655a 88%,transparent)}
+.top{top:0;animation:horizontal 2s linear infinite}.bottom{bottom:0;animation:horizontal 2s linear infinite reverse}
+.right{right:0;animation:vertical 2s linear infinite}.left{left:0;animation:vertical 2s linear infinite reverse}
+.logoWindow{position:relative;width:111px;height:31px;overflow:hidden;flex-shrink:0;display:flex;align-items:flex-start;justify-content:center}
+.logo{display:block;width:111px;height:auto;max-width:none;object-fit:initial;transform:translateY(-3px);filter:drop-shadow(0 0 0 rgba(92,69,248,0));animation:logoBreathe 2.4s ease-in-out infinite;user-select:none}
+/* Crop the original logo's embedded tagline in this tiny UI without modifying the official image. */
+.logoGleam{position:absolute;left:-52%;top:0;height:31px;width:29%;transform:skewX(-24deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.54),transparent);mix-blend-mode:screen;animation:gleam 3.1s ease-in-out infinite;pointer-events:none}
+.caption{font-size:9.5px;line-height:1.45;font-weight:500;letter-spacing:.018em;color:#89869a;text-align:center;margin-top:1px;white-space:nowrap}
+.actions{display:flex;align-items:center;gap:10px;justify-content:center;margin-top:5px;min-height:16px}
+.actions button{border:0;background:transparent;padding:2px 3px;font-family:inherit;font-weight:500;font-size:9px;line-height:1.4;color:#6457bb;cursor:pointer;white-space:nowrap}
+.actions button:last-child{color:#8f91a2}.actions button:hover,.actions button:focus-visible{color:#4f3cd2;text-decoration:underline;text-underline-offset:3px}
+.actions>span{height:10px;width:1px;background:#e7e5f0}
+@keyframes horizontal{0%{background-position:-72% 0}100%{background-position:172% 0}}
+@keyframes vertical{0%{background-position:0 -72%}100%{background-position:0 172%}}
+@keyframes logoBreathe{0%,100%{transform:translateY(-3px) scale(1);filter:drop-shadow(0 0 0 rgba(92,69,248,0))}50%{transform:translateY(-3px) scale(1.027);filter:drop-shadow(0 1px 3px rgba(92,69,248,.17))}}
+@keyframes gleam{0%,35%{left:-52%;opacity:0}47%{opacity:.7}72%,100%{left:130%;opacity:0}}
+@keyframes appear{from{opacity:0;transform:translateY(5px) scale(.975)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(max-width:480px){.buffer{width:164px;min-height:82px}}
+@media(prefers-reduced-motion:reduce){.buffer,.rim,.logo,.logoGleam{animation:none!important}.rim{background-position:center}.logoGleam{opacity:0}}

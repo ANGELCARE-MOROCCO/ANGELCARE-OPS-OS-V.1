@@ -1,3 +1,4 @@
+import { storefrontMetadata,storefrontNativeMetadata } from '@/angelcare-marketplace/seo-power/storefronts'
 import {GlobalPublicShell} from '@/angelcare-marketplace/public-universe/components/GlobalPublicShell'
 import {notFound} from 'next/navigation'
 import {Storefront} from '@/angelcare-marketplace/catalog-discovery/components/Storefront'
@@ -7,5 +8,7 @@ export default async function Page({params,searchParams}:{params:Promise<{locale
  const [{locale},query]=await Promise.all([params,searchParams])
  if(!['fr','en','ar'].includes(locale))notFound()
  const territory=typeof query.territory==='string'&&/^[A-Za-z0-9_-]{2,60}$/.test(query.territory)?query.territory:'MA-MASTER'
- return <GlobalPublicShell locale={locale as CatalogLocale} navigation={[]} variant="marketplace"><Storefront experience={await storefrontExperience({locale:locale as CatalogLocale,key:'families',territoryCode:territory})}/></GlobalPublicShell>
+ return <GlobalPublicShell seoPath={`/angelcare-marketplace/${locale}/families`} seoBase={await storefrontNativeMetadata('families',locale)} locale={locale as CatalogLocale} navigation={[]} variant="marketplace"><Storefront experience={await storefrontExperience({locale:locale as CatalogLocale,key:'families',territoryCode:territory})}/></GlobalPublicShell>
 }
+
+export async function generateMetadata({params,searchParams}:{params:Promise<{locale:string}>;searchParams?:Promise<Record<string,string|string[]|undefined>>}){const {locale}=await params;return storefrontMetadata('families',locale,await searchParams||{});}

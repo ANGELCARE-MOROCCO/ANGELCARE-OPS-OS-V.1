@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import type { ReactNode } from 'react';
+import { Suspense, type ReactNode } from 'react';
 import { ArrowUpRight,UserRound,ChevronDown } from 'lucide-react';
 import { headers } from 'next/headers';
 import type { Locale } from './contracts';
@@ -8,6 +8,7 @@ import { t,direction } from './i18n';
 import { LanguageControl } from './client/LanguageControl';
 import { NativeMenu } from './client/NativeMenu';
 import { GlobalHeader } from './client/GlobalHeader';
+import { NavigationBuffer } from './client/NavigationBuffer';
 import { headerText } from './header-copy';
 import { SignOut } from './client/SignOut';
 import { getJobkixSession } from './server/identity';
@@ -27,6 +28,7 @@ export async function Shell({locale,children}:{locale:Locale;children:ReactNode}
  return <div className={s.root} lang={locale} dir={direction(locale)} data-jobkix-world>
   <a className={s.skip} href="#jobkix-main">{t(locale,'skip')}</a>
   <GlobalHeader locale={locale} audience={audience} activePath={presentation?.path||''} brand={<Brand locale={locale}/>} language={<LanguageControl locale={locale} preferences={preferences}/>} account={account}/>
+  <Suspense fallback={null}><NavigationBuffer locale={locale}/></Suspense>
   <main id="jobkix-main">{children}</main>
   <Footer locale={locale} preferences={preferences}/>
  </div>;

@@ -1,61 +1,12 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { copy } from "./copy";
 import { path, safeImage, tr, world, type Locale } from "./catalogue";
 import { useGuest } from "./continuity";
 import { I } from "./Icons";
 import s from "./kidflix.module.css";
-export function InformationPage({
-  locale,
-  topic,
-}: {
-  locale: Locale;
-  topic: "about" | "privacy" | "accessibility";
-}) {
-  const guest = useGuest(),
-    [cleared, setCleared] = useState(false),
-    title =
-      topic === "about" ? "about" : topic === "privacy" ? "privacy" : "access",
-    body =
-      topic === "about"
-        ? "aboutBody"
-        : topic === "privacy"
-          ? "privacyBody"
-          : "accessBody";
-  return (
-    <article className={s.infoPage}>
-      <Link className={s.breadcrumb} href={path(locale)}>
-        <I name="ArrowLeft" size={14} />
-        {copy("home", locale)}
-      </Link>
-      <span className={s.eyebrow}>KIDFLIX · ANGELCARE</span>
-      <h1>{copy(title, locale)}</h1>
-      <p>{copy(body, locale)}</p>
-      {topic === "privacy" ? (
-        <>
-          <button
-            className={s.outline}
-            onClick={() => {
-              void guest
-                .clear()
-                .then(() => setCleared(true))
-                .catch(() => setCleared(false));
-            }}
-          >
-            {copy("erase", locale)}
-          </button>
-          {cleared ? <p role="status">{copy("erased", locale)}</p> : null}
-        </>
-      ) : (
-        <Link href={path(locale, "/explore")} className={s.primary}>
-          {copy("explore", locale)}
-          <I name="ArrowRight" size={17} />
-        </Link>
-      )}
-    </article>
-  );
-}
+export { InformationPage } from "./information/InformationPage";
 const obj = (v: any): Record<string, any> =>
   v && typeof v === "object" && !Array.isArray(v) ? v : {};
 const list = (v: any): Record<string, any>[] =>

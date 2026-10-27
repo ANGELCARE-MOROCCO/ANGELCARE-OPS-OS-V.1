@@ -11,14 +11,15 @@ import { FILTER_KEYS,readFilters,searchHref,type SearchFilters } from '../discov
 import { href } from '../routes';
 import { t,errorText } from '../i18n';
 import s from '../jobkix.module.css';
+import { announceJobkixNavigation } from './navigation-buffer-events';
 export function SearchCommand({locale,filters={},mode='candidate',target='jobs',savedSearchId}:{locale:Locale;filters?:SearchFilters;mode?:'candidate'|'hirer';target?:'jobs'|'career/discovery';savedSearchId?:string}){
  const [reach,setReach]=useState(filters.reach||'worldwide');
  const form=useRef<HTMLFormElement>(null),[invalid,setInvalid]=useState(false);
  const router=useRouter(),[pending,startNavigation]=useTransition();
  function formFilters(element:HTMLFormElement){const params=new URLSearchParams();for(const [key,value] of new FormData(element)){if(typeof value==='string'&&value)params.set(key,value);}return readFilters(params);}
  function destination(next:SearchFilters){const url=searchHref(locale,next,{},target);return savedSearchId&&target==='career/discovery'?url+(url.includes('?')?'&':'?')+new URLSearchParams({editSearch:savedSearchId}):url;}
- function navigate(event:FormEvent<HTMLFormElement>){if(mode!=='candidate')return;event.preventDefault();try{const next=formFilters(event.currentTarget);setInvalid(false);startNavigation(()=>router.push(destination(next)));}catch{setInvalid(true);}}
- function advanced(){if(!form.current)return;try{const next=formFilters(form.current);setInvalid(false);startNavigation(()=>router.push(destination(next)+'#results'));}catch{setInvalid(true);}}
+ function navigate(event:FormEvent<HTMLFormElement>){if(mode!=='candidate')return;event.preventDefault();try{const next=formFilters(event.currentTarget);setInvalid(false);const target=destination(next);announceJobkixNavigation(target);startNavigation(()=>router.push(target));}catch{setInvalid(true);}}
+ function advanced(){if(!form.current)return;try{const next=formFilters(form.current);setInvalid(false);const target=destination(next)+'#results';announceJobkixNavigation(target);startNavigation(()=>router.push(target));}catch{setInvalid(true);}}
  return <div className={s.command} id="jobkix-search-command"><div className={s.commandTabs}>
   <Link href={href(locale)} aria-current={mode==='candidate'?'page':undefined}>{t(locale,'findJobs')}</Link><Link href={href(locale,'for-employers')} aria-current={mode==='hirer'?'page':undefined}>{t(locale,'hireTalent')}</Link><Link href={href(locale,'professions')}>{t(locale,'professions')}</Link>
  </div><form ref={form} action={href(locale,mode==='candidate'?target:'for-employers')} method="get" onSubmit={navigate}>
