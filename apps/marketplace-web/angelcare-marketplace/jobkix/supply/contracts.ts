@@ -1,5 +1,5 @@
 /** Strict, shared Strategic Supply PM7 contracts. No arbitrary JavaScript, SQL or XPath code from admin inputs. */
-export const SUPPLY_SECTIONS=['overview','countries','sources','missions','bucket','review','publications','audit'] as const;
+export const SUPPLY_SECTIONS=['overview','countries','sources','missions','bucket','review','publications','audit','feeds','schedules','imports'] as const;
 export type SupplySection=typeof SUPPLY_SECTIONS[number];
 export const SOURCE_KINDS=['api','scrapy','jobspy'] as const;
 export type SourceKind=typeof SOURCE_KINDS[number];

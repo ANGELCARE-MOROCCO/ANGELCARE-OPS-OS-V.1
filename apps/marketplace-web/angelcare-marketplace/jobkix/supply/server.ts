@@ -5,6 +5,7 @@ import {hasMarketplaceWorkspaceAccess,requireMarketplaceApiContext} from '@/ange
 import {JobkixFault} from '../contracts';
 import {sourceInput,normalizeVacancy,type SourceInput} from './contracts';
 import {collectInlineApi} from './inline-api';
+import {collectFeed} from './r3/feed';
 
 type Row=Record<string,unknown>;
 const fail=(message:string):never=>{throw new Error(message)};
@@ -19,7 +20,7 @@ export const workerAuthorized=(key:string)=>{const expected=process.env.JOBKIX_S
 async function event(action:string,actor:string,details:Row={}){const db=await createServiceClient();const {error}=await db.from('jobkix_supply_events').insert({actor,action,source_id:details.source_id||null,mission_id:details.mission_id||null,vacancy_id:details.vacancy_id||null,data:details.data||{}});if(error)fail('Supply audit write failed: '+error.message)}
 const mandatory=async(result:{error?:{message:string}|null})=>{if(result.error)fail('Supply storage error: '+result.error.message)};
 
-type InlineApiSource={country:string;endpoint:string;config:unknown;credential_cipher?:string|null;credential_header?:string|null};
+type InlineApiSource={id:string;country:string;endpoint:string;config:unknown;credential_cipher?:string|null;credential_header?:string|null};
 async function runInlineApiMission(id:string,source:InlineApiSource):Promise<{id:string;state:'completed';processed:number;accepted:number;rejected:number}>{
  const db=await createServiceClient(),worker='internal-api-'+randomBytes(8).toString('hex');
  const now=new Date();
@@ -31,9 +32,25 @@ async function runInlineApiMission(id:string,source:InlineApiSource):Promise<{id
  if(!claim.data)throw Error('Mission was already claimed, cancelled or completed. Refresh Live Missions.');
  try{
   const credential=source.credential_cipher?unseal(source.credential_cipher):'';
-  const items=await collectInlineApi({endpoint:source.endpoint,country:source.country,config:source.config,
-   credential,credentialHeader:source.credential_header||''});
-  const result=await workerBatch(worker,{missionId:id,items});
+   const cfg=source.config&&typeof source.config==='object'?source.config as Row:{};
+   const rss=cfg.format==='rss';
+   let items:Row[]=[];
+   let feedCache:{etag:string|null;lastModified:string|null;unchanged:boolean}|null=null;
+   if(rss){
+    const cache=await db.from('jobkix_supply_r3_feed_cache').select('etag,last_modified').eq('source_id',source.id).maybeSingle();
+    await mandatory(cache);
+    const feed=await collectFeed({endpoint:source.endpoint,country:source.country,config:{...cfg,feedEtag:cache.data?.etag||'',feedLastModified:cache.data?.last_modified||''}});
+    items=feed.items as Row[];
+    feedCache={etag:feed.etag,lastModified:feed.lastModified,unchanged:feed.unchanged};
+   }else{
+    items=await collectInlineApi({endpoint:source.endpoint,country:source.country,config:source.config,
+     credential,credentialHeader:source.credential_header||''});
+   }
+   const result=await workerBatch(worker,{missionId:id,items});
+   if(feedCache){
+    const saved=await db.from('jobkix_supply_r3_feed_cache').upsert({source_id:source.id,etag:feedCache.etag,last_modified:feedCache.lastModified,last_checked_at:new Date().toISOString(),...(feedCache.unchanged?{}:{last_changed_at:new Date().toISOString()})},{onConflict:'source_id'});
+    await mandatory(saved);
+   }
   if(items.length>0&&result.accepted===0)throw Error('No valid vacancies after mapping. Check title and URL fields, then retry.');
   await workerFinish(worker,{missionId:id,success:true});
   return {id,state:'completed',processed:result.processed,accepted:result.accepted,rejected:result.rejected};
@@ -48,7 +65,21 @@ async function runInlineApiMission(id:string,source:InlineApiSource):Promise<{id
  }
 }
 
-export async function adminRead(section:string,params:URLSearchParams){await supplyAdmin();const db=await createServiceClient();const id=params.get('id');
+/** Durable scheduler entry: called only by the internal Node coordinator, never through public admin HTTP. */
+export async function executeR3ScheduledSource(sourceId:string,scheduleId:string):Promise<{id:string;state:'completed';processed:number;accepted:number;rejected:number}>{
+ const db=await createServiceClient();
+ const source=await db.from('jobkix_supply_sources').select('id,country,kind,endpoint,config,approved,enabled,credential_cipher,credential_header,version,publication_mode,archived_at').eq('id',sourceId).maybeSingle();
+ await mandatory(source);
+ if(!source.data||!source.data.approved||!source.data.enabled||source.data.archived_at||source.data.kind!=='api')throw Error('Scheduled source is disabled, unapproved, archived or unsupported');
+ const active=await db.from('jobkix_supply_missions').select('id,state').eq('source_id',sourceId).in('state',['queued','running']).order('created_at',{ascending:true}).limit(1);await mandatory(active);
+ if(active.data?.[0]?.state==='running')throw Error('Another source mission is already executing');
+ let missionId=active.data?.[0]?.id;
+ if(!missionId){const inserted=await db.from('jobkix_supply_missions').insert({source_id:sourceId,country:source.data.country,config_snapshot:{kind:'api',endpoint:source.data.endpoint,config:source.data.config,publication_mode:source.data.publication_mode,schedule_id:scheduleId},source_version:source.data.version}).select('id').single();await mandatory(inserted);missionId=inserted.data!.id;}
+ await event('r3.schedule.dispatched','jobkix-r3-scheduler',{source_id:sourceId,mission_id:missionId,data:{scheduleId}});
+ return runInlineApiMission(missionId!,source.data);
+}
+
+export async function adminRead(section:string,params:URLSearchParams){await supplyAdmin();if(['feeds','schedules','imports'].includes(section))return {rows:[]};const db=await createServiceClient();const id=params.get('id');
  if(section==='overview'){
   const tables=['jobkix_supply_sources','jobkix_supply_missions','jobkix_supply_vacancies'] as const;
   const numbers=await Promise.all(tables.map(x=>db.from(x).select('id',{count:'exact',head:true})));
@@ -82,7 +113,8 @@ export async function adminCommand(body:Row):Promise<unknown>{const actor=await 
  if(a==='mission.start'){
   const id=uuid(body.sourceId),source=await db.from('jobkix_supply_sources').select('id,name,kind,country,endpoint,config,version,enabled,approved,publication_mode,credential_cipher,credential_header').eq('id',id).maybeSingle();await mandatory(source);
   if(!source.data?.approved||!source.data.enabled)throw new Error('Source is not enabled and approved');
-  if(source.data.kind!=='api')throw Error('This engine is not available in the current Marketplace deployment. Only bounded JSON API collection is enabled.');
+  if(source.data.kind!=='api')throw Error('Scrapy/JobSpy need an explicitly approved execution architecture; only API/RSS sources are supported in this Marketplace.');
+  if((source.data.config as Row)?.format==='rss'){const flags=await db.from('jobkix_supply_r3_control').select('rss_enabled').eq('id',1).single();await mandatory(flags);if(!flags.data?.rss_enabled)throw Error('RSS engine is paused globally. Enable it in Automation & Schedules.');}
   const ongoing=await db.from('jobkix_supply_missions').select('id,state').eq('source_id',id).in('state',['queued','running']).order('created_at',{ascending:true}).limit(1);await mandatory(ongoing);
   if(ongoing.data?.length){
    if(ongoing.data[0].state==='queued')return runInlineApiMission(ongoing.data[0].id,source.data);
