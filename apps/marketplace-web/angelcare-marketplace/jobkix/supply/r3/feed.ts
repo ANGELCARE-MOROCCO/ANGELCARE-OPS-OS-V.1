@@ -8,11 +8,14 @@ export type FeedItem={title:string;company:string;city:string;country:string;des
 export type FeedInspection={format:'rss'|'atom';title:string;items:number;sample:FeedItem[];etag:string|null;lastModified:string|null;notModified:boolean};
 const blocked=new BlockList();
 for(const [ip,n] of [['0.0.0.0',8],['10.0.0.0',8],['100.64.0.0',10],['127.0.0.0',8],['169.254.0.0',16],['172.16.0.0',12],['192.168.0.0',16],['192.0.2.0',24],['198.18.0.0',15],['198.51.100.0',24],['203.0.113.0',24],['224.0.0.0',4],['240.0.0.0',4]] as const)blocked.addSubnet(ip,n,'ipv4');
-for(const [ip,n] of [['::',128],['::1',128],['fc00::',7],['fe80::',10],['ff00::',8],['2001:db8::',32],['::ffff:0:0',96]] as const)blocked.addSubnet(ip,n,'ipv6');
+for(const [ip,n] of [['::',128],['::1',128],['fc00::',7],['fe80::',10],['ff00::',8],['2001:db8::',32]] as const)blocked.addSubnet(ip,n,'ipv6');
+// Reject IPv4-mapped IPv6 addresses explicitly, without shadowing ordinary IPv4.
+const mappedIPv4=new BlockList();
+mappedIPv4.addSubnet('::ffff:0:0',96,'ipv6');
 function assertURL(url:string){const u=new URL(url);if(u.protocol!=='https:'||u.port&&u.port!=='443'||u.username||u.password||u.hash||isIP(u.hostname)||!u.hostname.includes('.')||/(^localhost$|\.local$|\.internal$)/i.test(u.hostname))throw Error('Source must use a public HTTPS host on port 443');return u;}
 export async function secureFeedGet(url:string,conditional:Record<string,string>={}):Promise<{status:number;body:string;etag:string|null;lastModified:string|null}>{
  const u=assertURL(url),addresses=await lookup(u.hostname,{all:true});
- if(!addresses.length||addresses.some(a=>blocked.check(a.address,a.family===6?'ipv6':'ipv4')))throw Error('Source resolves to an internal, reserved or unsafe address');
+ if(!addresses.length||addresses.some(a=>blocked.check(a.address,a.family===6?'ipv6':'ipv4')||(a.family===6&&mappedIPv4.check(a.address,'ipv6'))))throw Error('Source resolves to an internal, reserved or unsafe address');
  const selected=addresses.find(a=>a.family===4)||addresses[0];
  const headers:Record<string,string>={'User-Agent':'JOBKIX-RSS-Intelligence/3.0','Accept':'application/rss+xml, application/atom+xml, application/xml, text/xml'};
  if(conditional.etag&&conditional.etag.length<256)headers['If-None-Match']=conditional.etag;

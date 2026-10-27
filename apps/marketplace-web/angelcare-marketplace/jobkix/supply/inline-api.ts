@@ -23,8 +23,12 @@ for(const [ip,prefix] of [
 ] as const)BLOCKED.addSubnet(ip,prefix,'ipv4');
 for(const [ip,prefix] of [
  ['::',128],['::1',128],['fc00::',7],['fe80::',10],['ff00::',8],
- ['2001:db8::',32],['::ffff:0:0',96]
+ ['2001:db8::',32]
 ] as const)BLOCKED.addSubnet(ip,prefix,'ipv6');
+// Keep mapped-IPv4 rejection isolated: applying /96 to the primary BlockList
+// also blocks every ordinary public IPv4 address in Node's BlockList.
+const MAPPED_IPV4=new BlockList();
+MAPPED_IPV4.addSubnet('::ffff:0:0',96,'ipv6');
 
 const dict=(value:unknown):Dict=>value!==null&&typeof value==='object'&&!Array.isArray(value)?value as Dict:{};
 const bound=(x:unknown,min:number,max:number,fallback:number)=>Number.isInteger(Number(x))?Math.max(min,Math.min(max,Number(x))):fallback;
@@ -61,7 +65,10 @@ async function getJSON(u:URL,headers:Record<string,string>):Promise<unknown>{
  // Choose and PIN a resolved, publicly routable address for this HTTPS socket.
  // This avoids a second unvalidated DNS lookup during the connection.
  const addresses=await lookup(u.hostname,{all:true});
- const publicAddresses=addresses.filter(a=>!BLOCKED.check(a.address,a.family===6?'ipv6':'ipv4'));
+ const publicAddresses=addresses.filter(a=>
+  !BLOCKED.check(a.address,a.family===6?'ipv6':'ipv4') &&
+  !(a.family===6&&MAPPED_IPV4.check(a.address,'ipv6'))
+);
  if(!addresses.length||publicAddresses.length!==addresses.length)throw Error('API host resolves to a private, reserved or unavailable address');
  const resolved=publicAddresses.find(a=>a.family===4)||publicAddresses[0];
  return new Promise<unknown>((resolve,reject)=>{
