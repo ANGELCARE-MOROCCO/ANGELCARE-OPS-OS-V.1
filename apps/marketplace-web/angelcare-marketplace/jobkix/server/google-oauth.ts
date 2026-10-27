@@ -4,6 +4,7 @@ import { createUserClient } from '@/lib/supabase/server';
 import { isLocale,type Locale } from '../contracts';
 import { authIntent,type AuthIntent } from '../auth-navigation';
 import { href,safeReturnTo } from '../routes';
+import {jobkixOAuthOrigin,ensureJobkixOAuthAuthorizeUrl} from './google-redirect-policy';
 
 /** The existing shared Supabase cookie client is the sole authentication authority. */
 const OAUTH_CONTEXT_COOKIE = 'jobkix_google_oauth_context';
@@ -52,11 +53,16 @@ export async function beginJobkixGoogleSignIn(request:NextRequest):Promise<NextR
  try{
   const client=await createUserClient();
   // Use an exact redirect URL: no invitation tokens or role information sent to Google.
-  const callback=new URL(OAUTH_CALLBACK,request.nextUrl.origin);
+  const publicOrigin=jobkixOAuthOrigin(process.env.JOBKIX_PUBLIC_ORIGIN,process.env.NODE_ENV==='production',request.nextUrl.origin);
+  const callback=new URL(OAUTH_CALLBACK,publicOrigin);
   const {data,error}=await client.auth.signInWithOAuth({provider:'google',options:{redirectTo:callback.toString(),skipBrowserRedirect:true}});
   if(error||!data.url)return failure(request,context);
   const provider=new URL(data.url);
   if(provider.protocol!=='https:'&&!(process.env.NODE_ENV==='development'&&provider.hostname==='localhost'))return failure(request,context);
+  if(process.env.NODE_ENV==='production'){
+   // Fail closed if Supabase's authorize URL drops/changes our exact redirect_to.
+   ensureJobkixOAuthAuthorizeUrl(provider.href,callback.href,process.env.NEXT_PUBLIC_SUPABASE_URL||'');
+  }
   const response=markNoStore(NextResponse.redirect(provider.toString(),303));
   // Short-lived HttpOnly contextual navigation cookie. The normal Supabase PKCE verifier
   // remains in the shared auth client's cookies, not in this application cookie.
@@ -82,6 +88,7 @@ export async function completeJobkixGoogleSignIn(request:NextRequest):Promise<Ne
   // Existing /onboarding page will: enforce terms/adult consent for new users;
   // route fully onboarded candidate/hirer accounts onward; block restricted users.
   const destination=href(context.locale,'onboarding',new URLSearchParams({intent:context.intent,next:context.next}));
-  return clearFlowCookie(markNoStore(NextResponse.redirect(new URL(destination,request.url),303)));
+  const publicOrigin=jobkixOAuthOrigin(process.env.JOBKIX_PUBLIC_ORIGIN,process.env.NODE_ENV==='production',request.nextUrl.origin);
+  return clearFlowCookie(markNoStore(NextResponse.redirect(new URL(destination,publicOrigin),303)));
  }catch{return clearFlowCookie(failure(request,context));}
 }

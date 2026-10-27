@@ -21,6 +21,9 @@ export function composeJobkixAuthEmail(job:AuthEmailJob,config:EmailConfig){
  if(!['signup','recovery','magiclink','invite','email_change'].includes(job.action))throw Error('AUTH_EMAIL_JOBKIX_ACTION_UNSUPPORTED');
  // Reuse the existing native token, recipient-slot, allowed-origin and sender authority.
  const native=composeAuthEmail(job,config),destination=new URL(job.payload.email_data.redirect_to||'');
+ // JOBKIX must never silently use the legacy OPS sender.
+ if(native.sender!=='supports@angelcarehub.ma'||destination.origin!=='https://my.angelcarehub.com')
+  throw Error('AUTH_EMAIL_JOBKIX_ORIGIN_OR_SENDER_MISMATCH');
  if(!native.link)throw Error('AUTH_EMAIL_JOBKIX_LINK_MISSING');
  const token=new URL(native.link).searchParams.get('token');if(!token)throw Error('AUTH_EMAIL_JOBKIX_LINK_MISSING');
  const callback=new URL(destination.pathname,destination.origin);
