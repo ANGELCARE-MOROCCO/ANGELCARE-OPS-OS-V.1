@@ -2,9 +2,9 @@ import "server-only";
 import { CheerioCrawler } from "@crawlee/cheerio";
 import { Configuration, type BaseHttpClient } from "@crawlee/core";
 import { RobotsTxtFile } from "@crawlee/utils";
-import { LinkChecker } from "linkinator";
-import { createServer } from "node:http";
-import type { AddressInfo } from "node:net";
+
+
+
 import { hash, safeRead, SeoHttpClient, USER_AGENT } from "./network";
 import {
   type Facts,
@@ -189,10 +189,12 @@ export async function inspectPage(
   );
 }
 
-/** Linkinator consumes the real HTTP status through the same bounded transport.
- * The transient loopback adapter lives only for this request, not in another process/service. */
+/** Check canonical link status through the existing bounded, DNS-pinned HTTPS transport.
+ * Avoid importing Linkinator in Next.js route initialization or running a
+ * transient loopback HTTP server for a status already obtained from the target.
+ */
 export async function checkLinks(project: Project, paths: string[]) {
-  const results: { url: string; state: string; status: number }[] = [];
+  const results: { url: string; state: "OK" | "BROKEN" | "SKIPPED"; status: number }[] = [];
   for (const path of paths.slice(0, 3)) {
     const target = targetUrl(path, project);
     const response = await safeRead(target, {
@@ -202,40 +204,17 @@ export async function checkLinks(project: Project, paths: string[]) {
         publicPath(p, project.world);
       },
     });
-    const server = createServer((_req, res) => {
-      res.writeHead(response.statusCode, { "Content-Type": "text/plain" });
-      res.end("");
-    });
-    try {
-      await new Promise<void>((resolve, reject) => {
-        server.once("error", reject);
-        server.listen(0, "127.0.0.1", resolve);
-      });
-      const address = server.address() as AddressInfo,
-        local = `http://127.0.0.1:${address.port}/`;
-      const checked = await new LinkChecker().check({
-        path: local,
-        recurse: false,
-        concurrency: 1,
-        timeout: 2000,
-        retry: false,
-        retryErrors: false,
-        linksToSkip: async (url) => url !== local,
-      });
-      const root = checked.links.find((link) => link.url === local);
-      if (!root)
-        throw new SeoFault(
-          "LINK_CHECK_INCONCLUSIVE",
-          "Linkinator n’a pas confirmé la réponse.",
-        );
-      results.push({
-        url: target.href,
-        state: root.state,
-        status: response.statusCode,
-      });
-    } finally {
-      await new Promise<void>((resolve) => server.close(() => resolve()));
-    }
+    const status = response.statusCode;
+    const botChallenge = String(response.headers["cf-mitigated"] || "").toLowerCase();
+    const state: "OK" | "BROKEN" | "SKIPPED" =
+      status === 429 ||
+      status === 999 ||
+      (status === 403 && botChallenge === "challenge")
+        ? "SKIPPED"
+        : status >= 200 && status < 400
+          ? "OK"
+          : "BROKEN";
+    results.push({ url: target.href, state, status });
   }
   return results;
 }
