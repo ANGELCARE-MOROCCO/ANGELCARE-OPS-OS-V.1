@@ -147,6 +147,11 @@ export async function imageryCommand(c: Context, cmd: any) {
   )
     throw err("VALIDATION_ERROR", "Invalid imagery operation.");
   authorize(c, action === "kidflix_imagery_publish" ? "publish" : "manage");
+  const commandHash = hash({
+    tenant: c.tenantId,
+    territory: c.territoryId,
+    command: cmd,
+  });
   const db = await createServiceClient(),
     receipt = await db
       .from("ac_dce_commands")
@@ -156,7 +161,7 @@ export async function imageryCommand(c: Context, cmd: any) {
       .maybeSingle();
   if (receipt.error) throw err("DEPENDENCY_BLOCKED", "Receipt unavailable.");
   if (receipt.data) {
-    if (receipt.data.input_hash !== hash(cmd))
+    if (receipt.data.input_hash !== commandHash)
       throw err("CONFLICT", "This receipt belongs to another operation.");
     return {
       ...receipt.data.response,
@@ -257,7 +262,7 @@ export async function imageryCommand(c: Context, cmd: any) {
     p_tenant: c.tenantId,
     p_territory: c.territoryId,
     p_request: cmd.requestId,
-    p_hash: hash(cmd),
+    p_hash: commandHash,
     p_action: "save",
     p_id: prior?.id || null,
     p_revision: prior?.revision || 0,

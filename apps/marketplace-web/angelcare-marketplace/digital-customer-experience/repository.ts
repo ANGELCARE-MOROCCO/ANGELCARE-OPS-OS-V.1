@@ -1121,6 +1121,7 @@ async function save(c: Context, cmd: Command, trustedProvider = false) {
       "Use the KidFlix homepage controls so drafts cannot overwrite live editions.",
     );
   if (String(old?.key||cmd.record?.key||" ").startsWith("kidflix-imagery-")) throw new MarketplaceError("PERMISSION_DENIED","Use Page Imagery Studio for this configuration.");
+  if(old?.key === "kidflix-inventory-targets-r1" || cmd.record?.key === "kidflix-inventory-targets-r1")throw new MarketplaceError("PERMISSION_DENIED","Use Inventory Map to manage targets.");
   writable(c, kind);
   const normalized = normalizeRecord({ ...old, ...cmd.record }, old);
   if (kind === "setting" && normalized.key === "world-defaults") {
@@ -1607,6 +1608,9 @@ export async function bootstrap(c: Context, days = 30): Promise<Bootstrap> {
   };
 }
 export async function command(c: Context, cmd: Command): Promise<any> {
+  if(cmd.action === "inventory_plan_save") return (await import("./inventory/service")).inventoryPlanSave(c,cmd);
+  if(cmd.record?.key === "kidflix-inventory-targets-r1") throw new MarketplaceError("PERMISSION_DENIED","Use Inventory Map to manage targets.");
+  if(cmd.id && ["archive","restore","clone","purge","release","schedule"].includes(cmd.action)){const entry=await scoped((await createServiceClient()).from("ac_dce_records").select("key"),c).eq("id",cmd.id).maybeSingle();if(entry.error)throw new MarketplaceError("DEPENDENCY_BLOCKED","Record authority unavailable.");if(entry.data?.key === "kidflix-inventory-targets-r1")throw new MarketplaceError("PERMISSION_DENIED","Use Inventory Map to manage targets.");}
   if (cmd.action.startsWith("kidflix_imagery_"))
     return (await import("../kidflix/imagery/service")).imageryCommand(c,cmd);
   if (cmd.action.startsWith("kidflix_storefront_"))
@@ -2573,6 +2577,7 @@ export async function command(c: Context, cmd: Command): Promise<any> {
   throw new MarketplaceError("VALIDATION_ERROR", "Unsupported DCE command.");
 }
 export async function read(c: Context, input: Record<string, unknown>) {
+  if(input.op === "inventory_map") return (await import("./inventory/service")).inventoryRead(c);
   if (input.op === "kidflix_imagery") return (await import("../kidflix/imagery/service")).imageryRead(c,String(input.page||"home"),input.history===true||input.history==="true");
   if (input.op === "kidflix_storefront_selection")
     return (await import("../kidflix/storefronts/admin-service")).kidflixStorefrontSelection(c,String(input.family||""),input.locale as any,String(input.keys||""));

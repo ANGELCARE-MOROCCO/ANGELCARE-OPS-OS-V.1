@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { marketplaceIcons } from '@/angelcare-marketplace/brand'
 import { Suspense, type ReactNode } from 'react'
 import styles from '@/angelcare-marketplace/design-system/marketplace.module.css'
 import { LocalizationRuntime } from '@/angelcare-marketplace/localization-intelligence/components/LocalizationRuntime'
@@ -8,7 +9,10 @@ import { CareOrbitNavigation } from '@/angelcare-marketplace/navigation-care-orb
 import { MarketplaceTelemetry } from '@/angelcare-marketplace/store-xray/MarketplaceTelemetry'
 
 export async function generateMetadata(): Promise<Metadata> {
-  return buildWebPresenceMetadata('MARKETPLACE')
+  return {
+    ...await buildWebPresenceMetadata('MARKETPLACE'),
+    icons: marketplaceIcons(),
+  }
 }
 
 export default function AngelCareMarketplaceLayout({ children }: { children: ReactNode }) {

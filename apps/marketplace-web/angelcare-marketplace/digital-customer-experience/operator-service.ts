@@ -1,3 +1,4 @@
+import { validateTarget, applyImportTarget } from "./inventory/import-target";
 import { editionProjection } from "./experience-contract";
 import { createHash, randomUUID } from "node:crypto";
 import { createServiceClient } from "@/lib/supabase/server";
@@ -253,7 +254,43 @@ export async function operatorCommand(c: Context, cmd: Command) {
       }),
     );
   if (cmd.action === "operator_batch_create") {
-    const source = text(cmd.source);
+    let source = text(cmd.source);
+    if (Buffer.byteLength(source) > 4 * 1024 * 1024)
+      throw new MarketplaceError(
+        "VALIDATION_ERROR",
+        "Split files above 4 MiB.",
+      );
+    if (cmd.inventoryTarget !== undefined) {
+      let target;
+      try {
+        target = validateTarget(cmd.inventoryTarget);
+      } catch (e) {
+        throw new MarketplaceError("VALIDATION_ERROR", (e as Error).message);
+      }
+      if (target.family !== cmd.family || cmd.task !== "create")
+        throw new MarketplaceError(
+          "VALIDATION_ERROR",
+          "Inventory imports must create dossiers in the selected native category.",
+        );
+      if (target.topic) {
+        const topic = await record(c, target.topic);
+        if (topic.kind !== "topic" || topic.lifecycle === "archived")
+          throw new MarketplaceError(
+            "VALIDATION_ERROR",
+            "Choose an available topic in this scope.",
+          );
+      }
+      if (cmd.inventoryFill !== true && cmd.inventoryFill !== false)
+        throw new MarketplaceError(
+          "VALIDATION_ERROR",
+          "Review target filling explicitly.",
+        );
+      try {
+        source = applyImportTarget(source, target, cmd.inventoryFill).source;
+      } catch (e) {
+        throw new MarketplaceError("VALIDATION_ERROR", (e as Error).message);
+      }
+    }
     if (Buffer.byteLength(source) > 4 * 1024 * 1024)
       throw new MarketplaceError(
         "VALIDATION_ERROR",

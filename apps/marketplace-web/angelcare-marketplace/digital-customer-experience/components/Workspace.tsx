@@ -62,6 +62,7 @@ import { Publication, Inbox, Users } from "./Operations";
 import { Insights, Logs, Utilities, Settings } from "./Insights";
 import s from "./workspace.module.css";
 const ImageryStudio = lazy(() => import("../../kidflix/imagery/Studio").then(m=>({default:m.ImageryStudio})));
+const InventoryMap = lazy(() => import("../inventory/InventoryMap").then(m=>({default:m.InventoryMap})));
 const Editor = lazy(() =>
     import("./Editor").then((m) => ({ default: m.Editor })),
   ),
@@ -301,7 +302,8 @@ export function Workspace({
     body = <AnalyticsWorkspace audience={module === "audience"} />;
   else if (["reports", "revenue"].includes(module))
     body = <Insights section={module} />;
-  else if (module === "imports") body = <Imports />;
+  else if (module === "inventory-map") body = <InventoryMap />;
+  else if (module === "imports") body = <Imports key={[boot.health.scopeKey,params?.get("context"),params?.get("from"),params?.get("family"),params?.get("inventorySubtype"),params?.get("inventoryLocale"),params?.get("inventoryTopic")].join("|")} />;
   else if (module === "utilities") body = <Utilities />;
   else if (module === "settings") body = <Settings />;
   else if (module === "logs") body = <Logs />;

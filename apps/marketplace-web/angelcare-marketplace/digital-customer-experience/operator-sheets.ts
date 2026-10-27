@@ -115,6 +115,7 @@ export function operatorTemplate(
       "key",
       "title",
       "audience",
+      "locale",
       "topic",
       "mode",
       "ageMin",
@@ -252,6 +253,8 @@ export function operatorTemplate(
 }
 export function isOperatorSheet(headers: string[]) {
   return (
+    headers.includes("subtype") ||
+    headers.includes("locale") ||
     headers.includes("visibility") ||
     headers.includes("topic") ||
     headers.includes("adPolicyId") ||
@@ -290,7 +293,15 @@ export function planOperatorSheet(
         (r) => r.key === id && r.family === key && r.kind === "experience",
       );
       g = {
-        r: old ? structuredClone(old) : blankRecord("experience", key, locale),
+        r: old
+          ? structuredClone(old)
+          : blankRecord(
+              "experience",
+              key,
+              task === "create" && langs.includes(input.locale as any)
+                ? (input.locale as Locale)
+                : locale,
+            ),
         old,
         lines: [],
         issues: [],
@@ -302,6 +313,12 @@ export function planOperatorSheet(
     g.lines.push(cellsIndex + 2);
     g.cells.push(cells);
     try {
+      if (
+        task === "create" &&
+        input.locale &&
+        !langs.includes(input.locale as any)
+      )
+        throw Error("Creation locale must be fr, en or ar.");
       if (task === "create" && g.old)
         throw Error("Resource already exists; choose an update task.");
       if (
@@ -499,6 +516,9 @@ export function exportOperatorSheet(
         };
         if (task === "create")
           Object.assign(values, {
+            locale: langs.includes(r.data.defaultLocale as any)
+              ? r.data.defaultLocale
+              : "en",
             title: r.title,
             topic: r.topic,
             audience: r.audience,

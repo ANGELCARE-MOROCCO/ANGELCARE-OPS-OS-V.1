@@ -1,6 +1,15 @@
 "use client";
+import {
+  targetFromParams,
+  targetScope,
+  applyImportTarget,
+} from "../inventory/import-target";
+import { SUBTYPES } from "../reference-model";
+import { BASE } from "../types";
+import Link from "next/link";
+import im from "../inventory/inventory.module.css";
 import { ImportSourceStudio, TASK_LABELS } from "./ImportSourceStudio";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { FAMILIES } from "../registry";
 import { sheetCollections } from "../operator-sheets";
@@ -29,12 +38,23 @@ export function Imports() {
   const { locale, boot, notify, refresh, open: openDossier } = useUI(),
     params = useSearchParams(),
     context = params?.get("context") || "",
+    targetResult = useMemo(() => {
+      try {
+        return { target: targetFromParams(params), error: "" };
+      } catch (e) {
+        return { target: null, error: (e as Error).message };
+      }
+    }, [params]),
+    target = targetResult.target,
+    workingContext =
+      context || (target ? "inventory." + targetScope(target) : ""),
+    [fillTarget, setFillTarget] = useState(false),
     [family, setFamily] = useWorkingState(
-      "imports." + context + ".family",
+      "imports." + workingContext + ".family",
       params?.get("family") || "documents",
     ),
-    [task, setTask] = useWorkingState<ImportTask>(
-      "imports." + context + ".task",
+    [savedTask, setTask] = useWorkingState<ImportTask>(
+      "imports." + workingContext + ".task",
       TASKS.includes(params?.get("task") as ImportTask)
         ? (params!.get("task") as ImportTask)
         : "create",
@@ -43,9 +63,12 @@ export function Imports() {
     [source, setSource] = useState(""),
     [mappedSource, setMappedSource] = useState(""),
     [name, setName] = useState(""),
-    [batch, setBatch] = useWorkingState("imports." + context + ".batch", ""),
+    [batch, setBatch] = useWorkingState(
+      "imports." + workingContext + ".batch",
+      "",
+    ),
     [jobId, setJobId] = useWorkingState(
-      "imports." + context + ".job",
+      "imports." + workingContext + ".job",
       params?.get("job") || "",
     ),
     [page, setPage] = useState(1),
@@ -71,7 +94,11 @@ export function Imports() {
   const [exportCursor, setExportCursor] = useState(""),
     [exportBoundary, setExportBoundary] = useState(""),
     [exportPart, setExportPart] = useState(1);
-  const scopeFamily = contextRecord.value?.family || family,
+  const task = target ? "create" : savedTask;
+  const scopeFamily =
+      target?.family ||
+      contextRecord.value?.family ||
+      (FAMILIES.some((f) => f.key === family) ? family : "documents"),
     parts = sheetCollections(scopeFamily, task),
     part = parts.includes(collection) ? collection : parts[0];
   useEffect(() => {
@@ -97,12 +124,21 @@ export function Imports() {
     setBusy(true);
     setError("");
     try {
+      if (targetResult.error) throw Error(targetResult.error);
+      const preparedSource = target
+        ? applyImportTarget(mappedSource || source, target, fillTarget).source
+        : mappedSource || source;
       const b = await mutate({
         action: "operator_batch_create",
         family: scopeFamily,
         task,
-        source: mappedSource || source,
-        sourceName: name || scopeFamily + "-" + task + "-paste.csv",
+        source: preparedSource,
+        ...(target
+          ? { inventoryTarget: target, inventoryFill: fillTarget }
+          : {}),
+        sourceName:
+          (target ? targetScope(target) + "-" : "") +
+          (name || scopeFamily + "-" + task + "-paste.csv"),
       });
       setBatch(b.batch.id);
       setJobId("");
@@ -137,6 +173,79 @@ export function Imports() {
   }
   return (
     <>
+      {targetResult.error ? (
+        <div role="alert" className={im.targetBanner}>
+          {targetResult.error}{" "}
+          <Link href={BASE + "/imports"}>Open Import Studio</Link>
+        </div>
+      ) : null}
+      {target ? (
+        <section
+          className={im.targetBanner}
+          aria-label="Inventory import target"
+        >
+          <div>
+            <small>INVENTORY → NATIVE IMPORT STUDIO</small>
+            <h2>
+              {tr(FAMILIES.find((f) => f.key === target.family)!.name, locale)}{" "}
+              ·{" "}
+              {tr(
+                SUBTYPES[target.family].authored.find(
+                  (t) => t.id === target.subtype,
+                )!.label,
+                locale,
+              )}
+            </h2>
+            <p>
+              {target.locale.toUpperCase()} · {target.family} / {target.subtype}
+              {target.topic ? " · Topic: " + target.topic : ""}
+            </p>
+            <p>
+              {tr(
+                [
+                  "New source is scoped to this branch. Saved batches keep their own classifications. Imports create drafts; language review and publication follow in the native dossier.",
+                  "La nouvelle source est ciblée sur cette branche. Les lots enregistrés conservent leur classement. L’import crée des brouillons ; la révision et la publication se font dans le dossier natif.",
+                  "المصدر الجديد موجّه لهذا الفرع. تحتفظ الدفعات المحفوظة بتصنيفاتها. ينشئ الاستيراد مسودات ثم تتم المراجعة والنشر في الملف الأصلي.",
+                ],
+                locale,
+              )}
+            </p>
+          </div>
+          <label>
+            <input
+              type="checkbox"
+              checked={fillTarget}
+              onChange={(e) => setFillTarget(e.target.checked)}
+            />
+            {tr(
+              [
+                "Apply the selected subtype and language to blank cells; block conflicting values",
+                "Appliquer le sous-type et la langue aux cellules vides ; bloquer les conflits",
+                "تطبيق النوع واللغة على الخلايا الفارغة ومنع القيم المتعارضة",
+              ],
+              locale,
+            )}
+          </label>
+          <Link
+            href={
+              BASE +
+              "/inventory-map?category=" +
+              target.family +
+              "&subcategory=" +
+              target.subtype
+            }
+          >
+            {tr(
+              [
+                "Back to Inventory Map",
+                "Retour à la carte des stocks",
+                "العودة لخريطة المخزون",
+              ],
+              locale,
+            )}
+          </Link>
+        </section>
+      ) : null}
       {context && (
         <Panel title={contextRecord.value?.title || "Dossier context"}>
           <p>
@@ -165,7 +274,7 @@ export function Imports() {
           <div className={s.formGrid}>
             <Field label={<T v={["Family", "Famille", "العائلة"]} />}>
               <select
-                disabled={!!context}
+                disabled={!!context || !!target}
                 value={scopeFamily}
                 onChange={(e) => setFamily(e.target.value)}
               >
@@ -179,6 +288,7 @@ export function Imports() {
             <Field label={<T v={["Task", "Tâche", "المهمة"]} />}>
               <select
                 value={task}
+                disabled={!!target}
                 onChange={(e) => setTask(e.target.value as ImportTask)}
               >
                 {TASKS.map((t) => (
@@ -376,7 +486,9 @@ export function Imports() {
       <div className={s.actions}>
         <Button
           kind="primary"
-          disabled={!source || busy || !boot.actor.rights.manage}
+          disabled={
+            !!targetResult.error || !source || busy || !boot.actor.rights.manage
+          }
           onClick={prepare}
         >
           <T

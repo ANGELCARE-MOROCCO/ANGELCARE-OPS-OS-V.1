@@ -1,0 +1,111 @@
+@property --kidflix-toast-orbit-angle-r1 {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.anchor {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  padding: 16px;
+  box-sizing: border-box;
+  font-family: Nunito, "Avenir Next", Arial, sans-serif;
+  text-align: center;
+  color: #24314b;
+  -webkit-text-size-adjust: 100%;
+}
+
+.toast {
+  position: relative;
+  box-sizing: border-box;
+  width: 216px;
+  max-width: 100%;
+  min-height: 78px;
+  padding: 10px 18px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 1px solid #e7ebf2;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 12px 36px #14335424, 0 2px 6px #14335424;
+  pointer-events: auto;
+  isolation: isolate;
+}
+
+.orbit {
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 2px;
+  background: conic-gradient(from var(--kidflix-toast-orbit-angle-r1),
+    #128bfa 0deg 34deg, transparent 39deg 90deg,
+    #f33d93 90deg 124deg, transparent 129deg 180deg,
+    #f5b51b 180deg 214deg, transparent 219deg 270deg,
+    #1cbb81 270deg 304deg, transparent 309deg 360deg);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  animation: orbit 2.8s linear infinite;
+  pointer-events: none;
+}
+
+.logo { display: block; width: 103px; height: 34px; flex: 0 0 auto; object-fit: contain; }
+.message { color: #626f84; font-size: 11px; line-height: 15px; font-weight: 500; overflow-wrap: anywhere; }
+.toast[data-navigation-state="pending"] .message { white-space: nowrap; }
+.toast[data-navigation-state="slow"], .toast[data-navigation-state="error"] { width: 250px; padding-bottom: 10px; }
+.toast[data-navigation-state="error"] .orbit { animation: none; background: #d94b6b; }
+
+.dismiss {
+  position: absolute;
+  inset-block-start: 2px;
+  inset-inline-end: 2px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #707c8f;
+  font: 400 18px/1 Arial, sans-serif;
+  cursor: pointer;
+}
+.dismiss:hover { color: #24314b; background: #edf3fa; }
+.retry {
+  margin: 2px 0 0;
+  min-height: 32px;
+  min-width: 92px;
+  padding: 5px 12px;
+  border: 0;
+  border-radius: 9px;
+  background: #edf5ff;
+  color: #215d99;
+  font: 600 12px/18px Nunito, "Avenir Next", Arial, sans-serif;
+  cursor: pointer;
+}
+.retry:hover { background: #e0eeff; }
+.retry:focus-visible, .dismiss:focus-visible { outline: 2px solid #128bfa; outline-offset: 2px; }
+.srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+
+@keyframes orbit { to { --kidflix-toast-orbit-angle-r1: 360deg; } }
+
+@media (pointer: coarse) {
+  .dismiss { width: 44px; height: 44px; inset-block-start: 0; inset-inline-end: 0; }
+  .retry { min-height: 44px; }
+}
+@media (prefers-reduced-motion: reduce) { .orbit { animation: none; } }
+@media (forced-colors: active) {
+  .toast { border: 2px solid CanvasText; background: Canvas; color: CanvasText; box-shadow: none; }
+  .message, .dismiss, .retry { color: CanvasText; }
+  .orbit { display: none; }
+  .retry { border: 1px solid ButtonText; background: ButtonFace; }
+}

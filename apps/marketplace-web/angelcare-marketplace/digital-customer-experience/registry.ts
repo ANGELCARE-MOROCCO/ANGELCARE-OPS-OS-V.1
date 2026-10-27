@@ -1725,6 +1725,7 @@ export const FAMILIES: Family[] =
   BASE_FAMILIES.map(enrichFamily).map(deepenFamily);
 
 export const MODULES: Module[] = [
+  {key:"inventory-map",label:["Inventory Map","Carte des ressources","خريطة المخزون"],group:"primary",icon:"Network",description:["Explore every category and subcategory, inspect publication and language coverage, set inventory targets and start exact native imports.","Explorer catégories et sous-catégories, suivre les publications et langues, définir les objectifs et lancer des imports ciblés.","استكشاف الفئات والفئات الفرعية وتغطية النشر واللغات وتحديد الأهداف وبدء الاستيراد الموجّه."]},
   {key:"kidflix-imagery",label:["Page Imagery Studio","Studio des images","استوديو صور الصفحات"],group:"experience",icon:"Images",description:["Manage KidFlix page images, framing, slideshows and optional badges.","Gérer les images, cadrages, diaporamas et badges KidFlix.","إدارة صور كيدفليكس والتأطير والعروض والشارات الاختيارية."]},
   {
     key: "dashboard",

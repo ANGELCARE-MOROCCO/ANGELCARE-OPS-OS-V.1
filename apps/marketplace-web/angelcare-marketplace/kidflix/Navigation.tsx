@@ -1,9 +1,9 @@
 "use client";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
-import { tr, type Locale } from "./catalogue";
+import { type Locale } from "./catalogue";
 import { navigationEvent, navigateKidFlix } from "./navigation-events";
-import s from "./kidflix.module.css";
+import { NavigationToast } from "./NavigationToast";
 function Lifecycle({locale}:{locale:Locale}) {
   const pathname=usePathname(),search=useSearchParams(),key=pathname+"?"+search.toString(),router=useRouter(),routerRef=useRef(router);
   routerRef.current=router;
@@ -26,11 +26,6 @@ function Lifecycle({locale}:{locale:Locale}) {
     return()=>{clearTimeout(delay.current);clearTimeout(slow.current);document.removeEventListener("click",click,true);window.removeEventListener(navigationEvent,event);window.removeEventListener("popstate",pop);window.removeEventListener("pageshow",clear);window.removeEventListener("pagehide",clear);};
   },[]);
   if(state==="idle")return null;
-  return <div className={s.navigationToast} data-navigation-state={state}>
-    {state!=="error"?<span className={s.loadingRing} aria-hidden="true"/>:null}<strong>KidFlix</strong>
-    <span role={state==="error"?"alert":"status"}>{tr(state==="error"?["This discovery could not open.","Cette découverte n’a pas pu s’ouvrir.","تعذر فتح هذا الاكتشاف."]:state==="slow"?["Still opening your discovery…","Votre découverte s’ouvre encore…","ما زلنا نفتح اكتشافك…"]:["A new world is opening…","Un nouvel univers s’ouvre…","نفتح عالماً جديداً…"],locale)}</span>
-    {state==="error"||state==="slow"?<button onClick={()=>navigateKidFlix(target.current)}>{tr(["Retry","Réessayer","حاول مجدداً"],locale)}</button>:null}
-    <button onClick={clear} aria-label={tr(["Dismiss navigation feedback","Fermer le message","إغلاق حالة التنقل"],locale)}>×</button>
-  </div>;
+  return <NavigationToast locale={locale} state={state} onRetry={()=>navigateKidFlix(target.current)} onDismiss={clear}/>;
 }
 export function Navigation({locale}:{locale:Locale}){return <Suspense fallback={null}><Lifecycle locale={locale}/></Suspense>;}
