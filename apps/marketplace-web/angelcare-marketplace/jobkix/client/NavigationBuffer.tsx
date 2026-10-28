@@ -4,19 +4,9 @@ import {useEffect,useRef,useState} from 'react';
 import {usePathname,useRouter,useSearchParams} from 'next/navigation';
 import type {Locale} from '../contracts';
 import {JOBKIX_NAV_CANCEL,JOBKIX_NAV_START} from './navigation-buffer-events';
-import s from './navigation-buffer.module.css';
+import {NavigationBufferFace} from './NavigationBufferFace';
 
 type Phase = 'idle'|'waiting'|'slow';
-type Labels = {opening:string;slow:string;retry:string;dismiss:string;role:string};
-const COPY:Record<Locale,Labels>={
- en:{opening:'Opening…',slow:'Still loading…',retry:'Retry',dismiss:'Dismiss',role:'JOBKIX navigation'},
- fr:{opening:'Ouverture…',slow:'Chargement en cours…',retry:'Réessayer',dismiss:'Fermer',role:'Navigation JOBKIX'},
- es:{opening:'Abriendo…',slow:'Sigue cargando…',retry:'Reintentar',dismiss:'Cerrar',role:'Navegación JOBKIX'},
- hi:{opening:'खुल रहा है…',slow:'अभी लोड हो रहा है…',retry:'फिर कोशिश करें',dismiss:'बंद करें',role:'JOBKIX नेविगेशन'},
- tl:{opening:'Binubuksan…',slow:'Naglo-load pa…',retry:'Subukan muli',dismiss:'Isara',role:'JOBKIX navigation'},
- id:{opening:'Membuka…',slow:'Masih memuat…',retry:'Coba lagi',dismiss:'Tutup',role:'Navigasi JOBKIX'},
- ar:{opening:'جارٍ الفتح…',slow:'ما زال التحميل جارياً…',retry:'إعادة المحاولة',dismiss:'إغلاق',role:'التنقل في JOBKIX'}
-};
 const SHOW_AFTER_MS=110;
 const ACTIONS_AFTER_MS=5800;
 const ROUTE_PREFIX='/jobkix/';
@@ -50,7 +40,6 @@ export function NavigationBuffer({locale}:{locale:Locale}){
  const ticket=useRef(0);
  const previousRoute=useRef<string|null>(null);
  const locationKey=(pathname||'')+(search?.toString()?'?'+search.toString():'');
- const copy=COPY[locale]||COPY.en;
 
  // Clear only feedback timers, not Next's native page transition.
  function stopTimers(){if(clocks.current.show)clearTimeout(clocks.current.show);if(clocks.current.slow)clearTimeout(clocks.current.slow);clocks.current={};}
@@ -123,21 +112,5 @@ export function NavigationBuffer({locale}:{locale:Locale}){
   reset();
  }
  if(phase==='idle')return null;
- return <div className={s.overlay} data-jobkix-navigation-buffer aria-live="polite" aria-atomic="true">
-  <section className={s.buffer} role="status" aria-label={copy.role} dir="ltr">
-   <i className={`${s.rim} ${s.top}`} aria-hidden="true"/>
-   <i className={`${s.rim} ${s.right}`} aria-hidden="true"/>
-   <i className={`${s.rim} ${s.bottom}`} aria-hidden="true"/>
-   <i className={`${s.rim} ${s.left}`} aria-hidden="true"/>
-   <div className={s.logoWindow} aria-label="JOBKIX">
-    <img src="/jobkix/brand/jobkix-logo-color.png" width="1349" height="518" alt="" className={s.logo} draggable={false}/>
-    <span className={s.logoGleam} aria-hidden="true"/>
-   </div>
-   <span className={s.caption}>{phase==='slow'?copy.slow:copy.opening}</span>
-   {phase==='slow'?<div className={s.actions}>
-    {retryable.current?<><button onClick={retry} type="button">{copy.retry}</button><span aria-hidden="true"/></>:null}
-    <button onClick={dismiss} type="button">{copy.dismiss}</button>
-   </div>:null}
-  </section>
- </div>;
+ return <NavigationBufferFace locale={locale} phase={phase} retryable={retryable.current} onRetry={retry} onDismiss={dismiss}/>;
 }

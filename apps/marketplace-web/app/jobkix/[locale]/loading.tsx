@@ -1,5 +1,9 @@
 'use client';
-import s from '@/angelcare-marketplace/jobkix/jobkix.module.css';
-import { useJobkixLocale } from '@/angelcare-marketplace/jobkix/client/useLocale';
-import { t } from '@/angelcare-marketplace/jobkix/i18n';
-export default function Loading(){const locale=useJobkixLocale();return <div className={s.container} style={{paddingBlock:70}} aria-busy="true"><div className={s.panel}><strong>JOBKIX</strong><p>{t(locale,'loading')}</p><progress aria-label={t(locale,'loading')} style={{display:'block',width:'min(100%,360px)',marginBlockStart:25}}/></div></div>;}
+import {NavigationBufferFace} from '@/angelcare-marketplace/jobkix/client/NavigationBufferFace';
+import {useJobkixLocale} from '@/angelcare-marketplace/jobkix/client/useLocale';
+
+/** Native route-streaming fallback uses the exact same premium visual as link navigation. */
+export default function Loading(){
+ const locale=useJobkixLocale();
+ return <NavigationBufferFace locale={locale} phase="waiting" fallback/>;
+}

@@ -1,7 +1,7 @@
 'use client';
 import {useEffect,useRef,useState,type KeyboardEvent,type ReactNode} from 'react';
 import Link from 'next/link';
-import {useRouter} from 'next/navigation';
+import {useJobkixRouter as useRouter} from './useJobkixRouter';
 import {ArrowRight,ArrowUpRight,ShieldCheck,FileCheck2} from 'lucide-react';
 import type {Locale} from '../contracts';
 import {v7} from '../vacancy-pm7-copy';

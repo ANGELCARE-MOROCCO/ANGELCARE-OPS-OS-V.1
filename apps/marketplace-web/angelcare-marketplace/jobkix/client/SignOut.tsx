@@ -1,6 +1,6 @@
 'use client';
 import { useRef,useState } from 'react';
-import { useRouter } from 'next/navigation';
+import {useJobkixRouter as useRouter} from './useJobkixRouter';
 import type { Locale } from '../contracts';
 import { readResponse } from './commands';
 import { href } from '../routes';

@@ -1,7 +1,7 @@
 'use client';
 import { CommandForm } from './CommandForm';
 import { useRef,useState,type FormEvent } from 'react';
-import { useRouter } from 'next/navigation';
+import {useJobkixRouter as useRouter} from './useJobkixRouter';
 import Link from 'next/link';
 import { JobkixFault,LOCALES,type FaultCode,type Locale } from '../contracts';
 import type { DataRow } from '../server/repository';

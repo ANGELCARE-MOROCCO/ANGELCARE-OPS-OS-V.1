@@ -1,6 +1,6 @@
 'use client';
 import { useCurrentTime } from './RuntimeClock';
-import { useRouter } from 'next/navigation';
+import {useJobkixRouter as useRouter} from './useJobkixRouter';
 import type { Locale } from '../contracts';
 import { useCommand } from './commands';
 import { t,errorText } from '../i18n';

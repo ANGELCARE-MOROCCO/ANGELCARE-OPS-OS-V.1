@@ -1,7 +1,7 @@
 'use client';
 import { useState,type FormEvent } from 'react';
 import { Search,SlidersHorizontal,ChevronDown,Globe2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import {useJobkixRouter as useRouter} from './useJobkixRouter';
 import { CountryOptions } from '../Country';
 import { readFilters,searchHref } from '../discovery';
 import { href } from '../routes';

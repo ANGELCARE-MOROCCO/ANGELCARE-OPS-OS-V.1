@@ -23,3 +23,6 @@
 @keyframes appear{from{opacity:0;transform:translateY(5px) scale(.975)}to{opacity:1;transform:translateY(0) scale(1)}}
 @media(max-width:480px){.buffer{width:164px;min-height:82px}}
 @media(prefers-reduced-motion:reduce){.buffer,.rim,.logo,.logoGleam{animation:none!important}.rim{background-position:center}.logoGleam{opacity:0}}
+
+/* One visual authority: when a link transition and route streaming overlap, show one toaster. */
+:global(body:has([data-jobkix-navigation-buffer="true"])) .overlay[data-jobkix-route-fallback="true"]{display:none!important}

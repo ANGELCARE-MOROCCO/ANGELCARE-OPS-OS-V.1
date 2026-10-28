@@ -1,6 +1,6 @@
 'use client';
 import { useRef,useState,useTransition,type FormEvent } from 'react';
-import { useRouter } from 'next/navigation';
+import {useJobkixRouter as useRouter} from './useJobkixRouter';
 import Link from 'next/link';
 import { Search,Globe2 } from 'lucide-react';
 import type { Locale } from '../contracts';

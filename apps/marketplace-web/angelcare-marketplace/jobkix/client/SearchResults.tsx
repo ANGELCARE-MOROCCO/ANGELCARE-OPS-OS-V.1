@@ -1,7 +1,7 @@
 'use client';
 import { CommandForm } from './CommandForm';
 import { useEffect,useRef,useState,useTransition,type FormEvent,type ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
+import {useJobkixRouter as useRouter} from './useJobkixRouter';
 import Link from 'next/link';
 import { BookmarkPlus,SlidersHorizontal,X } from 'lucide-react';
 import { JobkixFault,type FaultCode,type Locale } from '../contracts';

@@ -1,6 +1,6 @@
 'use client';
 import { useTransition } from 'react';
-import { useRouter } from 'next/navigation';
+import {useJobkixRouter as useRouter} from './useJobkixRouter';
 import { Globe2 } from 'lucide-react';
 import { LOCALES,isLocale,type Locale } from '../contracts';
 import { LANGUAGE_NAMES,t } from '../i18n';

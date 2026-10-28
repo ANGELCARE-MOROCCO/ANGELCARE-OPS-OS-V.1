@@ -2,7 +2,7 @@
 import { CommandForm } from './CommandForm';
 import Link from 'next/link';
 import { useState,type FormEvent } from 'react';
-import { useRouter } from 'next/navigation';
+import {useJobkixRouter as useRouter} from './useJobkixRouter';
 import type { Locale } from '../contracts';
 import type { DataRow } from '../server/repository';
 import { object } from '../validation';

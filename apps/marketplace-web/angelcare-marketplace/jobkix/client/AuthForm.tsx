@@ -2,7 +2,7 @@
 import { CommandForm } from './CommandForm';
 import { GoogleSignIn } from './GoogleSignIn';
 import { useEffect,useRef,useState,type FormEvent,type ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
+import {useJobkixRouter as useRouter} from './useJobkixRouter';
 import Link from 'next/link';
 import { JobkixFault,type Locale } from '../contracts';
 import { TIMEZONE_SUGGESTIONS } from '../timezone-suggestions';
