@@ -4,20 +4,20 @@ function scaled(value: unknown, precision: number): bigint {
  if(!/^\d+(\.\d+)?$/.test(s)) throw Error('Invalid decimal')
  const [major,minor='']=s.split('.')
  if(minor.length>precision) throw Error('Precision exceeds scale')
- return BigInt(major)*10n**BigInt(precision)+BigInt(minor.padEnd(precision,'0'))
+ return BigInt(major)*BigInt(10)**BigInt(precision)+BigInt(minor.padEnd(precision,'0'))
 }
 function asDecimal(n:bigint,p:number):string {
- const d=10n**BigInt(p),negative=n<0n,positive=negative?-n:n
+ const d=BigInt(10)**BigInt(p),negative=n<BigInt(0),positive=negative?-n:n
  const whole=positive/d,minor=(positive%d).toString().padStart(p,'0')
  return (negative?'-':'')+(p?whole+'.'+minor:whole.toString())
 }
 export function costPreview(input:{unitCost:unknown;freight:unknown;duties:unknown;other:unknown;retailUsd:unknown;rate:unknown}) {
- const p=12,scale=10n**12n
+ const p=12,scale=BigInt(10)**BigInt(12)
  const local=scaled(input.unitCost,p)+scaled(input.freight,p)+scaled(input.duties,p)+scaled(input.other,p)
  const rate=scaled(input.rate,p)
- if(rate<=0n)throw Error('Missing approved positive FX rate')
- const usd=(local*scale+rate/2n)/rate
+ if(rate<=BigInt(0))throw Error('Missing approved positive FX rate')
+ const usd=(local*scale+rate/BigInt(2))/rate
  const retail=input.retailUsd===null || input.retailUsd===undefined || String(input.retailUsd)===''?null:scaled(input.retailUsd,p)
- const margin=retail!==null && retail>0n?((retail-usd)*10000n/retail):null
- return {landedUsd:asDecimal((usd+500000n)/1000000n,6),marginPercent:margin===null?null:asDecimal(margin,2)}
+ const margin=retail!==null && retail>BigInt(0)?((retail-usd)*BigInt(10000)/retail):null
+ return {landedUsd:asDecimal((usd+BigInt(500000))/BigInt(1000000),6),marginPercent:margin===null?null:asDecimal(margin,2)}
 }
