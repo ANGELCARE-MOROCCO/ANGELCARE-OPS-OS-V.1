@@ -619,11 +619,16 @@ async function nativeByIds(
 ) {
   const rows: Record<string, any>[] = [];
   for (let i = 0; i < ids.length; i += 100) {
+    // The native Media Library is a shared source vault. Its inventory
+    // intentionally does not apply tenant/territory SQL filters. Apply those
+    // filters to tenant-scoped registries only; enforce present scope fields
+    // against the returned rows below for defence in depth.
+    const nativeQuery =
+      table === "angelcare_marketplace_media_assets"
+        ? db.from(table).select("*")
+        : sharedNativeScope(db.from(table).select("*"), c);
     const data = await checked<any[]>(
-      sharedNativeScope(db.from(table).select("*"), c).in(
-        "id",
-        ids.slice(i, i + 100),
-      ),
+      nativeQuery.in("id", ids.slice(i, i + 100)),
     );
     rows.push(
       ...(data || []).filter(
