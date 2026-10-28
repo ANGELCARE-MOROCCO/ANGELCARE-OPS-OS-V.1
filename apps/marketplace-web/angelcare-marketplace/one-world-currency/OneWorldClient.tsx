@@ -71,7 +71,7 @@ export function OneWorldClient(){
    <article><span>MASTER CURRENCY</span><strong>USD</strong><small>Fixed pricing authority</small></article>
    <article><span>COUNTRY POLICIES</span><strong>{data?.countries.length??'—'}</strong><small>Persisted market records</small></article>
    <article><span>ACTIVE FX RATES</span><strong>{data?activeRates.length:'—'}</strong><small>Only approved rate entries</small></article>
-   <article><span>PENDING RATE BATCHES</span><strong>{data?data.batches.filter(x=>x.status==='staged').length:'—'}</strong><small>Awaiting second-person approval</small></article>
+   <article><span>PENDING RATE BATCHES</span><strong>{data?data!.batches.filter(x=>x.status==='staged').length:'—'}</strong><small>Awaiting second-person approval</small></article>
    <article><span>PRICE MARGIN RULES</span><strong>{data?.margins.length??'—'}</strong><small>Country / region / global</small></article>
   </div>
   <div className={style.body}>
@@ -90,12 +90,12 @@ export function OneWorldClient(){
       </div>
       <h3>Latest rate observations</h3>
       <div className={style.tableOuter}><table><thead><tr><th>Currency</th><th>1 USD</th><th>Observed</th><th>Source</th><th>Status</th></tr></thead><tbody>
-       {data.rates.slice(0,25).map(x=><tr key={x.id}><td><b>{x.currency}</b></td><td>{String(x.rate)}</td><td>{x.observed_on}</td><td>{x.source}</td><td><span className={style.chip}>{x.status}</span></td></tr>)}
+       {data!.rates.slice(0,25).map(x=><tr key={x.id}><td><b>{x.currency}</b></td><td>{String(x.rate)}</td><td>{x.observed_on}</td><td>{x.source}</td><td><span className={style.chip}>{x.status}</span></td></tr>)}
       </tbody></table></div>
     </>}
     {ready&&section==='countries'&&<>
      <div className={style.bar}><label className={style.search}><Search size={16}/><input placeholder="Country, ISO, region, currency..." value={filter} onChange={e=>setFilter(e.target.value)}/></label>
-      <button className={style.btn} onClick={()=>download('code,name,region,currency,uplift_bp,enabled\n'+data.countries.map(x=>[x.code,x.name,x.region,x.currency,x.uplift_bp,x.enabled].join(',')).join('\n'),'angelcare-one-world-countries.csv')}><Download size={15}/> Export</button>
+      <button className={style.btn} onClick={()=>download('code,name,region,currency,uplift_bp,enabled\n'+data!.countries.map(x=>[x.code,x.name,x.region,x.currency,x.uplift_bp,x.enabled].join(',')).join('\n'),'angelcare-one-world-countries.csv')}><Download size={15}/> Export</button>
       <button className={style.primary} onClick={()=>{setEditing({code:'',name:'',region:'',currency:'USD',uplift_bp:0,enabled:true});setNewCountry(true)}}><Plus size={15}/> Add country</button>
      </div>
      <div className={style.tableOuter}><table><thead><tr><th>Country</th><th>ISO</th><th>Market group</th><th>Currency</th><th>Uplift</th><th>Active</th><th>Action</th></tr></thead><tbody>
@@ -118,7 +118,7 @@ export function OneWorldClient(){
      </div>
      <button className={style.primary} onClick={captureRate} disabled={busy||!rateValue}>Stage verified rate</button>
      <h3>Active and historical rates</h3>
-     <div className={style.tableOuter}><table><thead><tr><th>Currency</th><th>Rate</th><th>Observation</th><th>Source</th><th>State</th></tr></thead><tbody>{data.rates.slice(0,150).map(x=><tr key={x.id}><td>{x.currency}</td><td><b>{String(x.rate)}</b></td><td>{x.observed_on}</td><td>{x.source}</td><td>{x.status}</td></tr>)}</tbody></table></div>
+     <div className={style.tableOuter}><table><thead><tr><th>Currency</th><th>Rate</th><th>Observation</th><th>Source</th><th>State</th></tr></thead><tbody>{data!.rates.slice(0,150).map(x=><tr key={x.id}><td>{x.currency}</td><td><b>{String(x.rate)}</b></td><td>{x.observed_on}</td><td>{x.source}</td><td>{x.status}</td></tr>)}</tbody></table></div>
     </>}
     {ready&&section==='bulk'&&<>
       <div className={style.notice}>Import comma-separated CSV rows. Validate and stage up to 300 rates per batch. This mode deliberately refuses duplicate currencies and USD identity overrides.</div>
@@ -135,20 +135,20 @@ export function OneWorldClient(){
        <label>Price uplift %<input type="number" value={marginPercent} onChange={e=>setMarginPercent(e.target.value)}/></label>
       </div><button className={style.primary} disabled={busy} onClick={()=>void run({action:'saveMargin',scope:marginScope,key:marginKey,upliftBp:Math.round(Number(marginPercent)*100)})}>Save effective margin rule</button>
       <h3>Approved margin configuration</h3>
-      <div className={style.tableOuter}><table><thead><tr><th>Scope</th><th>Key</th><th>Uplift</th><th>Last update</th></tr></thead><tbody>{data.margins.map(x=><tr key={x.id}><td>{x.scope}</td><td>{x.scope_key}</td><td>{num(x.uplift_bp)/100}%</td><td>{x.updated_at}</td></tr>)}</tbody></table></div>
+      <div className={style.tableOuter}><table><thead><tr><th>Scope</th><th>Key</th><th>Uplift</th><th>Last update</th></tr></thead><tbody>{data!.margins.map(x=><tr key={x.id}><td>{x.scope}</td><td>{x.scope_key}</td><td>{num(x.uplift_bp)/100}%</td><td>{x.updated_at}</td></tr>)}</tbody></table></div>
     </>}
     {ready&&section==='lab'&&<>
       <div className={style.notice}>This tool loads the active approved rate from Supabase and creates a persisted pricing simulation. It does not alter actual product prices or payment amounts.</div>
-      <div className={style.fields}><label>Target market<select value={country} onChange={e=>setCountry(e.target.value)}>{data.countries.filter(x=>x.enabled).map(x=><option value={x.code} key={x.code}>{x.name} ({x.currency})</option>)}</select></label>
+      <div className={style.fields}><label>Target market<select value={country} onChange={e=>setCountry(e.target.value)}>{data!.countries.filter(x=>x.enabled).map(x=><option value={x.code} key={x.code}>{x.name} ({x.currency})</option>)}</select></label>
       <label>USD canonical price<input value={usd} onChange={e=>setUsd(e.target.value)}/></label></div>
       <button className={style.primary} disabled={busy} onClick={()=>void (async()=>{const result=await run({action:'simulate',country,usd});if(result)setQuote(result)})()}>Calculate & save simulation</button>
       {quote&&<div className={style.quote}><small>SHADOW QUOTE · {quote.country}</small><strong>{quote.currency} {quote.amount}</strong><span>USD {quote.usd} × {quote.rate} · uplift {quote.upliftBp/100}%</span><small>Simulation receipt: {quote.simulationId}</small></div>}
     </>}
     {ready&&section==='batches'&&<>
      <div className={style.notice}>Four-eyes approval: rate batch authors cannot approve their own batch. The database switches active currency rates atomically.</div>
-     <div className={style.tableOuter}><table><thead><tr><th>Batch</th><th>Source</th><th>Created</th><th>Status</th><th>Approve</th></tr></thead><tbody>{data.batches.map(x=><tr key={x.id}><td><b>{x.label}</b><small className={style.subtle}>{x.id}</small></td><td>{x.source}</td><td>{x.created_at}</td><td>{x.status}</td><td><button className={style.btn} disabled={busy||x.status!=='staged'} onClick={()=>void run({action:'approveRates',batchId:x.id})}>Approve & activate</button></td></tr>)}</tbody></table></div>
+     <div className={style.tableOuter}><table><thead><tr><th>Batch</th><th>Source</th><th>Created</th><th>Status</th><th>Approve</th></tr></thead><tbody>{data!.batches.map(x=><tr key={x.id}><td><b>{x.label}</b><small className={style.subtle}>{x.id}</small></td><td>{x.source}</td><td>{x.created_at}</td><td>{x.status}</td><td><button className={style.btn} disabled={busy||x.status!=='staged'} onClick={()=>void run({action:'approveRates',batchId:x.id})}>Approve & activate</button></td></tr>)}</tbody></table></div>
     </>}
-    {ready&&section==='history'&&<div className={style.tableOuter}><table><thead><tr><th>Date</th><th>Actor</th><th>Action</th><th>Entity</th><th>Reference</th></tr></thead><tbody>{data.audit.map(x=><tr key={x.id}><td>{x.created_at}</td><td>{x.actor_id}</td><td>{x.action}</td><td>{x.entity}</td><td>{x.entity_id}</td></tr>)}</tbody></table></div>}
+    {ready&&section==='history'&&<div className={style.tableOuter}><table><thead><tr><th>Date</th><th>Actor</th><th>Action</th><th>Entity</th><th>Reference</th></tr></thead><tbody>{data!.audit.map(x=><tr key={x.id}><td>{x.created_at}</td><td>{x.actor_id}</td><td>{x.action}</td><td>{x.entity}</td><td>{x.entity_id}</td></tr>)}</tbody></table></div>}
     {ready&&section==='payments'&&<div className={style.notice}><CreditCard size={20}/> Existing PayPal code uses EUR capture and legacy Dh reconciliation. This workspace cannot mutate payments. Multi-currency checkout requires a separately tested adapter release.</div>}
     {ready&&section==='settings'&&<div className={style.cardGrid}>
       <div className={style.infoCard}><Database size={24}/><b>Supabase authority</b><span>Database-backed country, rate, margin, audit, and simulation operations</span></div>
