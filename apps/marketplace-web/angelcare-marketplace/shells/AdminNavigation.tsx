@@ -1,7 +1,7 @@
 'use client'
 import Link from 'next/link'
 import {usePathname} from 'next/navigation'
-import {BadgeDollarSign,Boxes,CalendarDays,ChartNoAxesCombined,FolderTree,Gauge,HeartHandshake,LayoutTemplate,Megaphone,Network,PackageSearch,School,ShieldCheck,Sparkles,UploadCloud,UsersRound,Headphones,ScanSearch} from 'lucide-react'
+import {BadgeDollarSign,Boxes,CalendarDays,ChartNoAxesCombined,FolderTree,Gauge,HeartHandshake,LayoutTemplate,Megaphone,Network,PackageSearch,School,ShieldCheck,Sparkles,UploadCloud,UsersRound,Headphones,ScanSearch,Globe2,Factory} from 'lucide-react'
 import styles from '../design-system/marketplace.module.css'
 import {cx} from '../design-system/ui'
 
@@ -27,11 +27,13 @@ const masters=[
  {id:'19',href:'/angelcare-marketplace/admin/hotline',label:'HOTLINE',icon:Headphones,ScanSearch},
  {id:'20',href:'/angelcare-marketplace/admin/digital-customer-experience',label:'Digital Customer Experience',icon:Sparkles},
  {id:'21',href:'/angelcare-marketplace/admin/seo-power',label:'SEO POWER',icon:ScanSearch},
+ {id:'22',href:'/angelcare-marketplace/admin/one-world-currency',label:'ONE WORLD · Currency & Rates',icon:Globe2},
+ {id:'23',href:'/angelcare-marketplace/admin/supplier-command-360',label:'SUPPLIER COMMAND 360',icon:Factory},
 ] as const
 
-export function AdminNavigation({collapsed=false,canHotline=false,canDce=false,canSeo=false}:{collapsed?:boolean;canHotline?:boolean;canDce?:boolean;canSeo?:boolean}){
+export function AdminNavigation({collapsed=false,canHotline=false,canDce=false,canSeo=false,canSupplierCommand=false}:{collapsed?:boolean;canHotline?:boolean;canDce?:boolean;canSeo?:boolean;canSupplierCommand?:boolean}){
  const pathname=usePathname()
- const visible=masters.filter(m=>(m.id!=='19'||canHotline)&&(m.id!=='20'||canDce)&&(m.id!=='21'||canSeo))
+ const visible=masters.filter(m=>(m.id!=='19'||canHotline)&&(m.id!=='20'||canDce)&&(m.id!=='21'||canSeo)&&(m.id!=='23'||canSupplierCommand))
  return <nav className={styles.sidebarNav} aria-label="Marketplace Admin">
   <div className={styles.navGroup}><div className={styles.navGroupLabel}>ANGELCARE MARKETPLACE</div></div>
   <div className={styles.navGroup}><div className={styles.navGroupLabel}>{visible.length} WORKSPACES</div>{visible.map(({id,href,label,icon:Icon})=>{const active=pathname===href||(href!=='/angelcare-marketplace/admin'&&pathname.startsWith(`${href}/`));return <Link key={`${id}-${href}`} href={href} className={cx(styles.sideNavLink,active&&styles.sideNavLinkActive)} aria-current={active?'page':undefined} title={collapsed?`${id} · ${label}`:undefined}><span className={styles.sideNavIcon}><Icon size={17}/></span><span className={styles.sideNavLabel}>{id} · {label}</span></Link>})}</div>

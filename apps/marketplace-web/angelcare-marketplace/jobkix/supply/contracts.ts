@@ -6,7 +6,7 @@ export type SourceKind=typeof SOURCE_KINDS[number];
 export const VACANCY_STATES=['new','ready','needs_review','approved','published','rejected','withdrawn'] as const;
 export type VacancyState=typeof VACANCY_STATES[number];
 export type RecordMap={title:string;company:string;city:string;country:string;description:string;url:string;externalId:string;remote:string;salary:string;postedAt:string;settingId:string;occupationId:string;workSchedule:string;contractType:string;sponsorship:string;relocation:string};
-export type ApiConfig={responsePath:string;format:'json'|'rss';method:'GET';keywordParam:string;countryParam:string;pageParam:string;maxPages:number;limit:number;query:string;headers:Record<string,string>;mapping:RecordMap};
+export type ApiConfig={autoPublish?:boolean;responsePath:string;format:'json'|'rss';method:'GET';keywordParam:string;countryParam:string;pageParam:string;maxPages:number;limit:number;query:string;headers:Record<string,string>;mapping:RecordMap};
 export type ScrapyConfig={card:string;title:string;company:string;city:string;description:string;link:string;next:string;limit:number;maxPages:number;downloadDelay:number};
 export type JobSpyConfig={boards:string[];query:string;location:string;countryIndeed:string;resultsWanted:number;hoursOld:number|null;isRemote:boolean;fetchDescription:boolean};
 export type SourceConfig=ApiConfig|ScrapyConfig|JobSpyConfig;
@@ -33,7 +33,7 @@ export function sourceInput(input:unknown):SourceInput{
  if(kind==='api'){
   const mapping=obj(raw.mapping),headers=obj(raw.headers);
   const cleanHeaders:Record<string,string>={};for(const [k,v] of Object.entries(headers))if(/^[A-Za-z0-9-]{1,50}$/.test(k)&&!/^authorization|cookie|host|proxy-|x-forwarded/i.test(k))cleanHeaders[k]=plain(v,500);
-  config={format:raw.format==='rss'?'rss':'json',method:'GET',responsePath:plain(raw.responsePath,150),keywordParam:plain(raw.keywordParam,60),countryParam:plain(raw.countryParam,60),pageParam:plain(raw.pageParam,60),maxPages:bound(raw.maxPages,1,10,2),limit:bound(raw.limit,1,300,70),query:plain(raw.query,200),headers:cleanHeaders,mapping:Object.fromEntries(Object.keys(DEFAULT_MAPPING).map(k=>[k,plain(mapping[k],150)||DEFAULT_MAPPING[k as keyof RecordMap]])) as RecordMap};
+  config={autoPublish:raw.autoPublish===true,format:raw.format==='rss'?'rss':'json',method:'GET',responsePath:plain(raw.responsePath,150),keywordParam:plain(raw.keywordParam,60),countryParam:plain(raw.countryParam,60),pageParam:plain(raw.pageParam,60),maxPages:bound(raw.maxPages,1,10,2),limit:bound(raw.limit,1,300,70),query:plain(raw.query,200),headers:cleanHeaders,mapping:Object.fromEntries(Object.keys(DEFAULT_MAPPING).map(k=>[k,plain(mapping[k],150)||DEFAULT_MAPPING[k as keyof RecordMap]])) as RecordMap};
  }else if(kind==='scrapy'){
   const selector=(field:keyof ScrapyConfig,fallback:string)=>plain(raw[field],240)||fallback;
   config={card:selector('card',DEFAULT_SCRAPY.card),title:selector('title',DEFAULT_SCRAPY.title),company:selector('company',DEFAULT_SCRAPY.company),city:selector('city',DEFAULT_SCRAPY.city),description:selector('description',DEFAULT_SCRAPY.description),link:selector('link',DEFAULT_SCRAPY.link),next:selector('next',DEFAULT_SCRAPY.next),limit:bound(raw.limit,1,300,70),maxPages:bound(raw.maxPages,1,10,3),downloadDelay:bound(raw.downloadDelay,1,10,2)};

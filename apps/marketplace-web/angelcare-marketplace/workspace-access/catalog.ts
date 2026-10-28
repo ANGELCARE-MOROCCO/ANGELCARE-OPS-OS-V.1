@@ -9,6 +9,7 @@ export interface MarketplaceAccessWorkspace {
 }
 
 export const MARKETPLACE_ACCESS_WORKSPACES = [
+  {key:'workspace.supplier_command',label:'SUPPLIER COMMAND 360',route:'/angelcare-marketplace/admin/supplier-command-360',mission:'Sourcing international, achats AngelCare, contrôles qualité, imports, disponibilité déclarée et expédition.',domains:['supplier_command']},
   {key:'workspace.digital_experience',label:'Digital Customer Experience',route:'/angelcare-marketplace/admin/digital-customer-experience',mission:'Expériences gratuites enfants/familles, studio, publication et monétisation.',domains:['digital_experience']},
   {key:'workspace.hotline',label:'HOTLINE',route:'/angelcare-marketplace/admin/hotline',mission:'Réception, conseillers, dossiers et parcours IVR.',domains:['hotline']},
   { key:'workspace.commerce_revenue', label:'Commerce & Revenue', route:'/angelcare-marketplace/admin/catalog', mission:'Catalogue, commerce, pipeline, conversion, commandes, paiements et Wallet.', domains:['catalog','commercial','conversion','orders','payments','wallet','commerce','crm','development','quote_basket'] },

@@ -197,11 +197,11 @@ function csvDownload(name:string,headers:string[],data:Array<Record<string,unkno
   browserDownload(blob,name)
 }
 
-export function ProductImportStudio(){
+export function ProductImportStudio({initialSource='',initialDoctrine='one_time_service'}:{initialSource?:string;initialDoctrine?:string}={}){
   const [templateLock,setTemplateLock]=useState<Product360TemplateLock|null>(null)
-  const[doctrine,setDoctrine]=useState('one_time_service')
+  const[doctrine,setDoctrine]=useState(initialDoctrine)
   const[importMode,setImportMode]=useState<ProductImportMode>('upsert')
-  const[source,setSource]=useState('')
+  const[source,setSource]=useState(initialSource)
   const[selectedFiles,setSelectedFiles]=useState<File[]>([])
   const[fileError,setFileError]=useState('')
   const[sourceHash,setSourceHash]=useState('')
