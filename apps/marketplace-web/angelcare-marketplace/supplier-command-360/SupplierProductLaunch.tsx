@@ -16,7 +16,11 @@ async function sc(action:string,payload:Row):Promise<any>{
 export function SupplierProductLaunch(){
  const [data,setData]=useState<Snapshot|null>(null),[supplierId,setSupplierId]=useState(''),[id,setId]=useState(''),[busy,setBusy]=useState(false),[error,setError]=useState(''),[success,setSuccess]=useState('');
  const [nameFr,setNameFr]=useState(''),[shortFr,setShortFr]=useState(''),[descriptionFr,setDescriptionFr]=useState(''),[sku,setSku]=useState(''),[unitCost,setUnitCost]=useState(''),[currency,setCurrency]=useState('USD'),[moq,setMoq]=useState('1')
- const refresh=useCallback(async(productId?:string)=>setData(await api(undefined,productId)),[])
+ const refresh=useCallback(async(productId?:string):Promise<Snapshot>=>{
+  const snapshot:Snapshot=await api(undefined,productId)
+  setData(snapshot)
+  return snapshot
+ },[])
  useEffect(()=>{const existing=new URLSearchParams(window.location.search).get('catalogId')||'';if(existing)setId(existing);refresh(existing||undefined).then(d=>{const offer=d.offers?.[0];if(offer){setSupplierId(String(offer.supplier_id));setSku(String(offer.supplier_sku||''));}else if(d.product?.commercial_metadata?.supplier_id){setSupplierId(String(d.product.commercial_metadata.supplier_id));setSku(String(d.product.sku||''))}}).catch(e=>setError(e.message))},[refresh])
  const eligible=(data?.suppliers||[]).filter(x=>['approved','active'].includes(x.status)&&['approved','conditional'].includes(x.quality_status));
  async function run(fn:()=>Promise<void>){setBusy(true);setError('');setSuccess('');try{await fn()}catch(e){setError(e instanceof Error?e.message:String(e))}finally{setBusy(false)}}
