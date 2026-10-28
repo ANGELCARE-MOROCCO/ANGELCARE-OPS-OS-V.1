@@ -80,6 +80,24 @@ const cachedPublished = unstable_cache(async(scope:WebPresenceScope):Promise<{co
 
 export async function getPublishedWebPresence(scope:WebPresenceScope){return cachedPublished(scope)}
 
+// robots.txt must reflect the currently published global-domain policy.
+// Never cache a temporary persistence fallback as the site's robots decision.
+// Other Web Presence consumers retain their existing tagged cache behavior.
+export async function getPublishedWebPresenceFresh(scope:WebPresenceScope):Promise<{
+  configuration:WebPresenceConfiguration; revision:number; versionId:string|null; fallback:boolean
+}>{
+  try{
+    const profile=await profileByScope(scope)
+    if(!profile.currentPublishedVersionId)return {configuration:compiledWebPresence(scope),revision:0,versionId:null,fallback:true}
+    const version=await versionById(profile.currentPublishedVersionId)
+    if(version.lifecycleState!=='PUBLISHED')throw new Error('Published pointer is inconsistent')
+    return {configuration:version.configuration,revision:version.versionNumber,versionId:version.id,fallback:false}
+  }catch{
+    // Fail closed if live publication cannot be verified.
+    return {configuration:compiledWebPresence(scope),revision:0,versionId:null,fallback:true}
+  }
+}
+
 const cachedRevision=unstable_cache(async(scope:WebPresenceScope,revision:number)=>{const profile=await profileByScope(scope),db=await createServiceClient(),result=await db.from('angelcare_marketplace_web_presence_versions').select('*').eq('profile_id',profile.id).eq('version_number',revision).in('lifecycle_state',['PUBLISHED','SUPERSEDED','ROLLED_BACK']).maybeSingle();if(result.error||!result.data)return null;const version=mapVersion(result.data as Row);return{configuration:version.configuration,revision:version.versionNumber,versionId:version.id,fallback:false as const}},['angelcare-marketplace-web-presence-revision'],{tags:[WEB_PRESENCE_CACHE_TAG]})
 export async function getWebPresenceRevision(scope:WebPresenceScope,revision:number){const current=await getPublishedWebPresence(scope);if(!Number.isSafeInteger(revision)||revision<1)return current;if(revision===current.revision)return current;const historical=await cachedRevision(scope,revision);if(!historical)throw new WebPresenceInputError('PUBLICATION_BLOCKED',`La révision Web Presence r${revision} est introuvable ou non publiable.`,404);return historical}
 
