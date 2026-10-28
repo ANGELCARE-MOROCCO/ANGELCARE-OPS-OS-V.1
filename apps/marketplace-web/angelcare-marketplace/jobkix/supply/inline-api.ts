@@ -74,7 +74,7 @@ async function getJSON(u:URL,headers:Record<string,string>):Promise<unknown>{
  return new Promise<unknown>((resolve,reject)=>{
   const req=request(u,{
    method:'GET',headers,timeout:MAX_MS,
-   lookup:(_hostname,_options,callback)=>callback(null,resolved.address,resolved.family)
+   lookup:(_hostname,options,callback)=>options.all?callback(null,[{address:resolved.address,family:resolved.family}]):callback(null,resolved.address,resolved.family)
   },res=>{
    const status=res.statusCode||0;
    if(status<200||status>=300){res.resume();reject(Error(`API returned HTTP ${status}; redirects are not followed`));return;}

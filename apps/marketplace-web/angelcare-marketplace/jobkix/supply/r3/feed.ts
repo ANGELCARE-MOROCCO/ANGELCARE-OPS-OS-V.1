@@ -21,7 +21,7 @@ export async function secureFeedGet(url:string,conditional:Record<string,string>
  if(conditional.etag&&conditional.etag.length<256)headers['If-None-Match']=conditional.etag;
  if(conditional.lastModified&&conditional.lastModified.length<256)headers['If-Modified-Since']=conditional.lastModified;
  return new Promise((resolve,reject)=>{
-  const req=request(u,{method:'GET',headers,timeout:15000,lookup:(_hostname,_options,cb)=>cb(null,selected.address,selected.family)},res=>{
+  const req=request(u,{method:'GET',headers,timeout:15000,lookup:(_hostname,options,cb)=>options.all?cb(null,[{address:selected.address,family:selected.family}]):cb(null,selected.address,selected.family)},res=>{
    const status=res.statusCode||0;
    if(status===304){res.resume();resolve({status,body:'',etag:String(res.headers.etag||'').slice(0,255)||null,lastModified:String(res.headers['last-modified']||'').slice(0,255)||null});return;}
    if(status<200||status>=300){res.resume();reject(Error('Feed provider returned HTTP '+status+(status===429?' (rate limited)':'')));return;}
