@@ -1,0 +1,84 @@
+{
+  "version": "CANDIDATE_PRO_MAX_5_20261026",
+  "state": "installed",
+  "installedAt": "2026-10-26T13:36:18.870Z",
+  "targets": [
+    {
+      "rel": "components/StudioShell.tsx",
+      "oldPresent": true,
+      "oldSha256": "56779a4925a709dfc634f2fdd901629e08b4030c4819b3577ba56211e79d955a",
+      "sha256": "12c8097a45a2f644e50ce91eba40329021334d40a02ac4468578a72288fd3c97",
+      "backup": "backups/2026-10-26T13-36-18-716Z/components/StudioShell.tsx"
+    },
+    {
+      "rel": "pages/Candidate.tsx",
+      "oldPresent": true,
+      "oldSha256": "df9cef9b8a320535844d690ac738210502079fc6ff7f72656b20c23bfe95003e",
+      "sha256": "7512b28eb85d1a6d31f1ce058bdac82e6bfed6b885cb227810be057d375c454d",
+      "backup": "backups/2026-10-26T13-36-18-716Z/pages/Candidate.tsx"
+    },
+    {
+      "rel": "pages/CandidateAccount.tsx",
+      "oldPresent": true,
+      "oldSha256": "326fef7b62aca51b27843998166be503fe9a74c6de9c69e69e089fcf8b31d27b",
+      "sha256": "42328331a917b1e9b104f1f606a808c48dc5552c99c2218d810f0214064227e3",
+      "backup": "backups/2026-10-26T13-36-18-716Z/pages/CandidateAccount.tsx"
+    },
+    {
+      "rel": "pages/SavedCollections.tsx",
+      "oldPresent": true,
+      "oldSha256": "f9a12140357a1491564e262e8e399f411520e14f2767c7f198895f43e705add0",
+      "sha256": "4ddbec2a529376807095868e0dd00d76f55b7abc535e0c0d8c1025bdcb125168",
+      "backup": "backups/2026-10-26T13-36-18-716Z/pages/SavedCollections.tsx"
+    },
+    {
+      "rel": "jobkix.module.css",
+      "oldPresent": true,
+      "oldSha256": "d33ee36cf0c01eee91840429f4b4dc6a9e5322d5cb9e9709511d321f09b50158",
+      "sha256": "6cce2e8715e044bc46142005db917c19381a932516798777433ff4068d91b570",
+      "backup": "backups/2026-10-26T13-36-18-716Z/jobkix.module.css"
+    },
+    {
+      "rel": "components/CandidateShell.tsx",
+      "oldPresent": false,
+      "oldSha256": null,
+      "sha256": "61639ddad7bc6b4648325a5e0550a98fcacba9e2dc7f037a575693324437c493",
+      "backup": null
+    },
+    {
+      "rel": "components/candidate-pro-max5.module.css",
+      "oldPresent": false,
+      "oldSha256": null,
+      "sha256": "cf1d3bb968285b01adab4358ae1452c9ff93964410fec421f926fa54bfce20ee",
+      "backup": null
+    },
+    {
+      "rel": "components/CandidateCockpit.tsx",
+      "oldPresent": false,
+      "oldSha256": null,
+      "sha256": "44c1c7dadc90bb1c2206fc265804bbaa0823478de957f2a498a5484a323500b9",
+      "backup": null
+    },
+    {
+      "rel": "components/candidate-cockpit.module.css",
+      "oldPresent": false,
+      "oldSha256": null,
+      "sha256": "f38dc8958279621f3219751a11d0c2c7caf712fb4b255102d93556dec6e233f5",
+      "backup": null
+    },
+    {
+      "rel": "components/CandidateProfileCoach.tsx",
+      "oldPresent": false,
+      "oldSha256": null,
+      "sha256": "26e68c113bce0f1fc3508236ae16ec6f9788d3d874470ec0ee2ac9140ab048ca",
+      "backup": null
+    },
+    {
+      "rel": "components/candidate-profile-coach.module.css",
+      "oldPresent": false,
+      "oldSha256": null,
+      "sha256": "f827eab6ae36d2fa51c3ea8774d3b4f49cc2bb100ee91bae2366668235a0740a",
+      "backup": null
+    }
+  ]
+}

@@ -24,9 +24,11 @@ import { type Row, type Snapshot, record } from "./model";
 import { batchMessage, health, recovery } from "./operations-model";
 import { SeoPowerTools } from "./NativeWorkspace";
 import s from "./operations.module.css";
+import { GrowthWorkspace } from "./GrowthWorkspace";
 const API = "/api/angelcare-marketplace/admin/seo-power";
 const NAV = [
   ["overview", "Pilotage", Activity],
+  ["growth", "Croissance", Globe2],
   ["priorities", "Priorités", ShieldAlert],
   ["pages", "Pages", FileSearch],
   ["corrections", "Corrections", Layers3],
@@ -417,6 +419,14 @@ export function SeoPowerWorkspace({ initial }: { initial: Snapshot }) {
             </p>
           </div>
         </section>
+      ) : null}
+      {tab === "growth" ? (
+        <GrowthWorkspace
+          projectId={world}
+          projects={data.projects}
+          permissions={rights}
+          pages={data.pages as unknown as Row[]}
+        />
       ) : null}
       {tab === "overview" ? (
         <>

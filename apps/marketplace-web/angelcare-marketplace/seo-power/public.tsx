@@ -1,4 +1,6 @@
 import "server-only";
+import { trackingGrant } from "./growth-telemetry";
+import { GrowthSignals } from "./GrowthSignals";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { unstable_cache } from "next/cache";
@@ -7,7 +9,16 @@ import { db, projectRow } from "./repository";
 import { type World, type ChangePatch, publicPath, record } from "./model";
 import { pageStructuredData, safeJsonLd } from "./structured";
 import styles from "./public.module.css";
-export async function samePublicHost(origin:string){try{return (await headers()).get('host')?.toLowerCase()===new URL(origin).host.toLowerCase();}catch{return false;}}
+export async function samePublicHost(origin: string) {
+  try {
+    return (
+      (await headers()).get("host")?.toLowerCase() ===
+      new URL(origin).host.toLowerCase()
+    );
+  } catch {
+    return false;
+  }
+}
 export const SEO_CACHE_TAG = "angelcare-seo-power-public-r1";
 export const publication = unstable_cache(
   async (world: World, path: string) => {
@@ -82,12 +93,14 @@ export async function seoMetadata(
         ...base.other,
         "seo-power": "r1:" + world,
         "seo-power-source": sourceStamp,
-      "seo-power-body": base.other?.["seo-power-body"]==="none"?"none":"r1",
+        "seo-power-body":
+          base.other?.["seo-power-body"] === "none" ? "none" : "r1",
       },
     };
   if (noindex(base)) return observed;
   const active = await publication(world, path);
-  if (!active || !(await samePublicHost(active.project.origin))) return observed;
+  if (!active || !(await samePublicHost(active.project.origin)))
+    return observed;
   if (active.patch.sourceStamp && active.patch.sourceStamp !== sourceStamp)
     return {
       ...observed,
@@ -140,6 +153,8 @@ export async function SeoEnhancements({
   base?: Metadata;
 }) {
   if (base && noindex(base)) return null;
+  const grant = await trackingGrant(world, path);
+  const tracking = grant ? <GrowthSignals token={grant} /> : null;
   const active = await publication(world, path);
   if (
     !active ||
@@ -147,7 +162,7 @@ export async function SeoEnhancements({
       base &&
       active.patch.sourceStamp !== nativeStamp(base))
   )
-    return null;
+    return tracking;
   if (!(await samePublicHost(active.project.origin))) return null;
   const p = active.patch,
     related = p.relatedPaths || [],
@@ -174,6 +189,7 @@ export async function SeoEnhancements({
             : "Explore more"
       }
     >
+      {tracking}
       {p.schema ? (
         <script
           type="application/ld+json"
@@ -223,6 +239,16 @@ export async function publicPages(world?: World) {
     const projects = (pr.data || []).map(projectRow),
       out: Record<string, unknown>[] = [];
     for (const project of projects) {
+      const eligibility = await client.rpc("ac_seo_growth_sitemap_paths", {
+        p_project: project.id,
+      });
+      if (eligibility.error && eligibility.error.code !== "PGRST202")
+        throw eligibility.error;
+      const managed = new Map(
+        (Array.isArray(eligibility.data) ? eligibility.data : []).map(
+          (r: { path: string; eligible: boolean }) => [r.path, r.eligible],
+        ),
+      );
       let cursor = "";
       for (let i = 0; i < 20; i++) {
         let q = client
@@ -239,13 +265,25 @@ export async function publicPages(world?: World) {
         const r = await q;
         if (r.error) throw r.error;
         if (!r.data?.length) break;
-        const landingIds=r.data.filter(row=>row.kind==='landing'&&row.published_change_id).map(row=>row.published_change_id);
-        const live=landingIds.length?await client.from('ac_seo_power_changes').select('id,verified_at').in('id',landingIds).eq('state','published'):null;
-        if(live?.error)throw live.error;
-        const verified=new Set((live?.data||[]).filter(v=>v.verified_at).map(v=>v.id));
+        const landingIds = r.data
+          .filter((row) => row.kind === "landing" && row.published_change_id)
+          .map((row) => row.published_change_id);
+        const live = landingIds.length
+          ? await client
+              .from("ac_seo_power_changes")
+              .select("id,verified_at")
+              .in("id", landingIds)
+              .eq("state", "published")
+          : null;
+        if (live?.error) throw live.error;
+        const verified = new Set(
+          (live?.data || []).filter((v) => v.verified_at).map((v) => v.id),
+        );
         for (const row of r.data) {
           try {
             publicPath(row.path, project.world);
+            if (managed.has(row.path) && managed.get(row.path) !== true)
+              continue;
             if (row.kind !== "landing" || verified.has(row.published_change_id))
               out.push({
                 ...row,

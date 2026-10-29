@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
+import { publicGrowth } from "./growth-public";
+import { GrowthCollection } from "./GrowthCollection";
 import { notFound } from "next/navigation";
-import { publication, seoMetadata, SeoEnhancements, samePublicHost } from "./public";
+import {
+  publication,
+  seoMetadata,
+  SeoEnhancements,
+  samePublicHost,
+} from "./public";
 import { type World, locales, root } from "./model";
 import styles from "./public.module.css";
 export async function landing(world: World, locale: string, slug: string) {
@@ -11,7 +18,10 @@ export async function landing(world: World, locale: string, slug: string) {
     return null;
   const path = `${root(world)}/${locale}/discover/${slug}`,
     value = await publication(world, path);
-  return value?.page.kind === "landing" && await samePublicHost(value.project.origin) ? { ...value, path } : null;
+  return value?.page.kind === "landing" &&
+    (await samePublicHost(value.project.origin))
+    ? { ...value, path }
+    : null;
 }
 export async function landingMetadata(
   world: World,
@@ -20,7 +30,11 @@ export async function landingMetadata(
 ): Promise<Metadata> {
   const v = await landing(world, locale, slug);
   if (!v) return { robots: { index: false, follow: false } };
+  const growth = await publicGrowth(world, v.path);
   return seoMetadata(world, v.path, {
+    ...(growth && !growth.ready
+      ? { robots: { index: false, follow: true } }
+      : {}),
     title: { absolute: v.patch.title || "" },
     description: v.patch.description,
     alternates: { canonical: new URL(v.path, v.project.origin).href },
@@ -37,6 +51,7 @@ export async function Landing({
 }) {
   const v = await landing(world, locale, slug);
   if (!v) notFound();
+  const growth = await publicGrowth(world, v.path);
   return (
     <article
       className={styles.landing}
@@ -49,6 +64,16 @@ export async function Landing({
       {(v.patch.body || "").split(/\n\s*\n/).map((paragraph, i) => (
         <p key={i}>{paragraph}</p>
       ))}
+      {growth ? (
+        <GrowthCollection
+          world={world}
+          locale={locale}
+          path={v.path}
+          origin={v.project.origin}
+          items={growth.items}
+          ready={growth.ready}
+        />
+      ) : null}
       <SeoEnhancements world={world} path={v.path} />
     </article>
   );

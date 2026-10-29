@@ -83,6 +83,7 @@ export function Reading(props: PlayerProps) {
     <>
       <Source
         m={m}
+        locale={locale}
         id={unit.assetId}
         alt={local(unit, "alt", locale) || local(unit, "title", locale)}
         pdf={unit.kind === "pdf" || engine === "pdf"}

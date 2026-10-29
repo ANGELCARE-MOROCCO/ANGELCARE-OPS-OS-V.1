@@ -611,7 +611,7 @@ export function DetailWorkspace({
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() =>
-                      emitVisitor(m.key, l, m.releaseId, "download_intent")
+                      !p.preview && emitVisitor(m.key, l, m.releaseId, "download_intent")
                     }
                   >
                     <I name="Download" size={17} />
@@ -812,7 +812,7 @@ export function DetailWorkspace({
           locale={l}
           onClose={() => setShare(false)}
         >
-          <SocialToolbar resourceKey={m.key} title={m.title} locale={l} />
+          {p.preview ? <p role="status">{tr(["Sharing preview · no public activity is recorded", "Aperçu du partage · aucune activité publique enregistrée", "معاينة المشاركة · لا يُسجّل نشاط عام"], l)}</p> : <SocialToolbar resourceKey={m.key} title={m.title} locale={l} />}
         </Modal>
       ) : null}
     </div>

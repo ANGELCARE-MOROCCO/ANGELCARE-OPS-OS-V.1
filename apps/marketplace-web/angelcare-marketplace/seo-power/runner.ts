@@ -15,6 +15,7 @@ import { hash, safeRead } from "./network";
 import { publicIndexNowKey } from "./public";
 import { refresh } from "./actions";
 import { recovery } from "./operations-model";
+import { growthTick } from "./growth-service";
 
 export async function authorizedWorker(token: string) {
   if (token.length < 40 || token.length > 200) return false;
@@ -343,12 +344,22 @@ export async function runBatch(
   projectId: string | null = null,
   source: "manual" | "scheduler" = "manual",
 ) {
+  const requestStarted = Date.now();
   const executionId = await rpc("ac_seo_power_execution", {
     p_project: projectId,
     p_source: source,
   });
   try {
-    const batch = await processBatch(projectId);
+    const growth = await growthTick(projectId);
+    const batch =
+      Date.now() - requestStarted < 15000
+        ? await processBatch(projectId)
+        : {
+            results: [] as Row[],
+            elapsedMs: Date.now() - requestStarted,
+            remaining:
+              "Exploration reportée au prochain lot après le passage Growth.",
+          };
     const problems = batch.results.filter(
       (r) =>
         r.error ||
@@ -357,7 +368,13 @@ export async function runBatch(
         r.verified === false ||
         r.followup,
     ).length;
-    const answer = { ...batch, problems, executionId };
+    const answer = {
+      ...batch,
+      elapsedMs: Date.now() - requestStarted,
+      growth,
+      problems: problems + (record(growth).error ? 1 : 0),
+      executionId,
+    };
     await rpc("ac_seo_power_execution", {
       p_id: executionId,
       p_result: answer,

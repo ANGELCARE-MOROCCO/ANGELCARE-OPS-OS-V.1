@@ -1,5 +1,6 @@
 "use client";
 import p from "./production.module.css";
+import { PublicReachability } from "./PublicReachability";
 import { explainIssue } from "../operator-guidance";
 import { EditionMedia, EditionAdvertising } from "./OperatorDesk";
 
@@ -127,6 +128,7 @@ export function DeliveryStudio({
       onChange({ certificatePolicy: { ...policy, ...p } });
   return (
     <div className={s.helpList}>
+      {record.id && record.key && ["experience", "bundle"].includes(record.kind || "") ? <PublicReachability resourceKey={record.key} language={language} revision={record.revision} /> : null}
       <div className={s.notice}>
         <T
           v={[

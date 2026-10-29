@@ -1,0 +1,37 @@
+{
+  "version": "R3",
+  "status": "installed",
+  "installedAt": "2026-10-26T12:00:05.683Z",
+  "files": [
+    {
+      "name": "Screen.tsx",
+      "oldHash": "69d4dc05fcc649ae08fa0af22680a05a29ccf0ac19082fc5f254235e244afae0",
+      "newHash": "183d599881a8bf955c9664bbfd94281a2fae0f6483123c0199ffd1e9aa8d2949",
+      "operation": "UPGRADE"
+    },
+    {
+      "name": "DeepWorkspace.tsx",
+      "oldHash": "f1e4be2cfe1b720aa2a64501a26292278648c395aec9d5c2473fe7f6901f3c8f",
+      "newHash": "858ad55586037cb7b34aaddc970475210d03fea84244645beb9eb102a083b1f4",
+      "operation": "UPGRADE"
+    },
+    {
+      "name": "DossierR2.tsx",
+      "oldHash": "fcd7ed742e0e9cc9cf8efca84ca908611d83961367e1da931c27842d406a4110",
+      "newHash": "43e527c93d4bf32c2a9236fe7f5e3a13166a73fc91745e17e9ce1fee35455b2b",
+      "operation": "UPGRADE"
+    },
+    {
+      "name": "ViewKeys.ts",
+      "oldHash": null,
+      "newHash": "3e3afb0095092e8e0ea1c77a9c3c11d0e61208c7e9934213f253a2f6db682e88",
+      "operation": "CREATE"
+    },
+    {
+      "name": "navigation-r3.module.css",
+      "oldHash": null,
+      "newHash": "238230a57b7bd9df4c406217ca58e1c7abccce600df88cd55216a4b74f4a9462",
+      "operation": "CREATE"
+    }
+  ]
+}

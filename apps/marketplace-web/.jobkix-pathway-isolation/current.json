@@ -1,0 +1,51 @@
+{
+  "app": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web",
+  "id": "2026-10-25T23-28-21-834Z-13704",
+  "files": [
+    {
+      "relative": "angelcare-marketplace/jobkix/account-pathway.ts",
+      "created": true,
+      "original": null
+    },
+    {
+      "relative": "angelcare-marketplace/jobkix/server/identity.ts",
+      "created": false,
+      "original": "e9739e798ed8efdcc0a620f0afd632d86cf141f54977dad4c8697a548f52dc2a"
+    },
+    {
+      "relative": "angelcare-marketplace/jobkix/server/studio-session.ts",
+      "created": false,
+      "original": "12cccf84b1fc3bd1b573df116ad0e75d6421ffe90bfb0911a894181f1c02acc8"
+    },
+    {
+      "relative": "angelcare-marketplace/jobkix/server/repository.ts",
+      "created": false,
+      "original": "63c9886dfdd20826336d6e7740199e0d73e21f3a3990cebdca7206d330941618"
+    },
+    {
+      "relative": "angelcare-marketplace/jobkix/Shell.tsx",
+      "created": false,
+      "original": "2aa94bfe6eecb5a953ba3e3f14902c26ea0f1211840874edffc67b03f724c025"
+    },
+    {
+      "relative": "angelcare-marketplace/jobkix/pages/Auth.tsx",
+      "created": false,
+      "original": "74a72f1294979ac7d572f70683106ca401e65dbbc4c0db004dcd9bbc0000f74f"
+    },
+    {
+      "relative": "angelcare-marketplace/jobkix/pathway-notice.ts",
+      "created": true,
+      "original": null
+    },
+    {
+      "relative": "angelcare-marketplace/jobkix/pages/Candidate.tsx",
+      "created": false,
+      "original": "c1b0e92292352e2bce8a68c4b94adb36686f289c2ed71d58795808d02de4a9f0"
+    },
+    {
+      "relative": "angelcare-marketplace/jobkix/pages/Hirer.tsx",
+      "created": false,
+      "original": "a2d62dcec191ee825fbea3d60e84e8c0ceb8c5abebcce6ff6b50097102c7e2e4"
+    }
+  ]
+}

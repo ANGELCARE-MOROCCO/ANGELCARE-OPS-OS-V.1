@@ -17,8 +17,8 @@ import {
   gradeSoundPair,
   gradeTaskActivity,
 } from "../detail-interactions";
-import { DetailExperience } from "../../kidflix/detail/experience";
-import { ExperienceOpening } from "../../kidflix/detail/experience/Primitives";
+import { DetailWorkspace } from "../../kidflix/detail/workspace/Workspace";
+
 import { NativeDetailPlayer } from "../../kidflix/detail/Detail";
 import rx from "../../kidflix/detail/experience/experience.module.css";
 import {
@@ -440,14 +440,11 @@ export function RuntimePreview({
     stage = <NativeDetailPlayer {...detailProps} />;
     stage = (
       <div className={rx.experienceRoot} dir={locale === "ar" ? "rtl" : "ltr"}>
-        <ExperienceOpening
+        <DetailWorkspace
           p={detailProps}
-          titleId={"r5-staff-preview-" + record.id}
+          titleId={"staff-preview-" + record.id}
           saved={bookmarked}
           onSave={() => setBookmarked((v) => !v)}
-        />
-        <DetailExperience
-          {...detailProps}
           files={
             <p>
               {tr(
@@ -462,7 +459,7 @@ export function RuntimePreview({
           }
         >
           <div id="kidflix-experience-player">{stage}</div>
-        </DetailExperience>
+        </DetailWorkspace>
       </div>
     );
   }

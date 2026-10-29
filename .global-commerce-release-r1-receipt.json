@@ -1,0 +1,26 @@
+{
+  "source_sha": "4f2f489945398d1472432d7c9ae1cbc96dd8b6ae",
+  "created_at": "2026-10-29T03:21:36.232682+00:00",
+  "files": [
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/global-commerce-release/GlobalCommerceReleaseClient.tsx",
+      "sha256": "c73959e3c31490db8d18f2c3966fc1baf84ef659f93cffb5f28ce7f2613cd2ea"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/global-commerce-release/release.module.css",
+      "sha256": "f6335a5288140cd034d150ec9e379be714d08c8470745835a8ffb913f4552464"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/global-commerce-release/server.ts",
+      "sha256": "d7f35afbdbd2c5ae61af8a0cfc01bd461ef8f5898f461540c448c973e055282e"
+    },
+    {
+      "path": "apps/marketplace-web/app/angelcare-marketplace/(protected)/admin/global-commerce-release/page.tsx",
+      "sha256": "3c78d2fe24a4542a4c7013d317b4262cc12ed78112b4f1aab63634e5c4b0e0c5"
+    },
+    {
+      "path": "apps/marketplace-web/app/api/angelcare-marketplace/admin/global-commerce-release/route.ts",
+      "sha256": "9d7d1361310f698fd0d899bd33014bd4176fbf82d332671c81f376ff180d4799"
+    }
+  ]
+}

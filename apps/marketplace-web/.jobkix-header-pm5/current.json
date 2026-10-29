@@ -1,0 +1,66 @@
+{
+  "app": "/Users/user/Desktop/angelcare-platform/apps/marketplace-web",
+  "id": "2026-10-26T00-14-52-740Z-14270",
+  "backups": [
+    {
+      "relative": "angelcare-marketplace/jobkix/Shell.tsx",
+      "created": false,
+      "original": "38fcfdc606d9cd5a79922324b8d3c1f6b7a1a220e32a083db9b0ed643825752e",
+      "patched": "9162d2fac68f4c5dc6a2c8fb29fbabdae3f0f4a5bdc4e1512e5aa339eda159f9"
+    },
+    {
+      "relative": "angelcare-marketplace/jobkix/jobkix.module.css",
+      "created": false,
+      "original": "725a9b861f3f18e18837a99a9749428b1cd7d7e23f77e05cc50b185c09670efa",
+      "patched": "6872610eb3b291114feeb08ea9f13936b79d6e7229f2f7200c5a17b571d676df"
+    },
+    {
+      "relative": "angelcare-marketplace/jobkix/client/GlobalHeader.tsx",
+      "created": true,
+      "original": null,
+      "patched": "c175aceefbd3d31bb6f0182b07f44521ec87839fcf1d448658a785ed0b39e691"
+    },
+    {
+      "relative": "angelcare-marketplace/jobkix/client/HeaderSearch.tsx",
+      "created": true,
+      "original": null,
+      "patched": "528154ed8ecd75f46632303117bbd8492562e92f31d8b09392a9a3c9278c745b"
+    },
+    {
+      "relative": "angelcare-marketplace/jobkix/header-copy.ts",
+      "created": true,
+      "original": null,
+      "patched": "65e54dca83365f0dbddea02e7bdbf75b53b71b0c50c92eba65ed89970c6a7b16"
+    },
+    {
+      "relative": "public/jobkix/header-pm5/city.png",
+      "created": true,
+      "original": null,
+      "patched": "cf53482c731b85c70806d60f3ad1acd221ec1395ed1ec9ccb1d1ed331ba8383d"
+    },
+    {
+      "relative": "public/jobkix/header-pm5/digital.png",
+      "created": true,
+      "original": null,
+      "patched": "2e3de69ae3f55e84a6ee0a1542f54d19394fabc7a8f8410bd2d367c11f496647"
+    },
+    {
+      "relative": "public/jobkix/header-pm5/education.png",
+      "created": true,
+      "original": null,
+      "patched": "098fa90a3bf0f8817d3ecee69f5482ac6d482dd5e79561adb150eb0b9fbd0ef9"
+    },
+    {
+      "relative": "public/jobkix/header-pm5/healthcare.png",
+      "created": true,
+      "original": null,
+      "patched": "464567474b12d1ba49e51aa837a48ac1b6aa0872651ffaa0cc5940023cf38495"
+    },
+    {
+      "relative": "public/jobkix/header-pm5/hospitality.png",
+      "created": true,
+      "original": null,
+      "patched": "8843e8e9595f9c56486cf5b9e19cf7280f86da01f191d60fb995f6c86adb5d08"
+    }
+  ]
+}

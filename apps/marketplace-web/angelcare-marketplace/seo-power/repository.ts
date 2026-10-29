@@ -57,6 +57,11 @@ export async function db() {
 export function databaseError(error: unknown): never {
   const message = String(record(error).message || error),
     code = [
+      "GROWTH_DAILY_BUDGET",
+      "STALE_INVENTORY_SCAN",
+      "STALE_GROWTH_CURSOR",
+      "INVENTORY_SCOPE",
+      "STALE_GROWTH_LEASE",
       "PROJECT_PAUSED",
       "JOB_NOT_RETRYABLE",
       "VERIFICATION_SUPERSEDED",
@@ -78,6 +83,16 @@ export function databaseError(error: unknown): never {
       code,
       (
         {
+          GROWTH_DAILY_BUDGET:
+            "Limite quotidienne de publication atteinte. L’inventaire peut continuer ; reprise au prochain jour UTC ou après modification de la règle.",
+          STALE_GROWTH_CURSOR:
+            "Un autre passage a avancé la préparation. Actualisez et reprenez le parcours.",
+          STALE_INVENTORY_SCAN:
+            "Ce lot a déjà été repris ou terminé. Actualisez la couverture avant de continuer.",
+          INVENTORY_SCOPE:
+            "Une source n’appartient pas au périmètre public ou à la langue du lot.",
+          STALE_GROWTH_LEASE:
+            "Un autre passage Growth a repris cette exécution.",
           PROJECT_PAUSED:
             "Cet univers est en pause. Reprenez-le avant de relancer une tâche.",
           JOB_NOT_RETRYABLE:

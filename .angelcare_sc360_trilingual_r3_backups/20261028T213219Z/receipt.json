@@ -1,0 +1,23 @@
+{
+  "created": [
+    "angelcare-marketplace/supplier-command-360/SupplierTrilingualImport.tsx",
+    "angelcare-marketplace/supplier-command-360/trilingual-import.module.css",
+    "angelcare-marketplace/supplier-command-360/trilingual-import-server.ts",
+    "app/angelcare-marketplace/(protected)/admin/supplier-command-360/trilingual-import/page.tsx",
+    "app/api/angelcare-marketplace/admin/supplier-command-360/trilingual-import/route.ts"
+  ],
+  "backups": {
+    "angelcare-marketplace/supplier-command-360/SupplierCommand360.tsx": "/Users/user/Desktop/angelcare-platform/.angelcare_sc360_trilingual_r3_backups/20261028T213219Z/SupplierCommand360.tsx.backup",
+    "angelcare-marketplace/enterprise-command/components/ProductImportStudio.tsx": "/Users/user/Desktop/angelcare-platform/.angelcare_sc360_trilingual_r3_backups/20261028T213219Z/ProductImportStudio.tsx.backup"
+  },
+  "installed_hashes": {
+    "angelcare-marketplace/supplier-command-360/SupplierCommand360.tsx": "8ec9d3eaf1186b6ea0c77ab6369ffb586f19a7e28d43cf710d55bf6d14c68a9e",
+    "angelcare-marketplace/enterprise-command/components/ProductImportStudio.tsx": "d0c3add50b059d568f5d29a149c4f4b77291e8904bf718f1b514e2410522dc2d",
+    "angelcare-marketplace/supplier-command-360/SupplierTrilingualImport.tsx": "e1c3846023d8b9673823665059aef0aa874f578a17a7e47e24839f71cb1e5fb3",
+    "angelcare-marketplace/supplier-command-360/trilingual-import.module.css": "eea85354b26ca4a6a307ca5c8ac13b8b92fef3a50e08a3f2ee591740abf09955",
+    "angelcare-marketplace/supplier-command-360/trilingual-import-server.ts": "cccb93769d4bb73d02579ff271b959f5b5df65be8cf0bc2eaf90497abff6d781",
+    "app/angelcare-marketplace/(protected)/admin/supplier-command-360/trilingual-import/page.tsx": "a1b447548aa308a025ad395e34e1a161a606e7cd36abb93c57ba1dd613b6960f",
+    "app/api/angelcare-marketplace/admin/supplier-command-360/trilingual-import/route.ts": "95fbb94109e783ecb7a6f6134df7bac9d5a3e39117d245a3cd806628186c31a5"
+  },
+  "r2_automatically_installed": false
+}

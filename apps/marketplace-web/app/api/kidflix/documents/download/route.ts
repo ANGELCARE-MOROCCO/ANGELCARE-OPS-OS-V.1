@@ -1,9 +1,25 @@
 import { downloadDocument } from "@/angelcare-marketplace/kidflix/documents/delivery";
+import { nativeFileOutcome } from "@/angelcare-marketplace/seo-power/growth-telemetry";
+import { randomUUID } from "node:crypto";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 export async function GET(request: Request) {
   try {
-    return await downloadDocument(request);
+    const response = await downloadDocument(request);
+    const url = new URL(request.url),
+      locale = url.searchParams.get("locale") || "en",
+      key = url.searchParams.get("key") || "";
+    if (
+      response.status === 200 &&
+      ["en", "fr", "ar"].includes(locale) &&
+      /^[a-z0-9][a-z0-9._-]{1,119}$/.test(key)
+    )
+      await nativeFileOutcome(
+        "kidflix",
+        `/kidflix/${locale}/experience/${key}`,
+        randomUUID(),
+      );
+    return response;
   } catch (e) {
     const u = new URL(request.url),
       l = ["en", "fr", "ar"].includes(u.searchParams.get("locale") || "")

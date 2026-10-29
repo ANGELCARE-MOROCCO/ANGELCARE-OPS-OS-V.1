@@ -1,0 +1,99 @@
+{
+  "version": "EMPLOYER_PRO_MAX_5_20261026",
+  "state": "installed",
+  "scope": "angelcare-marketplace/jobkix/",
+  "installedAt": "2026-10-26T13:12:35.612Z",
+  "targets": [
+    {
+      "rel": "components/StudioShell.tsx",
+      "oldPresent": true,
+      "oldSha256": "71b31b1424111070076f4762f42c5e98c7e7386cc389de4c67b570936c2fce63",
+      "newSha256": "56779a4925a709dfc634f2fdd901629e08b4030c4819b3577ba56211e79d955a",
+      "backup": "backups/2026-10-26T13-12-35-471Z/components/StudioShell.tsx"
+    },
+    {
+      "rel": "pages/Hirer.tsx",
+      "oldPresent": true,
+      "oldSha256": "9d4077de10b74ac18a59a7fdfea0f1ed9e379501fa3e59c77ee984a0f9a8e48c",
+      "newSha256": "f707e269681deb013f14fb0f1185829e990bdc2c16f5fde9b9b7922384fbff77",
+      "backup": "backups/2026-10-26T13-12-35-471Z/pages/Hirer.tsx"
+    },
+    {
+      "rel": "pages/HiringAccount.tsx",
+      "oldPresent": true,
+      "oldSha256": "5af31aa10aaef8c66cb1232b1ee7f0dc874c15f094aa9adfed410632f1e926b4",
+      "newSha256": "2d9d4a8d1579b0c37b931a48357dd5dce11b1471249f98c057a2718dac0ad259",
+      "backup": "backups/2026-10-26T13-12-35-471Z/pages/HiringAccount.tsx"
+    },
+    {
+      "rel": "pages/HiringTalent.tsx",
+      "oldPresent": true,
+      "oldSha256": "ed4e55cc778948a4d5d34af12f214e6ed9e9543d6fe868e0f451626567862c49",
+      "newSha256": "85b3fa494758ca67633bcef6f39cf814c0326679ecd210916c888e585b232c5a",
+      "backup": "backups/2026-10-26T13-12-35-471Z/pages/HiringTalent.tsx"
+    },
+    {
+      "rel": "pages/HiringApplications.tsx",
+      "oldPresent": true,
+      "oldSha256": "279646177027db6dbf5bba8673cc0d32ee8deebcf976e5cd3fb26475cf86e9b8",
+      "newSha256": "996429eb0cf36f7b5a8d2986dd1a677481d708dbf7e9ca92d805d902d6db5780",
+      "backup": "backups/2026-10-26T13-12-35-471Z/pages/HiringApplications.tsx"
+    },
+    {
+      "rel": "pages/HiringTeam.tsx",
+      "oldPresent": true,
+      "oldSha256": "6d5fc493b1507951ec4e21b41cbb4422702285655cd9f61e24ce5e35d7c82471",
+      "newSha256": "8de068f6aa1f295d2dbc137a9052074566cf3f7a22805ff97f12789ad00d25dd",
+      "backup": "backups/2026-10-26T13-12-35-471Z/pages/HiringTeam.tsx"
+    },
+    {
+      "rel": "jobkix.module.css",
+      "oldPresent": true,
+      "oldSha256": "6872610eb3b291114feeb08ea9f13936b79d6e7229f2f7200c5a17b571d676df",
+      "newSha256": "d33ee36cf0c01eee91840429f4b4dc6a9e5322d5cb9e9709511d321f09b50158",
+      "backup": "backups/2026-10-26T13-12-35-471Z/jobkix.module.css"
+    },
+    {
+      "rel": "components/EmployerShell.tsx",
+      "oldPresent": false,
+      "oldSha256": null,
+      "newSha256": "c7842b7706ad7697fa75725c0dafbb63a9d1c396300eec3727ef68d1c224f0c0",
+      "backup": null
+    },
+    {
+      "rel": "components/employer-pro-max5.module.css",
+      "oldPresent": false,
+      "oldSha256": null,
+      "newSha256": "cd2d65259b1483e3eebb17a3ba35716d9f915530cfd66f6ee4067d5f123ed938",
+      "backup": null
+    },
+    {
+      "rel": "components/EmployerCockpit.tsx",
+      "oldPresent": false,
+      "oldSha256": null,
+      "newSha256": "e84bd5b50b84dd2bde3cfe686c2b44ab18dba4622a77b17f815522f1285ad3c8",
+      "backup": null
+    },
+    {
+      "rel": "components/employer-cockpit.module.css",
+      "oldPresent": false,
+      "oldSha256": null,
+      "newSha256": "92233d96ac201458c7f1438e0b2052a6d0fc631854332ac358fa061a51153dcf",
+      "backup": null
+    },
+    {
+      "rel": "components/EmployerAnalyticsVisual.tsx",
+      "oldPresent": false,
+      "oldSha256": null,
+      "newSha256": "ea8fee8d90e42efd321ddeef10020c310840647daed508837d38f0a296925480",
+      "backup": null
+    },
+    {
+      "rel": "components/employer-analytics.module.css",
+      "oldPresent": false,
+      "oldSha256": null,
+      "newSha256": "57be29479c96eb3a25156ab95c07865bc9ee6b6051f5de1af45dba5658d616f4",
+      "backup": null
+    }
+  ]
+}

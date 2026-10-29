@@ -174,6 +174,10 @@ export function batchMessage(value: unknown) {
   ).length;
   if (v.fatal)
     return "Exécution interrompue. Consultez le journal et les tâches conservées.";
+  if (!rows.length && record(v.growth).projectId)
+    return record(v.growth).error
+      ? "Passage Growth à examiner : " + String(record(v.growth).error)
+      : "Passage Growth exécuté ; inventaire et opportunités actualisés. Aucune tâche d’exploration prise.";
   if (!rows.length)
     return "Aucune tâche prise : file vide, délai, pause, concurrence ou budget. Consultez les indicateurs par univers.";
   return `${rows.length} tâche(s) traitée(s) · ${problems} résultat(s) à examiner. Les tâches restantes restent dans la file.`;

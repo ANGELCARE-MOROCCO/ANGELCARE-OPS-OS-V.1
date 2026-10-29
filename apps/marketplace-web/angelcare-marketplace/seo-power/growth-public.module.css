@@ -1,0 +1,106 @@
+.root {
+  margin: 30px 0;
+  font: inherit;
+  color: inherit;
+}
+.root header {
+  padding: 25px;
+  background: #f1f8fb;
+  border: 1px solid #dce9ee;
+  border-radius: 14px;
+}
+.root header > span {
+  font-size: 12px;
+  letter-spacing: 0.3px;
+}
+.root h2 {
+  font-size: 25px;
+  margin: 10px 0;
+}
+.root p {
+  line-height: 1.8;
+  font-size: 15px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin: 24px 0;
+}
+.grid article {
+  border: 1px solid #e0e8ee;
+  border-radius: 12px;
+  padding: 20px;
+  background: white;
+  min-width: 0;
+}
+.grid img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 14px;
+}
+.grid h3 {
+  font-size: 19px;
+  line-height: 1.5;
+}
+.grid small {
+  color: #607482;
+  font-size: 11px;
+}
+.grid p {
+  white-space: pre-line;
+}
+.grid a {
+  color: #075c70;
+  text-decoration: none;
+}
+.grid .open {
+  display: inline-block;
+  border: 1px solid #aacfd8;
+  border-radius: 7px;
+  padding: 10px 14px;
+  margin-top: 12px;
+  font-weight: 700;
+  font-size: 12px;
+}
+.root table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.root caption {
+  font-weight: 700;
+  font-size: 20px;
+  text-align: start;
+  padding: 15px 0;
+}
+.root th,
+.root td {
+  text-align: start;
+  border: 1px solid #dce6ec;
+  padding: 12px;
+  vertical-align: top;
+}
+.root th {
+  background: #f4f8fb;
+}
+.root a:focus-visible {
+  outline: 3px solid #459bb3;
+  outline-offset: 3px;
+}
+@media (max-width: 800px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .root header {
+    padding: 18px;
+  }
+  .root th,
+  .root td {
+    font-size: 11px;
+    padding: 8px;
+  }
+}

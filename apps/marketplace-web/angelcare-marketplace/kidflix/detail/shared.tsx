@@ -128,22 +128,25 @@ export function Source({
   id,
   alt = "",
   className = "",
-  pdf = false,
+  locale = m.editionLocale === "fr" ? "fr" : m.editionLocale === "ar" ? "ar" : "en",
 }: {
   m: Row;
   id: unknown;
   alt?: string;
   className?: string;
   pdf?: boolean;
+  locale?: Locale;
 }) {
   const a = asset(m, id),
-    [failed, setFailed] = useState(false);
-  useEffect(() => setFailed(false), [id]);
+    [failed, setFailed] = useState(false),
+    [pdfRevision, setPdfRevision] = useState(0);
+  useEffect(() => setFailed(false), [id, a?.url]);
   if (!a || failed)
     return (
       <div className={s.sourceMissing}>
         <I name="FileText" size={28} />
         <span>{alt}</span>
+        <p>{locale === "fr" ? "La source est indisponible. Vérifiez le fichier lié à cette édition." : locale === "ar" ? "المصدر غير متاح. تحقق من الملف المرتبط بهذه النسخة." : "Source unavailable. Check the file bound to this edition."}</p>
       </div>
     );
   return a.mime.startsWith("image/") ? (
@@ -155,13 +158,22 @@ export function Source({
       draggable={false}
       onError={() => setFailed(true)}
     />
-  ) : pdf && a.mime === "application/pdf" ? (
-    <iframe
-      className={s.pdf}
-      src={a.url + "#toolbar=1"}
-      title={alt || "PDF"}
-      loading="lazy"
-    />
+  ) : a.mime === "application/pdf" ? (
+    <section aria-label={alt || "PDF"}>
+      <div className={s.controls}>
+        <a className={s.secondary} href={a.url} target="_blank" rel="noopener noreferrer">
+          {locale === "fr" ? "Ouvrir le PDF dans un nouvel onglet" : locale === "ar" ? "فتح ملف PDF في تبويب جديد" : "Open PDF in a new tab"}
+        </a>
+        <Button onClick={() => setPdfRevision((v) => v + 1)}>{t("retry", locale)}</Button>
+      </div>
+      <p role="status">{locale === "fr" ? "Le lecteur de votre navigateur gère les pages du PDF. Si l’aperçu est vide, ouvrez le fichier dans un nouvel onglet." : locale === "ar" ? "يتولى قارئ المتصفح عرض صفحات PDF. إذا كانت المعاينة فارغة، افتح الملف في تبويب جديد." : "Your browser’s PDF reader handles the pages. If the preview is blank, open the file in a new tab."}</p>
+      <iframe key={a.url + ":" + pdfRevision}
+        className={s.pdf}
+        src={(m.releaseId && m.key && typeof id === "string" ? "/api/kidflix/reader?" + new URLSearchParams({locale, key:m.key, asset:id, release:m.releaseId}) : a.url) + "#toolbar=1"}
+        title={alt || "PDF"}
+        loading="eager"
+      />
+    </section>
   ) : null;
 }
 export function Modal({

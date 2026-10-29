@@ -7,6 +7,7 @@ import { access, db, detail, snapshot, rpc } from "./repository";
 import { perform } from "./actions";
 import { authorizedWorker, runBatch } from "./runner";
 import { hash } from "./network";
+import { growthAction, growthSnapshot } from "./growth-service";
 import { record, SeoFault, text, uuid } from "./model";
 
 function id() {
@@ -132,6 +133,35 @@ export async function get(request: Request) {
         },
       });
     }
+    if (action === "growth")
+      return NextResponse.json(
+        {
+          data: await growthSnapshot(
+            url.searchParams.get("project")
+              ? uuid(url.searchParams.get("project"))
+              : null,
+            url.searchParams.get("state") || "all",
+            Number(url.searchParams.get("growthPage")) || 1,
+          ),
+          requestId: rid,
+        },
+        { headers: { "Cache-Control": "no-store" } },
+      );
+    if (action === "growth-sql") {
+      const sql = await readFile(
+        path.join(
+          process.cwd(),
+          "angelcare-marketplace/seo-power/INSTALL_SEO_GROWTH_R3_COMPLETE.sql",
+        ),
+        "utf8",
+      );
+      return new NextResponse(sql, {
+        headers: {
+          "Content-Type": "text/plain; charset=utf-8",
+          "Cache-Control": "no-store",
+        },
+      });
+    }
     if (action === "operations-sql") {
       const file = await readFile(
         path.join(
@@ -250,13 +280,19 @@ export async function post(request: Request) {
         "Autorisation de gestion SEO requise.",
         403,
       );
-    if (["approve", "publish"].includes(action) && !rights.publish)
+    if (
+      (["approve", "publish", "growth-publish"].includes(action) ||
+        (action === "growth-policy" &&
+          (record(input.policy).automaticPublish === true ||
+            record(input.policy).automaticMetadata === true))) &&
+      !rights.publish
+    )
       throw new SeoFault(
         "PUBLISH_REQUIRED",
         "Autorisation de publication requise.",
         403,
       );
-    if (action === "rollback" && !rights.rollback)
+    if (["rollback", "growth-rollback"].includes(action) && !rights.rollback)
       throw new SeoFault(
         "ROLLBACK_REQUIRED",
         "Autorisation de restauration requise.",
@@ -274,6 +310,11 @@ export async function post(request: Request) {
       );
     if (requestKey.length < 8)
       throw new SeoFault("REQUEST_KEY_REQUIRED", "Clé de requête requise.");
+    if (action.startsWith("growth-"))
+      return NextResponse.json({
+        data: await growthAction(action, input, ctx, requestKey),
+        requestId: rid,
+      });
     if (action === "retry-job") {
       const jobId = uuid(input.id);
       const result = await rpc("ac_seo_power_retry", {

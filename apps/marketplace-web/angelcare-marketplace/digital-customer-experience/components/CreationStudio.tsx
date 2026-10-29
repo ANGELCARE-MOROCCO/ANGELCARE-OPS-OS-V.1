@@ -70,6 +70,7 @@ import {
 } from "./CreationControls";
 import { Button, Dialog, Icon, mutate, query, useQuery, useUI } from "./ui";
 import s from "./creation.module.css";
+import { PublicReachability } from "./PublicReachability";
 const words = (en: string, fr: string, ar: string): Tri => [en, fr, ar];
 type Entry = {
   clientId: string;
@@ -2791,6 +2792,7 @@ export function CreationStudio({
                       {current.error}
                     </p>
                   )}
+                  {current.result?.publicPath && record.key ? <PublicReachability resourceKey={record.key} language={language} revision={record.revision} /> : null}
                   {current.result?.publicPath && (
                     <a
                       className={s.publicLink}

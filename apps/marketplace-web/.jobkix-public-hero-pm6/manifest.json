@@ -1,0 +1,71 @@
+{
+  "version": "PM6-R1",
+  "files": [
+    {
+      "relative": "angelcare-marketplace/jobkix/pages/Home.tsx",
+      "oldHash": "bd3491550c10da286a4ef8a91839925708802c04d091ac4d1f86584d4b367845",
+      "newHash": "afee23d18e3e348190b4c0d452b1d6a9e55b210e3f999a7e69e061d5cb3e259a"
+    },
+    {
+      "relative": "angelcare-marketplace/jobkix/pages/Search.tsx",
+      "oldHash": "62d1104cf3c6a51aee1b1ec58785422e44f12836379ef9106442e3e5f5a1d193",
+      "newHash": "af338a43b1e524c66257b9cfdb1aba4bf846ec67df37a6f41859e950a019b420"
+    },
+    {
+      "relative": "angelcare-marketplace/jobkix/components/Discovery.tsx",
+      "oldHash": "4ff141466fcd8dd8c874be7d59994c0b2c3ac7ad8f7ecede8f83e62593f6f4f6",
+      "newHash": "4051d35ba55385e00fb2927ac7513f47367f3f45bf213f4699bdededcfc0aac2"
+    },
+    {
+      "relative": "angelcare-marketplace/shells/AdminShell.tsx",
+      "oldHash": "5ed0826296a4ad2f8cba65294bddb57e1c1d9fd5d2175399838a6906d2cbf434",
+      "newHash": "07a1bd27034bd5ebed9d6e3e393a99633f829b9e858f5e210f84b27a4d960db0"
+    },
+    {
+      "relative": "angelcare-marketplace/jobkix/admin/HeroStudio.tsx",
+      "oldHash": null,
+      "newHash": "0e1af10649bb556ac94e8c3f5af34ff0af30329c49d46dfa9b6e5b604d14f751"
+    },
+    {
+      "relative": "angelcare-marketplace/jobkix/admin/hero-studio.module.css",
+      "oldHash": null,
+      "newHash": "ac65b6b1b0848d7ef6e5bedc0e5f5d0d94a36afaeb87976cf7340ebd8556303b"
+    },
+    {
+      "relative": "angelcare-marketplace/jobkix/hero/HeroSlideshow.tsx",
+      "oldHash": null,
+      "newHash": "043c20f79e2f5125099bbc5dbbc0685bfdf8b9370258892a7e2ec98efcd37e5b"
+    },
+    {
+      "relative": "angelcare-marketplace/jobkix/hero/admin.ts",
+      "oldHash": null,
+      "newHash": "08b0553c65bd7390806d4a93f2bb62f06f6232be50a21ccfbc953f3c67692501"
+    },
+    {
+      "relative": "angelcare-marketplace/jobkix/hero/contracts.ts",
+      "oldHash": null,
+      "newHash": "289249bd6af77fec784f6761b53455b799dd098003618a37b290c7a9e6bde370"
+    },
+    {
+      "relative": "angelcare-marketplace/jobkix/hero/hero.module.css",
+      "oldHash": null,
+      "newHash": "e47cadca469395e9c06d0ddc92914d03cdeb047ad18963648b43faf587667de1"
+    },
+    {
+      "relative": "angelcare-marketplace/jobkix/hero/public.ts",
+      "oldHash": null,
+      "newHash": "f66a017bff531014393fec97ad768411c072da8fb5a469672ec1df8c604a073f"
+    },
+    {
+      "relative": "app/angelcare-marketplace/(protected)/admin/jobkix/hero-studio/page.tsx",
+      "oldHash": null,
+      "newHash": "1118e0f9201610bb8c61ab34731e4b83a07a52f1725d47c1e66bd7e7df87b854"
+    },
+    {
+      "relative": "app/api/jobkix/admin/hero/route.ts",
+      "oldHash": null,
+      "newHash": "aaae36d57de8604ec42e33e41990378e9bd0ed01cb8f0059b6b8fdc18cc4e248"
+    }
+  ],
+  "installedAt": "2026-10-26T15:13:21.739Z"
+}
