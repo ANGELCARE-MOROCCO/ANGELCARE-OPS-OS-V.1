@@ -457,7 +457,9 @@ export function validateRecord(
           );
       for (const c of f.collections) {
         const rows = array(d[c.key]);
-        if (rows.length < (c.min || 0) && record.kind === "experience")
+        if (rows.length < (c.min || 0) && record.kind === "experience" &&
+          !(record.family === "planners" && c.key === "items" &&
+            text(d.mode) === "Printable Preview" && array(d.units).some(u => ["pdf","image"].includes(text(u.kind)) && isId(u.assetId))))
           issue(
             c.key,
             "COLLECTION",

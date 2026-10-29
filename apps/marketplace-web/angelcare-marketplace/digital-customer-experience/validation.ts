@@ -115,7 +115,7 @@ export function capabilityIssues(
   }
   if (record.family === "learning" && !draftTemplate) {
     if (
-      ["course", "video_course"].includes(mode?.engine || "") &&
+      mode?.engine === "video_course" &&
       !units.some((u) => u.kind === "video")
     )
       add(

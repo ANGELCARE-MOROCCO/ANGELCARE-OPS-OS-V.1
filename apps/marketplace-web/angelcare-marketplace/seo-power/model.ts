@@ -96,6 +96,9 @@ export type Snapshot = {
   changes: Row[];
   receipts: Row[];
   ci: Row[];
+  operations?: Row;
+  operationsError?: string;
+  observedAt?: string;
   runtime: Row;
   summary: Row;
   permissions: { manage: boolean; publish: boolean; rollback: boolean };
@@ -148,7 +151,9 @@ export function locales(world: World): string[] {
 }
 export function publicPath(input: string, world: World): string {
   if (
-    !input.startsWith("/") || input.length>1800 || input.includes("//") ||
+    !input.startsWith("/") ||
+    input.length > 1800 ||
+    input.includes("//") ||
     input.startsWith("//") ||
     /[\\\s\u0000-\u001f?#]/.test(input) ||
     /%2f|%5c|%00|%2e/i.test(input)

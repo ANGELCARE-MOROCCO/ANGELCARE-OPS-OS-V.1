@@ -264,6 +264,7 @@ export async function editionCommand(c: Context, cmd: Command) {
   const action = cmd.action.replace("master_edition_", ""),
     l = language(cmd.locale);
   authorize(c, action === "review" ? "manage" : "publish");
+  if (action === "direct_publish") authorize(c, "manage");
   const r = await record(c, text(cmd.id));
   if (!EDITION_KINDS.includes(r.kind))
     throw new MarketplaceError(
@@ -285,7 +286,7 @@ export async function editionCommand(c: Context, cmd: Command) {
   }
   const v = await inspectEdition(c, source, l);
   if (
-    ["review", "approve", "release", "schedule", "restore"].includes(action) &&
+    ["review", "approve", "release", "schedule", "restore", "direct_publish"].includes(action) &&
     !v.validation.valid
   )
     throw new MarketplaceError(
@@ -311,8 +312,9 @@ export async function editionCommand(c: Context, cmd: Command) {
           : { enabled: false },
     };
   return checked(
-    db.rpc("ac_dce_r5_edition", {
+    db.rpc(action === "direct_publish" ? "ac_dce_creation_publish" : "ac_dce_r5_edition", {
       ...receipt(c, cmd),
+      ...(action === "direct_publish" ? {p_hash: hash({command:cmd,tenant:c.tenantId,territory:c.territoryId,actor:c.actor.id})} : {}),
       p_id: r.id,
       p_revision: Number(cmd.revision),
       p_locale: l,

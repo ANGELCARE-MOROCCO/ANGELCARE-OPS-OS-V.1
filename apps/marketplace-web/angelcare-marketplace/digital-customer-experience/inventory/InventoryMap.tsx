@@ -400,6 +400,7 @@ export function InventoryMap() {
       )
     : 0;
   function startJourney() {
+    if(selection.family){const edition=language==="all"?"fr":language as Locale;create("experience",selection.family,{topic:selection.topic||null,data:{defaultLocale:edition,requiredLocales:[edition],...(selection.subtype?{subtype:selection.subtype}:{})}});return;}
     const family = selection.family || FAMILIES[0].key,
       subtype =
         selection.subtype &&
@@ -567,7 +568,7 @@ export function InventoryMap() {
             onClick={startJourney}
           >
             <Plus size={17} />
-            {L("Start an import", "Lancer un import", "بدء الاستيراد")}
+            {L("Add a resource", "Ajouter une ressource", "إضافة مورد")}
           </button>
         </div>
       </header>
@@ -1568,7 +1569,7 @@ export function InventoryMap() {
                     disabled={!boot.actor.rights.manage}
                     onClick={startJourney}
                   >
-                    {L("Start an import", "Lancer un import", "بدء الاستيراد")}
+                    {L("Add a resource", "Ajouter une ressource", "إضافة مورد")}
                   </button>
                 </div>
               ) : null}

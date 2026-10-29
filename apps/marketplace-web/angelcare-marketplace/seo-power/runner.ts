@@ -14,6 +14,7 @@ import {
 import { hash, safeRead } from "./network";
 import { publicIndexNowKey } from "./public";
 import { refresh } from "./actions";
+import { recovery } from "./operations-model";
 
 export async function authorizedWorker(token: string) {
   if (token.length < 40 || token.length > 200) return false;
@@ -31,7 +32,7 @@ export async function authorizedWorker(token: string) {
     timingSafeEqual(Buffer.from(actual), Buffer.from(expected))
   );
 }
-export async function runBatch(projectId: string | null = null) {
+async function processBatch(projectId: string | null = null) {
   const started = Date.now(),
     results: Row[] = [];
   for (let i = 0; i < 2 && Date.now() - started < 15000; i++) {
@@ -82,7 +83,16 @@ export async function runBatch(projectId: string | null = null) {
           links:
             !patch.relatedPaths?.length ||
             patch.relatedPaths.every((p) => facts.related.includes(p)),
-          schema: !patch.schema||facts.schemas.some(value=>{const v=record(value);return ['WebPage','CollectionPage'].includes(String(v['@type']))&&v['@id']===new URL(page.path,project.origin).href+'#webpage';}),
+          schema:
+            !patch.schema ||
+            facts.schemas.some((value) => {
+              const v = record(value);
+              return (
+                ["WebPage", "CollectionPage"].includes(String(v["@type"])) &&
+                v["@id"] ===
+                  new URL(page.path, project.origin).href + "#webpage"
+              );
+            }),
           revision:
             facts.seoPower === "r1:" + project.world &&
             facts.revision === String(change.id),
@@ -134,7 +144,9 @@ export async function runBatch(projectId: string | null = null) {
         );
         if (![200, 202].includes(response.statusCode))
           throw new SeoFault(
-            "INDEXNOW_REFUSED",
+            [400, 401, 403, 422].includes(response.statusCode)
+              ? "INDEXNOW_CONFIGURATION_REFUSED"
+              : "INDEXNOW_REFUSED",
             "IndexNow HTTP " + response.statusCode,
             502,
           );
@@ -150,7 +162,12 @@ export async function runBatch(projectId: string | null = null) {
       } else throw new SeoFault("UNKNOWN_JOB", "Type de tâche inconnu.");
     } catch (e) {
       error = e instanceof Error ? e.message : "Exécution interrompue.";
-      result = { code: e instanceof SeoFault ? e.code : "EXECUTION_FAILED" };
+      const code = e instanceof SeoFault ? e.code : "EXECUTION_FAILED";
+      result = {
+        code,
+        recovery: recovery(code).kind,
+        evidence: record(e).evidence || null,
+      };
     }
     try {
       const finished = await rpc("ac_seo_power_finish", {
@@ -162,122 +179,157 @@ export async function runBatch(projectId: string | null = null) {
       results.push({
         id: job.id,
         kind: job.kind,
+        projectId: project.id,
+        verified: result.verified,
         ...record(finished),
         ...(error ? { error } : {}),
       });
-      if (!error && job.kind === "crawl") {
-        const facts = record(result.facts),
-          paths = (Array.isArray(facts.links) ? facts.links : [])
-            .map((v) => new URL(String(record(v).url)).pathname)
-            .slice(0, project.policy.linksPerPage);
-        if (paths.length) {
-          const client = await db(),
-            count = await client
-              .from("ac_seo_power_pages")
-              .select("id", { count: "exact", head: true })
-              .eq("project_id", project.id);
-          if ((count.count || 0) < 10000) {
-            const added = await client
-              .from("ac_seo_power_pages")
-              .upsert(
-                paths
-                  .slice(0, 10000 - (count.count || 0))
-                  .map((path) => ({
+      try {
+        if (!error && job.kind === "crawl") {
+          const facts = record(result.facts),
+            paths = (Array.isArray(facts.links) ? facts.links : [])
+              .map((v) => new URL(String(record(v).url)).pathname)
+              .slice(0, project.policy.linksPerPage);
+          if (paths.length) {
+            const client = await db(),
+              count = await client
+                .from("ac_seo_power_pages")
+                .select("id", { count: "exact", head: true })
+                .eq("project_id", project.id);
+            if (count.error)
+              throw new SeoFault(
+                "DISCOVERY_READ_FAILED",
+                "Inventaire de découverte indisponible.",
+                503,
+              );
+            if ((count.count || 0) < 10000) {
+              const added = await client
+                .from("ac_seo_power_pages")
+                .upsert(
+                  paths.slice(0, 10000 - (count.count || 0)).map((path) => ({
                     project_id: project.id,
                     path,
                     locale: path.split("/")[2],
                     kind: "native",
                   })),
-                { onConflict: "project_id,path", ignoreDuplicates: true },
-              )
-              .select("id");
-            if (record(job.payload).discover === true)
-              for (const row of (added.data || []).slice(0, 10))
-                await rpc("ac_seo_power_enqueue", {
-                  p_page: row.id,
-                  p_kind: "crawl",
-                  p_payload: { discover: true },
-                });
+                  { onConflict: "project_id,path", ignoreDuplicates: true },
+                )
+                .select("id");
+              if (added.error)
+                throw new SeoFault(
+                  "DISCOVERY_WRITE_FAILED",
+                  "Découverte non enregistrée.",
+                  503,
+                );
+              if (record(job.payload).discover === true)
+                for (const row of (added.data || []).slice(0, 10))
+                  await rpc("ac_seo_power_enqueue", {
+                    p_page: row.id,
+                    p_kind: "crawl",
+                    p_payload: { discover: true },
+                  });
+            }
+          }
+          if (
+            project.policy.autoCanonical &&
+            facts.status === 200 &&
+            !facts.canonical &&
+            !/noindex/i.test(String(facts.robots)) &&
+            facts.seoPower === "r1:" + project.world &&
+            facts.sourceStamp
+          ) {
+            const actor = "00000000-0000-4000-8000-000000000001";
+            const call = async (action: string, payload: Row, suffix: string) =>
+              record(
+                await rpc("ac_seo_power_command", {
+                  p_action: action,
+                  p_payload: payload,
+                  p_actor: actor,
+                  p_request: String(job.id) + "-" + suffix,
+                  p_hash: hash({ action, payload, actor, scope: "global" }),
+                }),
+              );
+            const draft = await call(
+              "propose",
+              {
+                pageId: page.id,
+                baseHash: facts.contentHash,
+                patch: {
+                  canonicalPath: page.path,
+                  sourceStamp: facts.sourceStamp,
+                },
+                reason:
+                  "Règle autonome approuvée : ajouter uniquement la canonique absente sur une page native publique vérifiée.",
+              },
+              "canonical-draft",
+            );
+            const approved = await call(
+              "approve",
+              { id: draft.id, version: draft.version },
+              "canonical-approve",
+            );
+            await call(
+              "publish",
+              {
+                id: approved.id,
+                version: approved.version,
+                liveHash: facts.contentHash,
+              },
+              "canonical-publish",
+            );
+            refresh(page.path);
           }
         }
         if (
-          project.policy.autoCanonical &&
-          facts.status === 200 &&
-          !facts.canonical &&
-          !/noindex/i.test(String(facts.robots)) &&
-          facts.seoPower === "r1:" + project.world &&
-          facts.sourceStamp
-        ) {
-          const actor = "00000000-0000-4000-8000-000000000001";
-          const call = async (action: string, payload: Row, suffix: string) =>
-            record(
-              await rpc("ac_seo_power_command", {
-                p_action: action,
-                p_payload: payload,
-                p_actor: actor,
-                p_request: String(job.id) + "-" + suffix,
-                p_hash: hash({ action, payload, actor, scope: "global" }),
-              }),
-            );
-          const draft = await call(
-            "propose",
-            {
-              pageId: page.id,
-              baseHash: facts.contentHash,
-              patch: {
-                canonicalPath: page.path,
-                sourceStamp: facts.sourceStamp,
-              },
-              reason:
-                "Règle autonome approuvée : ajouter uniquement la canonique absente sur une page native publique vérifiée.",
-            },
-            "canonical-draft",
-          );
-          const approved = await call(
-            "approve",
-            { id: draft.id, version: draft.version },
-            "canonical-approve",
-          );
-          await call(
-            "publish",
-            {
-              id: approved.id,
-              version: approved.version,
-              liveHash: facts.contentHash,
-            },
-            "canonical-publish",
-          );
-          refresh(page.path);
-        }
+          !error &&
+          job.kind === "links" &&
+          result.nextOffset !== null &&
+          result.nextOffset !== undefined
+        )
+          await rpc("ac_seo_power_enqueue", {
+            p_page: page.id,
+            p_kind: "links",
+            p_payload: { offset: result.nextOffset },
+          });
+        if (
+          !error &&
+          job.kind === "verify" &&
+          result.verified === true &&
+          project.policy.indexNowEnabled
+        )
+          await rpc("ac_seo_power_enqueue", {
+            p_page: page.id,
+            p_kind: "indexnow",
+            p_payload: {},
+          });
+      } catch (followupError) {
+        const warning = {
+          code:
+            followupError instanceof SeoFault
+              ? followupError.code
+              : "FOLLOWUP_FAILED",
+          message:
+            followupError instanceof Error
+              ? followupError.message
+              : "Suite non confirmée.",
+          at: new Date().toISOString(),
+        };
+        await rpc("ac_seo_power_followup", {
+          p_id: job.id,
+          p_warning: warning,
+        });
+        Object.assign(results[results.length - 1], { followup: warning });
       }
-      if (
-        !error &&
-        job.kind === "links" &&
-        result.nextOffset !== null &&
-        result.nextOffset !== undefined
-      )
-        await rpc("ac_seo_power_enqueue", {
-          p_page: page.id,
-          p_kind: "links",
-          p_payload: { offset: result.nextOffset },
-        });
-      if (
-        !error &&
-        job.kind === "verify" &&
-        result.verified === true &&
-        project.policy.indexNowEnabled
-      )
-        await rpc("ac_seo_power_enqueue", {
-          p_page: page.id,
-          p_kind: "indexnow",
-          p_payload: {},
-        });
     } catch (e) {
-      results.push({
+      const unconfirmed = {
         id: job.id,
+        projectId: project.id,
         state: "unconfirmed",
         error: e instanceof Error ? e.message : "Résultat non confirmé.",
-      });
+      };
+      const prior = results.find((r) => r.id === job.id);
+      if (prior) Object.assign(prior, unconfirmed);
+      else results.push(unconfirmed);
     }
   }
   return {
@@ -285,4 +337,38 @@ export async function runBatch(projectId: string | null = null) {
     elapsedMs: Date.now() - started,
     remaining: "Les tâches non traitées restent dans la file persistante.",
   };
+}
+
+export async function runBatch(
+  projectId: string | null = null,
+  source: "manual" | "scheduler" = "manual",
+) {
+  const executionId = await rpc("ac_seo_power_execution", {
+    p_project: projectId,
+    p_source: source,
+  });
+  try {
+    const batch = await processBatch(projectId);
+    const problems = batch.results.filter(
+      (r) =>
+        r.error ||
+        r.state === "unconfirmed" ||
+        r.state === "failed" ||
+        r.verified === false ||
+        r.followup,
+    ).length;
+    const answer = { ...batch, problems, executionId };
+    await rpc("ac_seo_power_execution", {
+      p_id: executionId,
+      p_result: answer,
+    });
+    return answer;
+  } catch (e) {
+    const fatal = e instanceof SeoFault ? e.code : "EXECUTION_INTERRUPTED";
+    await rpc("ac_seo_power_execution", {
+      p_id: executionId,
+      p_result: { fatal, problems: 1 },
+    });
+    throw e;
+  }
 }

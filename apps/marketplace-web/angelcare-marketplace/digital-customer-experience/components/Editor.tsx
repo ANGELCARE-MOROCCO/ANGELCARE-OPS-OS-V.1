@@ -451,7 +451,7 @@ export function Editor({
   prepared?: Partial<DceRecord>;
   onPrepared?: (r: Partial<DceRecord>) => Promise<void>;
 }) {
-  const { locale, boot, notify, refresh, preview, open: openDossier } = useUI();
+  const { locale, boot, notify, refresh, preview, open: openDossier, create: openCreation } = useUI();
   const [draft, setDraft] = useState<Partial<DceRecord>>(() => {
       const base = blankRecord(kind, family, locale, boot.settings);
       return prepared
@@ -1088,6 +1088,14 @@ export function Editor({
       onClose={requestClose}
       footer={
         <>
+          {["experience","bundle"].includes(draft.kind||"") && <Button
+            disabled={busy||loading}
+            icon="Layers"
+            onClick={async()=>{
+              if(dirty){const saved=await save();if(!saved)return;onClose();openCreation(saved.kind,saved.family||"bundles",saved);}
+              else {onClose();openCreation(draft.kind,draft.family||"bundles",draft);}
+            }}
+          ><T v={["Guided workspace","Atelier simplifié","الورشة المبسطة"]}/></Button>}
           {draft.id && (
             <Button
               disabled={

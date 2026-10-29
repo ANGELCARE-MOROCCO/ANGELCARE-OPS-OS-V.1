@@ -9,7 +9,7 @@ import { BASE } from "../types";
 import Link from "next/link";
 import im from "../inventory/inventory.module.css";
 import { ImportSourceStudio, TASK_LABELS } from "./ImportSourceStudio";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { FAMILIES } from "../registry";
 import { sheetCollections } from "../operator-sheets";
@@ -35,7 +35,7 @@ import { Editor } from "./Editor";
 import { BatchProgress } from "./OperatorDesk";
 import s from "./workspace.module.css";
 export function Imports() {
-  const { locale, boot, notify, refresh, open: openDossier } = useUI(),
+  const { locale, boot, notify, refresh, open: openDossier, create } = useUI(),
     params = useSearchParams(),
     context = params?.get("context") || "",
     targetResult = useMemo(() => {
@@ -95,6 +95,10 @@ export function Imports() {
     [exportBoundary, setExportBoundary] = useState(""),
     [exportPart, setExportPart] = useState(1);
   const task = target ? "create" : savedTask;
+  const openedTarget = useRef("");
+  function quickCreate(){
+    create("experience",target?.family||scopeFamily,{topic:target?.topic||null,data:{defaultLocale:target?.locale||"fr",requiredLocales:[target?.locale||"fr"],...(target?{subtype:target.subtype}:{})}});
+  }
   const scopeFamily =
       target?.family ||
       contextRecord.value?.family ||
@@ -107,6 +111,10 @@ export function Imports() {
     setExportPart(1);
     setMappedSource("");
   }, [scopeFamily, task, part, context]);
+  useEffect(()=>{
+    if(!target||!boot.actor.rights.manage||targetResult.error)return;
+    const key=targetScope(target);if(openedTarget.current===key)return;openedTarget.current=key;quickCreate();
+  },[target?.family,target?.subtype,target?.locale,target?.topic,boot.actor.rights.manage]);
   async function pack() {
     try {
       const p = await query<any>({
@@ -173,6 +181,9 @@ export function Imports() {
   }
   return (
     <>
+      {!context && <Panel title={<T v={["Add a resource directly","Ajouter une ressource directement","إضافة مورد مباشرة"]}/>}
+        subtitle={<T v={["Upload files, build the content and publish from one category-specific workshop. The structured batch tools remain below.","Ajoutez les fichiers, composez le contenu et publiez dans un seul atelier. Les outils de lots structurés restent disponibles ci-dessous.","ارفع الملفات وألف المحتوى وانشر من ورشة واحدة. تبقى أدوات الدفعات المنظمة متاحة أدناه."]}/>}
+        actions={<Button kind="primary" icon="Plus" disabled={!boot.actor.rights.manage} onClick={quickCreate}><T v={["Open the workshop","Ouvrir l’atelier","فتح الورشة"]}/></Button>}>{null}</Panel>}
       {targetResult.error ? (
         <div role="alert" className={im.targetBanner}>
           {targetResult.error}{" "}

@@ -3,8 +3,6 @@ import { CheerioCrawler } from "@crawlee/cheerio";
 import { Configuration, type BaseHttpClient } from "@crawlee/core";
 import { RobotsTxtFile } from "@crawlee/utils";
 
-
-
 import { hash, safeRead, SeoHttpClient, USER_AGENT } from "./network";
 import {
   type Facts,
@@ -114,7 +112,7 @@ export async function inspectWithClient(
             .get(),
           seoPower: $('meta[name="seo-power"]').attr("content") || "",
           sourceStamp: source,
-        bodyHook: $('meta[name="seo-power-body"]').attr("content")||"",
+          bodyHook: $('meta[name="seo-power-body"]').attr("content") || "",
           revision: $('meta[name="seo-power-revision"]').attr("content") || "",
         };
       },
@@ -172,9 +170,22 @@ export async function inspectPage(
       robots.body.toString("utf8"),
     ).isAllowed(url.href, USER_AGENT)
   )
-    throw new SeoFault(
-      "ROBOTS_DISALLOWED",
-      "Exploration interdite par robots.txt.",
+    throw Object.assign(
+      new SeoFault(
+        "ROBOTS_DISALLOWED",
+        "Exploration interdite par robots.txt. Consultez la preuve et les directives publiques avant de modifier une règle.",
+      ),
+      {
+        evidence: {
+          url: url.href,
+          robotsUrl: new URL("/robots.txt", project.origin).href,
+          userAgent: USER_AGENT,
+          status: robots.statusCode,
+          checkedAt: new Date().toISOString(),
+          directives: robots.body.toString("utf8").slice(0, 12000),
+          truncated: robots.body.length > 12000,
+        },
+      },
     );
   return inspectWithClient(
     project,
@@ -194,7 +205,11 @@ export async function inspectPage(
  * transient loopback HTTP server for a status already obtained from the target.
  */
 export async function checkLinks(project: Project, paths: string[]) {
-  const results: { url: string; state: "OK" | "BROKEN" | "SKIPPED"; status: number }[] = [];
+  const results: {
+    url: string;
+    state: "OK" | "BROKEN" | "SKIPPED";
+    status: number;
+  }[] = [];
   for (const path of paths.slice(0, 3)) {
     const target = targetUrl(path, project);
     const response = await safeRead(target, {
@@ -205,7 +220,9 @@ export async function checkLinks(project: Project, paths: string[]) {
       },
     });
     const status = response.statusCode;
-    const botChallenge = String(response.headers["cf-mitigated"] || "").toLowerCase();
+    const botChallenge = String(
+      response.headers["cf-mitigated"] || "",
+    ).toLowerCase();
     const state: "OK" | "BROKEN" | "SKIPPED" =
       status === 429 ||
       status === 999 ||

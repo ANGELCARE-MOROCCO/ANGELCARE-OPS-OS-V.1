@@ -3,9 +3,10 @@ import { NextResponse } from "next/server";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { requireMarketplaceApiContext } from "../auth/context";
-import { access, db, detail, snapshot } from "./repository";
+import { access, db, detail, snapshot, rpc } from "./repository";
 import { perform } from "./actions";
 import { authorizedWorker, runBatch } from "./runner";
+import { hash } from "./network";
 import { record, SeoFault, text, uuid } from "./model";
 
 function id() {
@@ -131,6 +132,43 @@ export async function get(request: Request) {
         },
       });
     }
+    if (action === "operations-sql") {
+      const file = await readFile(
+        path.join(
+          process.cwd(),
+          "angelcare-marketplace/seo-power/INSTALL_SEO_POWER_OPERATIONS_R2.sql",
+        ),
+        "utf8",
+      );
+      return new NextResponse(file, {
+        headers: {
+          "Content-Type": "text/plain; charset=utf-8",
+          "Content-Disposition":
+            'attachment; filename="INSTALL_SEO_POWER_OPERATIONS_R2.sql"',
+          "Cache-Control": "no-store",
+        },
+      });
+    }
+    if (action === "queue-page") {
+      const project = url.searchParams.get("project");
+      return NextResponse.json(
+        {
+          data: await rpc("ac_seo_power_queue_page", {
+            p_project: project ? uuid(project) : null,
+            p_state: text(url.searchParams.get("state"), 20) || "all",
+            p_page: Math.max(
+              1,
+              Math.min(
+                100000,
+                Math.trunc(Number(url.searchParams.get("queuePage")) || 1),
+              ),
+            ),
+          }),
+          requestId: rid,
+        },
+        { headers: { "Cache-Control": "no-store" } },
+      );
+    }
     if (action === "detail")
       return NextResponse.json(
         {
@@ -236,6 +274,16 @@ export async function post(request: Request) {
       );
     if (requestKey.length < 8)
       throw new SeoFault("REQUEST_KEY_REQUIRED", "Clé de requête requise.");
+    if (action === "retry-job") {
+      const jobId = uuid(input.id);
+      const result = await rpc("ac_seo_power_retry", {
+        p_id: jobId,
+        p_actor: ctx.actor.id,
+        p_request: requestKey,
+        p_hash: hash({ action, jobId, actor: ctx.actor.id, scope: "global" }),
+      });
+      return NextResponse.json({ data: result, requestId: rid });
+    }
     const data =
       action === "run"
         ? await runBatch(input.projectId ? uuid(input.projectId) : null)
@@ -255,7 +303,10 @@ export async function run(request: Request) {
         "Exécution planifiée non autorisée.",
         403,
       );
-    return NextResponse.json({ data: await runBatch(), requestId: rid });
+    return NextResponse.json({
+      data: await runBatch(null, "scheduler"),
+      requestId: rid,
+    });
   } catch (e) {
     return failure(e, rid);
   }

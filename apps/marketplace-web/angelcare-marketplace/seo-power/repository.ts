@@ -57,6 +57,11 @@ export async function db() {
 export function databaseError(error: unknown): never {
   const message = String(record(error).message || error),
     code = [
+      "PROJECT_PAUSED",
+      "JOB_NOT_RETRYABLE",
+      "VERIFICATION_SUPERSEDED",
+      "EXECUTION_NOT_ACTIVE",
+      "INVALID_QUEUE_QUERY",
       "STALE_REVISION",
       "STALE_SOURCE",
       "REQUEST_REUSED",
@@ -73,6 +78,15 @@ export function databaseError(error: unknown): never {
       code,
       (
         {
+          PROJECT_PAUSED:
+            "Cet univers est en pause. Reprenez-le avant de relancer une tâche.",
+          JOB_NOT_RETRYABLE:
+            "Cette tâche ne demande pas de reprise ou une autre exécution est déjà active.",
+          VERIFICATION_SUPERSEDED:
+            "Une publication plus récente existe. Vérifiez la correction actuellement publiée.",
+          EXECUTION_NOT_ACTIVE:
+            "Ce passage est déjà terminé ou n’est plus actif.",
+          INVALID_QUEUE_QUERY: "Filtre ou pagination de file invalide.",
           STALE_REVISION:
             "Une révision plus récente existe. Rechargez avant de poursuivre.",
           STALE_SOURCE:
@@ -203,30 +217,40 @@ export async function snapshot(
       .order("last_seen", { ascending: false })
       .limit(150);
     if (chosen) issues = issues.eq("project_id", chosen.id);
-    const [p, j, f, c, r, ci, runtime, summary] = await Promise.all([
-      urls,
-      select("ac_seo_power_jobs"),
-      issues,
-      select("ac_seo_power_changes"),
-      client
-        .from("ac_seo_power_receipts")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(80),
-      client
-        .from("ac_seo_power_ci")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(30),
-      client.rpc("ac_seo_power_runtime_status"),
-      client.rpc("ac_seo_power_summary", { p_project: chosen?.id || null }),
-    ]);
+    const [p, j, f, c, r, ci, runtime, summary, operations] = await Promise.all(
+      [
+        urls,
+        select("ac_seo_power_jobs"),
+        issues,
+        select("ac_seo_power_changes"),
+        client
+          .from("ac_seo_power_receipts")
+          .select("*")
+          .order("created_at", { ascending: false })
+          .limit(80),
+        client
+          .from("ac_seo_power_ci")
+          .select("*")
+          .order("created_at", { ascending: false })
+          .limit(30),
+        client.rpc("ac_seo_power_runtime_status"),
+        client.rpc("ac_seo_power_summary", { p_project: chosen?.id || null }),
+        client.rpc("ac_seo_power_operations", {
+          p_project: chosen?.id || null,
+        }),
+      ],
+    );
     for (const result of [p, j, f, c, r, ci, runtime])
       if (result.error) databaseError(result.error);
     if (summary.error) databaseError(summary.error);
     return {
       ...empty,
       ready: true,
+      observedAt: new Date().toISOString(),
+      operations: record(operations.data),
+      operationsError: operations.error
+        ? "Migration Operations R2 requise ou lecture opérationnelle indisponible. Le statut du moteur ne peut pas être confirmé."
+        : undefined,
       projects: list,
       pages: (p.data || []).map(pageRow),
       total: p.count || 0,

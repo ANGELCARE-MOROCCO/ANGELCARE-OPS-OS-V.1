@@ -63,6 +63,7 @@ import { Insights, Logs, Utilities, Settings } from "./Insights";
 import s from "./workspace.module.css";
 const ImageryStudio = lazy(() => import("../../kidflix/imagery/Studio").then(m=>({default:m.ImageryStudio})));
 const InventoryMap = lazy(() => import("../inventory/InventoryMap").then(m=>({default:m.InventoryMap})));
+const CreationStudio = lazy(() => import("./CreationStudio").then(m=>({default:m.CreationStudio})));
 const Editor = lazy(() =>
     import("./Editor").then((m) => ({ default: m.Editor })),
   ),
@@ -123,6 +124,7 @@ export function Workspace({
     } | null>(null),
     [previewPicker, setPreviewPicker] = useState(false),
     [choose, setChoose] = useState(false),
+    [creator, setCreator] = useState<{family?:string;prepared?:Partial<import("../types").DceRecord>}|null>(null),
     [previewId, setPreview] = useState(""),
     [previewRelease, setPreviewRelease] = useState(""),
     [previewLanguage, setPreviewLanguage] = useState<Locale | undefined>(),
@@ -198,8 +200,8 @@ export function Workspace({
     family?: string,
     prepared?: Partial<import("../types").DceRecord>,
   ) {
-    if (kind === "experience" && !family) {
-      setChoose(true);
+    if (kind === "experience" || kind === "bundle") {
+      setCreator({family:family || (kind === "bundle" ? "bundles" : undefined),prepared});
       return;
     }
     setEditor({
@@ -710,6 +712,17 @@ export function Workspace({
               onSelect={(id) => {
                 setPreviewPicker(false);
                 preview(id);
+              }}
+            />
+          )}
+          {creator && (
+            <CreationStudio
+              family={creator.family}
+              prepared={creator.prepared}
+              onClose={() => setCreator(null)}
+              onAdvanced={(record) => {
+                setCreator(null);
+                setEditor({id:record.id,kind:record.kind,family:record.family||undefined,prepared:record,language:record.data?.defaultLocale as Locale});
               }}
             />
           )}

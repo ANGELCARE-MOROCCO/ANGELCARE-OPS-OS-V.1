@@ -1223,6 +1223,15 @@ export function enrichFamily(base: Family): Family {
         ),
       ]);
   }
+  // Printable planners use the same native Reading source contract as the public player.
+  // Keep editable items independent; a real PDF needs no fabricated checklist field.
+  if (base.key === "planners" && !collections.some(c => c.key === "units"))
+    collections.push(collection("units", "Printable sources", "Sources imprimables", "مصادر الطباعة", [
+      title,
+      select("kind", "Source type", "Type de source", "نوع المصدر", ["pdf", "image"]),
+      ref("assetId", "Source file", "Fichier source", "الملف الأصلي", "media", ["application/pdf", "image/"]),
+      field("text", "Accessible text", "Texte accessible", "نص متاح", "textarea"),
+    ]));
   for (const c of collections)
     for (const f of c.fields) {
       if (base.key === "activities" && f.key === "answer") f.localized = false;
@@ -1320,6 +1329,8 @@ export function enrichFamily(base: Family): Family {
 }
 export function modeContract(family: Family | undefined, data: Data) {
   const m = family?.modesContract?.find((m) => m.key === data.mode);
+  if (family?.key === "planners" && m?.engine === "print" && array(data.units).length)
+    return { ...m, requiredCollections: ["units"] };
   return family?.key === "activities" && data.engine === "bridge" && m
     ? { ...m, requiredCollections: ["bridgeChallenges"] }
     : m;

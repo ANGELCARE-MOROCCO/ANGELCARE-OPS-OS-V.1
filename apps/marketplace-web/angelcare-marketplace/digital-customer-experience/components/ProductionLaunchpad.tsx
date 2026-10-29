@@ -3,10 +3,10 @@ import Link from "next/link";
 import { BASE, tr, type Tri } from "../types";
 import { MODULES } from "../registry";
 import { useState } from "react";
-import { useUI, T } from "./ui";
+import { useUI, T, Button } from "./ui";
 import p from "./production.module.css";
 export function ProductionLaunchpad({ module }: { module: string }) {
-  const { locale } = useUI(),
+  const { locale, create, boot } = useUI(),
     [search, setSearch] = useState("");
   return (
     <>
@@ -27,13 +27,14 @@ export function ProductionLaunchpad({ module }: { module: string }) {
           <p>
             <T
               v={[
-                "Create, prepare, review and publish through the native authorities. Your dossiers, imports, media and language editions stay connected.",
-                "Créez, préparez, révisez et publiez avec les autorités natives. Dossiers, imports, médias et éditions linguistiques restent connectés.",
-                "أنشئ وحضّر وراجع وانشر عبر الجهات الأصلية. تبقى الملفات والاستيراد والوسائط والنسخ اللغوية متصلة.",
+                "Upload, compose and publish in a category-specific workspace. Files, drafts and language editions stay connected automatically.",
+                "Ajoutez, composez et publiez dans l’atelier de votre catégorie. Fichiers, brouillons et éditions linguistiques restent reliés automatiquement.",
+                "ارفع وألف وانشر في ورشة الفئة. تبقى الملفات والمسودات والنسخ اللغوية مترابطة تلقائياً.",
               ]}
             />
           </p>
         </div>
+        <Button kind="primary" icon="Plus" disabled={!boot.actor.rights.manage} onClick={()=>create("experience")}><T v={["Add a resource","Ajouter une ressource","إضافة مورد"]}/></Button>
         <nav
           aria-label={tr(
             [
