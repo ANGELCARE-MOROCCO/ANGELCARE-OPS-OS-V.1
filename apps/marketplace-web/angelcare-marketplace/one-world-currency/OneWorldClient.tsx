@@ -62,7 +62,7 @@ export function OneWorldClient(){
    <div><div className={style.eyebrow}><Globe2 size={14}/> ANGELCARE / FINANCIAL CONTROL TOWER</div>
     <h1>ONE WORLD <span>CURRENCY COMMAND</span></h1>
     <p>USD authority · Cross-border currency operations · Market governance</p></div>
-   <div className={style.headerRight}><span className={style.pill}><ShieldCheck size={14}/> SHADOW MODE</span>
+   <div className={style.headerRight}><span className={style.pill}><ShieldCheck size={14}/> {activeRates.length>1?'FX RATES ACTIVE':'FX RATES PENDING'}</span>
     <button className={style.btn} disabled={busy} onClick={()=>void reload()}><RefreshCcw size={15}/> Refresh</button></div>
   </header>
   {error&&<div className={style.alert}><CircleAlert size={18}/><span>{error}</span><button onClick={()=>setError('')}>Dismiss</button></div>}
@@ -71,7 +71,7 @@ export function OneWorldClient(){
    <article><span>MASTER CURRENCY</span><strong>USD</strong><small>Fixed pricing authority</small></article>
    <article><span>COUNTRY POLICIES</span><strong>{data?.countries.length??'—'}</strong><small>Persisted market records</small></article>
    <article><span>ACTIVE FX RATES</span><strong>{data?activeRates.length:'—'}</strong><small>Only approved rate entries</small></article>
-   <article><span>PENDING RATE BATCHES</span><strong>{data?data!.batches.filter(x=>x.status==='staged').length:'—'}</strong><small>Awaiting second-person approval</small></article>
+   <article><span>PENDING RATE BATCHES</span><strong>{data?data!.batches.filter(x=>x.status==='staged').length:'—'}</strong><small>Awaiting authorized activation</small></article>
    <article><span>PRICE MARGIN RULES</span><strong>{data?.margins.length??'—'}</strong><small>Country / region / global</small></article>
   </div>
   <div className={style.body}>
@@ -84,7 +84,7 @@ export function OneWorldClient(){
      <span className={style.status}>{data?'DATABASE CONNECTED':'CONNECTING'}</span></div>
     {!ready?<div className={style.center}><LoaderCircle size={24}/> Connecting to self-hosted Supabase. If no schema has been applied, the server will return a configuration error.</div>:null}
     {ready&&section==='overview'&&<>
-      <div className={style.notice}>Real database data is shown below. All price operations are isolated from public product pages and PayPal. No customer-facing currency is activated by this workspace.</div>
+      <div className={style.notice}>Real database data is shown below. Approved exchange rates are operational. Customer-facing international checkout requires its separately certified pricing and payment integration.</div>
       <div className={style.cardGrid}>
        {sections.slice(1,7).map(([id,name,Icon])=><button className={style.actionCard} key={id} onClick={()=>setSection(id)}><Icon size={24}/><b>{name}</b><small>Open operational controls</small><ChevronRight size={16}/></button>)}
       </div>
@@ -108,8 +108,8 @@ export function OneWorldClient(){
      </div><button className={style.primary} disabled={busy} onClick={()=>void run({action:'saveCountry',code:editing.code,name:editing.name,region:editing.region,currency:editing.currency,upliftBp:Number(editing.uplift_bp),enabled:editing.enabled},()=>setEditing(null))}>Save market policy</button></div>}
     </>}
     {ready&&section==='rates'&&<>
-     <div className={style.notice}>Manual rates are staged first. They are not active until a different authorized administrator approves the batch.</div>
-     <button className={style.btn} disabled={busy} onClick={()=>void run({action:'fetchRates'})}><RefreshCcw size={15}/> Fetch current USD reference rates from Frankfurter (stage only)</button>
+     <div className={style.notice}>Manual rates are staged for validation. An authorized administrator may activate their own batch.</div>
+     <button className={style.btn} disabled={busy} onClick={()=>void run({action:'fetchRates'})}><RefreshCcw size={15}/> Fetch & activate current USD rates</button>
      <div className={style.fields}>
       <label>Target currency<input value={rateCurrency} maxLength={3} onChange={e=>setRateCurrency(e.target.value.toUpperCase())}/></label>
       <label>1 USD equals<input value={rateValue} placeholder="Enter actual observed rate" onChange={e=>setRateValue(e.target.value)}/></label>
@@ -128,7 +128,7 @@ export function OneWorldClient(){
       <button className={style.primary} disabled={busy||!csv.trim()} onClick={importCsv}>Validate and stage CSV rate batch</button>
     </>}
     {ready&&section==='margins'&&<>
-      <div className={style.notice}>Uplift precedence is Country → Region → Global. Use basis points (100 bp = 1%). These rules are stored but not applied to public product prices in shadow mode.</div>
+      <div className={style.notice}>Uplift precedence is Country → Region → Global. Use basis points (100 bp = 1%). These rules are stored and used by the FX calculation engine; customer checkout integration is not yet certified.</div>
       <div className={style.fields}>
        <label>Target level<select value={marginScope} onChange={e=>{setMarginScope(e.target.value);setMarginKey(e.target.value==='global'?'*':e.target.value==='country'?'MA':'Europe')}}><option value="country">Country</option><option value="region">Region</option><option value="global">Global</option></select></label>
        <label>Scope key<input value={marginKey} onChange={e=>setMarginKey(e.target.value)}/></label>
@@ -142,19 +142,19 @@ export function OneWorldClient(){
       <div className={style.fields}><label>Target market<select value={country} onChange={e=>setCountry(e.target.value)}>{data!.countries.filter(x=>x.enabled).map(x=><option value={x.code} key={x.code}>{x.name} ({x.currency})</option>)}</select></label>
       <label>USD canonical price<input value={usd} onChange={e=>setUsd(e.target.value)}/></label></div>
       <button className={style.primary} disabled={busy} onClick={()=>void (async()=>{const result=await run({action:'simulate',country,usd});if(result)setQuote(result)})()}>Calculate & save simulation</button>
-      {quote&&<div className={style.quote}><small>SHADOW QUOTE · {quote.country}</small><strong>{quote.currency} {quote.amount}</strong><span>USD {quote.usd} × {quote.rate} · uplift {quote.upliftBp/100}%</span><small>Simulation receipt: {quote.simulationId}</small></div>}
+      {quote&&<div className={style.quote}><small>FX RATE SIMULATION · {quote.country}</small><strong>{quote.currency} {quote.amount}</strong><span>USD {quote.usd} × {quote.rate} · uplift {quote.upliftBp/100}%</span><small>Simulation receipt: {quote.simulationId}</small></div>}
     </>}
     {ready&&section==='batches'&&<>
-     <div className={style.notice}>Four-eyes approval: rate batch authors cannot approve their own batch. The database switches active currency rates atomically.</div>
-     <div className={style.tableOuter}><table><thead><tr><th>Batch</th><th>Source</th><th>Created</th><th>Status</th><th>Approve</th></tr></thead><tbody>{data!.batches.map(x=><tr key={x.id}><td><b>{x.label}</b><small className={style.subtle}>{x.id}</small></td><td>{x.source}</td><td>{x.created_at}</td><td>{x.status}</td><td><button className={style.btn} disabled={busy||x.status!=='staged'} onClick={()=>void run({action:'approveRates',batchId:x.id})}>Approve & activate</button></td></tr>)}</tbody></table></div>
+     <div className={style.notice}>Authorized administrators can activate submitted rate batches. Activation is atomic and audited.</div>
+     <div className={style.tableOuter}><table><thead><tr><th>Batch</th><th>Source</th><th>Created</th><th>Status</th><th>Approve</th></tr></thead><tbody>{data!.batches.map(x=><tr key={x.id}><td><b>{x.label}</b><small className={style.subtle}>{x.id}</small></td><td>{x.source}</td><td>{x.created_at}</td><td>{x.status}</td><td><button className={style.btn} disabled={busy||x.status!=='staged'} onClick={()=>void run({action:'approveRates',batchId:x.id})}>Activate rates</button></td></tr>)}</tbody></table></div>
     </>}
     {ready&&section==='history'&&<div className={style.tableOuter}><table><thead><tr><th>Date</th><th>Actor</th><th>Action</th><th>Entity</th><th>Reference</th></tr></thead><tbody>{data!.audit.map(x=><tr key={x.id}><td>{x.created_at}</td><td>{x.actor_id}</td><td>{x.action}</td><td>{x.entity}</td><td>{x.entity_id}</td></tr>)}</tbody></table></div>}
     {ready&&section==='payments'&&<div className={style.notice}><CreditCard size={20}/> Existing PayPal code uses EUR capture and legacy Dh reconciliation. This workspace cannot mutate payments. Multi-currency checkout requires a separately tested adapter release.</div>}
     {ready&&section==='settings'&&<div className={style.cardGrid}>
       <div className={style.infoCard}><Database size={24}/><b>Supabase authority</b><span>Database-backed country, rate, margin, audit, and simulation operations</span></div>
-      <div className={style.infoCard}><ShieldCheck size={24}/><b>Operational mode</b><span>SHADOW · no public mutation</span></div>
+      <div className={style.infoCard}><ShieldCheck size={24}/><b>Operational mode</b><span>Approved FX authority · checkout integration not yet certified</span></div>
       <div className={style.infoCard}><Layers size={24}/><b>USD base</b><span>Rate = 1, immutable identity</span></div>
-      <div className={style.infoCard}><ClipboardList size={24}/><b>Control doctrine</b><span>Rate batches require separate approval before activation</span></div>
+      <div className={style.infoCard}><ClipboardList size={24}/><b>Control doctrine</b><span>Rate activation requires administrator authorization and audit evidence</span></div>
     </div>}
    </main>
   </div>

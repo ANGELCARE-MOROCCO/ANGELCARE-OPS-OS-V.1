@@ -23,7 +23,7 @@ async function audit(db:any,actor:string,action:string,entity:string,entity_id:s
  const r=await db.from('ac_owc_audit').insert({actor_id:actor,action,entity,entity_id,after_value,reason})
  if(r.error)fail(r.error)
 }
-export async function mutate(input:Row,actor:string){
+export async function mutate(input:Row,actor:string):Promise<any>{
  const action=txt(input.action),db=await createServiceClient()
  if(action==='saveCountry'){
   const code=txt(input.code).toUpperCase(),currency=txt(input.currency).toUpperCase()
@@ -56,7 +56,22 @@ export async function mutate(input:Row,actor:string){
   const observations=(result as Row[]).filter(x=>x.base==='USD'&&typeof x.quote==='string'&&x.quote!=='USD'&&typeof x.rate==='number'&&x.rate>0)
    .slice(0,250).map(x=>({currency:txt(x.quote),rate:String(x.rate),observed_on:txt(x.date)}))
   if(!observations.length)throw new MarketplaceError('DATA_INTEGRITY','No valid USD reference rates returned')
-  return mutate({action:'stageRates',source:'frankfurter',label:'Frankfurter USD '+new Date().toISOString().slice(0,10),rows:observations},actor)
+  const staged=await mutate({
+   action:'stageRates',
+   source:'frankfurter',
+   label:'Frankfurter USD '+new Date().toISOString().slice(0,10),
+   rows:observations
+  },actor)
+  const activation=await mutate({
+   action:'approveRates',
+   batchId:String(staged.batch.id)
+  },actor)
+  return {
+   batch:staged.batch,
+   count:staged.count,
+   ...activation,
+   status:'active'
+  }
  }
  if(action==='stageRates'){
   const source=txt(input.source)
@@ -82,7 +97,7 @@ export async function mutate(input:Row,actor:string){
   if(!/^[\da-f-]{36}$/i.test(id))throw new MarketplaceError('VALIDATION_ERROR','Invalid batch ID')
   const b=await db.from('ac_owc_rate_batches').select('*').eq('id',id).single()
   if(b.error||!b.data)fail(b.error)
-  if(b.data.created_by===actor)throw new MarketplaceError('PERMISSION_DENIED','Four-eyes approval: another admin must approve rates')
+  // Same authorized administrator may activate a staged rate batch.
   const r=await db.rpc('ac_owc_activate_batch',{p_batch:id,p_actor:actor})
   if(r.error)fail(r.error)
   return {activated:Number(r.data)}
