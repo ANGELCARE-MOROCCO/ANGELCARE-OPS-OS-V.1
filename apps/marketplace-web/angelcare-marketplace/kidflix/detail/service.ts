@@ -1,5 +1,6 @@
 import { contextualRecommendations } from "../../digital-customer-experience/experience-depth";
 import "server-only";
+import { nativeReferenceInScope } from "./native-reference-scope";
 import {
   gradeClassification,
   gradeSoundPair,
@@ -61,14 +62,6 @@ export async function getDetail(
         .maybeSingle(),
     );
   if (!root) return null;
-  const sharedScope = (q: any) =>
-    ["tenant_id", "territory_id"].reduce(
-      (a, k) =>
-        root[k] == null
-          ? a.is(k, null)
-          : a.or(`${k}.is.null,${k}.eq.${root[k]}`),
-      q,
-    );
   async function hydrate(
     manifest: Row,
     depth = 0,
@@ -107,17 +100,13 @@ export async function getDetail(
     const mediaIds = Object.keys(obj(manifest.bindings?.media)).filter(uuid);
     out.bindings.media = {};
     for (let i = 0; i < mediaIds.length; i += 100) {
+      // Native media is a shared vault. IDs come only from this published manifest.
       const media = await checked(
-        sharedScope(
-          db
-            .from("angelcare_marketplace_media_assets")
-            .select(
-              "id,status,metadata,rights_expires_at,public_url,desktop_url,mime_type,file_name,size_bytes,width,height,duration_seconds",
-            )
-            .in("id", mediaIds.slice(i, i + 100)),
-        ),
+        db.from("angelcare_marketplace_media_assets").select("*")
+          .in("id", mediaIds.slice(i, i + 100)),
       );
       for (const a of media || []) {
+        if (!nativeReferenceInScope(a, root)) continue;
         const url = a.public_url || a.desktop_url || "";
         if (
           a.status !== "active" ||
@@ -213,17 +202,11 @@ export async function getDetail(
     ];
     if (offerIds.length) {
       const offers = await checked(
-        sharedScope(
-          db
-            .from("angelcare_marketplace_catalog_discovery_v")
-            .select(
-              "id,slug,kind,status,name_en,name_fr,name_ar,price_amount,currency_label,availability_status",
-            )
-            .in("id", offerIds)
-            .eq("status", "published"),
-        ),
+        db.from("angelcare_marketplace_catalog_discovery_v").select("*")
+          .in("id", offerIds).eq("status", "published"),
       );
       for (const offer of offers) {
+        if (!nativeReferenceInScope(offer, root)) continue;
         if (!/^[a-z0-9][a-z0-9-]*$/i.test(offer.slug || "")) continue;
         out.bindings.offers[offer.id] = {
           id: offer.id,

@@ -85,6 +85,7 @@ export async function getDocuments(
       p_page: Number(filters.page || 1),
     });
   if (result.error) {
+    console.error("KIDFLIX_DOCUMENTS_RPC_FAILED", { code: result.error.code, message: result.error.message });
     const e = new Error("DOCUMENTS_UNAVAILABLE") as Error & {
       setupRequired?: boolean;
     };
