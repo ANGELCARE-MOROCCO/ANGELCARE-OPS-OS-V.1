@@ -5,7 +5,8 @@ import {
   compatibleDefinition,
 } from "../../digital-customer-experience/capabilities";
 import { outputReadiness } from "../../digital-customer-experience/experience-contract";
-import { safeImage, type Locale } from "../catalogue";
+import type { Locale, Tri } from "../catalogue";
+import { safeMediaUrl } from "../media-url";
 export type Row = Record<string, any>;
 export interface DetailValue {
   releaseId: string;
@@ -30,7 +31,7 @@ export function definition(family: string, data: Row) {
 }
 export function asset(m: Row, id: unknown, prefix = "") {
   const a = obj(obj(m.bindings).media?.[str(id)]);
-  return safeImage(a.url) && (!prefix || str(a.mime).startsWith(prefix))
+  return safeMediaUrl(a.url) && (!prefix || str(a.mime).startsWith(prefix))
     ? a
     : null;
 }
@@ -59,6 +60,29 @@ export function storyProfile(m: Row) {
     ),
     engine: e,
   };
+}
+export function readingExtent(m: Row): { count: number; label: Tri } | null {
+  if (!["documents", "printables"].includes(str(m.family))) return null;
+  const units = rows(obj(m.definition).units);
+  if (!units.length) return null;
+  let pages = 0, known = true, pdf = false;
+  for (const unit of units) {
+    const source = asset(m, unit.assetId);
+    if (unit.kind === "pdf" || source?.mime === "application/pdf") {
+      pdf = true;
+      const count = Number(unit.pageCount || source?.pages);
+      if (Number.isSafeInteger(count) && count > 0) pages += count;
+      else known = false;
+    } else if (unit.kind === "image" || str(source?.mime).startsWith("image/")) pages++;
+    else known = false;
+  }
+  if (known) return { count: pages, label: pages === 1 ? ["page", "page", "صفحة"] : ["pages", "pages", "صفحات"] };
+  return { count: units.length, label: pdf ? units.length === 1 ? ["document", "document", "مستند"] : ["documents", "documents", "مستندات"] : units.length === 1 ? ["section", "partie", "جزء"] : ["sections", "parties", "أجزاء"] };
+}
+export function publishedOutputHref(m: Row, output: Row, locale: Locale, preview = false): string {
+  const fallback = safeMediaUrl(output.asset?.url) ? output.asset.url : "";
+  if (preview || m.family !== "documents" || !fallback || !/^[a-z0-9][a-z0-9._-]{1,119}$/.test(str(m.key)) || !/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(str(m.releaseId)) || !str(output.id)) return fallback;
+  return "/api/kidflix/documents/download?" + new URLSearchParams({ locale, key: m.key, release: m.releaseId, output: output.id });
 }
 export function capabilityFacts(m: Row, l: Locale) {
   const d = obj(m.definition),
@@ -118,9 +142,10 @@ export function capabilityFacts(m: Row, l: Locale) {
               ? "items"
               : "units";
   const count = rows(d[key]).length;
+  const extent = readingExtent(m);
   if (count)
     facts.push({
-      label: count + " " + labels[key as keyof typeof labels],
+      label: extent ? extent.count + " " + extent.label[l === "fr" ? 1 : l === "ar" ? 2 : 0] : count + " " + labels[key as keyof typeof labels],
       icon: "Layers",
     });
   if (

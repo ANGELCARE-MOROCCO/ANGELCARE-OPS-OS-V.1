@@ -11,7 +11,7 @@ import {
 } from "react";
 import { path, tr, world } from "../../catalogue";
 import { I } from "../../Icons";
-import { asset, capabilityFacts, readyOutputs, str, type Row } from "../model";
+import { asset, capabilityFacts, readingExtent, publishedOutputHref, readyOutputs, str, type Row } from "../model";
 import { local, t } from "../copy";
 import { Modal, type PlayerProps } from "../shared";
 import { SocialToolbar } from "../Social";
@@ -46,6 +46,7 @@ export function DetailWorkspace({
     outputs = readyOutputs(m),
     cover = asset(m, d.coverAssetId, "image/"),
     facts = capabilityFacts(m, l),
+    extent = readingExtent(m),
     tags = workspaceTags(d);
   const [tab, setTab] = useState("player"),
     [query, setQuery] = useState(""),
@@ -210,8 +211,8 @@ export function DetailWorkspace({
     },
     {
       icon: "Layers",
-      label: tr(profile.noun, l),
-      value: entries.length ? String(entries.length) : "",
+      label: tr(extent?.label || profile.noun, l),
+      value: extent ? String(extent.count) : entries.length ? String(entries.length) : "",
     },
     {
       icon: "FileText",
@@ -606,7 +607,7 @@ export function DetailWorkspace({
                       .join(" · ")}
                   </p>
                   <a
-                    href={o.asset.url}
+                    href={publishedOutputHref(m, o, l, !!p.preview)}
                     download
                     target="_blank"
                     rel="noopener noreferrer"

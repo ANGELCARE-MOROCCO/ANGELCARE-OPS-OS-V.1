@@ -1232,6 +1232,10 @@ export function enrichFamily(base: Family): Family {
       ref("assetId", "Source file", "Fichier source", "الملف الأصلي", "media", ["application/pdf", "image/"]),
       field("text", "Accessible text", "Texte accessible", "نص متاح", "textarea"),
     ]));
+  if (["documents", "printables", "learning", "planners"].includes(base.key)) {
+    const sources = collections.find(c => c.key === "units");
+    if (sources) merge(sources.fields, [num("pageCount", "PDF page count", "Nombre de pages PDF", "عدد صفحات PDF", 0, 100000)]);
+  }
   for (const c of collections)
     for (const f of c.fields) {
       if (base.key === "activities" && f.key === "answer") f.localized = false;
@@ -1239,7 +1243,11 @@ export function enrichFamily(base: Family): Family {
         Object.assign(f, {
           reference: "media",
           mime:
-            base.key === "printables"
+            base.key === "documents"
+              ? ["application/pdf", "image/"]
+              : base.key === "learning"
+                ? ["application/pdf", "image/", "video/", "audio/"]
+                : base.key === "printables"
               ? ["application/pdf", "image/"]
               : base.key === "video"
                 ? ["video/"]
@@ -1249,7 +1257,7 @@ export function enrichFamily(base: Family): Family {
                       base.key === "visual-cards" ||
                       base.key === "presentations"
                     ? ["image/"]
-                    : undefined,
+                    : f.mime,
         });
       if (f.key === "narrationAssetId") f.localized = true;
       if (f.key === "nativeId") f.reference = "offers";

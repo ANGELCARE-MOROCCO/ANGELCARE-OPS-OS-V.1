@@ -158,6 +158,7 @@ export function PreviewWindow({
     [error, setError] = useState("");
   useEffect(() => {
     let active = true;
+    setBindings({}); setError("");
     if (releaseId) return;
     import("./ui")
       .then(({ mutate }) => mutate({ action: "preview", id, locale: lang }))
@@ -170,7 +171,7 @@ export function PreviewWindow({
     return () => {
       active = false;
     };
-  }, [id, releaseId, lang]);
+  }, [id, releaseId, lang, q.value?.revision]);
   const selected = (q.value?.manifest?.editionLocale as Locale) || lang,
     r = q.value
       ? releaseId
@@ -232,6 +233,7 @@ export function PreviewWindow({
         {error && <p role="alert">{error}</p>}
         <State {...q} retry={q.reload}>
           <RuntimePreview
+            key={[id, releaseId || q.value?.revision || 0, selected].join(":")}
             record={r}
             bindings={
               releaseId ? object(q.value?.manifest?.bindings) : bindings

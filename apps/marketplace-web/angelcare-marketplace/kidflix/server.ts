@@ -1,11 +1,11 @@
 import "server-only";
+import { safeMediaUrl } from "./media-url";
 import { createServiceClient } from "@/lib/supabase/server";
 import {
   defaultHome,
   emptyCatalogue,
   isLocale,
   normalizeEdition,
-  safeImage,
   world,
   type Catalogue,
   type HomeConfig,
@@ -108,7 +108,7 @@ export function card(
     family: family.key,
     title: str(row.title, 300),
     summary: str(localized.summary, 900),
-    image: safeImage(image) ? image : "",
+    image: safeMediaUrl(image) ? image : "",
     imageAlt: str(m.alt, 400) || str(row.title, 300),
     audience: str(row.audience, 40),
     ageMin: numeric(d.ageMin),
@@ -273,10 +273,10 @@ export function publicDetail(m: Record<string, any>) {
       return [
         id,
         {
-          url: safeImage(a.url) ? a.url : "",
+          url: safeMediaUrl(a.url) ? a.url : "",
           mime: str(a.mime, 80),
           alt: str(a.alt, 400),
-          poster: safeImage(a.poster) ? a.poster : "",
+          poster: safeMediaUrl(a.poster) ? a.poster : "",
           bytes: Number(a.bytes) || 0,
         },
       ];

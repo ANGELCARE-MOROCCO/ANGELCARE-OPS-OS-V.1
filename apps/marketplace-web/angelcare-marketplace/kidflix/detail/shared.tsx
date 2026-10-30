@@ -8,6 +8,7 @@ import {
   type ButtonHTMLAttributes,
 } from "react";
 import { I } from "../Icons";
+import { isNativeMediaUrl } from "../media-url";
 import type { Locale } from "../catalogue";
 import { asset, obj, rows, str, type Row } from "./model";
 import { local, t } from "./copy";
@@ -169,7 +170,7 @@ export function Source({
       <p role="status">{locale === "fr" ? "Le lecteur de votre navigateur gère les pages du PDF. Si l’aperçu est vide, ouvrez le fichier dans un nouvel onglet." : locale === "ar" ? "يتولى قارئ المتصفح عرض صفحات PDF. إذا كانت المعاينة فارغة، افتح الملف في تبويب جديد." : "Your browser’s PDF reader handles the pages. If the preview is blank, open the file in a new tab."}</p>
       <iframe key={a.url + ":" + pdfRevision}
         className={s.pdf}
-        src={(m.releaseId && m.key && typeof id === "string" ? "/api/kidflix/reader?" + new URLSearchParams({locale, key:m.key, asset:id, release:m.releaseId}) : a.url) + "#toolbar=1"}
+        src={(!isNativeMediaUrl(a.url) && m.releaseId && m.key && typeof id === "string" ? "/api/kidflix/reader?" + new URLSearchParams({locale, key:m.key, asset:id, release:m.releaseId}) : a.url) + "#toolbar=1"}
         title={alt || "PDF"}
         loading="eager"
       />

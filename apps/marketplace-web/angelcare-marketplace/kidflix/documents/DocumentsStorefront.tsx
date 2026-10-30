@@ -34,7 +34,7 @@ const words = {
   subject: ["Subject", "Matière", "المادة"],
   theme: ["Theme / Season", "Thème / Saison", "الموضوع / الموسم"],
   format: ["Format", "Format", "التنسيق"],
-  language: ["Language", "Langue", "اللغة"],
+  language: ["Content language", "Langue du contenu", "لغة المحتوى"],
   age: ["Age Group", "Âge", "الفئة العمرية"],
   sort: ["Sort by", "Trier par", "الترتيب"],
   download: ["Download document", "Télécharger le document", "تنزيل الوثيقة"],
@@ -730,7 +730,7 @@ export function DocumentsStorefront({
             "language",
             t("language", locale),
             tr(
-              ["Current Language", "Langue actuelle", "اللغة الحالية"],
+              ["English content", "Contenu en français", "المحتوى العربي"],
               locale,
             ),
             [
@@ -1061,6 +1061,10 @@ export function DocumentsStorefront({
                 )}
               </p>
               <button onClick={reset}>{t("reset", locale)}</button>
+              {(!filters.language || filters.language === locale) && (data.facets.language || []).some(l => l !== locale) ? <div>
+                <p>{tr(["Published documents are available in other content languages.", "Des documents publiés sont disponibles dans d’autres langues de contenu.", "توجد وثائق منشورة بلغات محتوى أخرى."], locale)}</p>
+                <button onClick={() => change("language", "all")}>{tr(["Show all content languages", "Afficher toutes les langues de contenu", "عرض جميع لغات المحتوى"], locale)}</button>
+              </div> : null}
             </div>
           ) : null}
         </div>

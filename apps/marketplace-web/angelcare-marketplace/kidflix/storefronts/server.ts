@@ -1,7 +1,8 @@
 import 'server-only';
+import {safeMediaUrl} from '../media-url';
 import {createServiceClient}from '@/lib/supabase/server';
 import {card,filters,publicHost,getExperience}from '../server';
-import {emptyCatalogue,world,safeImage,type Locale}from '../catalogue';
+import {emptyCatalogue,world,type Locale}from '../catalogue';
 import {outputReadiness}from '../../digital-customer-experience/experience-contract';
 import {blankFacts,normalize,type StorefrontData,type Item}from './model';
 import {defaults}from './themes';
@@ -18,7 +19,7 @@ export function project(row:any,locale:Locale):Item|null {
  facts.certificate=r.family==='learning'&&d.certificatePolicy?.enabled===true&&Array.isArray(d.certificatePolicy.locales)&&d.certificatePolicy.locales.includes(locale);
  const raw=object(row.discovery),strings=(v:unknown)=>Array.isArray(v)?v.filter((x):x is string=>typeof x==='string').slice(0,100):[];
  const discovery:ReferenceMetadata={subtype:typeof raw.subtype==='string'?raw.subtype:'',paper:typeof raw.paper==='string'?raw.paper:'',orientation:typeof raw.orientation==='string'?raw.orientation:'',colourMode:typeof raw.colourMode==='string'?raw.colourMode:'',focus:strings(raw.focus),themes:strings(raw.themes),needs:strings(raw.needs),quick:strings(raw.quick),printAllowed:raw.printAllowed===true,contentLocale:['en','fr','ar'].includes(raw.contentLocale)?raw.contentLocale:locale};
- const previewImages=Array.isArray(row.previewImages)?row.previewImages.filter((x:any)=>x&&safeImage(x.url)&&typeof x.alt==='string').slice(0,3).map((x:any)=>({url:x.url,alt:x.alt.slice(0,500)})):[];return {...r,formats:facts.formats,facts,discovery,previewImages};
+ const previewImages=Array.isArray(row.previewImages)?row.previewImages.filter((x:any)=>x&&safeMediaUrl(x.url)&&typeof x.alt==='string').slice(0,3).map((x:any)=>({url:x.url,alt:x.alt.slice(0,500)})):[];return {...r,formats:facts.formats,facts,discovery,previewImages};
 }
 export async function getStorefront(host:string,locale:Locale,family:string,input:Record<string,unknown>={},withCurated=true):Promise<StorefrontData>{
  if(!world(family))throw Error('Unknown world');

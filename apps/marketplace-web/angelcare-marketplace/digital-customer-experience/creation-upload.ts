@@ -25,6 +25,7 @@ export type UploadCheckpoint = {
   collection: string;
   unit: string;
   field: string;
+  locale?: "en" | "fr" | "ar";
 };
 const MEDIA = "/api/angelcare-marketplace/admin/media";
 export async function nativeMediaPost(
@@ -101,7 +102,7 @@ export async function sourceMetadata(
 }
 export function queueFile(
   file: File,
-  target: Pick<UploadCheckpoint, "resource" | "collection" | "unit" | "field">,
+  target: Pick<UploadCheckpoint, "resource" | "collection" | "unit" | "field" | "locale">,
 ): UploadCheckpoint {
   return {
     id: creationId(),

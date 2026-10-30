@@ -335,12 +335,19 @@ export function localizedWrite(
   localized = true,
 ): Data {
   const next = { ...data, [key]: value };
-  if (localized && (typeof value === "string" || value === null))
+  if (localized && (typeof value === "string" || typeof value === "number" || value === null))
     next.locales = {
       ...object(data.locales),
       [locale]: { ...object(object(data.locales)[locale]), [key]: value },
     };
   return next;
+}
+/** Selecting an existing edition must never overwrite its authored title. */
+export function changeCreationLanguage(record: Partial<DceRecord>, locale: Locale): Partial<DceRecord> {
+  const data = object(record.data), editions = object(data.locales), edition = object(editions[locale]);
+  const title = text(edition.title) || text(record.title);
+  const required = Array.isArray(data.requiredLocales) ? data.requiredLocales.filter((l): l is Locale => ["en", "fr", "ar"].includes(String(l))) : [];
+  return { ...record, title, data: { ...data, defaultLocale: locale, requiredLocales: record.id ? Array.from(new Set([...required, locale])) : [locale], locales: { ...editions, [locale]: { ...edition, title } } } };
 }
 export function writeTitle(
   record: Partial<DceRecord>,
@@ -415,6 +422,27 @@ export function appendSource(
   let next: Partial<DceRecord> = { ...record, data: d };
   if (!text(record.title)) next = writeTitle(next, title, locale);
   return { record: next, collection, unit };
+}
+/** Apply only a completed native upload to its retained placement and language. */
+export function applyCreationMedia(record: Partial<DceRecord>, target: { collection: string; unit: string; field: string; locale?: Locale }, assetId: string, metadata: { duration?: number; pageCount?: number } = {}): Partial<DceRecord> {
+  const d = object(record.data), locale = target.locale || (d.defaultLocale as Locale) || "fr";
+  if (target.collection === "@root") return { ...record, data: localizedWrite(d, target.field, assetId, locale, true) };
+  return { ...record, data: { ...d, [target.collection]: array(d[target.collection]).map(row => {
+    if (row.id !== target.unit) return row;
+    const previous = text(object(object(row.locales)[locale])[target.field] ?? row[target.field]);
+    const next = localizedWrite(row, target.field, assetId, locale, true);
+    if (target.field === "assetId") {
+      const local = { ...object(object(next.locales)[locale]) };
+      if (previous !== assetId) {
+        delete next.pageCount; delete next.duration;
+        delete local.pageCount; delete local.duration;
+      }
+      if (metadata.duration) { next.duration = metadata.duration; local.duration = metadata.duration; }
+      if (metadata.pageCount) { next.pageCount = metadata.pageCount; local.pageCount = metadata.pageCount; }
+      next.locales = { ...object(next.locales), [locale]: local };
+    }
+    return next;
+  }) } };
 }
 export function updateUnit(
   record: Partial<DceRecord>,

@@ -1,4 +1,5 @@
 import { parseCsv } from "./imports";
+import { safeMediaUrl } from "../kidflix/media-url";
 import {
   authoringFamilies,
   authoringLocales,
@@ -692,7 +693,7 @@ export async function validateScoped(
         "Media is archived, failed or expired: " + id,
       );
     const url = m.public_url || m.desktop_url;
-    if (!url) add("media", "MEDIA_URL", "Media delivery URL missing: " + id);
+    if (!safeMediaUrl(url)) add("media", "MEDIA_URL", "Choose a usable native delivery URL for this media: " + id);
     object(bindings.media)[id] = {
       id,
       url: url || "",

@@ -196,6 +196,8 @@ export function editionProjection(r: DceRecord, locale: Locale): DceRecord {
     "backAssetId",
     "narrationAssetId",
     "captionAssetId",
+    "pageCount",
+    "duration",
   ];
   const mediaOverride = (dst: Data, src: Data) => {
     const local = object(object(src.locales)[locale]);

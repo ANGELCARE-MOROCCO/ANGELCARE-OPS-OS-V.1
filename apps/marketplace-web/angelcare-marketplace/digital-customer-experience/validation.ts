@@ -51,6 +51,8 @@ export function capabilityIssues(
     add(n.path, "LEGACY_CONFLICT", n.message);
   if (!family || !["experience", "template", "bundle"].includes(record.kind))
     return issues;
+  if (["experience", "bundle"].includes(record.kind) && !text(object(object(d.locales)[text(d.defaultLocale)]).coverAssetId || d.coverAssetId))
+    issues.push({ path: "coverAssetId", code: "PUBLIC_COVER_REQUIRED", severity: "error", message: ["Choose the image for this resource’s storefront card.", "Choisissez l’image de la carte publique de cette ressource.", "اختر صورة بطاقة هذا المورد في الواجهة العامة."] });
   issues.push(...depthIssues(d, family));
   if (record.kind !== "template")
     issues.push(...detailExperienceIssues(family, d));
@@ -503,9 +505,10 @@ export function mediaSlots(
     if (typeof value === "string" && value && mime?.length)
       slots.push({ path, id: value, mime });
   };
-  for (const f of family.fields) add(f.key, data[f.key], f.mime);
+  add("coverAssetId", data.coverAssetId, ["image/"]);
+  for (const f of family.fields) if (f.key !== "coverAssetId") add(f.key, data[f.key], f.mime);
   for (const c of family.collections)
-    for (const row of array(data[c.key]))
+    for (const row of array(data[c.key]).filter(row => c.key !== "outputs" || row.enabled !== false))
       for (const f of c.fields) {
         add(c.key + "." + text(row.id) + "." + f.key, row[f.key], f.mime);
         for (const [locale, localized] of Object.entries(object(row.locales)))

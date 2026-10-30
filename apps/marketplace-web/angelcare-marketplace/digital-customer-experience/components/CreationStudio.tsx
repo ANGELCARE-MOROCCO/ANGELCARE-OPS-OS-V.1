@@ -20,6 +20,8 @@ import {
   CREATION_PLANS,
   creationModeLabel,
   appendSource,
+  applyCreationMedia,
+  changeCreationLanguage,
   completeCreation,
   creationId,
   creationIssues,
@@ -537,6 +539,8 @@ export function CreationStudio({
   useEffect(() => {
     if (!record) return;
     const ids = new Set<string>();
+    const cover = text(object(object(data.locales)[language]).coverAssetId || data.coverAssetId);
+    if (cover) ids.add(cover);
     for (const c of f?.collections || [])
       for (const row of array(data[c.key]))
         for (const def of c.fields)
@@ -625,29 +629,10 @@ export function CreationStudio({
           })();
       if (
         !entriesRef.current.some((e) => e.clientId === checkpoint.resource) ||
-        !alive.current
+        !alive.current || !queueRef.current.some(q => q.id === id)
       )
         return;
-      change(checkpoint.resource, (r) => {
-        const d = object(r.data);
-        if (checkpoint.collection === "@root")
-          return {
-            ...r,
-            data: localizedWrite(
-              d,
-              checkpoint.field,
-              done.assetId!,
-              isLocale(d.defaultLocale) ? d.defaultLocale : "fr",
-              false,
-            ),
-          };
-        const updates: Data = { [checkpoint.field]: done.assetId! };
-        if (checkpoint.field === "assetId") {
-          if (done.duration) updates.duration = done.duration;
-          if (done.pageCount) updates.pageCount = done.pageCount;
-        }
-        return updateUnit(r, checkpoint.collection, checkpoint.unit, updates);
-      });
+      change(checkpoint.resource, r => applyCreationMedia(r, checkpoint, done.assetId!, done));
       const local = latestAssets.current[id];
       if (done.assetId)
         setAsset(done.assetId, {
@@ -755,6 +740,7 @@ export function CreationStudio({
         collection: collectionKey,
         unit: unitId,
         field,
+        locale: language,
       });
       files.current.set(q.id, file);
       const url = URL.createObjectURL(file);
@@ -919,6 +905,8 @@ export function CreationStudio({
     }
     entry = await saveOne(id);
     if (entry.savedVersion !== entry.version) entry = await saveOne(id);
+    if (entry.savedVersion !== entry.version) throw Error(t("Save the latest changes before publishing.", "Enregistrez les dernières modifications avant publication.", "احفظ آخر التغييرات قبل النشر."));
+    const sentVersion = entry.version, sentSignature = signature(entry.record);
     const l = entry.record.data?.defaultLocale as Locale;
     const inspection = await mutate<any>({
       action: "creation_inspect",
@@ -938,6 +926,8 @@ export function CreationStudio({
           ),
       );
     }
+    if (entriesRef.current.find(e => e.clientId === id)?.version !== sentVersion)
+      throw Error(t("The resource changed during validation. Publish its latest saved version.", "La ressource a changé pendant le contrôle. Publiez sa dernière version enregistrée.", "تغير المورد أثناء الفحص. انشر آخر نسخة محفوظة."));
     if (policy.value.independentReview) {
       await mutate({
         action: "master_edition_review",
@@ -950,8 +940,8 @@ export function CreationStudio({
           e.clientId === id
             ? {
                 ...e,
-                result: { review: true, signature: signature(e.record) },
-                status: "review",
+                result: { review: true, signature: sentSignature },
+                status: e.version === sentVersion ? "review" : "saved",
               }
             : e,
         ),
@@ -988,8 +978,8 @@ export function CreationStudio({
         e.clientId === id
           ? {
               ...e,
-              result: { ...result, signature: signature(e.record) },
-              status: "published",
+              result: { ...result, signature: sentSignature },
+              status: e.version === sentVersion ? "published" : "saved",
               error: undefined,
             }
           : e,
@@ -1044,48 +1034,35 @@ export function CreationStudio({
   }
   function changeContentLanguage(l: Locale) {
     rememberLanguage(l);
-    if (current)
-      change(current.clientId, (r) => ({
-        ...r,
-        data: {
-          ...object(r.data),
-          defaultLocale: l,
-          requiredLocales: r.id
-            ? Array.from(new Set([...arrayLocales(r.data?.requiredLocales), l]))
-            : [l],
-          locales: {
-            ...object(r.data?.locales),
-            [l]: {
-              ...object(object(r.data?.locales)[l]),
-              title: text(r.title),
-            },
-          },
-        },
-      }));
+    if (current) change(current.clientId, r => changeCreationLanguage(r, l));
   }
   const fieldControl = (def: Definition, row?: Data, c?: Collection) => {
     const key = c?.key || "@root",
       unit = text(row?.id),
-      target = row || data;
+      target = row || data,
+      localized = fieldIsLocalized(def) || def.reference === "media" || /assetId$/i.test(def.key) || ["pageCount", "duration"].includes(def.key);
     const changeValue = (value: Data[string]) => {
       if (def.reference === "media" || /assetId$/i.test(def.key))
         putQueue(
           queueRef.current.filter(
             (q) =>
-              !(
-                q.resource === current!.clientId &&
-                q.collection === key &&
-                q.unit === unit &&
-                q.field === def.key
-              ),
+              (() => {
+                const same = q.resource === current!.clientId && q.collection === key && q.unit === unit && q.field === def.key;
+                if (same) controllers.current.get(q.id)?.abort();
+                return !same;
+              })(),
           ),
         );
+      if (def.reference === "media" || /assetId$/i.test(def.key)) {
+        change(current!.clientId, r => applyCreationMedia(r, { collection: key, unit, field: def.key, locale: language }, text(value)));
+        return;
+      }
       const next = localizedWrite(
         target,
         def.key,
         value,
         language,
-        fieldIsLocalized(def),
+        localized,
       );
       if (row && c) changeRow(c.key, unit, next);
       else patch(next);
@@ -1119,14 +1096,14 @@ export function CreationStudio({
       <CreationField
         key={def.key}
         def={def}
-        value={target[def.key]}
+        value={localized ? object(object(target.locales)[language])[def.key] ?? target[def.key] : target[def.key]}
         disabled={busy || !boot.actor.rights.manage}
         onChange={changeValue}
         onBrowse={browseControl}
         onUpload={
           boot.actor.rights.media ? (d) => attachFile(d, key, unit) : undefined
         }
-        referenceName={assets[text(target[def.key])]?.name}
+        referenceName={assets[text(localized ? object(object(target.locales)[language])[def.key] ?? target[def.key] : target[def.key])]?.name}
         path={(c ? c.key + "." + unit + "." : "") + def.key}
       />
     );
@@ -1575,18 +1552,7 @@ export function CreationStudio({
                         q.state === "ready" &&
                         q.assetId,
                     )) {
-                      recovered =
-                        q.collection === "@root"
-                          ? {
-                              ...recovered,
-                              data: {
-                                ...object(recovered.data),
-                                [q.field]: q.assetId!,
-                              },
-                            }
-                          : updateUnit(recovered, q.collection, q.unit, {
-                              [q.field]: q.assetId!,
-                            });
+                      recovered = applyCreationMedia(recovered, q, q.assetId!, q);
                     }
                     return signature(recovered) === signature(e.record)
                       ? e
@@ -2537,6 +2503,15 @@ export function CreationStudio({
               </main>
               <aside className={s.inspector}>
                 <section className={s.essentialCard}>
+                  <div className={s.sectionHeading}><h3>{t("Storefront cover", "Couverture publique", "غلاف الواجهة العامة")}</h3><Icon name="Image" size={18} /></div>
+                  <p>{t("The image visitors click to open this resource. A square PNG works across all languages.", "L’image sur laquelle les visiteurs cliquent pour ouvrir cette ressource. Un PNG carré convient aux trois langues.", "الصورة التي ينقر عليها الزائر لفتح المورد. تناسب صورة PNG مربعة اللغات الثلاث.")}</p>
+                  {(() => {
+                    const id = text(object(object(data.locales)[language]).coverAssetId || data.coverAssetId), cover = assets[id];
+                    return cover?.url && cover.mime?.startsWith("image/") ? <img className={s.coverPreview} src={cover.url} alt={t("Selected editorial cover", "Couverture éditoriale choisie", "الغلاف التحريري المحدد")} /> : <div className={s.coverPlaceholder}><Icon name="Image" size={30} /><span>{t("Choose your cover", "Choisissez votre couverture", "اختر صورة الغلاف")}</span></div>;
+                  })()}
+                  {fieldControl({ key: "coverAssetId", type: "reference", reference: "media", localized: true, mime: ["image/png"], required: true, classification: "public", label: words("Editorial cover", "Couverture éditoriale", "الغلاف التحريري") })}
+                </section>
+                <section className={s.essentialCard}>
                   <div className={s.sectionHeading}>
                     <h3>
                       {t(
@@ -2792,7 +2767,7 @@ export function CreationStudio({
                       {current.error}
                     </p>
                   )}
-                  {current.result?.publicPath && record.key ? <PublicReachability resourceKey={record.key} language={language} revision={record.revision} /> : null}
+                  {current.result?.publicPath && record.key ? <PublicReachability resourceKey={record.key} language={language} revision={record.revision} onLocate={showIssue} /> : null}
                   {current.result?.publicPath && (
                     <a
                       className={s.publicLink}
@@ -3080,7 +3055,4 @@ export function CreationStudio({
       </div>
     </Dialog>
   );
-}
-function arrayLocales(value: unknown): Locale[] {
-  return Array.isArray(value) ? value.filter(isLocale) : [];
 }

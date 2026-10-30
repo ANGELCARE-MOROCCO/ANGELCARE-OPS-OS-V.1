@@ -15,6 +15,7 @@ import {
   engineFor,
   obj,
   readyOutputs,
+  publishedOutputHref,
   rows,
   str,
   validReturn,
@@ -279,7 +280,7 @@ function Files({ m, d, locale }: PlayerProps) {
             onClick={() =>
               emitVisitor(m.key, locale, m.releaseId, "download_intent")
             }
-            href={output.asset.url}
+            href={publishedOutputHref(m, output, locale)}
             target="_blank"
             rel="noopener noreferrer"
             download

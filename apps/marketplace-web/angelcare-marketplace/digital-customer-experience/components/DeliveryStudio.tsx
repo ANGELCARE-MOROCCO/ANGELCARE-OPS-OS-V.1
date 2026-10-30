@@ -128,7 +128,7 @@ export function DeliveryStudio({
       onChange({ certificatePolicy: { ...policy, ...p } });
   return (
     <div className={s.helpList}>
-      {record.id && record.key && ["experience", "bundle"].includes(record.kind || "") ? <PublicReachability resourceKey={record.key} language={language} revision={record.revision} /> : null}
+      {record.id && record.key && ["experience", "bundle"].includes(record.kind || "") ? <PublicReachability resourceKey={record.key} language={language} revision={record.revision} onLocate={onLocate} /> : null}
       <div className={s.notice}>
         <T
           v={[

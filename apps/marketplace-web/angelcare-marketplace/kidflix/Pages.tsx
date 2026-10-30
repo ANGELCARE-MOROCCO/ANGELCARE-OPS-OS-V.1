@@ -2,7 +2,8 @@
 import Link from "next/link";
 import { useEffect } from "react";
 import { copy } from "./copy";
-import { path, safeImage, tr, world, type Locale } from "./catalogue";
+import { safeMediaUrl } from "./media-url";
+import { path, tr, world, type Locale } from "./catalogue";
 import { useGuest } from "./continuity";
 import { I } from "./Icons";
 import s from "./kidflix.module.css";
@@ -58,7 +59,7 @@ export function ResourceOverview({
   function Media({ id }: { id: string }) {
     const a = obj(media[id]),
       url = str(a.url);
-    if (!safeImage(url)) return null;
+    if (!safeMediaUrl(url)) return null;
     return a.mime?.startsWith("image/") ? (
       <img src={url} alt={str(a.alt) || m.title} loading="lazy" />
     ) : a.mime?.startsWith("audio/") ? (
@@ -119,7 +120,7 @@ export function ResourceOverview({
           </div>
         </div>
         <div>
-          {safeImage(cover.url) ? (
+          {safeMediaUrl(cover.url) ? (
             <img
               src={cover.url}
               alt={str(cover.alt) || m.title}
@@ -165,7 +166,7 @@ export function ResourceOverview({
           <div className={s.outputLinks}>
             {outputs.map((o, i) => {
               const a = obj(media[str(o.assetId) || str(o.sourceAssetId)]);
-              return safeImage(a.url) &&
+              return safeMediaUrl(a.url) &&
                 [
                   "application/pdf",
                   "image/png",

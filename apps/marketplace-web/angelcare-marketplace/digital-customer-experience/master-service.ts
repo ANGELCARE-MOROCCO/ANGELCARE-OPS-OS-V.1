@@ -11,6 +11,7 @@ import { MarketplaceError } from "../server/errors";
 import type { MarketplaceRequestContext as Context } from "../domain/types";
 import { authorize, record, validateScoped, native } from "./repository";
 import { publicManifest, isId, scoreQuestions } from "./model";
+import { publicMediaReadiness } from "./public-readiness";
 import {
   stable,
   editionDefinition,
@@ -222,6 +223,8 @@ export async function inspectEdition(
         "Choose a published assessment in this language and scope.",
       );
   }
+  const publicMedia = publicMediaReadiness(publicManifest(projected, v.bindings), ["experience", "bundle"].includes(r.kind));
+  v.validation.errors.push(...publicMedia.issues);
   const unique = new Map<string, (typeof v.validation.errors)[number]>();
   for (const issue of v.validation.errors) {
     let path = issue.path
@@ -258,6 +261,7 @@ export async function inspectEdition(
     coverage: ready.coverage,
     definitionHash: editionHash(r, l),
     outcomes: outcomePlan(projected, v.bindings),
+    publicMedia,
   };
 }
 export async function editionCommand(c: Context, cmd: Command) {

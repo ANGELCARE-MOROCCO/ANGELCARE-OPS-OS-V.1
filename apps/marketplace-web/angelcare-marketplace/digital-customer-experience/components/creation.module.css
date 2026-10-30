@@ -1775,3 +1775,6 @@
   font-weight: 400;
   font-size: 11px;
 }
+
+.coverPreview { display:block; width:100%; max-height:210px; aspect-ratio:1; object-fit:cover; border-radius:14px; background:#eef5ff; margin:12px 0; }
+.coverPlaceholder { display:grid; place-items:center; gap:9px; min-height:125px; padding:18px; margin:12px 0; border:1px dashed #b6cbea; border-radius:14px; background:linear-gradient(135deg,#eff8ff,#fff1f7); color:#2357a1; font-weight:650; text-align:center; }

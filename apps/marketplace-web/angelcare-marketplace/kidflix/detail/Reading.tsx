@@ -81,13 +81,13 @@ export function Reading(props: PlayerProps) {
   }
   const source = unit ? (
     <>
-      <Source
+      {str(unit.assetId) || ["pdf", "image"].includes(str(unit.kind)) ? <Source
         m={m}
         locale={locale}
         id={unit.assetId}
         alt={local(unit, "alt", locale) || local(unit, "title", locale)}
         pdf={unit.kind === "pdf" || engine === "pdf"}
-      />
+      /> : null}
       {!printable && engine !== "slideshow" ? (
         <div className={s.storyText}>
           <h2>{local(unit, "title", locale)}</h2>

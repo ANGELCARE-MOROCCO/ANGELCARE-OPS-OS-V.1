@@ -24,7 +24,7 @@ export const profiles: Record<string, WorkspaceProfile> = {
     primary: ["Read", "Lire", "قراءة"],
     index: ["Outline & pages", "Sommaire et pages", "الفهرس والصفحات"],
     tools: ["Reading desk", "Repères de lecture", "مكتب القراءة"],
-    noun: ["pages", "pages", "صفحات"],
+    noun: ["sections", "parties", "أجزاء"],
     shape: "paper",
   },
   printables: {
@@ -38,7 +38,7 @@ export const profiles: Record<string, WorkspaceProfile> = {
       "مجموعة أوراق العمل",
     ],
     tools: ["Prepare & print", "Préparer et imprimer", "تجهيز وطباعة"],
-    noun: ["pages", "pages", "صفحات"],
+    noun: ["sections", "parties", "أجزاء"],
     shape: "paper",
   },
   stories: {
