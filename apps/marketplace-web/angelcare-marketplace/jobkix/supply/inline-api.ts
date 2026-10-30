@@ -35,8 +35,8 @@ const bound=(x:unknown,min:number,max:number,fallback:number)=>Number.isInteger(
 const clean=(value:unknown):string=>{
  if(value===null||value===undefined)return '';
  if(typeof value==='boolean')return value?'yes':'no';
- if(Array.isArray(value))return value.map(x=>String(x??'')).join(', ').slice(0,2000);
- if(typeof value==='object')return JSON.stringify(value).slice(0,2000);
+ if(Array.isArray(value))return value.filter(x=>typeof x==='string'||typeof x==='number').map(x=>String(x??'').trim()).filter(Boolean).join('\n').slice(0,12000);
+ if(typeof value==='object')return JSON.stringify(value).slice(0,12000);
  return String(value).trim().slice(0,12000);
 };
 const path=(record:unknown,dotted:string):unknown=>{

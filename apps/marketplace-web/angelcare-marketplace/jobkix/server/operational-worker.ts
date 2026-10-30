@@ -34,5 +34,12 @@ export async function processOperationalMail(){
 export async function processScheduledOperations(){
  const db=await createServiceClient(),result:Record<string,unknown>={};
  for(const [phase,rpc] of [['expiry','jobkix_process_expiries'],['alerts','jobkix_process_search_alerts'],['interviews','jobkix_process_interview_reminders']] as const){const response=await db.rpc(rpc);if(response.error)throw Error('JOBKIX_'+phase.toUpperCase()+'_UNAVAILABLE');result[phase]=response.data;}
+ // Deployment compatibility: enable only AFTER the additive R3 SQL has been staging-verified and manually installed.
+ // Existing scheduled native notification delivery is never made dependent on an uninstalled R3 function.
+ if(process.env.JOBKIX_R3_EXTERNAL_ALERTS_ENABLED==='true'){
+  const response=await db.rpc('jobkix_r3_process_external_search_alerts');
+  if(response.error)throw Error('JOBKIX_EXTERNAL_ALERTS_UNAVAILABLE');
+  result.externalAlerts=response.data;
+ }
  return result;
 }

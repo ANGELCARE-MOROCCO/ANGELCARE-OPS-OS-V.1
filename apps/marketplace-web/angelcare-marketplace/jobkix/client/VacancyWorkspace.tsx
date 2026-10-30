@@ -8,7 +8,7 @@ import {v7} from '../vacancy-pm7-copy';
 import s from '../vacancy-pm7.module.css';
 export type VacancyPanelId='overview'|'role'|'fit'|'terms'|'international'|'employer'|'apply';
 export interface VacancyPane{id:VacancyPanelId;label:string;content:ReactNode}
-export function VacancyWorkspace({locale,panels,applyHref,employerHref,employerName,actions,active,alreadyApplied,applyOpen}:{locale:Locale;panels:VacancyPane[];applyHref:string;employerHref:string;employerName:string;actions:ReactNode;active:boolean;alreadyApplied:boolean;applyOpen:boolean}){
+export function VacancyWorkspace({locale,panels,applyHref,external=false,employerHref,employerName,actions,active,alreadyApplied,applyOpen}:{locale:Locale;panels:VacancyPane[];applyHref:string;external?:boolean;employerHref:string|null;employerName:string;actions:ReactNode;active:boolean;alreadyApplied:boolean;applyOpen:boolean}){
  const router=useRouter(),copy=v7(locale),[selected,setSelected]=useState<VacancyPanelId>('overview');
  const tabRefs=useRef<Array<HTMLButtonElement|null>>([]),lastUrl=useRef('');
  useEffect(()=>{if(applyOpen)setSelected('apply');},[applyOpen]);
@@ -44,6 +44,7 @@ export function VacancyWorkspace({locale,panels,applyHref,employerHref,employerN
  }
  const startApply=()=>{
   if(!active)return;
+  if(external){window.location.assign(applyHref);return;}
   if(alreadyApplied){select('apply');return;}
   // Server initializes application documents and restores drafts with ?apply=1.
   if(!new URLSearchParams(window.location.search).has('apply')){
@@ -64,7 +65,7 @@ export function VacancyWorkspace({locale,panels,applyHref,employerHref,employerN
     <div className={s.actionArea} aria-label={copy.saveShare}>{actions}</div>
     <div className={s.consentHint}><FileCheck2 size={14} aria-hidden="true"/>{copy.declared}</div>
    </div>
-   <div className={s.sideCard}><div className={s.sideEyebrow}>{copy.company}</div><h3>{employerName}</h3><p>{copy.employerWorld}</p><Link className={s.sideLink} href={employerHref}>{copy.viewEmployer}<ArrowUpRight size={15} aria-hidden="true"/></Link></div>
+   <div className={s.sideCard}><div className={s.sideEyebrow}>{copy.company}</div><h3>{employerName}</h3><p>{copy.employerWorld}</p>{employerHref?<Link className={s.sideLink} href={employerHref}>{copy.viewEmployer}<ArrowUpRight size={15} aria-hidden="true"/></Link>:null}</div>
    <div className={`${s.sideCard} ${s.trustCard}`}><ShieldCheck size={19} aria-hidden="true"/><strong>{copy.noScore}</strong><p>{copy.fitNotice}</p><button onClick={()=>select('fit')} type="button" className={s.sideLink}>{copy.fit} <ArrowRight size={15} aria-hidden="true"/></button></div>
   </aside>
  </div>;

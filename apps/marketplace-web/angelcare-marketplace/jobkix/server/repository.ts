@@ -85,7 +85,16 @@ const readPublicSearch=cache(async(query:string):Promise<SearchResult>=>{
  return {items:result.items.map(object),total:result.total,page:result.page,pageSize:result.pageSize};
 });
 export async function searchVacancies(filters:SearchFilters):Promise<SearchResult>{return readPublicSearch(filtersParams(filters).toString());}
-export const publicVacancy=cache(async(id:string):Promise<DataRow|null>=>{const value=await rpc('jobkix_public_vacancy',{p_vacancy:uuid(id),p_allow_closed:true});return value===null?null:object(value);});
+export const publicVacancy=cache(async(id:string):Promise<DataRow|null>=>{
+ const vacancyId=uuid(id);
+ const native=await rpc('jobkix_public_vacancy',{p_vacancy:vacancyId,p_allow_closed:true});
+ if(native!==null)return object(native);
+ const external=await rpc('jobkix_r3_external_public_vacancy',{p_vacancy:vacancyId});
+ return external===null?null:object(external);
+});
+export async function externalSavedRow(id:string):Promise<DataRow>{
+ return object(await rpc('jobkix_r3_external_saved_row',{p_vacancy:uuid(id)}));
+}
 export async function publicEmployers(country:string|null=null,q='',page=1):Promise<DataRow[]>{
  const result=object(await rpc('jobkix_public_employers',{p_country:country,p_query:q,p_page:page}));
  if(!Array.isArray(result.items))throw new JobkixFault('DEPENDENCY_UNAVAILABLE');return result.items.map(object);
@@ -168,6 +177,8 @@ export async function executeCommand(action:string,payload:Record<string,unknown
   }
  }
  if(action!=='account.initialize'){const session=await requireJobkixSession();if(!isCommandAllowed(session.pathway,action,payload))throw new JobkixFault('FORBIDDEN');}
+ if(action==='external.saved.save'||action==='external.saved.remove')
+  return object(await rpc('jobkix_r3_external_save',{p_vacancy:payload.vacancyId,p_saved:action==='external.saved.save',p_collection:payload.collection||'default',p_expected_version:version,p_key:key}));
  if(action==='resource.save')return object(await rpc('jobkix_save_resource',{p_document:payload.documentId,p_locale:payload.locale,p_saved:payload.saved,p_collection:payload.collection,p_expected_version:version,p_idempotency_key:key}));
  return object(await rpc(WORKSPACE_ACTIONS.has(action)?'jobkix_workspace_command':'jobkix_command',{p_action:action,p_payload:payload,p_expected_version:version,p_idempotency_key:key}));
 }

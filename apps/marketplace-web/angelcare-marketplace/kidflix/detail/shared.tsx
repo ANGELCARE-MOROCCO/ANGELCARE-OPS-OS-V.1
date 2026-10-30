@@ -8,7 +8,6 @@ import {
   type ButtonHTMLAttributes,
 } from "react";
 import { I } from "../Icons";
-import { isNativeMediaUrl } from "../media-url";
 import type { Locale } from "../catalogue";
 import { asset, obj, rows, str, type Row } from "./model";
 import { local, t } from "./copy";
@@ -150,10 +149,16 @@ export function Source({
         <p>{locale === "fr" ? "La source est indisponible. Vérifiez le fichier lié à cette édition." : locale === "ar" ? "المصدر غير متاح. تحقق من الملف المرتبط بهذه النسخة." : "Source unavailable. Check the file bound to this edition."}</p>
       </div>
     );
+  const publicImage = a.mime.startsWith("image/") && m.releaseId && m.key && typeof id === "string"
+    ? "/api/kidflix/media?" + new URLSearchParams({ locale, key: m.key, asset: id, release: m.releaseId })
+    : "";
+  const publicPdf = a.mime === "application/pdf" && m.releaseId && m.key && typeof id === "string"
+    ? "/api/kidflix/reader?" + new URLSearchParams({ locale, key: m.key, asset: id, release: m.releaseId })
+    : "";
   return a.mime.startsWith("image/") ? (
     <img
       className={className}
-      src={a.url}
+      src={publicImage || a.url}
       alt={alt || a.alt || ""}
       loading="lazy"
       draggable={false}
@@ -162,7 +167,7 @@ export function Source({
   ) : a.mime === "application/pdf" ? (
     <section aria-label={alt || "PDF"}>
       <div className={s.controls}>
-        <a className={s.secondary} href={a.url} target="_blank" rel="noopener noreferrer">
+        <a className={s.secondary} href={publicPdf || a.url} target="_blank" rel="noopener noreferrer">
           {locale === "fr" ? "Ouvrir le PDF dans un nouvel onglet" : locale === "ar" ? "فتح ملف PDF في تبويب جديد" : "Open PDF in a new tab"}
         </a>
         <Button onClick={() => setPdfRevision((v) => v + 1)}>{t("retry", locale)}</Button>
@@ -170,7 +175,7 @@ export function Source({
       <p role="status">{locale === "fr" ? "Le lecteur de votre navigateur gère les pages du PDF. Si l’aperçu est vide, ouvrez le fichier dans un nouvel onglet." : locale === "ar" ? "يتولى قارئ المتصفح عرض صفحات PDF. إذا كانت المعاينة فارغة، افتح الملف في تبويب جديد." : "Your browser’s PDF reader handles the pages. If the preview is blank, open the file in a new tab."}</p>
       <iframe key={a.url + ":" + pdfRevision}
         className={s.pdf}
-        src={(!isNativeMediaUrl(a.url) && m.releaseId && m.key && typeof id === "string" ? "/api/kidflix/reader?" + new URLSearchParams({locale, key:m.key, asset:id, release:m.releaseId}) : a.url) + "#toolbar=1"}
+        src={(publicPdf || a.url) + "#toolbar=1"}
         title={alt || "PDF"}
         loading="eager"
       />

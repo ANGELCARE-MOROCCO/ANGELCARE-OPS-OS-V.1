@@ -8,8 +8,8 @@ export function PublicReachability({ resourceKey, language, revision, onLocate }
   useEffect(() => {
     const controller = new AbortController();
     setResult(null); setBusy(true);
-    const timeout = setTimeout(() => { controller.abort(); setResult({ code: "PUBLIC_CHECK_TIMEOUT" }); setBusy(false); }, 20000);
-    fetch("/api/kidflix/publication-status?" + new URLSearchParams({ key: resourceKey, locale: language }), { cache: "no-store", signal: controller.signal })
+    const timeout = setTimeout(() => { controller.abort(); setResult({ code: "PUBLIC_CHECK_TIMEOUT" }); setBusy(false); }, 75000);
+    fetch("/api/kidflix/publication-status?" + new URLSearchParams({ key: resourceKey, locale: language, probe: "1" }), { cache: "no-store", signal: controller.signal })
       .then(async r => { const v = await r.json(); if (!controller.signal.aborted) setResult(v); })
       .catch(e => { if (e.name !== "AbortError") setResult({ code: "PUBLIC_JOURNEY_UNAVAILABLE" }); })
       .finally(() => { clearTimeout(timeout); if (!controller.signal.aborted) setBusy(false); });
@@ -22,7 +22,8 @@ export function PublicReachability({ resourceKey, language, revision, onLocate }
     category: ["Category catalogue", "Catalogue de catégorie", "كتالوج الفئة"],
     detail: ["Detail data resolved", "Données de la page détaillée", "بيانات الصفحة التفصيلية"],
     cover: ["Storefront cover image", "Couverture de la carte publique", "صورة الغلاف العامة"],
-    files: ["Public player media bindings", "Fichiers liés aux lecteurs publics", "ملفات المشغلات العامة"]
+    files: ["Public player media bindings", "Fichiers liés aux lecteurs publics", "ملفات المشغلات العامة"],
+    transport: ["Real document/cover delivery (bounded sample)", "Livraison réelle des fichiers (échantillon limité)", "تسليم الملف الحقيقي (عينة محدودة)"]
   };
   const names: Record<string, [string,string,string]> = {
     PUBLIC_HOME_BINDING_REQUIRED: ["Activate the homepage domain for this language.", "Activez le domaine public de l’accueil pour cette langue.", "فعّل نطاق الصفحة الرئيسية لهذه اللغة."],
@@ -36,7 +37,8 @@ export function PublicReachability({ resourceKey, language, revision, onLocate }
     {result?.code && names[result.code] ? <p>{tr(names[result.code],language)}</p> : null}
     {result?.checks ? <ul>{Object.entries(result.checks).map(([key, passed]) => <li key={key}>{passed ? "✓" : "!"} {tr(labels[key] || [key,key,key],language)}</li>)}</ul> : null}
     {Array.isArray(result?.issues) && result.issues.length ? <ul>{result.issues.map((issue:any,i:number) => <li key={issue.path+":"+i}>{Array.isArray(issue.message) ? tr(issue.message,language) : issue.code}{onLocate && issue.path ? <Button onClick={() => onLocate(issue.path)}>{tr(["Fix this field", "Corriger ce champ", "تصحيح هذا الحقل"],language)}</Button> : null}</li>)}</ul> : null}
-    <p>{tr(["These checks verify published data and usable URLs. Open the public page to test the actual reader and download.", "Ces contrôles vérifient les données publiées et les URL utilisables. Ouvrez la page publique pour tester le lecteur et le téléchargement.", "تتحقق هذه الفحوص من البيانات المنشورة والروابط القابلة للاستخدام. افتح الصفحة العامة لاختبار القارئ والتنزيل."],language)}</p>
+    {Array.isArray(result?.transportTests) ? <ul>{result.transportTests.map((item:any,i:number) => <li key={i}>{item.status === "passed" ? "✓" : "!"} {item.kind}: {item.status} {item.bytes ? `(${item.bytes} bytes)` : ""}</li>)}</ul> : null}
+    <p>{tr(["The protected probe reads up to three real published files; it does not certify every file. Open the public page and download the release to complete acceptance.", "Le contrôle protégé lit jusqu’à trois vrais fichiers publiés, sans certifier tous les fichiers. Ouvrez la page publique et téléchargez l’édition pour finir la validation.", "يقرأ الفحص المحمي ما يصل إلى ثلاثة ملفات منشورة فعلية، لكنه لا يثبت جميع الملفات. افتح الصفحة العامة ونزّل النسخة لإكمال الفحص."],language)}</p>
     <Button disabled={busy} onClick={() => setRetry(x => x + 1)}>{tr(["Check again", "Vérifier à nouveau", "التحقق مجدداً"],language)}</Button>
     {result?.href ? <p><a href={result.href} target="_blank" rel="noopener noreferrer">{tr(["Open actual public page", "Ouvrir la vraie page publique", "فتح الصفحة العامة الفعلية"],language)} ↗</a></p> : null}
     {result?.categoryHref ? <p><a href={result.categoryHref} target="_blank" rel="noopener noreferrer">{tr(["Open this language’s storefront", "Ouvrir la catégorie dans cette langue", "فتح الفئة بهذه اللغة"],language)} ↗</a></p> : null}

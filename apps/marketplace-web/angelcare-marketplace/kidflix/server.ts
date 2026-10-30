@@ -1,5 +1,6 @@
 import "server-only";
 import { safeMediaUrl } from "./media-url";
+import { publishedCoverHref } from "./detail/published-media";
 import { createServiceClient } from "@/lib/supabase/server";
 import {
   defaultHome,
@@ -108,7 +109,7 @@ export function card(
     family: family.key,
     title: str(row.title, 300),
     summary: str(localized.summary, 900),
-    image: safeMediaUrl(image) ? image : "",
+    image: publishedCoverHref(row.key, row.release_id, locale, d.coverAssetId) || (safeMediaUrl(image) ? image : ""),
     imageAlt: str(m.alt, 400) || str(row.title, 300),
     audience: str(row.audience, 40),
     ageMin: numeric(d.ageMin),

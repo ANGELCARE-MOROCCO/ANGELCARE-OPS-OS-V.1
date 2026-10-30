@@ -51,7 +51,9 @@ export function capabilityIssues(
     add(n.path, "LEGACY_CONFLICT", n.message);
   if (!family || !["experience", "template", "bundle"].includes(record.kind))
     return issues;
-  if (["experience", "bundle"].includes(record.kind) && !text(object(object(d.locales)[text(d.defaultLocale)]).coverAssetId || d.coverAssetId))
+  // The cover is one canonical top-level native reference, not a localized field.
+  // The former boolean expression rejected valid covers (and missed certain drafts).
+  if (["experience", "bundle"].includes(record.kind) && !text(d.coverAssetId))
     issues.push({ path: "coverAssetId", code: "PUBLIC_COVER_REQUIRED", severity: "error", message: ["Choose the image for this resource’s storefront card.", "Choisissez l’image de la carte publique de cette ressource.", "اختر صورة بطاقة هذا المورد في الواجهة العامة."] });
   issues.push(...depthIssues(d, family));
   if (record.kind !== "template")

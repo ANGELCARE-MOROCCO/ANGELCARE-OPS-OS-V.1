@@ -125,6 +125,7 @@ function DocumentCard({
   onDownload: (r: DocumentItem) => void;
 }) {
   const guest = useGuest(),
+    [coverFailed, setCoverFailed] = useState(false),
     href = documentDetailHref(resource),
     topic = resource.documentUses[0]
       ? named(USES, resource.documentUses[0], locale)
@@ -147,8 +148,8 @@ function DocumentCard({
         href={href}
         onClick={() => guest.visit(resource.key)}
       >
-        {resource.image ? (
-          <img data-imagery-owner="resource-owned" data-imagery-record={resource.id}
+        {resource.image && !coverFailed ? (
+          <img onError={() => setCoverFailed(true)} data-imagery-owner="resource-owned" data-imagery-record={resource.id}
             src={resource.image}
             alt={resource.imageAlt || resource.title}
             loading="lazy"

@@ -3,6 +3,7 @@ import { createServiceClient } from "@/lib/supabase/server";
 import { createHash, createHmac, randomBytes, randomUUID } from "node:crypto";
 import { card, publicHost } from "../server";
 import { blankFacts } from "../storefronts/model";
+import { publishedCoverHref } from "../detail/published-media";
 import {
   documentFilters,
   normalizeDocumentSocialLinks,
@@ -41,6 +42,7 @@ export function documentCard(row: any, locale: Locale): DocumentItem | null {
         : null;
   return {
     ...r,
+    image: publishedCoverHref(x.key, x.release_id, contentLocale, obj(x.definition).coverAssetId) || r.image,
     contentLocale,
     facts: {
       ...blankFacts(),

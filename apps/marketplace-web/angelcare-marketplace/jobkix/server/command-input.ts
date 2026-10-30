@@ -36,6 +36,7 @@ function payloadFor(action:string,p:Record<string,unknown>):Record<string,unknow
   case 'offer.send':case 'offer.withdraw':return {id:v.uuid(p.id)};
   case 'offer.respond':return {id:v.uuid(p.id),response:v.choice(p.response,['accepted','declined'],'response')};
   case 'employer.search.save':return {organizationId:v.uuid(p.organizationId)};
+  case 'external.saved.save':case 'external.saved.remove':return {vacancyId:v.uuid(p.vacancyId),collection:v.text(p.collection??'default','collection',1,180)};
   case 'saved.save':return {vacancyId:v.uuid(p.vacancyId),collection:v.text(p.collection??'default','collection',1,180)};
   case 'saved.remove':return {vacancyId:v.uuid(p.vacancyId)};
   case 'search.save':return {id:optionalId(p.id),name:v.text(p.name,'name',1,180),filters:savedSearchFilters(p.filters),frequency:v.choice(p.frequency,['off','daily','weekly'],'frequency'),enabled:bool(p.enabled,'enabled')};

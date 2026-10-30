@@ -9,6 +9,7 @@ import { readyOutputs } from "../detail/model";
 import { publicHost } from "../server";
 import { isLocale, type Locale } from "../catalogue";
 import { takeBudget } from "./server";
+import { createMarketplaceMediaDeliveryUrl } from "../../commerce-studio/media-storage";
 export const MAX_DOCUMENT_BYTES = 64 * 1024 * 1024;
 export function publicAddress(address: string): boolean {
   if (isIP(address) === 4) {
@@ -164,6 +165,61 @@ export async function fetchDocumentBinary(
     req.end();
   });
 }
+/** A native media gateway URL is freshly signed on the server, never cached in a release. */
+export async function fetchPublishedDocumentBinary(
+  assetId: string, rawUrl: string, mime: string, host: string,
+): Promise<Uint8Array> {
+  const db = await createServiceClient();
+  const result = await db.from("angelcare_marketplace_media_assets").select("*").eq("id", assetId).maybeSingle();
+  const row = result.data;
+  if (result.error || !row || row.status !== "active" || row.mime_type !== mime ||
+      row.metadata?.status === "failed" ||
+      (row.rights_expires_at && Date.parse(row.rights_expires_at) <= Date.now()) ||
+      (row.public_url || row.desktop_url) !== rawUrl) throw Error("PUBLISHED_MEDIA_CHANGED");
+  if (row.storage_bucket !== "marketplace-windows-media")
+    return fetchDocumentBinary(new URL(rawUrl, "https://" + host).href, mime);
+
+  // This URL is generated from a configured, trusted gateway and a known published
+  // UUID; it is not a user-supplied SSRF destination. Redirects are disallowed.
+  const url = createMarketplaceMediaDeliveryUrl(assetId, 90_000);
+  const configured = process.env.MARKETPLACE_MEDIA_GATEWAY_PUBLIC_URL || "";
+  if (!configured || new URL(url).origin !== new URL(configured).origin)
+    throw Error("MEDIA_GATEWAY_CONFIG_INVALID");
+  const response = await fetch(url, {
+    cache: "no-store", redirect: "error", signal: AbortSignal.timeout(25_000),
+    headers: { Accept: mime, "Accept-Encoding": "identity" },
+  });
+  const contentType = (response.headers.get("content-type") || "").split(";")[0].trim().toLowerCase();
+  if (!response.ok || !response.body || ![mime, "application/octet-stream"].includes(contentType) ||
+      Number(response.headers.get("content-length") || "0") > MAX_DOCUMENT_BYTES)
+    throw Error("MEDIA_GATEWAY_DELIVERY_FAILED");
+  const parts: Uint8Array[] = [];
+  let bytesRead = 0;
+  for await (const chunk of response.body as any) {
+    const bytes = new Uint8Array(chunk);
+    bytesRead += bytes.length;
+    if (bytesRead > MAX_DOCUMENT_BYTES) {
+      await response.body.cancel().catch(() => {});
+      throw Error("DOCUMENT_TOO_LARGE");
+    }
+    parts.push(bytes);
+  }
+  const output = new Uint8Array(bytesRead);
+  let offset = 0;
+  for (const part of parts) { output.set(part, offset); offset += part.length; }
+  const starts = (...seq: number[]) => seq.every((b, i) => output[i] === b);
+  const valid = mime === "application/pdf" ? starts(37,80,68,70,45) :
+    mime === "image/png" ? starts(137,80,78,71,13,10,26,10) :
+    mime === "image/jpeg" ? starts(255,216,255) :
+    mime === "image/webp" ? output.length >= 12 &&
+      String.fromCharCode(...output.subarray(0,4)) === "RIFF" &&
+      String.fromCharCode(...output.subarray(8,12)) === "WEBP" :
+    mime === "image/avif" ? output.length >= 12 &&
+      String.fromCharCode(...output.subarray(4,8)) === "ftyp" : false;
+  if (!valid || bytesRead === 0) throw Error("DOCUMENT_TYPE_MISMATCH");
+  return output;
+}
+
 export async function downloadDocument(request: Request): Promise<Response> {
   const u = new URL(request.url),
     locale = u.searchParams.get("locale") || "",
@@ -194,8 +250,7 @@ export async function downloadDocument(request: Request): Promise<Response> {
     asset = selected.asset;
   if (!asset?.url || !["application/pdf", "image/png"].includes(selected.mime))
     throw Error("OUTPUT_UNAVAILABLE");
-  const absolute = new URL(asset.url, "https://" + host);
-  const bytes = await fetchDocumentBinary(absolute.href, selected.mime);
+  const bytes = await fetchPublishedDocumentBinary(selected.assetId, asset.url, selected.mime, host);
   const current = await getDetail(host, locale, key);
   const confirmed =
     current && current.releaseId === release

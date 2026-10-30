@@ -3,7 +3,7 @@ import { asset, obj, rows } from "@/angelcare-marketplace/kidflix/detail/model";
 import { publicHost } from "@/angelcare-marketplace/kidflix/server";
 import { isLocale } from "@/angelcare-marketplace/kidflix/catalogue";
 import { takeBudget } from "@/angelcare-marketplace/kidflix/documents/server";
-import { fetchDocumentBinary } from "@/angelcare-marketplace/kidflix/documents/delivery";
+import { fetchPublishedDocumentBinary } from "@/angelcare-marketplace/kidflix/documents/delivery";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 export async function GET(request: Request) {
@@ -18,7 +18,7 @@ export async function GET(request: Request) {
     const source = value && value.releaseId === release && rows(obj(value.manifest.definition).units).some(x => x.assetId === id) ? asset(value.manifest, id) : null;
     if (!source || source.mime !== "application/pdf") return Response.json({ error: "READER_SOURCE_UNAVAILABLE" }, { status: 404, headers });
     // Native fetcher pins public DNS, bounds redirects/time/size and checks %PDF-.
-    const bytes = await fetchDocumentBinary(new URL(source.url, "https://" + host).href, "application/pdf");
+    const bytes = await fetchPublishedDocumentBinary(id, source.url, "application/pdf", host);
     const current = await getDetail(host, locale, key);
     const confirmed = current && current.releaseId === release && rows(obj(current.manifest.definition).units).some(x => x.assetId === id) ? asset(current.manifest, id) : null;
     if (!confirmed || confirmed.url !== source.url || confirmed.mime !== source.mime) return Response.json({ error: "READER_SOURCE_CHANGED" }, { status: 409, headers });

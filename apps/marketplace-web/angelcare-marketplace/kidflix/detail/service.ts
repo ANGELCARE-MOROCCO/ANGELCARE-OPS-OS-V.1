@@ -1,6 +1,8 @@
 import { contextualRecommendations } from "../../digital-customer-experience/experience-depth";
 import "server-only";
 import { nativeReferenceInScope } from "./native-reference-scope";
+import { publishedMediaIds, publishedMediaMimeAllowed } from "./published-media";
+import { safeMediaUrl } from "../media-url";
 import {
   gradeClassification,
   gradeSoundPair,
@@ -97,7 +99,9 @@ export async function getDetail(
       ),
     };
     out.bindings = { ...out.bindings, records: {}, offers: {} };
-    const mediaIds = Object.keys(obj(manifest.bindings?.media)).filter(uuid);
+    // An older release may reference an actual native PDF/cover in its immutable
+    // published definition but omit its binding. Restore only those published IDs.
+    const mediaIds = publishedMediaIds(manifest);
     out.bindings.media = {};
     for (let i = 0; i < mediaIds.length; i += 100) {
       // Native media is a shared vault. IDs come only from this published manifest.
@@ -109,11 +113,12 @@ export async function getDetail(
         if (!nativeReferenceInScope(a, root)) continue;
         const url = a.public_url || a.desktop_url || "";
         if (
+          !publishedMediaMimeAllowed(manifest, a.id, a.mime_type || "") ||
           a.status !== "active" ||
           a.metadata?.status === "failed" ||
           (a.rights_expires_at &&
             Date.parse(a.rights_expires_at) <= Date.now()) ||
-          !/^(https:\/\/|\/(?!\/))/i.test(url)
+          !safeMediaUrl(url)
         )
           continue;
         out.bindings.media[a.id] = {
