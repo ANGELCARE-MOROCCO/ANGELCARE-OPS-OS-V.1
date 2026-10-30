@@ -197,6 +197,7 @@ export async function workerClaim(worker:string){const db=await createServiceCli
  await event('mission.claimed',worker,{source_id:mission.source_id,mission_id:mission.id});return {id:mission.id,sourceId:mission.source_id,country:mission.country,source:mission.config_snapshot,credential,credentialHeader:source.data.credential_header||''};
 }
 export async function workerBatch(worker:string,body:Row){const id=uuid(body.missionId),items=Array.isArray(body.items)?body.items:[];if(items.length>40)fail('Batch too large');const db=await createServiceClient();const mission=await db.from('jobkix_supply_missions').select('id,state,worker_id,source_id,country,processed,accepted,rejected,config_snapshot').eq('id',id).maybeSingle();await mandatory(mission);if(!mission.data||mission.data.state!=='running'||mission.data.worker_id!==worker)throw new JobkixFault('FORBIDDEN');
+ const missionSourceId=mission.data.source_id;
  const mode=(mission.data.config_snapshot as Row)?.publication_mode;let accepted=0,rejected=0;
  const source=await db.from('jobkix_supply_sources').select('approved,enabled,archived_at,publication_mode,config')
   .eq('id',mission.data.source_id).maybeSingle();await mandatory(source);
@@ -225,7 +226,7 @@ export async function workerBatch(worker:string,body:Row){const id=uuid(body.mis
    if(!values.length)return [] as Row[];
    const found=await db.from('jobkix_supply_vacancies')
     .select('id,external_ref,canonical_url,fingerprint,state,version,normalized,review_notes,published_at')
-    .eq('source_id',mission.data.source_id).in(field,[...new Set(values)]).limit(250);
+    .eq('source_id',missionSourceId).in(field,[...new Set(values)]).limit(250);
    await mandatory(found);return (found.data||[]) as Row[];
   };
   const candidates=[...await read('external_ref',refs),...await read('canonical_url',urls),...await read('fingerprint',hashes)];
