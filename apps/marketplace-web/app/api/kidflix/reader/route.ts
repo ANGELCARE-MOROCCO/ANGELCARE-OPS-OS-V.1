@@ -4,6 +4,7 @@ import { publicHost } from "@/angelcare-marketplace/kidflix/server";
 import { isLocale } from "@/angelcare-marketplace/kidflix/catalogue";
 import { takeBudget } from "@/angelcare-marketplace/kidflix/documents/server";
 import { fetchDocumentBinary } from "@/angelcare-marketplace/kidflix/documents/delivery";
+import { isNativeMediaUrl } from "@/angelcare-marketplace/kidflix/media-url";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 export async function GET(request: Request) {
@@ -17,11 +18,23 @@ export async function GET(request: Request) {
     const value = await getDetail(host, locale, key);
     const source = value && value.releaseId === release && rows(obj(value.manifest.definition).units).some(x => x.assetId === id) ? asset(value.manifest, id) : null;
     if (!source || source.mime !== "application/pdf") return Response.json({ error: "READER_SOURCE_UNAVAILABLE" }, { status: 404, headers });
-    // Native fetcher pins public DNS, bounds redirects/time/size and checks %PDF-.
-    const bytes = await fetchDocumentBinary(new URL(source.url, "https://" + host).href, "application/pdf");
+    // Revalidate the immutable published edition before granting delivery.
     const current = await getDetail(host, locale, key);
     const confirmed = current && current.releaseId === release && rows(obj(current.manifest.definition).units).some(x => x.assetId === id) ? asset(current.manifest, id) : null;
     if (!confirmed || confirmed.url !== source.url || confirmed.mime !== source.mime) return Response.json({ error: "READER_SOURCE_CHANGED" }, { status: 409, headers });
+
+    // Native vault media already has an active-asset check and signed
+    // gateway delivery. Let the browser follow its normal public route,
+    // exactly as the working admin preview does.
+    if (isNativeMediaUrl(source.url) && !source.url.includes("?")) {
+      return new Response(null, {
+        status: 307,
+        headers: { ...headers, Location: new URL(source.url, u.origin).href },
+      });
+    }
+
+    // Preserve bounded, DNS-validated fetching for other permitted URLs.
+    const bytes = await fetchDocumentBinary(new URL(source.url, "https://" + host).href, "application/pdf");
     const responseHeaders: Record<string,string> = { ...headers, "Content-Type": "application/pdf", "Content-Disposition": "inline; filename=\"kidflix-document.pdf\"", "Accept-Ranges": "bytes", "Content-Security-Policy": "default-src 'none'; frame-ancestors 'self'" };
     const range = request.headers.get("range");
     if (range) {
