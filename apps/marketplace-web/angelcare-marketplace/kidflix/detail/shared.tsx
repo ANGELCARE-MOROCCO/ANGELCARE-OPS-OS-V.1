@@ -1,5 +1,7 @@
 "use client";
 import {
+  createContext,
+  useContext,
   useEffect,
   useId,
   useRef,
@@ -7,11 +9,15 @@ import {
   type ReactNode,
   type ButtonHTMLAttributes,
 } from "react";
+import { createPortal } from "react-dom";
 import { I } from "../Icons";
 import type { Locale } from "../catalogue";
 import { asset, obj, rows, str, type Row } from "./model";
 import { local, t } from "./copy";
 import s from "./detail.module.css";
+// Presentation hint, scoped to the Class Mode player only. Normal readers are unchanged.
+export const ClassroomPresentationContext = createContext(false);
+
 export interface PlayerProps {
   openPlayer?: () => void;
   preview?: boolean;
@@ -137,6 +143,7 @@ export function Source({
   pdf?: boolean;
   locale?: Locale;
 }) {
+  const classroomPresentation = useContext(ClassroomPresentationContext);
   const a = asset(m, id),
     [failed, setFailed] = useState(false),
     [pdfRevision, setPdfRevision] = useState(0);
@@ -175,7 +182,7 @@ export function Source({
       <p role="status">{locale === "fr" ? "Le lecteur de votre navigateur gère les pages du PDF. Si l’aperçu est vide, ouvrez le fichier dans un nouvel onglet." : locale === "ar" ? "يتولى قارئ المتصفح عرض صفحات PDF. إذا كانت المعاينة فارغة، افتح الملف في تبويب جديد." : "Your browser’s PDF reader handles the pages. If the preview is blank, open the file in a new tab."}</p>
       <iframe key={a.url + ":" + pdfRevision}
         className={s.pdf}
-        src={(publicPdf || a.url) + "#toolbar=1"}
+        src={(publicPdf || a.url) + (classroomPresentation ? "#page=1&view=Fit&toolbar=1" : "#toolbar=1")}
         title={alt || "PDF"}
         loading="eager"
       />
@@ -187,11 +194,13 @@ export function Modal({
   locale,
   onClose,
   children,
+  presentation = "standard",
 }: {
   title: string;
   locale: Locale;
   onClose: () => void;
   children: ReactNode;
+  presentation?: "standard" | "classroom";
 }) {
   const ref = useRef<HTMLDivElement>(null),
     id = useId(),
@@ -240,9 +249,9 @@ export function Modal({
       before?.isConnected && before.focus();
     };
   }, []);
-  return (
+  const rendered = (
     <div
-      className={s.backdrop}
+      className={`${s.backdrop} ${presentation === "classroom" ? s.classroomBackdrop : ""}`}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -253,7 +262,7 @@ export function Modal({
         aria-modal="true"
         aria-labelledby={id}
         tabIndex={-1}
-        className={s.modal}
+        className={`${s.modal} ${presentation === "classroom" ? s.classroomModal : ""}`}
         dir={locale === "ar" ? "rtl" : "ltr"}
       >
         <header>
@@ -266,6 +275,11 @@ export function Modal({
       </section>
     </div>
   );
+  // Portaling Class Mode escapes detail-page stacking contexts and keeps
+  // sticky promotion banners behind the classroom presentation.
+  return presentation === "classroom" && typeof document !== "undefined"
+    ? createPortal(rendered, document.body)
+    : rendered;
 }
 export function Editorial({
   m,

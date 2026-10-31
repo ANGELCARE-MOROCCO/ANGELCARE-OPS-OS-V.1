@@ -7,7 +7,7 @@ import { j } from "./copy";
 import { path, tr, type Locale } from "../catalogue";
 import { obj, rows, str, time, type Row } from "../detail/model";
 import { local } from "../detail/copy";
-import { Button, Modal, action, type PlayerProps } from "../detail/shared";
+import { Button, Modal, ClassroomPresentationContext, action, type PlayerProps } from "../detail/shared";
 import s from "./journey.module.css";
 export function SessionActions({ m, locale }: { m: Row; locale: Locale }) {
   const p = usePersonal(),
@@ -92,6 +92,9 @@ export function ResourceSurface({
   const { m, d, state, update, locale } = props,
     c = capability(m),
     readingUnits = rows(d.units),
+    classroomPdf = ["documents", "printables"].includes(m.family) &&
+      (props.engine === "pdf" ||
+        readingUnits.some((unit) => unit.kind === "pdf" || unit.mime === "application/pdf")),
     readingMarks: string[] = Array.isArray(state.readingMarks)
       ? state.readingMarks
           .map((n: string | number) =>
@@ -212,31 +215,40 @@ export function ResourceSurface({
           title={m.title + " · " + j("classroom", locale)}
           locale={locale}
           onClose={() => setClassroom(false)}
+          presentation="classroom"
         >
-          <div className={s.surface}>
-            <div className={s.toolbar}>
-              <strong className={s.timer} role="timer">
-                {time(remaining)}
-              </strong>
-              <label className={s.field}>
-                {j("timer", locale)}
-                <input
-                  type="number"
-                  min="1"
-                  max="180"
-                  value={minutes}
-                  onChange={(e) => {
-                    const v = Math.max(
-                      1,
-                      Math.min(180, Number(e.target.value) || 1),
-                    );
-                    setMinutes(v);
-                    if (!deadline) setRemaining(v * 60);
-                  }}
-                />
+          <div className={s.classroomContent}>
+            <div className={s.classroomControlBar}>
+              <div className={s.classroomClock}>
+                <span className={s.classroomClockIcon} aria-hidden="true">◷</span>
+                <div className={s.classroomClockReadout}>
+                  <span>{tr(["Class time", "Temps de classe", "وقت الحصة"], locale)}</span>
+                  <strong className={s.classroomTime} role="timer" aria-live="off">
+                    {time(remaining)}
+                  </strong>
+                  <small> / {minutes} min</small>
+                </div>
+              </div>
+              <label className={s.classroomDuration}>
+                <span>{j("timer", locale)}</span>
+                <span className={s.classroomMinuteInput}>
+                  <input
+                    type="number"
+                    min="1"
+                    max="180"
+                    value={minutes}
+                    onChange={(e) => {
+                      const v = Math.max(1, Math.min(180, Number(e.target.value) || 1));
+                      setMinutes(v);
+                      if (!deadline) setRemaining(v * 60);
+                    }}
+                  />
+                  <small>min</small>
+                </span>
               </label>
-              <div className={s.actions}>
+              <div className={s.classroomTimerActions}>
                 <button
+                  type="button"
                   className={s.button}
                   onClick={() =>
                     deadline
@@ -247,6 +259,7 @@ export function ResourceSurface({
                   {j(deadline ? "pause" : "start", locale)}
                 </button>
                 <button
+                  type="button"
                   className={s.button}
                   onClick={() => {
                     setDeadline(0);
@@ -256,22 +269,33 @@ export function ResourceSurface({
                   {j("reset", locale)}
                 </button>
                 <button
+                  type="button"
                   className={s.button}
                   onClick={() => {
                     setRemaining((v) => v + 60);
                     if (deadline) setDeadline((v) => v + 60000);
                   }}
                 >
-                  +1 {j("duration", locale)}
+                  +1 min
                 </button>
               </div>
             </div>
-            {local(d, "kidflixFacilitator", locale) ? (
-              <p>{local(d, "kidflixFacilitator", locale)}</p>
-            ) : null}
+            <details className={s.classroomExtras}>
+              <summary>{tr(["Session tools", "Outils de séance", "أدوات الجلسة"], locale)}</summary>
+              <SessionActions m={m} locale={locale} />
+              {local(d, "kidflixFacilitator", locale) ? (
+                <p>{local(d, "kidflixFacilitator", locale)}</p>
+              ) : null}
+            </details>
+            <div
+              className={`${s.classroomView} ${classroomPdf ? s.classroomPdfView : ""}`}
+              data-kidflix-classroom-stage={classroomPdf ? "pdf" : "interactive"}
+            >
+              <ClassroomPresentationContext.Provider value={true}>
+                {view}
+              </ClassroomPresentationContext.Provider>
+            </div>
           </div>
-          <SessionActions m={m} locale={locale} />
-          <div className={s.classroomView}>{view}</div>
         </Modal>
       ) : (
         view

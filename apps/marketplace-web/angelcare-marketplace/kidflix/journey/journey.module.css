@@ -400,3 +400,110 @@
 .readingSurface[data-reading-contrast="dark"] { color:#f5f7ff; background:#10213b; }
 .readingSurface[data-reading-contrast="high"] :is(p,h2,h3,li,blockquote),.readingSurface[data-reading-contrast="dark"] :is(p,h2,h3,li,blockquote) { color:inherit; }
 .readingSurface[data-reading-contrast="dark"] :is(article,section) { background:transparent; }
+
+/* KIDFLIX CLASS MODE R2: dedicated in-player classroom presentation. */
+.classroomContent {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  min-height: 0;
+}
+.classroomControlBar {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  padding: 12px clamp(10px, 2vw, 20px);
+  border: 1px solid #e2e3f8;
+  border-radius: 15px;
+  background: linear-gradient(115deg, #fff, #f7f3ff);
+}
+.classroomClock { display: flex; align-items: center; gap: 11px; }
+.classroomClockIcon {
+  display: grid;
+  place-items: center;
+  width: 39px;
+  height: 39px;
+  border-radius: 50%;
+  background: #f0e8ff;
+  color: #6851bb;
+  font-size: 30px;
+}
+.classroomClockReadout > span { display: block; font-size: 11px; font-weight: 750; color: #5a6080; }
+.classroomClockReadout > small { color: #6e7196; font-size: 12px; }
+.classroomTime {
+  display: inline-block;
+  margin-top: 2px;
+  font-size: clamp(22px, 2vw, 30px);
+  line-height: 1.1;
+  color: #6245a4;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+.classroomDuration { display: flex; flex-direction: column; gap: 4px; color: #243550; font-size: 11px; font-weight: 750; }
+.classroomMinuteInput { display: flex; gap: 6px; align-items: center; }
+.classroomMinuteInput input {
+  width: 62px;
+  height: 34px;
+  padding: 6px;
+  border: 1px solid #d8dff2;
+  border-radius: 7px;
+  background: white;
+  color: #182b67;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+.classroomMinuteInput small { color: #77829b; font-size: 11px; }
+.classroomTimerActions { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+.classroomTimerActions .button {
+  min-height: 36px;
+  padding: 7px 11px;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 750;
+}
+.classroomTimerActions .button:last-child { background: #eee8ff; border-color: #d9ccff; color: #6242aa; }
+.classroomExtras {
+  flex: 0 0 auto;
+  border: 1px solid #e4e9f6;
+  border-radius: 10px;
+  background: #fbfcff;
+  padding: 5px 10px;
+  font-size: 12px;
+}
+.classroomExtras summary { font-size: 12px; font-weight: 700; color: #5f6a85; cursor: pointer; }
+.classroomExtras .actions { padding: 8px 0; }
+.classroomExtras p { margin: 5px 0; line-height: 1.4; }
+.classroomView {
+  display: block;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: clamp(8px, 1.2vw, 16px);
+  border: 1px solid #dce5f3;
+  border-radius: 13px;
+  background: #eef3fa;
+  font-size: clamp(14px, 1.3vw, 19px);
+}
+.classroomView .readingSurface { min-width: 0; }
+.classroomPdfView { overflow: hidden; }
+.classroomPdfView .readingSurface { display: flex; flex-direction: column; height: 100%; min-height: 0; }
+.classroomPdfView button { min-height: 34px; font-size: 12px; }
+@media (max-width: 760px) {
+  .classroomContent { gap: 6px; }
+  .classroomControlBar { padding: 8px; gap: 6px 10px; }
+  .classroomClockIcon { display: none; }
+  .classroomClockReadout > span { font-size: 10px; }
+  .classroomTime { font-size: 21px; }
+  .classroomTimerActions .button { padding: 6px 8px; min-height: 32px; font-size: 11px; }
+  .classroomDuration { font-size: 10px; }
+  .classroomView { padding: 5px; }
+  .classroomPdfView { min-height: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .classroomContent *, .classroomContent *::before, .classroomContent *::after { transition: none !important; animation: none !important; }
+}

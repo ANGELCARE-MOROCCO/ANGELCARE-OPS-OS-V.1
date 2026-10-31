@@ -42,6 +42,7 @@ import { OutputStudio } from "../journey/OutputStudio";
 import { OfflineFiles } from "../journey/Offline";
 import { AdSlot, RuntimeJourney } from "../journey/Runtime";
 import { emitVisitor } from "../journey/events";
+import { isNativeMediaUrl } from "../media-url";
 const Reading = dynamic(() => import("./Reading").then((m) => m.Reading)),
   Cards = dynamic(() => import("./VisualCards").then((m) => m.VisualCards)),
   Media = dynamic(() => import("./Media").then((m) => m.MediaExperience)),
@@ -249,8 +250,70 @@ function DetailReady({
     </LoveProvider>
   );
 }
+// Native media is already release-bound by readyOutputs(). Download its bytes in
+// the browser, using the same working gateway path as the public PDF viewer.
+// Never let a failed HTML/JSON response become a .pdf or .png download.
+const KIDFLIX_DOWNLOAD_MAX_BYTES = 64 * 1024 * 1024;
+async function saveKidFlixNativeFile(
+  mediaUrl: string,
+  mime: string,
+  name: string,
+): Promise<void> {
+  if (!isNativeMediaUrl(mediaUrl) || !["application/pdf", "image/png"].includes(mime))
+    throw Error("INVALID_PUBLISHED_FILE");
+  const controller = new AbortController();
+  const deadline = setTimeout(() => controller.abort(), 60_000);
+  try {
+    // The native media endpoint creates a fresh signed Windows gateway URL.
+    // Gateway CORS permits the configured public origin to read binary bytes.
+    const response = await fetch(mediaUrl, {
+      mode: "cors",
+      credentials: "omit",
+      cache: "no-store",
+      redirect: "follow",
+      signal: controller.signal,
+    });
+    if (!response.ok) throw Error("PUBLISHED_FILE_HTTP_" + response.status);
+    const actualMime = (response.headers.get("content-type") || "")
+      .split(";")[0].trim().toLowerCase();
+    if (![mime, "application/octet-stream"].includes(actualMime))
+      throw Error("PUBLISHED_FILE_MIME_MISMATCH");
+    const declaredSize = Number(response.headers.get("content-length") || "0");
+    if (!Number.isFinite(declaredSize) || declaredSize < 0 || declaredSize > KIDFLIX_DOWNLOAD_MAX_BYTES)
+      throw Error("PUBLISHED_FILE_TOO_LARGE");
+    const blob = await response.blob();
+    if (!blob.size || blob.size > KIDFLIX_DOWNLOAD_MAX_BYTES)
+      throw Error("PUBLISHED_FILE_EMPTY_OR_TOO_LARGE");
+    const head = new Uint8Array(await blob.slice(0, 8).arrayBuffer());
+    const valid = mime === "application/pdf"
+      ? head.length >= 5 && [37, 80, 68, 70, 45].every((byte, i) => head[i] === byte)
+      : head.length >= 8 && [137, 80, 78, 71, 13, 10, 26, 10].every((byte, i) => head[i] === byte);
+    if (!valid) throw Error("PUBLISHED_FILE_SIGNATURE_MISMATCH");
+    const base = (name || "KidFlix")
+      .normalize("NFKC")
+      .replace(/[\\/:*?"<>|\u0000-\u001f\u007f]/g, " ")
+      .trim()
+      .replace(/\.(pdf|png)$/i, "")
+      .slice(0, 140) || "KidFlix";
+    const fileUrl = URL.createObjectURL(blob);
+    try {
+      const link = document.createElement("a");
+      link.href = fileUrl;
+      link.download = base + (mime === "application/pdf" ? ".pdf" : ".png");
+      link.style.display = "none";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } finally {
+      setTimeout(() => URL.revokeObjectURL(fileUrl), 60_000);
+    }
+  } finally {
+    clearTimeout(deadline);
+  }
+}
 function Files({ m, d, locale }: PlayerProps) {
   const outputs = readyOutputs(m);
+  const downloading = useRef(new Set<string>());
   return outputs.length ? (
     <section className={s.files}>
       <span className={s.kicker}>
@@ -277,10 +340,27 @@ function Files({ m, d, locale }: PlayerProps) {
             </small>
           </div>
           <a
-            onClick={() =>
-              emitVisitor(m.key, locale, m.releaseId, "download_intent")
-            }
-            href={publishedOutputHref(m, output, locale)}
+            onClick={(event) => {
+              emitVisitor(m.key, locale, m.releaseId, "download_intent");
+              if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+              const nativeUrl = output.asset?.url;
+              if (!isNativeMediaUrl(nativeUrl)) return;
+              event.preventDefault();
+              if (downloading.current.has(output.id)) return;
+              downloading.current.add(output.id);
+              void saveKidFlixNativeFile(
+                nativeUrl,
+                output.mime,
+                local(output, "label", locale) || output.label || m.title,
+              ).catch(() => {
+                window.alert(locale === "fr"
+                  ? "Le téléchargement direct n’a pas abouti. Utilisez le bouton de téléchargement du lecteur PDF, qui fonctionne déjà."
+                  : locale === "ar"
+                    ? "تعذّر التنزيل المباشر. استخدم زر التنزيل داخل قارئ PDF."
+                    : "Direct download failed. Please use the working PDF viewer’s download button.");
+              }).finally(() => downloading.current.delete(output.id));
+            }}
+            href={output.asset?.url || publishedOutputHref(m, output, locale)}
             target="_blank"
             rel="noopener noreferrer"
             download
