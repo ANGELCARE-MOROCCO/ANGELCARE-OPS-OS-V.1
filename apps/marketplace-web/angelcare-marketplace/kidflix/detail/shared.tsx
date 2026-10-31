@@ -152,9 +152,9 @@ export function Source({
   const publicImage = a.mime.startsWith("image/") && m.releaseId && m.key && typeof id === "string"
     ? "/api/kidflix/media?" + new URLSearchParams({ locale, key: m.key, asset: id, release: m.releaseId })
     : "";
-  const publicPdf = a.mime === "application/pdf" && m.releaseId && m.key && typeof id === "string"
-    ? "/api/kidflix/reader?" + new URLSearchParams({ locale, key: m.key, asset: id, release: m.releaseId })
-    : "";
+  // This media binding comes from the authorized published edition.
+  // Match the working admin-preview transport without an extra PDF proxy.
+  const publicPdf = a.mime === "application/pdf" ? a.url : "";
   return a.mime.startsWith("image/") ? (
     <img
       className={className}
