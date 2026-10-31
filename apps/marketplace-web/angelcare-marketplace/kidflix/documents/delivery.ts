@@ -250,7 +250,7 @@ export async function downloadDocument(request: Request): Promise<Response> {
     asset = selected.asset;
   if (!asset?.url || !["application/pdf", "image/png"].includes(selected.mime))
     throw Error("OUTPUT_UNAVAILABLE");
-  const bytes = await fetchPublishedDocumentBinary(selected.assetId, asset.url, selected.mime, host);
+  const bytes = await fetchDocumentBinary(new URL(asset.url, "https://" + host).href, selected.mime);
   const current = await getDetail(host, locale, key);
   const confirmed =
     current && current.releaseId === release

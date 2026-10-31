@@ -3,7 +3,7 @@ import { asset } from "@/angelcare-marketplace/kidflix/detail/model";
 import { publishedMediaUuid } from "@/angelcare-marketplace/kidflix/detail/published-media";
 import { publicHost } from "@/angelcare-marketplace/kidflix/server";
 import { isLocale } from "@/angelcare-marketplace/kidflix/catalogue";
-import { fetchPublishedDocumentBinary } from "@/angelcare-marketplace/kidflix/documents/delivery";
+import { fetchDocumentBinary } from "@/angelcare-marketplace/kidflix/documents/delivery";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 const headers = { "Cache-Control": "private, no-store", "X-Content-Type-Options": "nosniff", "X-Robots-Tag": "noindex" };
@@ -26,7 +26,7 @@ export async function GET(request: Request) {
     const source = asset(detail.manifest, id, "image/");
     if (!source || !["image/png", "image/jpeg", "image/webp", "image/avif"].includes(source.mime))
       return Response.json({ error: "IMAGE_NOT_READY" }, { status: 404, headers });
-    const bytes = await fetchPublishedDocumentBinary(id, source.url, source.mime, host);
+    const bytes = await fetchDocumentBinary(new URL(source.url, "https://" + host).href, source.mime);
     return new Response(bytes as BodyInit, { headers: { ...headers, "Content-Type": source.mime, "Content-Length": String(bytes.byteLength) } });
   } catch {
     return Response.json({ error: "IMAGE_DELIVERY_UNAVAILABLE" }, { status: 503, headers });

@@ -5,7 +5,7 @@ import { getDocuments } from "@/angelcare-marketplace/kidflix/documents/server";
 import { isLocale, path } from "@/angelcare-marketplace/kidflix/catalogue";
 import { publicMediaReadiness } from "@/angelcare-marketplace/digital-customer-experience/public-readiness";
 import { rows, obj, asset, readyOutputs } from "@/angelcare-marketplace/kidflix/detail/model";
-import { fetchPublishedDocumentBinary } from "@/angelcare-marketplace/kidflix/documents/delivery";
+import { fetchDocumentBinary } from "@/angelcare-marketplace/kidflix/documents/delivery";
 import { requireMarketplaceApiContext } from "@/angelcare-marketplace/auth/context";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -50,7 +50,7 @@ export async function GET(request: Request) {
         const a = asset(manifest, candidate.id);
         if (!a) { transportTests.push({ kind: candidate.kind, status: "missing_binding" }); continue; }
         try {
-          const bytes = await fetchPublishedDocumentBinary(candidate.id, a.url, a.mime, host);
+          const bytes = await fetchDocumentBinary(new URL(a.url, "https://" + host).href, a.mime);
           transportTests.push({ kind: candidate.kind, status: "passed", bytes: bytes.byteLength });
         } catch (error) {
           console.error("KIDFLIX_PUBLIC_MEDIA_PROBE_FAILED", { kind: candidate.kind, code: error instanceof Error ? error.message : "unknown" });
