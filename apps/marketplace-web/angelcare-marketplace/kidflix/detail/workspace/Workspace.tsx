@@ -31,7 +31,7 @@ type Props = {
   onSave: () => void;
   children: ReactNode;
   files: ReactNode;
-  related: ReactNode;
+  related?: ReactNode;
 };
 export function DetailWorkspace({
   p,
@@ -625,7 +625,7 @@ export function DetailWorkspace({
             </div>
           </section>
         ) : null}
-        <div className={s.vmRelated} id="kidflix-related">{related}</div>
+        {related ? <div className={s.vmRelated} id="kidflix-related">{related}</div> : null}
       </div>
       <aside
         className={s.sideColumn}
