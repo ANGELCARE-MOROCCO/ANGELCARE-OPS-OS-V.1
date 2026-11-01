@@ -109,7 +109,30 @@ async function currentProfile(run:Row){const schema=await resolveSchema(run.prof
 export async function prepareNext(id:string,context:MarketplaceRequestContext){
  const run=await assertRunRights(id,context);if(!['preparing','correct'].includes(run.status))return{run,counts:await counts(id,context)}
  const profile=await currentProfile(run),db=await createServiceClient()
- const pending=await db.from(LINES).select('*').eq('run_id',id).eq('status','unchecked').order('row_number').limit(8);if(pending.error)error(pending.error)
+ let pending=await db.from(LINES).select('*')
+ .eq('run_id',id)
+ .eq('status','unchecked')
+ .order('row_number')
+ .limit(8)
+
+if(pending.error)error(pending.error)
+
+// Retry only the previously blocked media-representation rows.
+// Never retry unrelated invalid, applied or conflicting rows.
+if(!(pending.data||[]).length && run.status==='correct'){
+ const retry=await db.from(LINES).select('*')
+  .eq('run_id',id)
+  .eq('status','invalid')
+  .eq('error',
+   'Médias fournis en JSON et en manifeste ; choisissez une représentation.')
+  .order('row_number')
+  .limit(8)
+
+ if(retry.error)
+  error(retry.error,'Media reconciliation retry')
+
+ pending=retry
+}
  if((run.manifest||[]).some((b:Row)=>!run.assets?.[b.path]))throw new MarketplaceError('INVALID_STATE_TRANSITION','Tous les médias du manifeste doivent être vérifiés avant le préflight.');
  const refs=[...new Set<string>((pending.data||[]).flatMap((l:Row)=>Object.entries(l.prepared.values).filter(([k])=>k.startsWith('relation_')).flatMap(([,v])=>Array.isArray(v)?v:text(v).split('|')).filter(Boolean)))];const vr=refs.length?await db.from(LINES).select('item_id,identity_key,status').eq('run_id',id).in('identity_key',refs):{data:[],error:null};if(vr.error)error(vr.error);const virtualItems=(vr.data||[]).filter((r:Row)=>r.status!=='invalid').map((r:Row)=>({id:r.item_id,item_key:r.identity_key,public_reference:r.identity_key,status:'draft'}))
  for(const line of pending.data||[]){
@@ -118,15 +141,59 @@ export async function prepareNext(id:string,context:MarketplaceRequestContext){
    const before=await rpc(db,'angelcare_import_r2_snapshot',{p_item:line.item_id})
    const media=(run.manifest||[]).filter((b:Row)=>b.itemKey===row.identity)
    for(const b of media)if(!run.assets?.[b.path])throw Error('Média à vérifier avant le préflight : '+b.path)
-   if(media.some((b:Row)=>b.role!=='variant')){const named=media.filter((b:Row)=>b.role!=='variant').map((b:Row)=>({media_key:b.role==='gallery'?'gallery-'+b.order:b.role,reference:run.assets[b.path].asset_key,sort_order:b.order,alt_text_fr:b.altFr,alt_text_en:b.altEn,alt_text_ar:b.altAr,status:'active'}));if(row.values.media_json)throw Error('Médias fournis en JSON et en manifeste ; choisissez une représentation.');row.values.media_json=named}
+   if(media.some((b:Row)=>b.role!=='variant')){const named=media.filter((b:Row)=>b.role!=='variant').map((b:Row)=>({media_key:b.role==='gallery'?'gallery-'+b.order:b.role,reference:run.assets[b.path].asset_key,sort_order:b.order,alt_text_fr:b.altFr,alt_text_en:b.altEn,alt_text_ar:b.altAr,status:'active'}));// ANGELCARE_IMPORT_R2_MEDIA_RECONCILIATION_R3
+// Resolve all input representations by canonical media_key.
+// A verified manifest binding is authoritative for its own key.
+const resolved = new Map<string,Row>()
+const supplied = row.values.media_json
+
+if(supplied !== undefined && !Array.isArray(supplied))
+ throw Error('media_json doit être une liste.')
+
+for(const entry of Array.isArray(supplied)?supplied:[]){
+ const key=text(entry?.media_key)
+ if(!key)
+  throw Error('media_json : media_key obligatoire.')
+ resolved.set(key,entry)
+}
+
+const primary=text(row.values.primary_image_reference)
+if(primary)
+ resolved.set('primary',{
+  media_key:'primary',
+  reference:primary,
+  sort_order:0
+ })
+
+if(Array.isArray(row.values.gallery_references)){
+ for(let i=0;i<row.values.gallery_references.length;i++){
+  const reference=text(row.values.gallery_references[i])
+  if(!reference)continue
+  const key='gallery-'+(i+1)
+  resolved.set(key,{
+   media_key:key,
+   reference,
+   sort_order:(i+1)*10
+  })
+ }
+}
+
+// Verified Vault assignments take precedence on matching keys.
+// Other distinct media entries remain preserved.
+for(const entry of named)
+ resolved.set(text(entry.media_key),entry)
+
+row.values.media_json=[...resolved.values()]
+delete row.values.primary_image_reference
+delete row.values.gallery_references}
    const variantMedia=media.filter((b:Row)=>b.role==='variant');if(variantMedia.length){const variants=Array.isArray(row.values.variants_json)?row.values.variants_json.map((v:Row)=>({...v})):[];for(const b of variantMedia){let variant=variants.find((v:Row)=>v.variant_key===b.variantKey);if(!variant){const existing=(before?.variants||[]).find((v:Row)=>v.variant_key===b.variantKey&&v.status!=='archived');if(!existing)throw Error('Variante absente : '+b.variantKey+' ; fournissez sa définition native.');const replacement:Row={...existing};variants.push(replacement);variant=replacement}variant!.media_asset_reference=run.assets[b.path].asset_key;delete variant!.media_asset_id}row.values.variants_json=variants}
    const plan=await planOffer({db,context,profile,target:run.target,row,before,itemId:line.item_id,runId:id,virtual:virtualItems})
    // Academy child imports are validated and applied through their own native
    // companion authority in the same row transaction (SQL R2 extension).
    const academy=(run.companions?.academy||[]).filter((r:Row)=>r.item_key===row.identity)
    if(academy.length){const module=await import('./academy');plan.academy=await module.planAcademy(db,context,line.item_id,academy)}
-   const r=await db.from(LINES).update({plan,status:'ready',error:null,issues:row.issues}).eq('id',line.id).eq('status','unchecked');if(r.error)error(r.error)
-  }catch(e){const message=e instanceof Error?e.message:String(e);const r=await db.from(LINES).update({status:'invalid',error:message,issues:[...row.issues,{row:row.number,key:'_native_plan',value:null,expected:'Références et dossier natifs valides',message,severity:'error'}]}).eq('id',line.id).eq('status','unchecked');if(r.error)error(r.error)}
+   const r=await db.from(LINES).update({plan,status:'ready',error:null,issues:row.issues}).eq('id',line.id).eq('status',line.status);if(r.error)error(r.error)
+  }catch(e){const message=e instanceof Error?e.message:String(e);const r=await db.from(LINES).update({status:'invalid',error:message,issues:[...row.issues,{row:row.number,key:'_native_plan',value:null,expected:'Références et dossier natifs valides',message,severity:'error'}]}).eq('id',line.id).eq('status',line.status);if(r.error)error(r.error)}
  }
  const totals=await counts(id,context),status=totals.unchecked?'preparing':totals.invalid?'correct':'ready'
  const changed=await db.from(RUNS).update({status,revision:run.revision+1,updated_at:new Date().toISOString()}).eq('id',id).eq('revision',run.revision);if(changed.error)error(changed.error)
