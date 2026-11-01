@@ -14,9 +14,10 @@ import { I } from "../../Icons";
 import { asset, capabilityFacts, readingExtent, publishedOutputHref, readyOutputs, str, type Row } from "../model";
 import { local, t } from "../copy";
 import { Modal, type PlayerProps } from "../shared";
-import { SocialToolbar } from "../Social";
+import { LoveButton, SocialToolbar } from "../Social";
 import { emitVisitor } from "../../journey/events";
 import { capability } from "../../journey/contract";
+import { j } from "../../journey/copy";
 const CategoryDesk = dynamic(() =>
   import("./CategoryDesk").then((m) => m.CategoryDesk),
 );
@@ -30,6 +31,7 @@ type Props = {
   onSave: () => void;
   children: ReactNode;
   files: ReactNode;
+  related: ReactNode;
 };
 export function DetailWorkspace({
   p,
@@ -38,6 +40,7 @@ export function DetailWorkspace({
   onSave,
   children,
   files,
+  related,
 }: Props) {
   const { m, d, locale: l } = p,
     profile = profiles[m.family] || profiles.documents,
@@ -83,7 +86,21 @@ export function DetailWorkspace({
               : profile.tools,
       l,
     ),
-    privateResource = ["forms", "tools", "planners"].includes(m.family);
+    privateResource = ["forms", "tools", "planners"].includes(m.family),
+    classroomEnabled = capability(m).classroom === true,
+    isComplete = p.state.complete === true,
+    continuityAvailable = d.continuityPolicy !== "none",
+    visibleTags = tags.slice(0, 9),
+    keywordLinks = tags.slice(0, 14),
+    sourceObjectives = [d.learningObjectives, d.objectives, d.goals, d.outcomes]
+      .find((value) => Array.isArray(value)) as unknown[] | undefined,
+    learningObjectives = (sourceObjectives || []).map((value) => {
+      if (typeof value === "string") return value.trim();
+      if (!value || typeof value !== "object") return "";
+      const row = value as Row;
+      return local(row, "text", l) || local(row, "title", l) || local(row, "label", l) || "";
+    }).filter(Boolean).slice(0, 4),
+    objectiveLabels = learningObjectives.length ? learningObjectives : (str(d.subject) ? [str(d.subject)] : []);
   const tabs = [
     { id: "player", icon: profile.icon, label: primary },
     ...(entries.length
@@ -291,7 +308,7 @@ export function DetailWorkspace({
     >
       <div className={s.mainColumn}>
         <header className={s.identity}>
-          <div className={s.cover}>
+          <div className={s.cover} data-vm-resource-cover>
             {cover ? (
               <img
                 src={cover.url}
@@ -303,6 +320,16 @@ export function DetailWorkspace({
             )}
           </div>
           <div className={s.identityCopy}>
+            <div className={s.visualMaxEyebrow}>
+              <I name="Sparkles" size={16} />
+              {tr(["A discovery worth exploring", "Une découverte à explorer", "اكتشاف يستحق الاستكشاف"], l)}
+              {m.releaseId ? (
+                <span className={s.publishedMarker}>
+                  <I name="CircleCheck" size={13} />
+                  {tr(["Published", "Publié", "منشور"], l)}
+                </span>
+              ) : null}
+            </div>
             <div className={s.badges}>
               <span className={s.categoryBadge}>{tr(w.title, l)}</span>
               {outputs.length ? (
@@ -316,8 +343,24 @@ export function DetailWorkspace({
                 </span>
               ) : null}
               <span className={s.languageBadge}>
+                <I name="Languages" size={13} />
                 {l === "fr" ? "Français" : l === "ar" ? "العربية" : "English"}
               </span>
+              {str(d.edition) ? (
+                <span className={s.vmEditionBadge}>
+                  <I name="ShieldCheck" size={13} /> {str(d.edition)}
+                </span>
+              ) : null}
+              {outputs.some((o) => o.mime === "application/pdf") ? (
+                <span className={s.visualMaxPdfBadge}>
+                  <I name="FileText" size={13} /> PDF
+                </span>
+              ) : null}
+              {Number(d.estimatedMinutes) > 0 ? (
+                <span className={s.visualMaxTimeBadge}>
+                  <I name="Clock" size={13} /> {Number(d.estimatedMinutes)} min
+                </span>
+              ) : null}
               {privateResource ? (
                 <span className={s.privateBadge}>
                   <I name="LockKeyhole" size={12} />
@@ -329,8 +372,14 @@ export function DetailWorkspace({
             {local(d, "summary", l) ? (
               <p className={s.lead}>{local(d, "summary", l)}</p>
             ) : null}
+            {str(d.subject) ? (
+              <div className={s.visualMaxSubject}>
+                <I name="Target" size={16} />
+                <span>{str(d.subject)}</span>
+              </div>
+            ) : null}
             <div className={s.facts}>
-              {facts.slice(0, 4).map((f, i) => (
+              {facts.slice(0, 8).map((f, i) => (
                 <span key={i}>
                   <I name={f.icon} size={16} />
                   {f.label}
@@ -345,6 +394,23 @@ export function DetailWorkspace({
             </div>
           </div>
         </header>
+        <nav className={s.visualMaxJumpBar} aria-label={tr(["Resource shortcuts", "Accès rapides", "اختصارات المورد"], l)}>
+          <button type="button" aria-current={tab === "player" ? "page" : undefined} onClick={() => changeTab("player")}>
+            <I name={profile.icon} size={17} /> {primary}
+          </button>
+          {entries.length ? <button type="button" aria-current={tab === "index" ? "page" : undefined} onClick={() => changeTab("index")}>
+            <I name="LayoutGrid" size={17} /> {indexLabel}
+          </button> : null}
+          <button type="button" aria-current={tab === "tools" ? "page" : undefined} onClick={() => changeTab("tools")}>
+            <I name="Sparkles" size={17} /> {toolsLabel}
+          </button>
+          <Link href={path(l, "/explore/" + m.family)}>
+            <I name="Layers" size={17} /> {tr(["Explore similar resources", "Ressources associées", "موارد مرتبطة"], l)}
+          </Link>
+          <Link href={path(l, "/my")}>
+            <I name="Bookmark" size={17} /> {tr(["My library", "Ma bibliothèque", "مكتبتي"], l)}
+          </Link>
+        </nav>
         <div
           className={`${s.viewerRow} ${entries.length > 1 ? s.withRail : ""}`}
         >
@@ -366,6 +432,14 @@ export function DetailWorkspace({
             aria-label={focus ? m.title : undefined}
             data-shape={profile.shape}
           >
+            <div className={s.visualMaxPlayerBrand}>
+              <span><I name="BookOpen" size={16} /> {tr(["Learning space", "Espace de découverte", "مساحة التعلم"], l)}</span>
+              <small>
+                {entries.length > 1
+                  ? `${position + 1} / ${entries.length} · ${tr(["sections", "étapes", "خطوات"], l)}`
+                  : tr(["Interactive resource viewer", "Lecteur de la ressource", "عارض المورد"], l)}
+              </small>
+            </div>
             <div className={s.modeRow}>
               <div
                 className={s.tabs}
@@ -527,6 +601,31 @@ export function DetailWorkspace({
             ) : null}
           </div>
         </div>
+        {(str(d.subject) || visibleTags.length > 0) ? (
+          <section className={s.visualMaxLearningStrip}>
+            <h2>
+              <I name="Target" size={20} />
+              {tr(["What you'll explore", "Ce que vous allez explorer", "ما ستستكشفه"], l)}
+            </h2>
+            <div>
+              {[str(d.subject), ...visibleTags]
+                .filter(Boolean)
+                .filter((x, i, arr) => arr.indexOf(x) === i)
+                .slice(0, 6)
+                .map((value, i) => (
+                  <Link
+                    key={value}
+                    href={path(l, "/explore?q=" + encodeURIComponent(value))}
+                    className={s.visualMaxOutcome}
+                  >
+                    <I name={i % 2 === 0 ? "CircleCheck" : "Sparkles"} size={14} />
+                    {value}
+                  </Link>
+                ))}
+            </div>
+          </section>
+        ) : null}
+        <div className={s.vmRelated} id="kidflix-related">{related}</div>
       </div>
       <aside
         className={s.sideColumn}
@@ -539,7 +638,7 @@ export function DetailWorkspace({
           l,
         )}
       >
-        <section className={s.acquisition} id="r5-published-files">
+        <section className={s.acquisition} id="r5-published-files" data-vm-format-count={outputs.length} data-vm-first-format={outputs[0]?.mime === "application/pdf" ? "pdf" : "other"}>
           <header>
             <h2>
               {tr(
@@ -649,7 +748,51 @@ export function DetailWorkspace({
               {files}
             </details>
           ) : null}
+          {classroomEnabled ? (
+            <button
+              type="button"
+              className={s.visualMaxClassMode}
+              onClick={() => {
+                // Keep the native Class Mode authority in ResourceSurface.
+                // The known-good R2 does not have the optional data attribute.
+                // Resolve its real localized action label instead of requiring
+                // a mutation to journey/Tools.tsx.
+                const expectedLabel = j("classroom", l).trim();
+                const buttons = Array.from(
+                  stage.current?.querySelectorAll<HTMLButtonElement>("button") ?? []
+                );
+                const classroom = buttons.find((button) =>
+                  button.hasAttribute("data-kidflix-open-class-mode") ||
+                  button.textContent?.trim() === expectedLabel
+                );
+                if (classroom) {
+                  setTab("player");
+                  classroom.click();
+                } else {
+                  // Never fake the Class Mode action. Expose the native toolbar.
+                  setTab("player");
+                  const toggle = stage.current?.querySelector<HTMLButtonElement>(
+                    "[data-workspace-session-toggle]"
+                  );
+                  if (toggle?.getAttribute("aria-expanded") === "false") {
+                    toggle.click();
+                  }
+                  setNotice(tr(
+                    ["Use the Class Mode control in the opened reader toolbar.",
+                    "Utilisez le bouton Mode classe dans la barre du lecteur.",
+                    "استخدم زر وضع الفصل في شريط أدوات القارئ."], l
+                  ));
+                }
+              }}
+            >
+              <I name="Presentation" size={22} />
+              <strong>{tr(["Class Mode", "Mode Classe", "وضع الفصل"], l)}</strong>
+              {Number(d.estimatedMinutes) > 0 ? <span>{Number(d.estimatedMinutes)} min</span> : null}
+              <I name="ArrowRight" size={19} />
+            </button>
+          ) : null}
           <div className={s.quickActions}>
+            <LoveButton locale={l} />
             {printable ? (
               pdf ? (
                 <a
@@ -721,6 +864,25 @@ export function DetailWorkspace({
             {notice}
           </p>
         </section>
+        <section className={s.visualMaxProgress} aria-label={tr(["Reading progress", "Progression", "التقدم"], l)}>
+          <div
+            className={s.visualMaxProgressRing}
+            style={{ "--visual-progress": `${continuityAvailable && isComplete ? 100 : 0}%` } as CSSProperties}
+          >
+            <span>{continuityAvailable ? (isComplete ? "100%" : "0%") : "—"}</span>
+          </div>
+          <div className={s.visualMaxProgressBody}>
+            <h2>{tr(["Your progress", "Votre progression", "تقدمك"], l)}</h2>
+            <p>
+              {!continuityAvailable
+                ? tr(["Progress is not saved for this resource.", "La progression n’est pas enregistrée pour cette ressource.", "لا يتم حفظ التقدم في هذا المورد."], l)
+                : isComplete
+                  ? tr(["You've completed this experience.", "Vous avez terminé cette découverte.", "لقد أكملت هذه التجربة."], l)
+                  : tr(["Continue this learning experience at your pace.", "Poursuivez votre découverte à votre rythme.", "تابع تجربتك التعليمية وفق وتيرتك."], l)}
+            </p>
+            <progress value={continuityAvailable && isComplete ? 100 : 0} max={100} aria-label={tr(["Progress", "Progression", "التقدم"], l)} />
+          </div>
+        </section>
         <section className={s.metadata}>
           <h2>
             {tr(
@@ -739,9 +901,15 @@ export function DetailWorkspace({
               </div>
             ))}
           </dl>
-          {tags.length ? (
-            <div className={s.tags}>
-              {tags.map((tag) => (
+        </section>
+        {keywordLinks.length > 0 ? (
+          <section className={s.visualMaxKeywords}>
+            <h2>
+              <I name="Layers" size={21} />
+              {tr(["Keywords (tags)", "Mots-clés (tags)", "الكلمات المفتاحية"], l)}
+            </h2>
+            <div className={s.visualMaxKeywordList}>
+              {keywordLinks.map((tag) => (
                 <Link
                   key={tag}
                   href={path(l, "/explore?q=" + encodeURIComponent(tag))}
@@ -750,8 +918,18 @@ export function DetailWorkspace({
                 </Link>
               ))}
             </div>
-          ) : null}
-        </section>
+          </section>
+        ) : null}
+        {objectiveLabels.length > 0 ? (
+          <section className={s.vmObjectives}>
+            <h2><I name="Target" size={24} /> {tr(["Learning objectives", "Objectifs d’apprentissage", "أهداف التعلم"], l)}</h2>
+            <ul>
+              {objectiveLabels.map((objective, i) => (
+                <li key={i}><I name="CircleCheck" size={16} /><span>{objective}</span></li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
         <section className={s.personalNote}>
           <I
             name={privateResource ? "LockKeyhole" : "BookmarkCheck"}
@@ -799,6 +977,21 @@ export function DetailWorkspace({
             </Link>
           </div>
         </section>
+        <button
+          type="button"
+          className={s.visualMaxGuide}
+          onClick={() => {
+            changeTab("tools");
+            requestAnimationFrame(() => stage.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
+          }}
+        >
+          <I name="Sparkles" size={25} />
+          <span>
+            <strong>{tr(["How to use it?", "Comment l’utiliser ?", "كيف تستخدمه؟"], l)}</strong>
+            <small>{tr(["Discover existing tips, activities and category tools.", "Retrouvez les conseils, activités et outils disponibles.", "اكتشف الإرشادات والأنشطة والأدوات المتاحة."], l)}</small>
+          </span>
+          <I name={l === "ar" ? "ChevronLeft" : "ChevronRight"} size={20} />
+        </button>
       </aside>
       {share ? (
         <Modal

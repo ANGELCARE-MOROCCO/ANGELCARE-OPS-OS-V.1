@@ -176,7 +176,7 @@ function DetailReady({
         <DetailWorkspace p={props} titleId={titleId} saved={saved} onSave={() => {
           guest.toggle(m.key);
           if (!saved) emitVisitor(m.key, locale, m.releaseId, "bookmark");
-        }} files={<Files {...props} />}>
+        }} files={<Files {...props} />} related={<DiscoveryRails m={m} locale={locale} context={{score: progress.state.score ?? progress.state.assessment?.score, complete: progress.state.complete === true}} />}>
           <section
             id="kidflix-experience-player"
             className={s.playerSurface}
@@ -193,7 +193,6 @@ function DetailReady({
             )}
           </section>
         </DetailWorkspace>
-        <DiscoveryRails m={m} locale={locale} context={{score: progress.state.score ?? progress.state.assessment?.score, complete: progress.state.complete === true}} />
         <AdSlot m={m} locale={locale} zone="after_intro" />
         <Dossier {...props} />
         <PrivateTools {...props} />

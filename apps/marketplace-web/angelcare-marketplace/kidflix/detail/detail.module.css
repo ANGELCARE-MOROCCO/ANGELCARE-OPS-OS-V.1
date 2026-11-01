@@ -2898,3 +2898,330 @@
   .reference .shelf { box-shadow: none; }
 }
 /* KIDFLIX_DETAIL_POLISH_R1_DETAIL_END */
+
+/* KIDFLIX_VISUAL_FIDELITY_R3_DETAIL_BEGIN
+   Source-scoped visual fidelity enhancements. Keep all player/reader handlers unchanged. */
+.reference.detail {
+  --vm-deep: #08145c;
+  --vm-violet: #7824d9;
+  --vm-pink: #f70483;
+  max-width: 1680px;
+  padding: 12px clamp(14px,2vw,32px) 32px;
+  margin-inline:auto;
+  background:
+    radial-gradient(ellipse 39% 21% at 0% 1%,rgba(222,232,255,.75),transparent 75%),
+    radial-gradient(ellipse 37% 28% at 100% 11%,rgba(255,221,249,.55),transparent 68%),
+    linear-gradient(145deg,#fcfdff 0%,#fafaff 63%,#f8f9ff 100%);
+  color:var(--vm-deep);
+  font-family: KidFlixWorld,"Trebuchet MS","Arial Rounded MT Bold",system-ui,sans-serif;
+}
+.reference .breadcrumb {
+  margin:0 0 8px;
+  font-size:11px;
+  color:#234190;
+  font-weight:740;
+  gap:6px;
+}
+.reference .breadcrumb a {color:#4764a8;}
+.reference .breadcrumb a:hover {color:#e80081;text-decoration:underline;}
+.reference .breadcrumb > span:last-child {font-weight:930;color:#0a1a62;}
+.reference .playerSurface{
+  background:transparent;border:0;box-shadow:none;margin:0;padding:0;overflow:visible;
+}
+/* Reader toolbar: saturated electric gradient, dense controls, faithful emphasis. */
+.reference .readerTools {
+  position:relative;
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  min-height:37px;
+  margin:0 0 4px;
+  padding:4px 6px;
+  border-radius:0;
+  background:linear-gradient(105deg,#42d4ff 0%,#4ebeff 48%,#bef5ff 100%);
+  color:#132e78;
+  box-shadow:inset 0 1px #ffffff93;
+}
+.reference .readerTools label.search {
+  flex:0 1 230px;
+  min-width:120px;
+  max-width:260px;
+}
+.reference .readerTools input{
+  min-height:28px;
+  padding:6px 11px;
+  border-radius:8px;
+  border:1px solid #bed9ff;
+  background:linear-gradient(180deg,#fff,#f8fcff);
+  box-shadow:0 2px 3px #2b74ab1e;
+  font-size:11px;
+  font-weight:700;
+  color:#344884;
+}
+.reference .readerTools .controls {gap:5px;display:flex;align-items:center;justify-content:flex-end;}
+.reference .readerTools .controls :is(button,.button){
+  display:inline-flex;
+  min-height:28px;
+  min-width:29px;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  padding:5px 8px;
+  border:1px solid #d7e7ff;
+  border-radius:8px;
+  background:linear-gradient(180deg,#fff,#f0f5ff);
+  color:#193a86;
+  font-size:11px;
+  font-weight:920;
+  box-shadow:inset 0 1px #fff,0 2px 3px #246aa91e;
+}
+.reference .readerTools .controls :is(button,.button):hover:not(:disabled){border-color:#83c1ff;background:#fff;}
+.reference .readerTools output{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:43px;
+  min-height:28px;
+  padding:5px 7px;
+  border-radius:99px;
+  color:#10255f;
+  background:#e8f3ff;
+  border:1px solid #c3ddff;
+  font-size:11px;
+  font-weight:970;
+}
+.reference .readerLayout,.reference .readerMain {min-width:0;}
+.reference .readingCanvas{
+  max-width:100%;
+  min-height:0;
+  padding:3px;
+  background:#1f2431;
+  border:1px solid #2e3344;
+  border-radius:0 0 8px 8px;
+  box-shadow:inset 0 1px 6px rgba(0,0,0,.28);
+}
+.reference .readingCanvas iframe {
+  display:block;
+  width:100%;
+  height:clamp(270px,30.8vh,360px);
+  border:0;
+  border-radius:1px;
+  background:#1f2531;
+}
+.reference .readingCanvas > img{
+  display:block;
+  margin:auto;
+  max-height:330px;
+  width:auto;
+  max-width:100%;
+  object-fit:contain;
+  box-shadow:0 3px 11px #0002;
+}
+.reference .storyText {padding:12px 8px 4px;}
+.reference .storyText h2{color:#112365;font-weight:950;font-size:18px;}
+.reference .storyText p{color:#344778;font-size:13px;line-height:1.55;}
+.reference .readingCanvas:has(iframe){padding:0;}
+.reference .paperCanvas{background:#232839;}
+/* Native media and interactive experiences retain their category-specific layouts. */
+.reference :is(.mediaPlayer,.slide,.studyCard>div,.lesson,.quiz,.questionnaire,.toolPanel,.planner,.archiveEntry){
+  border-radius:14px;
+  border-color:#e4dbff;
+  box-shadow:0 7px 17px rgba(54,44,127,.12);
+}
+.reference .studyCard > div{padding:18px;}
+/* Discovery rails are composed inside the existing workspace main column by R3. */
+.reference .discovery {display:grid;gap:10px;margin:4px 0 0;min-width:0;}
+.reference .discovery > .callout {color:#65749f;font-size:10px;margin:0;}
+.reference .shelf {
+  position:relative;
+  min-width:0;
+  margin:2px 0 0;
+  padding:10px 11px 12px;
+  border-radius:15px;
+  border:1px solid #e7d6ff;
+  background:linear-gradient(115deg,#f9e9ff 0%,#f2fcff 44%,#fff5e6 100%);
+  box-shadow:0 4px 13px rgba(65,43,157,.10);
+}
+.reference .shelf:nth-child(3n+2){background:linear-gradient(117deg,#e6f8ff,#faf1ff 58%,#fff0e6);}
+.reference .shelf:nth-child(3n+3){background:linear-gradient(120deg,#fff2e9,#f0f5ff 63%,#f3f0ff);}
+.reference .shelf > header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:7px;
+  margin:0 0 8px;
+}
+.reference .shelf > header h2{
+  margin:0!important;
+  color:#0d1c65;
+  letter-spacing:-.035em;
+  font-size:clamp(14px,1.05vw,18px)!important;
+  line-height:1.15;
+  font-weight:1000;
+  text-shadow:0 1px #fff;
+}
+.reference .shelf > header small{display:none;}
+.reference .shelf > header .controls{display:flex;align-items:center;gap:5px;}
+.reference .shelf > header .controls > button{
+  display:grid;
+  place-items:center;
+  width:28px;
+  height:28px;
+  min-width:28px;
+  padding:3px;
+  border:1px solid #d5dfff;
+  border-radius:99px;
+  background:linear-gradient(180deg,#fff,#f3f3ff);
+  color:#30218d;
+  box-shadow:0 2px 4px #46419820;
+  font-size:0;
+}
+.reference .shelf > header .controls > button svg{width:14px;height:14px;}
+.reference .shelf > header .viewAll{font-size:11px;font-weight:950;color:#38248e!important;text-decoration:none;white-space:nowrap;}
+.reference .shelf > header .viewAll:hover{text-decoration:underline;}
+.reference .rail {
+  display:flex;
+  gap:8px;
+  padding:0 1px 4px;
+  scroll-padding-inline:0;
+  overflow-x:auto;
+  min-width:0;
+}
+.reference .rail .resourceCard{
+  flex:0 0 clamp(148px,16.5vw,185px);
+  min-width:148px;
+  display:block;
+  background:#fff;
+  border:1px solid #e4d9ff;
+  border-radius:13px;
+  overflow:hidden;
+  box-shadow:0 3px 5px #44269e16,0 6px 10px #6443a91c;
+  transition:transform .16s,box-shadow .16s;
+}
+.reference .rail .resourceCard:hover{transform:translateY(-2px);box-shadow:0 8px 16px #5d37b136;}
+.reference .resourceImage {
+  position:relative;
+  height:68px;
+  padding:0;
+  border-radius:12px 12px 0 0;
+  overflow:hidden;
+  background:linear-gradient(135deg,#ccecff,#ffe5f4);
+}
+.reference .resourceImage img {height:68px;width:100%;object-fit:cover;}
+.reference .resourceBadge {
+  display:block;
+  position:absolute;
+  top:5px;
+  inset-inline-start:5px;
+  inset-inline-end:auto;
+  bottom:auto;
+  font-size:8px;
+  font-weight:950;
+  padding:3px 6px;
+  border-radius:99px;
+  color:#fff;
+  max-width:73%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  box-shadow:0 2px 4px #181e5536;
+}
+.reference .resourceCopy{
+  display:block;
+  min-height:65px;
+  padding:7px 8px 8px;
+  background:linear-gradient(180deg,#fff,#fdfbff);
+}
+.reference .resourceTitle{
+  display:-webkit-box;
+  overflow:hidden;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  min-height:27px;
+  margin-bottom:5px;
+  color:#111e63;
+  font-size:10px;
+  line-height:1.22;
+  font-weight:980;
+  text-decoration:none;
+}
+.reference .resourceTitle:hover{color:#f0007f;}
+.reference .resourceCopy > :is(p,small){display:none;}
+.reference .cardFacts{display:flex;flex-wrap:wrap;gap:4px;margin:0;font-size:9px;}
+.reference .cardFacts span{
+  display:inline-block;
+  border:1px solid #eee5ff;
+  border-radius:99px;
+  background:linear-gradient(#f6e8ff,#ecdbff);
+  color:#60359d;
+  font-weight:900;
+  padding:3px 5px;
+  font-size:9px;
+}
+.reference .cardFacts span:nth-child(2n){background:linear-gradient(#fff3d9,#ffe6b2);border-color:#ffe9c2;color:#a6630f;}
+.reference .cardCTA{display:none;}
+.reference .railStatus{color:#596aa0;font-size:10px;}
+.reference .dossier,.reference .authoredResult{
+  border-color:#e5dfff;
+  border-radius:17px;
+  box-shadow:0 6px 18px #42348a12;
+}
+.reference .dossier h2{color:#101e65;font-weight:1000;}
+@media(max-width:1170px){
+  .reference.detail{padding:12px 19px 30px;}
+  .reference .readingCanvas iframe{height:clamp(280px,36vh,430px)}
+  .reference .rail .resourceCard{flex-basis:160px;}
+}
+@media(max-width:900px){
+  .reference .readingCanvas iframe{height:clamp(350px,50vh,540px)}
+  .reference .rail .resourceCard{flex-basis:175px;}
+}
+@media(max-width:610px){
+  .reference.detail{padding:10px 11px 24px;}
+  .reference .breadcrumb{font-size:10px;margin-bottom:6px;}
+  .reference .readerTools{padding:4px;gap:3px;}
+  .reference .readerTools .search{flex-basis:125px;}
+  .reference .readerTools .controls{gap:3px;}
+  .reference .readerTools .controls :is(button,.button){padding:4px 5px;min-width:26px;min-height:26px;}
+  .reference .readingCanvas iframe{height:clamp(330px,53vh,510px)}
+  .reference .shelf{padding:10px;}
+  .reference .shelf>header h2{font-size:15px!important;}
+  .reference .shelf>header .controls>button{width:26px;height:26px;min-width:26px;}
+  .reference .rail .resourceCard{flex-basis:154px;min-width:154px;}
+  .reference .resourceImage,.reference .resourceImage img{height:69px;}
+}
+@media(prefers-reduced-motion:reduce){
+  .reference .rail .resourceCard{transition:none;transform:none!important;}
+}
+@media print{
+  .reference.detail{background:#fff;}
+  .reference .shelf{box-shadow:none;}
+}
+/* KIDFLIX_VISUAL_FIDELITY_R3_DETAIL_END */
+/* Media and card sizing invariants previously set by the R1 desktop media query. */
+.reference .readerTools label.search {
+  display:flex;align-items:center;
+  padding:0!important;margin:0!important;
+  min-height:0;height:29px;
+  border:0;background:transparent;box-shadow:none;
+}
+.reference .readerTools .search input {
+  height:28px!important;min-height:0!important;
+  padding:5px 9px!important;margin:0!important;
+  font-size:11px;line-height:1.05;
+}
+.reference .readerTools .controls {align-self:center;min-height:29px;}
+.reference .readerTools .controls button{height:28px;}
+.reference .readerTools{min-height:34px;}
+.reference .rail .resourceCard{min-height:0!important;}
+.reference .resourceImage,
+.reference .rail .resourceImage{
+  min-height:0!important;
+  height:68px!important;
+}
+.reference .resourceImage img,
+.reference .rail .resourceImage img {min-height:0!important;height:68px!important;}
+.reference .readingCanvas iframe{height:clamp(270px,28vh,345px);}
+.reference .position{padding-top:4px;}

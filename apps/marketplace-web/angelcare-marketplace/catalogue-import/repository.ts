@@ -15,12 +15,42 @@ import { planOffer } from './planner'
 
 function validateInput<T>(read:()=>T):T{try{return read()}catch(e){if(e instanceof MarketplaceError)throw e;throw new MarketplaceError('VALIDATION_ERROR',e instanceof Error?e.message:String(e))}}
 const RUNS='angelcare_marketplace_catalogue_import_runs',LINES='angelcare_marketplace_catalogue_import_lines'
-function error(cause:any):never {if(/CONFLICT|CHANGED|DENIED/.test(cause?.message||''))throw new MarketplaceError('CONFLICT','L’état a changé ou le périmètre est incompatible. Relisez le dossier avant de poursuivre.',{cause});throw new MarketplaceError(['42P01','PGRST202'].includes(cause?.code)?'CONFIGURATION_ERROR':'INTERNAL_ERROR',['42P01','PGRST202'].includes(cause?.code)?'Activez Catalogue Import R2 avec le SQL fourni.':'Opération d’import impossible ; état conservé.',{cause})}
+// ANGELCARE_CATALOGUE_IMPORT_R2_REPAIR_20261101_R2
+// Preserve database guardrails, but never mask actionable SQLSTATE diagnostics from operators.
+function error(cause:any,phase='import'):never {
+ const code=String(cause?.code||'UNKNOWN').slice(0,40)
+ const isConfig=['42P01','PGRST202','42703','42883'].includes(code)
+ const isConflict=/CONFLICT|CHANGED|DENIED/.test(String(cause?.message||''))
+ const explanations:Record<string,string>={
+  '23505':'Une clé unique est déjà utilisée. Le lot n’a pas été écrasé.',
+  '23503':'Une référence de données liée est absente ou incompatible.',
+  '23502':'Une colonne obligatoire manque dans la requête ou le schéma.',
+  '23514':'Une valeur ne satisfait pas une contrainte de la base.',
+  '22P02':'Un identifiant UUID ou un type de donnée est invalide.',
+  '42703':'Le code serveur et les colonnes SQL ne sont pas synchronisés.',
+  '42883':'Une fonction PostgreSQL attendue est absente ou incompatible.',
+  '42501':'Les privilèges de la fonction ou de la table sont insuffisants.',
+  '42P01':'Une table du module Import R2 est absente.',
+  'PGRST202':'La fonction RPC est absente du cache de schéma PostgREST.',
+  'PGRST000':'La connexion à PostgREST a échoué.',
+ }
+ // Never include source CSV, patient details, user identities or raw database row values.
+ console.error('[ANGELCARE_CATALOGUE_IMPORT_R2_DB]',{
+  phase,code,
+  message:String(cause?.message||'').slice(0,500),
+  hint:String(cause?.hint||'').slice(0,300)
+ })
+ throw new MarketplaceError(
+  isConflict?'CONFLICT':isConfig?'CONFIGURATION_ERROR':'INTERNAL_ERROR',
+  `${phase} : ${explanations[code]||'La base a refusé cette opération.'} [SQLSTATE ${code}]. Aucune validation métier n’a été contournée.`,
+  {cause}
+ )
+}
 function requireRights(context:MarketplaceRequestContext,keys:MarketplacePermission[]){for(const key of keys)if(!hasMarketplacePermission(context,key))throw new MarketplaceError('FORBIDDEN','Permission requise : '+key)}
 function plannedPermissions(rows:PreparedRow[],manifest:Row[],academy:Row[],target:Row):MarketplacePermission[]{const values=rows.map(r=>r.values),clears=rows.flatMap(r=>r.clears),required:MarketplacePermission[]=[];if(target.categoryKeys.length||values.some(r=>Object.hasOwn(r,'category_keys')||Object.hasOwn(r,'primary_category_key'))||clears.includes('category_keys'))required.push('marketplace.categories.manage');if(manifest.length||values.some(r=>['media_json','gallery_references','primary_image_reference'].some(k=>Object.hasOwn(r,k)))||clears.some(k=>['media_json','gallery_references','primary_image_reference'].includes(k)))required.push('marketplace.media.manage');if(values.some(r=>Object.keys(r).some(k=>k.startsWith('price_rule')))||clears.some(k=>k.startsWith('price_rule')))required.push('marketplace.finance.price_books.manage');if(academy.length)required.push('marketplace.academy.catalog.manage','marketplace.academy.cohorts.manage');return required}
 export async function assertRunRights(id:string,context:MarketplaceRequestContext){const run=await readRun(id,context);requireRights(context,run.target.requiredPermissions||[]);return run}
 export async function requiresPublication(id:string,context:MarketplaceRequestContext){await readRun(id,context);const db=await createServiceClient();const r=await db.from(LINES).select('id',{count:'exact',head:true}).eq('run_id',id).eq('plan->after->>status','published');if(r.error)error(r.error);return Number(r.count)>0}
-async function rpc(db:any,name:string,args:Row){const r=await db.rpc(name,args);if(r.error)error(r.error);return r.data}
+async function rpc(db:any,name:string,args:Row){const r=await db.rpc(name,args);if(r.error)error(r.error,'RPC '+name);return r.data}
 function scope(q:any,c:MarketplaceRequestContext){if(c.territoryId)q=q.eq('territory_id',c.territoryId);if(c.tenantId)q=q.eq('tenant_id',c.tenantId);return q}
 export async function readRun(id:string,context:MarketplaceRequestContext){const db=await createServiceClient(),r=await scope(db.from(RUNS).select('*').eq('id',id),context).maybeSingle();if(r.error)error(r.error);if(!r.data)throw new MarketplaceError('NOT_FOUND','Lot absent ou hors périmètre.');return r.data as Row}
 export async function runPage(context:MarketplaceRequestContext,page=1){const db=await createServiceClient();const r=await scope(db.from(RUNS).select('id,reference,profile_key,target,status,source_name,revision,created_at,updated_at,created_by',{count:'exact'}),context).order('created_at',{ascending:false}).order('id').range((page-1)*24,page*24-1);if(r.error)error(r.error);return{rows:r.data||[],total:r.count||0,page,pageSize:24}}
@@ -43,7 +73,7 @@ export async function createRun(body:Row,context:MarketplaceRequestContext){
  for(const b of manifest)if(!keys.has(b.itemKey)||b.checksum&&!/^[0-9a-f]{64}$/i.test(b.checksum))throw new MarketplaceError('VALIDATION_ERROR','Manifeste hors fichier ou SHA-256 invalide.')
  if(manifest.length&&!targetFields(profile,target).some(f=>f.module==='media'||f.module==='variants'))throw new MarketplaceError('VALIDATION_ERROR','Ce parcours ne modifie pas les médias.')
  const db=await createServiceClient(),existing=new Map<string,Row>()
- for(let i=0;i<rows.length;i+=100){const r=await db.from('angelcare_marketplace_catalog_items').select('id,item_key,territory_id,tenant_id').in('item_key',rows.slice(i,i+100).map(r=>r.identity).filter(Boolean));if(r.error)error(r.error);for(const item of r.data||[]){if(context.territoryId&&item.territory_id&&item.territory_id!==context.territoryId||context.tenantId&&item.tenant_id!==context.tenantId)throw new MarketplaceError('FORBIDDEN','Une clé du fichier appartient à un autre périmètre.');existing.set(item.item_key,item)}}
+ for(let i=0;i<rows.length;i+=100){const r=await db.from('angelcare_marketplace_catalog_items').select('id,item_key,territory_id,tenant_id').in('item_key',rows.slice(i,i+100).map(r=>r.identity).filter(Boolean));if(r.error)error(r.error,'Catalogue item lookup');for(const item of r.data||[]){if(context.territoryId&&item.territory_id&&item.territory_id!==context.territoryId||context.tenantId&&item.tenant_id!==context.tenantId)throw new MarketplaceError('FORBIDDEN','Une clé du fichier appartient à un autre périmètre.');existing.set(item.item_key,item)}}
  const requiredPermissions=plannedPermissions(rows,manifest,companionRows,{...target,categoryKeys:targetFields(profile,target).some(f=>f.module==='categories')?target.categoryKeys:[]});requireRights(context,requiredPermissions);
  if(body.correctionOf){const parent=await readRun(text(body.correctionOf),context);const old=await allLines(db,parent.id);const applied=new Set(old.filter(l=>['applied','rolled_back'].includes(l.status)).map(l=>l.identity_key));if(rows.some(row=>applied.has(row.identity)))throw new MarketplaceError('CONFLICT','Une correction ne peut pas reprendre une ligne déjà appliquée.');}
  const id=crypto.randomUUID(),seen=new Set<string>()
@@ -51,7 +81,21 @@ export async function createRun(body:Row,context:MarketplaceRequestContext){
  // allowing ambiguous rows to enter the execution plan.
  const lines=rows.map(row=>{const duplicate=!row.identity||seen.has(row.identity);seen.add(row.identity);return{row_number:row.number,identity_key:duplicate?`!invalid-line-${row.number}`:row.identity,item_id:existing.get(row.identity)?.id||crypto.randomUUID(),original:row.original,prepared:row,issues:row.issues,status:row.issues.some(i=>i.severity==='error')||duplicate?'invalid':'unchecked'}})
  const sourceHash=await fingerprint({actor:context.actor.id,territory:context.territoryId,tenant:context.tenantId,target,source,collections,academy:companionRows,manifest,profile:hash,correctionOf:text(body.correctionOf)})
- return rpc(db,'angelcare_import_r2_create',{p_run:{id,created_by:context.actor.id,territory_id:context.territoryId,tenant_id:context.tenantId,source_name:text(body.sourceName)||'import.csv',source_csv:source,source_hash:sourceHash,profile_key:profile.key,profile_fingerprint:hash,profile_snapshot:schema,target:{...target,requiredPermissions},manifest,companions:{collections,academy:companionRows}},p_lines:lines})
+ // Exact-scope registration recovery; no permission or data-constraint bypass.
+ const priorQuery=()=>scope(db.from(RUNS).select('*').eq('created_by',context.actor.id).eq('source_hash',sourceHash),context).maybeSingle()
+ const prior=await priorQuery()
+ if(prior.error)error(prior.error,'Existing import batch lookup')
+ if(prior.data)return prior.data
+ try {
+  return await rpc(db,'angelcare_import_r2_create',{p_run:{id,created_by:context.actor.id,territory_id:context.territoryId,tenant_id:context.tenantId,source_name:text(body.sourceName)||'import.csv',source_csv:source,source_hash:sourceHash,profile_key:profile.key,profile_fingerprint:hash,profile_snapshot:schema,target:{...target,requiredPermissions},manifest,companions:{collections,academy:companionRows}},p_lines:lines})
+ }catch(failure){
+  const recovered=await priorQuery()
+  if(!recovered.error&&recovered.data){
+   console.info('[ANGELCARE_CATALOGUE_IMPORT_R2] Registration recovered by exact source hash')
+   return recovered.data
+  }
+  throw failure
+ }
 }
 export async function registerAsset(id:string,body:Row,context:MarketplaceRequestContext){
  const run=await readRun(id,context),db=await createServiceClient(),path=text(body.path),binding=(run.manifest||[]).find((b:Row)=>b.path===path)

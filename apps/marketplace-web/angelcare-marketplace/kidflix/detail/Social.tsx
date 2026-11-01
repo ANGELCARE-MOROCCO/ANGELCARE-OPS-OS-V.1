@@ -159,7 +159,7 @@ export function LoveProvider({
     </Love.Provider>
   );
 }
-function LoveButton({ locale }: { locale: Locale }) {
+export function LoveButton({ locale }: { locale: Locale }) {
   const { value, busy, error, toggle } = useContext(Love),
     label = sw(value?.liked ? "loved" : "love", locale),
     full = value ? value.count.toLocaleString(locale) : "—",

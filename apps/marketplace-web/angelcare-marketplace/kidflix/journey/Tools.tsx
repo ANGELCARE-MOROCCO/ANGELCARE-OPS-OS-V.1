@@ -139,7 +139,7 @@ export function ResourceSurface({
         <div className={s.toolbar}>
           <SessionActions m={m} locale={locale} />
           {c.classroom ? (
-            <button className={s.button} onClick={() => setClassroom(true)}>
+            <button className={s.button} data-kidflix-open-class-mode onClick={() => setClassroom(true)}>
               {j("classroom", locale)}
             </button>
           ) : null}
