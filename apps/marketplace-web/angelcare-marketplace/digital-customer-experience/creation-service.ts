@@ -7,6 +7,7 @@ import { editionCommand, inspectEdition, masterError } from "./master-service";
 import { authoringFamilies } from "./management";
 import { CREATION_CONTRACT, completeCreation } from "./creation-model";
 import { isId } from "./model";
+import { assertPackageForPublication, bindPublishedPackage } from "../kidflix/interactive/service";
 import { object, text, type Command, type Locale } from "./types";
 
 function scope(q: any, c: Context) {
@@ -128,6 +129,7 @@ export async function creationCommand(c: Context, cmd: Command) {
         "CONFLICT",
         "The resource changed. Reload its saved revision before publishing.",
       );
+    const interactivePackage = await assertPackageForPublication(c, r, locale);
     const result = await editionCommand(c, {
       ...cmd,
       action: "master_edition_direct_publish",
@@ -144,6 +146,7 @@ export async function creationCommand(c: Context, cmd: Command) {
         "DEPENDENCY_BLOCKED",
         "The server has not confirmed an active public edition.",
       );
+    if (interactivePackage) await bindPublishedPackage(c, interactivePackage.id, r.id, release.id, locale);
     return {
       ...result,
       record: r,
@@ -161,6 +164,7 @@ export async function creationCommand(c: Context, cmd: Command) {
     const locale = cmd.locale as Locale;
     if (!["fr", "en", "ar"].includes(locale))
       throw new MarketplaceError("VALIDATION_ERROR", "Choose a language.");
+    await assertPackageForPublication(c, r, locale);
     return inspectEdition(c, r, locale);
   }
   throw new MarketplaceError(

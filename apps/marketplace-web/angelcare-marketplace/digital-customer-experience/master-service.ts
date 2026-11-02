@@ -288,6 +288,10 @@ export async function editionCommand(c: Context, cmd: Command) {
       throw new MarketplaceError("NOT_FOUND", "Edition release not found.");
     source = z.snapshot;
   }
+  const interactiveCandidate = object(source.data).interactivePackage;
+  const verifiedInteractive = interactiveCandidate
+    ? await (await import("../kidflix/interactive/service")).assertPackageForPublication(c, source, l)
+    : null;
   const v = await inspectEdition(c, source, l);
   if (
     ["review", "approve", "release", "schedule", "restore", "direct_publish"].includes(action) &&
@@ -315,7 +319,7 @@ export async function editionCommand(c: Context, cmd: Command) {
           ? certificatePolicy(p.data)
           : { enabled: false },
     };
-  return checked(
+  const applied: any = await checked(
     db.rpc(action === "direct_publish" ? "ac_dce_creation_publish" : "ac_dce_r5_edition", {
       ...receipt(c, cmd),
       ...(action === "direct_publish" ? {p_hash: hash({command:cmd,tenant:c.tenantId,territory:c.territoryId,actor:c.actor.id})} : {}),
@@ -333,6 +337,13 @@ export async function editionCommand(c: Context, cmd: Command) {
       p_release: text(cmd.releaseId) || null,
     }),
   );
+  if (verifiedInteractive && (action === "release" || action === "direct_publish") &&
+    applied?.release?.state === "published" && applied.release.id) {
+    await (await import("../kidflix/interactive/service")).bindPublishedPackage(
+      c, verifiedInteractive.id, source.id, applied.release.id, l
+    );
+  }
+  return applied;
 }
 export async function masterRead(c: Context, input: Record<string, unknown>) {
   authorize(c, "view");

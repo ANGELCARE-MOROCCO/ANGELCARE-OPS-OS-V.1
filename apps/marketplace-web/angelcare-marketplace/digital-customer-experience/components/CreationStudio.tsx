@@ -73,6 +73,7 @@ import {
 import { Button, Dialog, Icon, mutate, query, useQuery, useUI } from "./ui";
 import s from "./creation.module.css";
 import { PublicReachability } from "./PublicReachability";
+import { UniversalInteractiveImport } from "./UniversalInteractiveImport";
 const words = (en: string, fr: string, ar: string): Tri => [en, fr, ar];
 type Entry = {
   clientId: string;
@@ -1520,6 +1521,61 @@ export function CreationStudio({
             )}
           </div>
         </div>
+        {current && f && (
+          <UniversalInteractiveImport
+            locale={language}
+            family={f.key}
+            canManage={boot.actor.rights.manage === true}
+            attached={object(data.interactivePackage)}
+            recordId={text(record?.id)}
+            currentTitle={text(record?.title)}
+            onTitleChange={(title) => {
+              change(current.clientId, (r) => {
+                const d = object(r.data), locales = object(d.locales);
+                return {
+                  ...r,
+                  title,
+                  data: {
+                    ...d,
+                    locales: {
+                      ...locales,
+                      [language]: { ...object(locales[language]), title },
+                    },
+                  },
+                };
+              });
+            }}
+            onContinue={() => document.getElementById('kidflix-native-publication-actions')?.scrollIntoView({ behavior: 'smooth', block: 'end' })}
+            onOpenDossier={() => { void openExpert(); }}
+            onAttach={(pkg) => {
+              change(current.clientId, (r) => {
+                const original = object(r.data), title = text(r.title) || pkg.title;
+                return {
+                  ...r,
+                  title,
+                  data: {
+                    ...original,
+                    interactivePackage: {
+                      id: pkg.id,
+                      checksum: pkg.checksum,
+                      locale: pkg.locale,
+                      entry: pkg.entry,
+                    },
+                    locales: {
+                      ...object(original.locales),
+                      [language]: { ...object(object(original.locales)[language]), title },
+                    },
+                  },
+                };
+              });
+              setNotice(t(
+                "Interactive package linked to this draft. Save and complete the native publication review.",
+                "Package interactif lié au brouillon. Enregistrez et terminez la revue native.",
+                "تم ربط الحزمة بالمسودة. احفظ وأكمل مراجعة النشر الأصلي."
+              ));
+            }}
+          />
+        )}
         {restore && (
           <div className={s.recovery}>
             <Icon name="RotateCcw" />
@@ -2824,7 +2880,7 @@ export function CreationStudio({
                 </button>
               </aside>
             </div>
-            <footer className={s.footer}>
+            <footer id="kidflix-native-publication-actions" className={s.footer}>
               <div>
                 <span className={s.footerCount}>
                   {String(readyCount).padStart(2, "0")}

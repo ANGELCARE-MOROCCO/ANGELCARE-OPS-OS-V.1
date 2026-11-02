@@ -371,7 +371,9 @@ export function validateRecord(
   const d = compatibleDefinition(record.family, record.data).data,
     f = familyByKey(
       record.family || (record.kind === "bundle" ? "bundles" : ""),
-    );
+    ),
+    interactiveRef = object(d.interactivePackage),
+    interactiveContent = isId(interactiveRef.id) && /^[a-f0-9]{64}$/i.test(text(interactiveRef.checksum)) && interactiveRef.locale === d.defaultLocale;
   if (d.publicRuntimeReady === true)
     issue(
       "publicRuntimeReady",
@@ -457,7 +459,7 @@ export function validateRecord(
           );
       for (const c of f.collections) {
         const rows = array(d[c.key]);
-        if (rows.length < (c.min || 0) && record.kind === "experience" &&
+        if (rows.length < (c.min || 0) && record.kind === "experience" && !interactiveContent &&
           !(record.family === "planners" && c.key === "items" &&
             text(d.mode) === "Printable Preview" && array(d.units).some(u => ["pdf","image"].includes(text(u.kind)) && isId(u.assetId))))
           issue(
@@ -545,7 +547,7 @@ export function validateRecord(
   }
   if (
     ["PDF Reader", "Chaptered PDF", "PDF Preview"].includes(text(d.mode)) &&
-    !array(d.units).some((u) => u.kind === "pdf")
+    !interactiveContent && !array(d.units).some((u) => u.kind === "pdf")
   )
     issue(
       "mode",
@@ -1022,6 +1024,7 @@ export function publicManifest(record: DceRecord, bindings: Data): Data {
     "outputs",
     "certificatePolicy",
     "htmlActivity",
+    "interactivePackage",
     ...(kindFields[record.kind] || []),
     ...(family?.fields
       .filter((f) => f.classification !== "private")
@@ -1192,6 +1195,17 @@ export function publicManifest(record: DceRecord, bindings: Data): Data {
       delete next.notes;
       return next;
     });
+  if (clone.interactivePackage) {
+    const ref = object(clone.interactivePackage),
+      id = text(ref.id), checksum = text(ref.checksum),
+      locale = text(ref.locale), entry = text(ref.entry);
+    if (!isId(id) || !/^[a-f0-9]{64}$/i.test(checksum) ||
+        !LOCALES.includes(locale as Locale) ||
+        !/^[A-Za-z0-9/_.-]+\.html$/.test(entry) ||
+        entry.split("/").some((part) => !part || part === "." || part === ".."))
+      throw Error("INVALID_PUBLIC_INTERACTIVE_REFERENCE");
+    clone.interactivePackage = { id, checksum, locale, entry };
+  }
   if (clone.htmlActivity) {
     const p = object(clone.htmlActivity);
     clone.htmlActivity = {

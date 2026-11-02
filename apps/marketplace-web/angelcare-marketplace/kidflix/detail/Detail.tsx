@@ -23,6 +23,7 @@ import {
   type Row,
 } from "./model";
 import { useProgress } from "./progress";
+import { UniversalInteractivePlayer } from "./UniversalInteractivePlayer";
 import {
   Button,
   Editorial,
@@ -184,7 +185,16 @@ function DetailReady({
           >
             {progress.ready ? (
               <ResourceSurface props={props} compact>
-                <Player {...props} />
+                {str(obj(d.interactivePackage).id) ? (
+                  <UniversalInteractivePlayer
+                    p={props}
+                    packageId={str(obj(d.interactivePackage).id)}
+                    checksum={str(obj(d.interactivePackage).checksum)}
+                    entry={str(obj(d.interactivePackage).entry) || "index.html"}
+                  />
+                ) : (
+                  <Player {...props} />
+                )}
               </ResourceSurface>
             ) : (
               <div className={s.loading} role="status">
