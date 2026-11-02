@@ -7,6 +7,7 @@ import css from './ops.module.css'
 type Row=Record<string,any>
 type Snapshot={providers:ProviderState[];selections:Selection[];categories:Row[];events:Row[];imports:Row[];generatedAt:string}
 type Legacy={suppliers:Row[];profiles:Row[];documents:Row[];media:Row[];channels:Row[];assortments:Row[];catalog:Row[];offers:Row[];commercials:Row[];imports:Row[];importRows:Row[];journeys:Row[];payments:Row[];purchases:Row[];purchaseLines:Row[];availability:Row[];shipments:Row[];shipmentEvents:Row[];tasks:Row[];audit:Row[];rateBook:Row[]}
+type SelectionDraft=Omit<Partial<Selection>,'editorial'|'compliance'> & {editorial?:Partial<Editorial>;compliance?:Partial<Compliance>}
 const base='/angelcare-marketplace/admin/supplier-command-360'
 const url='/api/angelcare-marketplace/admin/supplier-ops-max'
 const legacyUrl='/api/angelcare-marketplace/admin/supplier-command-360'
@@ -59,7 +60,7 @@ export function SupplierOpsMax(){
  const [provider,setProvider]=useState<Provider>('cj'),[query,setQuery]=useState('montessori'),[page,setPage]=useState(1)
  const [results,setResults]=useState<SupplierListing[]>([]),[total,setTotal]=useState<number|null>(null),[searched,setSearched]=useState(false),[minCost,setMinCost]=useState(''),[maxCost,setMaxCost]=useState(''),[stockOnly,setStockOnly]=useState(false),[withImage,setWithImage]=useState(false),[view,setView]=useState<'grid'|'list'>('grid')
  const [selected,setSelected]=useState<string>(''),[pane,setPane]=useState<'overview'|'variants'|'editorial'|'pricing'|'compliance'|'media'>('overview')
- const [draft,setDraft]=useState<Partial<Selection>>({}),[showFilters,setShowFilters]=useState(true),[globalSearch,setGlobalSearch]=useState('')
+ const [draft,setDraft]=useState<SelectionDraft>({}),[showFilters,setShowFilters]=useState(true),[globalSearch,setGlobalSearch]=useState('')
  const [legacySection,setLegacySection]=useState('')
  const load=useCallback(async()=>{
   const [next,old]=await Promise.allSettled([response<Snapshot>(url),response<Legacy>(legacyUrl)])
@@ -73,7 +74,7 @@ export function SupplierOpsMax(){
  const selectedRow=data?.selections.find(x=>x.id===selected)||data?.selections[0]
  const editing=useMemo(()=>selectedRow?{...selectedRow,...draft,editorial:{...selectedRow.editorial,...draft.editorial},compliance:{...selectedRow.compliance,...draft.compliance}} as Selection:null,[selectedRow,draft])
  const choose=(id:string)=>{setSelected(id);setDraft({});setPane('overview')}
- const pending=(patch:Partial<Selection>)=>setDraft(prev=>({...prev,...patch,editorial:{...prev.editorial,...patch.editorial},compliance:{...prev.compliance,...patch.compliance}}))
+ const pending=(patch:SelectionDraft)=>setDraft(prev=>({...prev,...patch,...(patch.editorial?{editorial:{...prev.editorial,...patch.editorial}}:{}),...(patch.compliance?{compliance:{...prev.compliance,...patch.compliance}}:{})}))
  const act=async(body:Row,success='Saved and audit recorded')=>{setBusy(true);setError('');setNotice('');try{const result=await post(body);setNotice(success);await load();return result}catch(e){setError(e instanceof Error?e.message:String(e));return null}finally{setBusy(false)}}
  const search=async(n=1,p=provider,q=query)=>{setBusy(true);setError('');setNotice('');setSearched(true);try{const out=await response<{items:SupplierListing[];total:number|null;page:number}>(`${url}?operation=search&provider=${p}&q=${encodeURIComponent(q)}&page=${n}`);setResults(out.items);setTotal(out.total);setPage(out.page)}catch(e){setResults([]);setError(e instanceof Error?e.message:String(e))}finally{setBusy(false)}}
  const nextTab=tabs[tab-1]
