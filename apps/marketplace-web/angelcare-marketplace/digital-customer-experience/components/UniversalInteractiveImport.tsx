@@ -34,7 +34,12 @@ async function folderZip(files:File[]){
     directory.push(central,name);offset+=head.length+name.length+size;
   }
   const cdLen=directory.reduce((sum,b)=>sum+b.length,0);const end=Uint8Array.from([...u32(0x06054b50),...u16(0),...u16(0),...u16(files.length),...u16(files.length),...u32(cdLen),...u32(offset),...u16(0)]);
-  return new File([...chunks,...directory,end],'kidflix-folder-import.zip',{type:'application/zip'});
+  const zipTail=[...directory,end].map(bytes=>{
+    const buffer=new ArrayBuffer(bytes.byteLength);
+    new Uint8Array(buffer).set(bytes);
+    return buffer;
+  });
+  return new File([...chunks,...zipTail],'kidflix-folder-import.zip',{type:'application/zip'});
 }
 async function filesFromDraggedEntries(entries:any[]):Promise<File[]> {
   const all:File[]=[];
