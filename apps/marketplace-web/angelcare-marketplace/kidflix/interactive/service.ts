@@ -8,7 +8,7 @@ import { inspectZip, previewToken, runtimeOrigin, rebuildPackageArchive, safePac
 export const KF_PACKAGE_BUCKET='kidflix-interactive-packages';
 export const KF_PACKAGE_TABLE='ac_kidflix_interactive_packages';
 const uuid=(s:unknown)=>typeof s==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s);
-export type PackageRow={id:string;scope_key:string;owner_actor_id:string;family_key:string;locale:string;manifest:Record<string,unknown>;checksum_sha256:string;entry_path:string;file_index:Record<string,{size:number;mime:string;sha256:string}>;state:string;record_id:string|null;release_id:string|null;};
+export type PackageRow={id:string;scope_key:string;owner_actor_id:string;family_key:string;locale:string;manifest:Record<string,unknown>;checksum_sha256:string;entry_path:string;original_storage_path:string;file_index:Record<string,{size:number;mime:string;sha256:string}>;state:string;record_id:string|null;release_id:string|null;};
 function check(err:unknown,stage:string):never {throw Error(stage+': '+String((err as any)?.message||err));}
 export async function scopedPackage(id:string,scope:string):Promise<PackageRow>{
   if(!uuid(id))throw Error('INVALID_PACKAGE_ID');
