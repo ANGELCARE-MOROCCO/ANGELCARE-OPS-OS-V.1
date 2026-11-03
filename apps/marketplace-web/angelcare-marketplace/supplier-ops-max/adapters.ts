@@ -15,7 +15,7 @@ function linkList(x:unknown):string[]{
  const list=Array.isArray(x)?x:typeof x==='string'?x.split(/[,|]+/):[]
  return [...new Set(list.map(img).filter((u):u is string=>Boolean(u)))].slice(0,24)
 }
-function variants(x:unknown):SupplierVariant[]{return arr(x).slice(0,120).map((v,i)=>{
+function variants(x:unknown):SupplierVariant[]{const source=arr(x);if(source.length>500)throw Error('Provider returned more than 500 variants; incomplete product selection is prohibited');return source.map((v,i)=>{
  const r=obj(v);const id=str(r.vid||r.variantId||r.skuId||r.id||r.variantSku||i,180)
  return {id,sku:str(r.variantSku||r.sku||id,180),label:str(r.variantNameEn||r.variantName||r.name||r.specification||`Variant ${i+1}`,300),cost:num(r.variantSellPrice??r.sellPrice??r.price),stock:num(r.inventoryNum??r.totalInventoryNum??r.stock),attributes:obj(r.attributes),imageUrl:img(r.variantImage||r.image||r.img)}
 })}

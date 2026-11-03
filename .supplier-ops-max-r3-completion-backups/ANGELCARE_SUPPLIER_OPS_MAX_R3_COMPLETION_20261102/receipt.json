@@ -1,0 +1,22 @@
+{
+  "release_id": "ANGELCARE_SUPPLIER_OPS_MAX_R3_COMPLETION_20261102",
+  "timestamp": "2026-11-02T23:28:55.052682+00:00",
+  "files": [
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/SupplierOpsMax.tsx",
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/server.ts",
+    "apps/marketplace-web/app/api/angelcare-marketplace/admin/supplier-ops-max/route.ts",
+    "apps/marketplace-web/angelcare-marketplace/catalog-discovery/repository.ts",
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/cj-order-bridge.ts",
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/finance-bridge.ts",
+    "apps/marketplace-web/supabase/migrations/20261102_supplier_ops_max_r3_completion_order_bridge.sql"
+  ],
+  "source_hashes": {
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/SupplierOpsMax.tsx": "91fe109e08c853c1468594f41c849873937b1a06c2d93962d43309f936a2962c",
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/server.ts": "725ee29eb333c5931c7b44970dc210276c58d80919b92ef547730c2d73714ccd",
+    "apps/marketplace-web/app/api/angelcare-marketplace/admin/supplier-ops-max/route.ts": "d1242159f557b41e684cc83a366202422e1c8620aafa1ddc54eea2d15062d0fe",
+    "apps/marketplace-web/angelcare-marketplace/catalog-discovery/repository.ts": "894f0ac1c4cfc5c2bb9b093e38d37589b95b969bad4bc12ce848c11470b83860",
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/cj-order-bridge.ts": null,
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/finance-bridge.ts": null,
+    "apps/marketplace-web/supabase/migrations/20261102_supplier_ops_max_r3_completion_order_bridge.sql": null
+  }
+}

@@ -163,7 +163,7 @@ export function cjSearchParameters(filters:CjSearchFilters):Record<string,string
 }
 export async function cjSearch(filters:CjSearchFilters){return cjCall('search',cjSearchParameters(filters))}
 export async function cjVariants(pid:string){const raw=await cjCall('variants',{pid:safeId(pid)});return asArray(raw.data)}
-export async function cjInventory(vid:string){const raw=await cjCall('stock',{vid:safeId(vid)});return {checkedAt:new Date().toISOString(),warehouses:asArray(raw.data).map(v=>{const r=obj(v);return {
+export async function cjInventory(vid:string){const raw=await cjCall('stock',{vid:safeId(vid)});if(!Array.isArray(raw.data))throw Error('CJ stock response has no warehouse list');return {checkedAt:new Date().toISOString(),warehouses:asArray(raw.data).map(v=>{const r=obj(v);return {
   variantId:text(r.vid),warehouseId:text(r.areaId),warehouse:text(r.areaEn),countryCode:text(r.countryCode),
   total: r.totalInventoryNum??null,cjManaged:r.cjInventoryNum??null,factoryManaged:r.factoryInventoryNum??null,
   verification:r.verifiedWarehouse??null,

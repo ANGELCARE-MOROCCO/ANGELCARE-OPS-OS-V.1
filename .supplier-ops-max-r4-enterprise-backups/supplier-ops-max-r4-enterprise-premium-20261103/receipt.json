@@ -1,0 +1,40 @@
+{
+  "release_id": "supplier-ops-max-r4-enterprise-premium-20261103",
+  "timestamp": "2026-11-03T04:57:11.494443+00:00",
+  "files": [
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/SupplierOpsMax.tsx",
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/server.ts",
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/ops.module.css",
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/cj-native.ts",
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/adapters.ts",
+    "apps/marketplace-web/app/api/angelcare-marketplace/admin/supplier-ops-max/route.ts",
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/inventory-normalization.ts",
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/inventory-intelligence.ts",
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/InventoryControlTower.tsx",
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/inventory.module.css",
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/r4-decision-queue.ts",
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/CjCategoryExplorer.tsx",
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/category-explorer.module.css",
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/CommerceOperationsBoard.tsx",
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/commerce-board.module.css",
+    "apps/marketplace-web/supabase/migrations/20261103_supplier_ops_max_r4_inventory_intelligence.sql"
+  ],
+  "source_hashes": {
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/SupplierOpsMax.tsx": "d70c2eef8580b8308c2ab87286aad159a22c2ffe48befc5f4c5d0c3d6b599736",
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/server.ts": "96c8d9eb05c0a62a64f25b6b75a2e4cc5040544c26fd2a25b972ffb48ca5d811",
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/ops.module.css": "d0061d8750e11f5f2ed81d8420d14d8840529eed81b90bd54d2c6bb618dc96d1",
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/cj-native.ts": "79e7150e2716e3b8417badf58f3fe79b09aa8a4dd4241d69c788c83c1804c3c5",
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/adapters.ts": "7458c38e296c8f7ab53c43707761b3fdd9d3e16824cdf34277b4eb350116e19d",
+    "apps/marketplace-web/app/api/angelcare-marketplace/admin/supplier-ops-max/route.ts": "eafd1b71cc9fb21dfad178b5a7c5d6fd131728df693bcfc29847d016f2ec29d5",
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/inventory-normalization.ts": null,
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/inventory-intelligence.ts": null,
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/InventoryControlTower.tsx": null,
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/inventory.module.css": null,
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/r4-decision-queue.ts": null,
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/CjCategoryExplorer.tsx": null,
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/category-explorer.module.css": null,
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/CommerceOperationsBoard.tsx": null,
+    "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/commerce-board.module.css": null,
+    "apps/marketplace-web/supabase/migrations/20261103_supplier_ops_max_r4_inventory_intelligence.sql": null
+  }
+}

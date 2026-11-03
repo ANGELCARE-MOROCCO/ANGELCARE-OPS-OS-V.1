@@ -6,10 +6,12 @@ import { applyProduct360ImportRow, loadProduct360Snapshot, evaluateProduct360Rea
 import { commerceResourceAction, createCommerceResource, updateCommerceResource, archiveCommerceResource } from '../commerce-studio/repository'
 import { mutate as oneWorldMutate } from '../one-world-currency/server'
 import { providerStates, findSupplierProducts, fetchSupplierDetail, searchSupplierWithFilters } from './adapters'
-import { cjCategories, cjHealth, cjInventory, cjFreight, cjConfiguration, type CjSearchFilters } from './cj-native'
+import { cjCategories, cjHealth, cjInventory, cjFreight, cjConfiguration, cjSearchParameters, type CjSearchFilters } from './cj-native'
 import { financeCatalogue, proposal as proposeFinanceRule,activateRetail,approvedRetailRule } from './finance-bridge'
 import { previewCjSandbox,prepareCjSandbox,submitCjSandbox,reconcileCjSandbox,listCjBridges } from './cj-order-bridge'
 import { getDiscoveryItemById } from '../catalog-discovery/repository'
+import { readInventory, refreshSelectionInventory } from './inventory-intelligence'
+import { evaluateWarehouseStockGate } from './inventory-normalization'
 import { PROVIDERS, type Provider, type Selection, type SupplierListing, EMPTY_COMPLIANCE, EMPTY_EDITORIAL, editorialGate, literalText, finiteMoney, supplierKey } from './contract'
 
 type Row=Record<string,any>
@@ -56,6 +58,16 @@ async function getOne(db:any,ctx:MarketplaceRequestContext,id:unknown):Promise<S
  if(!result.data)throw new MarketplaceError('NOT_FOUND','Supplier selection not found')
  return projection(result.data)
 }
+async function requireFreshCjStock(db:any,ctx:MarketplaceRequestContext,selection:Selection){
+ if(selection.provider!=='cj'){
+  if(selection.stock===null||selection.stock<=0)throw new MarketplaceError('DEPENDENCY_BLOCKED','Positive source inventory required for selected supplier')
+  return
+ }
+ const state=await readInventory(db,ctx.tenantId||null,selection.id)
+ if(!state.available)throw new MarketplaceError('DEPENDENCY_BLOCKED','R4 inventory snapshot migration required before CJ product launch')
+ const gate=evaluateWarehouseStockGate(state.items,selection.selected_variant_ids)
+ if(!gate.ok)throw new MarketplaceError('DEPENDENCY_BLOCKED','Fresh CJ variant warehouse evidence missing: '+gate.missing.slice(0,6).join('; '))
+}
 async function audit(db:any,ctx:MarketplaceRequestContext,action:string,selectionId:string|null,note:string,details:Row={}){
  const {error}=await db.from('ac_som_events').insert({actor_id:ctx.actor.id,tenant_id:ctx.tenantId||null,territory_id:ctx.territoryId||null,
   selection_id:selectionId,action,note:note.slice(0,500),details})
@@ -73,12 +85,16 @@ export async function loadSupplierOpsMax(){
  if(categories.error)failDb(categories.error,'canonical taxonomy')
  if(events.error)failDb(events.error,'audit')
  if(imports.error)failDb(imports.error,'import history')
- const [finance,bridges]=await Promise.all([
-  financeCatalogue(db),listCjBridges(db).then(items=>({items,available:true})).catch(()=>({items:[],available:false}))
+ const savedResult=await scope(db.from('ac_som_saved_searches').select('id,name,keyword,provider,filters,updated_at').eq('actor_id',ctx.actor.id).order('updated_at',{ascending:false}).limit(30),ctx)
+ const savedSearches=savedResult.error?[]:savedResult.data||[]
+ const savedSearchesAvailable=!savedResult.error
+ const [finance,bridges,inventory]=await Promise.all([
+  financeCatalogue(db),listCjBridges(db).then(items=>({items,available:true})).catch(()=>({items:[],available:false})),
+  readInventory(db,ctx.tenantId||null)
  ])
  return {providers:providerStates(),selections:(selections.data||[]).map(projection),categories:categories.data||[],events:events.data||[],imports:imports.data||[],
    generatedAt:new Date().toISOString(),providerDataState:'live_on_request',commercialDataState:'canonical',publication:'existing_commerce_authority',
-   finance,cjBridges:bridges,cj:cjConfiguration(),capabilities:{liveProviders:['cj','fulfillbot'],pendingProviderContracts:['hypersku','eprolo'],automaticPaidOrders:false}}
+   finance,cjBridges:bridges,inventory,savedSearches,savedSearchesAvailable,cj:cjConfiguration(),capabilities:{liveProviders:['cj','fulfillbot'],pendingProviderContracts:['hypersku','eprolo'],automaticPaidOrders:false}}
 }
 export async function supplierOpsSearch(provider:unknown,query:unknown,page:unknown,filters:CjSearchFilters={}){
  await context(false)
@@ -89,6 +105,7 @@ export async function supplierOpsSearch(provider:unknown,query:unknown,page:unkn
 export async function supplierOpsCategories(){await context(false);return {tree:await cjCategories(),source:'CJ API V2',checkedAt:new Date().toISOString()}}
 export async function supplierOpsHealth(){await context(false);return cjHealth()}
 export async function supplierOpsStock(variantId:unknown){await context(false);return cjInventory(str(variantId,200))}
+export async function supplierOpsInventory(selectionId?:unknown){const ctx=await context(false),db=await createServiceClient();return readInventory(db,ctx.tenantId||null,selectionId?str(selectionId):undefined)}
 export async function supplierOpsFreight(raw:Record<string,string>){await context(false);return cjFreight({variantId:str(raw.variantId,200),origin:str(raw.origin,2),destination:str(raw.destination,2),quantity:Number(raw.quantity)||1,zip:str(raw.zip,30)||undefined})}
 export async function supplierOpsCjOptions(purchaseId:unknown){
  const ctx=await context(false)
@@ -123,6 +140,40 @@ export async function supplierOpsDetail(provider:unknown,productId:unknown){
 }
 export async function supplierOpsAction(raw:Row){
  const action=str(raw.action,60),ctx=await context(true),db=await createServiceClient()
+ if(action==='r4-save-search'){
+  const provider=raw.provider
+  if(provider!=='cj'&&provider!=='fulfillbot')throw new MarketplaceError('VALIDATION_ERROR','Only authorized live suppliers can be used in saved searches')
+  const name=str(raw.name,70),keyword=str(raw.keyword,150)
+  if(name.length<3)throw new MarketplaceError('VALIDATION_ERROR','Saved search name must be at least three characters')
+  const allowed=['categoryId','countryCode','startSellPrice','endSellPrice','startWarehouseInventory','verifiedWarehouse','productFlag','productType','supplierId','hasCertification','customization','addMarkStatus','orderBy','sort']
+  const filters=clean(raw.filters),validated:Row={}
+  for(const key of allowed)if(filters[key]!==undefined)validated[key]=filters[key]
+  if(provider==='cj')cjSearchParameters({...validated,keyWord:keyword,page:1,size:24})
+  else if(!keyword||Object.keys(validated).length)throw new MarketplaceError('VALIDATION_ERROR','Fulfillbot searches require keyword only')
+  const count=await scope(db.from('ac_som_saved_searches').select('id',{count:'exact',head:true}).eq('actor_id',ctx.actor.id),ctx)
+  if(count.error)failDb(count.error,'saved search availability')
+  if((count.count||0)>=30)throw new MarketplaceError('VALIDATION_ERROR','Maximum 30 saved sourcing searches per operator')
+  const result=await db.from('ac_som_saved_searches').insert({tenant_id:ctx.tenantId||null,actor_id:ctx.actor.id,provider,name,keyword,filters:validated}).select('id').single()
+  if(result.error)failDb(result.error,'saved sourcing search')
+  await audit(db,ctx,'r4.search.saved',null,'Operator saved a real-provider sourcing search',{id:result.data.id,provider})
+  return {id:result.data.id,stored:true}
+ }
+ if(action==='r4-delete-search'){
+  if(!uuid(raw.id))throw new MarketplaceError('VALIDATION_ERROR','Saved-search UUID required')
+  const result=await scope(db.from('ac_som_saved_searches').delete().eq('actor_id',ctx.actor.id).eq('id',str(raw.id)),ctx).select('id')
+  if(result.error)failDb(result.error,'saved-search deletion')
+  if(!result.data?.length)throw new MarketplaceError('NOT_FOUND','Owned saved search not found')
+  await audit(db,ctx,'r4.search.deleted',null,'Operator deleted their saved search',{id:str(raw.id)})
+  return {deleted:true}
+ }
+ if(action==='r4-refresh-inventory'){
+  if(!hasMarketplacePermission(ctx,'marketplace.admin.access'))throw new MarketplaceError('PERMISSION_DENIED','Inventory refresh requires authorized admin access')
+  const selection=await getOne(db,ctx,raw.id)
+  const ids=Array.isArray(raw.variantIds)?raw.variantIds.map((v:unknown)=>str(v,200)):[]
+  if(ids.length>12)throw new MarketplaceError('VALIDATION_ERROR','Maximum 12 variants per refresh')
+  const result=await refreshSelectionInventory({db,actorId:ctx.actor.id,tenantId:ctx.tenantId||null,selection,variantIds:ids})
+  return {...result,source:'CJ_API_V2',stockIsNotReserved:true}
+ }
  if(action==='select'){
   const input=clean(raw.product) as SupplierListing
   if(!isProvider(input.provider)||!['cj','fulfillbot'].includes(input.provider)||input.provenance!=='live_provider_api')throw new MarketplaceError('VALIDATION_ERROR','Verified live-provider product required')
@@ -247,7 +298,7 @@ export async function supplierOpsAction(raw:Row){
   if(!selection.canonical_supplier_id)throw new MarketplaceError('DEPENDENCY_BLOCKED','Map a quality-approved canonical supplier before import')
   const gate=editorialGate(selection)
   if(!gate.ok)throw new MarketplaceError('DEPENDENCY_BLOCKED','Complete selection dossier before import: '+gate.missing.join(', '))
-  if(selection.stock===null||selection.stock<=0)throw new MarketplaceError('DEPENDENCY_BLOCKED','Positive live supplier stock required before marking product available')
+  await requireFreshCjStock(db,ctx,selection)
   const imageAge=Date.now()-new Date(selection.normalized.fetchedAt).valueOf()
   if(!Number.isFinite(imageAge)||imageAge>24*60*60*1000)throw new MarketplaceError('DEPENDENCY_BLOCKED','Supplier snapshot older than 24h. Refresh product first.')
   const e=selection.editorial,key=supplierKey(selection.provider,selection.provider_product_id)
@@ -429,7 +480,8 @@ export async function supplierOpsAction(raw:Row){
   const selection=await getOne(db,ctx,raw.id)
   if(!selection.catalog_item_id)throw new MarketplaceError('VALIDATION_ERROR','Canonical import required before publication')
   if(!selection.supplier_offer_id)throw new MarketplaceError('DEPENDENCY_BLOCKED','Canonical supplier offer must be linked and approved first')
-  if(selection.stock===null||selection.stock<=0||Date.now()-new Date(selection.normalized.fetchedAt).valueOf()>24*60*60*1000)throw new MarketplaceError('DEPENDENCY_BLOCKED','Fresh positive supplier stock verification required before publishing')
+  await requireFreshCjStock(db,ctx,selection)
+  if(Date.now()-new Date(selection.normalized.fetchedAt).valueOf()>24*60*60*1000)throw new MarketplaceError('DEPENDENCY_BLOCKED','Supplier product specifications older than 24h: refresh the product dossier')
   const offer=await db.from('angelcare_marketplace_supplier_offers').select('id,status').eq('id',selection.supplier_offer_id).single()
   if(offer.error||!offer.data||!['approved','active'].includes(offer.data.status))throw new MarketplaceError('DEPENDENCY_BLOCKED','Supplier offer requires approval in existing Supplier 360')
   const catRows=await db.from('angelcare_marketplace_catalog_item_categories').select('category_id,is_primary').eq('catalog_item_id',selection.catalog_item_id)

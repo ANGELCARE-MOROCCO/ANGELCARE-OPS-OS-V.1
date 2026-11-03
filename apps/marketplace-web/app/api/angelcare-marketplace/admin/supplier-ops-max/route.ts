@@ -1,5 +1,5 @@
 import { apiFailure,apiSuccess,parseJsonObject,requestId } from '@/angelcare-marketplace/server/request'
-import { loadSupplierOpsMax,supplierOpsSearch,supplierOpsDetail,supplierOpsAction,supplierOpsCategories,supplierOpsHealth,supplierOpsStock,supplierOpsFreight,supplierOpsCjOptions } from '@/angelcare-marketplace/supplier-ops-max/server'
+import { loadSupplierOpsMax,supplierOpsSearch,supplierOpsDetail,supplierOpsAction,supplierOpsCategories,supplierOpsHealth,supplierOpsStock,supplierOpsFreight,supplierOpsCjOptions,supplierOpsInventory } from '@/angelcare-marketplace/supplier-ops-max/server'
 export const dynamic='force-dynamic'
 export const runtime='nodejs'
 export async function GET(request:Request){
@@ -14,6 +14,7 @@ export async function GET(request:Request){
    operation==='detail'?await supplierOpsDetail(query.get('provider'),query.get('productId')):
    operation==='categories'?await supplierOpsCategories():operation==='health'?await supplierOpsHealth():
    operation==='stock'?await supplierOpsStock(query.get('variantId')):
+   operation==='inventory'?await supplierOpsInventory(query.get('selectionId')):
    operation==='freight'?await supplierOpsFreight(Object.fromEntries(query)):
    operation==='cj-options'?await supplierOpsCjOptions(query.get('purchaseId')):null
   if(!data)throw new Error('Unsupported supplier operation')

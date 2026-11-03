@@ -1,0 +1,62 @@
+{
+  "release_id": "ANGELCARE_SUPPLIER_OPS_MAX_R3_AUDITED_20261102",
+  "files": [
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/SupplierOpsMax.tsx",
+      "old_sha256": "83128866b749e08717bdb0f24140c9d7fc90319958101668c9bcf111ee4cdf6d",
+      "new_sha256": "91fe109e08c853c1468594f41c849873937b1a06c2d93962d43309f936a2962c",
+      "size": 53020,
+      "mode": "modify"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/adapters.ts",
+      "old_sha256": "702a9f5980bb30973c6bf37732fa759073a39d6bc9abeae5eeae793b207e62c4",
+      "new_sha256": "7458c38e296c8f7ab53c43707761b3fdd9d3e16824cdf34277b4eb350116e19d",
+      "size": 9364,
+      "mode": "modify"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/cj-native.ts",
+      "old_sha256": null,
+      "new_sha256": "79e7150e2716e3b8417badf58f3fe79b09aa8a4dd4241d69c788c83c1804c3c5",
+      "size": 12009,
+      "mode": "create"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/contract.ts",
+      "old_sha256": "e94618d3157a67d8fc2e76206d8735c857bed9d6bd2ff9d92f00bb1b4812ceb0",
+      "new_sha256": "b9f9f660b94b05443b722deb8af50e70749ce871bf38ecf4a56c2a74268002de",
+      "size": 6793,
+      "mode": "modify"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/ops.module.css",
+      "old_sha256": "3c3f17a324a4aa0c2c8f6176cd2973d6c2f247ff63142ba77bb9bb597e70b02a",
+      "new_sha256": "d0061d8750e11f5f2ed81d8420d14d8840529eed81b90bd54d2c6bb618dc96d1",
+      "size": 23833,
+      "mode": "modify"
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/server.ts",
+      "old_sha256": "efa379fad73f70c254b2e63c50af0a62147f2c32e947f2c804ffc8b529e0133e",
+      "new_sha256": "725ee29eb333c5931c7b44970dc210276c58d80919b92ef547730c2d73714ccd",
+      "size": 36056,
+      "mode": "modify"
+    },
+    {
+      "path": "apps/marketplace-web/app/api/angelcare-marketplace/admin/supplier-ops-max/route.ts",
+      "old_sha256": "bf7963f93fb253ec2e7b020d323c4c560588aff5f155bf1e2194465a72945883",
+      "new_sha256": "d1242159f557b41e684cc83a366202422e1c8620aafa1ddc54eea2d15062d0fe",
+      "size": 1916,
+      "mode": "modify"
+    },
+    {
+      "path": "apps/marketplace-web/supabase/migrations/20261102_supplier_ops_max_r3_category_assignments.sql",
+      "old_sha256": null,
+      "new_sha256": "251a428a919cfb7cb74e836f5ad370d18e0b5df3b37570a23dc17a3f80200479",
+      "size": 560,
+      "mode": "create"
+    }
+  ],
+  "timestamp": "2026-11-02T22:33:57.790236+00:00"
+}
