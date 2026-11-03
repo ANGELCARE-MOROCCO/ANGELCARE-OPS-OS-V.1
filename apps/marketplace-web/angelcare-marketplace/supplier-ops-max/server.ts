@@ -441,7 +441,7 @@ export async function supplierOpsAction(raw:Row){
    if(!cat)throw new MarketplaceError('DEPENDENCY_BLOCKED','Category mapping ambiguous; synchronize first: '+key)
    mapped.set(key,str(cat.id))}
   const expected=new Set(mapped.values()),active=catRows.data||[]
-  if(active.length!==expected.size||active.some((r:Row)=>!expected.has(str(r.category_id)))||active.filter((r:Row)=>r.is_primary).length!==1||!active.some((r:Row)=>r.is_primary&&str(r.category_id)===mapped.get(selection.category_key)))throw new MarketplaceError('DEPENDENCY_BLOCKED','Storefront assignments changed; use Sync categories first')
+  if(active.length!==expected.size||active.some((r:Row)=>!expected.has(str(r.category_id)))||active.filter((r:Row)=>r.is_primary).length!==1||!active.some((r:Row)=>r.is_primary&&str(r.category_id)===mapped.get(selection.category_key ?? '')))throw new MarketplaceError('DEPENDENCY_BLOCKED','Storefront assignments changed; use Sync categories first')
   // Fresh stock, vendor qualification, compliance and explicit acknowledgement are
   // additional gates. The existing Commerce Studio still decides publication.
   const gate=editorialGate(selection)
