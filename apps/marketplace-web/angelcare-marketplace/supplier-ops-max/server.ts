@@ -110,7 +110,7 @@ export async function supplierOpsCjOptions(purchaseId:unknown){
   const selection=await db.from('ac_som_selections').select('id,normalized,selected_variant_ids').eq('supplier_offer_id',line.supplier_offer_id).eq('provider','cj').limit(2)
   if(selection.error)failDb(selection.error,'CJ variant options')
   const record=selection.data?.length===1?selection.data[0]:null
-  const variants=(record?.normalized?.variants||[]).filter((x:Row)=>record.selected_variant_ids?.includes(x.id)).map((x:Row)=>({id:x.id,sku:x.sku,label:x.label}))
+  const variants=(record?.normalized?.variants||[]).filter((x:Row)=>record?.selected_variant_ids?.includes(x.id)).map((x:Row)=>({id:x.id,sku:x.sku,label:x.label}))
   options.push({lineId:line.id,quantity:Number(line.quantity),variants})
  }
  return {purchaseId:po.data.id,reference:po.data.reference,addresses:addresses.data||[],lines:options,personalDataNotInLogs:true}
