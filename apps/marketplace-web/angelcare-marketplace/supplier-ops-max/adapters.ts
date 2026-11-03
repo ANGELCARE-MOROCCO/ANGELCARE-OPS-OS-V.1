@@ -3,6 +3,7 @@
  * CJ listV2 and Fulfillbot product search are documented. HyperSKU and EPROLO
  * intentionally fail closed until vendor-provided API specifications are reviewed.
  */
+import { cjCall, cjSearch, cjVariants, cjConfiguration, type CjSearchFilters } from './cj-native'
 import { PROVIDERS, type Provider, type ProviderState, type SupplierListing, type SupplierVariant, finiteMoney, literalText } from './contract'
 
 const str=(x:unknown,max=500)=>literalText(x,max)
@@ -45,7 +46,7 @@ const cfg={
  eprolo:{name:'EPROLO',docs:'https://eprolo.com/eprolo-api/',capabilities:[] as const,note:'API document and access must be requested from the account manager. No guessed calls.'}
 }
 export function providerStates():ProviderState[]{return PROVIDERS.map(id=>{
- const can=id==='cj'?Boolean(process.env.CJ_ACCESS_TOKEN):id==='fulfillbot'?Boolean(process.env.FULFILLBOT_API_KEY):false
+ const can=id==='cj'?cjConfiguration().configured:id==='fulfillbot'?Boolean(process.env.FULFILLBOT_API_KEY):false
  return {id,name:cfg[id].name,docs:cfg[id].docs,capabilities:[...cfg[id].capabilities],mode:id==='hypersku'||id==='eprolo'?'documentation_required':can?'configured':'credential_missing',credentialsConfigured:can,note:cfg[id].note}
 })}
 async function upstream(url:URL,headers:Record<string,string>):Promise<Record<string,any>>{
@@ -64,13 +65,10 @@ async function upstream(url:URL,headers:Record<string,string>):Promise<Record<st
 export async function findSupplierProducts(provider:Provider,query:string,page=1,size=24):Promise<{items:SupplierListing[];total:number|null;page:number;provider:Provider}>{
  if(!PROVIDERS.includes(provider))throw Error('Unknown provider')
  if(!['cj','fulfillbot'].includes(provider))throw Error(`Provider ${provider} requires verified API documentation before live search`)
- const q=str(query,150);if(q.length<2)throw Error('Search query must contain at least 2 characters')
+ const q=str(query,150);if(provider!=='cj'&&q.length<2)throw Error('Search query must contain at least 2 characters')
  page=Math.max(1,Math.min(1000,Math.trunc(page)||1));size=Math.max(1,Math.min(60,Math.trunc(size)||24))
  if(provider==='cj'){
-  const token=process.env.CJ_ACCESS_TOKEN;if(!token)throw Error('CJ_ACCESS_TOKEN not configured server-side')
-  const url=new URL('https://developers.cjdropshipping.com/api2.0/v1/product/listV2')
-  url.searchParams.set('keyWord',q);url.searchParams.set('page',String(page));url.searchParams.set('size',String(size))
-  const raw=await upstream(url,{'CJ-Access-Token':token})
+  const raw=await cjSearch({keyWord:q||undefined,page,size})
   const data=obj(raw.data)
   // listV2: data.content = [{ productList: [...] }], NOT data.list.
   const items=arr(data.content).flatMap(c=>arr(obj(c).productList)).map(normalizeCJ).filter((item):item is SupplierListing=>item!==null)
@@ -92,13 +90,11 @@ export async function fetchSupplierDetail(provider:Provider,id:string):Promise<S
  const productId=str(id,200)
  if(!productId||!['cj','fulfillbot'].includes(provider))throw Error('Unsupported provider product detail request')
  if(provider==='cj'){
-  if(!process.env.CJ_ACCESS_TOKEN)throw Error('CJ_ACCESS_TOKEN not configured')
-  const url=new URL('https://developers.cjdropshipping.com/api2.0/v1/product/query')
-  url.searchParams.set('pid',productId)
-  const data=(await upstream(url,{'CJ-Access-Token':process.env.CJ_ACCESS_TOKEN})).data
+  const data=(await cjCall('product',{pid:productId})).data
   const listing=normalizeCJ(data)
   if(!listing)throw Error('CJ product details are incomplete')
-  return listing
+  const enriched=await cjVariants(productId)
+  return {...listing,variants:variants(enriched)}
  }
  if(!process.env.FULFILLBOT_API_KEY)throw Error('FULFILLBOT_API_KEY not configured')
  const url=new URL(`https://api.fulfillbot.com/api/v1/open/products/${encodeURIComponent(productId)}`)
@@ -106,4 +102,15 @@ export async function fetchSupplierDetail(provider:Provider,id:string):Promise<S
  const listing=normalizeFulfillbot(data)
  if(!listing)throw Error('Fulfillbot product details are incomplete')
  return listing
+}
+
+/** Supplier-native filters: pagination and sorting execute on CJ, never just the visible cards. */
+export async function searchSupplierWithFilters(provider:Provider,filters:CjSearchFilters){
+ if(provider==='cj'){
+  const query=await cjSearch(filters),data=obj(query.data)
+  const items=arr(data.content).flatMap(c=>arr(obj(c).productList)).map(normalizeCJ).filter((x):x is SupplierListing=>x!==null)
+  const count=Number(data.totalRecords)
+  return {items,total:Number.isFinite(count)?count:null,page:filters.page??1,provider:'cj',providerFiltersApplied:true}
+ }
+ return findSupplierProducts(provider,filters.keyWord??'',filters.page??1,filters.size??24)
 }

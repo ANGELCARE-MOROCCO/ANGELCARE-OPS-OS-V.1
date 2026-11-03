@@ -1,6 +1,7 @@
 import { assertAdminLoginSameOrigin } from '@/angelcare-marketplace/auth/admin/admin-auth';
 import { requireMarketplaceApiContext } from '@/angelcare-marketplace/auth/context';
 import { authorize } from '@/angelcare-marketplace/digital-customer-experience/repository';
+import {getStudioAsset,deriveStudioMediaBatch} from '@/angelcare-marketplace/kidflix/interactive/studio-ultimate-service';
 import {
   importPackage, adminPackageInfo, listStudioPackages,
   readStudioSource, deriveStudioPackage, exportStudioArchive, cloneStudioPackage,
@@ -30,6 +31,14 @@ export async function GET(req:Request){
         'Content-Type':'application/zip',
         'Content-Disposition':'attachment; filename="kidflix-experience-'+id+'.zip"'}});
     }
+    // KF_EXPERIENCE_STUDIO_ULTIMATE_20261103 — private preview-safe media only.
+    if(operation==='asset'){
+      const pathname=q.get('path')||'';
+      const asset=await getStudioAsset(c,id,pathname);
+      return new Response(new Uint8Array(asset.bytes),{headers:{...headers,
+        'Content-Type':asset.mime,'Content-Security-Policy':"default-src 'none'; sandbox",
+        'Cross-Origin-Resource-Policy':'same-origin','Content-Disposition':'inline'}});
+    }
     if(operation==='file'){
       const pathname=q.get('path')||'';
       return Response.json({data:await readStudioSource(c,id,pathname)},{headers});
@@ -48,6 +57,21 @@ export async function POST(req:Request){
     if(action==='clone'){
       const id=form.get('id');if(typeof id!=='string')return deny('SOURCE_PACKAGE_REQUIRED');
       return Response.json({data:await cloneStudioPackage(c,id)},{status:201,headers});
+    }
+    if(action==='derive_batch'){
+      const id=form.get('id'),changes=form.get('changes');
+      if(typeof id!=='string'||typeof changes!=='string'||changes.length>10000)return deny('INVALID_BATCH_REQUEST');
+      const declared=JSON.parse(changes);
+      if(!Array.isArray(declared)||declared.length<1||declared.length>24)return deny('INVALID_BATCH_COUNT');
+      const patches=[];
+      for(const item of declared){
+        if(!item||typeof item.path!=='string'||typeof item.checksum!=='string'||typeof item.field!=='string'||
+           !/^asset_(?:[0-9]|1[0-9]|2[0-3])$/.test(item.field))return deny('INVALID_BATCH_ASSET_FIELDS');
+        const blob=form.get(item.field);
+        if(!(blob instanceof File)||blob.size>36*1024*1024)return deny('INVALID_BATCH_ASSET');
+        patches.push({path:item.path,checksum:item.checksum,content:Buffer.from(await blob.arrayBuffer())});
+      }
+      return Response.json({data:await deriveStudioMediaBatch(c,id,patches)},{status:201,headers});
     }
     if(action==='derive'){
       const id=form.get('id'),path=form.get('path'),checksum=form.get('checksum'),replacement=form.get('replacement');

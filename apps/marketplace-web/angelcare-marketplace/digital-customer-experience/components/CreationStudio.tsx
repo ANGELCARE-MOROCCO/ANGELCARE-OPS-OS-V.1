@@ -1545,6 +1545,8 @@ export function CreationStudio({
                 };
               });
             }}
+            publicPath={current.result?.publicPath}
+            onSaveDraft={async()=>{/* KF_EXPERIENCE_STUDIO_ULTIMATE_20261103 */await saveOne(current.clientId)}}
             onContinue={() => document.getElementById('kidflix-native-publication-actions')?.scrollIntoView({ behavior: 'smooth', block: 'end' })}
             onOpenDossier={() => { void openExpert(); }}
             onAttach={(pkg) => {

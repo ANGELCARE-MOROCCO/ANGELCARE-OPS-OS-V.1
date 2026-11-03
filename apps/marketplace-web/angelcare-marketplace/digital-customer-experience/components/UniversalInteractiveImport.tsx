@@ -2,6 +2,13 @@
 import { useEffect,useRef,useState } from 'react';
 import type { Locale } from '../types';
 import styles from './universal-interactive.module.css';
+import {StudioProjectIntelligence} from './StudioProjectIntelligence';
+import {StudioCodeEditor} from './StudioCodeEditor';
+import {StudioAssetWorkbench} from './StudioAssetWorkbench';
+import {StudioBatchMedia} from './StudioBatchMedia';
+import {StudioRevisionCompare} from './StudioRevisionCompare';
+import {StudioVisualInspector,type Selection,type VisualProperty} from './StudioVisualInspector';
+import {StudioAIRepairHandoff} from './StudioAIRepairHandoff';
 const API='/api/angelcare-marketplace/admin/digital-customer-experience/interactive-package';
 type FileMeta={path:string;size:number;mime:string;sha256:string};
 type Result={id:string;checksum:string;family:string;locale:string;title:string;fileCount?:number;totalBytes?:number;state:string;entry:string;previewUrl:string;files?:FileMeta[];recordId?:string|null;releaseId?:string|null;parentId?:string|null;createdAt?:string;capabilities?:string[];audience?:{age_min?:number;age_max?:number};rights?:{holder?:string;license?:string}};
@@ -64,10 +71,10 @@ async function filesFromDraggedEntries(entries:any[]):Promise<File[]> {
 }
 
 export function UniversalInteractiveImport({
-  locale,family,canManage,attached,recordId,currentTitle,onTitleChange,onContinue,onOpenDossier,onAttach,
+  locale,family,canManage,attached,recordId,currentTitle,publicPath,onSaveDraft,onTitleChange,onContinue,onOpenDossier,onAttach,
 }:{
   locale:Locale;family:string;canManage:boolean;
-  attached?:{id?:unknown;checksum?:unknown;locale?:unknown};recordId?:string;currentTitle?:string;
+  attached?:{id?:unknown;checksum?:unknown;locale?:unknown};recordId?:string;currentTitle?:string;publicPath?:string;onSaveDraft?:()=>Promise<void>;
   onTitleChange?:(value:string)=>void;onContinue?:()=>void;onOpenDossier?:()=>void;
   onAttach:(p:Result)=>void;
 }){
@@ -79,6 +86,9 @@ export function UniversalInteractiveImport({
   const [fileSearch,setFileSearch]=useState(''),[currentPath,setCurrentPath]=useState(''),[content,setContent]=useState(''),[originalText,setOriginalText]=useState(''),[textBusy,setTextBusy]=useState(false);
   const [device,setDevice]=useState<'desktop'|'tablet'|'mobile'>('desktop'),[session,setSession]=useState(''),[events,setEvents]=useState<string[]>([]),[previewError,setPreviewError]=useState(''),[previewVersion,setPreviewVersion]=useState(0);
   const [confirmReplace,setConfirmReplace]=useState('');
+  // KF_EXPERIENCE_STUDIO_ULTIMATE_20261103: one protected preview inspector and edit session.
+  const [inspectEnabled,setInspectEnabled]=useState(false);
+  const [inspectorSelection,setInspectorSelection]=useState<Selection|null>(null);
   const t=(en:string,fr:string,ar:string)=>L(locale,en,fr,ar);
   const foreign=!!result?.recordId&&result.recordId!==recordId;
   const isAttached=!!result&&!foreign&&String(attached?.id||'')===result.id&&String(attached?.checksum||'')===result.checksum;
@@ -130,12 +140,13 @@ export function UniversalInteractiveImport({
       const data=await apiGet({operation:'info',id}) as Result;
       if(data.family!==family||data.locale!==locale)throw Error('Package category or language does not match this dossier.');
       setResult(data);setCurrentPath('');setContent('');setOriginalText('');setStep(nextStep);
+      setInspectEnabled(false);setInspectorSelection(null);
       setSession(crypto.randomUUID());setPreviewVersion(v=>v+1);setEvents([]);setPreviewError('');setPhase('validated');
       setExpanded(true);
     }catch(e){setFailure((e as Error).message);setPhase('failed')}
   }
   const attachedId=typeof attached?.id==='string'?attached.id:'';
-  useEffect(()=>{if(!attachedId)return;void loadPackage(attachedId,'understand');},[attachedId,family,locale]);
+  useEffect(()=>{if(!attachedId)return;if(result?.id===attachedId&&result?.family===family&&result?.locale===locale)return;void loadPackage(attachedId,'understand');},[attachedId,family,locale]);
   async function reloadLibrary(){
     setListingBusy(true);
     try{const list=await apiGet({operation:'list',family,locale}) as Listing[];setLibrary(list)}
@@ -164,6 +175,10 @@ export function UniversalInteractiveImport({
     }catch(e){setPhase('failed');setFailure((e as Error).name==='AbortError'?t('Upload cancelled','Téléversement annulé','تم إلغاء الرفع'):(e as Error).message)}
   }
   async function selectFile(file:FileMeta){
+    if(content!==originalText&&currentPath&&currentPath!==file.path&&
+      !window.confirm(t('Discard unsaved edits before opening another file?',
+        'Abandonner les modifications non enregistrées avant de changer de fichier ?',
+        'هل تريد تجاهل التعديلات غير المحفوظة؟')))return;
     setCurrentPath(file.path);setContent('');setOriginalText('');setFailure('');
     if(!result||!editable(file.path)){setConfirmReplace(file.path);return}
     setTextBusy(true);try{
@@ -212,15 +227,71 @@ export function UniversalInteractiveImport({
   const previewOrigin=(()=>{try{return new URL(previewUrl).origin}catch{return ''}})();
   useEffect(()=>{if(!result||!session||!previewOrigin)return;const receive=(e:MessageEvent)=>{
     if(e.source!==frame.current?.contentWindow||e.origin!==previewOrigin||e.data?.contract!=='kidflix.interactive.bridge.1'||e.data?.channel!==session)return;
-    const action=String(e.data.action||'');if(!['ready','progress','answer','save','complete','error'].includes(action))return;
+    const action=String(e.data.action||'');    if(action==='studio.select'){
+      const next=e.data?.data as Selection;
+      if(next&&typeof next.tag==='string'&&typeof next.selector==='string')setInspectorSelection(next);
+      return;
+    }
+    if(action==='studio.runtimeError'||action==='studio.assetError'){
+      const detail=String(e.data?.data?.message||e.data?.data?.source||'Unknown runtime problem').slice(0,230);
+      setPreviewError((action==='studio.assetError'?'Missing asset: ':'Runtime error: ')+detail);
+      setEvents(old=>[...old.slice(-18),action+' · '+detail]);return;
+    }
+    if(!['ready','progress','answer','save','complete','error','studio.inspect.available','studio.inspect.status'].includes(action))return;
     const label=action+(action==='progress'&&Number.isFinite(Number(e.data.data?.percent))?' · '+Number(e.data.data.percent)+'%':'');
     setEvents(old=>[...old.slice(-18),new Date().toLocaleTimeString()+' · '+label]);
     if(action==='error')setPreviewError(String(e.data?.data?.message||'Runtime error').slice(0,240));
-    if(action==='ready')frame.current?.contentWindow?.postMessage({contract:'kidflix.interactive.bridge.1',channel:session,action:'restore',data:{state:{}}},previewOrigin);
-  };window.addEventListener('message',receive);return()=>window.removeEventListener('message',receive)},[result?.id,session,previewOrigin]);
+    if(action==='ready'){
+      frame.current?.contentWindow?.postMessage({contract:'kidflix.interactive.bridge.1',channel:session,action:'restore',data:{state:{}}},previewOrigin);
+      frame.current?.contentWindow?.postMessage({contract:'kidflix.interactive.bridge.1',channel:session,action:'studio.inspect.set',data:{enabled:inspectEnabled}},previewOrigin);
+    }
+  };window.addEventListener('message',receive);return()=>window.removeEventListener('message',receive)},[result?.id,session,previewOrigin,inspectEnabled]);
+   useEffect(()=>{
+     if(previewOrigin&&session)frame.current?.contentWindow?.postMessage({contract:'kidflix.interactive.bridge.1',channel:session,action:'studio.inspect.set',data:{enabled:inspectEnabled}},previewOrigin);
+   },[inspectEnabled,previewOrigin,session]);
   async function refreshPreview(){if(!result)return;await loadPackage(result.id,'experience')}
   const previewSrc=previewUrl&&session?previewUrl+'#kfchannel='+encodeURIComponent(session)+'&view='+previewVersion:'';
-  const selectStep=(s:Step)=>{setExpanded(true);setStep(s);setFailure('');};
+  async function refreshPublicationProof(){
+    if(!result)return;
+    try{
+      const updated=await apiGet({operation:'info',id:result.id}) as Result;
+      setResult(updated);
+      setMessage(updated.releaseId?t('Published release binding verified.','Liaison à la publication vérifiée.','تم التحقق من ربط النشر.'):
+        t('Package is stored but not yet tied to a published release.','Package enregistré, pas encore lié à une publication.','الحزمة محفوظة ولم تُنشر بعد.'));
+    }catch(e){setFailure((e as Error).message)}
+  }
+  async function saveVisualChanges(items:Partial<Record<VisualProperty,string>>,selector:string){
+    if(!result||!canManage)throw Error('A validated editable package is required.');
+    if(!/^(?:#[a-zA-Z_][\w-]{0,80}|\[data-kf-edit="[a-zA-Z0-9_-]{1,80}"\])$/.test(selector))throw Error('Only a stable id or data-kf-edit selector can be persisted.');
+    const allowed=new Set(['color','backgroundColor','fontSize','borderRadius','padding']);
+    const declarations=Object.entries(items).filter(([key,value])=>allowed.has(key)&&typeof value==='string'&&value.length<=80&&!/url\(|expression\(|[{};<>]/i.test(value));
+    if(!declarations.length)throw Error('No safe visual properties to save.');
+    const file=(result.files||[]).find(f=>/\.css$/i.test(f.path)&&f.size<248*1024)
+      ||(result.files||[]).find(f=>f.path===result.entry&&f.size<248*1024);
+    if(!file)throw Error('No editable stylesheet or entry HTML is available. Use the source editor to add a CSS file.');
+    const payload=await apiGet({operation:'file',id:result.id,path:file.path});
+    const body=String(payload.content||'');
+    const cssName=(key:string)=>key.replace(/[A-Z]/g,s=>'-'+s.toLowerCase());
+    const rule='\n/* KidFlix Studio · approved visual override */\n'+selector+' {\n'+declarations.map(([k,v])=>'  '+cssName(k)+': '+v+';').join('\n')+'\n}\n';
+    const next=/\.css$/i.test(file.path)?body+rule:body.replace(/<\/head\s*>/i,'<style>'+rule+'</style></head>');
+    if(next===body)throw Error('The HTML entry is missing a closing head element.');
+    const replacement=new File([next],file.path.split('/').pop()||'source.css',{type:'text/plain;charset=utf-8'});
+    const form=new FormData();form.set('action','derive');form.set('id',result.id);form.set('path',file.path);
+    form.set('checksum',file.sha256);form.set('replacement',replacement);
+    controller.current?.abort();controller.current=new AbortController();
+    const saved=await sendForm(form,controller.current.signal);
+    await loadPackage(saved.id,'perfect');
+    setMessage(t('Visual changes saved in a new validated revision. Attach this revision when ready.',
+      'Styles enregistrés dans une nouvelle révision vérifiée. Associez-la lorsque vous êtes prêt.',
+      'تم حفظ التغييرات المرئية في إصدار جديد؛ اربطه عندما تكون جاهزًا.'));
+  }
+  const selectStep=(s:Step)=>{
+    if(s!=='perfect'&&content!==originalText&&currentPath&&
+       !window.confirm(t('Leave this step and discard unsaved source edits?',
+         'Quitter cette étape et abandonner les modifications non enregistrées ?',
+         'مغادرة الخطوة وتجاهل التعديلات غير المحفوظة؟')))return;
+    setExpanded(true);setStep(s);setFailure('');
+  };
   return <section className={styles.root} aria-label="KidFlix interactive experience production studio">
     <header className={styles.header}>
       <div className={styles.identity}>
@@ -284,7 +355,8 @@ export function UniversalInteractiveImport({
               <p>{t('Official KidFlix branding is provided by the trusted player host.','L’identité officielle KidFlix est fournie par le lecteur hôte.','هوية KidFlix الرسمية يوفرها مشغل المنصة.')}</p>
             </div>
           </div>
-          <div className={styles.toolbar}><button type="button" className={styles.primary} onClick={()=>selectStep('perfect')}>{t('Perfect the experience','Perfectionner l’expérience','تحسين التجربة')}</button><button type="button" onClick={()=>selectStep('experience')}>{t('Play full preview','Ouvrir la prévisualisation','فتح المعاينة')}</button></div>
+                     <StudioProjectIntelligence id={result.id} entry={result.entry} files={result.files||[]} locale={locale} onOpenFile={path=>{const file=result.files?.find(f=>f.path===path);if(file){setStep('perfect');void selectFile(file)}}}/>
+<div className={styles.toolbar}><button type="button" className={styles.primary} onClick={()=>selectStep('perfect')}>{t('Perfect the experience','Perfectionner l’expérience','تحسين التجربة')}</button><button type="button" onClick={()=>selectStep('experience')}>{t('Play full preview','Ouvrir la prévisualisation','فتح المعاينة')}</button></div>
         </>}
       </div>}
 
@@ -299,16 +371,15 @@ export function UniversalInteractiveImport({
             </div>
             <div className={styles.editorPanel}>{!selected?<div className={styles.empty}>{t('Choose a source file, image or audio asset from the project tree.','Choisissez un code, une image ou un fichier audio dans l’arborescence.','اختر ملفًا من شجرة المشروع.')}</div>:<>
               <div className={styles.editorHead}><strong>{selected.path}</strong><small>SHA {selected.sha256.slice(0,12)}…</small></div>
-              {!editable(selected.path)&&assetUrl&&<div className={styles.assetPreview}>
-                {selected.mime.startsWith('image/')?<img src={assetUrl} alt={selected.path} loading="lazy"/>:selected.mime.startsWith('audio/')?<audio src={assetUrl} controls preload="metadata"/>:selected.mime.startsWith('video/')?<video src={assetUrl} controls preload="metadata"/>:<span>{t('Binary asset. Replace to update.','Média binaire. Remplacez pour corriger.','ملف ثنائي؛ استبدله لتعديله.')}</span>}
-              </div>}
+              {!editable(selected.path)&&<StudioAssetWorkbench packageId={result.id} file={selected} locale={locale} disabled={!canManage||phase==='updating'} onReplace={file=>replaceFile(selected.path,file)}/>}
               {editable(selected.path)?<>
-                {textBusy?<p>{t('Loading source…','Chargement du code…','تحميل الكود…')}</p>:<textarea className={styles.sourceEditor} aria-label="Edit source file" spellCheck={false} value={content} onChange={e=>setContent(e.target.value)} disabled={!canManage||phase==='updating'} />}
-                <div className={styles.toolbar}><button type="button" className={styles.primary} onClick={saveText} disabled={!canManage||textBusy||content===originalText||phase==='updating'}>{t('Save as new validated revision','Enregistrer une nouvelle révision','حفظ نسخة جديدة')}</button><button type="button" onClick={()=>setContent(originalText)} disabled={content===originalText}>{t('Discard edits','Annuler les modifications','تراجع')}</button></div>
+                {textBusy?<p>{t('Loading source…','Chargement du code…','تحميل الكود…')}</p>:<StudioCodeEditor path={selected.path} value={content} original={originalText} onChange={setContent} onSave={saveText} disabled={!canManage||phase==='updating'} locale={locale}/>}
+                <div className={styles.toolbar}><button type="button" onClick={()=>setContent(originalText)} disabled={content===originalText}>{t('Discard edits','Annuler les modifications','تراجع')}</button></div>
               </>:<><p>{t('Binary media is replaced directly; the rest of the project stays unchanged.','Remplacez directement ce média sans modifier le reste du projet.','استبدل الملف دون تعديل بقية المشروع.')}</p><button type="button" className={styles.primary} onClick={()=>{setConfirmReplace(selected.path);replacementInput.current?.click()}} disabled={!canManage||phase==='updating'}>{t('Replace this asset','Remplacer ce média','استبدال الملف')}</button></>}
             </>}</div>
           </div>
-          <input ref={replacementInput} hidden type="file" onChange={e=>{const file=e.target.files?.[0];if(file&&confirmReplace)void replaceFile(confirmReplace,file);e.target.value='';setConfirmReplace('')}}/>
+                     <StudioBatchMedia packageId={result.id} files={result.files||[]} locale={locale} disabled={!canManage||phase==='updating'} onRevision={pkg=>{void loadPackage(pkg.id,'perfect');setMessage(t('Batch replacement created a new validated package revision.','Remplacement groupé enregistré dans une nouvelle révision.','تم إنشاء إصدار جديد للاستبدال الجماعي.'))}}/>
+<input ref={replacementInput} hidden type="file" onChange={e=>{const file=e.target.files?.[0];if(file&&confirmReplace)void replaceFile(confirmReplace,file);e.target.value='';setConfirmReplace('')}}/>
           <div className={styles.toolbar}><button type="button" onClick={()=>selectStep('experience')}>{t('Preview this revision','Tester cette révision','معاينة النسخة')}</button><button type="button" onClick={()=>void downloadArchive()}>{t('Export full source ZIP','Exporter le ZIP source complet','تصدير ملف ZIP الكامل')}</button>{onOpenDossier&&<button type="button" onClick={onOpenDossier}>{t('Full Content 360 editor','Éditeur Content 360 complet','محرر Content 360 الكامل')}</button>}</div>
         </>}
       </div>}
@@ -318,8 +389,12 @@ export function UniversalInteractiveImport({
           <div className={styles.stageTitle}><h4>{t('Experience the actual application','Testez la vraie application','جرّب التطبيق الحقيقي')}</h4><p>{t('Interact with the executable package, not a screenshot or approximation.','Interagissez avec le package réel, pas une capture.','تفاعل مع الحزمة الحقيقية لا صورة ثابتة.')}</p></div>
           <div className={styles.previewTools}><div className={styles.deviceSwitch}>{(['desktop','tablet','mobile'] as const).map(x=><button type="button" key={x} className={device===x?styles.active:''} onClick={()=>setDevice(x)}>{x}</button>)}</div><button type="button" onClick={()=>void refreshPreview()}>{t('Restart / refresh session','Relancer la session','إعادة تشغيل الجلسة')}</button></div>
           <div className={styles.previewZone}><iframe key={result.id+session+previewVersion} ref={frame} title="KidFlix isolated interactive experience preview" className={styles.frame} style={{maxWidth:device==='desktop'?'100%':device==='tablet'?820:390}} src={previewSrc} sandbox="allow-scripts allow-same-origin" referrerPolicy="no-referrer"/></div>
-          <div className={styles.eventsPanel}><div><strong>{t('Live interaction diagnostics','Diagnostic des interactions','تشخيص التفاعلات')}</strong><button type="button" onClick={()=>setEvents([])}>{t('Clear','Effacer','مسح')}</button></div><p>{previewError||events.slice(-6).join(' · ')||t('Start interacting; events will appear here.','Interagissez ; les événements apparaîtront ici.','ابدأ التفاعل وستظهر الأحداث هنا.')}</p></div>
-          <div className={styles.toolbar}><button type="button" className={styles.primary} onClick={()=>selectStep('publish')}>{t('Ready for publication review','Passer à la publication','متابعة النشر')}</button><button type="button" onClick={()=>selectStep('perfect')}>{t('Improve something','Modifier un élément','تحسين عنصر')}</button></div>
+                     <StudioVisualInspector locale={locale} enabled={inspectEnabled} selection={inspectorSelection} onToggle={setInspectEnabled} disabled={!canManage||phase==='updating'}
+             onApply={(key,value)=>{if(inspectorSelection?.selector&&previewOrigin&&session)frame.current?.contentWindow?.postMessage({contract:'kidflix.interactive.bridge.1',channel:session,action:'studio.inspect.apply',data:{selector:inspectorSelection.selector,property:key,value}},previewOrigin)}}
+             onSave={saveVisualChanges}/>
+<div className={styles.eventsPanel}><div><strong>{t('Live interaction diagnostics','Diagnostic des interactions','تشخيص التفاعلات')}</strong><button type="button" onClick={()=>setEvents([])}>{t('Clear','Effacer','مسح')}</button></div><p>{previewError||events.slice(-6).join(' · ')||t('Start interacting; events will appear here.','Interagissez ; les événements apparaîtront ici.','ابدأ التفاعل وستظهر الأحداث هنا.')}</p></div>
+                     <StudioAIRepairHandoff locale={locale} family={family} title={result.title} packageId={result.id} files={result.files||[]} events={events} previewError={previewError} onExportSource={downloadArchive}/>
+           <div className={styles.toolbar}><button type="button" className={styles.primary} onClick={()=>selectStep('publish')}>{t('Ready for publication review','Passer à la publication','متابعة النشر')}</button><button type="button" onClick={()=>selectStep('perfect')}>{t('Improve something','Modifier un élément','تحسين عنصر')}</button></div>
         </>}
       </div>}
 
@@ -327,8 +402,17 @@ export function UniversalInteractiveImport({
         {!result?<div className={styles.empty}>{t('Choose and preview a package first.','Choisissez et testez d’abord un package.','اختر وعاين الحزمة أولًا.')}</div>:<>
           <div className={styles.stageTitle}><h4>{t('Connect to native publication','Rejoindre la publication native','الربط بالنشر الأصلي')}</h4><p>{t('The existing Content 360 review and publish controls remain authoritative.','Le dossier Content 360 conserve l’autorité de validation et publication.','يظل ملف Content 360 مسؤولًا عن المراجعة والنشر.')}</p></div>
           <div className={styles.publishRow}><div><small>{t('Chosen project','Projet choisi','المشروع')}</small><strong>{result.title}</strong><p>{result.family} · {result.locale.toUpperCase()} · {result.checksum.slice(0,18)}…</p></div><span className={isAttached?styles.ok:styles.pending}>{isAttached?t('Linked to this draft','Lié au brouillon','مرتبط بالمسودة'):t('Not linked yet','Non lié','غير مرتبط')}</span></div>
-          {foreign&&<p className={styles.publishNote} role="status">{t('This package belongs to another dossier. Make an independent copy before attaching it here.','Ce package est lié à un autre dossier. Créez une copie indépendante avant de l’associer.','هذه الحزمة مرتبطة بملف آخر. أنشئ نسخة مستقلة قبل الربط.')}</p>}
-          <div className={styles.toolbar}>{foreign&&<button type="button" className={styles.primary} disabled={!canManage} onClick={()=>void cloneForThisDossier()}>{t('Make independent copy','Créer une copie indépendante','إنشاء نسخة مستقلة')}</button>}{!foreign&&!isAttached&&<button type="button" className={styles.primary} disabled={!canManage} onClick={()=>{onAttach(result);setMessage(t('Package attached locally. Save this native dossier to persist the revision.','Package associé. Enregistrez le dossier natif pour conserver la révision.','تم الربط. احفظ الملف الأصلي لتثبيت النسخة.'))}}>{t('Attach this exact revision','Associer cette révision','اربط هذه النسخة')}</button>}{isAttached&&<button type="button" className={styles.primary} onClick={onContinue}>{t('Continue to native Save / Review / Publish','Continuer vers Enregistrer / Vérifier / Publier','متابعة الحفظ والمراجعة والنشر')}</button>}{onOpenDossier&&<button type="button" onClick={onOpenDossier}>{t('Open complete dossier','Ouvrir le dossier complet','فتح الملف الكامل')}</button>}</div>
+                     <div className={styles.publishRow}>
+             <div><small>{t('Publication proof','Preuve de publication','إثبات النشر')}</small>
+             <strong>{result.releaseId?t('Native published release detected','Publication native détectée','تم رصد النشر الأصلي'):t('Awaiting native publication','En attente de publication native','بانتظار النشر')}</strong>
+             {result.releaseId&&<p>Release ID: <code>{result.releaseId}</code></p>}
+             {result.releaseId&&publicPath&&publicPath.startsWith('/')&&!publicPath.startsWith('//')&&
+               <a href={publicPath} target="_blank" rel="noopener noreferrer">{t('Open actual public page','Ouvrir la page publique','فتح الصفحة العامة')}</a>}
+             <p>{t('A saved package alone is not a published resource.','Le simple enregistrement du package ne constitue pas une publication.','حفظ الحزمة لا يعني نشرها.')}</p>
+           </div>
+           <button type="button" onClick={()=>void refreshPublicationProof()}>{t('Verify real publication status','Vérifier la publication réelle','التحقق من النشر الفعلي')}</button>
+           {foreign&&<p className={styles.publishNote} role="status">{t('This package belongs to another dossier. Make an independent copy before attaching it here.','Ce package est lié à un autre dossier. Créez une copie indépendante avant de l’associer.','هذه الحزمة مرتبطة بملف آخر. أنشئ نسخة مستقلة قبل الربط.')}</p>}
+          <div className={styles.toolbar}>{foreign&&<button type="button" className={styles.primary} disabled={!canManage} onClick={()=>void cloneForThisDossier()}>{t('Make independent copy','Créer une copie indépendante','إنشاء نسخة مستقلة')}</button>}{!foreign&&!isAttached&&<button type="button" className={styles.primary} disabled={!canManage} onClick={()=>{onAttach(result);setMessage(t('Package attached locally. Save this native dossier to persist the revision.','Package associé. Enregistrez le dossier natif pour conserver la révision.','تم الربط. احفظ الملف الأصلي لتثبيت النسخة.'))}}>{t('Attach this exact revision','Associer cette révision','اربط هذه النسخة')}</button>}{isAttached&&onSaveDraft&&<button type="button" disabled={!canManage||phase==='saving'} onClick={()=>{setPhase('saving');void onSaveDraft().then(()=>{setPhase('validated');setMessage(t('Native dossier saved. Continue with final Content 360 review.','Dossier natif enregistré. Continuez vers la vérification finale.','تم حفظ الملف الأصلي؛ تابع المراجعة النهائية.'))}).catch(e=>{setPhase('failed');setFailure(String(e))})}}>{t('Save native draft','Enregistrer le brouillon natif','حفظ المسودة الأصلية')}</button>}{isAttached&&<button type="button" className={styles.primary} onClick={onContinue}>{t('Continue to native Save / Review / Publish','Continuer vers Enregistrer / Vérifier / Publier','متابعة الحفظ والمراجعة والنشر')}</button>}{onOpenDossier&&<button type="button" onClick={onOpenDossier}>{t('Open complete dossier','Ouvrir le dossier complet','فتح الملف الكامل')}</button>}</div>
           <p className={styles.publishNote}>{t('Publishing is only confirmed when Content 360 reports the real active public release. Uploading or attaching a package alone is not publication.','La publication n’est confirmée qu’après activation réelle de l’édition publique. Le téléversement ne suffit pas.','النشر مؤكد فقط بعد تفعيل الإصدار العام في Content 360.')}</p>
         </>}
       </div>}
@@ -336,7 +420,8 @@ export function UniversalInteractiveImport({
       {step==='manage'&&<div className={styles.stage}>
         <div className={styles.stageTitle}><h4>{t('All your recoverable experience packages','Retrouvez vos expériences enregistrées','استعد مشاريعك المحفوظة')}</h4><p>{t('Resume, compare, reuse or restore validated revisions. No repeat uploads.','Reprenez, comparez, réutilisez ou restaurez sans nouvel import.','استأنف أو قارن أو استعد دون إعادة رفع.')}</p></div>
         <div className={styles.toolbar}><button type="button" disabled={listingBusy} onClick={()=>void reloadLibrary()}>{listingBusy?t('Loading…','Chargement…','تحميل…'):t('Refresh library','Actualiser la liste','تحديث القائمة')}</button><button type="button" onClick={()=>selectStep('start')}>{t('Import another experience','Importer une autre expérience','استيراد تجربة أخرى')}</button></div>
-        {!library.length?<div className={styles.empty}>{listingBusy?t('Loading packages…','Chargement des packages…','تحميل الحزم…'):t('No saved packages for this category and language yet.','Aucun package pour cette catégorie et cette langue.','لا توجد حزم محفوظة لهذه الفئة واللغة.')}</div>:<div className={styles.library}>{library.map(item=><div key={item.id} className={styles.libraryRow}><div><strong>{item.title}</strong><p>{item.state} · {item.files} {t('files','fichiers','ملفات')} · {item.createdAt?new Date(item.createdAt).toLocaleString(locale):''}</p>{item.parentId&&<small>{t('Revision of','Révision de','نسخة من')} {item.parentId.slice(0,8)}…</small>}</div><div className={styles.toolbar}><button type="button" onClick={()=>void loadPackage(item.id,'understand')}>{t('Open','Ouvrir','فتح')}</button>{item.id!==attachedId&&<button type="button" onClick={()=>void loadPackage(item.id,'experience')}>{t('Preview','Prévisualiser','معاينة')}</button>}</div></div>)}</div>}
+                 {library.length>1&&<StudioRevisionCompare locale={locale} library={library} activeId={result?.id} onOpen={id=>{void loadPackage(id,'understand')}} onRestore={id=>{void loadPackage(id,'publish');setMessage(t('Older revision loaded. Attach it to your draft to prepare a new publication.','Ancienne révision chargée. Associez-la au brouillon pour préparer une republication.','تم تحميل الإصدار السابق؛ اربطه بالمسودة للنشر.'))}}/>}
+{!library.length?<div className={styles.empty}>{listingBusy?t('Loading packages…','Chargement des packages…','تحميل الحزم…'):t('No saved packages for this category and language yet.','Aucun package pour cette catégorie et cette langue.','لا توجد حزم محفوظة لهذه الفئة واللغة.')}</div>:<div className={styles.library}>{library.map(item=><div key={item.id} className={styles.libraryRow}><div><strong>{item.title}</strong><p>{item.state} · {item.files} {t('files','fichiers','ملفات')} · {item.createdAt?new Date(item.createdAt).toLocaleString(locale):''}</p>{item.parentId&&<small>{t('Revision of','Révision de','نسخة من')} {item.parentId.slice(0,8)}…</small>}</div><div className={styles.toolbar}><button type="button" onClick={()=>void loadPackage(item.id,'understand')}>{t('Open','Ouvrir','فتح')}</button>{item.id!==attachedId&&<button type="button" onClick={()=>void loadPackage(item.id,'experience')}>{t('Preview','Prévisualiser','معاينة')}</button>}</div></div>)}</div>}
       </div>}
     </div>}
   </section>;

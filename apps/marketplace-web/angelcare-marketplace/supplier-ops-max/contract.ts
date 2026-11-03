@@ -23,7 +23,7 @@ export type SupplierListing = {
 export type Selection = {
   id:string; provider:Provider; provider_product_id:string; title:string; sku:string;
   image_url:string|null; currency:string; cost:number|null; stock:number|null; supplier_moq:number|null;
-  normalized:SupplierListing; catalog_item_id:string|null; category_key:string|null; canonical_supplier_id:string|null; supplier_offer_id:string|null; selected_variant_ids:string[];
+  normalized:SupplierListing; catalog_item_id:string|null; category_key:string|null; category_keys:string[]; canonical_supplier_id:string|null; supplier_offer_id:string|null; selected_variant_ids:string[];
   status:'selected'|'review'|'ready'|'imported'|'published'|'archived';
   editorial:Editorial; compliance:Compliance;
   target_margin:number|null; shipping_cost:number|null; duty_cost:number|null;
@@ -76,7 +76,7 @@ const requiredCompliance:(keyof Compliance)[] = [
 ]
 export function editorialGate(selection:Selection):ProductGate {
   const missing:string[]=[]
-  if(!selection.category_key)missing.push('Canonical category')
+  if(!selection.category_key||!selection.category_keys.includes(selection.category_key))missing.push('Canonical primary category and assignment')
   if(!selection.image_url)missing.push('Primary image')
   if(!selection.sku)missing.push('Supplier SKU')
   for(const key of requiredEditorial)if(!String(selection.editorial[key]??'').trim())missing.push(key)
