@@ -236,12 +236,12 @@ export function CreationStudio({
   const committing = useCallback((next: Entry[]) => {
     entriesRef.current = next;
     setEntries(next);
-    queueMicrotask(() => persistRef.current());
+
   }, []);
   const putQueue = useCallback((next: UploadCheckpoint[]) => {
     queueRef.current = next;
     setQueue(next);
-    queueMicrotask(() => persistRef.current());
+
   }, []);
   const change = (
     id: string,
