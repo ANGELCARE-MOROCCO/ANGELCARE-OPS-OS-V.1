@@ -226,7 +226,7 @@ export function UniversalInteractiveImport({
   const previewUrl=result?.previewUrl||'';
   const previewOrigin=(()=>{try{return new URL(previewUrl).origin}catch{return ''}})();
   useEffect(()=>{if(!result||!session||!previewOrigin)return;const receive=(e:MessageEvent)=>{
-    if(e.source!==frame.current?.contentWindow||e.origin!==previewOrigin||e.data?.contract!=='kidflix.interactive.bridge.1'||e.data?.channel!==session)return;
+    if(e.source!==frame.current?.contentWindow||e.origin!=='null'||e.data?.contract!=='kidflix.interactive.bridge.1'||e.data?.channel!==session)return;
     const action=String(e.data.action||'');    if(action==='studio.select'){
       const next=e.data?.data as Selection;
       if(next&&typeof next.tag==='string'&&typeof next.selector==='string')setInspectorSelection(next);
@@ -242,12 +242,12 @@ export function UniversalInteractiveImport({
     setEvents(old=>[...old.slice(-18),new Date().toLocaleTimeString()+' · '+label]);
     if(action==='error')setPreviewError(String(e.data?.data?.message||'Runtime error').slice(0,240));
     if(action==='ready'){
-      frame.current?.contentWindow?.postMessage({contract:'kidflix.interactive.bridge.1',channel:session,action:'restore',data:{state:{}}},previewOrigin);
-      frame.current?.contentWindow?.postMessage({contract:'kidflix.interactive.bridge.1',channel:session,action:'studio.inspect.set',data:{enabled:inspectEnabled}},previewOrigin);
+      frame.current?.contentWindow?.postMessage({contract:'kidflix.interactive.bridge.1',channel:session,action:'restore',data:{state:{}}},'*');
+      frame.current?.contentWindow?.postMessage({contract:'kidflix.interactive.bridge.1',channel:session,action:'studio.inspect.set',data:{enabled:inspectEnabled}},'*');
     }
   };window.addEventListener('message',receive);return()=>window.removeEventListener('message',receive)},[result?.id,session,previewOrigin,inspectEnabled]);
    useEffect(()=>{
-     if(previewOrigin&&session)frame.current?.contentWindow?.postMessage({contract:'kidflix.interactive.bridge.1',channel:session,action:'studio.inspect.set',data:{enabled:inspectEnabled}},previewOrigin);
+     if(previewOrigin&&session)frame.current?.contentWindow?.postMessage({contract:'kidflix.interactive.bridge.1',channel:session,action:'studio.inspect.set',data:{enabled:inspectEnabled}},'*');
    },[inspectEnabled,previewOrigin,session]);
   async function refreshPreview(){if(!result)return;await loadPackage(result.id,'experience')}
   const previewSrc=previewUrl&&session?previewUrl+'#kfchannel='+encodeURIComponent(session)+'&view='+previewVersion:'';
@@ -388,9 +388,9 @@ export function UniversalInteractiveImport({
         {!result?<div className={styles.empty}>{t('Choose an imported package to play its real HTML application.','Choisissez un projet pour exécuter sa vraie application HTML.','اختر حزمة لتشغيل تطبيق HTML الحقيقي.')}</div>:<>
           <div className={styles.stageTitle}><h4>{t('Experience the actual application','Testez la vraie application','جرّب التطبيق الحقيقي')}</h4><p>{t('Interact with the executable package, not a screenshot or approximation.','Interagissez avec le package réel, pas une capture.','تفاعل مع الحزمة الحقيقية لا صورة ثابتة.')}</p></div>
           <div className={styles.previewTools}><div className={styles.deviceSwitch}>{(['desktop','tablet','mobile'] as const).map(x=><button type="button" key={x} className={device===x?styles.active:''} onClick={()=>setDevice(x)}>{x}</button>)}</div><button type="button" onClick={()=>void refreshPreview()}>{t('Restart / refresh session','Relancer la session','إعادة تشغيل الجلسة')}</button></div>
-          <div className={styles.previewZone}><iframe key={result.id+session+previewVersion} ref={frame} title="KidFlix isolated interactive experience preview" className={styles.frame} style={{maxWidth:device==='desktop'?'100%':device==='tablet'?820:390}} src={previewSrc} sandbox="allow-scripts allow-same-origin" referrerPolicy="no-referrer"/></div>
+          <div className={styles.previewZone}><iframe key={result.id+session+previewVersion} ref={frame} title="KidFlix isolated interactive experience preview" className={styles.frame} style={{maxWidth:device==='desktop'?'100%':device==='tablet'?820:390}} src={previewSrc} sandbox="allow-scripts" referrerPolicy="no-referrer"/></div>
                      <StudioVisualInspector locale={locale} enabled={inspectEnabled} selection={inspectorSelection} onToggle={setInspectEnabled} disabled={!canManage||phase==='updating'}
-             onApply={(key,value)=>{if(inspectorSelection?.selector&&previewOrigin&&session)frame.current?.contentWindow?.postMessage({contract:'kidflix.interactive.bridge.1',channel:session,action:'studio.inspect.apply',data:{selector:inspectorSelection.selector,property:key,value}},previewOrigin)}}
+             onApply={(key,value)=>{if(inspectorSelection?.selector&&previewOrigin&&session)frame.current?.contentWindow?.postMessage({contract:'kidflix.interactive.bridge.1',channel:session,action:'studio.inspect.apply',data:{selector:inspectorSelection.selector,property:key,value}},'*')}}
              onSave={saveVisualChanges}/>
 <div className={styles.eventsPanel}><div><strong>{t('Live interaction diagnostics','Diagnostic des interactions','تشخيص التفاعلات')}</strong><button type="button" onClick={()=>setEvents([])}>{t('Clear','Effacer','مسح')}</button></div><p>{previewError||events.slice(-6).join(' · ')||t('Start interacting; events will appear here.','Interagissez ; les événements apparaîtront ici.','ابدأ التفاعل وستظهر الأحداث هنا.')}</p></div>
                      <StudioAIRepairHandoff locale={locale} family={family} title={result.title} packageId={result.id} files={result.files||[]} events={events} previewError={previewError} onExportSource={downloadArchive}/>

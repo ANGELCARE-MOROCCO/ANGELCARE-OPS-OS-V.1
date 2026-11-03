@@ -1,6 +1,6 @@
 import { createServiceClient } from '@/lib/supabase/server';
 import { KF_PACKAGE_BUCKET,KF_PACKAGE_TABLE,type PackageRow } from '@/angelcare-marketplace/kidflix/interactive/service';
-import { runtimeOrigin,safePackagePath,sha256,verifyPreviewToken } from '@/angelcare-marketplace/kidflix/interactive/package';
+import { applicationOrigin,runtimeOrigin,safePackagePath,sha256,verifyPreviewToken } from '@/angelcare-marketplace/kidflix/interactive/package';
 import {previewStudioScript} from '@/angelcare-marketplace/kidflix/interactive/preview-studio-script';
 import {randomBytes} from 'node:crypto';
 export const dynamic='force-dynamic';export const runtime='nodejs';
@@ -12,13 +12,9 @@ function trustedRuntimeHost(request:Request){
   // Do not serve untrusted code through the privileged KidFlix application origin.
   if(!requestHost||requestHost.toLowerCase()!==u.host.toLowerCase())throw Error('RUNTIME_HOST_NOT_ISOLATED');
 }
-function frameAncestors(){
-  const app=process.env.KIDFLIX_APPLICATION_ORIGIN||'';
-  if(!app||new URL(app).protocol!=='https:')throw Error('KIDFLIX_APPLICATION_ORIGIN_REQUIRED');
-  return new URL(app).origin;
-}
+function frameAncestors(){return applicationOrigin();}
 function officialLogo(){
-  const path=process.env.KIDFLIX_OFFICIAL_LOGO_PATH||'';
+  const path=process.env.KIDFLIX_OFFICIAL_LOGO_PATH||'/kidflix/kidflix-official.png';
   // A host-owned official asset only. Never accept a logo URL supplied by the ZIP.
   if(!/^\/[A-Za-z0-9/_\-.]+\.png$/.test(path)||path.includes('..'))throw Error('OFFICIAL_KIDFLIX_LOGO_NOT_CONFIGURED');
   return path;
@@ -77,7 +73,25 @@ export async function GET(req:Request,{params}:{params:Promise<{mode:string;refe
     const origin=frameAncestors();if(isHtml)officialLogo();
     const nonce=isHtml&&mode==='preview'?randomBytes(18).toString('base64'):undefined;
     const content=isHtml?htmlShell(bytes.toString('utf8'),nonce,origin):new Uint8Array(bytes);
-    const csp=["default-src 'none'","base-uri 'none'","object-src 'none'","form-action 'none'","frame-src 'none'", `script-src 'self' 'wasm-unsafe-eval'${nonce?" 'nonce-"+nonce+"'":''}`, "style-src 'self' 'unsafe-inline'", "img-src 'self' data: blob:","font-src 'self' data:","media-src 'self' blob:","connect-src 'self'", "worker-src 'self' blob:", `frame-ancestors ${origin}`].join('; ');
-    return new Response(content,{headers:{'Content-Type':meta.mime,'Content-Security-Policy':csp,'X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer','Cache-Control':'private,no-store','Permissions-Policy':'camera=(), microphone=(), geolocation=(), payment=(), usb=()'}});
+    // Sandbox is enforced by the response, even if opened directly.
+// Without allow-same-origin, executable HTML has an opaque origin.
+    const assetOrigin=runtimeOrigin();
+    const csp=[
+      ...(isHtml?['sandbox allow-scripts']:[]),
+      "default-src 'none'",
+      "base-uri 'none'",
+      "object-src 'none'",
+      "form-action 'none'",
+      "frame-src 'none'",
+      `script-src ${assetOrigin} 'wasm-unsafe-eval'${nonce?" 'nonce-"+nonce+"'":''}`,
+      `style-src ${assetOrigin} 'unsafe-inline'`,
+      `img-src ${assetOrigin} data: blob:`,
+      `font-src ${assetOrigin} data:`,
+      `media-src ${assetOrigin} blob:`,
+      "connect-src 'none'",
+      "worker-src 'none'",
+      `frame-ancestors ${origin}`
+    ].join('; ');
+    return new Response(content,{headers:{'Content-Type':meta.mime,'Content-Security-Policy':csp,...(isHtml?{}:{'Access-Control-Allow-Origin':'*'}),'X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer','Cache-Control':'private,no-store','Permissions-Policy':'camera=(), microphone=(), geolocation=(), payment=(), usb=()'}});
   }catch(e){return error('INTERACTIVE_RUNTIME_UNAVAILABLE',503)}
 }

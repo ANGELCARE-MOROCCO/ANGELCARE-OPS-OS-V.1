@@ -144,29 +144,53 @@ export function inspectZip(input:Buffer):KfPackage {
   return {manifest:{...m,family_key:family,target_locale:locale as KfLocale},files,entry,checksum:sha(input),bytes:total};
 }
 export function sha256(input:Buffer|string){return createHash('sha256').update(input).digest('hex')}
+function previewSigningKey():string {
+  const dedicated=process.env.KIDFLIX_INTERACTIVE_SIGNING_SECRET||'';
+  if(dedicated){
+    if(dedicated.length<48)throw Error('INTERACTIVE_SIGNING_SECRET_TOO_SHORT');
+    return dedicated;
+  }
+  const root=process.env.SUPABASE_SERVICE_ROLE_KEY||'';
+  if(root.length<48)throw Error('INTERACTIVE_SIGNING_SECRET_REQUIRED');
+  return createHmac('sha256',root)
+    .update('kidflix.interactive.preview.v1')
+    .digest('hex');
+}
 export function previewToken(packageId:string,subject:string,expires:number){
-  const key=process.env.KIDFLIX_INTERACTIVE_SIGNING_SECRET;
-  if(!key||key.length<48)throw Error('INTERACTIVE_SIGNING_SECRET_REQUIRED');
+  const key=previewSigningKey();
   const payload=Buffer.from(JSON.stringify({packageId,subject,expires})).toString('base64url');
   const mac=createHmac('sha256',key).update(payload).digest('base64url');
   return payload+'.'+mac;
 }
 export function verifyPreviewToken(token:string,packageId:string){
-  const key=process.env.KIDFLIX_INTERACTIVE_SIGNING_SECRET;if(!key||key.length<48)return false;
+  const key=previewSigningKey();
   const [payload,mac]=token.split('.');if(!payload||!mac||payload.length>1200)return false;
   const expected=createHmac('sha256',key).update(payload).digest('base64url');
   const a=Buffer.from(mac),b=Buffer.from(expected);if(a.length!==b.length||!timingSafeEqual(a,b))return false;
   try{const p=JSON.parse(Buffer.from(payload,'base64url').toString('utf8'));return p.packageId===packageId&&Number(p.expires)>Date.now()&&Number(p.expires)<Date.now()+900000}catch{return false}
 }
+export function applicationOrigin():string {
+  const site=process.env.KIDFLIX_APPLICATION_ORIGIN||
+    process.env.NEXT_PUBLIC_SITE_URL||
+    process.env.NEXT_PUBLIC_APP_URL||
+    'https://my.angelcarehub.com';
+  const u=new URL(site);
+  if(u.protocol!=='https:')throw Error('APP_ORIGIN_MUST_BE_HTTPS');
+  return u.origin;
+}
 export function runtimeOrigin():string {
-  const o=process.env.KIDFLIX_INTERACTIVE_RUNTIME_ORIGIN||'';
-  const site=process.env.KIDFLIX_APPLICATION_ORIGIN||process.env.NEXT_PUBLIC_SITE_URL||process.env.NEXT_PUBLIC_APP_URL||'';
-  if(!site)throw Error('KIDFLIX_APPLICATION_ORIGIN_REQUIRED');
-  if(!o)throw Error('SEPARATE_INTERACTIVE_RUNTIME_ORIGIN_REQUIRED');
-  const u=new URL(o);if(u.protocol!=='https:'||u.pathname!=='/'||u.search||u.hash||u.username||u.password)throw Error('INVALID_RUNTIME_ORIGIN');
-  if(site){const main=new URL(site);if(main.protocol!=='https:')throw Error('APP_ORIGIN_MUST_BE_HTTPS');
-    const own=u.hostname.split('.').slice(-2).join('.'),privileged=main.hostname.split('.').slice(-2).join('.');
-    if(u.host===main.host||own===privileged)throw Error('RUNTIME_REQUIRES_SEPARATE_REGISTRABLE_DOMAIN');}
+  const app=applicationOrigin();
+  const configured=process.env.KIDFLIX_INTERACTIVE_RUNTIME_ORIGIN||'';
+  if(!configured)return app;
+  const u=new URL(configured);
+  if(u.protocol!=='https:'||u.pathname!=='/'||
+     u.search||u.hash||u.username||u.password)
+    throw Error('INVALID_RUNTIME_ORIGIN');
+  if(u.origin===app)return app;
+  const own=u.hostname.split('.').slice(-2).join('.');
+  const privileged=new URL(app).hostname.split('.').slice(-2).join('.');
+  if(own===privileged)
+    throw Error('RUNTIME_REQUIRES_SEPARATE_REGISTRABLE_DOMAIN');
   return u.origin;
 }
 
