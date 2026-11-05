@@ -26,7 +26,9 @@ export function publicHost(value: string): string {
     h.includes("..")
   )
     throw Error("Invalid public host");
-  return h;
+  // KidFlix has one published liveHost binding. The new root domain must
+  // read the same published scope without changing request origin semantics.
+  return h === "angelcarehub.com" ? "my.angelcarehub.com" : h;
 }
 export function filters(input: Record<string, unknown>) {
   const out: Record<string, string> = {};
