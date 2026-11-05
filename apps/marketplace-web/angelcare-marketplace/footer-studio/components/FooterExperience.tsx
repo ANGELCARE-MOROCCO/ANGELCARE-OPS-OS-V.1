@@ -1,5 +1,6 @@
 "use client"
 import {KidFlixMarketplaceEntry} from '../../kidflix/MarketplaceEntry'
+import { consentAnalyticsAllowed, trackingAllowedOnPath } from '@/components/compliance/consent-policy'
 
 import Image from 'next/image'
 import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink'
@@ -28,7 +29,7 @@ function localized(value:unknown, locale:FooterLocale, fallback=''):string{
 }
 function localeHref(href:string,locale:FooterLocale){return href.replace(/^\/angelcare-marketplace\/(fr|en|ar)(?=\/|$)/,`/angelcare-marketplace/${locale}`)}
 function sendEvent(eventType:string, actionKey:string, experience:FooterRuntimeExperience){
-  if(experience.preview||typeof window==='undefined') return
+  if(experience.preview||typeof window==='undefined'||!consentAnalyticsAllowed('angelcare')||!trackingAllowedOnPath(window.location.pathname)) return
   const body=JSON.stringify({eventType,actionKey,profileId:experience.profile.id,locale:experience.locale,pathname:window.location.pathname,deviceClass:window.innerWidth<720?'mobile':window.innerWidth<1100?'tablet':'desktop'})
   const url='/api/angelcare-marketplace/public/footer/events'
   if(navigator.sendBeacon){navigator.sendBeacon(url,new Blob([body],{type:'application/json'}));return}
@@ -101,6 +102,7 @@ export function FooterExperience({experience,marketplace=true,preview=false}:Pro
       </section>
     </div>
     {profile.settings.show_service_bar!==false?<div className={styles.serviceBar}><span><strong>{experience.contact_desks.filter((desk)=>desk.status==='active').length}</strong>{localText(brand.service_desks_label,locale,t.serviceDesks)}</span><span><strong>360°</strong>{localText(brand.service_coverage_label,locale,t.coverage)}</span><span><strong>3</strong>{localText(brand.service_languages_label,locale,t.languages)}</span><nav>{(['fr','en','ar'] as const).map((code)=><Link href={`/angelcare-marketplace/${code}`} data-active={locale===code} key={code} onClick={click('locale_click',code)}>{localeNames[code]}</Link>)}</nav></div>:null}
+    <nav aria-label={locale==='fr'?'Informations légales':locale==='ar'?'المعلومات القانونية':'Legal information'} style={{display:'flex',flexWrap:'wrap',gap:16,justifyContent:'center',padding:'10px 18px',fontSize:12}}><Link href={`/angelcare-marketplace/${locale}/legal/privacy`}>{locale==='fr'?'Confidentialité':locale==='ar'?'الخصوصية':'Privacy'}</Link><Link href={`/angelcare-marketplace/${locale}/legal/cookies`}>{locale==='fr'?'Cookies':locale==='ar'?'ملفات الارتباط':'Cookies'}</Link><Link href={`/angelcare-marketplace/${locale}/legal/terms`}>{locale==='fr'?'Conditions':locale==='ar'?'الشروط':'Terms'}</Link></nav>
     <div className={styles.authorityWrap}><a href="#angelcare-marketplace-top" className={styles.authority} onClick={click('authority_click','back-to-top')}><span>{profile.authority_statement}</span><strong aria-hidden="true"><ArrowUp size={17}/></strong></a></div>
   </footer>
 }

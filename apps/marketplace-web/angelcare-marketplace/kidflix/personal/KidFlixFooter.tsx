@@ -292,6 +292,8 @@ export function KidFlixFooter({
             <ShieldCheck size={14} />
             {t(["Privacy", "Confidentialité", "الخصوصية"])}
           </Link>
+          <Link href={path(locale, "/cookies")}><ShieldCheck size={14}/>{t(["Cookies & storage","Cookies et stockage","ملفات الارتباط والتخزين"])}</Link>
+          <Link href={path(locale, "/terms")}>{t(["Usage terms","Conditions d’utilisation","شروط الاستخدام"])}</Link>
           <Link href={path(locale, "/my?tab=preferences")}>
             {t(["My preferences", "Mes préférences", "تفضيلاتي"])}
           </Link>

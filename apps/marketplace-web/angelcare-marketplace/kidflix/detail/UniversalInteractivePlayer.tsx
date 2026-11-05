@@ -15,6 +15,11 @@ export function UniversalInteractivePlayer({p,packageId,checksum,entry='index.ht
   useEffect(()=>{
     try{
       const u=new URL(configuredOrigin||window.location.origin);
+      // KIDFLIX_RUNTIME_ROOT_HOST_BRIDGE_R1: The root is a public application
+      // entrypoint. Executable HTML remains on the existing authorized runtime.
+      if(window.location.hostname.toLowerCase()==='angelcarehub.com'&&
+         u.origin==='https://angelcarehub.com'&&u.pathname==='/'&&!u.search&&!u.hash)
+        u.hostname='my.angelcarehub.com';
       setOrigin(u.protocol==='https:'&&u.pathname==='/'&&!u.search&&!u.hash?u.origin:'');
     }catch{setOrigin('')}
   },[configuredOrigin]);

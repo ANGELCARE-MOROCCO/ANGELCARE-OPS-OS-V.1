@@ -1,0 +1,36 @@
+/* Completely isolated compliance UI; zero global selectors and no template overrides. */
+.mount{position:fixed;inset:auto 16px 16px auto;z-index:2147483000;max-width:min(470px,calc(100vw - 32px));color:var(--cc-ink);font-family:var(--cc-font);direction:var(--cc-direction);line-height:1.5}
+.angelcare{--cc-accent:#1d68ad;--cc-ink:#102847;--cc-muted:#526b83;--cc-surface:#ffffff;--cc-pale:#eef7ff;--cc-border:#cbddec;--cc-font:inherit;--cc-direction:ltr}
+.kidflix{--cc-accent:#f40082;--cc-ink:#07184c;--cc-muted:#536c88;--cc-surface:#ffffff;--cc-pale:#f5faff;--cc-border:#cce4f2;--cc-font:KidFlixWorld,'Segoe UI',Arial,sans-serif;--cc-direction:ltr}
+.jobkix{--cc-accent:#5148e8;--cc-ink:#11223a;--cc-muted:#52617a;--cc-surface:#ffffff;--cc-pale:#f3f1ff;--cc-border:#d5d1fa;--cc-font:inherit;--cc-direction:ltr}
+.mount[dir="rtl"]{--cc-direction:rtl}
+.panel{overflow:auto;max-height:min(82vh,690px);border:1px solid var(--cc-border);border-radius:17px;background:var(--cc-surface);box-shadow:0 18px 60px rgba(12,35,62,.18);color:var(--cc-ink);padding:20px}
+.kidflix .panel{border-top:5px solid #08a8ef;box-shadow:0 12px 45px rgba(0,90,180,.14)}
+.jobkix .panel{border-top:4px solid var(--cc-accent)}
+.mount *{box-sizing:border-box}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.brand{display:flex;align-items:center;gap:11px;min-width:0}
+.brand img{width:auto;max-width:135px;height:32px;object-fit:contain;object-position:initial}
+.brand small{display:block;font-size:10px;text-transform:uppercase;font-weight:750;letter-spacing:.09em;color:var(--cc-muted)}
+.title{font-size:18px;line-height:1.25;font-weight:800;letter-spacing:-.025em;margin:0 0 7px}
+.copy{font-size:12.5px;line-height:1.6;color:var(--cc-muted);margin:0 0 15px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:13px 0 11px}
+.button{min-height:42px;padding:9px 12px;font:inherit;font-size:12.5px;font-weight:750;line-height:1.25;border-radius:9px;border:1px solid var(--cc-border);background:#fff;color:var(--cc-ink);cursor:pointer;transition:box-shadow .15s ease,background .15s ease}
+.primary{background:var(--cc-accent);color:#fff;border-color:var(--cc-accent)}
+.button:hover{box-shadow:0 3px 10px rgba(13,32,65,.11)}
+.button:focus-visible,.link:focus-visible,.switch:focus-visible{outline:3px solid var(--cc-accent);outline-offset:3px}
+.link{color:var(--cc-accent);text-decoration:underline;text-underline-offset:3px;font-size:12px;font-weight:700}
+.links{display:flex;gap:15px;justify-content:flex-start;flex-wrap:wrap}
+.full{grid-column:1/-1}
+.prefs{display:grid;gap:9px;margin-top:13px}
+.preference{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:12px;background:var(--cc-pale);border:1px solid var(--cc-border);border-radius:11px}
+.preference strong{font-size:13px;display:block}
+.preference p{font-size:11.5px;color:var(--cc-muted);margin:4px 0 0;line-height:1.45}
+.preference input{flex:none;width:19px;height:19px;accent-color:var(--cc-accent);cursor:pointer}
+.preference input:disabled{cursor:not-allowed}
+.state{font-size:10px;white-space:nowrap;font-weight:800;color:var(--cc-muted)}
+.settings{padding:8px 13px;background:#fff;color:var(--cc-ink);border:1px solid var(--cc-border);border-radius:22px;box-shadow:0 5px 20px rgba(12,35,62,.12);font-size:11px;font-weight:700;cursor:pointer;max-width:min(270px,calc(100vw - 32px))}
+.kidflix .settings{border-color:#fac3e1;color:#a4005c}
+.note{font-size:11px;color:var(--cc-muted);padding-top:8px}
+@media(max-width:600px){.mount{inset:auto 8px 8px 8px;max-width:none}.panel{border-radius:13px;padding:16px;max-height:77vh}.brand img{height:26px}.actions{gap:8px}.button{font-size:12px;min-height:43px}}
+@media(prefers-reduced-motion:reduce){.button{transition:none}}

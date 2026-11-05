@@ -12,7 +12,13 @@ function trustedRuntimeHost(request:Request){
   // Do not serve untrusted code through the privileged KidFlix application origin.
   if(!requestHost||requestHost.toLowerCase()!==u.host.toLowerCase())throw Error('RUNTIME_HOST_NOT_ISOLATED');
 }
-function frameAncestors(){return applicationOrigin();}
+function frameAncestors(){
+  // KIDFLIX_RUNTIME_ROOT_HOST_BRIDGE_R1: exactly two allowed first-party parents.
+  // The request Host enforcement remains strict and unchanged.
+  const app=applicationOrigin();
+  return app==='https://my.angelcarehub.com'
+    ? 'https://my.angelcarehub.com https://angelcarehub.com' : app;
+}
 function officialLogo(){
   const path=process.env.KIDFLIX_OFFICIAL_LOGO_PATH||'/kidflix/kidflix-official.png';
   // A host-owned official asset only. Never accept a logo URL supplied by the ZIP.
@@ -70,7 +76,7 @@ export async function GET(req:Request,{params}:{params:Promise<{mode:string;refe
     const bytes=Buffer.from(await f.data.arrayBuffer());
     if(bytes.length!==meta.size||sha256(bytes)!==meta.sha256)return error('PACKAGE_INTEGRITY_MISMATCH',503);
     const isHtml=meta.mime.startsWith('text/html');
-    const origin=frameAncestors();if(isHtml)officialLogo();
+    const origin=applicationOrigin();if(isHtml)officialLogo();
     const nonce=isHtml&&mode==='preview'?randomBytes(18).toString('base64'):undefined;
     const content=isHtml?htmlShell(bytes.toString('utf8'),nonce,origin):new Uint8Array(bytes);
     // Sandbox is enforced by the response, even if opened directly.
@@ -90,7 +96,7 @@ export async function GET(req:Request,{params}:{params:Promise<{mode:string;refe
       `media-src ${assetOrigin} blob:`,
       "connect-src 'none'",
       "worker-src 'none'",
-      `frame-ancestors ${origin}`
+      `frame-ancestors ${frameAncestors()}`
     ].join('; ');
     return new Response(content,{headers:{'Content-Type':meta.mime,'Content-Security-Policy':csp,...(isHtml?{}:{'Access-Control-Allow-Origin':'*'}),'X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer','Cache-Control':'private,no-store','Permissions-Policy':'camera=(), microphone=(), geolocation=(), payment=(), usb=()'}});
   }catch(e){return error('INTERACTIVE_RUNTIME_UNAVAILABLE',503)}

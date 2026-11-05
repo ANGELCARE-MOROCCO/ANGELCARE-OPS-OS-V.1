@@ -22,6 +22,7 @@ const CategoryDesk = dynamic(() =>
   import("./CategoryDesk").then((m) => m.CategoryDesk),
 );
 import { profiles, workspaceEntries, workspaceTags, type Entry } from "./model";
+import { Eye, MousePointerClick } from "lucide-react";
 import s from "./workspace.module.css";
 
 type Props = {
@@ -56,7 +57,12 @@ export function DetailWorkspace({
     [share, setShare] = useState(false),
     [focus, setFocus] = useState(false),
     [notice, setNotice] = useState(""),
-    [visitedTools, setVisitedTools] = useState(false);
+    [visitedTools, setVisitedTools] = useState(false),
+    [engagement, setEngagement] = useState<{
+      views: number | null;
+      clicks: number | null;
+      threshold: 5;
+    } | null>(null);
   const tabId = useId(),
     stage = useRef<HTMLDivElement>(null),
     focusButton = useRef<HTMLButtonElement>(null),
@@ -108,6 +114,38 @@ export function DetailWorkspace({
       : []),
     { id: "tools", icon: "SlidersHorizontal", label: toolsLabel },
   ];
+  // KIDFLIX_ENGAGEMENT_BADGES_R1: read only, no personal tracking or timers.
+  useEffect(() => {
+    if (!m.releaseId || p.preview) {
+      setEngagement(null);
+      return;
+    }
+    const controller = new AbortController();
+    setEngagement(null);
+    void fetch(
+      `/api/kidflix/experience/${encodeURIComponent(m.key)}/engagement?locale=${encodeURIComponent(l)}`,
+      { credentials: "same-origin", signal: controller.signal },
+    )
+      .then(async (response) => {
+        if (!response.ok) throw Error("AGGREGATE_UNAVAILABLE");
+        const raw: unknown = await response.json();
+        if (!raw || typeof raw !== "object" || Array.isArray(raw))
+          throw Error("INVALID_AGGREGATE");
+        const stats = raw as Record<string, unknown>;
+        const validCount = (value: unknown): value is number | null =>
+          value === null ||
+          (typeof value === "number" && Number.isSafeInteger(value) && value >= 5);
+        if (stats.available !== true || stats.threshold !== 5 ||
+            !validCount(stats.views) || !validCount(stats.clicks))
+          throw Error("INVALID_AGGREGATE");
+        if (!controller.signal.aborted)
+          setEngagement({ views: stats.views, clicks: stats.clicks, threshold: 5 });
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setEngagement(null);
+      });
+    return () => controller.abort();
+  }, [m.key, m.releaseId, l, p.preview]);
   useEffect(() => {
     const r = rail.current,
       active = r?.querySelector<HTMLElement>("[aria-current]");
@@ -320,7 +358,7 @@ export function DetailWorkspace({
             )}
           </div>
           <div className={s.identityCopy}>
-            <div className={s.visualMaxEyebrow}>
+            <div className={`${s.visualMaxEyebrow} ${m.releaseId && !p.preview ? s.engagementRow : ""}`}>
               <I name="Sparkles" size={16} />
               {tr(["A discovery worth exploring", "Une découverte à explorer", "اكتشاف يستحق الاستكشاف"], l)}
               {m.releaseId ? (
@@ -328,6 +366,40 @@ export function DetailWorkspace({
                   <I name="CircleCheck" size={13} />
                   {tr(["Published", "Publié", "منشور"], l)}
                 </span>
+              ) : null}
+              {m.releaseId && !p.preview ? (
+                <>
+                  <span
+                    className={`${s.engagementBadge} ${s.engagementViews}`}
+                    title={tr([
+                      "Unique visitors who allowed measurement and viewed this experience. Counts below five are suppressed.",
+                      "Visiteurs uniques ayant accepté la mesure et consulté cette expérience. Les valeurs inférieures à cinq sont masquées.",
+                      "زوار فريدون وافقوا على القياس وشاهدوا التجربة. تُخفى الأعداد الأقل من خمسة."
+                    ], l)}
+                  >
+                    <Eye size={13} aria-hidden="true" />
+                    <span>{tr(["Views", "Vues", "المشاهدات"], l)}</span>
+                    <strong aria-live="polite">
+                      {!engagement ? "—" : engagement.views === null ? "<5" :
+                        new Intl.NumberFormat(l).format(engagement.views)}
+                    </strong>
+                  </span>
+                  <span
+                    className={`${s.engagementBadge} ${s.engagementClicks}`}
+                    title={tr([
+                      "Unique visitors who allowed measurement and started this experience. The click metric represents learning starts; counts below five are suppressed.",
+                      "Visiteurs uniques ayant accepté la mesure et commencé cette expérience. Les clics correspondent aux démarrages; moins de cinq sont masqués.",
+                      "زوار فريدون وافقوا على القياس وبدأوا هذه التجربة. تعبّر النقرات عن بدء التعلم وتُخفى الأعداد الأقل من خمسة."
+                    ], l)}
+                  >
+                    <MousePointerClick size={13} aria-hidden="true" />
+                    <span>{tr(["Clicks", "Clics", "النقرات"], l)}</span>
+                    <strong aria-live="polite">
+                      {!engagement ? "—" : engagement.clicks === null ? "<5" :
+                        new Intl.NumberFormat(l).format(engagement.clicks)}
+                    </strong>
+                  </span>
+                </>
               ) : null}
             </div>
             <div className={s.badges}>
@@ -752,47 +824,78 @@ export function DetailWorkspace({
             <button
               type="button"
               className={s.visualMaxClassMode}
+              data-kidflix-class-mode-launcher
               onClick={() => {
-                // Keep the native Class Mode authority in ResourceSurface.
-                // The known-good R2 does not have the optional data attribute.
-                // Resolve its real localized action label instead of requiring
-                // a mutation to journey/Tools.tsx.
-                const expectedLabel = j("classroom", l).trim();
-                const buttons = Array.from(
-                  stage.current?.querySelectorAll<HTMLButtonElement>("button") ?? []
+                // Launch the existing native classroom reader. Never create a
+                // second modal, timer, download path, or parallel experience.
+                setTab("player");
+                const classroom = stage.current?.querySelector<HTMLButtonElement>(
+                  "[data-kidflix-open-class-mode]"
                 );
-                const classroom = buttons.find((button) =>
-                  button.hasAttribute("data-kidflix-open-class-mode") ||
-                  button.textContent?.trim() === expectedLabel
-                );
-                if (classroom) {
-                  setTab("player");
+                if (classroom && !classroom.disabled) {
+                  setNotice("");
                   classroom.click();
-                } else {
-                  // Never fake the Class Mode action. Expose the native toolbar.
-                  setTab("player");
-                  const toggle = stage.current?.querySelector<HTMLButtonElement>(
-                    "[data-workspace-session-toggle]"
-                  );
-                  if (toggle?.getAttribute("aria-expanded") === "false") {
-                    toggle.click();
-                  }
-                  setNotice(tr(
-                    ["Use the Class Mode control in the opened reader toolbar.",
-                    "Utilisez le bouton Mode classe dans la barre du lecteur.",
-                    "استخدم زر وضع الفصل في شريط أدوات القارئ."], l
-                  ));
+                  return;
                 }
+                // Compatibility with older readers that expose only localized
+                // native toolbar text. This is a fallback, not a new authority.
+                const expectedLabel = j("classroom", l).trim();
+                const fallback = Array.from(
+                  stage.current?.querySelectorAll<HTMLButtonElement>("button") ?? []
+                ).find((button) => button.textContent?.trim() === expectedLabel);
+                if (fallback && !fallback.disabled) {
+                  setNotice("");
+                  fallback.click();
+                  return;
+                }
+                const toggle = stage.current?.querySelector<HTMLButtonElement>(
+                  "[data-workspace-session-toggle]"
+                );
+                if (toggle?.getAttribute("aria-expanded") === "false") toggle.click();
+                setNotice(
+                  tr(
+                    [
+                      "Open Class Mode from the resource reader toolbar.",
+                      "Ouvrez le Mode Classe depuis la barre d’outils du lecteur.",
+                      "افتح وضع الفصل من شريط أدوات قارئ المورد.",
+                    ],
+                    l
+                  )
+                );
               }}
             >
-              <I name="Presentation" size={22} />
-              <strong>{tr(["Class Mode", "Mode Classe", "وضع الفصل"], l)}</strong>
-              {Number(d.estimatedMinutes) > 0 ? <span>{Number(d.estimatedMinutes)} min</span> : null}
-              <I name="ArrowRight" size={19} />
+              <span className={s.classModeIcon} aria-hidden="true">
+                <I name="Presentation" size={24} />
+              </span>
+              <span className={s.classModeCopy}>
+                <span className={s.classModeHeading}>
+                  <strong>{tr(["Class Mode", "Mode Classe", "وضع الفصل"], l)}</strong>
+                  {Number(d.estimatedMinutes) > 0 ? (
+                    <span
+                      className={s.classModeDuration}
+                      title={tr(["Estimated activity time", "Durée indicative de l’activité", "المدة التقديرية للنشاط"], l)}
+                    >
+                      <I name="Clock" size={12} />
+                      {Number(d.estimatedMinutes)} min
+                    </span>
+                  ) : null}
+                </span>
+                <small>{tr([
+                  "Present this resource in the classroom viewer",
+                  "Présentez la ressource en vue classe",
+                  "اعرض هذا المورد في وضع الفصل",
+                ], l)}</small>
+              </span>
+              <span className={s.classModeArrow} aria-hidden="true">
+                <I name="ArrowRight" size={19} />
+              </span>
             </button>
           ) : null}
+          {/* KIDFLIX_ACTION_TRIO_POLISH_R1 */}
           <div className={s.quickActions}>
-            <LoveButton locale={l} />
+            <div className={s.quickLoveSlot}>
+              <LoveButton locale={l} />
+            </div>
             {printable ? (
               pdf ? (
                 <a
@@ -833,12 +936,25 @@ export function DetailWorkspace({
                 </a>
               )
             ) : null}
-            <button type="button" onClick={() => setShare(true)}>
-              <I name="Share2" size={20} />
-              {tr(["Share", "Partager", "مشاركة"], l)}
+            <button
+              type="button"
+              className={s.quickShare}
+              onClick={() => setShare(true)}
+              aria-haspopup="dialog"
+              aria-label={tr(["Share this discovery", "Partager cette découverte", "شارك هذا الاكتشاف"], l)}
+            >
+              <span className={s.quickActionIcon} aria-hidden="true">
+                <I name="Share2" size={22} />
+              </span>
+              <span className={s.quickActionCopy}>
+                <strong>{tr(["Share", "Partager", "مشاركة"], l)}</strong>
+                <small>{tr(["Send this resource", "Envoyer cette ressource", "أرسل هذا المورد"], l)}</small>
+              </span>
+              <I name={l === "ar" ? "ChevronLeft" : "ChevronRight"} size={16} />
             </button>
             <button
               type="button"
+              className={s.quickSave}
               onClick={() => {
                 onSave();
                 setNotice(
@@ -855,9 +971,29 @@ export function DetailWorkspace({
                 );
               }}
               aria-pressed={saved}
+              aria-label={tr(
+                saved
+                  ? ["Remove from my library", "Retirer de ma bibliothèque", "إزالة من مكتبتي"]
+                  : ["Save this discovery", "Enregistrer cette découverte", "احفظ هذا الاكتشاف"],
+                l,
+              )}
             >
-              <I name={saved ? "BookmarkCheck" : "Bookmark"} size={20} />
-              {t(saved ? "saved" : "save", l)}
+              <span className={s.quickActionIcon} aria-hidden="true">
+                <I name={saved ? "BookmarkCheck" : "Bookmark"} size={22} />
+              </span>
+              <span className={s.quickActionCopy}>
+                <strong>{tr(
+                  saved ? ["Saved", "Enregistré", "تم الحفظ"] : ["Save", "Enregistrer", "حفظ"],
+                  l,
+                )}</strong>
+                <small>{tr(
+                  saved
+                    ? ["In your library", "Dans votre bibliothèque", "في مكتبتك"]
+                    : ["Keep for later", "Retrouver plus tard", "احتفظ به لوقت لاحق"],
+                  l,
+                )}</small>
+              </span>
+              <I name={l === "ar" ? "ChevronLeft" : "ChevronRight"} size={16} />
             </button>
           </div>
           <p className={s.actionStatus} role="status">

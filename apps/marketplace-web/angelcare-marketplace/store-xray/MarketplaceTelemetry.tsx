@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useSyncExternalStore } from 'react'
+import { consentAnalyticsAllowed, subscribeConsent, trackingAllowedOnPath } from '@/components/compliance/consent-policy'
 import { usePathname, useSearchParams } from 'next/navigation'
 
 type EventPayload = {
@@ -282,9 +283,12 @@ function classifyApi(apiPath: string, method: string, status: number, currentPat
 export function MarketplaceTelemetry() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const telemetryConsent = useSyncExternalStore(subscribeConsent, () => consentAnalyticsAllowed('angelcare'), () => false)
 
   useEffect(() => {
-    if (!pathname || pathname.includes('/admin')) return
+    // Privacy boundary: no session/visitor IDs, fetch hooks or beacons without opt-in.
+    if (!telemetryConsent) return
+    if (!pathname || !trackingAllowedOnPath(pathname) || pathname.includes('/admin')) return
     if (!pathname.startsWith('/angelcare-marketplace')) return
     if (navigator.doNotTrack === '1') return
 
@@ -571,9 +575,9 @@ export function MarketplaceTelemetry() {
       window.removeEventListener('offline', onOffline)
       window.removeEventListener('pagehide', onPageHide)
       observers.forEach((observer) => observer.disconnect())
-      flush(true)
+      if(consentAnalyticsAllowed('angelcare'))flush(true)
     }
-  }, [pathname, searchParams])
+  }, [pathname, searchParams, telemetryConsent])
 
   return null
 }

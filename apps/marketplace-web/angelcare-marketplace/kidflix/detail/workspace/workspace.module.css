@@ -2673,3 +2673,450 @@
 }
 /* Explicit CSS Module class for the existing published PDF format article. */
 .pdf{border-color:#ffd2e7;}
+/* KIDFLIX_CLASS_MODE_POLISH_R1_BEGIN
+   Only the resource-detail Class Mode action; no header, reader or global
+   button overrides. Native KidFlix editorial blue and existing action. */
+.visualMaxClassMode {
+  position:relative;
+  isolation:isolate;
+  display:grid;
+  grid-template-columns:42px minmax(0,1fr) 34px;
+  align-items:center;
+  column-gap:11px;
+  width:100%;
+  min-height:72px;
+  padding:11px 12px;
+  overflow:hidden;
+  border:1px solid #68c7ff;
+  border-radius:13px;
+  background:linear-gradient(112deg,#1599fb 0%,#0874ef 47%,#084aca 100%);
+  color:#fff;
+  text-shadow:none;
+  box-shadow:inset 0 1px 0 #ffffff8c,inset 0 -2px 0 #0032a54d,
+    0 5px 13px #0052c645,0 1px 2px #00377d24;
+  text-align:start;
+  cursor:pointer;
+  transform:translateZ(0);
+  transition:background .18s ease,border-color .18s ease,
+    box-shadow .18s ease,transform .18s ease;
+}
+.visualMaxClassMode::before {
+  content:"";
+  pointer-events:none;
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background:radial-gradient(ellipse 70% 140% at 0% 0%,#ffffff37,transparent 76%);
+}
+.visualMaxClassMode::after {
+  content:"";
+  pointer-events:none;
+  position:absolute;
+  width:110px;
+  height:200%;
+  top:-50%;
+  inset-inline-start:-135px;
+  transform:rotate(18deg);
+  background:linear-gradient(90deg,transparent,#ffffff25,transparent);
+  transition:inset-inline-start .55s ease;
+}
+.visualMaxClassMode:hover {
+  filter:none;
+  border-color:#a5e7ff;
+  background:linear-gradient(112deg,#28aaff 0%,#0783f7 47%,#0b53d9 100%);
+  box-shadow:inset 0 1px 0 #ffffff9c,inset 0 -2px 0 #0032a54d,
+    0 9px 20px #0052c65c,0 2px 3px #00377d24;
+  transform:translateY(-2px);
+}
+.visualMaxClassMode:hover::after {inset-inline-start:120%;}
+.visualMaxClassMode:active {
+  filter:none;
+  transform:translateY(0);
+  box-shadow:inset 0 2px 7px #003b9275,0 2px 5px #0052c63a;
+}
+.visualMaxClassMode:focus-visible {
+  outline:3px solid #ffde50;
+  outline-offset:3px;
+}
+.visualMaxClassMode .classModeIcon,
+.visualMaxClassMode .classModeArrow,
+.visualMaxClassMode .classModeCopy,
+.visualMaxClassMode .classModeHeading {
+  background:transparent;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+  padding:0;
+  min-height:0;
+  min-width:0;
+}
+.visualMaxClassMode .classModeIcon {
+  width:42px;
+  height:45px;
+  display:grid;
+  place-items:center;
+  border:1px solid #ffffff7a;
+  border-radius:10px;
+  background:linear-gradient(145deg,#ffffff51,#ffffff13);
+  box-shadow:inset 0 1px 0 #ffffff60,0 3px 6px #063f9f3b;
+  color:white;
+}
+.visualMaxClassMode .classModeIcon svg {
+  width:24px;
+  height:24px;
+  filter:drop-shadow(0 1px 1px #08459c70);
+}
+.visualMaxClassMode .classModeCopy {
+  display:flex;
+  flex:1;
+  flex-direction:column;
+  align-items:stretch;
+  gap:3px;
+  text-align:start;
+}
+.visualMaxClassMode .classModeHeading {
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:flex-start;
+  align-items:center;
+  gap:6px 8px;
+  width:100%;
+}
+.visualMaxClassMode .classModeHeading strong {
+  flex:0 1 auto;
+  text-align:start;
+  white-space:normal;
+  font-size:clamp(14px,1.1vw,16px);
+  font-weight:950;
+  letter-spacing:-.025em;
+  line-height:1.1;
+}
+.visualMaxClassMode .classModeCopy small {
+  display:block;
+  width:100%;
+  font-size:10px;
+  line-height:1.3;
+  font-weight:650;
+  color:#e1f3ff;
+  text-shadow:0 1px 1px #00358050;
+  text-wrap:pretty;
+}
+.visualMaxClassMode .classModeDuration {
+  display:inline-flex;
+  flex:0 0 auto;
+  align-items:center;
+  gap:3px;
+  min-height:21px;
+  padding:3px 6px;
+  border:1px solid #ffffff70;
+  border-radius:999px;
+  background:#ffffff25;
+  color:#fff;
+  font-size:10px;
+  font-weight:850;
+  line-height:1;
+  white-space:nowrap;
+  box-shadow:inset 0 1px 0 #ffffff24;
+}
+.visualMaxClassMode .classModeDuration svg {width:12px;height:12px;}
+.visualMaxClassMode .classModeArrow {
+  width:32px;
+  height:32px;
+  display:grid;
+  place-items:center;
+  border:1px solid #ffffff75;
+  border-radius:50%;
+  background:linear-gradient(145deg,#ffffff43,#ffffff12);
+  box-shadow:inset 0 1px 0 #ffffff64;
+  transition:background .18s ease,transform .18s ease;
+}
+.visualMaxClassMode:hover .classModeArrow {
+  background:#ffffff52;
+  transform:translateX(2px);
+}
+[dir="rtl"] .visualMaxClassMode:hover .classModeArrow {transform:translateX(-2px);}
+[dir="rtl"] .visualMaxClassMode .classModeArrow svg {transform:rotate(180deg);}
+@media (max-width:480px) {
+  .visualMaxClassMode {column-gap:9px;padding:10px;grid-template-columns:40px minmax(0,1fr) 30px;}
+  .visualMaxClassMode .classModeIcon {width:40px;height:43px;}
+  .visualMaxClassMode .classModeArrow {width:30px;height:30px;}
+  .visualMaxClassMode .classModeCopy small {font-size:10px;}
+}
+@media (prefers-reduced-motion:reduce) {
+  .visualMaxClassMode,.visualMaxClassMode::after,.visualMaxClassMode .classModeArrow {
+    transition:none;
+    animation:none;
+  }
+  .visualMaxClassMode:hover,.visualMaxClassMode:active,
+  .visualMaxClassMode:hover .classModeArrow {transform:none;}
+  .visualMaxClassMode:hover::after {inset-inline-start:-135px;}
+}
+@media print { .visualMaxClassMode {display:none;} }
+/* KIDFLIX_CLASS_MODE_POLISH_R1_END */
+
+/* KIDFLIX_ACTION_TRIO_POLISH_R1_CSS_BEGIN */
+/* Only the three KidFlix detail sidebar controls. Existing social state and APIs are untouched. */
+.quickActions {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px;
+  align-items:stretch;
+  margin-top:10px;
+}
+.quickActions > .quickLoveSlot {
+  grid-column:1/-1;
+  min-width:0;
+}
+.quickLoveSlot > button {
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  width:100%;
+  min-height:68px;
+  gap:12px;
+  margin:0;
+  padding:12px 14px;
+  border:1px solid #f7a1c9;
+  border-radius:14px;
+  background:linear-gradient(120deg,#fff9fc 0%,#ffedf6 56%,#ffe1ef 100%);
+  color:#a31456!important;
+  box-shadow:inset 0 2px 0 #ffffffed,0 5px 13px #da1a7030;
+  font:inherit;
+  cursor:pointer;
+  text-align:start;
+  position:relative;
+  overflow:hidden;
+  transition:transform .17s ease,box-shadow .17s ease,border-color .17s ease;
+}
+.quickLoveSlot > button::after {
+  content:"";
+  position:absolute;
+  width:65px;
+  height:65px;
+  border-radius:50%;
+  inset-inline-end:-27px;
+  top:-37px;
+  background:radial-gradient(circle,#fff8 0%,#fff0 72%);
+  pointer-events:none;
+}
+.quickLoveSlot > button > svg {
+  box-sizing:content-box;
+  width:27px;
+  height:27px;
+  padding:9px;
+  flex:none;
+  border:1px solid #ffd0e5;
+  border-radius:13px;
+  background:#fff;
+  fill:#ff4d9440;
+  stroke:#e21470;
+  filter:drop-shadow(0 2px 3px #b0266d26);
+}
+.quickLoveSlot > button > span {
+  display:block;
+  flex:1;
+  min-width:0;
+  font-size:clamp(12px,1vw,15px);
+  line-height:1.25;
+  font-weight:950;
+  letter-spacing:-.018em;
+  white-space:normal;
+  text-wrap:balance;
+}
+.quickLoveSlot > button > strong {
+  flex:none;
+  min-width:34px;
+  max-width:64px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  padding:6px 8px;
+  border:1px solid #f5a7c9;
+  border-radius:999px;
+  background:#fff;
+  color:#ae155c;
+  font-size:11px;
+  font-weight:950;
+  text-align:center;
+  box-shadow:0 2px 5px #ae155c12;
+}
+.quickLoveSlot > button[aria-pressed="true"] {
+  background:linear-gradient(125deg,#ffe8f2,#ffd6e8);
+  border-color:#ed6a9d;
+  box-shadow:inset 0 2px #fff9,0 5px 14px #e6267840;
+}
+.quickLoveSlot > button:hover:not(:disabled) {
+  transform:translateY(-2px);
+  border-color:#e95491;
+  box-shadow:inset 0 2px #fff,0 9px 19px #d51c7940;
+}
+.quickLoveSlot > button:disabled {opacity:.62;cursor:wait;}
+.quickActions > .quickShare,
+.quickActions > .quickSave {
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  min-width:0;
+  min-height:76px;
+  gap:8px;
+  margin:0;
+  padding:11px 9px;
+  border-radius:13px;
+  text-align:start;
+  font:inherit;
+  cursor:pointer;
+  overflow:hidden;
+  transition:transform .17s ease,border-color .17s ease,box-shadow .17s ease;
+}
+.quickActions > .quickShare {
+  border:1px solid #a3d7ff;
+  background:linear-gradient(135deg,#f9fdff,#e9f6ff);
+  color:#075da5!important;
+  box-shadow:inset 0 2px #fff,0 4px 10px #0877bf1f;
+}
+.quickActions > .quickSave {
+  border:1px solid #a8e6cf;
+  background:linear-gradient(135deg,#fbfffd,#e9fff5);
+  color:#0a775e!important;
+  box-shadow:inset 0 2px #fff,0 4px 10px #0798751d;
+}
+.quickActions .quickActionIcon {
+  display:grid;
+  place-items:center;
+  flex:0 0 35px;
+  width:35px;
+  height:37px;
+  border-radius:10px;
+  border:1px solid currentColor;
+  background:#fff;
+  box-shadow:0 2px 7px #0b4a8320;
+}
+.quickActions > .quickShare .quickActionIcon {color:#0e8de7;}
+.quickActions > .quickSave .quickActionIcon {color:#10a780;}
+.quickActions .quickActionCopy {
+  min-width:0;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+}
+.quickActions .quickActionCopy strong {
+  font-size:12px;
+  font-weight:950;
+  letter-spacing:-.018em;
+  line-height:1.2;
+  overflow-wrap:anywhere;
+}
+.quickActions .quickActionCopy small {
+  font-size:10px;
+  font-weight:700;
+  opacity:.75;
+  line-height:1.2;
+  overflow-wrap:anywhere;
+}
+.quickActions > :is(.quickShare,.quickSave) > svg:last-child {
+  flex:none;
+  width:15px;
+  height:15px;
+  opacity:.7;
+}
+.quickActions > :is(.quickShare,.quickSave):hover {
+  transform:translateY(-2px);
+  box-shadow:inset 0 2px #fff,0 8px 16px #1c72a32c;
+}
+.quickActions > .quickShare:hover {border-color:#48b4f5;}
+.quickActions > .quickSave:hover {border-color:#42cda7;}
+.quickActions > .quickSave[aria-pressed="true"] {
+  border-color:#48c99d;
+  background:linear-gradient(135deg,#ecfff6,#d5f9e6);
+  color:#087356!important;
+  box-shadow:inset 0 2px #fff,0 4px 11px #04a16d2d;
+}
+/* Published PDF/PNG print remains operational and sits after the action trio. */
+.quickActions > a {order:4;grid-column:1/-1;}
+.quickActions > .quickLoveSlot {order:1;}
+.quickActions > .quickShare {order:2;}
+.quickActions > .quickSave {order:3;}
+@media(max-width:400px){
+  .quickActions > :is(.quickShare,.quickSave) {gap:6px;padding:9px 7px;min-height:72px;}
+  .quickActions .quickActionIcon {flex-basis:29px;width:29px;height:33px;}
+  .quickActions .quickActionCopy strong {font-size:11px;}
+  .quickActions .quickActionCopy small {font-size:9px;}
+  .quickActions > :is(.quickShare,.quickSave) > svg:last-child {display:none;}
+  .quickLoveSlot > button {gap:9px;padding:10px 11px;}
+  .quickLoveSlot > button > svg {padding:7px;width:25px;height:25px;}
+}
+@media(prefers-reduced-motion:reduce){
+  .quickLoveSlot > button,
+  .quickActions > .quickShare,
+  .quickActions > .quickSave {transition:none;transform:none!important;}
+}
+/* KIDFLIX_ACTION_TRIO_POLISH_R1_CSS_END */
+
+/* KIDFLIX_ENGAGEMENT_BADGES_R1_CSS_BEGIN */
+/* Read-only, public aggregate badges beside the native Published marker. */
+.visualMaxEyebrow.engagementRow {
+  max-width:100%;
+  column-gap:6px;
+  row-gap:5px;
+}
+.visualMaxEyebrow > .engagementBadge {
+  box-sizing:border-box;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  min-height:22px;
+  padding:3px 7px;
+  border:1px solid #c1dfff;
+  border-radius:999px;
+  background:linear-gradient(180deg,#fff,#edf6ff);
+  box-shadow:inset 0 1px #fff,0 2px 5px #234ca313;
+  color:#24538b;
+  font-size:10px;
+  font-weight:800;
+  line-height:1.1;
+  text-transform:none;
+  letter-spacing:0;
+  white-space:nowrap;
+  opacity:1;
+  font-variant-numeric:tabular-nums;
+}
+.visualMaxEyebrow > .engagementViews {
+  border-color:#c1dfff;
+  color:#24538b;
+}
+.visualMaxEyebrow > .engagementBadge svg {flex:none;color:#297ac6;}
+.visualMaxEyebrow > .engagementBadge strong {
+  font:inherit;
+  font-weight:1000;
+  color:#10447e;
+  border-radius:999px;
+  padding:2px 4px;
+  background:#fff;
+  border:1px solid #dfebfb;
+}
+.visualMaxEyebrow > .engagementClicks {
+  border-color:#e3c7ff;
+  background:linear-gradient(180deg,#fff,#f6eeff);
+  color:#7144a5;
+}
+.visualMaxEyebrow > .engagementClicks svg {color:#8b58c5;}
+.visualMaxEyebrow > .engagementClicks strong {color:#6833a4;border-color:#ecdafc;}
+@media (max-width:1100px) {
+  .visualMaxEyebrow.engagementRow {
+    position:relative;
+    inset:auto;
+    top:auto;
+    justify-content:flex-start;
+    margin:0 0 9px;
+    opacity:1;
+  }
+}
+@media (max-width:610px) {
+  .visualMaxEyebrow.engagementRow {gap:5px;}
+  .visualMaxEyebrow > .engagementBadge {min-height:22px;padding:3px 6px;font-size:9px;}
+}
+@media print {
+  .visualMaxEyebrow > .engagementBadge {display:none;}
+}
+/* KIDFLIX_ENGAGEMENT_BADGES_R1_CSS_END */
