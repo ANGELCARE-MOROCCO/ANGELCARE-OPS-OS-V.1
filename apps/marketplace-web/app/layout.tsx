@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import GlobalLocalStoragePersistenceBridge from "@/components/persistence/GlobalLocalStoragePersistenceBridge";
 import DesktopRuntimeBridge from "@/components/desktop/DesktopRuntimeBridge";
+import AngelCareAnalytics from "@/components/analytics/AngelCareAnalytics";
 import { buildWebPresenceMetadata } from "@/angelcare-marketplace/web-presence/runtime";
 import { headers } from 'next/headers';
 import { jobkixPresentation } from '@/angelcare-marketplace/jobkix/presentation-context';
@@ -19,6 +20,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className="min-h-full flex flex-col">
         {children}
         <WorldBoundary><GlobalLocalStoragePersistenceBridge /><DesktopRuntimeBridge /></WorldBoundary>
+        <AngelCareAnalytics />
       </body>
     </html>
   )
