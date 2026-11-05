@@ -52,6 +52,8 @@ export interface HomepageItem {
   featured: boolean
   availability_status: string
   category_key: string | null
+  /** All visible, published catalogue memberships; never replace the native registry. */
+  category_keys?: string[]
   category_title: string | null
   media_url: string | null
   trust_labels: string[]

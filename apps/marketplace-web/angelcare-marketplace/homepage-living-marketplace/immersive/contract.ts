@@ -163,11 +163,15 @@ const PROFESSIONAL_SCHEMAS = [
   "quality-check-assessment",
   "custom-managed-solution",
 ];
+const inHomepageCategory = (item: HomepageItem, key: string) =>
+  item.category_keys ? item.category_keys.includes(key) : item.category_key === key
+
 export function matchesNeed(item: HomepageItem, need: Need) {
+  const capability = String(item.metadata.family_service_capability || item.metadata.home_service_capability || '')
   if (need === "all") return true;
   const key = schema(item);
-  if (need === "care") return item.kind === "service" && CARE.includes(key);
-  if (need === "baby") return item.kind === "service" && key === "postpartum";
+  if (need === "care") return item.kind === "service" && CARE.includes(key) && capability !== "home-care-postpartum";
+  if (need === "baby") return item.kind === "service" && (key === "postpartum" || capability === "home-care-postpartum");
   if (need === "learn")
     return (
       ["product", "kit", "service"].includes(item.kind) && LEARN.includes(key)
@@ -189,7 +193,7 @@ export function matchesNeed(item: HomepageItem, need: Need) {
       "quality-check",
       "quality",
       "professionals",
-    ].includes(item.category_key || "")
+    ].some((category) => inHomepageCategory(item, category))
   );
 }
 export function developmentPool(
@@ -199,7 +203,7 @@ export function developmentPool(
   const explicit = items.filter(
     (item) =>
       matchesNeed(item, "learn") ||
-      ["development", "kits"].includes(item.category_key || ""),
+      ["development", "kits"].some((category) => inHomepageCategory(item, category)),
   );
   return canonicalSubset([...experience.developmentItems, ...explicit], items);
 }
@@ -333,7 +337,7 @@ export function discover(
       matchesAge(item, filters.age) &&
       matchesGoal(item, filters.goal) &&
       (!filters.available || canPurchase(item)) &&
-      (!filters.category || item.category_key === filters.category) &&
+      (!filters.category || inHomepageCategory(item, filters.category)) &&
       (!query ||
         `${item.name} ${item.short_description || ""} ${item.category_title || ""}`
           .toLocaleLowerCase(locale)

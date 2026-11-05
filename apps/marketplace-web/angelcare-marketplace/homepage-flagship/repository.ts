@@ -64,14 +64,14 @@ function mapCategory(row: DbRow, itemCount: number): HomepageCategory {
   }
 }
 
-function mapItem(row: DbRow, locale: HomepageLocale, mediaUrl: string | null, category?: HomepageCategory, trustLabels: string[] = []): HomepageItem {
+function mapItem(row: DbRow, locale: HomepageLocale, mediaUrl: string | null, category?: HomepageCategory, trustLabels: string[] = [], categoryKeys: string[] = []): HomepageItem {
   return {
     id: text(row.id), public_reference: text(row.public_reference), item_key: text(row.item_key), slug: text(row.slug),
     kind: text(row.kind) as HomepageItem['kind'], name: localized(row, 'name', locale),
     short_description: localized(row, 'short_description', locale) || null, status: text(row.status), territory_id: nullableText(row.territory_id),
     currency_label: text(row.currency_label) || 'Dh', price_mode: text(row.price_mode) as HomepageItem['price_mode'],
     price_amount: nullableNumber(row.price_amount), featured: Boolean(row.featured), availability_status: text(row.availability_status),
-    category_key: category?.category_key || null, category_title: category?.title || null, media_url: mediaUrl,
+    category_key: category?.category_key || null, category_keys: categoryKeys, category_title: category?.title || null, media_url: mediaUrl,
     trust_labels: trustLabels,
     metadata: { ...recordValue(row.commercial_metadata), ...recordValue(row.attributes) },
     experience_schema_key: nullableText(row.experience_schema_key) || nullableText(recordValue(row.commercial_metadata).experience_schema_key),
@@ -118,6 +118,41 @@ async function visitorSelection(): Promise<{ saved: string[]; compare: string[] 
   }
 }
 
+
+/** Strictly read all published, territory-eligible items in stable pages.
+ * Page size stays under Supabase's common per-request limit; a short page is complete.
+ * No draft, archived, foreign-territory or illustrative offers are synthesized. */
+type HomepageReadClient = Awaited<ReturnType<typeof createServiceClient>>
+async function readHomepagePages(
+  readPage: (first: number, last: number) => Promise<{data: unknown; error: {code?: string; message?: string} | null}>,
+  action: string,
+): Promise<DbRow[]> {
+  const collected: DbRow[] = []
+  for (let offset = 0; offset < 100000; offset += 240) {
+    const page = await readPage(offset, offset + 239)
+    if (page.error) throw homepageFailure(action, page.error)
+    const batch = rows(page.data)
+    collected.push(...batch)
+    if (batch.length < 240) return collected
+  }
+  throw new MarketplaceError('INTERNAL_ERROR', 'Limite de sécurité de pagination Homepage atteinte.')
+}
+async function readHomepagePublishedItems(db: HomepageReadClient, territoryId: string | null): Promise<DbRow[]> {
+  return readHomepagePages(async (first, last) => {
+    let q = db.from('angelcare_marketplace_catalog_items').select('*').eq('status', 'published')
+    q = territoryId ? q.or('territory_id.is.null,territory_id.eq.' + territoryId) : q.is('territory_id', null)
+    return await q.order('featured', {ascending: false}).order('updated_at', {ascending: false}).order('id').range(first, last)
+  }, 'charger toutes les offres publiées')
+}
+async function readHomepageVisibleCategories(db: HomepageReadClient, locale: HomepageLocale, territoryId: string | null): Promise<DbRow[]> {
+  return readHomepagePages(async (first, last) => {
+    let q = db.from('angelcare_marketplace_catalog_categories').select('*')
+      .eq('locale', locale).eq('status', 'published').eq('visible', true)
+    q = territoryId ? q.or('territory_id.is.null,territory_id.eq.' + territoryId) : q.is('territory_id', null)
+    return await q.order('sort_order').order('category_key').order('id').range(first, last)
+  }, 'charger les catégories publiques visibles')
+}
+
 export async function getHomepageExperience(input: { locale: HomepageLocale; territoryCode?: string; territoryId?: string }): Promise<HomepageExperience> {
   const locale = input.locale
   const territoryCode = input.territoryCode || 'MA-MASTER'
@@ -130,24 +165,23 @@ export async function getHomepageExperience(input: { locale: HomepageLocale; ter
   const { data: campaignRows, error: campaignError } = await campaignQuery.order('priority').limit(8)
   if (campaignError) throw homepageFailure('charger les campagnes', campaignError)
 
-  const [{ data: categoryRows }, { data: itemRows, error: itemError }, { data: mediaRows }, { data: linkRows }, { data: collectionRows }, { data: collectionItemRows }, { data: sectionRows }, { data: placementRows }] = await Promise.all([
-    supabase.from('angelcare_marketplace_catalog_categories').select('*').eq('locale', locale).eq('status', 'published').order('sort_order'),
-    supabase.from('angelcare_marketplace_catalog_items').select('*').eq('status', 'published').order('featured', { ascending: false }).order('updated_at', { ascending: false }).limit(120),
-    supabase.from('angelcare_marketplace_catalog_item_media').select('*').eq('status', 'active').order('sort_order'),
-    supabase.from('angelcare_marketplace_catalog_item_categories').select('*'),
+  const [categoryRows, itemRows, mediaRows, linkRows, { data: collectionRows }, { data: collectionItemRows }, { data: sectionRows }, { data: placementRows }] = await Promise.all([
+    readHomepageVisibleCategories(supabase, locale, territoryId),
+    readHomepagePublishedItems(supabase, territoryId),
+    readHomepagePages(async (first, last) => await supabase.from('angelcare_marketplace_catalog_item_media').select('*').eq('status', 'active').order('sort_order').order('id').range(first, last), 'charger les médias de la homepage'),
+    readHomepagePages(async (first, last) => await supabase.from('angelcare_marketplace_catalog_item_categories').select('*').order('id').range(first, last), 'charger les liaisons de catégories'),
     supabase.from('angelcare_marketplace_homepage_collections').select('*').eq('locale', locale).eq('status', 'active').order('sort_order'),
     supabase.from('angelcare_marketplace_homepage_collection_items').select('*').eq('status', 'active').order('sort_order'),
     supabase.from('angelcare_marketplace_homepage_sections').select('*').eq('locale', locale).eq('status', 'active').eq('visible', true).lte('starts_at', now).or(`ends_at.is.null,ends_at.gte.${now}`).order('sort_order'),
     supabase.from('angelcare_marketplace_homepage_placements').select('*').eq('locale', locale).eq('status', 'active').lte('starts_at', now).or(`ends_at.is.null,ends_at.gte.${now}`).order('priority').order('sort_order'),
   ])
-  if(itemError)throw homepageFailure('charger les offres publiées',itemError)
 
   const fallbackCampaignRows = locale !== 'fr' && !rows(campaignRows).length
     ? (await supabase.from('angelcare_marketplace_homepage_campaigns').select('*').eq('locale', 'fr').eq('status', 'active').lte('starts_at', now).or(`ends_at.is.null,ends_at.gte.${now}`).order('priority').limit(8)).data
     : null
   const [fallbackCategoryRows, fallbackCollectionRows, fallbackSectionRows, fallbackPlacementRows] = locale !== 'fr'
     ? await Promise.all([
-      rows(categoryRows).length ? Promise.resolve(null) : supabase.from('angelcare_marketplace_catalog_categories').select('*').eq('locale', 'fr').eq('status', 'published').order('sort_order').then(result => result.data),
+      rows(categoryRows).length ? Promise.resolve(null) : readHomepageVisibleCategories(supabase, 'fr', territoryId),
       rows(collectionRows).length ? Promise.resolve(null) : supabase.from('angelcare_marketplace_homepage_collections').select('*').eq('locale', 'fr').eq('status', 'active').order('sort_order').then(result => result.data),
       rows(sectionRows).length ? Promise.resolve(null) : supabase.from('angelcare_marketplace_homepage_sections').select('*').eq('locale', 'fr').eq('status', 'active').eq('visible', true).lte('starts_at', now).or(`ends_at.is.null,ends_at.gte.${now}`).order('sort_order').then(result => result.data),
       rows(placementRows).length ? Promise.resolve(null) : supabase.from('angelcare_marketplace_homepage_placements').select('*').eq('locale', 'fr').eq('status', 'active').lte('starts_at', now).or(`ends_at.is.null,ends_at.gte.${now}`).order('priority').order('sort_order').then(result => result.data),
@@ -167,16 +201,31 @@ export async function getHomepageExperience(input: { locale: HomepageLocale; ter
     const id=text(row.catalog_item_id),url=text(row.asset_url)
     if(url&&!mediaMap.has(id))mediaMap.set(id,url)
   }
+  // Counts describe published, territory-eligible items; never raw associations.
+  // Retain every visible native membership and choose a deterministic primary label.
   const rawCategories = rows(effectiveCategoryRows)
-  const countByCategory = new Map<string, number>()
-  for (const link of linkRowsSafe) countByCategory.set(text(link.category_id), (countByCategory.get(text(link.category_id)) || 0) + 1)
-  const categories = rawCategories.map((row) => mapCategory(row, countByCategory.get(text(row.id)) || 0))
+  const categories = rawCategories.map((row) => mapCategory(row, 0))
   const categoryById = new Map(categories.map((category) => [category.id, category]))
-  const categoryByItem = new Map<string, HomepageCategory>()
+  const eligibleItemIds = new Set(itemRowsSafe.map((row) => text(row.id)))
+  const categoryByItem = new Map<string, HomepageCategory[]>()
+  const countIds = new Map<string, Set<string>>()
   for (const row of linkRowsSafe) {
+    const itemId = text(row.catalog_item_id)
     const category = categoryById.get(text(row.category_id))
-    if (category) categoryByItem.set(text(row.catalog_item_id), category)
+    if (!category || !eligibleItemIds.has(itemId)) continue
+    const membership = categoryByItem.get(itemId) || []
+    if (!membership.some((existing) => existing.id === category.id)) {
+      membership.push(category)
+      categoryByItem.set(itemId, membership)
+    }
+    const ids = countIds.get(category.id) || new Set<string>()
+    ids.add(itemId)
+    countIds.set(category.id, ids)
   }
+  const categoryRank = new Map(categories.map((category, index) => [category.id, index]))
+  for (const membership of categoryByItem.values())
+    membership.sort((a, b) => (categoryRank.get(a.id) ?? 999999) - (categoryRank.get(b.id) ?? 999999))
+  for (const category of categories) category.item_count = countIds.get(category.id)?.size || 0
 
   const trustByObject = new Map<string, string[]>()
   const { data: badgeRows } = await supabase.from('angelcare_marketplace_trust_badge_issuances').select('object_id,badge_key,status,valid_until,verification_reference,public_claims').eq('status', 'active')
@@ -186,7 +235,14 @@ export async function getHomepageExperience(input: { locale: HomepageLocale; ter
     trustByObject.set(objectId, [...(trustByObject.get(objectId) || []), text(badge.badge_key)])
   }
 
-  const items = itemRowsSafe.filter(row=>!row.territory_id||text(row.territory_id)===territoryId).map((row) => mapItem(row, locale, mediaMap.get(text(row.id)) || null, categoryByItem.get(text(row.id)), trustByObject.get(text(row.id)) || []))
+  const items = itemRowsSafe.map((row) => {
+    const itemId = text(row.id)
+    const memberships = categoryByItem.get(itemId) || []
+    const explicitId = text(row.primary_category_id) || text(row.category_id)
+    const primary = memberships.find((category) => category.id === explicitId) || memberships[0]
+    return mapItem(row, locale, mediaMap.get(itemId) || null, primary,
+      trustByObject.get(itemId) || [], memberships.map((category) => category.category_key))
+  })
   const itemById = new Map(items.map((item) => [item.id, item]))
   const collectionLinks = rows(collectionItemRows)
   const collections: HomepageCollection[] = rows(effectiveCollectionRows).map((row) => ({
@@ -247,10 +303,10 @@ export async function getHomepageExperience(input: { locale: HomepageLocale; ter
     popularItems: placementItems('popular'), bestPickItems: placementItems('best-pick'), newArrivalItems: placementItems('new-arrival'),
     featuredItems: published.filter((item) => item.featured).slice(0, 14),
     availableItems: published.filter((item) => item.availability_status === 'available').slice(0, 12),
-    familyItems: published.filter((item) => item.metadata.audience === 'family' || item.category_key === 'family-services').slice(0, 10),
-    developmentItems: published.filter((item) => ['development', 'kits'].includes(item.category_key || '')).slice(0, 10),
-    academyItems: published.filter((item) => item.kind === 'training' || item.category_key === 'academy').slice(0, 10),
-    organizationItems: published.filter((item) => item.metadata.audience === 'organization' || ['institutions', 'hospitality', 'corporate', 'partner-os', 'quality'].includes(item.category_key || '')).slice(0, 12),
+    familyItems: published.filter((item) => item.metadata.audience === 'family' || ['families','home-services','family-services'].some((key) => item.category_keys?.includes(key))).slice(0, 10),
+    developmentItems: published.filter((item) => ['development', 'kits'].some((key) => item.category_keys?.includes(key))).slice(0, 10),
+    academyItems: published.filter((item) => item.kind === 'training' || item.category_keys?.includes('academy')).slice(0, 10),
+    organizationItems: published.filter((item) => item.metadata.audience === 'organization' || ['establishments','institutions','hospitality','health-partners','health-adjacent','corporates','corporate','partner-os','quality-check','quality','professionals'].some((key) => item.category_keys?.includes(key))).slice(0, 12),
     academyCohorts, partnerPlans, trustSignals, selection, generatedAt: new Date().toISOString(),
   }
 }

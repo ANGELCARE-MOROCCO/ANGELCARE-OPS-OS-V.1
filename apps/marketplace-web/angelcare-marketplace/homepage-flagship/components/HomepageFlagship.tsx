@@ -172,8 +172,8 @@ export function HomepageFlagship({ experience, editor }: { experience: HomepageE
     event.preventDefault()
     const params = new URLSearchParams({ q: query, audience, territory: experience.territory?.territory_code || 'MA-MASTER' })
     if (date) params.set('date', date)
-    track({ event_name: 'search.submitted', locale, territory_code: experience.territory?.territory_code, route: `/angelcare-marketplace/${locale}/marketplace?${params.toString()}`, event_data: { query, audience, date } })
-    careOrbitLocation.assign(`/angelcare-marketplace/${locale}/marketplace?${params.toString()}`)
+    track({ event_name: 'search.submitted', locale, territory_code: experience.territory?.territory_code, route: `/angelcare-marketplace/${locale}/marketplace/search?${params.toString()}`, event_data: { query, audience, date } })
+    careOrbitLocation.assign(`/angelcare-marketplace/${locale}/marketplace/search?${params.toString()}`)
   }
 
   const audienceCards = [
@@ -192,7 +192,7 @@ export function HomepageFlagship({ experience, editor }: { experience: HomepageE
   return <div className={styles.storefront} dir={rtl ? 'rtl' : 'ltr'} style={themeStyle} data-theme-id={theme.id} data-theme-density={theme.density} data-header-variant={theme.headerVariant} onClickCapture={editor ? (event) => { const element = (event.target as HTMLElement).closest<HTMLElement>('[data-section-key]'); if (!element?.dataset.sectionKey) return; event.preventDefault(); event.stopPropagation(); editor.onSelectSection?.(element.dataset.sectionKey) } : undefined}>
     <nav className={styles.categoryBar} aria-label={c.navigation} data-section-key="category-nav" data-editor-selected={editor?.selectedSectionKey === 'category-nav' || undefined}>
       <Link className={styles.allCategories} href={`/angelcare-marketplace/${locale}/marketplace`}><PackageOpen size={17}/>{c.navigation}</Link>
-      <div className={styles.categoryScroll}>{experience.categories.slice(0, 10).map((category) => <Link key={category.id} href={`/angelcare-marketplace/${locale}/marketplace?category=${encodeURIComponent(category.category_key)}`} onClick={() => track({ event_name: 'category.opened', locale, category_key: category.category_key, route: `/angelcare-marketplace/${locale}/marketplace` })}>{category.title}<span>{category.item_count}</span></Link>)}</div>
+      <div className={styles.categoryScroll}>{experience.categories.map((category) => <Link key={category.id} href={`/angelcare-marketplace/${locale}/marketplace/category/${encodeURIComponent(category.category_key)}`} onClick={() => track({ event_name: 'category.opened', locale, category_key: category.category_key, route: `/angelcare-marketplace/${locale}/marketplace` })}>{category.title}<span>{category.item_count}</span></Link>)}</div>
     </nav>
 
     <section className={styles.heroTheatre} data-section-key="hero" data-editor-selected={editor?.selectedSectionKey === 'hero' || undefined}>
@@ -224,7 +224,7 @@ export function HomepageFlagship({ experience, editor }: { experience: HomepageE
 
       <section className={styles.categoryExchange} data-section-key="category-mosaic" data-editor-selected={editor?.selectedSectionKey === 'category-mosaic' || undefined}>
         <div className={styles.sectionHeading}><div><span>MEGA MARKETPLACE DIRECTORY</span><h2>{sectionTitle('category-mosaic', c.categories)}</h2><p>{sectionSubtitle('category-mosaic', c.categoriesLead)}</p></div><Link href={sectionSetting('category-mosaic','primary_cta_href',`/angelcare-marketplace/${locale}/marketplace`)}>{sectionSetting('category-mosaic','primary_cta_label',c.viewAll)}<ArrowRight size={16}/></Link></div>
-        <div className={styles.categoryMosaic}>{experience.categories.slice(0, 9).map((category, index) => <Link key={category.id} href={`/angelcare-marketplace/${locale}/marketplace?category=${category.category_key}`} className={styles.categoryTile} data-size={index === 0 || index === 5 ? 'large' : index === 1 || index === 6 ? 'wide' : 'standard'} data-theme={category.visual_theme}><img src={category.cover_asset_url || '/angelcare-marketplace/homepage/category-universal.svg'} alt="" loading="lazy"/><div><span>{category.item_count} {locale === 'ar' ? 'عرض' : locale === 'en' ? 'offers' : 'offres'}</span><h3>{category.title}</h3><p>{category.short_description}</p><b>{c.open}<ArrowRight size={15}/></b></div></Link>)}</div>
+        <div className={styles.categoryMosaic}>{experience.categories.slice(0, 9).map((category, index) => <Link key={category.id} href={`/angelcare-marketplace/${locale}/marketplace/category/${encodeURIComponent(category.category_key)}`} className={styles.categoryTile} data-size={index === 0 || index === 5 ? 'large' : index === 1 || index === 6 ? 'wide' : 'standard'} data-theme={category.visual_theme}><img src={category.cover_asset_url || '/angelcare-marketplace/homepage/category-universal.svg'} alt="" loading="lazy"/><div><span>{category.item_count} {locale === 'ar' ? 'عرض' : locale === 'en' ? 'offers' : 'offres'}</span><h3>{category.title}</h3><p>{category.short_description}</p><b>{c.open}<ArrowRight size={15}/></b></div></Link>)}</div>
       </section>
 
       <Rail sectionKey="featured-products" title={sectionTitle('featured-products', c.featured)} subtitle={sectionSubtitle('featured-products', c.featuredLead)} items={experience.featuredItems} locale={locale} saved={saved} compared={compared} toggle={toggle} href={sectionSetting('featured-products','primary_cta_href','')} ctaLabel={sectionSetting('featured-products','primary_cta_label','')}/>

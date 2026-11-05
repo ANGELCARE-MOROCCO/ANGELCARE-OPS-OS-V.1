@@ -316,6 +316,7 @@ export function LivingCommerceHomepage({
       "home-development",
       "home-kits",
       "home-professional",
+      "home-taxonomy",
     ];
     let frame = 0;
     const updateSection = () => {
@@ -652,6 +653,7 @@ export function LivingCommerceHomepage({
       <nav className={styles.sectionNav} aria-label={t(C.explore)}>
         {[
           { id: "home-worlds", label: C.explore },
+          { id: "home-taxonomy", label: C.taxonomyTitle },
           { id: "home-discovery", label: C.discover },
           { id: "home-services", label: C.service },
           {
@@ -1352,7 +1354,7 @@ export function LivingCommerceHomepage({
           <div className={styles.categoryGrid}>
             {categories.map((category, index) => (
               <Link
-                href={`${market}/category/${encodeURIComponent(category.slug)}`}
+                href={`${market}/category/${encodeURIComponent(category.category_key)}`}
                 key={category.id}
               >
                 <span>{String(index + 1).padStart(2, "0")}</span>
