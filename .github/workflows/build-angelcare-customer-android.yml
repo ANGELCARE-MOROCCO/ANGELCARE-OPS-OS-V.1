@@ -1,0 +1,124 @@
+name: AngelCare Customer Android — Approved Icon + Verified TWA R5.3
+
+on:
+  pull_request:
+    branches:
+      - upgrade/next-angelcare-upgrade
+    paths:
+      - 'mobile/angelcare-customer-android/**'
+      - '.github/workflows/build-angelcare-customer-android.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-customer-preview-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  apk-preview:
+    name: R5.3 single-mask launcher icon + verified splash + stable trust
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    defaults:
+      run:
+        working-directory: mobile/angelcare-customer-android
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Set up Android SDK (skip obsolete tools package)
+        uses: android-actions/setup-android@v3
+        with:
+          packages: ''
+          log-accepted-android-sdk-licenses: 'false'
+      - name: Set up Gradle 8.13 (runner only)
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
+      - name: Install Android SDK 36 and signing utilities (runner only)
+        run: sdkmanager 'platforms;android-36' 'build-tools;35.0.0'
+      - name: Verify isolated source and pinned certificate
+        run: python3 scripts/verify_source.py
+      - name: Validate isolated R5.3 sender syntax and dry-run contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check push-sender/send.mjs
+          node push-sender/send.mjs --title 'Test' --body 'Dry run only' --kind announcement --url 'https://my.angelcarehub.com/angelcare-marketplace/fr' | grep -F 'FCM_DELIVERY=DRY_RUN_ONLY'
+          echo 'R5_3_PUBLIC_PUSH_SENDER_STATIC=PASS'
+      - name: Restore persistent preview signing identity from encrypted secrets
+        shell: bash
+        env:
+          KEYSTORE_B64: ${{ secrets.ANGELCARE_TWA_PREVIEW_KEYSTORE_B64 }}
+          KEYSTORE_PASS: ${{ secrets.ANGELCARE_TWA_PREVIEW_KEYSTORE_PASS }}
+        run: |
+          set -euo pipefail
+          test -n "$KEYSTORE_B64" && test -n "$KEYSTORE_PASS" || { echo 'STOP: Missing Android signing secrets'; exit 1; }
+          printf '%s' "$KEYSTORE_B64" | base64 --decode > "$RUNNER_TEMP/angelcare-preview.p12"
+          chmod 600 "$RUNNER_TEMP/angelcare-preview.p12"
+          test -s "$RUNNER_TEMP/angelcare-preview.p12"
+          echo 'STABLE_PREVIEW_KEYSTORE_RESTORED=YES'
+      - name: Compile stable-signed R5.3 APK and unsigned AAB
+        env:
+          ANGELCARE_FCM_PROJECT_ID: ${{ secrets.ANGELCARE_FCM_PROJECT_ID }}
+          ANGELCARE_FCM_APP_ID: ${{ secrets.ANGELCARE_FCM_APP_ID }}
+          ANGELCARE_FCM_API_KEY: ${{ secrets.ANGELCARE_FCM_API_KEY }}
+          ANGELCARE_FCM_SENDER_ID: ${{ secrets.ANGELCARE_FCM_SENDER_ID }}
+          ANGELCARE_PREVIEW_KEYSTORE_PATH: ${{ runner.temp }}/angelcare-preview.p12
+          ANGELCARE_PREVIEW_KEYSTORE_PASSWORD: ${{ secrets.ANGELCARE_TWA_PREVIEW_KEYSTORE_PASS }}
+        run: gradle --no-daemon --stacktrace :app:assembleDebug :app:bundleRelease
+      - name: Certify adaptive icon, TWA splash, canonical hotline and signed APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK='app/build/outputs/apk/debug/app-debug.apk'
+          test -s "$APK"
+          SDK_BUILD_TOOLS="$ANDROID_SDK_ROOT/build-tools/35.0.0"
+          "$SDK_BUILD_TOOLS/aapt" dump xmltree "$APK" AndroidManifest.xml > "$RUNNER_TEMP/angelcare-android-manifest.txt"
+          grep -Fq 'com.angelcare.marketplace.AngelCareLauncherActivity' "$RUNNER_TEMP/angelcare-android-manifest.txt"
+          grep -Fq 'androidx.core.content.FileProvider' "$RUNNER_TEMP/angelcare-android-manifest.txt"
+          grep -Fq 'twa_splash_fileprovider' "$RUNNER_TEMP/angelcare-android-manifest.txt"
+          grep -Fq 'android.support.customtabs.trusted.SPLASH_IMAGE_DRAWABLE' "$RUNNER_TEMP/angelcare-android-manifest.txt"
+          grep -Fq 'android.support.customtabs.trusted.SPLASH_SCREEN_BACKGROUND_COLOR' "$RUNNER_TEMP/angelcare-android-manifest.txt"
+          grep -Fq 'android.support.customtabs.trusted.FILE_PROVIDER_AUTHORITY' "$RUNNER_TEMP/angelcare-android-manifest.txt"
+          grep -Fq 'com.google.androidbrowserhelper.trusted.ManageDataLauncherActivity' "$RUNNER_TEMP/angelcare-android-manifest.txt"
+          grep -Fq 'manageSpaceActivity' "$RUNNER_TEMP/angelcare-android-manifest.txt"
+          ! grep -Fq 'com.angelcare.marketplace.HomeActivity' "$RUNNER_TEMP/angelcare-android-manifest.txt"
+          ! grep -Fq 'com.angelcare.marketplace.VoiceActivity' "$RUNNER_TEMP/angelcare-android-manifest.txt"
+          ! grep -Fq 'com.angelcare.marketplace.InboxActivity' "$RUNNER_TEMP/angelcare-android-manifest.txt"
+          grep -Fq 'com.angelcare.marketplace.AngelCareMessagingService' "$RUNNER_TEMP/angelcare-android-manifest.txt"
+          grep -Fq 'android.permission.POST_NOTIFICATIONS' "$RUNNER_TEMP/angelcare-android-manifest.txt"
+          "$SDK_BUILD_TOOLS/apksigner" verify --verbose --print-certs "$APK" > "$RUNNER_TEMP/angelcare-apksigner.txt"
+          expected="$(tr -d ':\r\n' < trust/preview_cert_sha256.txt | tr '[:upper:]' '[:lower:]')"
+          actual="$(sed -n 's/^Signer #1 certificate SHA-256 digest: //p' "$RUNNER_TEMP/angelcare-apksigner.txt" | head -1 | tr -d '\r\n' | tr '[:upper:]' '[:lower:]')"
+          test "${#expected}" -eq 64 && test "$actual" = "$expected" || { echo 'STOP: APK signing certificate does not match domain-association contract'; exit 1; }
+          unzip -Z1 "$APK" > "$RUNNER_TEMP/r53-apk-entries.txt"
+          grep -Fq 'res/mipmap-anydpi-v26/ic_launcher.xml' "$RUNNER_TEMP/r53-apk-entries.txt" || { echo 'STOP: Adaptive launcher icon missing'; exit 1; }
+          echo 'COMPILED_TWA_COMPONENTS=PASS'
+          echo 'R5_3_SELECTED_APP_ICON=PASS'
+          echo 'R5_3_TWA_BRANDED_STARTUP_SPLASH=PASS'
+          echo 'R5_DIRECT_TWA_NO_NATIVE_SEARCH=PASS'
+          echo 'SIGNED_PREVIEW_FINGERPRINT=PASS'
+      - name: Package APK, unsigned AAB and checksums
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s app/build/outputs/apk/debug/app-debug.apk
+          test -s app/build/outputs/bundle/release/app-release.aab
+          mkdir -p dist
+          cp app/build/outputs/apk/debug/app-debug.apk "dist/angelcare-customer-R5_3-single-mask-preview-${GITHUB_SHA:0:12}.apk"
+          cp app/build/outputs/bundle/release/app-release.aab "dist/angelcare-customer-R5_3-UNSIGNED-${GITHUB_SHA:0:12}.aab"
+          (cd dist && sha256sum * > SHA256SUMS.txt)
+          cat dist/SHA256SUMS.txt
+      - name: Upload unmerged preview artifacts only
+        uses: actions/upload-artifact@v4
+        with:
+          name: angelcare-customer-R5_3-single-mask-preview-${{ github.run_id }}
+          path: mobile/angelcare-customer-android/dist/*
+          retention-days: 14
+          if-no-files-found: error
