@@ -1,0 +1,13 @@
+.notice { max-width: 1040px; padding: 72px 28px 90px; margin: 0 auto; background: #fff; color: #24304b; font-family: inherit; }
+.eyebrow { color: #775a8d; font-size: 11px; font-weight: 800; letter-spacing: .12em; }
+.notice h1 { margin: 18px 0 32px; font-size: clamp(30px,4vw,49px); line-height: 1.15; letter-spacing: -.035em; }
+.panel { border: 1px solid #e5dfed; border-radius: 20px; padding: 30px; background: linear-gradient(130deg,#fbf8ff,#fff); }
+.mark { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; background: #eee4f8; color: #73518e; font-size: 18px; font-weight: 800; }
+.panel h2 { margin: 19px 0 13px; font-size: 23px; }
+.panel p { margin: 0; max-width: 720px; color: #667087; font-size: 15px; line-height: 1.8; }
+.notice nav { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 25px; margin-top: 27px; }
+.notice a { display: inline-flex; gap: 15px; align-items: center; min-height: 46px; color: #685280; text-decoration: none; font-size: 13px; font-weight: 750; }
+.notice .primary { padding: 12px 18px; border: 1px solid #d8c8e7; border-radius: 11px; background: #f1e8fc; color: #573c70; }
+.notice a:focus-visible { outline: 3px solid #1674c7; outline-offset: 4px; }
+.translation { max-width: 1200px; margin: 24px auto; padding: 15px 22px; border: 1px solid #e5d9ed; border-radius: 10px; background: #faf6ff; color: #725383; font-size: 13px; line-height: 1.6; }
+@media(max-width:600px) { .notice { padding: 42px 18px 60px; } .panel { padding: 23px; } .notice nav { align-items: stretch; flex-direction: column; gap: 10px; } .translation { margin: 18px; } }

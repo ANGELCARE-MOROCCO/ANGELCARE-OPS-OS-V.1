@@ -364,7 +364,7 @@ export function PartnerOS() {
         tone="ink"
       >
         <div className={s.split}>
-          <Picture name="desk" />
+          <Picture slot={"visual.partner-os.1"} name="desk" />
           <div>
             <h3>
               {tr(

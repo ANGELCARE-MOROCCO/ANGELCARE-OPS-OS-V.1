@@ -1,4 +1,5 @@
 "use client";
+import { imageryToken } from "../marketplace-imagery/pages";
 import { Sun, ArrowDown } from "lucide-react";
 import { B, WORLDS, tr, w } from "./content";
 import {
@@ -22,7 +23,7 @@ export function Hospitality() {
   return (
     <>
       <section className={s.hotelHero} data-business-module="resort-opening">
-        <Picture name="hospitality" priority />
+        <Picture slot={"visual.hospitality.1"} name="hospitality" priority />
         <div className={s.hotelCopy}>
           <span className={s.kicker}>
             <Sun size={20} />
@@ -266,7 +267,7 @@ export function Hospitality() {
             },
           ].map((e) => (
             <figure key={e.image}>
-              <Picture name={e.image} />
+              <Picture slot={"visual.hospitality.2." + imageryToken(e.image)} name={e.image} />
               <figcaption>{tr(e.title, locale)}</figcaption>
             </figure>
           ))}

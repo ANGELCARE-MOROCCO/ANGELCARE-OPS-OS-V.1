@@ -1,3 +1,4 @@
+import {publicInteractiveHealth} from "@/angelcare-marketplace/kidflix/interactive/public-health";
 import { getHome, getCatalogue, getExperience, publicHost } from "@/angelcare-marketplace/kidflix/server";
 import { getDetail } from "@/angelcare-marketplace/kidflix/detail/service";
 import { getStorefront } from "@/angelcare-marketplace/kidflix/storefronts/server";
@@ -31,6 +32,9 @@ export async function GET(request: Request) {
     checks.detail = !!detail;
     const health = detail ? publicMediaReadiness(detail.manifest) : null;
     checks.cover = health?.cover.ready === true; checks.files = health?.files.ready === true;
+    const interactiveReference=obj(obj(detail?.manifest).definition).interactivePackage;
+    const interactive=interactiveReference ? await publicInteractiveHealth(value.releaseId,interactiveReference,probe) : null;
+    if(interactive)(checks as Record<string,boolean>).interactive=interactive.ready;
     const transportTests: Array<{ kind: string; status: string; bytes?: number; error?: string }> = [];
     if (probe && detail) {
       stage = "transport";
@@ -78,6 +82,7 @@ export async function GET(request: Request) {
       checks.category = storefront.catalogue.rows.some(x => x.key === key);
     }
     return Response.json({ status: categoryIncomplete ? "incomplete" : Object.values(checks).every(Boolean) ? "ready" : "blocked", ...(categoryIncomplete ? { code: "CATEGORY_CHECK_BUDGET_REACHED" } : {}), checks,
+      interactive,
       issues: health?.issues || [], missingFiles: health?.files.missing || 0,
       fileUnits: rows(obj(detail?.manifest.definition).units).length,
       mediaPlacements: health?.files.total || 0, releaseId: value.releaseId,

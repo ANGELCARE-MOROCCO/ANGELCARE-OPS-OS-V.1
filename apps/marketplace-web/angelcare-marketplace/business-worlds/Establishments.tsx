@@ -39,7 +39,7 @@ export function Establishments() {
           </div>
         </div>
         <div className={s.campusPanorama}>
-          <Picture name="school" priority />
+          <Picture slot={"visual.establishments.1"} name="school" priority />
           <div className={s.campusBadge}>
             {tr(
               w(

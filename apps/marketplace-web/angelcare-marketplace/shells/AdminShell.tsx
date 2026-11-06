@@ -6,7 +6,8 @@ import { getAdminShellSnapshot } from '../admin-shell/repository'
 import type { AdminShellWorkspace } from '../admin-shell/types'
 import { access as seoAccess } from '../seo-power/repository'
 import { AdminShellChrome } from './AdminShellChrome'
-import { ADMIN_AREAS as JOBKIX_AREAS } from '../jobkix/admin-contract'
+import { accessibleJobkixAdminEntries } from '../jobkix/admin-navigation/access'
+import { JOBKIX_HUB_PATH } from '../jobkix/admin-navigation/registry'
 
 const SANILA_WORKSPACES: AdminShellWorkspace[] = [
   { href: '/angelcare-marketplace/admin/sanila', domain: 'sanila', label: 'SANILA · Commandement', dynamic: false },
@@ -50,6 +51,8 @@ function workspaces(canDce: boolean): AdminShellWorkspace[] {
 export async function AdminShell({ context, children }: { context: MarketplaceRequestContext; children: ReactNode }) {
   const canSeo = seoAccess(context).view
   const canDce = hasMarketplacePermission(context,'marketplace.digital_experience.view')
+  const jobkixEntries = accessibleJobkixAdminEntries(context)
+  const jobkixWorkspaces: AdminShellWorkspace[] = jobkixEntries.length ? [{href:JOBKIX_HUB_PATH,domain:'jobkix',label:'JOBKIX · Admin & workspaces',dynamic:false}, ...jobkixEntries.map(entry=>({href:entry.href,domain:'jobkix',label:'JOBKIX · '+entry.title,dynamic:false}))] : []
   const snapshot = await getAdminShellSnapshot()
   return (
     <AdminShellChrome
@@ -60,10 +63,11 @@ export async function AdminShell({ context, children }: { context: MarketplaceRe
       permissionCount={context.permissions.length}
       canHotline={hasMarketplacePermission(context,'marketplace.hotline.view')}
       canDce={canDce}
+      canJobkix={jobkixEntries.length>0}
       canSeo={canSeo}
       canSupplierCommand={hasMarketplaceWorkspaceAccess(context,'workspace.supplier_command')}
       snapshot={snapshot}
-      workspaces={[...workspaces(canDce), ...(canSeo?[{href:'/angelcare-marketplace/admin/seo-power',domain:'web_presence',label:'SEO POWER',dynamic:false}]:[]), ...JOBKIX_AREAS.filter(area=>hasMarketplaceWorkspaceAccess(context,area.workspace)).map(area=>({href:'/angelcare-marketplace/admin/jobkix/'+area.slug,domain:'jobkix',label:'JOBKIX · '+area.name[context.locale],dynamic:false})), ...(hasMarketplaceWorkspaceAccess(context,'jobkix.vacancies')?[{href:'/angelcare-marketplace/admin/jobkix/strategic-supply',domain:'jobkix',label:'JOBKIX · Strategic Supply Command',dynamic:false}]:[]), ...(hasMarketplaceWorkspaceAccess(context,'jobkix.editorial')?[{href:'/angelcare-marketplace/admin/jobkix/hero-studio',domain:'jobkix',label:'JOBKIX · Hero & Slideshow Studio',dynamic:false}]:[])]}
+      workspaces={[...workspaces(canDce), ...(canSeo?[{href:'/angelcare-marketplace/admin/seo-power',domain:'web_presence',label:'SEO POWER',dynamic:false}]:[]), ...jobkixWorkspaces]}
     >
       {children}
     </AdminShellChrome>

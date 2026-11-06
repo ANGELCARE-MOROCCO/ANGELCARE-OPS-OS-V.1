@@ -73,6 +73,8 @@ import {
 import { Button, Dialog, Icon, mutate, query, useQuery, useUI } from "./ui";
 import s from "./creation.module.css";
 import { PublicReachability } from "./PublicReachability";
+import {isHtmlDelivery,packageForLocale,attachInteractivePackage} from "../delivery-contract";
+import {DeliveryControlCenter} from "./DeliveryControlCenter";
 import { UniversalInteractiveImport } from "./UniversalInteractiveImport";
 const words = (en: string, fr: string, ar: string): Tri => [en, fr, ar];
 type Entry = {
@@ -179,6 +181,7 @@ export function CreationStudio({
     [ready, setReady] = useState(false),
     [busy, setBusy] = useState(false),
     [notice, setNotice] = useState(""),
+    [serverInspection,setServerInspection] = useState<{key:string;state:string;errors?:any[];message?:string}>({key:"",state:"idle"}),
     [drawer, setDrawer] = useState(false),
     [drawerSearch, setDrawerSearch] = useState(""),
     [reference, setReference] = useState<ReferenceRequest | null>(null),
@@ -365,7 +368,7 @@ export function CreationStudio({
     latestAssets.current = assets;
   }, [assets]);
   useEffect(() => {
-    if (!drawer && !reference) return;
+    if (!reference) return;
     const previous = document.activeElement as HTMLElement | null;
     const panel = document.querySelector<HTMLElement>("[data-creation-drawer]");
     const controls = () =>
@@ -870,6 +873,18 @@ export function CreationStudio({
       return moved;
     });
   }
+  useEffect(()=>{
+    if(!current||!isHtmlDelivery(object(current.record.data))||!text(current.record.title)||busy)return;
+    let alive=true;
+    const key=current.clientId+":"+current.version+":"+language;
+    setServerInspection({key,state:"checking"});
+    const timer=setTimeout(()=>{
+      void saveOne(current.clientId).then(saved=>mutate<any>({action:"creation_inspect",id:saved.record.id,revision:saved.record.revision,locale:language,requestId:creationId()})).then(result=>{
+        if(alive)setServerInspection({key,state:result.validation?.valid?"ready":"error",errors:result.validation?.errors||[]});
+      }).catch(error=>{if(alive)setServerInspection({key,state:"error",message:error.message})});
+    },900);
+    return()=>{alive=false;clearTimeout(timer)};
+  },[current?.clientId,current?.version,language,busy]);
   const activeQueue = queue.filter((q) => q.resource === current?.clientId),
     issues = useMemo(() => (record ? creationIssues(record) : []), [record]);
   const readyCount = entries.filter(
@@ -1526,7 +1541,9 @@ export function CreationStudio({
             locale={language}
             family={f.key}
             canManage={boot.actor.rights.manage === true}
-            attached={object(data.interactivePackage)}
+            attached={packageForLocale(data,language)}
+            coverAssetId={text(object(object(data.locales)[language]).coverAssetId || data.coverAssetId)}
+            onCover={id=>change(current.clientId,r=>applyCreationMedia(r,{collection:"@root",unit:"",field:"coverAssetId",locale:language},id))}
             recordId={text(record?.id)}
             currentTitle={text(record?.title)}
             onTitleChange={(title) => {
@@ -1546,30 +1563,23 @@ export function CreationStudio({
               });
             }}
             publicPath={current.result?.publicPath}
+            canPublish={!busy&&(boot.actor.rights.publish||(policy.value.independentReview&&boot.actor.rights.manage))}
+            publishLabel={policy.value.independentReview?t("Send for independent review","Envoyer en revue indépendante","إرسال للمراجعة المستقلة"):t("Publish this edition","Publier cette édition","نشر هذه النسخة")}
+            onPublish={async()=>{setBusy(true);try{await publishOne(current.clientId)}finally{setBusy(false)}}}
             onSaveDraft={async()=>{/* KF_EXPERIENCE_STUDIO_ULTIMATE_20261103 */await saveOne(current.clientId)}}
             onContinue={() => document.getElementById('kidflix-native-publication-actions')?.scrollIntoView({ behavior: 'smooth', block: 'end' })}
             onOpenDossier={() => { void openExpert(); }}
+            onBatchAttach={pkg=>{
+              const existing=entriesRef.current.find(e=>text(packageForLocale(object(e.record.data),pkg.locale).id)===pkg.id || (pkg.targetRecord?.id&&e.record.id===pkg.targetRecord.id));
+              if(existing){change(existing.clientId,r=>attachInteractivePackage(r,pkg as any,f));return;}
+              const placeholder=entriesRef.current.find(e=>!e.record.id&&!text(e.record.title)&&!text(packageForLocale(object(e.record.data),pkg.locale).id));
+              if(placeholder){change(placeholder.clientId,r=>attachInteractivePackage(pkg.targetRecord||r,pkg as any,f));return;}
+              const base=pkg.targetRecord||newCreation(f.key,pkg.locale as Locale,boot.settings);
+              const next:Entry={clientId:creationId(),record:attachInteractivePackage(base,pkg as any,f),version:1,savedVersion:0,selected:true};
+              committing([...entriesRef.current,next]);
+            }}
             onAttach={(pkg) => {
-              change(current.clientId, (r) => {
-                const original = object(r.data), title = text(r.title) || pkg.title;
-                return {
-                  ...r,
-                  title,
-                  data: {
-                    ...original,
-                    interactivePackage: {
-                      id: pkg.id,
-                      checksum: pkg.checksum,
-                      locale: pkg.locale,
-                      entry: pkg.entry,
-                    },
-                    locales: {
-                      ...object(original.locales),
-                      [language]: { ...object(object(original.locales)[language]), title },
-                    },
-                  },
-                };
-              });
+              change(current.clientId, r => attachInteractivePackage(!r.id&&pkg.targetRecord?pkg.targetRecord:r, pkg as any, f));
               setNotice(t(
                 "Interactive package linked to this draft. Save and complete the native publication review.",
                 "Package interactif lié au brouillon. Enregistrez et terminez la revue native.",
@@ -1578,6 +1588,7 @@ export function CreationStudio({
             }}
           />
         )}
+        {current && f && <DeliveryControlCenter record={current.record} family={f} language={language} templateControl={fieldControl({key:"templateId",type:"reference",reference:"record",label:words("Source template","Modèle source","القالب الأصلي")})} onChange={next=>change(current.clientId,()=>next)} onAdvanced={()=>{setDrawer(true);requestAnimationFrame(()=>document.querySelector("[data-creation-drawer]")?.scrollIntoView({behavior:"smooth",block:"start"}))}} />}
         {restore && (
           <div className={s.recovery}>
             <Icon name="RotateCcw" />
@@ -1989,6 +2000,7 @@ export function CreationStudio({
                     )}
                   />
                 </label>
+                <details className={s.nativeContent} open={!isHtmlDelivery(data)}><summary>{isHtmlDelivery(data)?t("Preserved native content · inactive for this HTML edition","Contenu natif conservé · inactif pour cette édition HTML","المحتوى الأصلي محفوظ وغير نشط لنسخة HTML"):t("Native content studio","Atelier de contenu natif","استوديو المحتوى الأصلي")}</summary>
                 {plan.accept && (
                   <section
                     className={s.sourceSection}
@@ -2558,6 +2570,7 @@ export function CreationStudio({
                     )}
                   </section>
                 )}
+                </details>
               </main>
               <aside className={s.inspector}>
                 <section className={s.essentialCard}>
@@ -2787,6 +2800,7 @@ export function CreationStudio({
                       </p>
                     )
                   )}
+                  {isHtmlDelivery(data)&&<div className={s.serverProof} data-state={serverInspection.state} role="status"><strong>{serverInspection.state==='ready'?t('Server inspection passed','Vérification serveur réussie','نجح فحص الخادم'):serverInspection.state==='checking'?t('Saving and checking this edition…','Enregistrement et vérification de cette édition…','حفظ النسخة وفحصها…'):t('Server publication inspection','Vérification serveur de publication','فحص النشر على الخادم')}</strong>{serverInspection.message||t('Package, scope, references and public media are checked together.','Le package, le périmètre, les références et les médias publics sont vérifiés ensemble.','تفحص الحزمة والنطاق والمراجع والوسائط العامة معاً.')}{serverInspection.errors?.map((issue:any)=><button type="button" key={issue.path+issue.code} className={s.textButton} onClick={()=>showIssue(issue.path)}>{tr(issue.message,locale)}</button>)}</div>}
                   {issues.length ? (
                     <div className={s.issueList}>
                       {issues.slice(0, 6).map((issue, index) => (
@@ -2959,7 +2973,7 @@ export function CreationStudio({
             </footer>
           </>
         )}
-        {(drawer || reference) && (
+        {reference && (
           <div
             className={s.drawerBackdrop}
             onClick={() => {
@@ -2970,7 +2984,7 @@ export function CreationStudio({
         )}
         {(drawer || reference) && (
           <aside
-            className={s.drawer}
+            className={`${s.drawer} ${reference ? s.referenceDialog : s.inlineAdvanced}`}
             data-creation-drawer
             aria-label={
               reference?.label ||
@@ -3045,7 +3059,6 @@ export function CreationStudio({
                         {f.fields
                           .filter(
                             (def) =>
-                              visibleCreationField(def, record!) &&
                               (!drawerSearch ||
                                 [def.key, ...def.label]
                                   .join(" ")

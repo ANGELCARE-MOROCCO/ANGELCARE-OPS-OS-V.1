@@ -1,3 +1,4 @@
+import { activeDeliveryRecord, fieldAppliesToDelivery } from "./delivery-contract";
 import { FAMILIES } from "./registry";
 import { modeContract } from "./capabilities";
 import {
@@ -19,6 +20,7 @@ export function translationCoverage(
   record: Partial<DceRecord>,
   locale: string,
 ) {
+  record = activeDeliveryRecord(record, FAMILIES.find(f => f.key === record.family), locale);
   const d = object(record.data),
     base = text(d.defaultLocale) || "en";
   const family = FAMILIES.find((f) => f.key === record.family),
@@ -43,6 +45,7 @@ export function translationCoverage(
         record.family === "forms" &&
         ["consentLabel", "responsibleTeam", "destination"].includes(field.key)
       ) &&
+      fieldAppliesToDelivery(field.key, d, family) &&
       field.localized &&
       activeField(field, engine) &&
       (field.required || text(d[field.key]) || text(source[field.key]))

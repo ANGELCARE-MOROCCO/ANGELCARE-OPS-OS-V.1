@@ -32,7 +32,8 @@ export function Enquiry({
       "idle",
     ),
     [reference, setReference] = useState(""),
-    [invalid, setInvalid] = useState(false);
+    [invalid, setInvalid] = useState(false),
+    [overLimit, setOverLimit] = useState(false);
   const lock = useRef(false),
     controller = useRef<AbortController | null>(null),
     started = useRef(false),
@@ -50,7 +51,9 @@ export function Enquiry({
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (lock.current || state === "success") return;
-    if (!validEnquiry(world, v)) {
+    const submission = { ...v, message: appendBrief(v.message, brief, max) };
+    setOverLimit(submission.message.length > max);
+    if (!validEnquiry(world, v) || submission.message.length > max) {
       setInvalid(true);
       return;
     }
@@ -67,7 +70,7 @@ export function Enquiry({
           enquiryPayload(
             world,
             locale,
-            v,
+            submission,
             sourceRoute || routeFor(locale, world),
           ),
         ),
@@ -243,7 +246,7 @@ export function Enquiry({
             </label>
             {invalid ? (
               <p className={s.error} role="alert">
-                {tr(B.invalid, locale)}
+                {overLimit ? (locale === 'fr' ? 'Votre message et le projet sélectionné sont trop longs. Raccourcissez le message avant de transmettre.' : locale === 'ar' ? 'الرسالة والمشروع المحدد طويلان جداً. يرجى اختصار الرسالة قبل الإرسال.' : 'Your message and selected brief are too long. Shorten the message before sending.') : tr(B.invalid, locale)}
               </p>
             ) : null}
             {state === "error" ? (

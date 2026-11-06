@@ -1,0 +1,19 @@
+{
+  "name": "kidflix-delivery-r2-verification",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "verify": "node verify.cjs && node verify-sql.cjs && node verify-import-session.cjs",
+    "browser": "node verify-browser.cjs"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "0.3.14",
+    "esbuild": "0.25.12",
+    "lucide-react": "0.468.0",
+    "pdf-lib": "1.17.1",
+    "playwright": "1.60.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "typescript": "5.9.3"
+  }
+}

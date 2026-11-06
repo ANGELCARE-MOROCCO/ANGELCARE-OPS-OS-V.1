@@ -1,4 +1,5 @@
 "use client";
+import { imageryToken } from "../marketplace-imagery/pages";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
@@ -314,7 +315,7 @@ function World({
           </div>
         </div>
         <div className={s.heroVisual}>
-          <Photo
+          <Photo slot={(!copy.media_url) ? ("visual.immersive-storefront.1") : undefined}
             src={offerMediaOrEditorial(copy.media_url, profile.photo, worldKey)}
             alt={t(profile.label)}
             priority
@@ -350,7 +351,7 @@ function World({
           ))}
           {!spotlight.length ? (
             <>
-              <Photo
+              <Photo slot={"visual.immersive-storefront.2"}
                 src={photo(profile.secondaryPhoto)}
                 alt={t(profile.signature)}
               />
@@ -406,7 +407,7 @@ function World({
                     });
                 }}
               >
-                <Photo src={photo(topic.photo)} alt="" />
+                <Photo slot={"visual.immersive-storefront.3." + imageryToken(index)} src={photo(topic.photo)} alt="" />
                 <div>
                   <span>
                     0{index + 1}
@@ -496,7 +497,7 @@ function World({
           data-storefront-module="editorial"
         >
           <div className={s.storyPhoto}>
-            <Photo
+            <Photo slot={"visual.immersive-storefront.4." + imageryToken(chapter)}
               src={photo(currentChapter.photo)}
               alt={t(currentChapter.title)}
             />
@@ -759,7 +760,7 @@ function World({
           </div>
           {!native.resources.length ? (
             <div className={s.resourceFallback}>
-              <Photo src={photo(profile.secondaryPhoto)} alt="" />
+              <Photo slot={"visual.immersive-storefront.5"} src={photo(profile.secondaryPhoto)} alt="" />
               <div>
                 <h3>{t(profile.chapters[1].title)}</h3>
                 <p>{t(profile.chapters[1].body)}</p>
@@ -1011,7 +1012,7 @@ function World({
           <div className={s.relatedGrid}>
             {profile.related.map((key, index) => (
               <Link key={key} href={`${base}/${key}`} data-tone={index}>
-                <Photo src={photo(relatedPhoto(key))} alt="" />
+                <Photo slot={"visual.immersive-storefront.6." + imageryToken(index)} src={photo(relatedPhoto(key))} alt="" />
                 <div>
                   <span>ANGELCARE</span>
                   <h3>{relatedLabel(key, locale)}</h3>
@@ -1048,7 +1049,7 @@ function World({
           </div>
         </section>
         <section className={s.finalSection} data-storefront-module="final">
-          <Photo src={photo(profile.photo)} alt="" />
+          <Photo slot={"visual.immersive-storefront.7"} src={photo(profile.photo)} alt="" />
           <div>
             <span>{t(profile.eyebrow)}</span>
             <h2>{t(C.final)}</h2>

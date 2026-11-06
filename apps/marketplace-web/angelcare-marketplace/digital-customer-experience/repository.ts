@@ -1,3 +1,4 @@
+import { activeDeliveryData, activeDeliveryRecord, isHtmlDelivery } from "./delivery-contract";
 import { parseCsv } from "./imports";
 import { safeMediaUrl } from "../kidflix/media-url";
 import {
@@ -656,7 +657,8 @@ export async function validateScoped(
   c: Pick<Context, "tenantId" | "territoryId" | "locale">,
   r: DceRecord,
 ): Promise<{ validation: Validation; bindings: Data }> {
-  const definition = compatibleDefinition(r.family, r.data).data;
+  r = activeDeliveryRecord(r, FAMILIES.find(f => f.key === r.family));
+  const definition = activeDeliveryData(compatibleDefinition(r.family, r.data).data, FAMILIES.find(f => f.key === r.family));
   const validation = validateRecord(r),
     ref = references({ ...definition, parentId: r.topic || null }),
     db = await createServiceClient();
@@ -668,6 +670,10 @@ export async function validateScoped(
       severity: "error",
     });
   const bindings: Data = { media: {}, records: {}, offers: {} };
+  if (isHtmlDelivery(definition)) {
+    try { await (await import("../kidflix/interactive/service")).assertPackageForPublication(c, r, text(definition.defaultLocale)); }
+    catch(e) { add("interactivePackage", "INTERACTIVE_PACKAGE", String((e as Error).message)); }
+  }
   const [media, offers] = await Promise.all([
     nativeByIds(db, c, "angelcare_marketplace_media_assets", ref.media),
     nativeByIds(db, c, "angelcare_marketplace_catalog_discovery_v", ref.offers),
@@ -827,7 +833,7 @@ export async function validateScoped(
       }
     if (
       settings.requireCaptions === true &&
-      r.family === "video" &&
+      r.family === "video" && !isHtmlDelivery(definition) &&
       !array(definition.captions).length &&
       !array(definition.units).some((u) => u.captionAssetId)
     )
@@ -1614,6 +1620,7 @@ export async function bootstrap(c: Context, days = 30): Promise<Bootstrap> {
   };
 }
 export async function command(c: Context, cmd: Command): Promise<any> {
+  if (cmd.action.startsWith("delivery_")) return (await import("./delivery-service")).deliveryCommand(c,cmd);
   if (cmd.action.startsWith("creation_")) return (await import("./creation-service")).creationCommand(c,cmd);
   if(cmd.action === "inventory_plan_save") return (await import("./inventory/service")).inventoryPlanSave(c,cmd);
   if(cmd.record?.key === "kidflix-inventory-targets-r1") throw new MarketplaceError("PERMISSION_DENIED","Use Inventory Map to manage targets.");
@@ -2584,6 +2591,7 @@ export async function command(c: Context, cmd: Command): Promise<any> {
   throw new MarketplaceError("VALIDATION_ERROR", "Unsupported DCE command.");
 }
 export async function read(c: Context, input: Record<string, unknown>) {
+  if (input.op === "delivery_repair_plan") return (await import("./delivery-service")).deliveryRead(c,input);
   if (input.op === "creation_status") return (await import("./creation-service")).creationRead(c,input);
   if(input.op === "inventory_map") return (await import("./inventory/service")).inventoryRead(c);
   if (input.op === "kidflix_imagery") return (await import("../kidflix/imagery/service")).imageryRead(c,String(input.page||"home"),input.history===true||input.history==="true");

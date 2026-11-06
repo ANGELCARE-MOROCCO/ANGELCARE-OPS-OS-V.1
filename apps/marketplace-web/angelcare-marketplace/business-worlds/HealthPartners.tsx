@@ -22,7 +22,7 @@ export function HealthPartners() {
   return (
     <>
       <section className={s.healthHero} data-business-module="care-opening">
-        <Picture name="health" priority />
+        <Picture slot={"visual.health-partners.1"} name="health" priority />
         <div className={s.healthCopy}>
           <span className={s.kicker}>
             <HeartHandshake size={18} />
@@ -377,7 +377,7 @@ export function HealthPartners() {
         tone="paper"
       >
         <div className={s.split}>
-          <Picture name="academy" />
+          <Picture slot={"visual.health-partners.2"} name="academy" />
           <Tiles
             items={[
               {

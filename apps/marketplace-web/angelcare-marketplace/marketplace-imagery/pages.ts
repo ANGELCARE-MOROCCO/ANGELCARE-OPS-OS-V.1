@@ -1,0 +1,6 @@
+export const PAGE_KEYS = ['home','families','home-services','development','kits','academy','establishments','hospitality','health-partners','corporates','partner-os','quality-check','professionals'] as const;
+export const PAGE_TITLES: Record<string,string> = {home:'Accueil · Homepage',families:'Familles','home-services':'Services à domicile',development:'Développement',kits:'Kits',academy:'Academy',establishments:'Établissements',hospitality:'Hospitality','health-partners':'Partenaires santé',corporates:'Entreprises','partner-os':'Partner OS','quality-check':'Quality Check',professionals:'Professionnels'};
+export const pageTitle=(page:string)=>PAGE_TITLES[page]||page;
+export const pagePath=(page:string,locale='fr')=>`/angelcare-marketplace/${locale}${page==='home'?'':'/'+page}`;
+export function pageFromPath(pathname:string):string {const m=pathname.match(/^\/angelcare-marketplace\/(fr|en|ar)(?:\/([^/]+))?\/?$/);if(!m)return 'other';const page=!m[2]||m[2]==='accueil'?'home':m[2];return (PAGE_KEYS as readonly string[]).includes(page)?page:'other';}
+export const imageryToken=(value:unknown)=>String(value??'').toLowerCase().replace(/[^a-z0-9-]/g,'-').replace(/-+/g,'-').slice(0,80)||'default';

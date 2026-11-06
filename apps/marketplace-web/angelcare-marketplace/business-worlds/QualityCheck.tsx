@@ -50,7 +50,7 @@ export function QualityCheck() {
           </div>
         </div>
         <div className={s.qualityVisual}>
-          <Picture name="school" priority />
+          <Picture slot={"visual.quality-check.1"} name="school" priority />
           <div className={s.qualityCaption}>
             <span>QUALITY CHECK</span>
             <strong>
@@ -355,7 +355,7 @@ export function QualityCheck() {
         tone="ink"
       >
         <div className={s.split}>
-          <Picture name="professional" />
+          <Picture slot={"visual.quality-check.2"} name="professional" />
           <Tiles
             items={[
               {

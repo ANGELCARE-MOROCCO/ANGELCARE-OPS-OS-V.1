@@ -1,3 +1,4 @@
+import { isHtmlDelivery } from "./delivery-contract";
 import { changedDefinitionPaths } from "./production-model";
 import {
   gradeBridge,
@@ -288,7 +289,7 @@ export async function editionCommand(c: Context, cmd: Command) {
       throw new MarketplaceError("NOT_FOUND", "Edition release not found.");
     source = z.snapshot;
   }
-  const interactiveCandidate = object(source.data).interactivePackage;
+  const interactiveCandidate = isHtmlDelivery(object(source.data), l);
   const verifiedInteractive = interactiveCandidate
     ? await (await import("../kidflix/interactive/service")).assertPackageForPublication(c, source, l)
     : null;
@@ -337,12 +338,6 @@ export async function editionCommand(c: Context, cmd: Command) {
       p_release: text(cmd.releaseId) || null,
     }),
   );
-  if (verifiedInteractive && (action === "release" || action === "direct_publish") &&
-    applied?.release?.state === "published" && applied.release.id) {
-    await (await import("../kidflix/interactive/service")).bindPublishedPackage(
-      c, verifiedInteractive.id, source.id, applied.release.id, l
-    );
-  }
   return applied;
 }
 export async function masterRead(c: Context, input: Record<string, unknown>) {

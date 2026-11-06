@@ -1,0 +1,933 @@
+[
+  {
+    "pages": [
+      "home"
+    ],
+    "key": "visual.living-commerce-homepage.1",
+    "dynamic": true,
+    "section": "hero",
+    "label": "hero \u00b7 1",
+    "sequence": true,
+    "file": "homepage-living-marketplace/immersive/LivingCommerceHomepage.tsx",
+    "expression": "editorial(scene.image)",
+    "suffix": "scene.world",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "home"
+    ],
+    "key": "visual.living-commerce-homepage.2",
+    "dynamic": true,
+    "section": "hero",
+    "label": "hero \u00b7 2",
+    "sequence": true,
+    "file": "homepage-living-marketplace/immersive/LivingCommerceHomepage.tsx",
+    "expression": "editorial(value.image)",
+    "suffix": "value.image",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "home"
+    ],
+    "key": "visual.living-commerce-homepage.3",
+    "dynamic": true,
+    "section": "home-worlds",
+    "label": "home worlds \u00b7 3",
+    "sequence": true,
+    "file": "homepage-living-marketplace/immersive/LivingCommerceHomepage.tsx",
+    "expression": "editorial(WORLD_PHOTOS[world.key] || \"family\")",
+    "suffix": "index",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "home"
+    ],
+    "key": "visual.living-commerce-homepage.4",
+    "dynamic": false,
+    "section": "home-family",
+    "label": "home family \u00b7 4",
+    "sequence": true,
+    "file": "homepage-living-marketplace/immersive/LivingCommerceHomepage.tsx",
+    "expression": "editorial(\"family\")",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "home"
+    ],
+    "key": "visual.living-commerce-homepage.5",
+    "dynamic": false,
+    "section": "home-family",
+    "label": "home family \u00b7 5",
+    "sequence": true,
+    "file": "homepage-living-marketplace/immersive/LivingCommerceHomepage.tsx",
+    "expression": "editorial(\"support\")",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "home"
+    ],
+    "key": "visual.living-commerce-homepage.6",
+    "dynamic": false,
+    "section": "home-family",
+    "label": "home family \u00b7 6",
+    "sequence": true,
+    "file": "homepage-living-marketplace/immersive/LivingCommerceHomepage.tsx",
+    "expression": "editorial(\"games\")",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "home"
+    ],
+    "key": "visual.living-commerce-homepage.7",
+    "dynamic": false,
+    "section": "home-services",
+    "label": "home services \u00b7 7",
+    "sequence": true,
+    "file": "homepage-living-marketplace/immersive/LivingCommerceHomepage.tsx",
+    "expression": "editorial(\"care\")",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "home"
+    ],
+    "key": "visual.living-commerce-homepage.8",
+    "dynamic": false,
+    "section": "home-development",
+    "label": "home development \u00b7 8",
+    "sequence": true,
+    "file": "homepage-living-marketplace/immersive/LivingCommerceHomepage.tsx",
+    "expression": "editorial(\"montessori\")",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "home"
+    ],
+    "key": "visual.living-commerce-homepage.9",
+    "dynamic": false,
+    "section": "home-kits",
+    "label": "home kits \u00b7 9",
+    "sequence": true,
+    "file": "homepage-living-marketplace/immersive/LivingCommerceHomepage.tsx",
+    "expression": "kit ? kit.media_url : editorial(\"kits\")",
+    "suffix": "",
+    "conditional": "!kit"
+  },
+  {
+    "pages": [
+      "home"
+    ],
+    "key": "visual.living-commerce-homepage.10",
+    "dynamic": false,
+    "section": "home-collections",
+    "label": "home collections \u00b7 10",
+    "sequence": true,
+    "file": "homepage-living-marketplace/immersive/LivingCommerceHomepage.tsx",
+    "expression": "editorial(\"box\")",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "home"
+    ],
+    "key": "visual.living-commerce-homepage.11",
+    "dynamic": false,
+    "section": "home-academy",
+    "label": "home academy \u00b7 11",
+    "sequence": true,
+    "file": "homepage-living-marketplace/immersive/LivingCommerceHomepage.tsx",
+    "expression": "editorial(\"homework\")",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "home"
+    ],
+    "key": "visual.living-commerce-homepage.12",
+    "dynamic": true,
+    "section": "home-professional",
+    "label": "home professional \u00b7 12",
+    "sequence": true,
+    "file": "homepage-living-marketplace/immersive/LivingCommerceHomepage.tsx",
+    "expression": "editorial(WORLD_PHOTOS[key])",
+    "suffix": "index",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "home"
+    ],
+    "key": "visual.living-commerce-homepage.13",
+    "dynamic": false,
+    "section": "home-guidance",
+    "label": "home guidance \u00b7 13",
+    "sequence": true,
+    "file": "homepage-living-marketplace/immersive/LivingCommerceHomepage.tsx",
+    "expression": "editorial(\"support\")",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "home"
+    ],
+    "key": "visual.living-commerce-homepage.14",
+    "dynamic": false,
+    "section": "finale",
+    "label": "finale \u00b7 14",
+    "sequence": true,
+    "file": "homepage-living-marketplace/immersive/LivingCommerceHomepage.tsx",
+    "expression": "editorial(\"family\")",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "families"
+    ],
+    "key": "visual.family-gateway.1",
+    "dynamic": false,
+    "section": "family-top",
+    "label": "family top \u00b7 1",
+    "sequence": true,
+    "file": "families-storefront/gateway/FamilyGateway.tsx",
+    "expression": "FAMILY_HERO_MEDIA",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "families"
+    ],
+    "key": "visual.family-gateway.2",
+    "dynamic": true,
+    "section": "family-gateways",
+    "label": "family gateways \u00b7 2",
+    "sequence": true,
+    "file": "families-storefront/gateway/FamilyGateway.tsx",
+    "expression": "editorial(world.media)",
+    "suffix": "index",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "families"
+    ],
+    "key": "visual.family-gateway.3",
+    "dynamic": true,
+    "section": "family-needs",
+    "label": "family needs \u00b7 3",
+    "sequence": true,
+    "file": "families-storefront/gateway/FamilyGateway.tsx",
+    "expression": "editorial(row.media)",
+    "suffix": "index",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "families"
+    ],
+    "key": "visual.family-gateway.4",
+    "dynamic": false,
+    "section": "family-care",
+    "label": "family care \u00b7 4",
+    "sequence": true,
+    "file": "families-storefront/gateway/FamilyGateway.tsx",
+    "expression": "editorial('care')",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "families"
+    ],
+    "key": "visual.family-gateway.5",
+    "dynamic": true,
+    "section": "family-rhythm",
+    "label": "family rhythm \u00b7 5",
+    "sequence": true,
+    "file": "families-storefront/gateway/FamilyGateway.tsx",
+    "expression": "editorial(row.media)",
+    "suffix": "index",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "families"
+    ],
+    "key": "visual.family-gateway.6",
+    "dynamic": false,
+    "section": "family-learn",
+    "label": "family learn \u00b7 6",
+    "sequence": true,
+    "file": "families-storefront/gateway/FamilyGateway.tsx",
+    "expression": "editorial('montessori')",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "families"
+    ],
+    "key": "visual.family-gateway.7",
+    "dynamic": false,
+    "section": "family-play",
+    "label": "family play \u00b7 7",
+    "sequence": true,
+    "file": "families-storefront/gateway/FamilyGateway.tsx",
+    "expression": "kit?.media_url || editorial('kits')",
+    "suffix": "",
+    "conditional": "!kit?.media_url"
+  },
+  {
+    "pages": [
+      "families"
+    ],
+    "key": "visual.family-gateway.8",
+    "dynamic": true,
+    "section": "family-moments",
+    "label": "family moments \u00b7 8",
+    "sequence": true,
+    "file": "families-storefront/gateway/FamilyGateway.tsx",
+    "expression": "editorial(row.image)",
+    "suffix": "index",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "families"
+    ],
+    "key": "visual.family-gateway.9",
+    "dynamic": true,
+    "section": "family-collections",
+    "label": "family collections \u00b7 9",
+    "sequence": true,
+    "file": "families-storefront/gateway/FamilyGateway.tsx",
+    "expression": "collection.items.find(item => item.media_url)?.media_url || editorial('games')",
+    "suffix": "index",
+    "conditional": "!collection.items.some(item => item.media_url)"
+  },
+  {
+    "pages": [
+      "families"
+    ],
+    "key": "visual.family-gateway.10",
+    "dynamic": false,
+    "section": "family-collections",
+    "label": "family collections \u00b7 10",
+    "sequence": true,
+    "file": "families-storefront/gateway/FamilyGateway.tsx",
+    "expression": "editorial('games')",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "families"
+    ],
+    "key": "visual.family-gateway.11",
+    "dynamic": true,
+    "section": "family-travel",
+    "label": "family travel \u00b7 11",
+    "sequence": true,
+    "file": "families-storefront/gateway/FamilyGateway.tsx",
+    "expression": "FAMILY_EDITORIAL_MEDIA[key]",
+    "suffix": "key",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "families"
+    ],
+    "key": "visual.family-gateway.12",
+    "dynamic": true,
+    "section": "family-directory",
+    "label": "family directory \u00b7 12",
+    "sequence": true,
+    "file": "families-storefront/gateway/FamilyGateway.tsx",
+    "expression": "FAMILY_EDITORIAL_MEDIA[story.schemaKey]",
+    "suffix": "story.schemaKey",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "families"
+    ],
+    "key": "visual.family-gateway.13",
+    "dynamic": false,
+    "section": "family-guidance",
+    "label": "family guidance \u00b7 13",
+    "sequence": true,
+    "file": "families-storefront/gateway/FamilyGateway.tsx",
+    "expression": "editorial('family')",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "development",
+      "kits",
+      "academy"
+    ],
+    "key": "visual.immersive-storefront.1",
+    "dynamic": false,
+    "section": "sf-top",
+    "label": "sf top \u00b7 1",
+    "sequence": true,
+    "file": "storefront-immersive/ImmersiveStorefront.tsx",
+    "expression": "offerMediaOrEditorial(copy.media_url, profile.photo, worldKey)",
+    "suffix": "",
+    "conditional": "!copy.media_url"
+  },
+  {
+    "pages": [
+      "development",
+      "kits",
+      "academy"
+    ],
+    "key": "visual.immersive-storefront.2",
+    "dynamic": false,
+    "section": "sf-top",
+    "label": "sf top \u00b7 2",
+    "sequence": true,
+    "file": "storefront-immersive/ImmersiveStorefront.tsx",
+    "expression": "photo(profile.secondaryPhoto)",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "development",
+      "kits",
+      "academy"
+    ],
+    "key": "visual.immersive-storefront.3",
+    "dynamic": true,
+    "section": "topics",
+    "label": "topics \u00b7 3",
+    "sequence": true,
+    "file": "storefront-immersive/ImmersiveStorefront.tsx",
+    "expression": "photo(topic.photo)",
+    "suffix": "index",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "development",
+      "kits",
+      "academy"
+    ],
+    "key": "visual.immersive-storefront.4",
+    "dynamic": true,
+    "section": "sf-editorial",
+    "label": "sf editorial \u00b7 4",
+    "sequence": true,
+    "file": "storefront-immersive/ImmersiveStorefront.tsx",
+    "expression": "photo(currentChapter.photo)",
+    "suffix": "chapter",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "development",
+      "kits",
+      "academy"
+    ],
+    "key": "visual.immersive-storefront.5",
+    "dynamic": false,
+    "section": "sf-resources",
+    "label": "sf resources \u00b7 5",
+    "sequence": true,
+    "file": "storefront-immersive/ImmersiveStorefront.tsx",
+    "expression": "photo(profile.secondaryPhoto)",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "development",
+      "kits",
+      "academy"
+    ],
+    "key": "visual.immersive-storefront.6",
+    "dynamic": true,
+    "section": "related",
+    "label": "related \u00b7 6",
+    "sequence": true,
+    "file": "storefront-immersive/ImmersiveStorefront.tsx",
+    "expression": "photo(relatedPhoto(key))",
+    "suffix": "index",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "development",
+      "kits",
+      "academy"
+    ],
+    "key": "visual.immersive-storefront.7",
+    "dynamic": false,
+    "section": "final",
+    "label": "final \u00b7 7",
+    "sequence": true,
+    "file": "storefront-immersive/ImmersiveStorefront.tsx",
+    "expression": "photo(profile.photo)",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "development"
+    ],
+    "key": "visual.signature-experiences.1",
+    "dynamic": false,
+    "section": "signature-experiences",
+    "label": "signature experiences \u00b7 1",
+    "sequence": true,
+    "file": "storefront-immersive/SignatureExperiences.tsx",
+    "expression": "storefrontPhoto(\"development\", \"montessori\")",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "kits"
+    ],
+    "key": "visual.signature-experiences.2",
+    "dynamic": false,
+    "section": "signature-experiences",
+    "label": "signature experiences \u00b7 2",
+    "sequence": true,
+    "file": "storefront-immersive/SignatureExperiences.tsx",
+    "expression": "storefrontPhoto(\"kits\", \"kits\")",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "hospitality"
+    ],
+    "key": "visual.signature-experiences.3",
+    "dynamic": true,
+    "section": "signature-experiences",
+    "label": "signature experiences \u00b7 3",
+    "sequence": true,
+    "file": "storefront-immersive/SignatureExperiences.tsx",
+    "expression": "storefrontPhoto(\"hospitality\", topic.photo)",
+    "suffix": "topic.photo",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "health-partners"
+    ],
+    "key": "visual.signature-experiences.4",
+    "dynamic": false,
+    "section": "signature-experiences",
+    "label": "signature experiences \u00b7 4",
+    "sequence": true,
+    "file": "storefront-immersive/SignatureExperiences.tsx",
+    "expression": "storefrontPhoto(\"health-partners\", \"newborn\")",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "corporates"
+    ],
+    "key": "visual.signature-experiences.5",
+    "dynamic": false,
+    "section": "signature-experiences",
+    "label": "signature experiences \u00b7 5",
+    "sequence": true,
+    "file": "storefront-immersive/SignatureExperiences.tsx",
+    "expression": "storefrontPhoto(\"corporates\", \"corporate\")",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "professionals"
+    ],
+    "key": "visual.signature-experiences.6",
+    "dynamic": true,
+    "section": "signature-experiences",
+    "label": "signature experiences \u00b7 6",
+    "sequence": true,
+    "file": "storefront-immersive/SignatureExperiences.tsx",
+    "expression": "storefrontPhoto(\"professionals\", topic.photo)",
+    "suffix": "topic.photo",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "establishments"
+    ],
+    "key": "visual.establishments.1",
+    "dynamic": false,
+    "section": "establishments",
+    "label": "establishments \u00b7 1",
+    "sequence": true,
+    "file": "business-worlds/Establishments.tsx",
+    "expression": "\"school\"",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "hospitality"
+    ],
+    "key": "visual.hospitality.1",
+    "dynamic": false,
+    "section": "hospitality",
+    "label": "hospitality \u00b7 1",
+    "sequence": true,
+    "file": "business-worlds/Hospitality.tsx",
+    "expression": "\"hospitality\"",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "hospitality"
+    ],
+    "key": "visual.hospitality.2",
+    "dynamic": true,
+    "section": "stay-gallery",
+    "label": "stay gallery \u00b7 2",
+    "sequence": true,
+    "file": "business-worlds/Hospitality.tsx",
+    "expression": "e.image",
+    "suffix": "e.image",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "health-partners"
+    ],
+    "key": "visual.health-partners.1",
+    "dynamic": false,
+    "section": "health-partners",
+    "label": "health partners \u00b7 1",
+    "sequence": true,
+    "file": "business-worlds/HealthPartners.tsx",
+    "expression": "\"health\"",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "health-partners"
+    ],
+    "key": "visual.health-partners.2",
+    "dynamic": false,
+    "section": "care-workshops",
+    "label": "care workshops \u00b7 2",
+    "sequence": true,
+    "file": "business-worlds/HealthPartners.tsx",
+    "expression": "\"academy\"",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "corporates"
+    ],
+    "key": "visual.corporates.1",
+    "dynamic": false,
+    "section": "corporates",
+    "label": "corporates \u00b7 1",
+    "sequence": true,
+    "file": "business-worlds/Corporates.tsx",
+    "expression": "\"corporate\"",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "corporates"
+    ],
+    "key": "visual.corporates.2",
+    "dynamic": false,
+    "section": "corporates",
+    "label": "corporates \u00b7 2",
+    "sequence": true,
+    "file": "business-worlds/Corporates.tsx",
+    "expression": "\"family\"",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "corporates"
+    ],
+    "key": "visual.corporates.3",
+    "dynamic": false,
+    "section": "employer-deployment",
+    "label": "employer deployment \u00b7 3",
+    "sequence": true,
+    "file": "business-worlds/Corporates.tsx",
+    "expression": "\"desk\"",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "partner-os"
+    ],
+    "key": "visual.partner-os.1",
+    "dynamic": false,
+    "section": "os-clarity",
+    "label": "os clarity \u00b7 1",
+    "sequence": true,
+    "file": "business-worlds/PartnerOS.tsx",
+    "expression": "\"desk\"",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "quality-check"
+    ],
+    "key": "visual.quality-check.1",
+    "dynamic": false,
+    "section": "quality-check",
+    "label": "quality check \u00b7 1",
+    "sequence": true,
+    "file": "business-worlds/QualityCheck.tsx",
+    "expression": "\"school\"",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "quality-check"
+    ],
+    "key": "visual.quality-check.2",
+    "dynamic": false,
+    "section": "quality-action",
+    "label": "quality action \u00b7 2",
+    "sequence": true,
+    "file": "business-worlds/QualityCheck.tsx",
+    "expression": "\"professional\"",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "professionals"
+    ],
+    "key": "visual.professionals.1",
+    "dynamic": false,
+    "section": "professionals",
+    "label": "professionals \u00b7 1",
+    "sequence": true,
+    "file": "business-worlds/Professionals.tsx",
+    "expression": "\"professional\"",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "professionals"
+    ],
+    "key": "visual.professionals.2",
+    "dynamic": false,
+    "section": "professionals",
+    "label": "professionals \u00b7 2",
+    "sequence": true,
+    "file": "business-worlds/Professionals.tsx",
+    "expression": "\"preschool\"",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "professionals"
+    ],
+    "key": "visual.professionals.3",
+    "dynamic": false,
+    "section": "professional-practice",
+    "label": "professional practice \u00b7 3",
+    "sequence": true,
+    "file": "business-worlds/Professionals.tsx",
+    "expression": "\"professional\"",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "professionals"
+    ],
+    "key": "visual.professionals.4",
+    "dynamic": false,
+    "section": "professional-learning",
+    "label": "professional learning \u00b7 4",
+    "sequence": true,
+    "file": "business-worlds/Professionals.tsx",
+    "expression": "\"academy\"",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "establishments",
+      "hospitality",
+      "health-partners",
+      "corporates",
+      "partner-os",
+      "quality-check",
+      "professionals"
+    ],
+    "key": "visual.shared.1",
+    "dynamic": true,
+    "section": "shared",
+    "label": "shared \u00b7 1",
+    "sequence": true,
+    "file": "business-worlds/Shared.tsx",
+    "expression": "d.photo",
+    "suffix": "i",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "establishments",
+      "hospitality",
+      "health-partners",
+      "corporates",
+      "partner-os",
+      "quality-check",
+      "professionals"
+    ],
+    "key": "visual.shared.2",
+    "dynamic": true,
+    "section": "shared",
+    "label": "shared \u00b7 2",
+    "sequence": true,
+    "file": "business-worlds/Shared.tsx",
+    "expression": "t.photo",
+    "suffix": "i",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "establishments",
+      "hospitality",
+      "health-partners",
+      "corporates",
+      "partner-os",
+      "quality-check",
+      "professionals"
+    ],
+    "key": "visual.tools.1",
+    "dynamic": true,
+    "section": "tools",
+    "label": "tools \u00b7 1",
+    "sequence": true,
+    "file": "business-worlds/Tools.tsx",
+    "expression": "choice.photo",
+    "suffix": "dimension + \".\" + active",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "development",
+      "kits",
+      "academy"
+    ],
+    "key": "visual.educational-discovery.1",
+    "dynamic": true,
+    "section": "educational-discovery",
+    "label": "educational discovery \u00b7 1",
+    "sequence": true,
+    "file": "business-worlds/EducationalDiscovery.tsx",
+    "expression": "storefrontPhoto(world, topics[active].image)",
+    "suffix": "active",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "home-services"
+    ],
+    "key": "visual.home-services-storefront.1",
+    "dynamic": true,
+    "section": "service-universes",
+    "label": "service universes \u00b7 1",
+    "sequence": true,
+    "file": "home-services-storefront/components/HomeServicesStorefront.tsx",
+    "expression": "group.image",
+    "suffix": "group.image",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "home-services"
+    ],
+    "key": "visual.home-services-storefront.2",
+    "dynamic": false,
+    "section": "home-services-storefront",
+    "label": "home services storefront \u00b7 2",
+    "sequence": true,
+    "source": "/angelcare-marketplace/families-world-r2/hero.jpg",
+    "file": "home-services-storefront/components/HomeServicesStorefront.tsx",
+    "expression": "\"/angelcare-marketplace/families-world-r2/hero.jpg\"",
+    "suffix": "",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "home-services"
+    ],
+    "key": "visual.service-hero.1",
+    "dynamic": true,
+    "section": "services-top",
+    "label": "services top \u00b7 1",
+    "sequence": true,
+    "file": "home-services-storefront/components/ServiceHero.tsx",
+    "expression": "group.image",
+    "suffix": "i",
+    "conditional": null
+  },
+  {
+    "pages": [
+      "home"
+    ],
+    "key": "visual.homepage-flagship.1",
+    "dynamic": true,
+    "section": "homepage-flagship",
+    "label": "homepage flagship \u00b7 1",
+    "sequence": true,
+    "file": "homepage-flagship/components/HomepageFlagship.tsx",
+    "expression": "category.cover_asset_url || '/angelcare-marketplace/homepage/category-universal.svg'",
+    "suffix": "index",
+    "conditional": "!category.cover_asset_url"
+  },
+  {
+    "pages": [
+      "home"
+    ],
+    "key": "visual.homepage-flagship.2",
+    "dynamic": false,
+    "section": "homepage-flagship",
+    "label": "homepage flagship \u00b7 2",
+    "sequence": true,
+    "file": "homepage-flagship/components/HomepageFlagship.tsx",
+    "expression": "sectionSetting('family-services','media_url','/angelcare-marketplace/homepage/family-showcase.svg')",
+    "suffix": "",
+    "conditional": "sectionSetting('family-services','media_url','/angelcare-marketplace/homepage/family-showcase.svg') === '/angelcare-marketplace/homepage/family-showcase.svg'"
+  }
+]

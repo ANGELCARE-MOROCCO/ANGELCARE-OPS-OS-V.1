@@ -15,6 +15,49 @@
   padding-bottom: 96px;
   isolation: isolate;
 }
+
+/* AC-7SF-R1: page chrome only. Existing photographs, image wrappers and overlays are protected. */
+.world[data-business-revision="AC-7SF-R1"] { --light: #fff; background: #fff; }
+.world[data-business-revision="AC-7SF-R1"] .worldNav { background: #fff; color: #352248; border-block: 1px solid #e8dfef; box-shadow: 0 4px 14px #25123a05; }
+.world[data-business-revision="AC-7SF-R1"] .worldNav > span { color: #67507f; }
+.world[data-business-revision="AC-7SF-R1"] .worldNav a { padding-inline: 5px; }
+.world[data-business-revision="AC-7SF-R1"] .worldNav a[aria-current="location"] { color: #68408a; border-color: #a479c7; }
+.world[data-business-revision="AC-7SF-R1"] .corporateHero { background: radial-gradient(ellipse at 4% 8%, #fff5df, transparent 50%), #fff; }
+.world[data-business-revision="AC-7SF-R1"] .campusHero { background: radial-gradient(ellipse at 5% 0, #edf8ed, transparent 60%), #fff; }
+.world[data-business-revision="AC-7SF-R1"] .proHero { background: radial-gradient(ellipse at 15% 5%, #f8f0ff, transparent 60%), #fff; }
+.world[data-business-revision="AC-7SF-R1"] .qualityHero { background: #f4faf6; }
+.world[data-business-revision="AC-7SF-R1"] .osHero { background: radial-gradient(ellipse at 95% 5%, #f3eaff, transparent 60%), #fff; color: #30203f; }
+.world[data-business-revision="AC-7SF-R1"] .osHero .softButton { background: #fff; color: #63457f !important; border-color: #d7c6e8; }
+.world[data-business-revision="AC-7SF-R1"] .osBlueprint { background: linear-gradient(135deg, #fff, #faf6ff); box-shadow: 0 22px 55px #5d3b7d12; color: #55346f; border-color: #ddd0ec; }
+.world[data-business-revision="AC-7SF-R1"] .blueprintBar { border-color: #ded1eb; }
+.world[data-business-revision="AC-7SF-R1"] .blueprintCore { background: #f3eefb; color: #654482; border-color: #ddc9ee; }
+.world[data-business-revision="AC-7SF-R1"] .blueprintNodes > div { background: #fff; border-color: #e3d5ee; }
+.world[data-business-revision="AC-7SF-R1"] .osBlueprint > small { color: #7a658c; }
+.world[data-business-revision="AC-7SF-R1"] .ink,
+.world[data-business-revision="AC-7SF-R1"] .violet { background: linear-gradient(130deg, #fcfaff, #fff); color: #30213f; border-block: 1px solid #ece4f2; }
+.world[data-business-revision="AC-7SF-R1"] .ink .kicker,
+.world[data-business-revision="AC-7SF-R1"] .violet .kicker { color: #76538e; }
+.world[data-business-revision="AC-7SF-R1"] .ink .softButton { background: #fff; border-color: #d9cce6; color: #604479 !important; }
+.world[data-business-revision="AC-7SF-R1"] .ink .tiles article,
+.world[data-business-revision="AC-7SF-R1"] .ink .explorerTabs button,
+.world[data-business-revision="AC-7SF-R1"] .ink .priorities button { background: #fff; border-color: #dfd3e9; color: #513668; }
+.world[data-business-revision="AC-7SF-R1"] .ink .priorities button[aria-pressed="true"],
+.world[data-business-revision="AC-7SF-R1"] .ink .explorerTabs button[aria-selected="true"] { background: #eadcf9; color: #4e286a; }
+.world[data-business-revision="AC-7SF-R1"] .ink .tiles p,
+.world[data-business-revision="AC-7SF-R1"] .ink .steps p,
+.world[data-business-revision="AC-7SF-R1"] .ink .verticalSteps p { color: #746181; }
+.world[data-business-revision="AC-7SF-R1"] .ink .steps h3,
+.world[data-business-revision="AC-7SF-R1"] .ink .verticalSteps h3 { color: #473052; }
+.world[data-business-revision="AC-7SF-R1"] .ink .tileOrdinal { background: #f0e7fa; color: #77528f; }
+.world[data-business-revision="AC-7SF-R1"] .ink .verticalSteps { border-color: #d8c8e6; }
+.world[data-business-revision="AC-7SF-R1"] .enquiry { background: linear-gradient(130deg, #faf6ff, #fff); color: #38244c; border-top: 1px solid #e6dcef; }
+.world[data-business-revision="AC-7SF-R1"] .enquiryIntro > p,
+.world[data-business-revision="AC-7SF-R1"] .assurance p { color: #746080; }
+.world[data-business-revision="AC-7SF-R1"] .assurance { background: #fff; border-color: #e3d6ed; color: #684981; }
+.world[data-business-revision="AC-7SF-R1"] .brief { background: #fff; border-color: #e1d1ed; color: #674c7c; white-space: pre-line; }
+.world[data-business-revision="AC-7SF-R1"] .consent a { color: #65427f; }
+.world[data-business-revision="AC-7SF-R1"] .bottomDock { background: #fffdfdf5; color: #4e345e; border-color: #decee9; box-shadow: 0 10px 35px #3d22571a; }
+.world[data-business-revision="AC-7SF-R1"] .bottomDock button { color: #705382; }
 .world * {
   box-sizing: border-box;
   min-width: 0;

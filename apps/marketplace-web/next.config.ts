@@ -17,6 +17,8 @@ const nextConfig: NextConfig = {
   // AC360_BUILD_STABILITY_LOCK
   // Prevent Vercel/Next webpack cache serialization crashes caused by very large AC360 French cockpit bundles.
   experimental: {
+    // Legacy asset edits remain supported; new ZIP imports use 4 MiB chunks.
+    proxyClientMaxBodySize: '70mb',
     webpackBuildWorker: false,
     // Allows a 1 MB staff portrait plus normal multipart form overhead.
     // The application and Supabase bucket still enforce the strict 1 MB image rule.

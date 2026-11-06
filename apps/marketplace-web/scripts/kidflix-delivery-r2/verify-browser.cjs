@@ -1,0 +1,23 @@
+require('./preview.cjs');
+const {chromium}=require(process.env.KIDFLIX_QA_PLAYWRIGHT||'playwright'),assert=require('node:assert/strict'),fs=require('fs');
+(async()=>{
+ const browser=await chromium.launch({headless:true,executablePath:process.env.KIDFLIX_QA_CHROME||undefined,args:['--no-sandbox','--no-zygote','--single-process','--disable-gpu']});
+ const page=await browser.newPage({viewport:{width:1440,height:1100}}),errors=[];page.on('pageerror',e=>errors.push(e.message));let checks=0;
+ const check=async(name,fn)=>{await fn();checks++;console.log('PASS '+name)};
+ await page.goto('http://127.0.0.1:4087/?legacy=1');
+ await check('three primary steps and desktop-only preview',async()=>{await page.getByRole('button',{name:'02 Vérifier',exact:true}).waitFor();assert.equal(await page.getByRole('button',{name:/^(Tablet|Mobile)$/i}).count(),0);await page.frameLocator('iframe').getByRole('button',{name:/Carte suivante/}).click();await page.frameLocator('iframe').getByText('B b',{exact:true}).waitFor();});
+ await check('review and apply exact metadata repairs',async()=>{await page.getByRole('button',{name:/Révision des données/}).click();await page.getByLabel('J’ai vérifié les classements et le comportement de reprise.').check();await page.getByRole('button',{name:'Appliquer les corrections vérifiées',exact:true}).click();await page.getByText('Vérification serveur réussie',{exact:true}).waitFor({timeout:12000});});
+ await check('subcategory and parent group are editable',async()=>{await page.getByRole('button',{name:'Collection et liens',exact:true}).click();await page.getByLabel('Sous-catégorie',{exact:true}).first().selectOption('concept');await page.getByLabel('Thème / groupe parent',{exact:true}).selectOption('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb');const r=await page.evaluate(()=>[...window.__qa.records.values()].at(-1));assert(r);});
+ await check('all fields and collections remain accessible without a sidebar',async()=>{await page.getByRole('button',{name:'Toutes les capacités ↗',exact:true}).click();const advanced=page.locator('[data-creation-drawer]');await advanced.waitFor();assert.equal(await advanced.evaluate(el=>getComputedStyle(el).position),'relative');assert((await advanced.innerText()).includes('Règles de classement'));});
+ await check('one publish action and public verification',async()=>{await page.getByRole('button',{name:'03 Publier',exact:true}).click();await page.getByRole('button',{name:'Publier cette édition',exact:true}).click();await page.getByRole('link',{name:'Ouvrir la ressource publiée',exact:true}).waitFor({timeout:12000});});
+ await page.screenshot({path:__dirname+'/publication-desktop.png',fullPage:false});
+ await page.goto('http://127.0.0.1:4087/?lang=ar');
+ await check('Arabic workspace is RTL',async()=>{await page.locator('[dir="rtl"]').first().waitFor();assert.equal(await page.getByRole('button',{name:/^(Tablet|Mobile)$/i}).count(),0);});
+ await page.goto('http://127.0.0.1:4087/?readonly=1');
+ await check('publication permission remains enforced in the UI',async()=>{await page.getByRole('button',{name:'03 Publier',exact:true}).click();assert.equal(await page.getByRole('button',{name:'Publier cette édition',exact:true}).isDisabled(),true);});
+ await page.goto('http://127.0.0.1:4087/?empty=1');
+ await check('large ZIP uses multiple bounded chunks and registers its cover',async()=>{const zip=Buffer.alloc(9*1024*1024+100,17);await page.locator('input[accept=".zip,application/zip"]').setInputFiles({name:'large-controlled-fixture.zip',mimeType:'application/zip',buffer:zip});await page.getByRole('button',{name:'Importer et analyser le projet',exact:true}).click();await page.getByRole('button',{name:'02 Vérifier',exact:true}).waitFor();await page.getByText('Vérification serveur réussie',{exact:true}).waitFor({timeout:15000});const state=await page.evaluate(()=>({chunks:window.__qa.received,records:[...window.__qa.records.values()]}));assert.equal(state.chunks.length,3);assert(state.records.some(r=>r.data?.interactivePackage?.id&&r.data?.coverAssetId));});
+ assert.deepEqual(errors,[]);checks++;console.log('PASS no browser JavaScript errors');
+ fs.writeFileSync(__dirname+'/browser-results.json',JSON.stringify({checksPassed:checks,errors,mode:'isolated controlled API fixtures; not production'},null,2));
+ await page.screenshot({path:__dirname+'/review-desktop.png',fullPage:false});await browser.close();console.log('BROWSER_CHECKS='+checks);process.exit(0);
+})().catch(e=>{console.error(e);process.exit(1)});

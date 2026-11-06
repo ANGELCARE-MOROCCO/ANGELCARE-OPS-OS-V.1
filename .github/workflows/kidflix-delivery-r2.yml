@@ -1,0 +1,53 @@
+name: Verify KidFlix HTML delivery
+on:
+  push:
+    branches: [upgrade/next-angelcare-upgrade]
+    paths:
+      - 'apps/marketplace-web/angelcare-marketplace/digital-customer-experience/**'
+      - 'apps/marketplace-web/angelcare-marketplace/kidflix/interactive/**'
+      - 'apps/marketplace-web/angelcare-marketplace/kidflix/detail/UniversalInteractivePlayer.tsx'
+      - 'apps/marketplace-web/app/api/kidflix/**'
+      - 'apps/marketplace-web/app/api/angelcare-marketplace/admin/digital-customer-experience/**'
+      - 'apps/marketplace-web/scripts/kidflix-delivery-r2/**'
+      - '.github/workflows/kidflix-delivery-r2.yml'
+  pull_request:
+    paths:
+      - 'apps/marketplace-web/angelcare-marketplace/digital-customer-experience/**'
+      - 'apps/marketplace-web/angelcare-marketplace/kidflix/interactive/**'
+      - 'apps/marketplace-web/scripts/kidflix-delivery-r2/**'
+permissions:
+  contents: read
+jobs:
+  contracts-and-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: apps/marketplace-web/scripts/kidflix-delivery-r2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: apps/marketplace-web/scripts/kidflix-delivery-r2/package-lock.json
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Verify delivery, PostgreSQL transactions and recoverable imports
+        run: npm run verify
+      - name: Verify the desktop operator workflow
+        shell: bash
+        run: |
+          export KIDFLIX_QA_CHROME="$(command -v google-chrome || command -v chromium || true)"
+          if [ -z "$KIDFLIX_QA_CHROME" ]; then
+            npx --no-install playwright install --with-deps chromium
+          fi
+          npm run browser
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: kidflix-delivery-r2-${{ github.sha }}
+          path: |
+            apps/marketplace-web/scripts/kidflix-delivery-r2/*-desktop.png
+            apps/marketplace-web/scripts/kidflix-delivery-r2/browser-results.json
+          if-no-files-found: warn
+          retention-days: 30

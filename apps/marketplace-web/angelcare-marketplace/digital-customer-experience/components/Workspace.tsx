@@ -61,6 +61,7 @@ import { AccessWorkspace } from "./Access";
 import { Publication, Inbox, Users } from "./Operations";
 import { Insights, Logs, Utilities, Settings } from "./Insights";
 import s from "./workspace.module.css";
+const AngelCareImageryStudio = lazy(() => import("../../marketplace-imagery/Studio").then(m=>({default:m.ImageryStudio})));
 const ImageryStudio = lazy(() => import("../../kidflix/imagery/Studio").then(m=>({default:m.ImageryStudio})));
 const InventoryMap = lazy(() => import("../inventory/InventoryMap").then(m=>({default:m.InventoryMap})));
 const CreationStudio = lazy(() => import("./CreationStudio").then(m=>({default:m.CreationStudio})));
@@ -288,6 +289,7 @@ export function Workspace({
       </>
     );
   else if (module === "content") body = <Registry kind="content" />;
+  else if (module === "angelcare-imagery") body = <AngelCareImageryStudio />;
   else if (module === "kidflix-imagery") body = <ImageryStudio />;
   else if (module === "media") body = <MediaLibrary />;
   else if (module === "templates") body = <DesignRegistry />;

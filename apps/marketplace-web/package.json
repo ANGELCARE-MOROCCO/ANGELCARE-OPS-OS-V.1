@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "kidflix:delivery:verify": "node scripts/kidflix-delivery-r2/verify.cjs",
     "dev": "next dev",
     "build": "NODE_OPTIONS=--max-old-space-size=16384 next build --turbopack",
     "start": "next start",

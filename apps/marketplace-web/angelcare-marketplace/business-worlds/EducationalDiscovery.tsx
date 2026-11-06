@@ -1,4 +1,6 @@
 "use client";
+import { ManagedImage } from "../marketplace-imagery/ManagedImage";
+import { imageryToken } from "../marketplace-imagery/pages";
 import Link from "next/link";
 import { useState } from "react";
 import { ArrowUpRight, Check, Lightbulb, BookOpen } from "lucide-react";
@@ -218,7 +220,7 @@ export function EducationalDiscovery({
           ))}
         </div>
         <div className={s.learningPanel}>
-          <img src={storefrontPhoto(world, topics[active].image)} alt="" loading="lazy" />
+          <ManagedImage slot={"visual.educational-discovery.1." + imageryToken(active)} src={storefrontPhoto(world, topics[active].image)} alt="" loading="lazy" />
           <div>
             <BookOpen size={25} />
             <h3>{tr(topics[active].title, locale)}</h3>

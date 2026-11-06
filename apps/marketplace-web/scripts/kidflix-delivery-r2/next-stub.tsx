@@ -1,0 +1,1 @@
+import React from'react';export function useSearchParams(){return new URLSearchParams(location.search)};export default function Link({href,children,...p}:any){return <a {...p} href={href}>{children}</a>}

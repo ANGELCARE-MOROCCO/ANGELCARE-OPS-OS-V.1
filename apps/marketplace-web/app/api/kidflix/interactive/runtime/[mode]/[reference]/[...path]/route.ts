@@ -1,3 +1,4 @@
+import {runtimeHealthScript} from '@/angelcare-marketplace/kidflix/interactive/runtime-health-script';
 import { createServiceClient } from '@/lib/supabase/server';
 import { KF_PACKAGE_BUCKET,KF_PACKAGE_TABLE,type PackageRow } from '@/angelcare-marketplace/kidflix/interactive/service';
 import { applicationOrigin,runtimeOrigin,safePackagePath,sha256,verifyPreviewToken } from '@/angelcare-marketplace/kidflix/interactive/package';
@@ -25,19 +26,21 @@ function officialLogo(){
   if(!/^\/[A-Za-z0-9/_\-.]+\.png$/.test(path)||path.includes('..'))throw Error('OFFICIAL_KIDFLIX_LOGO_NOT_CONFIGURED');
   return path;
 }
-function brandOverlay(){
+function brandOverlay(holder:string){
   const logo=officialLogo();
   // The host injects this outside package control. CSP allows the isolated origin's own PNG.
-  return `<div id="kidflix-host-authenticity" role="contentinfo"><img src="${logo}" alt="KidFlix" width="64" height="22"><span>KidFlix · Official educational experience</span></div>`;
+  const copyright=holder.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]!));
+  return `<div id="kidflix-host-authenticity" role="contentinfo"><img src="${logo}" alt="KidFlix" width="64" height="22"><span>© ${copyright} · KidFlix</span></div>`;
 }
-function htmlShell(html:string,previewNonce?:string,parentOrigin?:string){
+function htmlShell(html:string,nonce:string,holder:string,preview:boolean,parentOrigin:string){
   // HTML is executed only on the separate origin with a strict CSP.
   if(!/<\/body\s*>/i.test(html))throw Error('HTML_BODY_REQUIRED');
   const style=`<style>#kidflix-host-authenticity{position:fixed!important;right:10px!important;bottom:10px!important;z-index:2147483647!important;display:flex!important;align-items:center!important;gap:5px!important;background:rgba(255,255,255,.92)!important;border:1px solid rgba(25,42,70,.13)!important;border-radius:8px!important;padding:3px 5px!important;font:9px/1.2 system-ui,sans-serif!important;color:#56606f!important;pointer-events:none!important;max-width:150px!important;box-shadow:0 1px 6px rgba(0,0,0,.08)!important}#kidflix-host-authenticity img{display:block!important;max-height:22px!important;max-width:64px!important;object-fit:contain!important}#kidflix-host-authenticity span{font-size:8px!important;max-width:73px!important}</style>`;
   // KF_EXPERIENCE_STUDIO_ULTIMATE_20261103 — the inspector exists only in signed previews.
-  const instrumentation=previewNonce&&parentOrigin
-    ? '<script nonce="'+previewNonce+'">'+previewStudioScript(parentOrigin)+'</script>' : '';
-  return html.replace(/<\/body\s*>/i,style+brandOverlay()+instrumentation+'</body>');
+  const instrumentation=preview ? '<script nonce="'+nonce+'">'+previewStudioScript(parentOrigin)+'</script>' : '';
+  const health='<script nonce="'+nonce+'">'+runtimeHealthScript()+'</script>';
+  html=html.replace(/<head\b[^>]*>/i,head=>head+health);
+  return html.replace(/<\/body\s*>/i,style+brandOverlay(holder)+instrumentation+'</body>');
 }
 export async function GET(req:Request,{params}:{params:Promise<{mode:string;reference:string;path:string[]}>}){
   try{
@@ -77,8 +80,8 @@ export async function GET(req:Request,{params}:{params:Promise<{mode:string;refe
     if(bytes.length!==meta.size||sha256(bytes)!==meta.sha256)return error('PACKAGE_INTEGRITY_MISMATCH',503);
     const isHtml=meta.mime.startsWith('text/html');
     const origin=applicationOrigin();if(isHtml)officialLogo();
-    const nonce=isHtml&&mode==='preview'?randomBytes(18).toString('base64'):undefined;
-    const content=isHtml?htmlShell(bytes.toString('utf8'),nonce,origin):new Uint8Array(bytes);
+    const nonce=isHtml?randomBytes(18).toString('base64'):undefined;
+    const content=isHtml?htmlShell(bytes.toString('utf8'),nonce!,String((p.manifest.copyright as any)?.holder||'KidFlix'),mode==='preview',origin):new Uint8Array(bytes);
     // Sandbox is enforced by the response, even if opened directly.
 // Without allow-same-origin, executable HTML has an opaque origin.
     const assetOrigin=runtimeOrigin();

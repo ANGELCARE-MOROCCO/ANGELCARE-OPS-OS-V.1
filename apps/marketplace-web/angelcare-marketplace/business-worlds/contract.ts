@@ -110,12 +110,10 @@ export function prioritySummary(
     .slice(0, 1000);
 }
 export function appendBrief(message: string, brief: string, max: number) {
-  const clean = brief.trim().slice(0, 1000);
+  const clean = brief.trim().slice(0, Math.min(2000, max));
   if (!clean || message.includes(clean)) return message;
-  return (message.trim() ? `${message.trim()}\n\n${clean}` : clean).slice(
-    0,
-    max,
-  );
+  // Validation owns the length check. Never silently truncate the customer's message or selected offer IDs.
+  return message.trim() ? `${message.trim()}\n\n${clean}` : clean;
 }
 export function publicEvent(
   key: BusinessKey,

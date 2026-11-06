@@ -1,3 +1,4 @@
+import {businessTerritoryFromSearch} from '@/angelcare-marketplace/business-worlds/repository'
 import { storefrontMetadata,storefrontNativeMetadata } from '@/angelcare-marketplace/seo-power/storefronts'
 import {notFound} from 'next/navigation'
 import {PublicPartnerOs} from '@/angelcare-marketplace/partner-os/components/PublicPartnerOs'
@@ -7,11 +8,13 @@ import {storefrontExperience} from '@/angelcare-marketplace/catalog-discovery/re
 import type {CatalogLocale} from '@/angelcare-marketplace/catalog-discovery/types'
 import {partnerContext} from '@/angelcare-marketplace/storefront-immersive/native-context'
 
-export default async function Page({params}:{params:Promise<{locale:string}>}){
+export default async function Page({params,searchParams}:{params:Promise<{locale:string}>;searchParams?:Promise<Record<string,string|string[]|undefined>>}){
+ const territoryCode=businessTerritoryFromSearch(await searchParams)
+
  const {locale}=await params
  if(!['fr','en','ar'].includes(locale))notFound()
  const safe=locale as CatalogLocale
- const [plans,storefront]=await Promise.all([listPlans(),storefrontExperience({locale:safe,key:'partner-os'})])
+ const [plans,storefront]=await Promise.all([listPlans(),storefrontExperience({locale:safe,key:'partner-os',territoryCode})])
  return <Storefront experience={storefront} nativeContext={partnerContext(safe,plans)} nativeFallback={<PublicPartnerOs locale={safe} plans={plans}/>}/>
 }
 

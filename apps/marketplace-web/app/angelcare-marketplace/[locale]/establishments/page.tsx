@@ -1,3 +1,4 @@
+import {businessTerritoryFromSearch} from '@/angelcare-marketplace/business-worlds/repository'
 import { storefrontMetadata,storefrontNativeMetadata } from '@/angelcare-marketplace/seo-power/storefronts'
 import {PublicEstablishmentsExperience} from '@/angelcare-marketplace/b2b-verticals/components/PublicEstablishmentsExperience'
 import {publicVerticalSnapshot} from '@/angelcare-marketplace/b2b-verticals/repository'
@@ -6,13 +7,15 @@ import {Storefront} from '@/angelcare-marketplace/catalog-discovery/components/S
 import {storefrontExperience} from '@/angelcare-marketplace/catalog-discovery/repository'
 import {surfaceContext} from '@/angelcare-marketplace/storefront-immersive/native-context'
 
-export default async function Page({params}:{params:Promise<{locale:string}>}){
+export default async function Page({params,searchParams}:{params:Promise<{locale:string}>;searchParams?:Promise<Record<string,string|string[]|undefined>>}){
+ const territoryCode=businessTerritoryFromSearch(await searchParams)
+
  const {locale:raw}=await params
  const locale=raw==='ar'?'ar':raw==='en'?'en':'fr'
  const [snapshot,experience,storefront]=await Promise.all([
   publicVerticalSnapshot('establishment'),
   getPublishedSurface('establishments',{locale}).catch(()=>null),
-  storefrontExperience({locale,key:'establishments'}),
+  storefrontExperience({locale,key:'establishments',territoryCode}),
  ])
  return <Storefront experience={storefront} nativeContext={surfaceContext(experience)} nativeFallback={<PublicEstablishmentsExperience locale={locale} mode="establishments" activePrograms={snapshot.activePrograms} organizations={snapshot.organizations} experience={experience}/>}/>
 }

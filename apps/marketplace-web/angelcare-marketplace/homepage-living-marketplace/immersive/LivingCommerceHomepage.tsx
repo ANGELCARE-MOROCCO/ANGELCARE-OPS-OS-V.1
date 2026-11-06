@@ -1,4 +1,5 @@
 "use client";
+import { imageryToken } from "../../marketplace-imagery/pages";
 import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink';
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -544,7 +545,7 @@ export function LivingCommerceHomepage({
         </div>
         <div className={styles.heroStage}>
           <div className={styles.heroPhoto} key={scene.image}>
-            <Photo src={editorial(scene.image)} priority />
+            <Photo slot={"visual.living-commerce-homepage.1." + imageryToken(scene.world)} src={editorial(scene.image)} priority />
             <span className={styles.photoLabel}>{t(C.editorial)}</span>
             <span
               className={styles.heroProgress}
@@ -617,7 +618,7 @@ export function LivingCommerceHomepage({
             { key: "kits", image: "kits", label: C.kitFallback },
           ].map((value) => (
             <Link href={worldHref(value.key)} key={value.key}>
-              <Photo src={editorial(value.image)} />
+              <Photo slot={"visual.living-commerce-homepage.2." + imageryToken(value.image)} src={editorial(value.image)} />
               <div>
                 <span>
                   {worlds.find((world) => world.key === value.key)?.label}
@@ -697,7 +698,7 @@ export function LivingCommerceHomepage({
               data-accent={world.accent}
             >
               <div className={styles.worldPhoto}>
-                <Photo src={editorial(WORLD_PHOTOS[world.key] || "family")} />
+                <Photo slot={"visual.living-commerce-homepage.3." + imageryToken(index)} src={editorial(WORLD_PHOTOS[world.key] || "family")} />
                 <span>{String(index + 1).padStart(2, "0")}</span>
               </div>
               <strong>{world.label}</strong>
@@ -860,7 +861,7 @@ export function LivingCommerceHomepage({
         </Head>
         <div className={styles.familyMosaic}>
           <Link className={styles.familyMain} href={worldHref("families")}>
-            <Photo src={editorial("family")} />
+            <Photo slot={"visual.living-commerce-homepage.4"} src={editorial("family")} />
             <div>
               <span>{t(C.editorial)}</span>
               <h3>
@@ -883,7 +884,7 @@ export function LivingCommerceHomepage({
             className={styles.babyTile}
             onClick={() => selectNeed("baby")}
           >
-            <Photo src={editorial("support")} />
+            <Photo slot={"visual.living-commerce-homepage.5"} src={editorial("support")} />
             <span>
               <small>{t(NEEDS[2].label)}</small>
               <strong>
@@ -899,7 +900,7 @@ export function LivingCommerceHomepage({
             </span>
           </button>
           <Link className={styles.playTile} href={worldHref("development")}>
-            <Photo src={editorial("games")} />
+            <Photo slot={"visual.living-commerce-homepage.6"} src={editorial("games")} />
             <div>
               <span>
                 {t(
@@ -939,7 +940,7 @@ export function LivingCommerceHomepage({
         data-reveal
       >
         <div className={styles.serviceIntro}>
-          <Photo src={editorial("care")} />
+          <Photo slot={"visual.living-commerce-homepage.7"} src={editorial("care")} />
           <div>
             <span className={styles.eyebrow}>{t(C.service)}</span>
             <h2>{t(C.serviceTitle)}</h2>
@@ -1044,7 +1045,7 @@ export function LivingCommerceHomepage({
           </Action>
         </div>
         <div className={styles.developmentStage}>
-          <Photo src={editorial("montessori")} />
+          <Photo slot={"visual.living-commerce-homepage.8"} src={editorial("montessori")} />
           <span className={styles.stageCaption}>
             <BookOpen size={18} />
             {t(C.editorial)}
@@ -1077,7 +1078,7 @@ export function LivingCommerceHomepage({
                 ) + 1,
               ).padStart(2, "0")}
             </span>
-            <Photo
+            <Photo slot={(!kit) ? ("visual.living-commerce-homepage.9") : undefined}
               src={kit ? kit.media_url : editorial("kits")}
               contain={!!kit}
               alt={kit?.name || ""}
@@ -1426,7 +1427,7 @@ export function LivingCommerceHomepage({
           </>
         ) : (
           <div className={styles.collectionEmpty}>
-            <Photo src={editorial("box")} />
+            <Photo slot={"visual.living-commerce-homepage.10"} src={editorial("box")} />
             <div>
               <h3>
                 {t(
@@ -1530,7 +1531,7 @@ export function LivingCommerceHomepage({
             <Action href={worldHref("academy")}>{t(C.explore)}</Action>
           </div>
           <div className={styles.academyVisual}>
-            <Photo src={editorial("homework")} />
+            <Photo slot={"visual.living-commerce-homepage.11"} src={editorial("homework")} />
             <span>{t(C.editorial)}</span>
           </div>
         </div>
@@ -1578,7 +1579,7 @@ export function LivingCommerceHomepage({
         <div className={styles.professionalGrid}>
           {professionalKeys.map((key, index) => (
             <Link href={worldHref(key)} key={key}>
-              <Photo src={editorial(WORLD_PHOTOS[key])} />
+              <Photo slot={"visual.living-commerce-homepage.12." + imageryToken(index)} src={editorial(WORLD_PHOTOS[key])} />
               <span className={styles.sectorNumber}>0{index + 1}</span>
               <div>
                 <h3>{worlds.find((world) => world.key === key)?.label}</h3>
@@ -1665,7 +1666,7 @@ export function LivingCommerceHomepage({
         data-reveal
       >
         <div className={styles.guidancePhoto}>
-          <Photo src={editorial("support")} />
+          <Photo slot={"visual.living-commerce-homepage.13"} src={editorial("support")} />
           <span>{t(C.editorial)}</span>
         </div>
         <div className={styles.guidanceCopy}>
@@ -1819,7 +1820,7 @@ export function LivingCommerceHomepage({
       </section>
 
       <section className={styles.finale} data-home-module="finale" data-reveal>
-        <Photo src={editorial("family")} />
+        <Photo slot={"visual.living-commerce-homepage.14"} src={editorial("family")} />
         <div>
           <span className={styles.eyebrow}>
             ANGELCARE ·{" "}

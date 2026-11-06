@@ -1,10 +1,12 @@
 "use client";
+import { imageryToken } from "../marketplace-imagery/pages";
 import { useId, useState } from "react";
 import { ArrowRight, Check, CheckCircle2, ClipboardList } from "lucide-react";
 import type { Words } from "../storefront-immersive/content";
 import { B, tr, w } from "./content";
 import { Picture, useWorld } from "./Shared";
 import s from "./business.module.css";
+import { IntentMatches } from './Commerce';
 export interface ExplorerChoice {
   label: Words;
   title: Words;
@@ -29,6 +31,7 @@ export function Explorer({
 }) {
   const { locale, setContext } = useWorld(),
     [active, setActive] = useState(0),
+    [touched, setTouched] = useState(false),
     id = useId(),
     choice = choices[active];
   return (
@@ -52,6 +55,7 @@ export function Explorer({
             tabIndex={i === active ? 0 : -1}
             onClick={() => {
               setActive(i);
+              setTouched(true);
               setContext(dimension, tr(c.label, locale));
             }}
             onKeyDown={(e) => {
@@ -74,6 +78,7 @@ export function Explorer({
                     ? choices.length - 1
                     : (i + step + choices.length) % choices.length;
               setActive(next);
+              setTouched(true);
               setContext(dimension, tr(choices[next].label, locale));
               document.getElementById(`${id}-tab-${next}`)?.focus();
             }}
@@ -92,7 +97,7 @@ export function Explorer({
         tabIndex={0}
       >
         {choice.photo ? (
-          <Picture name={choice.photo} alt={tr(choice.label, locale)} />
+          <Picture slot={"visual.tools.1." + imageryToken(dimension + "." + active)} name={choice.photo} alt={tr(choice.label, locale)} />
         ) : null}
         <div>
           <span className={s.kicker}>
@@ -110,6 +115,7 @@ export function Explorer({
           </ul>
         </div>
       </div>
+      {touched ? <IntentMatches dimension={dimension} index={active} /> : null}
     </div>
   );
 }

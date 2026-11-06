@@ -1,0 +1,1647 @@
+[
+  {
+    "id": "home.visual.living-commerce-homepage.1.families",
+    "section": "hero",
+    "label": "Opening scene · families",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/hero.jpg"
+  },
+  {
+    "id": "home.visual.living-commerce-homepage.1.development",
+    "section": "hero",
+    "label": "Opening scene · development",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/montessori.jpg"
+  },
+  {
+    "id": "home.visual.living-commerce-homepage.1.establishments",
+    "section": "hero",
+    "label": "Opening scene · establishments",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/school.jpg"
+  },
+  {
+    "id": "home.visual.living-commerce-homepage.2.care",
+    "section": "hero",
+    "label": "Opening promotion · home-services",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/care.jpg"
+  },
+  {
+    "id": "home.visual.living-commerce-homepage.2.kits",
+    "section": "hero",
+    "label": "Opening promotion · kits",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/kits.jpg"
+  },
+  {
+    "id": "home.visual.living-commerce-homepage.3.0",
+    "section": "home-worlds",
+    "label": "World directory · families",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/family.jpg"
+  },
+  {
+    "id": "home.visual.living-commerce-homepage.3.1",
+    "section": "home-worlds",
+    "label": "World directory · home-services",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/care.jpg"
+  },
+  {
+    "id": "home.visual.living-commerce-homepage.3.2",
+    "section": "home-worlds",
+    "label": "World directory · development",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/montessori.jpg"
+  },
+  {
+    "id": "home.visual.living-commerce-homepage.3.3",
+    "section": "home-worlds",
+    "label": "World directory · kits",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/kits.jpg"
+  },
+  {
+    "id": "home.visual.living-commerce-homepage.3.4",
+    "section": "home-worlds",
+    "label": "World directory · academy",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/homework.jpg"
+  },
+  {
+    "id": "home.visual.living-commerce-homepage.3.5",
+    "section": "home-worlds",
+    "label": "World directory · establishments",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/preschool.jpg"
+  },
+  {
+    "id": "home.visual.living-commerce-homepage.3.6",
+    "section": "home-worlds",
+    "label": "World directory · hospitality",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/hospitality.jpg"
+  },
+  {
+    "id": "home.visual.living-commerce-homepage.3.7",
+    "section": "home-worlds",
+    "label": "World directory · health-partners",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/support.jpg"
+  },
+  {
+    "id": "home.visual.living-commerce-homepage.3.8",
+    "section": "home-worlds",
+    "label": "World directory · corporates",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/school.jpg"
+  },
+  {
+    "id": "home.visual.living-commerce-homepage.3.9",
+    "section": "home-worlds",
+    "label": "World directory · partner-os",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/digital.jpg"
+  },
+  {
+    "id": "home.visual.living-commerce-homepage.3.10",
+    "section": "home-worlds",
+    "label": "World directory · quality-check",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/support.jpg"
+  },
+  {
+    "id": "home.visual.living-commerce-homepage.3.11",
+    "section": "home-worlds",
+    "label": "World directory · professionals",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/care.jpg"
+  },
+  {
+    "id": "home.visual.living-commerce-homepage.4",
+    "section": "home-family",
+    "label": "home family · 4",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/family.jpg"
+  },
+  {
+    "id": "home.visual.living-commerce-homepage.5",
+    "section": "home-family",
+    "label": "home family · 5",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/support.jpg"
+  },
+  {
+    "id": "home.visual.living-commerce-homepage.6",
+    "section": "home-family",
+    "label": "home family · 6",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/games.jpg"
+  },
+  {
+    "id": "home.visual.living-commerce-homepage.7",
+    "section": "home-services",
+    "label": "home services · 7",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/care.jpg"
+  },
+  {
+    "id": "home.visual.living-commerce-homepage.8",
+    "section": "home-development",
+    "label": "home development · 8",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/montessori.jpg"
+  },
+  {
+    "id": "home.visual.living-commerce-homepage.9",
+    "section": "home-kits",
+    "label": "home kits · 9",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/kits.jpg",
+    "condition": "Editorial fallback only; native catalogue imagery remains authoritative."
+  },
+  {
+    "id": "home.visual.living-commerce-homepage.10",
+    "section": "home-collections",
+    "label": "home collections · 10",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/box.jpg"
+  },
+  {
+    "id": "home.visual.living-commerce-homepage.11",
+    "section": "home-academy",
+    "label": "home academy · 11",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/homework.jpg"
+  },
+  {
+    "id": "home.visual.living-commerce-homepage.12.0",
+    "section": "home-professional",
+    "label": "Professional world · establishments",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/preschool.jpg"
+  },
+  {
+    "id": "home.visual.living-commerce-homepage.12.1",
+    "section": "home-professional",
+    "label": "Professional world · hospitality",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/hospitality.jpg"
+  },
+  {
+    "id": "home.visual.living-commerce-homepage.12.2",
+    "section": "home-professional",
+    "label": "Professional world · health-partners",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/support.jpg"
+  },
+  {
+    "id": "home.visual.living-commerce-homepage.12.3",
+    "section": "home-professional",
+    "label": "Professional world · corporates",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/school.jpg"
+  },
+  {
+    "id": "home.visual.living-commerce-homepage.13",
+    "section": "home-guidance",
+    "label": "home guidance · 13",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/support.jpg"
+  },
+  {
+    "id": "home.visual.living-commerce-homepage.14",
+    "section": "finale",
+    "label": "finale · 14",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/family.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.1",
+    "section": "family-top",
+    "label": "family top · 1",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/hero.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.2.0",
+    "section": "family-gateways",
+    "label": "Family gateway · home-services",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/care.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.2.1",
+    "section": "family-gateways",
+    "label": "Family gateway · development",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/montessori.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.2.2",
+    "section": "family-gateways",
+    "label": "Family gateway · kits",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/kits.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.3.0",
+    "section": "family-needs",
+    "label": "Family need · care",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/family.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.3.1",
+    "section": "family-needs",
+    "label": "Family need · baby",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/care.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.3.2",
+    "section": "family-needs",
+    "label": "Family need · learn",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/homework.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.3.3",
+    "section": "family-needs",
+    "label": "Family need · play",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/games.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.3.4",
+    "section": "family-needs",
+    "label": "Family need · adapted",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/support.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.4",
+    "section": "family-care",
+    "label": "family care · 4",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/care.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.5.0",
+    "section": "family-rhythm",
+    "label": "Family rhythm · occasional",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/care.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.5.1",
+    "section": "family-rhythm",
+    "label": "Family rhythm · recurring",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/family.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.5.2",
+    "section": "family-rhythm",
+    "label": "Family rhythm · night",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/evening.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.5.3",
+    "section": "family-rhythm",
+    "label": "Family rhythm · pickup",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/school.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.6",
+    "section": "family-learn",
+    "label": "family learn · 6",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/montessori.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.7",
+    "section": "family-play",
+    "label": "family play · 7",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/kits.jpg",
+    "condition": "Editorial fallback only; native catalogue imagery remains authoritative."
+  },
+  {
+    "id": "families.visual.family-gateway.8.0",
+    "section": "family-moments",
+    "label": "Editorial moment · school",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/school.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.8.1",
+    "section": "family-moments",
+    "label": "Editorial moment · flashcards",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/flashcards.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.8.2",
+    "section": "family-moments",
+    "label": "Editorial moment · games",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/games.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.10",
+    "section": "family-collections",
+    "label": "family collections · 10",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/games.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.12.home-childcare-one-time",
+    "section": "family-directory",
+    "label": "Family atomic story · home-childcare-one-time",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/care.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.12.home-childcare-recurring",
+    "section": "family-directory",
+    "label": "Family atomic story · home-childcare-recurring",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/family.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.12.school-pickup-care",
+    "section": "family-directory",
+    "label": "Family atomic story · school-pickup-care",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/school.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.12.overnight-extended-care",
+    "section": "family-directory",
+    "label": "Family atomic story · overnight-extended-care",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/evening.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.12.emergency-last-minute-care",
+    "section": "family-directory",
+    "label": "Family atomic story · emergency-last-minute-care",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/urgent.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.12.montessori-home-service",
+    "section": "family-directory",
+    "label": "Family atomic story · montessori-home-service",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/montessori.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.12.learning-homework-support",
+    "section": "family-directory",
+    "label": "Family atomic story · learning-homework-support",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/homework.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.12.non-medical-support-service",
+    "section": "family-directory",
+    "label": "Family atomic story · non-medical-support-service",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/support.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.12.flashcards-learning-product",
+    "section": "family-directory",
+    "label": "Family atomic story · flashcards-learning-product",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/flashcards.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.12.montessori-development-kit",
+    "section": "family-directory",
+    "label": "Family atomic story · montessori-development-kit",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/kits.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.12.development-game",
+    "section": "family-directory",
+    "label": "Family atomic story · development-game",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/games.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.12.activity-subscription-box",
+    "section": "family-directory",
+    "label": "Family atomic story · activity-subscription-box",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/box.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.12.digital-learning-resource",
+    "section": "family-directory",
+    "label": "Family atomic story · digital-learning-resource",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/digital.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.12.hotel-travel-childcare",
+    "section": "family-directory",
+    "label": "Family atomic story · hotel-travel-childcare",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/hospitality.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.12.holiday-excursion-programme",
+    "section": "family-directory",
+    "label": "Family atomic story · holiday-excursion-programme",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/holidays.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.12.preschool-admission",
+    "section": "family-directory",
+    "label": "Family atomic story · preschool-admission",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/preschool.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.13",
+    "section": "family-guidance",
+    "label": "family guidance · 13",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/family.jpg"
+  },
+  {
+    "id": "development.visual.immersive-storefront.1",
+    "section": "sf-top",
+    "label": "sf top · 1",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/development/development.webp",
+    "condition": "Editorial fallback only; native catalogue imagery remains authoritative."
+  },
+  {
+    "id": "kits.visual.immersive-storefront.1",
+    "section": "sf-top",
+    "label": "sf top · 1",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/kits/kits.webp",
+    "condition": "Editorial fallback only; native catalogue imagery remains authoritative."
+  },
+  {
+    "id": "academy.visual.immersive-storefront.1",
+    "section": "sf-top",
+    "label": "sf top · 1",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/academy/academy.webp",
+    "condition": "Editorial fallback only; native catalogue imagery remains authoritative."
+  },
+  {
+    "id": "development.visual.immersive-storefront.2",
+    "section": "sf-top",
+    "label": "sf top · 2",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/development/flashcards.webp"
+  },
+  {
+    "id": "kits.visual.immersive-storefront.2",
+    "section": "sf-top",
+    "label": "sf top · 2",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/kits/flashcards.webp"
+  },
+  {
+    "id": "academy.visual.immersive-storefront.2",
+    "section": "sf-top",
+    "label": "sf top · 2",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/academy/professional.webp"
+  },
+  {
+    "id": "development.visual.immersive-storefront.3.0",
+    "section": "topics",
+    "label": "Discover · Language & expression",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/development/flashcards.webp"
+  },
+  {
+    "id": "development.visual.immersive-storefront.3.1",
+    "section": "topics",
+    "label": "Discover · Independence & Montessori",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/development/montessori.webp"
+  },
+  {
+    "id": "development.visual.immersive-storefront.3.2",
+    "section": "topics",
+    "label": "Discover · Creativity & play",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/development/games.webp"
+  },
+  {
+    "id": "development.visual.immersive-storefront.3.3",
+    "section": "topics",
+    "label": "Discover · Focus & learning",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/development/homework.webp"
+  },
+  {
+    "id": "kits.visual.immersive-storefront.3.0",
+    "section": "topics",
+    "label": "Discover · Montessori kits",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/kits/montessori.webp"
+  },
+  {
+    "id": "kits.visual.immersive-storefront.3.1",
+    "section": "topics",
+    "label": "Discover · Flashcards",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/kits/flashcards.webp"
+  },
+  {
+    "id": "kits.visual.immersive-storefront.3.2",
+    "section": "topics",
+    "label": "Discover · Development games",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/kits/games.webp"
+  },
+  {
+    "id": "kits.visual.immersive-storefront.3.3",
+    "section": "topics",
+    "label": "Discover · Digital resources",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/kits/digital.webp"
+  },
+  {
+    "id": "academy.visual.immersive-storefront.3.0",
+    "section": "topics",
+    "label": "Discover · Early childhood",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/academy/care.webp"
+  },
+  {
+    "id": "academy.visual.immersive-storefront.3.1",
+    "section": "topics",
+    "label": "Discover · Teaching & Montessori",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/academy/montessori.webp"
+  },
+  {
+    "id": "academy.visual.immersive-storefront.3.2",
+    "section": "topics",
+    "label": "Discover · Professional pathways",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/academy/professional.webp"
+  },
+  {
+    "id": "academy.visual.immersive-storefront.3.3",
+    "section": "topics",
+    "label": "Discover · Team training",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/academy/school.webp"
+  },
+  {
+    "id": "development.visual.immersive-storefront.4.0",
+    "section": "sf-editorial",
+    "label": "Editorial chapter · Learning starts with play",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/development/games.webp"
+  },
+  {
+    "id": "development.visual.immersive-storefront.4.1",
+    "section": "sf-editorial",
+    "label": "Editorial chapter · Bring discovery home",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/development/montessori.webp"
+  },
+  {
+    "id": "development.visual.immersive-storefront.4.2",
+    "section": "sf-editorial",
+    "label": "Editorial chapter · The joy of trying again",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/development/development.webp"
+  },
+  {
+    "id": "kits.visual.immersive-storefront.4.0",
+    "section": "sf-editorial",
+    "label": "Editorial chapter · Details make the difference",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/kits/kits.webp"
+  },
+  {
+    "id": "kits.visual.immersive-storefront.4.1",
+    "section": "sf-editorial",
+    "label": "Editorial chapter · Build a meaningful selection",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/kits/flashcards.webp"
+  },
+  {
+    "id": "kits.visual.immersive-storefront.4.2",
+    "section": "sf-editorial",
+    "label": "Editorial chapter · Keep the discovery going",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/kits/games.webp"
+  },
+  {
+    "id": "academy.visual.immersive-storefront.4.0",
+    "section": "sf-editorial",
+    "label": "Editorial chapter · Turn ambition into action",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/academy/academy.webp"
+  },
+  {
+    "id": "academy.visual.immersive-storefront.4.1",
+    "section": "sf-editorial",
+    "label": "Editorial chapter · Learn close to real practice",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/academy/professional.webp"
+  },
+  {
+    "id": "academy.visual.immersive-storefront.4.2",
+    "section": "sf-editorial",
+    "label": "Editorial chapter · One team, a shared learning project",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/academy/school.webp"
+  },
+  {
+    "id": "development.visual.immersive-storefront.5",
+    "section": "sf-resources",
+    "label": "sf resources · 5",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/development/flashcards.webp"
+  },
+  {
+    "id": "kits.visual.immersive-storefront.5",
+    "section": "sf-resources",
+    "label": "sf resources · 5",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/kits/flashcards.webp"
+  },
+  {
+    "id": "academy.visual.immersive-storefront.5",
+    "section": "sf-resources",
+    "label": "sf resources · 5",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/academy/professional.webp"
+  },
+  {
+    "id": "development.visual.immersive-storefront.6.0",
+    "section": "related",
+    "label": "Related world · kits",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/development/montessori.webp"
+  },
+  {
+    "id": "development.visual.immersive-storefront.6.1",
+    "section": "related",
+    "label": "Related world · home-services",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/development/family.webp"
+  },
+  {
+    "id": "development.visual.immersive-storefront.6.2",
+    "section": "related",
+    "label": "Related world · families",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/development/family.webp"
+  },
+  {
+    "id": "kits.visual.immersive-storefront.6.0",
+    "section": "related",
+    "label": "Related world · development",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/kits/games.webp"
+  },
+  {
+    "id": "kits.visual.immersive-storefront.6.1",
+    "section": "related",
+    "label": "Related world · families",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/kits/family.webp"
+  },
+  {
+    "id": "kits.visual.immersive-storefront.6.2",
+    "section": "related",
+    "label": "Related world · academy",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/kits/family.webp"
+  },
+  {
+    "id": "academy.visual.immersive-storefront.6.0",
+    "section": "related",
+    "label": "Related world · professionals",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/academy/professional.webp"
+  },
+  {
+    "id": "academy.visual.immersive-storefront.6.1",
+    "section": "related",
+    "label": "Related world · establishments",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/academy/care.webp"
+  },
+  {
+    "id": "academy.visual.immersive-storefront.6.2",
+    "section": "related",
+    "label": "Related world · development",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/academy/montessori.webp"
+  },
+  {
+    "id": "development.visual.immersive-storefront.7",
+    "section": "final",
+    "label": "final · 7",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/development/development.webp"
+  },
+  {
+    "id": "kits.visual.immersive-storefront.7",
+    "section": "final",
+    "label": "final · 7",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/kits/kits.webp"
+  },
+  {
+    "id": "academy.visual.immersive-storefront.7",
+    "section": "final",
+    "label": "final · 7",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/academy/academy.webp"
+  },
+  {
+    "id": "development.visual.signature-experiences.1",
+    "section": "signature-experiences",
+    "label": "signature experiences · 1",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/development/montessori.webp"
+  },
+  {
+    "id": "kits.visual.signature-experiences.2",
+    "section": "signature-experiences",
+    "label": "signature experiences · 2",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/kits/kits.webp"
+  },
+  {
+    "id": "establishments.visual.establishments.1",
+    "section": "establishments",
+    "label": "establishments · 1",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/establishments/school.webp"
+  },
+  {
+    "id": "hospitality.visual.hospitality.1",
+    "section": "hospitality",
+    "label": "hospitality · 1",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/hospitality.webp"
+  },
+  {
+    "id": "health-partners.visual.health-partners.1",
+    "section": "health-partners",
+    "label": "health partners · 1",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/health-partners/health.webp"
+  },
+  {
+    "id": "health-partners.visual.health-partners.2",
+    "section": "care-workshops",
+    "label": "care workshops · 2",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/health-partners/academy.webp"
+  },
+  {
+    "id": "corporates.visual.corporates.1",
+    "section": "corporates",
+    "label": "corporates · 1",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/corporates/corporate.webp"
+  },
+  {
+    "id": "corporates.visual.corporates.2",
+    "section": "corporates",
+    "label": "corporates · 2",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/corporates/family.webp"
+  },
+  {
+    "id": "corporates.visual.corporates.3",
+    "section": "employer-deployment",
+    "label": "employer deployment · 3",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/corporates/desk.webp"
+  },
+  {
+    "id": "partner-os.visual.partner-os.1",
+    "section": "os-clarity",
+    "label": "os clarity · 1",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/partner-os/desk.webp"
+  },
+  {
+    "id": "quality-check.visual.quality-check.1",
+    "section": "quality-check",
+    "label": "quality check · 1",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/quality-check/school.webp"
+  },
+  {
+    "id": "quality-check.visual.quality-check.2",
+    "section": "quality-action",
+    "label": "quality action · 2",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/quality-check/professional.webp"
+  },
+  {
+    "id": "professionals.visual.professionals.1",
+    "section": "professionals",
+    "label": "professionals · 1",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/professionals/professional.webp"
+  },
+  {
+    "id": "professionals.visual.professionals.2",
+    "section": "professionals",
+    "label": "professionals · 2",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/professionals/preschool.webp"
+  },
+  {
+    "id": "professionals.visual.professionals.3",
+    "section": "professional-practice",
+    "label": "professional practice · 3",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/professionals/professional.webp"
+  },
+  {
+    "id": "professionals.visual.professionals.4",
+    "section": "professional-learning",
+    "label": "professional learning · 4",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/professionals/academy.webp"
+  },
+  {
+    "id": "establishments.visual.shared.1.0",
+    "section": "shared",
+    "label": "Dossier · Understand your starting point",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/establishments/preschool.webp"
+  },
+  {
+    "id": "establishments.visual.shared.1.1",
+    "section": "shared",
+    "label": "Dossier · Develop competencies",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/establishments/academy.webp"
+  },
+  {
+    "id": "establishments.visual.shared.1.2",
+    "section": "shared",
+    "label": "Dossier · Structure your progress",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/establishments/desk.webp"
+  },
+  {
+    "id": "hospitality.visual.shared.1.0",
+    "section": "shared",
+    "label": "Dossier · Kids Club",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/games.webp"
+  },
+  {
+    "id": "hospitality.visual.shared.1.1",
+    "section": "shared",
+    "label": "Dossier · Guest Childcare",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/care.webp"
+  },
+  {
+    "id": "hospitality.visual.shared.1.2",
+    "section": "shared",
+    "label": "Dossier · Family Concierge",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/family.webp"
+  },
+  {
+    "id": "hospitality.visual.shared.1.3",
+    "section": "shared",
+    "label": "Dossier · Seasonal programmes",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/holidays.webp"
+  },
+  {
+    "id": "health-partners.visual.shared.1.0",
+    "section": "shared",
+    "label": "Dossier · Maternity & preparation",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/health-partners/newborn.webp"
+  },
+  {
+    "id": "health-partners.visual.shared.1.1",
+    "section": "shared",
+    "label": "Dossier · Mother & Baby Care",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/health-partners/care.webp"
+  },
+  {
+    "id": "health-partners.visual.shared.1.2",
+    "section": "shared",
+    "label": "Dossier · Workshops & orientation",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/health-partners/support.webp"
+  },
+  {
+    "id": "corporates.visual.shared.1.0",
+    "section": "shared",
+    "label": "Dossier · Family Benefits",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/corporates/family.webp"
+  },
+  {
+    "id": "corporates.visual.shared.1.1",
+    "section": "shared",
+    "label": "Dossier · Emergency Support",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/corporates/urgent.webp"
+  },
+  {
+    "id": "corporates.visual.shared.1.2",
+    "section": "shared",
+    "label": "Dossier · Family Days",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/corporates/holidays.webp"
+  },
+  {
+    "id": "partner-os.visual.shared.1.0",
+    "section": "shared",
+    "label": "Dossier · An organisation workspace",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/partner-os/desk.webp"
+  },
+  {
+    "id": "partner-os.visual.shared.1.1",
+    "section": "shared",
+    "label": "Dossier · Role-based access",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/partner-os/professional.webp"
+  },
+  {
+    "id": "partner-os.visual.shared.1.2",
+    "section": "shared",
+    "label": "Dossier · Prepared activation",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/partner-os/academy.webp"
+  },
+  {
+    "id": "quality-check.visual.shared.1.0",
+    "section": "shared",
+    "label": "Dossier · Define the scope",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/quality-check/school.webp"
+  },
+  {
+    "id": "quality-check.visual.shared.1.1",
+    "section": "shared",
+    "label": "Dossier · Gather the evidence",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/quality-check/desk.webp"
+  },
+  {
+    "id": "quality-check.visual.shared.1.2",
+    "section": "shared",
+    "label": "Dossier · Organise improvement",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/quality-check/professional.webp"
+  },
+  {
+    "id": "professionals.visual.shared.1.0",
+    "section": "shared",
+    "label": "Dossier · Educational practice",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/professionals/preschool.webp"
+  },
+  {
+    "id": "professionals.visual.shared.1.1",
+    "section": "shared",
+    "label": "Dossier · Supporting families",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/professionals/care.webp"
+  },
+  {
+    "id": "professionals.visual.shared.1.2",
+    "section": "shared",
+    "label": "Dossier · Learn & prepare",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/professionals/academy.webp"
+  },
+  {
+    "id": "home-services.visual.home-services-storefront.1.care",
+    "section": "service-universes",
+    "label": "Service universe · care",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/care.jpg"
+  },
+  {
+    "id": "home-services.visual.home-services-storefront.1.baby",
+    "section": "service-universes",
+    "label": "Service universe · baby",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/family.jpg"
+  },
+  {
+    "id": "home-services.visual.home-services-storefront.1.activities",
+    "section": "service-universes",
+    "label": "Service universe · activities",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/montessori.jpg"
+  },
+  {
+    "id": "home-services.visual.home-services-storefront.1.support",
+    "section": "service-universes",
+    "label": "Service universe · support",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/support.jpg"
+  },
+  {
+    "id": "home-services.visual.home-services-storefront.1.events",
+    "section": "service-universes",
+    "label": "Service universe · events",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/holidays.jpg"
+  },
+  {
+    "id": "home-services.visual.home-services-storefront.1.other",
+    "section": "service-universes",
+    "label": "Service universe · other",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/hero.jpg"
+  },
+  {
+    "id": "home-services.visual.home-services-storefront.2",
+    "section": "home-services-storefront",
+    "label": "home services storefront · 2",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/hero.jpg"
+  },
+  {
+    "id": "home-services.visual.service-hero.1.care",
+    "section": "services-top",
+    "label": "Opening service scene · care",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/care.jpg"
+  },
+  {
+    "id": "home-services.visual.service-hero.1.baby",
+    "section": "services-top",
+    "label": "Opening service scene · baby",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/family.jpg"
+  },
+  {
+    "id": "home-services.visual.service-hero.1.activities",
+    "section": "services-top",
+    "label": "Opening service scene · activities",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/montessori.jpg"
+  },
+  {
+    "id": "home-services.visual.service-hero.1.support",
+    "section": "services-top",
+    "label": "Opening service scene · support",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/support.jpg"
+  },
+  {
+    "id": "home-services.visual.service-hero.1.events",
+    "section": "services-top",
+    "label": "Opening service scene · events",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/holidays.jpg"
+  },
+  {
+    "id": "home-services.visual.service-hero.1.other",
+    "section": "services-top",
+    "label": "Opening service scene · other",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/hero.jpg"
+  },
+  {
+    "id": "home.visual.homepage-flagship.2",
+    "section": "homepage-flagship",
+    "label": "homepage flagship · 2",
+    "sequence": true,
+    "owner": "editable",
+    "condition": "Editorial fallback only; native catalogue imagery remains authoritative."
+  },
+  {
+    "id": "establishments.visual.tools.1.institution-context-0",
+    "section": "tools",
+    "label": "Explorer · Early foundations matter.",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/establishments/preschool.webp"
+  },
+  {
+    "id": "establishments.visual.tools.1.institution-context-1",
+    "section": "tools",
+    "label": "Explorer · Connect experiences around the child.",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/establishments/school.webp"
+  },
+  {
+    "id": "establishments.visual.tools.1.campus-dimension-0",
+    "section": "tools",
+    "label": "Explorer · An environment that supports use.",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/establishments/school.webp"
+  },
+  {
+    "id": "establishments.visual.tools.1.campus-dimension-1",
+    "section": "tools",
+    "label": "Explorer · Develop practice together.",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/establishments/professional.webp"
+  },
+  {
+    "id": "establishments.visual.tools.1.campus-dimension-2",
+    "section": "tools",
+    "label": "Explorer · Make the relationship clearer.",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/establishments/family.webp"
+  },
+  {
+    "id": "establishments.visual.tools.1.campus-dimension-3",
+    "section": "tools",
+    "label": "Explorer · Give improvement a direction.",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/establishments/desk.webp"
+  },
+  {
+    "id": "hospitality.visual.tools.1.stay-moment-0",
+    "section": "tools",
+    "label": "Explorer · Understanding begins at arrival.",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/hospitality.webp"
+  },
+  {
+    "id": "hospitality.visual.tools.1.stay-moment-1",
+    "section": "tools",
+    "label": "Explorer · Imagine a world of activities.",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/games.webp"
+  },
+  {
+    "id": "hospitality.visual.tools.1.stay-moment-2",
+    "section": "tools",
+    "label": "Explorer · Prepare clear terms.",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/care.webp"
+  },
+  {
+    "id": "hospitality.visual.tools.1.stay-moment-3",
+    "section": "tools",
+    "label": "Explorer · Make room for shared memories.",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/family.webp"
+  },
+  {
+    "id": "hospitality.visual.tools.1.stay-moment-4",
+    "section": "tools",
+    "label": "Explorer · A clear experience through to the end.",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/holidays.webp"
+  },
+  {
+    "id": "hospitality.visual.tools.1.property-context-0",
+    "section": "tools",
+    "label": "Explorer · Work with the rhythm of the stay.",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/hospitality.webp"
+  },
+  {
+    "id": "hospitality.visual.tools.1.property-context-1",
+    "section": "tools",
+    "label": "Explorer · Prepare an experience shaped by the season.",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/holidays.webp"
+  },
+  {
+    "id": "health-partners.visual.tools.1.care-stage-0",
+    "section": "tools",
+    "label": "Explorer · Prepare support around birth.",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/health-partners/newborn.webp"
+  },
+  {
+    "id": "health-partners.visual.tools.1.care-stage-1",
+    "section": "tools",
+    "label": "Explorer · Support a new arrangement.",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/health-partners/support.webp"
+  },
+  {
+    "id": "health-partners.visual.tools.1.care-stage-2",
+    "section": "tools",
+    "label": "Explorer · Put needs into words.",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/health-partners/family.webp"
+  },
+  {
+    "id": "health-partners.visual.tools.1.care-stage-3",
+    "section": "tools",
+    "label": "Explorer · Prepare shared learning moments.",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/health-partners/academy.webp"
+  },
+  {
+    "id": "health-partners.visual.tools.1.care-perspective-0",
+    "section": "tools",
+    "label": "Explorer · Support that makes sense.",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/health-partners/family.webp"
+  },
+  {
+    "id": "health-partners.visual.tools.1.care-perspective-1",
+    "section": "tools",
+    "label": "Explorer · Prepare clear cooperation.",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/health-partners/health.webp"
+  },
+  {
+    "id": "corporates.visual.shared.2.0",
+    "section": "shared",
+    "label": "Visual tile · A rhythm to organise",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/corporates/homework.webp"
+  },
+  {
+    "id": "corporates.visual.shared.2.1",
+    "section": "shared",
+    "label": "Visual tile · A transition to support",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/corporates/newborn.webp"
+  },
+  {
+    "id": "corporates.visual.shared.2.2",
+    "section": "shared",
+    "label": "Visual tile · An unexpected moment to prepare for",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/corporates/urgent.webp"
+  },
+  {
+    "id": "corporates.visual.tools.1.employer-perspective-0",
+    "section": "tools",
+    "label": "Explorer · Understand how to benefit.",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/corporates/family.webp"
+  },
+  {
+    "id": "corporates.visual.tools.1.employer-perspective-1",
+    "section": "tools",
+    "label": "Explorer · Define a usable framework.",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/corporates/corporate.webp"
+  },
+  {
+    "id": "professionals.visual.tools.1.professional-direction-0",
+    "section": "tools",
+    "label": "Explorer · Observe, prepare, cooperate.",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/professionals/preschool.webp"
+  },
+  {
+    "id": "professionals.visual.tools.1.professional-direction-1",
+    "section": "tools",
+    "label": "Explorer · Work within a clear framework.",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/professionals/care.webp"
+  },
+  {
+    "id": "professionals.visual.tools.1.professional-direction-2",
+    "section": "tools",
+    "label": "Explorer · Bring coherent activities to life.",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/professionals/games.webp"
+  },
+  {
+    "id": "professionals.visual.tools.1.professional-direction-3",
+    "section": "tools",
+    "label": "Explorer · Choose a next skill.",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/professionals/academy.webp"
+  },
+  {
+    "id": "families.visual.family-gateway.11.hotel-travel-childcare",
+    "section": "family-travel",
+    "label": "Editorial context · hotel-travel-childcare",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/hospitality.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.11.holiday-excursion-programme",
+    "section": "family-travel",
+    "label": "Editorial context · holiday-excursion-programme",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/holidays.jpg"
+  },
+  {
+    "id": "families.visual.family-gateway.11.preschool-admission",
+    "section": "family-travel",
+    "label": "Editorial context · preschool-admission",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/families-world-r2/preschool.jpg"
+  },
+  {
+    "id": "hospitality.visual.hospitality.2.games",
+    "section": "stay-gallery",
+    "label": "Editorial context · games",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/games.webp"
+  },
+  {
+    "id": "hospitality.visual.hospitality.2.family",
+    "section": "stay-gallery",
+    "label": "Editorial context · family",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/family.webp"
+  },
+  {
+    "id": "hospitality.visual.hospitality.2.montessori",
+    "section": "stay-gallery",
+    "label": "Editorial context · montessori",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/montessori.webp"
+  },
+  {
+    "id": "development.visual.educational-discovery.1.0",
+    "section": "educational-discovery",
+    "label": "Experience guidance · Explore",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/development/montessori.webp"
+  },
+  {
+    "id": "development.visual.educational-discovery.1.1",
+    "section": "educational-discovery",
+    "label": "Experience guidance · Support",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/development/family.webp"
+  },
+  {
+    "id": "development.visual.educational-discovery.1.2",
+    "section": "educational-discovery",
+    "label": "Experience guidance · Vary",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/development/flashcards.webp"
+  },
+  {
+    "id": "kits.visual.educational-discovery.1.0",
+    "section": "educational-discovery",
+    "label": "Experience guidance · Choose",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/kits/kits.webp"
+  },
+  {
+    "id": "kits.visual.educational-discovery.1.1",
+    "section": "educational-discovery",
+    "label": "Experience guidance · Prepare",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/kits/montessori.webp"
+  },
+  {
+    "id": "kits.visual.educational-discovery.1.2",
+    "section": "educational-discovery",
+    "label": "Experience guidance · Use again",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/kits/games.webp"
+  },
+  {
+    "id": "academy.visual.educational-discovery.1.0",
+    "section": "educational-discovery",
+    "label": "Experience guidance · Objective",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/academy/academy.webp"
+  },
+  {
+    "id": "academy.visual.educational-discovery.1.1",
+    "section": "educational-discovery",
+    "label": "Experience guidance · Delivery",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/academy/desk.webp"
+  },
+  {
+    "id": "academy.visual.educational-discovery.1.2",
+    "section": "educational-discovery",
+    "label": "Experience guidance · Progression",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/academy/professional.webp"
+  }
+]

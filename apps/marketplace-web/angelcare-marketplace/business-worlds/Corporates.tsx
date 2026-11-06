@@ -53,8 +53,8 @@ export function Corporates() {
           </div>
         </div>
         <div className={s.corporateCollage}>
-          <Picture name="corporate" priority />
-          <Picture name="family" />
+          <Picture slot={"visual.corporates.1"} name="corporate" priority />
+          <Picture slot={"visual.corporates.2"} name="family" />
           <div className={s.floatingLabel}>
             {tr(
               w(
@@ -317,7 +317,7 @@ export function Corporates() {
         tone="paper"
       >
         <div className={s.split}>
-          <Picture name="desk" />
+          <Picture slot={"visual.corporates.3"} name="desk" />
           <Steps
             vertical
             steps={[

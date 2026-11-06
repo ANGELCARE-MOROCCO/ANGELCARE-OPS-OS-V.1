@@ -1,4 +1,6 @@
+import {packageCompatibility} from './compatibility';
 import 'server-only';
+import {packageForLocale,isHtmlDelivery,validInteractiveReference} from '../../digital-customer-experience/delivery-contract';
 import { randomUUID } from 'node:crypto';
 import { createServiceClient } from '@/lib/supabase/server';
 import type { MarketplaceRequestContext } from '@/angelcare-marketplace/domain/types';
@@ -21,6 +23,7 @@ export async function scopedPackage(id:string,scope:string):Promise<PackageRow>{
 export async function importPackage(c:MarketplaceRequestContext,archive:Buffer,declaredFamily:string,declaredLocale:string){
   authorize(c,'manage');
   const p=inspectZip(archive);
+  const compatibility=packageCompatibility(p);if(!compatibility.valid)throw Error(compatibility.issues.map(i=>i.code+': '+i.path+' → '+i.detail).join(' · '));
   if(p.manifest.family_key!==declaredFamily||p.manifest.target_locale!==declaredLocale)throw Error('PACKAGE_CATEGORY_OR_LANGUAGE_MISMATCH');
   // Verify the runtime is actually isolated BEFORE accepting any executable package.
   const origin=runtimeOrigin();
@@ -29,7 +32,7 @@ export async function importPackage(c:MarketplaceRequestContext,archive:Buffer,d
   for(const f of p.files)files[f.path]={size:f.bytes.length,mime:f.mime,sha256:f.hash};
   const base=`${scope.replace(/[^a-zA-Z0-9_-]/g,'_')}/${id}`;
   const row={id,scope_key:scope,owner_actor_id:c.actor.id,family_key:declaredFamily,locale:declaredLocale,
-    state:'processing',manifest:p.manifest,checksum_sha256:p.checksum,entry_path:p.entry,file_index:files,
+    state:'processing',manifest:{...p.manifest,__kidflix_delivery:compatibility},checksum_sha256:p.checksum,entry_path:p.entry,file_index:files,
     original_storage_path:base+'/original.zip',record_id:null,release_id:null};
   const inserted=await db.from(KF_PACKAGE_TABLE).insert(row).select('id').single();
   if(inserted.error)check(inserted.error,'PACKAGE_RECORD_CREATE_FAILED');
@@ -56,14 +59,18 @@ export async function importPackage(c:MarketplaceRequestContext,archive:Buffer,d
     title:p.manifest.title,fileCount:count,totalBytes:p.bytes,state:'validated',entry:p.entry,
     previewUrl:`${origin}/api/kidflix/interactive/runtime/preview/${encodeURIComponent(token)}/${id}/${p.entry}`};
 }
-export async function assertPackageForPublication(c:MarketplaceRequestContext,r:{id:string;family:string|null;data:any},locale:string){
-  const ref=r.data?.interactivePackage;
-  if(!ref)return null;
-  const packageId=ref?.id;
+export async function assertPackageForPublication(c:Pick<MarketplaceRequestContext,'tenantId'|'territoryId'>,r:{id:string;family:string|null;data:any},locale:string){
+  if(!isHtmlDelivery(r.data||{},locale))return null;
+  const ref=packageForLocale(r.data||{},locale);
+  if(!validInteractiveReference(ref))throw Error('INTERACTIVE_PACKAGE_REQUIRED_FOR_LOCALE');
+  const packageId=String(ref?.id||'');
   if(!uuid(packageId)||!/^\w+$/.test(String(ref?.checksum||'')))throw Error('INVALID_INTERACTIVE_PACKAGE_REFERENCE');
+  const db=await createServiceClient();
+  const activation=await db.rpc('ac_kidflix_delivery_status');
+  if(activation.error||activation.data?.atomicBinding!==true)throw Error('KIDFLIX_DELIVERY_R2_SQL_REQUIRED');
   const p=await scopedPackage(packageId,scopeKey(c));
   if(p.state!=='validated'&&p.state!=='published')throw Error('INTERACTIVE_PACKAGE_NOT_VALIDATED');
-  if(p.family_key!==r.family||p.locale!==locale||p.checksum_sha256!==ref.checksum)throw Error('INTERACTIVE_PACKAGE_IDENTITY_MISMATCH');
+  if(p.family_key!==r.family||p.locale!==locale||p.checksum_sha256!==ref.checksum||p.entry_path!==ref.entry)throw Error('INTERACTIVE_PACKAGE_IDENTITY_MISMATCH');
   if(p.record_id&&p.record_id!==r.id)throw Error('INTERACTIVE_PACKAGE_BOUND_TO_ANOTHER_DOSSIER');
   return p;
 }
@@ -82,11 +89,18 @@ export async function bindPublishedPackage(c:MarketplaceRequestContext,packageId
 /** In-flight signed preview: no public record is needed. */
 export async function adminPackageInfo(c:MarketplaceRequestContext,id:string){
   authorize(c,'manage');const p=await scopedPackage(id,scopeKey(c));
-  return {id:p.id,checksum:p.checksum_sha256,state:p.state,family:p.family_key,locale:p.locale,
+  const db=await createServiceClient();
+  const declaredKey=String((p.manifest.catalogue as any)?.collection_key||'html-'+p.id);
+  let target=db.from('ac_dce_records').select('*').eq('kind','experience').eq('family',p.family_key);
+  target=c.tenantId?target.eq('tenant_id',c.tenantId):target.is('tenant_id',null);
+  target=c.territoryId?target.eq('territory_id',c.territoryId):target.is('territory_id',null);
+  const matched=p.record_id?await target.eq('id',p.record_id).maybeSingle():await target.eq('key',declaredKey).maybeSingle();
+  if(matched.error)check(matched.error,'PACKAGE_TARGET_LOOKUP_FAILED');
+  return {targetRecord:matched.data||null,id:p.id,checksum:p.checksum_sha256,state:p.state,family:p.family_key,locale:p.locale,
     title:p.manifest.title,entry:p.entry_path,recordId:p.record_id,releaseId:p.release_id,
     files:Object.entries(p.file_index).map(([path,info])=>({path,...info})),
     capabilities:Array.isArray(p.manifest.capabilities)?p.manifest.capabilities:[],
-    audience:p.manifest.audience||{},rights:p.manifest.copyright||{},
+    audience:p.manifest.audience||{},rights:p.manifest.copyright||{},manifest:p.manifest,
     parentId:(p.manifest.__kidflix_studio as any)?.parent||null,runtimeOrigin:runtimeOrigin(),
     previewUrl:`${runtimeOrigin()}/api/kidflix/interactive/runtime/preview/${encodeURIComponent(previewToken(id,c.actor.id,Date.now()+600000))}/${id}/${p.entry_path}`};
 }
@@ -102,7 +116,7 @@ export async function listStudioPackages(c:MarketplaceRequestContext,family:stri
     .eq('scope_key',scopeKey(c)).eq('family_key',family).eq('locale',locale)
     .in('state',['validated','published']).order('created_at',{ascending:false}).limit(50);
   if(r.error)check(r.error,'STUDIO_LIBRARY_UNAVAILABLE');
-  return (r.data||[]).map(p=>({id:p.id,checksum:p.checksum_sha256,title:p.manifest?.title||'Untitled',
+  return (r.data||[]).map((p:any)=>({id:p.id,checksum:p.checksum_sha256,title:p.manifest?.title||'Untitled',
     state:p.state,locale:p.locale,family:p.family_key,recordId:p.record_id,releaseId:p.release_id,
     entry:p.entry_path,createdAt:p.created_at,files:Object.keys(p.file_index||{}).length,
     parentId:p.manifest?.__kidflix_studio?.parent||null}));

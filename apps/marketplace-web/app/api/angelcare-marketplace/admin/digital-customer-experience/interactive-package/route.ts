@@ -1,3 +1,4 @@
+import {deliveryAdminContract} from '@/angelcare-marketplace/digital-customer-experience/delivery-admin-contract';
 import { assertAdminLoginSameOrigin } from '@/angelcare-marketplace/auth/admin/admin-auth';
 import { requireMarketplaceApiContext } from '@/angelcare-marketplace/auth/context';
 import { authorize } from '@/angelcare-marketplace/digital-customer-experience/repository';
@@ -20,6 +21,7 @@ function sameOrigin(req:Request){
 export async function GET(req:Request){
   try{
     const c=await actor(),q=new URL(req.url).searchParams,operation=q.get('operation')||'info';
+    if(operation==='contract')return Response.json(deliveryAdminContract(q.get('family')||''),{headers:{...headers,'Content-Disposition':'attachment; filename="kidflix-delivery-contract.json"'}});
     if(operation==='list'){
       const family=q.get('family')||'',locale=q.get('locale')||'';
       return Response.json({data:await listStudioPackages(c,family,locale)},{headers});

@@ -1778,3 +1778,13 @@
 
 .coverPreview { display:block; width:100%; max-height:210px; aspect-ratio:1; object-fit:cover; border-radius:14px; background:#eef5ff; margin:12px 0; }
 .coverPlaceholder { display:grid; place-items:center; gap:9px; min-height:125px; padding:18px; margin:12px 0; border:1px dashed #b6cbea; border-radius:14px; background:linear-gradient(135deg,#eff8ff,#fff1f7); color:#2357a1; font-weight:650; text-align:center; }
+
+/* KIDFLIX_DELIVERY_R2: a desktop canvas, horizontal resource strip and inline controls. */
+.studio{min-width:1100px;background:#f5f8fc}
+.layout{display:flex;flex-direction:column;align-items:stretch;gap:0}
+.resourceRail{position:relative;top:auto;min-height:0;width:100%;padding:15px 24px;display:flex;align-items:center;gap:16px;border:0;border-block:1px solid #e2e9f2;background:#fff}
+.railHeading{padding:0;gap:9px;flex-shrink:0}.railList{display:flex;flex:1;gap:10px;overflow-x:auto;min-width:0}.railItem{min-width:220px;max-width:290px;margin:0;flex-shrink:0}.railActions{display:flex;gap:8px;flex-shrink:0}.railNote{display:none}
+.canvas{width:100%;max-width:none;padding:26px 30px}.inspector{position:relative;top:auto;width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;padding:22px 30px;border:0;background:#eef3f9}.essentialCard,.readinessCard{margin:0;background:#fff;border-radius:17px;border:1px solid #dce5ef;padding:20px}
+.nativeContent{border:1px solid #dae4f1;border-radius:16px;background:#fff;margin-top:20px;padding:16px}.nativeContent>summary{cursor:pointer;font-size:12px;font-weight:800;color:#496786;padding:4px 0 12px}.nativeContent[open]>summary{border-bottom:1px solid #e2e9f2;margin-bottom:18px}
+.drawer.inlineAdvanced{position:relative;inset:auto;transform:none;width:calc(100% - 48px);max-width:none;max-height:none;height:auto;overflow:visible;margin:24px;padding:25px;border:1px solid #d7e2ee;border-radius:20px;box-shadow:0 7px 30px #233f6010;background:#fff;z-index:1}.inlineAdvanced .contentFields{grid-template-columns:repeat(3,minmax(0,1fr))}.inlineAdvanced .otherCategories{display:flex;flex-wrap:wrap;gap:8px}.inlineAdvanced .advancedSection>div{padding:18px}.drawer.referenceDialog{inset:50% auto auto 50%;transform:translate(-50%,-50%);width:860px;max-width:90vw;max-height:82vh;height:auto;border-radius:20px;border:1px solid #d6e2ef}.drawerBackdrop{background:#19334e66;backdrop-filter:blur(3px)}
+.serverProof{border:1px solid #c9d8ea;border-radius:12px;padding:13px;background:#f6faff;font-size:12px;color:#47627f;line-height:1.7;margin:12px 0}.serverProof strong{display:block;color:#193d66}.serverProof[data-state=error]{border-color:#efc9b9;background:#fff8f3}.serverProof[data-state=ready]{border-color:#a2d6be;background:#f1fcf6}

@@ -7,7 +7,7 @@ import { editionCommand, inspectEdition, masterError } from "./master-service";
 import { authoringFamilies } from "./management";
 import { CREATION_CONTRACT, completeCreation } from "./creation-model";
 import { isId } from "./model";
-import { assertPackageForPublication, bindPublishedPackage } from "../kidflix/interactive/service";
+import { assertPackageForPublication } from "../kidflix/interactive/service";
 import { object, text, type Command, type Locale } from "./types";
 
 function scope(q: any, c: Context) {
@@ -53,7 +53,10 @@ export async function creationRead(
   const independentReview =
     object(policy.data?.data).independentReview === true;
   const migration = await db.rpc("ac_dce_creation_runtime_status");
+  const delivery=await db.rpc("ac_kidflix_delivery_status");
   return {
+    deliveryReady: !delivery.error && delivery.data?.atomicBinding === true,
+    deliveryContract: delivery.data?.contract || null,
     contract: CREATION_CONTRACT,
     independentReview,
     atomicPublish: !migration.error && migration.data?.atomicPublish === true,
@@ -146,7 +149,7 @@ export async function creationCommand(c: Context, cmd: Command) {
         "DEPENDENCY_BLOCKED",
         "The server has not confirmed an active public edition.",
       );
-    if (interactivePackage) await bindPublishedPackage(c, interactivePackage.id, r.id, release.id, locale);
+
     return {
       ...result,
       record: r,

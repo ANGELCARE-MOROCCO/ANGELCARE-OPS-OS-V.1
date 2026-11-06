@@ -1,4 +1,5 @@
 "use client";
+import { ManagedImage } from "../marketplace-imagery/ManagedImage";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
@@ -25,11 +26,13 @@ import type { Selections } from "./useSelections";
 import s from "./storefront.module.css";
 
 export function Photo({
+  slot,
   src,
   alt = "",
   contain = false,
   priority = false,
 }: {
+  slot?: string;
   src: string | null;
   alt?: string;
   contain?: boolean;
@@ -44,7 +47,7 @@ export function Photo({
       data-media-fit={contain ? "contain" : "cover"}
     >
       {safe && !failed ? (
-        <img
+        <ManagedImage slot={slot}
           src={safe}
           alt={alt}
           loading={priority ? "eager" : "lazy"}

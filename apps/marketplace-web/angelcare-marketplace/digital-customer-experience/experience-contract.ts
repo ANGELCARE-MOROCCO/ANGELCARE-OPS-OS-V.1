@@ -1,3 +1,4 @@
+import { activeDeliveryData } from "./delivery-contract";
 import { applyEditionOrder } from "./experience-depth";
 import { FAMILIES } from "./registry";
 import { translationCoverage } from "./localisation";
@@ -231,6 +232,8 @@ export function editionProjection(r: DceRecord, locale: Locale): DceRecord {
         (locale === base ? text(p.markup) : ""),
     };
   }
+  const packageReference = object(object(source.interactivePackages)[locale]);
+  if (Object.keys(packageReference).length) data.interactivePackage = packageReference;
   data.defaultLocale = locale;
   data.requiredLocales = [locale];
   data.translationFallback = false;

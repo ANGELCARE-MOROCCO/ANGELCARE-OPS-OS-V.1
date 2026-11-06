@@ -1,3 +1,4 @@
+import { activeDeliveryData, fieldAppliesToDelivery, isHtmlDelivery } from "./delivery-contract";
 import {FOCUS,classificationChoices} from "../kidflix/storefront-reference/taxonomy";
 import { detailExperienceIssues } from "./detail-experience";
 import { depthIssues } from "./experience-depth";
@@ -25,7 +26,7 @@ export function capabilityIssues(
 ): Issue[] {
   const issues: Issue[] = [],
     adapted = compatibleDefinition(record.family, record.data),
-    d = adapted.data;
+    d = activeDeliveryData(adapted.data, family);
   const add = (path: string, code: string, en: string) =>
     issues.push({
       path,
@@ -56,7 +57,7 @@ export function capabilityIssues(
   if (["experience", "bundle"].includes(record.kind) && !text(d.coverAssetId))
     issues.push({ path: "coverAssetId", code: "PUBLIC_COVER_REQUIRED", severity: "error", message: ["Choose the image for this resource’s storefront card.", "Choisissez l’image de la carte publique de cette ressource.", "اختر صورة بطاقة هذا المورد في الواجهة العامة."] });
   issues.push(...depthIssues(d, family));
-  if (record.kind !== "template")
+  if (record.kind !== "template" && !isHtmlDelivery(d))
     issues.push(...detailExperienceIssues(family, d));
   const draftTemplate = record.kind === "template",
     mode = modeContract(family, d),
@@ -66,7 +67,7 @@ export function capabilityIssues(
         : [d.defaultLocale || "en"]
     ).map(String);
   for (const f of family.fields) {
-    if (!activeField(f, mode?.engine || "")) continue;
+    if (!fieldAppliesToDelivery(f.key, d, family) || !activeField(f, mode?.engine || "")) continue;
     const v = d[f.key];
     if (
       f.required &&
@@ -99,6 +100,7 @@ export function capabilityIssues(
           "TRANSLATION_REQUIRED",
           "Complete " + path + " for " + locale + ".",
         );
+  if (isHtmlDelivery(d)) return issues;
   const units = array(d.units);
   if (record.family === "documents" && !draftTemplate) {
     if (
@@ -503,6 +505,7 @@ export function mediaSlots(
 ): { path: string; id: string; mime: string[] }[] {
   const slots: { path: string; id: string; mime: string[] }[] = [];
   if (!family) return slots;
+  data = activeDeliveryData(data, family);
   const add = (path: string, value: unknown, mime?: string[]) => {
     if (typeof value === "string" && value && mime?.length)
       slots.push({ path, id: value, mime });

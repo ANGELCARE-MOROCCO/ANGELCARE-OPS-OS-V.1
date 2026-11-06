@@ -1,3 +1,4 @@
+import { activeDeliveryData, activeDeliveryRecord, isHtmlDelivery, validInteractiveReference } from "./delivery-contract";
 import { gradeQuestions } from "./experience-depth";
 import { WORLD_DEFAULTS, worldIssues } from "./administration";
 import { projectLayout } from "./composition";
@@ -345,6 +346,7 @@ export function validateRecord(
   record: DceRecord,
   now = new Date(),
 ): Validation {
+  record = activeDeliveryRecord(record, familyByKey(record.family || ""));
   record = {
     ...record,
     data: {
@@ -373,7 +375,8 @@ export function validateRecord(
       record.family || (record.kind === "bundle" ? "bundles" : ""),
     ),
     interactiveRef = object(d.interactivePackage),
-    interactiveContent = isId(interactiveRef.id) && /^[a-f0-9]{64}$/i.test(text(interactiveRef.checksum)) && interactiveRef.locale === d.defaultLocale;
+    interactiveContent = isHtmlDelivery(d) && validInteractiveReference(interactiveRef) && interactiveRef.locale === d.defaultLocale;
+  if (isHtmlDelivery(d) && !interactiveContent) issue("interactivePackage", "INTERACTIVE_REFERENCE", "Choose a validated HTML package for this language.", "Choisissez un package HTML validé pour cette langue.", "اختر حزمة HTML معتمدة لهذه اللغة.");
   if (d.publicRuntimeReady === true)
     issue(
       "publicRuntimeReady",
@@ -439,7 +442,7 @@ export function validateRecord(
         "عائلة غير معروفة.",
       );
     else {
-      if (!f.modes.includes(text(d.mode)))
+      if (!isHtmlDelivery(d) && !f.modes.includes(text(d.mode)))
         issue(
           "mode",
           "MODE",
@@ -623,7 +626,7 @@ export function validateRecord(
         "إجابة التقييم مطلوبة.",
       );
   }
-  if (f?.key === "forms") {
+  if (f?.key === "forms" && !isHtmlDelivery(d)) {
     if (
       array(d.fields).some((x) => x.type === "file") &&
       !isId(d.privateReceiverId)
@@ -653,7 +656,7 @@ export function validateRecord(
       );
   }
   if (
-    f?.key === "tools" &&
+    f?.key === "tools" && !isHtmlDelivery(d) &&
     !["sum", "average", "ratio", "groups", "duration"].includes(
       text(d.operation),
     )
@@ -666,7 +669,7 @@ export function validateRecord(
       "اختر حساباً معتمداً.",
     );
   if (
-    f?.key === "activities" &&
+    f?.key === "activities" && !isHtmlDelivery(d) &&
     !["matching", "memory", "sequence", "sorting", "choice", "bridge"].includes(
       text(d.engine),
     )
@@ -958,7 +961,7 @@ export function references(data: Data): {
   return { records: [...records], media: [...media], offers: [...offers] };
 }
 export function publicManifest(record: DceRecord, bindings: Data): Data {
-  const definition = compatibleDefinition(record.family, record.data).data;
+  const definition = activeDeliveryData(compatibleDefinition(record.family, record.data).data, familyByKey(record.family || ""));
   const family = familyByKey(
     record.family || (record.kind === "bundle" ? "bundles" : ""),
   );
@@ -1025,6 +1028,7 @@ export function publicManifest(record: DceRecord, bindings: Data): Data {
     "certificatePolicy",
     "htmlActivity",
     "interactivePackage",
+    "delivery",
     ...(kindFields[record.kind] || []),
     ...(family?.fields
       .filter((f) => f.classification !== "private")

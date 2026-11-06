@@ -34,6 +34,7 @@ export function BusinessWorlds({
   }[experience.key];
   return (
     <WorldFrame
+      key={`${experience.key}:${experience.locale}:${experience.territoryCode || 'all'}`}
       world={experience.key}
       experience={experience}
       native={native}

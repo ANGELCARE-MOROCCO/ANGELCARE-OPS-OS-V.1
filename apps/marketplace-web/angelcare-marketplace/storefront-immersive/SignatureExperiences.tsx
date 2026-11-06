@@ -1,4 +1,5 @@
 "use client";
+import { imageryToken } from "../marketplace-imagery/pages";
 import Link from "next/link";
 import { useState } from "react";
 import {
@@ -143,7 +144,7 @@ export function DevelopmentStudio({ profile, locale, items, native }: Props) {
   return (
     <div className={s.activityStudio} data-signature="development-studio">
       <aside>
-        <Photo src={storefrontPhoto("development", "montessori")} alt={tr(profile.signature, locale)} />
+        <Photo slot={"visual.signature-experiences.1"} src={storefrontPhoto("development", "montessori")} alt={tr(profile.signature, locale)} />
         <span className={s.floatingStamp}>
           <Sparkles />{" "}
           {tr(
@@ -238,7 +239,7 @@ export function KitWorkbench({ profile, locale, items }: Props) {
         {item ? (
           <Photo src={item.media_url} alt={item.name} contain />
         ) : (
-          <Photo src={storefrontPhoto("kits", "kits")} alt={tr(profile.label, locale)} />
+          <Photo slot={"visual.signature-experiences.2"} src={storefrontPhoto("kits", "kits")} alt={tr(profile.label, locale)} />
         )}
         <span className={s.galleryLabel}>
           <PackageOpen size={16} />
@@ -439,7 +440,7 @@ export function HospitalityItinerary({ profile, locale }: Props) {
         ))}
       </nav>
       <div className={s.itineraryImage}>
-        <Photo src={storefrontPhoto("hospitality", topic.photo)} alt={tr(topic.label, locale)} />
+        <Photo slot={"visual.signature-experiences.3." + imageryToken(topic.photo)} src={storefrontPhoto("hospitality", topic.photo)} alt={tr(topic.label, locale)} />
         <div>
           <span>{tr(profile.label, locale)}</span>
           <h3>{tr(topic.label, locale)}</h3>
@@ -465,7 +466,7 @@ export function HealthSupport({ profile, locale }: Props) {
   return (
     <div className={s.supportJourney} data-signature="health-support">
       <div className={s.supportPortrait}>
-        <Photo src={storefrontPhoto("health-partners", "newborn")} alt={tr(profile.title, locale)} />
+        <Photo slot={"visual.signature-experiences.4"} src={storefrontPhoto("health-partners", "newborn")} alt={tr(profile.title, locale)} />
         <span>
           <ShieldCheck size={19} />
           {tr(
@@ -515,7 +516,7 @@ export function CorporateBenefits({ profile, locale }: Props) {
   return (
     <div className={s.benefits} data-signature="corporate-benefits">
       <div className={s.benefitCopy}>
-        <Photo src={storefrontPhoto("corporates", "corporate")} alt={tr(profile.label, locale)} />
+        <Photo slot={"visual.signature-experiences.5"} src={storefrontPhoto("corporates", "corporate")} alt={tr(profile.label, locale)} />
         <div>
           <h3>
             {tr(
@@ -704,7 +705,7 @@ export function ProfessionalPath({ profile, locale, items }: Props) {
         ))}
       </div>
       <div className={s.careerPanel}>
-        <Photo src={storefrontPhoto("professionals", topic.photo)} alt={tr(topic.label, locale)} />
+        <Photo slot={"visual.signature-experiences.6." + imageryToken(topic.photo)} src={storefrontPhoto("professionals", topic.photo)} alt={tr(topic.label, locale)} />
         <div>
           <h3>{tr(topic.label, locale)}</h3>
           <PublishedLinks items={matched} locale={locale} />

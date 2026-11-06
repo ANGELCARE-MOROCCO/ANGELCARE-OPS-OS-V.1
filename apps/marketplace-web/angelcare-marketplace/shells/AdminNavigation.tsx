@@ -1,7 +1,7 @@
 'use client'
 import Link from 'next/link'
 import {usePathname} from 'next/navigation'
-import {BadgeDollarSign,Boxes,CalendarDays,ChartNoAxesCombined,FolderTree,Gauge,HeartHandshake,LayoutTemplate,Megaphone,Network,PackageSearch,School,ShieldCheck,Sparkles,UploadCloud,UsersRound,Headphones,ScanSearch,Globe2,Factory} from 'lucide-react'
+import {BadgeDollarSign,Boxes,CalendarDays,ChartNoAxesCombined,FolderTree,Gauge,HeartHandshake,LayoutTemplate,Megaphone,Network,PackageSearch,School,ShieldCheck,Sparkles,UploadCloud,UsersRound,Headphones,ScanSearch,Globe2,Factory,BriefcaseBusiness} from 'lucide-react'
 import styles from '../design-system/marketplace.module.css'
 import {cx} from '../design-system/ui'
 
@@ -29,13 +29,15 @@ const masters=[
  {id:'21',href:'/angelcare-marketplace/admin/seo-power',label:'SEO POWER',icon:ScanSearch},
  {id:'22',href:'/angelcare-marketplace/admin/one-world-currency',label:'ONE WORLD · Currency & Rates',icon:Globe2},
  {id:'23',href:'/angelcare-marketplace/admin/supplier-command-360',label:'SUPPLIER COMMAND 360',icon:Factory},
+ {id:'24',href:'/angelcare-marketplace/admin/digital-customer-experience/angelcare-imagery',label:'AngelCare · Images & visuels',icon:Sparkles},
+ {id:'25',href:'/angelcare-marketplace/admin/jobkix/workspaces',label:'JOBKIX · Admin & workspaces',icon:BriefcaseBusiness},
 ] as const
 
-export function AdminNavigation({collapsed=false,canHotline=false,canDce=false,canSeo=false,canSupplierCommand=false}:{collapsed?:boolean;canHotline?:boolean;canDce?:boolean;canSeo?:boolean;canSupplierCommand?:boolean}){
+export function AdminNavigation({collapsed=false,canHotline=false,canDce=false,canSeo=false,canSupplierCommand=false,canJobkix=false}:{collapsed?:boolean;canHotline?:boolean;canDce?:boolean;canSeo?:boolean;canSupplierCommand?:boolean;canJobkix?:boolean}){
  const pathname=usePathname()
- const visible=masters.filter(m=>(m.id!=='19'||canHotline)&&(m.id!=='20'||canDce)&&(m.id!=='21'||canSeo)&&(m.id!=='23'||canSupplierCommand))
+ const visible=masters.filter(m=>(m.id!=='19'||canHotline)&&(!['20','24'].includes(m.id)||canDce)&&(m.id!=='21'||canSeo)&&(m.id!=='23'||canSupplierCommand)&&(m.id!=='25'||canJobkix))
  return <nav className={styles.sidebarNav} aria-label="Marketplace Admin">
   <div className={styles.navGroup}><div className={styles.navGroupLabel}>ANGELCARE MARKETPLACE</div></div>
-  <div className={styles.navGroup}><div className={styles.navGroupLabel}>{visible.length} WORKSPACES</div>{visible.map(({id,href,label,icon:Icon})=>{const active=pathname===href||(href!=='/angelcare-marketplace/admin'&&pathname.startsWith(`${href}/`));return <Link key={`${id}-${href}`} href={href} className={cx(styles.sideNavLink,active&&styles.sideNavLinkActive)} aria-current={active?'page':undefined} title={collapsed?`${id} · ${label}`:undefined}><span className={styles.sideNavIcon}><Icon size={17}/></span><span className={styles.sideNavLabel}>{id} · {label}</span></Link>})}</div>
+  <div className={styles.navGroup}><div className={styles.navGroupLabel}>{visible.length} WORKSPACES</div>{visible.map(({id,href,label,icon:Icon})=>{const active=(id==='25'&&(pathname==='/angelcare-marketplace/admin/jobkix'||pathname.startsWith('/angelcare-marketplace/admin/jobkix/')))||!(id==='20'&&pathname.startsWith('/angelcare-marketplace/admin/digital-customer-experience/angelcare-imagery'))&&(pathname===href||(href!=='/angelcare-marketplace/admin'&&pathname.startsWith(`${href}/`)));return <Link key={`${id}-${href}`} href={href} className={cx(styles.sideNavLink,active&&styles.sideNavLinkActive)} aria-current={active?'page':undefined} title={collapsed?`${id} · ${label}`:undefined}><span className={styles.sideNavIcon}><Icon size={17}/></span><span className={styles.sideNavLabel}>{id} · {label}</span></Link>})}</div>
  </nav>
 }

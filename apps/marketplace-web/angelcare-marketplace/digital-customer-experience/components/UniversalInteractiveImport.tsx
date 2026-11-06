@@ -1,5 +1,7 @@
 'use client';
 import { useEffect,useRef,useState } from 'react';
+import {queueFile,uploadCreationFile} from '../creation-upload';
+import {uploadInteractiveProject,resumeInteractiveProject,importOperation} from '../interactive-upload';
 import type { Locale } from '../types';
 import styles from './universal-interactive.module.css';
 import {StudioProjectIntelligence} from './StudioProjectIntelligence';
@@ -11,13 +13,14 @@ import {StudioVisualInspector,type Selection,type VisualProperty} from './Studio
 import {StudioAIRepairHandoff} from './StudioAIRepairHandoff';
 const API='/api/angelcare-marketplace/admin/digital-customer-experience/interactive-package';
 type FileMeta={path:string;size:number;mime:string;sha256:string};
-type Result={id:string;checksum:string;family:string;locale:string;title:string;fileCount?:number;totalBytes?:number;state:string;entry:string;previewUrl:string;files?:FileMeta[];recordId?:string|null;releaseId?:string|null;parentId?:string|null;createdAt?:string;capabilities?:string[];audience?:{age_min?:number;age_max?:number};rights?:{holder?:string;license?:string}};
+type Result={id:string;checksum:string;family:string;locale:string;title:string;fileCount?:number;totalBytes?:number;manifest?:Record<string,any>;targetRecord?:any;state:string;entry:string;previewUrl:string;files?:FileMeta[];recordId?:string|null;releaseId?:string|null;parentId?:string|null;createdAt?:string;capabilities?:string[];audience?:{age_min?:number;age_max?:number};rights?:{holder?:string;license?:string}};
 type Listing={id:string;checksum:string;title:string;state:string;locale:string;family:string;recordId?:string|null;releaseId?:string|null;entry:string;createdAt?:string;files:number;parentId?:string|null};
 type Step='start'|'understand'|'perfect'|'experience'|'publish'|'manage';
+const theJourney:Step[]=['start','experience','publish'];
 const steps:Step[]=['start','understand','perfect','experience','publish','manage'];
 const stepLabels:Record<Step,[string,string,string]>={
- start:['Start','Départ','ابدأ'],understand:['Understand','Comprendre','فهم'],perfect:['Perfect','Perfectionner','تحسين'],
- experience:['Experience','Expérience','تجربة'],publish:['Publish','Publier','نشر'],manage:['Manage','Gérer','إدارة']
+ start:['Import','Importer','استيراد'],understand:['Understand','Comprendre','فهم'],perfect:['Perfect','Perfectionner','تحسين'],
+ experience:['Review','Vérifier','مراجعة'],publish:['Publish','Publier','نشر'],manage:['Manage','Gérer','إدارة']
 };
 const editable=(name:string)=>/\.(html?|css|m?js|json|md|txt|csv|vtt)$/i.test(name);
 const money=(size:number)=>size>=1048576?(size/1048576).toFixed(1)+' MiB':(size/1024).toFixed(0)+' KiB';
@@ -71,20 +74,24 @@ async function filesFromDraggedEntries(entries:any[]):Promise<File[]> {
 }
 
 export function UniversalInteractiveImport({
-  locale,family,canManage,attached,recordId,currentTitle,publicPath,onSaveDraft,onTitleChange,onContinue,onOpenDossier,onAttach,
+  locale,family,canManage,attached,recordId,currentTitle,publicPath,onSaveDraft,onTitleChange,onContinue,onOpenDossier,onAttach,onCover,coverAssetId,onBatchAttach,onPublish,canPublish,publishLabel,
 }:{
   locale:Locale;family:string;canManage:boolean;
   attached?:{id?:unknown;checksum?:unknown;locale?:unknown};recordId?:string;currentTitle?:string;publicPath?:string;onSaveDraft?:()=>Promise<void>;
   onTitleChange?:(value:string)=>void;onContinue?:()=>void;onOpenDossier?:()=>void;
-  onAttach:(p:Result)=>void;
+  onAttach:(p:Result)=>void;onCover?:(id:string)=>void;coverAssetId?:string;onBatchAttach?:(p:Result)=>void;onPublish?:()=>Promise<void>;canPublish?:boolean;publishLabel?:string;
 }){
+  const contextVersion=useRef(0),previousDossier=useRef(recordId);
   const fileInput=useRef<HTMLInputElement>(null),folderInput=useRef<HTMLInputElement>(null),replacementInput=useRef<HTMLInputElement>(null),frame=useRef<HTMLIFrameElement>(null),controller=useRef<AbortController|null>(null);
-  const [expanded,setExpanded]=useState(false),[step,setStep]=useState<Step>('start');
+  const [expanded,setExpanded]=useState(true),[step,setStep]=useState<Step>('start'),[advanced,setAdvanced]=useState(false);
+  const [imports,setImports]=useState<any[]>([]);
+  const [resumeId,setResumeId]=useState(''),[coverPath,setCoverPath]=useState('');
+  const [batchSources,setBatchSources]=useState<File[]>([]),[batchReceipts,setBatchReceipts]=useState<Record<string,{state:string;error?:string;id?:string}>>({});
   const [source,setSource]=useState<File|null>(null),[selection,setSelection]=useState(''),[drag,setDrag]=useState(false);
   const [phase,setPhase]=useState('idle'),[message,setMessage]=useState(''),[failure,setFailure]=useState(''),[transferProgress,setTransferProgress]=useState(0);
   const [result,setResult]=useState<Result|null>(null),[library,setLibrary]=useState<Listing[]>([]),[listingBusy,setListingBusy]=useState(false);
   const [fileSearch,setFileSearch]=useState(''),[currentPath,setCurrentPath]=useState(''),[content,setContent]=useState(''),[originalText,setOriginalText]=useState(''),[textBusy,setTextBusy]=useState(false);
-  const [device,setDevice]=useState<'desktop'|'tablet'|'mobile'>('desktop'),[session,setSession]=useState(''),[events,setEvents]=useState<string[]>([]),[previewError,setPreviewError]=useState(''),[previewVersion,setPreviewVersion]=useState(0);
+  const [session,setSession]=useState(''),[events,setEvents]=useState<string[]>([]),[previewError,setPreviewError]=useState(''),[previewVersion,setPreviewVersion]=useState(0);
   const [confirmReplace,setConfirmReplace]=useState('');
   // KF_EXPERIENCE_STUDIO_ULTIMATE_20261103: one protected preview inspector and edit session.
   const [inspectEnabled,setInspectEnabled]=useState(false);
@@ -104,6 +111,7 @@ export function UniversalInteractiveImport({
       u.hash='';return u.href;
     }catch{return ''}
   })();
+  useEffect(()=>{try{const saved=JSON.parse(sessionStorage.getItem('kidflix.import.r2.'+family+'.'+locale)||'null');setResumeId(saved?.id||'')}catch{}},[family,locale]);
   useEffect(()=>{folderInput.current?.setAttribute('webkitdirectory','');folderInput.current?.setAttribute('directory','');return()=>controller.current?.abort()},[]);
   function sendForm(form:FormData,signal:AbortSignal):Promise<any>{
     setTransferProgress(0);
@@ -135,42 +143,72 @@ export function UniversalInteractiveImport({
     return body.data as any;
   }
   async function loadPackage(id:string,nextStep:Step='understand'){
+    const version=contextVersion.current;
     setFailure('');setPhase('loading');
     try{
       const data=await apiGet({operation:'info',id}) as Result;
+      if(version!==contextVersion.current)throw new DOMException('Context changed','AbortError');
       if(data.family!==family||data.locale!==locale)throw Error('Package category or language does not match this dossier.');
       setResult(data);setCurrentPath('');setContent('');setOriginalText('');setStep(nextStep);
       setInspectEnabled(false);setInspectorSelection(null);
       setSession(crypto.randomUUID());setPreviewVersion(v=>v+1);setEvents([]);setPreviewError('');setPhase('validated');
-      setExpanded(true);
-    }catch(e){setFailure((e as Error).message);setPhase('failed')}
+      setExpanded(true);return data;
+    }catch(e){if(version===contextVersion.current){setFailure((e as Error).message);setPhase('failed')}throw e}
   }
+  useEffect(()=>{
+    contextVersion.current++;controller.current?.abort();setResult(null);setSource(null);setBatchSources([]);setSelection('');setCurrentPath('');setContent('');setOriginalText('');setSession('');setStep('start');setCoverPath('');setFailure('');setPhase('idle');
+  },[family,locale]);
+  useEffect(()=>{const old=previousDossier.current;previousDossier.current=recordId;if(old&&old!==recordId){contextVersion.current++;controller.current?.abort();setResult(null);setSource(null);setBatchSources([]);setSelection('');setSession('');setStep('start');setPhase('idle')}},[recordId]);
   const attachedId=typeof attached?.id==='string'?attached.id:'';
-  useEffect(()=>{if(!attachedId)return;if(result?.id===attachedId&&result?.family===family&&result?.locale===locale)return;void loadPackage(attachedId,'understand');},[attachedId,family,locale]);
+  useEffect(()=>{if(!attachedId)return;void loadPackage(attachedId,'experience').catch(()=>{});},[attachedId,family,locale,recordId]);
   async function reloadLibrary(){
     setListingBusy(true);
-    try{const list=await apiGet({operation:'list',family,locale}) as Listing[];setLibrary(list)}
+    try{const [list,sessions]=await Promise.all([apiGet({operation:'list',family,locale}),importOperation({action:'list',family,locale})]);setLibrary(list);setImports(sessions as unknown as any[])}
     catch(e){setFailure((e as Error).message)}finally{setListingBusy(false)}
   }
   useEffect(()=>{if(expanded&&step==='manage')void reloadLibrary()},[expanded,step,family,locale]);
   async function choose(files:FileList|File[]|null,folder:boolean){
     if(!files?.length)return;setFailure('');setMessage('');setPhase('preparing');
     try{
-      if(!folder&&files.length!==1)throw Error('Select one complete ZIP or one project folder.');
+      if(!folder&&files.length>40)throw Error('Select up to 40 ZIP projects per batch.');
       const value=folder?await folderZip(Array.from(files)):Array.from(files)[0];
-      if(!value.name.toLowerCase().endsWith('.zip'))throw Error('Choose a .zip archive.');
+      if((!folder?Array.from(files):[value]).some(f=>!f.name.toLowerCase().endsWith('.zip')||f.size>64*1024*1024))throw Error('Each project must be a ZIP up to 64 MiB.');
       if(value.size>64*1024*1024)throw Error('ZIP exceeds 64 MiB.');
+      setBatchSources(!folder?Array.from(files):[value]);setBatchReceipts({});
       setSource(value);setSelection(folder?files.length+' '+t('folder files','fichiers du dossier','ملفات المجلد'):value.name);
       setPhase('ready');setStep('start');setExpanded(true);
     }catch(e){setSource(null);setPhase('failed');setFailure((e as Error).message)}
   }
+  async function registerCover(info:Result,path:string){
+    if(!onCover||!path)return;
+    const response=await fetch(API+'?'+new URLSearchParams({operation:'asset',id:info.id,path}),{credentials:'same-origin',cache:'no-store'});
+    if(!response.ok)throw Error('PACKAGE_COVER_UNAVAILABLE');
+    const file=new File([await response.blob()],path.split('/').pop()||'cover.png',{type:'image/png'});
+    const stop=new AbortController();
+    const receipt=await uploadCreationFile(file,queueFile(file,{resource:recordId||info.id,collection:'@root',unit:'',field:'coverAssetId',locale}),()=>{},stop.signal);
+    if(!receipt.assetId)throw Error('NATIVE_COVER_REGISTRATION_FAILED');onCover(receipt.assetId);
+  }
   async function submit(){
     if(!source||!canManage)return;
+    if(batchSources.length>1){
+      setFailure('');setPhase('uploading');controller.current?.abort();controller.current=new AbortController();
+      for(const [fileIndex,file] of batchSources.entries()){
+        const key=fileIndex+':'+file.name+':'+file.size;if(batchReceipts[key]?.state==='validated')continue;
+        if(controller.current.signal.aborted)break;
+        setBatchReceipts(old=>({...old,[key]:{state:'uploading'}}));
+        try{const info=await uploadInteractiveProject(file,{family,locale},controller.current.signal,(n)=>setTransferProgress(n));(onBatchAttach||onAttach)(info);setBatchReceipts(old=>({...old,[key]:{state:'validated',id:info.id}}))}
+        catch(e){setBatchReceipts(old=>({...old,[key]:{state:'failed',error:(e as Error).message}}));}
+      }
+      setPhase('validated');return;
+    }
     setFailure('');setPhase('uploading');controller.current?.abort();controller.current=new AbortController();
     try{
-      const form=new FormData();form.set('action','create');form.set('package',source);form.set('family',family);form.set('locale',locale);
-      const saved=await sendForm(form,controller.current.signal);
-      await loadPackage(saved.id,'understand');setSource(null);setSelection('');
+      // Durable, bounded binary transfer with server checkpoints.
+      const saved=await uploadInteractiveProject(source,{family,locale,recordId},controller.current.signal,(n,receipt)=>{setTransferProgress(n);if(receipt){setResumeId(receipt.id);if(receipt.state!=='uploading')setPhase('verifying')}});
+      const info=await loadPackage(saved.id,'experience');onAttach(info);
+      const declared=String(info.manifest?.cover||info.manifest?.editorial?.cover||'');
+      if(!coverAssetId&&declared&&info.files?.some(f=>f.path===declared&&f.mime==='image/png'))await registerCover(info,declared);
+      setSource(null);setSelection('');
       setMessage(t('Package validated and ready for review.','Package validé, prêt à être perfectionné.','تم التحقق من الحزمة وهي جاهزة للمراجعة.'));
     }catch(e){setPhase('failed');setFailure((e as Error).name==='AbortError'?t('Upload cancelled','Téléversement annulé','تم إلغاء الرفع'):(e as Error).message)}
   }
@@ -232,14 +270,15 @@ export function UniversalInteractiveImport({
       if(next&&typeof next.tag==='string'&&typeof next.selector==='string')setInspectorSelection(next);
       return;
     }
-    if(action==='studio.runtimeError'||action==='studio.assetError'){
+    if(['studio.runtimeError','studio.assetError','host.runtimeError','host.assetError'].includes(action)){
       const detail=String(e.data?.data?.message||e.data?.data?.source||'Unknown runtime problem').slice(0,230);
       setPreviewError((action==='studio.assetError'?'Missing asset: ':'Runtime error: ')+detail);
       setEvents(old=>[...old.slice(-18),action+' · '+detail]);return;
     }
-    if(!['ready','progress','answer','save','complete','error','studio.inspect.available','studio.inspect.status'].includes(action))return;
+    if(!['ready','progress','answer','save','complete','error','studio.inspect.available','studio.inspect.status','host.loaded'].includes(action))return;
     const label=action+(action==='progress'&&Number.isFinite(Number(e.data.data?.percent))?' · '+Number(e.data.data.percent)+'%':'');
     setEvents(old=>[...old.slice(-18),new Date().toLocaleTimeString()+' · '+label]);
+    if(action==='host.loaded'&&e.data?.data?.assetsReady===false)setPreviewError('Some package images did not load.');
     if(action==='error')setPreviewError(String(e.data?.data?.message||'Runtime error').slice(0,240));
     if(action==='ready'){
       frame.current?.contentWindow?.postMessage({contract:'kidflix.interactive.bridge.1',channel:session,action:'restore',data:{state:{}}},'*');
@@ -290,6 +329,7 @@ export function UniversalInteractiveImport({
        !window.confirm(t('Leave this step and discard unsaved source edits?',
          'Quitter cette étape et abandonner les modifications non enregistrées ?',
          'مغادرة الخطوة وتجاهل التعديلات غير المحفوظة؟')))return;
+    if(!theJourney.includes(s))setAdvanced(true);
     setExpanded(true);setStep(s);setFailure('');
   };
   return <section className={styles.root} aria-label="KidFlix interactive experience production studio">
@@ -297,16 +337,17 @@ export function UniversalInteractiveImport({
       <div className={styles.identity}>
         <span className={styles.eyebrow}>KIDFLIX · INTERACTIVE EXPERIENCE STUDIO</span>
         <h3>{t('From project to published experience','Du projet à l’expérience publiée','من المشروع إلى التجربة المنشورة')}</h3>
-        <p>{t('Import, inspect, perfect, experience, publish and manage — without leaving Content 360.','Importer, comprendre, perfectionner, tester, publier et gérer — dans Content 360.','استيراد وفحص وتحسين وتجربة ونشر وإدارة ضمن Content 360.')}</p>
+        <p>{t('Import, review and publish. Advanced source, asset and revision controls remain available.','Importer, vérifier, publier. Le code, les médias et les versions restent accessibles dans les options avancées.','استيراد وفحص وتحسين وتجربة ونشر وإدارة ضمن Content 360.')}</p>
       </div>
       <button type="button" onClick={()=>setExpanded(x=>!x)} aria-expanded={expanded} className={styles.toggle}>{expanded?t('Close Studio','Fermer le studio','إغلاق'):t('Open Studio','Ouvrir le studio','فتح الاستوديو')}</button>
     </header>
     {expanded&&<div className={styles.body}>
       <nav className={styles.journey} aria-label="Experience production journey">
-        {steps.map((s,index)=><button type="button" key={s} onClick={()=>selectStep(s)} className={`${styles.journeyStep} ${step===s?styles.active:''}`} aria-current={step===s?'step':undefined}>
+        {(advanced?steps:theJourney).map((s,index)=><button type="button" key={s} onClick={()=>selectStep(s)} className={`${styles.journeyStep} ${step===s?styles.active:''}`} aria-current={step===s?'step':undefined}>
           <small>{String(index+1).padStart(2,'0')}</small><span>{L(locale,...stepLabels[s])}</span>
         </button>)}
       </nav>
+      <button type="button" className={styles.advancedToggle} aria-expanded={advanced} onClick={()=>{setAdvanced(x=>!x);if(advanced&&!theJourney.includes(step))setStep('experience')}}>{advanced?t('Essential workflow','Parcours essentiel','المسار الأساسي'):t('Advanced options · source, assets, revisions','Options avancées · code, médias, versions','خيارات متقدمة · المصدر والوسائط والإصدارات')}</button>
       <div className={styles.statusbar}>
         <span><b>{family}</b> · {locale.toUpperCase()}</span>
         <span>{result?result.title:t('New project','Nouveau projet','مشروع جديد')}</span>
@@ -316,15 +357,18 @@ export function UniversalInteractiveImport({
       {message&&<div className={styles.notice} role="status">{message}<button type="button" onClick={()=>setMessage('')}>×</button></div>}
 
       {step==='start'&&<div className={styles.stage}>
+        {resumeId&&<div className={styles.notice}><span>{t('Import checkpoint available','Un import peut être repris','يمكن استئناف الاستيراد')}</span><button type="button" disabled={['uploading','verifying'].includes(phase)} onClick={()=>{controller.current?.abort();controller.current=new AbortController();setPhase('verifying');void resumeInteractiveProject(resumeId,controller.current.signal,(n)=>setTransferProgress(n)).then(async saved=>{const info=await loadPackage(saved.id,'experience');onAttach(info);setPhase('validated')}).catch(e=>{setFailure(e.message);setPhase('failed')})}}>{t('Resume processing','Reprendre le traitement','استئناف المعالجة')}</button></div>}
         <div className={styles.stageTitle}><h4>{t('Start with your complete project','Commencez avec votre projet complet','ابدأ بمشروعك الكامل')}</h4><p>{t('Your original HTML, CSS, JavaScript, photographs, audio and animations stay together.','Vos fichiers HTML, CSS, JavaScript, images, sons et animations restent ensemble.','تبقى ملفات HTML وCSS وJavaScript والصور والصوت والرسوم معًا.')}</p></div>
+        <p><a href={API+"?"+new URLSearchParams({operation:"contract",family}).toString()} download>{t("Download this category’s complete field contract","Télécharger le contrat complet des champs de cette catégorie","تنزيل عقد حقول الفئة الكامل")}</a></p>
         <div className={styles.startGrid}>
           <button type="button" disabled={!canManage} onClick={()=>fileInput.current?.click()}><span className={styles.startIcon}>ZIP</span><strong>{t('Import complete ZIP','Importer un ZIP complet','استيراد ZIP كامل')}</strong><small>{t('Recommended universal format','Format universel conseillé','الصيغة العامة الموصى بها')}</small></button>
           <button type="button" disabled={!canManage} onClick={()=>folderInput.current?.click()}><span className={styles.startIcon}>DIR</span><strong>{t('Import project folder','Importer un dossier','استيراد مجلد')}</strong><small>{t('Retains nested project files','Conserve les sous-dossiers','يحفظ مجلدات المشروع')}</small></button>
           <a href="/kidflix/universal-interactive/KIDFLIX_UNIVERSAL_EXPERIENCE_MASTER.zip" download><span className={styles.startIcon}>SDK</span><strong>{t('Get AI Builder Master','Télécharger le master IA','تنزيل قالب الذكاء')}</strong><small>{t('One SDK, one chosen language','Un SDK, une langue choisie','قالب واحد ولغة محددة')}</small></a>
           <button type="button" onClick={()=>selectStep('manage')}><span className={styles.startIcon}>↻</span><strong>{t('Resume existing work','Reprendre un projet','استئناف مشروع')}</strong><small>{t('No repeat upload necessary','Aucun réimport nécessaire','دون إعادة رفع')}</small></button>
         </div>
-        <input ref={fileInput} type="file" accept=".zip,application/zip" hidden onChange={e=>{void choose(e.target.files,false);e.target.value=''}}/>
+        <input ref={fileInput} type="file" accept=".zip,application/zip" multiple hidden onChange={e=>{void choose(e.target.files,false);e.target.value=''}}/>
         <input ref={folderInput} type="file" multiple hidden onChange={e=>{void choose(e.target.files,true);e.target.value=''}}/>
+        {batchSources.length>1&&<div className={styles.library} aria-live="polite">{batchSources.map((file,fileIndex)=>{const receipt=batchReceipts[fileIndex+':'+file.name+':'+file.size];return <div className={styles.libraryRow} key={fileIndex+':'+file.name+':'+file.size}><strong>{file.name}</strong><span>{receipt?.state||t('Waiting','En attente','في الانتظار')}</span>{receipt?.error&&<p role="alert">{receipt.error}</p>}</div>})}</div>}
         <div className={styles.dropzone} data-drag={drag} onDragOver={e=>{e.preventDefault();setDrag(true)}} onDragLeave={()=>setDrag(false)} onDrop={e=>{e.preventDefault();setDrag(false);const items=Array.from(e.dataTransfer.items).filter(x=>x.kind==='file'),entries=items.map(x=>(x as any).webkitGetAsEntry?.()).filter(Boolean);const files=Array.from(e.dataTransfer.files);if(entries.some((x:any)=>x.isDirectory))void filesFromDraggedEntries(entries).then(xs=>choose(xs,true)).catch(err=>setFailure(err.message));else void choose(files,files.length>1||files.some(x=>!!x.webkitRelativePath))}}>
           <strong>{selection||t('Drop your complete ZIP or folder here','Déposez votre ZIP ou dossier complet ici','أفلت ملف ZIP أو المجلد الكامل هنا')}</strong>
           <p>{t('Original assets remain organized. No separate Shared Media Vault visit.','Tous les fichiers restent organisés. Aucun passage par la médiathèque partagée.','تظل الملفات منظمة دون زيارة مكتبة الوسائط المشتركة.')}</p>
@@ -384,16 +428,21 @@ export function UniversalInteractiveImport({
         </>}
       </div>}
 
+      {result&&onCover&&['experience','publish'].includes(step)&&<section className={styles.stage} aria-label={t('Editorial cover','Couverture éditoriale','الغلاف التحريري')}>
+        <div className={styles.stageTitle}><h4>{t('Public cover','Couverture publique','الغلاف العام')}</h4><p>{coverAssetId?t('A native cover is already linked. You can replace it.','Une couverture native est déjà associée. Vous pouvez la remplacer.','يوجد غلاف أصلي مرتبط ويمكن استبداله.'):t('Choose a PNG from this project, or upload a cover in the collection settings below.','Choisissez un PNG de ce projet ou ajoutez une couverture dans les réglages de la collection ci-dessous.','اختر PNG من المشروع أو أضف غلافاً من إعدادات المجموعة أدناه.')}</p></div>
+        <div className={styles.toolbar}><select aria-label={t('Project PNG cover','PNG du projet pour la couverture','غلاف PNG من المشروع')} value={coverPath} onChange={e=>setCoverPath(e.target.value)}><option value="">{t('Select the editorial PNG','Choisir le PNG éditorial','اختر صورة الغلاف')}</option>{(result.files||[]).filter(f=>f.mime==='image/png').map(f=><option key={f.path} value={f.path}>{f.path}</option>)}</select><button type="button" disabled={!canManage||!coverPath||phase==='cover'} onClick={()=>{setPhase('cover');void registerCover(result,coverPath).then(()=>{setMessage(t('Native cover registered and linked.','Couverture native enregistrée et associée.','سجل الغلاف الأصلي وربط.'));setPhase('validated')}).catch(e=>{setFailure(e.message);setPhase('failed')})}}>{t('Use this cover','Utiliser cette couverture','استخدام هذا الغلاف')}</button></div>
+      </section>}
+
       {step==='experience'&&<div className={styles.stage}>
         {!result?<div className={styles.empty}>{t('Choose an imported package to play its real HTML application.','Choisissez un projet pour exécuter sa vraie application HTML.','اختر حزمة لتشغيل تطبيق HTML الحقيقي.')}</div>:<>
           <div className={styles.stageTitle}><h4>{t('Experience the actual application','Testez la vraie application','جرّب التطبيق الحقيقي')}</h4><p>{t('Interact with the executable package, not a screenshot or approximation.','Interagissez avec le package réel, pas une capture.','تفاعل مع الحزمة الحقيقية لا صورة ثابتة.')}</p></div>
-          <div className={styles.previewTools}><div className={styles.deviceSwitch}>{(['desktop','tablet','mobile'] as const).map(x=><button type="button" key={x} className={device===x?styles.active:''} onClick={()=>setDevice(x)}>{x}</button>)}</div><button type="button" onClick={()=>void refreshPreview()}>{t('Restart / refresh session','Relancer la session','إعادة تشغيل الجلسة')}</button></div>
-          <div className={styles.previewZone}><iframe key={result.id+session+previewVersion} ref={frame} title="KidFlix isolated interactive experience preview" className={styles.frame} style={{maxWidth:device==='desktop'?'100%':device==='tablet'?820:390}} src={previewSrc} sandbox="allow-scripts" referrerPolicy="no-referrer"/></div>
-                     <StudioVisualInspector locale={locale} enabled={inspectEnabled} selection={inspectorSelection} onToggle={setInspectEnabled} disabled={!canManage||phase==='updating'}
+          <div className={styles.previewTools}><strong>{t('Desktop preview','Aperçu ordinateur','معاينة سطح المكتب')}</strong><button type="button" onClick={()=>void refreshPreview()}>{t('Restart / refresh session','Relancer la session','إعادة تشغيل الجلسة')}</button></div>
+          <div className={styles.previewZone}><iframe key={result.id+session+previewVersion} ref={frame} title="KidFlix isolated interactive experience preview" className={styles.frame} style={{width:'100%'}} src={previewSrc} sandbox="allow-scripts" referrerPolicy="no-referrer"/></div>
+                     {advanced&&<StudioVisualInspector locale={locale} enabled={inspectEnabled} selection={inspectorSelection} onToggle={setInspectEnabled} disabled={!canManage||phase==='updating'}
              onApply={(key,value)=>{if(inspectorSelection?.selector&&previewOrigin&&session)frame.current?.contentWindow?.postMessage({contract:'kidflix.interactive.bridge.1',channel:session,action:'studio.inspect.apply',data:{selector:inspectorSelection.selector,property:key,value}},'*')}}
-             onSave={saveVisualChanges}/>
-<div className={styles.eventsPanel}><div><strong>{t('Live interaction diagnostics','Diagnostic des interactions','تشخيص التفاعلات')}</strong><button type="button" onClick={()=>setEvents([])}>{t('Clear','Effacer','مسح')}</button></div><p>{previewError||events.slice(-6).join(' · ')||t('Start interacting; events will appear here.','Interagissez ; les événements apparaîtront ici.','ابدأ التفاعل وستظهر الأحداث هنا.')}</p></div>
-                     <StudioAIRepairHandoff locale={locale} family={family} title={result.title} packageId={result.id} files={result.files||[]} events={events} previewError={previewError} onExportSource={downloadArchive}/>
+             onSave={saveVisualChanges}/>}
+{advanced&&<div className={styles.eventsPanel}><div><strong>{t('Live interaction diagnostics','Diagnostic des interactions','تشخيص التفاعلات')}</strong><button type="button" onClick={()=>setEvents([])}>{t('Clear','Effacer','مسح')}</button></div><p>{previewError||events.slice(-6).join(' · ')||t('Start interacting; events will appear here.','Interagissez ; les événements apparaîtront ici.','ابدأ التفاعل وستظهر الأحداث هنا.')}</p></div>}
+                     {advanced&&<StudioAIRepairHandoff locale={locale} family={family} title={result.title} packageId={result.id} files={result.files||[]} events={events} previewError={previewError} onExportSource={downloadArchive}/>}
            <div className={styles.toolbar}><button type="button" className={styles.primary} onClick={()=>selectStep('publish')}>{t('Ready for publication review','Passer à la publication','متابعة النشر')}</button><button type="button" onClick={()=>selectStep('perfect')}>{t('Improve something','Modifier un élément','تحسين عنصر')}</button></div>
         </>}
       </div>}
@@ -413,16 +462,18 @@ export function UniversalInteractiveImport({
            </div>
            <button type="button" onClick={()=>void refreshPublicationProof()}>{t('Verify real publication status','Vérifier la publication réelle','التحقق من النشر الفعلي')}</button>
            {foreign&&<p className={styles.publishNote} role="status">{t('This package belongs to another dossier. Make an independent copy before attaching it here.','Ce package est lié à un autre dossier. Créez une copie indépendante avant de l’associer.','هذه الحزمة مرتبطة بملف آخر. أنشئ نسخة مستقلة قبل الربط.')}</p>}
-          <div className={styles.toolbar}>{foreign&&<button type="button" className={styles.primary} disabled={!canManage} onClick={()=>void cloneForThisDossier()}>{t('Make independent copy','Créer une copie indépendante','إنشاء نسخة مستقلة')}</button>}{!foreign&&!isAttached&&<button type="button" className={styles.primary} disabled={!canManage} onClick={()=>{onAttach(result);setMessage(t('Package attached locally. Save this native dossier to persist the revision.','Package associé. Enregistrez le dossier natif pour conserver la révision.','تم الربط. احفظ الملف الأصلي لتثبيت النسخة.'))}}>{t('Attach this exact revision','Associer cette révision','اربط هذه النسخة')}</button>}{isAttached&&onSaveDraft&&<button type="button" disabled={!canManage||phase==='saving'} onClick={()=>{setPhase('saving');void onSaveDraft().then(()=>{setPhase('validated');setMessage(t('Native dossier saved. Continue with final Content 360 review.','Dossier natif enregistré. Continuez vers la vérification finale.','تم حفظ الملف الأصلي؛ تابع المراجعة النهائية.'))}).catch(e=>{setPhase('failed');setFailure(String(e))})}}>{t('Save native draft','Enregistrer le brouillon natif','حفظ المسودة الأصلية')}</button>}{isAttached&&<button type="button" className={styles.primary} onClick={onContinue}>{t('Continue to native Save / Review / Publish','Continuer vers Enregistrer / Vérifier / Publier','متابعة الحفظ والمراجعة والنشر')}</button>}{onOpenDossier&&<button type="button" onClick={onOpenDossier}>{t('Open complete dossier','Ouvrir le dossier complet','فتح الملف الكامل')}</button>}</div>
+          {onPublish&&!foreign&&<div className={styles.toolbar}><button type="button" className={styles.primary} disabled={!canPublish||phase==='publishing'} onClick={()=>{setPhase('publishing');setFailure('');if(!isAttached)onAttach(result);void (async()=>{await onSaveDraft?.();await onPublish();await refreshPublicationProof();setPhase('validated')})().catch(e=>{setFailure(e.message);setPhase('failed')})}}>{phase==='publishing'?t('Publishing…','Publication…','جارٍ النشر…'):(publishLabel||t('Publish this edition','Publier cette édition','نشر هذه النسخة'))}</button></div>}
+          {(advanced||foreign||!onPublish)&&<div className={styles.toolbar}>{foreign&&<button type="button" className={styles.primary} disabled={!canManage} onClick={()=>void cloneForThisDossier()}>{t('Make independent copy','Créer une copie indépendante','إنشاء نسخة مستقلة')}</button>}{!foreign&&!isAttached&&<button type="button" className={styles.primary} disabled={!canManage} onClick={()=>{onAttach(result);setMessage(t('Package attached locally. Save this native dossier to persist the revision.','Package associé. Enregistrez le dossier natif pour conserver la révision.','تم الربط. احفظ الملف الأصلي لتثبيت النسخة.'))}}>{t('Attach this exact revision','Associer cette révision','اربط هذه النسخة')}</button>}{isAttached&&onSaveDraft&&<button type="button" disabled={!canManage||phase==='saving'} onClick={()=>{setPhase('saving');void onSaveDraft().then(()=>{setPhase('validated');setMessage(t('Native dossier saved. Continue with final Content 360 review.','Dossier natif enregistré. Continuez vers la vérification finale.','تم حفظ الملف الأصلي؛ تابع المراجعة النهائية.'))}).catch(e=>{setPhase('failed');setFailure(String(e))})}}>{t('Save native draft','Enregistrer le brouillon natif','حفظ المسودة الأصلية')}</button>}{isAttached&&<button type="button" className={styles.primary} onClick={onContinue}>{t('Continue to native Save / Review / Publish','Continuer vers Enregistrer / Vérifier / Publier','متابعة الحفظ والمراجعة والنشر')}</button>}{onOpenDossier&&<button type="button" onClick={onOpenDossier}>{t('Open complete dossier','Ouvrir le dossier complet','فتح الملف الكامل')}</button>}</div>}
           <p className={styles.publishNote}>{t('Publishing is only confirmed when Content 360 reports the real active public release. Uploading or attaching a package alone is not publication.','La publication n’est confirmée qu’après activation réelle de l’édition publique. Le téléversement ne suffit pas.','النشر مؤكد فقط بعد تفعيل الإصدار العام في Content 360.')}</p>
         </>}
       </div>}
 
       {step==='manage'&&<div className={styles.stage}>
+        {imports.filter(item=>item.state!=='validated').map(item=><div className={styles.libraryRow} key={item.id}><div><strong>{item.state} · {item.received?.length}/{item.chunkCount}</strong><p>{item.error||item.id}</p></div><button type="button" onClick={()=>{setResumeId(item.id);setStep('start')}}>{t('Resume this import','Reprendre cet import','استئناف هذا الاستيراد')}</button><button type="button" onClick={()=>{void importOperation({action:'cancel',id:item.id}).then(()=>reloadLibrary()).catch(e=>setFailure(e.message))}}>{t('Cancel incomplete transfer','Annuler le transfert incomplet','إلغاء النقل غير المكتمل')}</button></div>)}
         <div className={styles.stageTitle}><h4>{t('All your recoverable experience packages','Retrouvez vos expériences enregistrées','استعد مشاريعك المحفوظة')}</h4><p>{t('Resume, compare, reuse or restore validated revisions. No repeat uploads.','Reprenez, comparez, réutilisez ou restaurez sans nouvel import.','استأنف أو قارن أو استعد دون إعادة رفع.')}</p></div>
         <div className={styles.toolbar}><button type="button" disabled={listingBusy} onClick={()=>void reloadLibrary()}>{listingBusy?t('Loading…','Chargement…','تحميل…'):t('Refresh library','Actualiser la liste','تحديث القائمة')}</button><button type="button" onClick={()=>selectStep('start')}>{t('Import another experience','Importer une autre expérience','استيراد تجربة أخرى')}</button></div>
                  {library.length>1&&<StudioRevisionCompare locale={locale} library={library} activeId={result?.id} onOpen={id=>{void loadPackage(id,'understand')}} onRestore={id=>{void loadPackage(id,'publish');setMessage(t('Older revision loaded. Attach it to your draft to prepare a new publication.','Ancienne révision chargée. Associez-la au brouillon pour préparer une republication.','تم تحميل الإصدار السابق؛ اربطه بالمسودة للنشر.'))}}/>}
-{!library.length?<div className={styles.empty}>{listingBusy?t('Loading packages…','Chargement des packages…','تحميل الحزم…'):t('No saved packages for this category and language yet.','Aucun package pour cette catégorie et cette langue.','لا توجد حزم محفوظة لهذه الفئة واللغة.')}</div>:<div className={styles.library}>{library.map(item=><div key={item.id} className={styles.libraryRow}><div><strong>{item.title}</strong><p>{item.state} · {item.files} {t('files','fichiers','ملفات')} · {item.createdAt?new Date(item.createdAt).toLocaleString(locale):''}</p>{item.parentId&&<small>{t('Revision of','Révision de','نسخة من')} {item.parentId.slice(0,8)}…</small>}</div><div className={styles.toolbar}><button type="button" onClick={()=>void loadPackage(item.id,'understand')}>{t('Open','Ouvrir','فتح')}</button>{item.id!==attachedId&&<button type="button" onClick={()=>void loadPackage(item.id,'experience')}>{t('Preview','Prévisualiser','معاينة')}</button>}</div></div>)}</div>}
+{!library.length?<div className={styles.empty}>{listingBusy?t('Loading packages…','Chargement des packages…','تحميل الحزم…'):t('No saved packages for this category and language yet.','Aucun package pour cette catégorie et cette langue.','لا توجد حزم محفوظة لهذه الفئة واللغة.')}</div>:<div className={styles.library}>{library.map(item=><div key={item.id} className={styles.libraryRow}><div><strong>{item.title}</strong><p>{item.state} · {item.files} {t('files','fichiers','ملفات')} · {item.createdAt?new Date(item.createdAt).toLocaleString(locale):''}</p>{item.parentId&&<small>{t('Revision of','Révision de','نسخة من')} {item.parentId.slice(0,8)}…</small>}</div><div className={styles.toolbar}><button type="button" onClick={()=>void loadPackage(item.id,'understand')}>{t('Open','Ouvrir','فتح')}</button>{item.id!==attachedId&&<button type="button" onClick={()=>void loadPackage(item.id,'experience').catch(()=>{})}>{t('Preview','Prévisualiser','معاينة')}</button>}</div></div>)}</div>}
       </div>}
     </div>}
   </section>;

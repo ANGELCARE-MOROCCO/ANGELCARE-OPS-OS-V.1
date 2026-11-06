@@ -1,4 +1,5 @@
 "use client";
+import { ManagedImage } from "../../marketplace-imagery/ManagedImage";
 import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink';
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
@@ -29,11 +30,13 @@ import styles from "./immersive.module.css";
 export const editorial = (key: string) =>
   `/angelcare-marketplace/families-world-r2/${key}.jpg`;
 export function Photo({
+  slot,
   src,
   alt = "",
   priority = false,
   contain = false,
 }: {
+  slot?: string;
   src: string | null;
   alt?: string;
   priority?: boolean;
@@ -49,7 +52,7 @@ export function Photo({
       data-media-state={src && !failed ? "ready" : "missing"}
     >
       {displaySrc && !failed ? (
-        <img
+        <ManagedImage slot={slot}
           src={displaySrc}
           alt={alt}
           loading={priority ? "eager" : "lazy"}

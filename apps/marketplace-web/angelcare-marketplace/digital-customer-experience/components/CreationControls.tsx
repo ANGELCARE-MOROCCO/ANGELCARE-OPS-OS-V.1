@@ -85,7 +85,9 @@ export function referenceFor(
         ? "offers"
         : "record",
     kind:
-      def.key === "contentId"
+      def.key === "templateId"
+        ? "template"
+        : def.key === "contentId"
         ? "content"
         : ["experienceId", "assessmentId"].includes(def.key)
           ? "experience"

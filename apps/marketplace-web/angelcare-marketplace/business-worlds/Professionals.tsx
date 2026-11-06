@@ -28,8 +28,8 @@ export function Professionals() {
         data-business-module="professional-opening"
       >
         <div className={s.proPortraits}>
-          <Picture name="professional" priority />
-          <Picture name="preschool" />
+          <Picture slot={"visual.professionals.1"} name="professional" priority />
+          <Picture slot={"visual.professionals.2"} name="preschool" />
           <span>
             {tr(
               w(
@@ -230,7 +230,7 @@ export function Professionals() {
         )}
       >
         <div className={s.practiceMosaic}>
-          <Picture name="professional" />
+          <Picture slot={"visual.professionals.3"} name="professional" />
           <Tiles
             items={[
               {
@@ -282,7 +282,7 @@ export function Professionals() {
         tone="ink"
       >
         <div className={s.split}>
-          <Picture name="academy" />
+          <Picture slot={"visual.professionals.4"} name="academy" />
           <div>
             <h3>
               {tr(

@@ -16,6 +16,7 @@ export function PublicReachability({ resourceKey, language, revision, onLocate }
     return () => { clearTimeout(timeout); controller.abort(); };
   }, [resourceKey, language, revision, retry]);
   const labels: Record<string, [string,string,string]> = {
+    interactive: ["HTML package and runtime", "Package HTML et exécution", "حزمة HTML وتشغيلها"],
     configuration: ["Public domain and language", "Domaine et langue publics", "النطاق واللغة العامان"],
     edition: ["Current public edition", "Édition publique active", "النسخة العامة النشطة"],
     discovery: ["General discovery", "Découverte générale", "الاستكشاف العام"],
