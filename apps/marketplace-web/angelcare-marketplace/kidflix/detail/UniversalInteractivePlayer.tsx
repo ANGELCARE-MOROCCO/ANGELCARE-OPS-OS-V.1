@@ -45,7 +45,7 @@ export function UniversalInteractivePlayer({p,packageId,checksum,entry='index.ht
     window.addEventListener('message',receive);
     return()=>window.removeEventListener('message',receive);
   },[origin,channel,valid,p.update,p.state.interactiveState]);
-  useEffect(()=>{if(!valid||ready)return;const t=setTimeout(()=>{if(!ready)setFailure(t('The experience is not responding yet. You can reload it.','L’expérience ne répond pas encore. Vous pouvez la relancer.','التجربة لا تستجيب بعد. يمكنك إعادة تحميلها.'))},16000);return()=>clearTimeout(t)},[valid,ready,src]);
+  useEffect(()=>{if(!valid||ready)return;const timeoutId=setTimeout(()=>{if(!ready)setFailure(t('The experience is not responding yet. You can reload it.','L’expérience ne répond pas encore. Vous pouvez la relancer.','التجربة لا تستجيب بعد. يمكنك إعادة تحميلها.'))},16000);return()=>clearTimeout(timeoutId)},[valid,ready,src]);
   if(!valid)return <div role="alert" style={{padding:22,background:'#fff5f1',borderRadius:12}}>{t('The interactive player configuration is unavailable. Please contact the publisher.','La configuration du lecteur interactif est indisponible. Contactez l’éditeur.','إعداد المشغل التفاعلي غير متاح. يرجى الاتصال بالناشر.')}</div>;
   return <section ref={shell} aria-label="KidFlix interactive experience" style={{position:'relative',borderRadius:17,overflow:'hidden',border:'1px solid #dce5ef',background:'#fff',boxShadow:'0 4px 23px #1b364414'}}>
     <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:10,flexWrap:'wrap',padding:'10px 13px',borderBottom:'1px solid #e1eaf1',background:'#f9fbfe'}}>
