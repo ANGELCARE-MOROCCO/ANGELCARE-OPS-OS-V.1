@@ -59,6 +59,6 @@ export async function POST(request: Request) {
     response.headers.set('cache-control', 'no-store')
     return response
   } catch {
-    return NextResponse.json({ ok: false, message: 'Connexion administrateur momentanément indisponible.' }, { status: 500 })
+    return NextResponse.json({ ok: false, code: 'SERVICE_UNAVAILABLE', message: 'Connexion administrateur momentanément indisponible. Votre mot de passe n’est pas nécessairement incorrect.' }, { status: 503 })
   }
 }

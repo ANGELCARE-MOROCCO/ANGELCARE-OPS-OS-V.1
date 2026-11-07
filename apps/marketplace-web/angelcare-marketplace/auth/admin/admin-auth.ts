@@ -26,7 +26,7 @@ type AdminLoginResult =
   | {
       ok: false
       status: number
-      code: 'INVALID_CREDENTIALS' | 'ACCESS_DENIED' | 'RATE_LIMITED' | 'ACCOUNT_UNAVAILABLE' | 'MFA_REQUIRED'
+      code: 'INVALID_CREDENTIALS' | 'ACCESS_DENIED' | 'RATE_LIMITED' | 'ACCOUNT_UNAVAILABLE' | 'MFA_REQUIRED' | 'SERVICE_UNAVAILABLE'
       message: string
     }
 
@@ -196,7 +196,12 @@ export async function authenticateMarketplaceAdmin(input: {
     .limit(1)
     .maybeSingle()
 
-  if (error || !user || text(user.status).toLowerCase() !== 'active' || !text(user.password_hash)) {
+  // Do not tell operators their credentials are wrong when Supabase is unavailable.
+  if (error) {
+    return { ok: false, status: 503, code: 'SERVICE_UNAVAILABLE', message: 'Service de connexion temporairement indisponible. Réessayez sans changer vos identifiants.' }
+  }
+
+  if (!user || text(user.status).toLowerCase() !== 'active' || !text(user.password_hash)) {
     await writeLoginAudit({ action: LOGIN_FAILURE_ACTION, targetId: identifierHash, result: 'failed', reason: 'identity_not_available', request: input.request })
     return { ok: false, status: 401, code: 'INVALID_CREDENTIALS', message: 'Identifiants administrateur invalides.' }
   }

@@ -39,12 +39,13 @@ export async function getCurrentAppUser() {
 
   const supabase = await createClient()
 
-  const { data: session } = await supabase
+  const { data: session, error: sessionError } = await supabase
     .from('app_sessions')
     .select('*')
     .eq('session_token', token)
     .maybeSingle()
 
+  if (sessionError) throw new Error('SESSION_BACKEND_UNAVAILABLE')
   if (!session) return null
 
   if (new Date(session.expires_at).getTime() < Date.now()) {
@@ -52,12 +53,13 @@ export async function getCurrentAppUser() {
     return null
   }
 
-  const { data: user } = await supabase
+  const { data: user, error: userError } = await supabase
     .from('app_users')
     .select('*')
     .eq('id', session.user_id)
     .maybeSingle()
 
+  if (userError) throw new Error('SESSION_BACKEND_UNAVAILABLE')
   if (!user || user.status !== 'active') return null
 
   const tenantAccessResult = await supabase
@@ -71,8 +73,8 @@ export async function getCurrentAppUser() {
   // Security policy is an authorization dependency. A database/policy lookup
   // failure must never silently degrade to unrestricted access.
   if (tenantAccessResult.error) {
-    await supabase.from('app_sessions').delete().eq('session_token', token)
-    return null
+    // Policy lookup failure denies access temporarily without revoking the session.
+    throw new Error('SESSION_BACKEND_UNAVAILABLE')
   }
 
   const tenantAccess = tenantAccessResult.data
@@ -100,8 +102,8 @@ export async function getCurrentAppUser() {
     }
     const seen = await supabase.from('app_sessions').update({ last_seen_at: new Date().toISOString() }).eq('session_token', token)
     if (seen.error) {
-      await supabase.from('app_sessions').delete().eq('session_token', token)
-      return null
+      // Failure to persist last_seen_at must not revoke an authorized session.
+      // Authorization and expiration were verified above.
     }
   }
 

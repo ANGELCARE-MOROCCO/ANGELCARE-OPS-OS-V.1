@@ -19,7 +19,9 @@ export async function getCurrentUser() {
     .gt('expires_at', new Date().toISOString())
     .maybeSingle()
 
-  if (sessionError || !session?.user_id) return null
+  // A transient database failure must not masquerade as a revoked session.
+  if (sessionError) throw new Error('SESSION_BACKEND_UNAVAILABLE')
+  if (!session?.user_id) return null
 
   const { data: user, error: userError } = await supabase
     .from('app_users')
@@ -27,17 +29,19 @@ export async function getCurrentUser() {
     .eq('id', session.user_id)
     .maybeSingle()
 
-  if (userError || !user || user.status !== 'active') return null
+  if (userError) throw new Error('SESSION_BACKEND_UNAVAILABLE')
+  if (!user || user.status !== 'active') return null
 
-  try {
-    const { data: tenantAccess } = await supabase
+  const { data: tenantAccess, error: tenantAccessError } = await supabase
       .from('angelcare360_operator_tenant_access_accounts')
       .select('status,security_policy,access_starts_at,access_expires_at,mfa_enrolled_at')
       .eq('app_user_id', user.id)
       .order('updated_at', { ascending: false })
       .limit(1)
       .maybeSingle()
-    if (tenantAccess) {
+  // Fail closed, preserving the cookie, when the policy authority is unavailable.
+  if (tenantAccessError) throw new Error('SESSION_BACKEND_UNAVAILABLE')
+  if (tenantAccess) {
       const now = Date.now()
       const startsAt = tenantAccess.access_starts_at ? new Date(tenantAccess.access_starts_at).getTime() : null
       const expiresAt = tenantAccess.access_expires_at ? new Date(tenantAccess.access_expires_at).getTime() : null
@@ -48,8 +52,5 @@ export async function getCurrentUser() {
       if (createdAt && createdAt + durationHours * 3600000 <= now) return null
       if (Boolean(policy.require_mfa) && tenantAccess.mfa_enrolled_at && !session.mfa_verified_at) return null
     }
-  } catch {
-    // Compatibility mode before the Tenant Identity migration exists.
-  }
   return user
 }

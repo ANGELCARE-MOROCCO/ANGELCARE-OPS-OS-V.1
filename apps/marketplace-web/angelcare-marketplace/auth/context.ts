@@ -105,7 +105,15 @@ async function databaseWorkspaceAccess(userId:string):Promise<string[]>{
 }
 
 export async function getMarketplaceContext(): Promise<MarketplaceRequestContext | null> {
-  const user = (await getCurrentUser().catch(() => null)) as CurrentAppUser | null
+  let user: CurrentAppUser | null
+  try {
+    user = (await getCurrentUser()) as CurrentAppUser | null
+  } catch (error) {
+    if (error instanceof Error && error.message === 'SESSION_BACKEND_UNAVAILABLE') {
+      throw new MarketplaceError('CONFIGURATION_ERROR', 'La connexion à la base de données est momentanément indisponible. Votre session n’a pas été supprimée.', { status: 503, retryable: true, cause: error })
+    }
+    throw error
+  }
   if (!user?.id) return null
   if (user.__demo) return null
 
