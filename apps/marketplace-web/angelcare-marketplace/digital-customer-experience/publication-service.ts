@@ -41,7 +41,15 @@ const fingerprint = (r: DceRecord, l: Locale) =>
       ]),
     )
     .digest("hex");
-function eligibleMedia(row: any, control: GateControl) {
+type PublicationMediaCandidate = {
+  status?: string;
+  processingState?: string;
+  url?: unknown;
+  expiresAt?: string;
+  mime?: string;
+};
+
+function eligibleMedia(row: PublicationMediaCandidate, control: GateControl) {
   return (
     row.status === "active" &&
     row.processingState !== "failed" &&
@@ -101,7 +109,7 @@ export async function publicationOptions(
     });
     return {
       ...result,
-      rows: result.rows.filter((row) => eligibleMedia(row, control)),
+      rows: result.rows.filter((row: PublicationMediaCandidate) => eligibleMedia(row, control)),
     };
   }
   if (control.kind === "offers")
