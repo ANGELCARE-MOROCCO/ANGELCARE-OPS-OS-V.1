@@ -3,46 +3,279 @@ import { useEffect, useState } from "react";
 import type { Locale } from "../types";
 import { tr } from "../types";
 import { Button, Panel } from "./ui";
-export function PublicReachability({ resourceKey, language, revision, onLocate }: { resourceKey: string; language: Locale; revision?: number; onLocate?: (path: string) => void }) {
-  const [result, setResult] = useState<any>(null), [retry, setRetry] = useState(0), [busy, setBusy] = useState(true);
+export function PublicReachability({
+  resourceKey,
+  language,
+  revision,
+  releaseId,
+  onLocate,
+}: {
+  resourceKey: string;
+  language: Locale;
+  revision?: number;
+  releaseId?: string;
+  onLocate?: (path: string) => void;
+}) {
+  const [result, setResult] = useState<any>(null),
+    [retry, setRetry] = useState(0),
+    [busy, setBusy] = useState(true);
   useEffect(() => {
     const controller = new AbortController();
-    setResult(null); setBusy(true);
-    const timeout = setTimeout(() => { controller.abort(); setResult({ code: "PUBLIC_CHECK_TIMEOUT" }); setBusy(false); }, 75000);
-    fetch("/api/kidflix/publication-status?" + new URLSearchParams({ key: resourceKey, locale: language, probe: "1" }), { cache: "no-store", signal: controller.signal })
-      .then(async r => { const v = await r.json(); if (!controller.signal.aborted) setResult(v); })
-      .catch(e => { if (e.name !== "AbortError") setResult({ code: "PUBLIC_JOURNEY_UNAVAILABLE" }); })
-      .finally(() => { clearTimeout(timeout); if (!controller.signal.aborted) setBusy(false); });
-    return () => { clearTimeout(timeout); controller.abort(); };
-  }, [resourceKey, language, revision, retry]);
-  const labels: Record<string, [string,string,string]> = {
-    interactive: ["HTML package and runtime", "Package HTML et exécution", "حزمة HTML وتشغيلها"],
-    configuration: ["Public domain and language", "Domaine et langue publics", "النطاق واللغة العامان"],
-    edition: ["Current public edition", "Édition publique active", "النسخة العامة النشطة"],
+    setResult(null);
+    setBusy(true);
+    const timeout = setTimeout(() => {
+      controller.abort();
+      setResult({ code: "PUBLIC_CHECK_TIMEOUT" });
+      setBusy(false);
+    }, 75000);
+    fetch(
+      "/api/kidflix/publication-status?" +
+        new URLSearchParams({ key: resourceKey, locale: language, probe: "1" }),
+      { cache: "no-store", signal: controller.signal },
+    )
+      .then(async (r) => {
+        const v = await r.json();
+        if (!controller.signal.aborted) setResult(v);
+      })
+      .catch((e) => {
+        if (e.name !== "AbortError")
+          setResult({ code: "PUBLIC_JOURNEY_UNAVAILABLE" });
+      })
+      .finally(() => {
+        clearTimeout(timeout);
+        if (!controller.signal.aborted) setBusy(false);
+      });
+    return () => {
+      clearTimeout(timeout);
+      controller.abort();
+    };
+  }, [resourceKey, language, revision, releaseId, retry]);
+  const labels: Record<string, [string, string, string]> = {
+    interactive: [
+      "HTML package and runtime",
+      "Package HTML et exécution",
+      "حزمة HTML وتشغيلها",
+    ],
+    configuration: [
+      "Public domain and language",
+      "Domaine et langue publics",
+      "النطاق واللغة العامان",
+    ],
+    edition: [
+      "Current public edition",
+      "Édition publique active",
+      "النسخة العامة النشطة",
+    ],
     discovery: ["General discovery", "Découverte générale", "الاستكشاف العام"],
     category: ["Category catalogue", "Catalogue de catégorie", "كتالوج الفئة"],
-    detail: ["Detail data resolved", "Données de la page détaillée", "بيانات الصفحة التفصيلية"],
-    cover: ["Storefront cover image", "Couverture de la carte publique", "صورة الغلاف العامة"],
-    files: ["Public player media bindings", "Fichiers liés aux lecteurs publics", "ملفات المشغلات العامة"],
-    transport: ["Real document/cover delivery (bounded sample)", "Livraison réelle des fichiers (échantillon limité)", "تسليم الملف الحقيقي (عينة محدودة)"]
+    detail: [
+      "Detail data resolved",
+      "Données de la page détaillée",
+      "بيانات الصفحة التفصيلية",
+    ],
+    cover: [
+      "Storefront cover image",
+      "Couverture de la carte publique",
+      "صورة الغلاف العامة",
+    ],
+    files: [
+      "Public player media bindings",
+      "Fichiers liés aux lecteurs publics",
+      "ملفات المشغلات العامة",
+    ],
+    transport: [
+      "Real document/cover delivery (bounded sample)",
+      "Livraison réelle des fichiers (échantillon limité)",
+      "تسليم الملف الحقيقي (عينة محدودة)",
+    ],
   };
-  const names: Record<string, [string,string,string]> = {
-    PUBLIC_HOME_BINDING_REQUIRED: ["Activate the homepage domain for this language.", "Activez le domaine public de l’accueil pour cette langue.", "فعّل نطاق الصفحة الرئيسية لهذه اللغة."],
-    NO_PUBLIC_EDITION_IN_THIS_SCOPE: ["No active public edition was found for this language.", "Aucune édition publique active trouvée dans cette langue.", "لم تُعثر على نسخة عامة نشطة بهذه اللغة."],
-    PUBLIC_CHECK_TIMEOUT: ["The check timed out. Retry without publishing again.", "Le contrôle a expiré. Réessayez sans republier.", "انتهت مهلة الفحص. أعد المحاولة دون إعادة النشر."],
-    PUBLIC_JOURNEY_UNAVAILABLE: ["A public service could not be checked. The saved edition is preserved.", "Un service public n’a pas pu être contrôlé. L’édition enregistrée est conservée.", "تعذر فحص خدمة عامة. النسخة المحفوظة محفوظة."],
-    CATEGORY_CHECK_BUDGET_REACHED: ["The catalogue check is incomplete; open the category to verify.", "Le contrôle du catalogue est incomplet ; ouvrez la catégorie pour vérifier.", "فحص الكتالوج غير مكتمل؛ افتح الفئة للتحقق."]
+  const names: Record<string, [string, string, string]> = {
+    PUBLIC_HOME_BINDING_REQUIRED: [
+      "Activate the homepage domain for this language.",
+      "Activez le domaine public de l’accueil pour cette langue.",
+      "فعّل نطاق الصفحة الرئيسية لهذه اللغة.",
+    ],
+    NO_PUBLIC_EDITION_IN_THIS_SCOPE: [
+      "No active public edition was found for this language.",
+      "Aucune édition publique active trouvée dans cette langue.",
+      "لم تُعثر على نسخة عامة نشطة بهذه اللغة.",
+    ],
+    PUBLIC_CHECK_TIMEOUT: [
+      "The check timed out. Retry without publishing again.",
+      "Le contrôle a expiré. Réessayez sans republier.",
+      "انتهت مهلة الفحص. أعد المحاولة دون إعادة النشر.",
+    ],
+    PUBLIC_JOURNEY_UNAVAILABLE: [
+      "A public service could not be checked. The saved edition is preserved.",
+      "Un service public n’a pas pu être contrôlé. L’édition enregistrée est conservée.",
+      "تعذر فحص خدمة عامة. النسخة المحفوظة محفوظة.",
+    ],
+    CATEGORY_CHECK_BUDGET_REACHED: [
+      "The catalogue check is incomplete; open the category to verify.",
+      "Le contrôle du catalogue est incomplet ; ouvrez la catégorie pour vérifier.",
+      "فحص الكتالوج غير مكتمل؛ افتح الفئة للتحقق.",
+    ],
   };
-  return <Panel title={tr(["Public journey", "Parcours public", "المسار العام"], language)}>
-    <p role="status">{busy ? tr(["Checking…", "Vérification…", "جارٍ التحقق…"],language) : result?.status === "ready" ? tr(["Public data checks passed", "Contrôles des données publiques réussis", "نجحت فحوص البيانات العامة"],language) : tr(["Public access needs attention", "Accès public à corriger", "الوصول العام يحتاج إلى تصحيح"],language)}</p>
-    {result?.code && names[result.code] ? <p>{tr(names[result.code],language)}</p> : null}
-    {result?.checks ? <ul>{Object.entries(result.checks).map(([key, passed]) => <li key={key}>{passed ? "✓" : "!"} {tr(labels[key] || [key,key,key],language)}</li>)}</ul> : null}
-    {Array.isArray(result?.issues) && result.issues.length ? <ul>{result.issues.map((issue:any,i:number) => <li key={issue.path+":"+i}>{Array.isArray(issue.message) ? tr(issue.message,language) : issue.code}{onLocate && issue.path ? <Button onClick={() => onLocate(issue.path)}>{tr(["Fix this field", "Corriger ce champ", "تصحيح هذا الحقل"],language)}</Button> : null}</li>)}</ul> : null}
-    {Array.isArray(result?.transportTests) ? <ul>{result.transportTests.map((item:any,i:number) => <li key={i}>{item.status === "passed" ? "✓" : "!"} {item.kind}: {item.status} {item.bytes ? `(${item.bytes} bytes)` : ""}</li>)}</ul> : null}
-    <p>{tr(["The protected probe reads up to three real published files; it does not certify every file. Open the public page and download the release to complete acceptance.", "Le contrôle protégé lit jusqu’à trois vrais fichiers publiés, sans certifier tous les fichiers. Ouvrez la page publique et téléchargez l’édition pour finir la validation.", "يقرأ الفحص المحمي ما يصل إلى ثلاثة ملفات منشورة فعلية، لكنه لا يثبت جميع الملفات. افتح الصفحة العامة ونزّل النسخة لإكمال الفحص."],language)}</p>
-    <Button disabled={busy} onClick={() => setRetry(x => x + 1)}>{tr(["Check again", "Vérifier à nouveau", "التحقق مجدداً"],language)}</Button>
-    {result?.href ? <p><a href={result.href} target="_blank" rel="noopener noreferrer">{tr(["Open actual public page", "Ouvrir la vraie page publique", "فتح الصفحة العامة الفعلية"],language)} ↗</a></p> : null}
-    {result?.categoryHref ? <p><a href={result.categoryHref} target="_blank" rel="noopener noreferrer">{tr(["Open this language’s storefront", "Ouvrir la catégorie dans cette langue", "فتح الفئة بهذه اللغة"],language)} ↗</a></p> : null}
-    {result?.allLanguagesHref ? <p><a href={result.allLanguagesHref} target="_blank" rel="noopener noreferrer">{tr(["Browse all content languages", "Afficher toutes les langues de contenu", "عرض جميع لغات المحتوى"],language)} ↗</a></p> : null}
-  </Panel>;
+  return (
+    <Panel
+      title={tr(
+        ["Public journey", "Parcours public", "المسار العام"],
+        language,
+      )}
+    >
+      <p role="status">
+        {busy
+          ? tr(["Checking…", "Vérification…", "جارٍ التحقق…"], language)
+          : result?.status === "ready"
+            ? tr(
+                [
+                  "Public data checks passed",
+                  "Contrôles des données publiques réussis",
+                  "نجحت فحوص البيانات العامة",
+                ],
+                language,
+              )
+            : tr(
+                [
+                  "Public access needs attention",
+                  "Accès public à corriger",
+                  "الوصول العام يحتاج إلى تصحيح",
+                ],
+                language,
+              )}
+      </p>
+      {result?.code && names[result.code] ? (
+        <p>{tr(names[result.code], language)}</p>
+      ) : null}
+      {result?.checks ? (
+        <ul>
+          {Object.entries(result.checks).map(([key, passed]) => (
+            <li key={key}>
+              {passed === true
+                ? "✓"
+                : !result.checks.configuration ||
+                    (key !== "configuration" &&
+                      key !== "edition" &&
+                      !result.checks.edition) ||
+                    passed == null
+                  ? "○"
+                  : "!"}{" "}
+              {tr(labels[key] || [key, key, key], language)}
+              {passed !== true &&
+              (!result.checks.configuration ||
+                (key !== "configuration" &&
+                  key !== "edition" &&
+                  !result.checks.edition) ||
+                passed == null)
+                ? " · " +
+                  tr(
+                    [
+                      "Not checked · waiting for prerequisite",
+                      "Non contrôlé · prérequis en attente",
+                      "لم يُفحص · بانتظار المتطلب",
+                    ],
+                    language,
+                  )
+                : ""}
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      {Array.isArray(result?.issues) && result.issues.length ? (
+        <ul>
+          {result.issues.map((issue: any, i: number) => (
+            <li key={issue.path + ":" + i}>
+              {Array.isArray(issue.message)
+                ? tr(issue.message, language)
+                : issue.code}
+              {onLocate && issue.path ? (
+                <Button onClick={() => onLocate(issue.path)}>
+                  {tr(
+                    ["Fix this field", "Corriger ce champ", "تصحيح هذا الحقل"],
+                    language,
+                  )}
+                </Button>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      {Array.isArray(result?.transportTests) ? (
+        <ul>
+          {result.transportTests.map((item: any, i: number) => (
+            <li key={i}>
+              {item.status === "passed" ? "✓" : "!"} {item.kind}: {item.status}{" "}
+              {item.bytes ? `(${item.bytes} bytes)` : ""}
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      <p>
+        {tr(
+          [
+            "The protected probe reads up to three real published files; it does not certify every file. Open the public page and download the release to complete acceptance.",
+            "Le contrôle protégé lit jusqu’à trois vrais fichiers publiés, sans certifier tous les fichiers. Ouvrez la page publique et téléchargez l’édition pour finir la validation.",
+            "يقرأ الفحص المحمي ما يصل إلى ثلاثة ملفات منشورة فعلية، لكنه لا يثبت جميع الملفات. افتح الصفحة العامة ونزّل النسخة لإكمال الفحص.",
+          ],
+          language,
+        )}
+      </p>
+      <Button disabled={busy} onClick={() => setRetry((x) => x + 1)}>
+        {tr(["Check again", "Vérifier à nouveau", "التحقق مجدداً"], language)}
+      </Button>
+      {result?.href ? (
+        <p>
+          <a href={result.href} target="_blank" rel="noopener noreferrer">
+            {tr(
+              [
+                "Open actual public page",
+                "Ouvrir la vraie page publique",
+                "فتح الصفحة العامة الفعلية",
+              ],
+              language,
+            )}{" "}
+            ↗
+          </a>
+        </p>
+      ) : null}
+      {result?.categoryHref ? (
+        <p>
+          <a
+            href={result.categoryHref}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {tr(
+              [
+                "Open this language’s storefront",
+                "Ouvrir la catégorie dans cette langue",
+                "فتح الفئة بهذه اللغة",
+              ],
+              language,
+            )}{" "}
+            ↗
+          </a>
+        </p>
+      ) : null}
+      {result?.allLanguagesHref ? (
+        <p>
+          <a
+            href={result.allLanguagesHref}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {tr(
+              [
+                "Browse all content languages",
+                "Afficher toutes les langues de contenu",
+                "عرض جميع لغات المحتوى",
+              ],
+              language,
+            )}{" "}
+            ↗
+          </a>
+        </p>
+      ) : null}
+    </Panel>
+  );
 }

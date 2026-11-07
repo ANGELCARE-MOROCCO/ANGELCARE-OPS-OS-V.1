@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useEffect, useState, type ReactNode } from 'react'
+import { Suspense, useEffect, useState, type ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
 import { PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import styles from '../design-system/marketplace.module.css'
@@ -12,9 +12,13 @@ import { AdminLogoutButton } from '../auth/admin/AdminLogoutButton'
 import { GovernedActionProvider } from './GovernedActionProvider'
 import { AdminWorkspaceContextNav } from './AdminWorkspaceContextNav'
 
+import type { Locale } from '../admin-notifications/model'
+import { NativeNotificationFocus } from '../admin-notifications/NativeNotificationFocus'
+
 const SIDEBAR_PREFERENCE_KEY = 'angelcare.marketplace.admin-sidebar.v1'
 
 export function AdminShellChrome({
+  locale = 'fr',
   actorDisplayName,
   actorEmail,
   roleKeys,
@@ -29,6 +33,7 @@ export function AdminShellChrome({
   workspaces,
   children,
 }: {
+  locale?: Locale
   actorDisplayName: string
   actorEmail: string | null
   roleKeys: string[]
@@ -110,13 +115,14 @@ export function AdminShellChrome({
       </aside>
       <section className={styles.workspace}>
         <AdminShellCommandSurface
+          locale={locale}
           snapshot={snapshot}
           workspaces={workspaces}
           territoryId={territoryId}
           permissionCount={permissionCount}
         />
         <AdminWorkspaceContextNav />
-        <main className={`${styles.content} ${styles.adminContent}`} style={dce ? {padding: 0} : undefined}><GovernedActionProvider>{children}</GovernedActionProvider></main>
+        <main className={`${styles.content} ${styles.adminContent}`} style={dce ? {padding: 0} : undefined}><GovernedActionProvider><Suspense fallback={null}><NativeNotificationFocus locale={locale} /></Suspense>{children}</GovernedActionProvider></main>
       </section>
     </div>
   )

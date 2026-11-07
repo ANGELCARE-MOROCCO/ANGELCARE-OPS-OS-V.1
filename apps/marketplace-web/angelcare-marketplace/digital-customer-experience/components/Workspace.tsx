@@ -61,10 +61,22 @@ import { AccessWorkspace } from "./Access";
 import { Publication, Inbox, Users } from "./Operations";
 import { Insights, Logs, Utilities, Settings } from "./Insights";
 import s from "./workspace.module.css";
-const AngelCareImageryStudio = lazy(() => import("../../marketplace-imagery/Studio").then(m=>({default:m.ImageryStudio})));
-const ImageryStudio = lazy(() => import("../../kidflix/imagery/Studio").then(m=>({default:m.ImageryStudio})));
-const InventoryMap = lazy(() => import("../inventory/InventoryMap").then(m=>({default:m.InventoryMap})));
-const CreationStudio = lazy(() => import("./CreationStudio").then(m=>({default:m.CreationStudio})));
+const AngelCareImageryStudio = lazy(() =>
+  import("../../marketplace-imagery/Studio").then((m) => ({
+    default: m.ImageryStudio,
+  })),
+);
+const ImageryStudio = lazy(() =>
+  import("../../kidflix/imagery/Studio").then((m) => ({
+    default: m.ImageryStudio,
+  })),
+);
+const InventoryMap = lazy(() =>
+  import("../inventory/InventoryMap").then((m) => ({
+    default: m.InventoryMap,
+  })),
+);
+
 const Editor = lazy(() =>
     import("./Editor").then((m) => ({ default: m.Editor })),
   ),
@@ -125,7 +137,6 @@ export function Workspace({
     } | null>(null),
     [previewPicker, setPreviewPicker] = useState(false),
     [choose, setChoose] = useState(false),
-    [creator, setCreator] = useState<{family?:string;prepared?:Partial<import("../types").DceRecord>}|null>(null),
     [previewId, setPreview] = useState(""),
     [previewRelease, setPreviewRelease] = useState(""),
     [previewLanguage, setPreviewLanguage] = useState<Locale | undefined>(),
@@ -137,7 +148,9 @@ export function Workspace({
     [initializing, setInitializing] = useState(false),
     [openNotifications, setNotifications] = useState(false);
   const latest = useRef(0);
-  const title = MODULES.find((m) => m.key === module) || MODULES.find((m) => m.key === "dashboard")!;
+  const title =
+    MODULES.find((m) => m.key === module) ||
+    MODULES.find((m) => m.key === "dashboard")!;
   useEffect(() => {
     setBoot(initial);
   }, [initial]);
@@ -201,13 +214,20 @@ export function Workspace({
     family?: string,
     prepared?: Partial<import("../types").DceRecord>,
   ) {
-    if (kind === "experience" || kind === "bundle") {
-      setCreator({family:family || (kind === "bundle" ? "bundles" : undefined),prepared});
+    if (kind === "experience" && !family && !prepared?.family) {
+      setChoose(true);
       return;
     }
     setEditor({
+      id: prepared?.id,
       kind: kind as Kind,
-      family,
+      family:
+        family ||
+        prepared?.family ||
+        (kind === "bundle" ? "bundles" : undefined),
+      initialTab: ["experience", "bundle"].includes(kind)
+        ? "source"
+        : "overview",
       prepared,
       language: (["ar", "fr", "en"].includes(
         String(prepared?.data?.defaultLocale),
@@ -307,7 +327,20 @@ export function Workspace({
   else if (["reports", "revenue"].includes(module))
     body = <Insights section={module} />;
   else if (module === "inventory-map") body = <InventoryMap />;
-  else if (module === "imports") body = <Imports key={[boot.health.scopeKey,params?.get("context"),params?.get("from"),params?.get("family"),params?.get("inventorySubtype"),params?.get("inventoryLocale"),params?.get("inventoryTopic")].join("|")} />;
+  else if (module === "imports")
+    body = (
+      <Imports
+        key={[
+          boot.health.scopeKey,
+          params?.get("context"),
+          params?.get("from"),
+          params?.get("family"),
+          params?.get("inventorySubtype"),
+          params?.get("inventoryLocale"),
+          params?.get("inventoryTopic"),
+        ].join("|")}
+      />
+    );
   else if (module === "utilities") body = <Utilities />;
   else if (module === "settings") body = <Settings />;
   else if (module === "logs") body = <Logs />;
@@ -360,14 +393,18 @@ export function Workspace({
             onClick={() => setNav(false)}
           >
             <Icon name="LayoutDashboard" />
-            <span>{tr(MODULES.find((m) => m.key === "dashboard")!.label, locale)}</span>
+            <span>
+              {tr(MODULES.find((m) => m.key === "dashboard")!.label, locale)}
+            </span>
           </Link>
           {Object.entries(GROUPS).map(([key, group]) => (
             <div key={key}>
               {key !== "dashboard" && (
                 <h3 className={s.navGroup}>{tr(group, locale)}</h3>
               )}
-              {MODULES.filter((m) => m.group === key && m.key !== "dashboard").map((m) => (
+              {MODULES.filter(
+                (m) => m.group === key && m.key !== "dashboard",
+              ).map((m) => (
                 <Link
                   key={m.key}
                   href={BASE + (m.key === "dashboard" ? "" : "/" + m.key)}
@@ -717,23 +754,12 @@ export function Workspace({
               }}
             />
           )}
-          {creator && (
-            <CreationStudio
-              family={creator.family}
-              prepared={creator.prepared}
-              onClose={() => setCreator(null)}
-              onAdvanced={(record) => {
-                setCreator(null);
-                setEditor({id:record.id,kind:record.kind,family:record.family||undefined,prepared:record,language:record.data?.defaultLocale as Locale});
-              }}
-            />
-          )}
           {choose && (
             <NewExperience
               onClose={() => setChoose(false)}
               onChoose={(family) => {
                 setChoose(false);
-                setEditor({ kind: "experience", family });
+                setEditor({ kind: "experience", family, initialTab: "source" });
               }}
             />
           )}

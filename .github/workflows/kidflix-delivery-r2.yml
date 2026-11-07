@@ -34,7 +34,7 @@ jobs:
       - run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Verify delivery, PostgreSQL transactions and recoverable imports
         run: npm run verify
-      - name: Verify the desktop operator workflow
+      - name: Verify creation and the existing-draft Dossier 360 workflow
         shell: bash
         run: |
           export KIDFLIX_QA_CHROME="$(command -v google-chrome || command -v chromium || true)"
@@ -49,5 +49,6 @@ jobs:
           path: |
             apps/marketplace-web/scripts/kidflix-delivery-r2/*-desktop.png
             apps/marketplace-web/scripts/kidflix-delivery-r2/browser-results.json
+            apps/marketplace-web/scripts/kidflix-delivery-r2/r3-browser-results.json
           if-no-files-found: warn
           retention-days: 30

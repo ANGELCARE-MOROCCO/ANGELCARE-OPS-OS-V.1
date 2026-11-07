@@ -74,12 +74,12 @@ async function filesFromDraggedEntries(entries:any[]):Promise<File[]> {
 }
 
 export function UniversalInteractiveImport({
-  locale,family,canManage,attached,recordId,currentTitle,publicPath,onSaveDraft,onTitleChange,onContinue,onOpenDossier,onAttach,onCover,coverAssetId,onBatchAttach,onPublish,canPublish,publishLabel,
+  embedded=false,onPreview,currentAgeMin,currentAgeMax,onUseDeclaredAudience,locale,family,canManage,attached,recordId,currentTitle,publicPath,onSaveDraft,onTitleChange,onContinue,onOpenDossier,onAttach,onCover,coverAssetId,onBatchAttach,onPublish,canPublish,publishLabel,
 }:{
-  locale:Locale;family:string;canManage:boolean;
+  embedded?:boolean;onPreview?:()=>void;currentAgeMin?:number;currentAgeMax?:number;onUseDeclaredAudience?:(min:number,max:number)=>void;locale:Locale;family:string;canManage:boolean;
   attached?:{id?:unknown;checksum?:unknown;locale?:unknown};recordId?:string;currentTitle?:string;publicPath?:string;onSaveDraft?:()=>Promise<void>;
   onTitleChange?:(value:string)=>void;onContinue?:()=>void;onOpenDossier?:()=>void;
-  onAttach:(p:Result)=>void;onCover?:(id:string)=>void;coverAssetId?:string;onBatchAttach?:(p:Result)=>void;onPublish?:()=>Promise<void>;canPublish?:boolean;publishLabel?:string;
+  onAttach:(p:Result)=>void|Promise<void>;onCover?:(id:string)=>void;coverAssetId?:string;onBatchAttach?:(p:Result)=>void|Promise<void>;onPublish?:()=>Promise<void>;canPublish?:boolean;publishLabel?:string;
 }){
   const contextVersion=useRef(0),previousDossier=useRef(recordId);
   const fileInput=useRef<HTMLInputElement>(null),folderInput=useRef<HTMLInputElement>(null),replacementInput=useRef<HTMLInputElement>(null),frame=useRef<HTMLIFrameElement>(null),controller=useRef<AbortController|null>(null);
@@ -149,7 +149,7 @@ export function UniversalInteractiveImport({
       const data=await apiGet({operation:'info',id}) as Result;
       if(version!==contextVersion.current)throw new DOMException('Context changed','AbortError');
       if(data.family!==family||data.locale!==locale)throw Error('Package category or language does not match this dossier.');
-      setResult(data);setCurrentPath('');setContent('');setOriginalText('');setStep(nextStep);
+      setResult(data);setCurrentPath('');setContent('');setOriginalText('');setStep(embedded&&!advanced?'start':nextStep);
       setInspectEnabled(false);setInspectorSelection(null);
       setSession(crypto.randomUUID());setPreviewVersion(v=>v+1);setEvents([]);setPreviewError('');setPhase('validated');
       setExpanded(true);return data;
@@ -196,7 +196,7 @@ export function UniversalInteractiveImport({
         const key=fileIndex+':'+file.name+':'+file.size;if(batchReceipts[key]?.state==='validated')continue;
         if(controller.current.signal.aborted)break;
         setBatchReceipts(old=>({...old,[key]:{state:'uploading'}}));
-        try{const info=await uploadInteractiveProject(file,{family,locale},controller.current.signal,(n)=>setTransferProgress(n));(onBatchAttach||onAttach)(info);setBatchReceipts(old=>({...old,[key]:{state:'validated',id:info.id}}))}
+        try{const info=await uploadInteractiveProject(file,{family,locale},controller.current.signal,(n)=>setTransferProgress(n));await (onBatchAttach||onAttach)(info);setBatchReceipts(old=>({...old,[key]:{state:'validated',id:info.id}}))}
         catch(e){setBatchReceipts(old=>({...old,[key]:{state:'failed',error:(e as Error).message}}));}
       }
       setPhase('validated');return;
@@ -205,7 +205,7 @@ export function UniversalInteractiveImport({
     try{
       // Durable, bounded binary transfer with server checkpoints.
       const saved=await uploadInteractiveProject(source,{family,locale,recordId},controller.current.signal,(n,receipt)=>{setTransferProgress(n);if(receipt){setResumeId(receipt.id);if(receipt.state!=='uploading')setPhase('verifying')}});
-      const info=await loadPackage(saved.id,'experience');onAttach(info);
+      const info=await loadPackage(saved.id,'experience');await onAttach(info);
       const declared=String(info.manifest?.cover||info.manifest?.editorial?.cover||'');
       if(!coverAssetId&&declared&&info.files?.some(f=>f.path===declared&&f.mime==='image/png'))await registerCover(info,declared);
       setSource(null);setSelection('');
@@ -333,31 +333,33 @@ export function UniversalInteractiveImport({
     setExpanded(true);setStep(s);setFailure('');
   };
   return <section className={styles.root} aria-label="KidFlix interactive experience production studio">
-    <header className={styles.header}>
+    {!embedded&&<header className={styles.header}>
       <div className={styles.identity}>
         <span className={styles.eyebrow}>KIDFLIX · INTERACTIVE EXPERIENCE STUDIO</span>
         <h3>{t('From project to published experience','Du projet à l’expérience publiée','من المشروع إلى التجربة المنشورة')}</h3>
         <p>{t('Import, review and publish. Advanced source, asset and revision controls remain available.','Importer, vérifier, publier. Le code, les médias et les versions restent accessibles dans les options avancées.','استيراد وفحص وتحسين وتجربة ونشر وإدارة ضمن Content 360.')}</p>
       </div>
       <button type="button" onClick={()=>setExpanded(x=>!x)} aria-expanded={expanded} className={styles.toggle}>{expanded?t('Close Studio','Fermer le studio','إغلاق'):t('Open Studio','Ouvrir le studio','فتح الاستوديو')}</button>
-    </header>
+    </header>}
     {expanded&&<div className={styles.body}>
-      <nav className={styles.journey} aria-label="Experience production journey">
+      {(!embedded||advanced)&&<nav className={styles.journey} aria-label="Experience production journey">
         {(advanced?steps:theJourney).map((s,index)=><button type="button" key={s} onClick={()=>selectStep(s)} className={`${styles.journeyStep} ${step===s?styles.active:''}`} aria-current={step===s?'step':undefined}>
           <small>{String(index+1).padStart(2,'0')}</small><span>{L(locale,...stepLabels[s])}</span>
         </button>)}
-      </nav>
-      <button type="button" className={styles.advancedToggle} aria-expanded={advanced} onClick={()=>{setAdvanced(x=>!x);if(advanced&&!theJourney.includes(step))setStep('experience')}}>{advanced?t('Essential workflow','Parcours essentiel','المسار الأساسي'):t('Advanced options · source, assets, revisions','Options avancées · code, médias, versions','خيارات متقدمة · المصدر والوسائط والإصدارات')}</button>
+      </nav>}
+      <button type="button" className={styles.advancedToggle} aria-expanded={advanced} onClick={()=>{setAdvanced(x=>!x);if(advanced)setStep(embedded?'start':'experience')}}>{advanced?t('Essential workflow','Parcours essentiel','المسار الأساسي'):t('Advanced options · source, assets, revisions','Options avancées · code, médias, versions','خيارات متقدمة · المصدر والوسائط والإصدارات')}</button>
       <div className={styles.statusbar}>
         <span><b>{family}</b> · {locale.toUpperCase()}</span>
         <span>{result?result.title:t('New project','Nouveau projet','مشروع جديد')}</span>
-        <span className={styles.state}>{phase}</span>
+        <span className={styles.state}>{({idle:t('Ready to import','Prêt à importer','جاهز للاستيراد'),uploading:t('Uploading','Téléversement','جارٍ الرفع'),verifying:t('Validating source','Validation de la source','فحص المصدر'),loading:t('Loading source','Chargement de la source','تحميل المصدر'),validated:t('Package validated','Package validé','الحزمة معتمدة'),saving:t('Saving','Enregistrement','جارٍ الحفظ'),publishing:t('Publishing','Publication','جارٍ النشر'),failed:t('Action needed','Action requise','إجراء مطلوب')} as Record<string,string>)[phase]||phase}</span>
       </div>
+      {embedded&&result&&!advanced&&<div className={styles.notice}><div><strong>{t('Current HTML source','Source HTML actuelle','مصدر HTML الحالي')} · {result.title}</strong><p>{result.files?.length||result.fileCount||0} {t('project files retained together','fichiers du projet conservés ensemble','ملفات مشروع محفوظة معاً')}</p></div><div className={styles.toolbar}>{onPreview&&<button type="button" onClick={onPreview}>{t('Open experience preview','Ouvrir l’aperçu de l’expérience','فتح معاينة التجربة')}</button>}<button type="button" onClick={onContinue}>{t('Check publication readiness','Vérifier la préparation à la publication','فحص جاهزية النشر')}</button></div></div>}
+      {embedded&&result&&Number.isInteger(result.audience?.age_min)&&Number.isInteger(result.audience?.age_max)&&(currentAgeMin!==result.audience!.age_min||currentAgeMax!==result.audience!.age_max)&&<div className={`${styles.notice} ${styles.reviewNotice}`}><div><strong>{t('Review declared ages','Vérifier les âges déclarés','مراجعة الأعمار المعلنة')}</strong><p>{t('Dossier ages','Âges du dossier','أعمار الملف')} : {currentAgeMin}–{currentAgeMax} · {t('Package declaration','Déclaration du package','تعريف الحزمة')} : {result.audience!.age_min}–{result.audience!.age_max}</p><small>{t('Your reviewed ages remain unchanged unless you choose this action.','Vos âges vérifiés sont conservés tant que vous ne choisissez pas cette action.','تبقى الأعمار التي راجعتها كما هي ما لم تختر هذا الإجراء.')}</small></div>{onUseDeclaredAudience&&<button type="button" disabled={!canManage} onClick={()=>onUseDeclaredAudience(result.audience!.age_min!,result.audience!.age_max!)}>{t('Use the declared package ages','Utiliser les âges déclarés du package','استخدام الأعمار المعلنة للحزمة')}</button>}</div>}
       {failure&&<div className={styles.error} role="alert"><b>{t('Needs attention','À corriger','يتطلب الانتباه')}</b><p>{failure}</p><button type="button" onClick={()=>setFailure('')}>{t('Dismiss','Fermer','إغلاق')}</button></div>}
       {message&&<div className={styles.notice} role="status">{message}<button type="button" onClick={()=>setMessage('')}>×</button></div>}
 
       {step==='start'&&<div className={styles.stage}>
-        {resumeId&&<div className={styles.notice}><span>{t('Import checkpoint available','Un import peut être repris','يمكن استئناف الاستيراد')}</span><button type="button" disabled={['uploading','verifying'].includes(phase)} onClick={()=>{controller.current?.abort();controller.current=new AbortController();setPhase('verifying');void resumeInteractiveProject(resumeId,controller.current.signal,(n)=>setTransferProgress(n)).then(async saved=>{const info=await loadPackage(saved.id,'experience');onAttach(info);setPhase('validated')}).catch(e=>{setFailure(e.message);setPhase('failed')})}}>{t('Resume processing','Reprendre le traitement','استئناف المعالجة')}</button></div>}
+        {resumeId&&<div className={styles.notice}><span>{t('Import checkpoint available','Un import peut être repris','يمكن استئناف الاستيراد')}</span><button type="button" disabled={['uploading','verifying'].includes(phase)} onClick={()=>{controller.current?.abort();controller.current=new AbortController();setPhase('verifying');void resumeInteractiveProject(resumeId,controller.current.signal,(n)=>setTransferProgress(n)).then(async saved=>{const info=await loadPackage(saved.id,'experience');await onAttach(info);setPhase('validated')}).catch(e=>{setFailure(e.message);setPhase('failed')})}}>{t('Resume processing','Reprendre le traitement','استئناف المعالجة')}</button></div>}
         <div className={styles.stageTitle}><h4>{t('Start with your complete project','Commencez avec votre projet complet','ابدأ بمشروعك الكامل')}</h4><p>{t('Your original HTML, CSS, JavaScript, photographs, audio and animations stay together.','Vos fichiers HTML, CSS, JavaScript, images, sons et animations restent ensemble.','تبقى ملفات HTML وCSS وJavaScript والصور والصوت والرسوم معًا.')}</p></div>
         <p><a href={API+"?"+new URLSearchParams({operation:"contract",family}).toString()} download>{t("Download this category’s complete field contract","Télécharger le contrat complet des champs de cette catégorie","تنزيل عقد حقول الفئة الكامل")}</a></p>
         <div className={styles.startGrid}>

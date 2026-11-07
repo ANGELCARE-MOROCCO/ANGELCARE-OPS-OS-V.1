@@ -317,6 +317,7 @@ export async function mutate<T = any>(command: Partial<Command>): Promise<T> {
       j.error?.code,
       j.error?.details,
     );
+  if (typeof window !== "undefined" && !["preview", "validate", "creation_inspect"].includes(command.action || "") && (j.data?.record || command.action?.startsWith("master_edition_"))) window.dispatchEvent(new Event("dce-records-changed"));
   return j.data;
 }
 export function useQuery<T>(params: Record<string, unknown>, fallback: T) {

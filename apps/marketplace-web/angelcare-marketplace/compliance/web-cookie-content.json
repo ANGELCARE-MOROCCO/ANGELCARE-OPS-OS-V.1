@@ -1,0 +1,80 @@
+{
+  "fr": {
+    "title": "Cookies et choix de confidentialité",
+    "lead": "Transparence sur les technologies nécessaires et facultatives utilisées dans le Marketplace ANGELCARE.",
+    "sections": [
+      [
+        "Technologies essentielles",
+        "Les dispositifs requis pour la sécurité, les sessions demandées, les transactions et les services nécessaires sont utilisés uniquement lorsque leur fonction l’exige."
+      ],
+      [
+        "Analyse d’audience facultative",
+        "Les technologies facultatives d’audience Google et les mesures internes de comportement sont soumises au choix d’analyse sur les pages publiques compatibles. Elles ne doivent pas collecter des données relatives aux demandes privées."
+      ],
+      [
+        "Vos préférences",
+        "Vous pouvez autoriser ou refuser les catégories facultatives dans le panneau de confidentialité. Le stockage que vous demandez activement, par exemple pour une session ou une réservation, peut être nécessaire à ce service."
+      ],
+      [
+        "Publicité",
+        "Les scripts publicitaires AdSense, le profilage et le reciblage ne sont pas activés dans cette phase. Le présent panneau n’est pas une plateforme de consentement publicitaire certifiée."
+      ],
+      [
+        "Services tiers et droits",
+        "Certains services de paiement, médias externes et outils de sécurité peuvent appliquer leurs propres conditions. Consultez également les mentions légales et la politique de confidentialité publiées pour le Marketplace."
+      ]
+    ]
+  },
+  "en": {
+    "title": "Cookies and privacy choices",
+    "lead": "Clear information about necessary and optional technologies used by ANGELCARE Marketplace.",
+    "sections": [
+      [
+        "Essential technologies",
+        "Security, requested sessions, transactions and technically necessary services use storage only where needed for their actual function."
+      ],
+      [
+        "Optional analytics",
+        "Optional Google Analytics and internal behavioral measurement are controlled by the analytics choice on eligible public pages. They must not collect private request contents."
+      ],
+      [
+        "Your preferences",
+        "Use the privacy panel to accept or reject optional purposes. Storage used when you deliberately request a session or booking may be necessary for that function."
+      ],
+      [
+        "Advertising",
+        "AdSense advertising scripts, profiling and remarketing are not active in this phase. This interface is not a certified advertising consent-management platform."
+      ],
+      [
+        "Third parties and your rights",
+        "Some payment, external-media and security providers may apply their own conditions. Consult the Marketplace published privacy and legal documents as well."
+      ]
+    ]
+  },
+  "ar": {
+    "title": "ملفات الارتباط وخيارات الخصوصية",
+    "lead": "معلومات واضحة عن التقنيات الضرورية والاختيارية في سوق أنجل كير.",
+    "sections": [
+      [
+        "التقنيات الضرورية",
+        "تُستخدم البيانات اللازمة للأمان والجلسات والمعاملات والخدمات المطلوبة فقط عندما تستلزمها الوظيفة."
+      ],
+      [
+        "تحليلات اختيارية",
+        "يخضع Google Analytics والقياس الداخلي الاختياري لموافقتك على الصفحات العامة المسموحة، ولا ينبغي إرسال محتويات الطلبات الخاصة."
+      ],
+      [
+        "خياراتك",
+        "يمكنك قبول الوظائف الاختيارية أو رفضها عبر لوحة الخصوصية. وقد يلزم تخزين بيانات عند طلب جلسة أو حجز."
+      ],
+      [
+        "الإعلانات",
+        "لم تُفعّل إعلانات AdSense أو التنميط أو إعادة الاستهداف في هذه المرحلة. وهذه الواجهة ليست منصة موافقة إعلانية معتمدة."
+      ],
+      [
+        "الأطراف الثالثة والحقوق",
+        "قد تضع خدمات الدفع والوسائط الخارجية والأمان شروطها الخاصة. راجع كذلك سياسة الخصوصية والوثائق القانونية المنشورة."
+      ]
+    ]
+  }
+}

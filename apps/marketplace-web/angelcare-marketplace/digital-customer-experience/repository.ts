@@ -507,6 +507,7 @@ export async function native(
             status: r.status,
             rights: r.rights_status || r.license_type,
             expiresAt: r.rights_expires_at,
+            processingState: r.metadata?.status || null,
             metadata: {
               sha256: r.metadata?.sha256,
               width: r.metadata?.width,
@@ -1620,6 +1621,7 @@ export async function bootstrap(c: Context, days = 30): Promise<Bootstrap> {
   };
 }
 export async function command(c: Context, cmd: Command): Promise<any> {
+  if (cmd.action === "publication_repair") return (await import("./publication-service")).publicationRepair(c, cmd);
   if (cmd.action.startsWith("delivery_")) return (await import("./delivery-service")).deliveryCommand(c,cmd);
   if (cmd.action.startsWith("creation_")) return (await import("./creation-service")).creationCommand(c,cmd);
   if(cmd.action === "inventory_plan_save") return (await import("./inventory/service")).inventoryPlanSave(c,cmd);
@@ -2591,6 +2593,8 @@ export async function command(c: Context, cmd: Command): Promise<any> {
   throw new MarketplaceError("VALIDATION_ERROR", "Unsupported DCE command.");
 }
 export async function read(c: Context, input: Record<string, unknown>) {
+  if (input.op === "publication_gate") return (await import("./publication-service")).publicationGate(c, input);
+  if (input.op === "publication_options") return (await import("./publication-service")).publicationOptions(c, input);
   if (input.op === "delivery_repair_plan") return (await import("./delivery-service")).deliveryRead(c,input);
   if (input.op === "creation_status") return (await import("./creation-service")).creationRead(c,input);
   if(input.op === "inventory_map") return (await import("./inventory/service")).inventoryRead(c);

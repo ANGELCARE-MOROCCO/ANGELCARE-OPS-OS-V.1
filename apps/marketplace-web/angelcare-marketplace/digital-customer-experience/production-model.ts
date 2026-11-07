@@ -1,3 +1,4 @@
+import { organisationFieldKey } from "./workspace-contract";
 import { ROOT_FIELDS } from "./dossier-fields";
 import { FAMILIES, MODULES } from "./registry";
 import { DEPTH_FIELDS, DEPTH_COLLECTIONS } from "./experience-depth";
@@ -314,7 +315,7 @@ export function dossierCapabilityIndex(
       status: "available",
       kind: "field",
     });
-  return entries;
+  return entries.map(entry=>organisationFieldKey(entry.path.split(".")[0])?{...entry,section:"overview"}:entry);
 }
 export function issueDestination(
   path: string,

@@ -1,26 +1,21 @@
 'use client'
 
+import type { Locale } from '../admin-notifications/model'
+import { NotificationCenter } from '../admin-notifications/NotificationCenter'
+
 import { useEffect, useMemo, useState } from 'react'
 import {
-  AlertTriangle,
-  Bell,
   Boxes,
-  CheckCircle2,
   ChevronRight,
   CircleGauge,
-  ClipboardCheck,
   ExternalLink,
   LayoutGrid,
-  MessageSquareText,
-  School,
   Search,
   Settings2,
-  ShoppingBag,
-  UserPlus,
   X,
 } from 'lucide-react'
 import { GlobalCommandPalette } from '../enterprise-command/components/GlobalCommandPalette'
-import type { AdminShellIndicator, AdminShellNotification, AdminShellSnapshot, AdminShellWorkspace } from './types'
+import type { AdminShellIndicator, AdminShellSnapshot, AdminShellWorkspace } from './types'
 import styles from './admin-shell-pro-max.module.css'
 
 const SPEED_KEY = 'angelcare.marketplace.admin-signal-speed.v1'
@@ -45,14 +40,6 @@ function familyFor(workspace: AdminShellWorkspace): string {
   return 'Autres autorités'
 }
 
-function notificationIcon(kind: AdminShellNotification['kind']) {
-  if (kind === 'order') return ShoppingBag
-  if (kind === 'customer') return UserPlus
-  if (kind === 'sanila') return School
-  if (kind === 'approval') return ClipboardCheck
-  if (kind === 'blocker') return AlertTriangle
-  return MessageSquareText
-}
 
 function indicatorTone(indicator: AdminShellIndicator) {
   return indicator.tone === 'critical' ? styles.signalCritical
@@ -62,11 +49,13 @@ function indicatorTone(indicator: AdminShellIndicator) {
 }
 
 export function AdminShellCommandSurface({
+  locale = 'fr',
   snapshot,
   workspaces,
   territoryId,
   permissionCount,
 }: {
+  locale?: Locale
   snapshot: AdminShellSnapshot
   workspaces: AdminShellWorkspace[]
   territoryId: string | null
@@ -77,8 +66,7 @@ export function AdminShellCommandSurface({
   const [selectedKeys, setSelectedKeys] = useState<string[]>(allKeys)
   const [signalMenuOpen, setSignalMenuOpen] = useState(false)
   const [workspaceOpen, setWorkspaceOpen] = useState(false)
-  const [notificationsOpen, setNotificationsOpen] = useState(false)
-  const [workspaceQuery, setWorkspaceQuery] = useState('')
+    const [workspaceQuery, setWorkspaceQuery] = useState('')
 
   useEffect(() => {
     try {
@@ -145,56 +133,14 @@ export function AdminShellCommandSurface({
           <button
             type="button"
             className={styles.iconCommand}
-            onClick={() => { setWorkspaceOpen(true); setNotificationsOpen(false) }}
+            onClick={() => { setWorkspaceOpen(true) }}
             aria-label="Ouvrir tous les workspaces"
             title="Tous les workspaces"
           >
             <LayoutGrid size={17} />
           </button>
 
-          <div className={styles.notificationAnchor}>
-            <button
-              type="button"
-              className={styles.iconCommand}
-              data-active={notificationsOpen}
-              onClick={() => { setNotificationsOpen((value) => !value); setSignalMenuOpen(false) }}
-              aria-label={`${snapshot.notificationCount} notifications`}
-              title="Notifications et alertes"
-            >
-              <Bell size={17} />
-              {snapshot.notificationCount > 0 ? <span className={styles.notificationBadge}>{snapshot.notificationCount > 99 ? '99+' : snapshot.notificationCount}</span> : null}
-            </button>
-            {notificationsOpen ? (
-              <div className={styles.notificationMenu}>
-                <header>
-                  <div><span>Centre d’attention</span><strong>{snapshot.notificationCount} signaux</strong></div>
-                  <button type="button" onClick={() => setNotificationsOpen(false)} aria-label="Fermer"><X size={15} /></button>
-                </header>
-                <div className={styles.notificationList}>
-                  {snapshot.notifications.map((notification) => {
-                    const Icon = notificationIcon(notification.kind)
-                    return (
-                      <a
-                        key={notification.id}
-                        href={notification.href}
-                        target="_blank"
-                        rel="noreferrer"
-                        className={styles.notificationItem}
-                        data-severity={notification.severity}
-                        onClick={() => setNotificationsOpen(false)}
-                      >
-                        <span className={styles.notificationIcon}><Icon size={15} /></span>
-                        <span><strong>{notification.title}</strong><small>{notification.detail}</small></span>
-                        <ExternalLink size={13} />
-                      </a>
-                    )
-                  })}
-                  {!snapshot.notifications.length ? <div className={styles.notificationEmpty}><CheckCircle2 size={18} />Aucune alerte dans ce snapshot.</div> : null}
-                </div>
-                <footer>Figé jusqu’au prochain chargement ou rafraîchissement de page.</footer>
-              </div>
-            ) : null}
-          </div>
+          <NotificationCenter initialLocale={locale} />
 
           <span className={styles.microMeta}>{territoryId || 'Global'}</span>
           <span className={styles.microMeta}>{permissionCount} permissions</span>
@@ -232,7 +178,7 @@ export function AdminShellCommandSurface({
               type="button"
               className={styles.signalSettingsButton}
               data-active={signalMenuOpen}
-              onClick={() => { setSignalMenuOpen((value) => !value); setNotificationsOpen(false) }}
+              onClick={() => { setSignalMenuOpen((value) => !value) }}
               aria-label="Choisir les indicateurs"
               title="Choisir les indicateurs"
             >

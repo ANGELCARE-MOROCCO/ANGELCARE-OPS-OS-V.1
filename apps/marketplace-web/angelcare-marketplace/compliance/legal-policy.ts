@@ -1,47 +1,126 @@
-import type { CmsPage } from '../experience-builder/types';
+import type { CmsPage } from "../experience-builder/types";
 
-export type LegalKind = 'terms' | 'privacy';
-export type LegalLocale = 'fr' | 'en' | 'ar';
-export const LEGAL_ROUTE_REVISION = 'AC-LEGAL-R1';
-export const LEGAL_IDENTITIES: Record<LegalKind, { slugs: readonly string[]; keys: readonly string[] }> = {
+export type LegalKind = "terms" | "privacy" | "cookies";
+export type LegalLocale = "fr" | "en" | "ar";
+export const LEGAL_ROUTE_REVISION = "AC-LEGAL-WEB-R2";
+export const LEGAL_IDENTITIES: Record<
+  LegalKind,
+  { slugs: readonly string[]; keys: readonly string[] }
+> = {
   terms: {
-    slugs: ['legal/terms', 'terms', 'terms-and-conditions', 'terms-of-service', 'conditions-utilisation', 'conditions-generales-utilisation', 'conditions-generales-d-utilisation', 'cgu'],
-    keys: ['public.legal.terms', 'legal.terms', 'public.terms', 'public.terms-of-service'],
+    slugs: [
+      "legal/terms",
+      "terms",
+      "terms-and-conditions",
+      "terms-of-service",
+      "conditions-utilisation",
+      "conditions-generales-utilisation",
+      "conditions-generales-d-utilisation",
+      "cgu",
+    ],
+    keys: [
+      "public.legal.terms",
+      "legal.terms",
+      "public.terms",
+      "public.terms-of-service",
+    ],
+  },
+  cookies: {
+    slugs: [
+      "legal/cookies",
+      "cookies",
+      "cookie-policy",
+      "politique-cookies",
+      "politique-des-cookies",
+      "legal/cookie-policy",
+    ],
+    keys: ["public.legal.cookies", "legal.cookies", "public.cookies"],
   },
   privacy: {
-    slugs: ['legal/privacy', 'privacy', 'privacy-policy', 'politique-de-confidentialite', 'politique-confidentialite', 'confidentialite'],
-    keys: ['public.legal.privacy', 'legal.privacy', 'public.privacy', 'public.privacy-policy'],
+    slugs: [
+      "legal/privacy",
+      "privacy",
+      "privacy-policy",
+      "politique-de-confidentialite",
+      "politique-confidentialite",
+      "confidentialite",
+    ],
+    keys: [
+      "public.legal.privacy",
+      "legal.privacy",
+      "public.privacy",
+      "public.privacy-policy",
+    ],
   },
 };
 export type LegalRow = Record<string, unknown>;
-export const text = (value: unknown) => typeof value === 'string' ? value.trim() : '';
+export const text = (value: unknown) =>
+  typeof value === "string" ? value.trim() : "";
 export function legalIdentity(kind: LegalKind, row: LegalRow): boolean {
   const identity = LEGAL_IDENTITIES[kind];
-  return identity.keys.includes(text(row.route_key)) || identity.slugs.includes(text(row.published_slug) || text(row.slug));
+  return (
+    identity.keys.includes(text(row.route_key)) ||
+    identity.slugs.includes(text(row.published_slug) || text(row.slug))
+  );
 }
 export function publishedLegalRow(row: LegalRow): boolean {
   const state = text(row.publication_state);
   // A modern explicit draft/unpublished state is never overridden by legacy status.
-  return state ? state === 'published' : row.status === 'published';
+  return state ? state === "published" : row.status === "published";
 }
-export type CandidateSelection = { status: 'missing' } | { status: 'ambiguous' } | { status: 'candidate'; page: CmsPage };
-export function selectLegalCandidate(kind: LegalKind, locale: LegalLocale, territoryId: string | null, input: readonly LegalRow[]): CandidateSelection {
+export type CandidateSelection =
+  | { status: "missing" }
+  | { status: "ambiguous" }
+  | { status: "candidate"; page: CmsPage };
+export function selectLegalCandidate(
+  kind: LegalKind,
+  locale: LegalLocale,
+  territoryId: string | null,
+  input: readonly LegalRow[],
+): CandidateSelection {
   const byId = new Map<string, LegalRow>();
   for (const row of input) {
-    if (!text(row.id) || !legalIdentity(kind, row) || !publishedLegalRow(row)) continue;
+    if (!text(row.id) || !legalIdentity(kind, row) || !publishedLegalRow(row))
+      continue;
     const publishedLocale = text(row.published_locale) || text(row.locale);
-    const territory = row.published_territory_id !== undefined ? text(row.published_territory_id) : text(row.territory_id);
-    if (publishedLocale !== locale || (territory && territory !== territoryId)) continue;
+    const territory =
+      row.published_territory_id !== undefined
+        ? text(row.published_territory_id)
+        : text(row.territory_id);
+    if (publishedLocale !== locale || (territory && territory !== territoryId))
+      continue;
     byId.set(text(row.id), row);
   }
   const rank = (row: LegalRow) => {
-    const territory = row.published_territory_id !== undefined ? text(row.published_territory_id) : text(row.territory_id);
+    const territory =
+      row.published_territory_id !== undefined
+        ? text(row.published_territory_id)
+        : text(row.territory_id);
     const slug = text(row.published_slug) || text(row.slug);
-    return (territoryId && territory === territoryId ? 100 : 0) + (slug === `legal/${kind}` ? 20 : LEGAL_IDENTITIES[kind].keys.includes(text(row.route_key)) ? 10 : 0);
+    return (
+      (territoryId && territory === territoryId ? 100 : 0) +
+      (slug === `legal/${kind}`
+        ? 20
+        : LEGAL_IDENTITIES[kind].keys.includes(text(row.route_key))
+          ? 10
+          : 0)
+    );
   };
-  const candidates = [...byId.values()].sort((a, b) => rank(b) - rank(a) || text(a.id).localeCompare(text(b.id)));
-  if (!candidates.length) return { status: 'missing' };
-  if (candidates[1] && rank(candidates[0]) === rank(candidates[1])) return { status: 'ambiguous' };
-  return { status: 'candidate', page: candidates[0] as unknown as CmsPage };
+  const candidates = [...byId.values()].sort(
+    (a, b) => rank(b) - rank(a) || text(a.id).localeCompare(text(b.id)),
+  );
+  if (!candidates.length) return { status: "missing" };
+  if (candidates[1] && rank(candidates[0]) === rank(candidates[1]))
+    return { status: "ambiguous" };
+  return { status: "candidate", page: candidates[0] as unknown as CmsPage };
 }
-export const legalPath = (locale: LegalLocale, kind: LegalKind) => `/angelcare-marketplace/${locale}/legal/${kind}`;
+export const legalPath = (locale: LegalLocale, kind: LegalKind) =>
+  `/angelcare-marketplace/${locale}/legal/${kind}`;
+
+/** Only audited legal aliases. Other CMS routes retain their native resolution. */
+export function canonicalLegalAlias(slug: string): string | null {
+  for (const kind of ["terms", "privacy", "cookies"] as const) {
+    if (LEGAL_IDENTITIES[kind].slugs.includes(slug)) return "legal/" + kind;
+  }
+  return null;
+}

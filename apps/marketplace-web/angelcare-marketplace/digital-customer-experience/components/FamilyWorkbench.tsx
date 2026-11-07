@@ -416,8 +416,8 @@ export function FamilyWorkbench({
                 </button>
               ))}
             </div>
-            <div className={s.authoringSplit}>
-              <aside className={s.unitOutline}>
+            <div className={s.authoringSplit} data-dossier-units>
+              <section className={s.unitOutline} data-unit-outline>
                 <div className={s.sectionTitle}>
                   <strong>{collection && tr(collection.label, locale)}</strong>
                   <Button disabled={readOnly} icon="Plus" onClick={add}>
@@ -543,7 +543,7 @@ export function FamilyWorkbench({
                     }
                   />
                 )}
-              </aside>
+              </section>
               <section className={s.unitInspector}>
                 {selected && collection ? (
                   <>

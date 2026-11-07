@@ -1,15 +1,8 @@
-import {notFound} from 'next/navigation';
-import type {Metadata} from 'next';
-import {GlobalPublicShell} from '@/angelcare-marketplace/public-universe/components/GlobalPublicShell';
-import {PublicPageRenderer} from '@/angelcare-marketplace/public-universe/components/PublicPageRenderer';
-import {getPublicPage} from '@/angelcare-marketplace/public-universe/repository';
-import {AngelCareCookieInformation} from '@/angelcare-marketplace/compliance/CookieInformation';
-type Locale='fr'|'en'|'ar';
-export async function generateMetadata({params}:{params:Promise<{locale:string}>}):Promise<Metadata>{const {locale}=await params;if(!['fr','en','ar'].includes(locale))notFound();return {title:locale==='fr'?'Cookies et confidentialité · ANGELCARE':'Cookies & privacy · ANGELCARE',robots:{index:false,follow:true}};}
-export default async function Page({params}:{params:Promise<{locale:string}>}){
- const {locale}=await params;if(!['fr','en','ar'].includes(locale))notFound();
- const published=await getPublicPage({locale,slug:'legal/cookies'}).catch(()=>null);
- return <GlobalPublicShell locale={locale as Locale} navigation={published?.navigation||[]} variant='marketplace'>
-  {published?<PublicPageRenderer experience={published} locale={locale as Locale}/>:<AngelCareCookieInformation locale={locale as Locale}/>}
- </GlobalPublicShell>;
-}
+import { notFound } from 'next/navigation';
+import { AngelCareLegalPage, legalMetadata } from '@/angelcare-marketplace/compliance/LegalPage';
+import type { LegalLocale } from '@/angelcare-marketplace/compliance/legal-policy';
+export const dynamic = 'force-dynamic';
+type Props = { params: Promise<{ locale: string }> };
+async function localeFrom({ params }: Props): Promise<LegalLocale> { const { locale } = await params; if (!['fr', 'en', 'ar'].includes(locale)) notFound(); return locale as LegalLocale; }
+export async function generateMetadata(props: Props) { return legalMetadata('cookies', await localeFrom(props)); }
+export default async function Page(props: Props) { return <AngelCareLegalPage kind="cookies" locale={await localeFrom(props)} />; }

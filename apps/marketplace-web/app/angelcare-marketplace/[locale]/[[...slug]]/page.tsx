@@ -1,3 +1,4 @@
+import { canonicalLegalAlias } from '@/angelcare-marketplace/compliance/legal-policy'
 import { seoMetadata } from '@/angelcare-marketplace/seo-power/public'
 import type { Metadata } from 'next'
 import { notFound, permanentRedirect } from 'next/navigation'
@@ -24,7 +25,7 @@ const legacyRouteAliases: Record<PublicLocale, Record<string, string>> = {
   en: {}, ar: {},
 }
 
-function canonicalAlias(locale: PublicLocale, slug: string): string | null { return legacyRouteAliases[locale][slug] || null }
+function canonicalAlias(locale: PublicLocale, slug: string): string | null { return canonicalLegalAlias(slug) || legacyRouteAliases[locale][slug] || null }
 
 async function nativeMetadata({ params }: { params: Promise<{ locale: string; slug?: string[] }> }): Promise<Metadata> {
   const current = await params

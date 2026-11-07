@@ -28,6 +28,7 @@ import {
   mutate,
   query,
 } from "./ui";
+import { DeliveryDraftRepair } from "./DeliveryDraftRepair";
 import { ExperienceCard } from "./Dashboard";
 import s from "./workspace.module.css";
 export function Registry({
@@ -79,6 +80,7 @@ export function Registry({
     },
     { rows: [], total: 0, page: 1, pageSize: 24 },
   );
+  useEffect(()=>{const refresh=()=>request.reload();window.addEventListener("dce-records-changed",refresh);return()=>window.removeEventListener("dce-records-changed",refresh)},[]);
   useEffect(() => {
     setSelected([]);
   }, [page, family, q, lifecycle, kind]);
@@ -325,6 +327,7 @@ export function Registry({
           ))}
         </section>
       )}
+      {kind === "experience" && family && canWrite && <details className={p.bulkReceipt}><summary>{tr(["Diagnose and repair category drafts", "Diagnostiquer et réparer les brouillons de la catégorie", "تشخيص وإصلاح مسودات الفئة"], locale)}</summary><DeliveryDraftRepair key={family} family={family}/></details>}
       <Panel>
         <State {...request} retry={request.reload}>
           {request.value.rows.length ? (

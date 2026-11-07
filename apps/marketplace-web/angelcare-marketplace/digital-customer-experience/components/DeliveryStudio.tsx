@@ -1,10 +1,11 @@
 "use client";
 import p from "./production.module.css";
 import { PublicReachability } from "./PublicReachability";
+import { PublicationGate } from "./PublicationGate";
 import { explainIssue } from "../operator-guidance";
 import { EditionMedia, EditionAdvertising } from "./OperatorDesk";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   certificatePolicy,
   OUTCOMES,
@@ -44,6 +45,10 @@ export function DeliveryStudio({
   onChange,
   focusPath,
   onLocate,
+  onSave,
+  onPersisted,
+  onBusy,
+  renderSpecialist,
 }: {
   record: Partial<DceRecord>;
   language: Locale;
@@ -53,6 +58,10 @@ export function DeliveryStudio({
   onChange: (patch: Data) => void;
   focusPath?: string;
   onLocate?: (path: string) => void;
+  onSave?: () => Promise<DceRecord | undefined>;
+  onPersisted?: (r: DceRecord) => void;
+  onBusy?: (busy: boolean) => void;
+  renderSpecialist?: (path: string) => ReactNode;
 }) {
   const { locale, boot, refresh, notify, preview, open } = useUI(),
     [tab, setTab] = useState("editions"),
@@ -70,6 +79,10 @@ export function DeliveryStudio({
     if (focusPath?.startsWith("outputs")) setTab("actions");
     else if (focusPath?.startsWith("certificatePolicy")) setTab("certificate");
   }, [focusPath]);
+  const production = useQuery<any>(
+    { op: "creation_status" },
+    { independentReview: true, atomicPublish: false },
+  );
   const q = useQuery<any>(
       record.id
         ? { op: "master_editions", id: record.id, revision: record.revision }
@@ -128,7 +141,30 @@ export function DeliveryStudio({
       onChange({ certificatePolicy: { ...policy, ...p } });
   return (
     <div className={s.helpList}>
-      {record.id && record.key && ["experience", "bundle"].includes(record.kind || "") ? <PublicReachability resourceKey={record.key} language={language} revision={record.revision} onLocate={onLocate} /> : null}
+      <PublicationGate
+        record={record}
+        language={language}
+        dirty={dirty}
+        readOnly={readOnly}
+        onSave={onSave}
+        onPersisted={onPersisted}
+        onBusy={onBusy}
+        renderSpecialist={renderSpecialist}
+        onLocate={onLocate}
+        onRefresh={() => {
+          q.reload();
+          ready.reload();
+        }}
+      />
+      {record.id && record.key && selected?.activeReleaseId ? (
+        <PublicReachability
+          resourceKey={record.key}
+          language={language}
+          revision={record.revision}
+          releaseId={selected.activeReleaseId}
+          onLocate={onLocate}
+        />
+      ) : null}
       <div className={s.notice}>
         <T
           v={[
@@ -369,32 +405,6 @@ export function DeliveryStudio({
                             locale,
                           )}
                     </Badge>
-                    {ready.value.validation.errors.map((e: any, i: number) => (
-                      <p key={i}>
-                        <strong>{explainIssue(record, e, locale).label}</strong>{" "}
-                        · {explainIssue(record, e, locale).message}{" "}
-                        <Button
-                          onClick={() =>
-                            onLocate
-                              ? onLocate(e.path)
-                              : record.id &&
-                                open(
-                                  record.id,
-                                  explainIssue(record, e, locale).tab,
-                                  language,
-                                )
-                          }
-                        >
-                          <T
-                            v={[
-                              "Open correction area",
-                              "Ouvrir la correction",
-                              "فتح التصحيح",
-                            ]}
-                          />
-                        </Button>
-                      </p>
-                    ))}
                   </>
                 )}
               </State>
@@ -410,39 +420,46 @@ export function DeliveryStudio({
                 </p>
               )}
               <div className={s.actions}>
-                <Button
-                  icon="ClipboardCheck"
-                  disabled={
-                    dirty || busy || readOnly || !ready.value.validation?.valid
-                  }
-                  onClick={() => void act("review")}
-                >
-                  <T
-                    v={[
-                      "Submit edition for review",
-                      "Mettre l’édition en revue",
-                      "إحالة النسخة للمراجعة",
-                    ]}
-                  />
-                </Button>
-                <Button
-                  icon="BadgeCheck"
-                  disabled={
-                    dirty ||
-                    busy ||
-                    !boot.actor.rights.publish ||
-                    selected?.state !== "review"
-                  }
-                  onClick={() => void act("approve")}
-                >
-                  <T
-                    v={[
-                      "Approve edition",
-                      "Approuver l’édition",
-                      "اعتماد النسخة",
-                    ]}
-                  />
-                </Button>
+                {production.value.independentReview && (
+                  <>
+                    <Button
+                      icon="ClipboardCheck"
+                      disabled={
+                        dirty ||
+                        busy ||
+                        readOnly ||
+                        !ready.value.validation?.valid
+                      }
+                      onClick={() => void act("review")}
+                    >
+                      <T
+                        v={[
+                          "Submit edition for review",
+                          "Mettre l’édition en revue",
+                          "إحالة النسخة للمراجعة",
+                        ]}
+                      />
+                    </Button>
+                    <Button
+                      icon="BadgeCheck"
+                      disabled={
+                        dirty ||
+                        busy ||
+                        !boot.actor.rights.publish ||
+                        selected?.state !== "review"
+                      }
+                      onClick={() => void act("approve")}
+                    >
+                      <T
+                        v={[
+                          "Approve edition",
+                          "Approuver l’édition",
+                          "اعتماد النسخة",
+                        ]}
+                      />
+                    </Button>
+                  </>
+                )}
                 <Button
                   icon="Rocket"
                   kind="primary"
@@ -450,9 +467,19 @@ export function DeliveryStudio({
                     dirty ||
                     busy ||
                     !boot.actor.rights.publish ||
-                    !selected?.approvalCurrent
+                    !ready.value.validation?.valid ||
+                    (!production.value.independentReview &&
+                      !production.value.atomicPublish) ||
+                    (production.value.independentReview &&
+                      !selected?.approvalCurrent)
                   }
-                  onClick={() => void act("release")}
+                  onClick={() =>
+                    void act(
+                      production.value.independentReview
+                        ? "release"
+                        : "direct_publish",
+                    )
+                  }
                 >
                   <T
                     v={[

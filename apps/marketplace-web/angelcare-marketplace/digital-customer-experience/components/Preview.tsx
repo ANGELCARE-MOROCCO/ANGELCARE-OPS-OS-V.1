@@ -1,4 +1,6 @@
 "use client";
+import { SavedExperiencePreview } from "./DossierStudio";
+import { isHtmlDelivery } from "../delivery-contract";
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import {
   array,
@@ -148,7 +150,7 @@ export function PreviewWindow({
   onClose: () => void;
 }) {
   const { locale } = useUI(),
-    [device, setDevice] = useState("desktop"),
+    [device] = useState("desktop"),
     [lang, setLang] = useState<Locale>(initialLanguage || locale),
     q = useQuery<any>(
       { op: releaseId ? "release" : "record", id: releaseId || id },
@@ -158,7 +160,8 @@ export function PreviewWindow({
     [error, setError] = useState("");
   useEffect(() => {
     let active = true;
-    setBindings({}); setError("");
+    setBindings({});
+    setError("");
     if (releaseId) return;
     import("./ui")
       .then(({ mutate }) => mutate({ action: "preview", id, locale: lang }))
@@ -221,64 +224,67 @@ export function PreviewWindow({
               <option key={l}>{l}</option>
             ))}
           </select>
-          <select
-            aria-label="Preview device"
-            value={device}
-            onChange={(e) => setDevice(e.target.value)}
-          >
-            <option value="desktop">Desktop</option>
-            <option value="mobile">Mobile · 375px</option>
-          </select>
         </div>
         {error && <p role="alert">{error}</p>}
         <State {...q} retry={q.reload}>
-          <RuntimePreview
-            key={[id, releaseId || q.value?.revision || 0, selected].join(":")}
-            record={r}
-            bindings={
-              releaseId ? object(q.value?.manifest?.bindings) : bindings
-            }
-            locale={selected}
-            device={device}
-            onDetailAction={
-              releaseId
-                ? (operation, input) =>
-                    import("./ui").then(({ mutate }) =>
-                      mutate({
-                        action: "master_preview_detail",
-                        releaseId,
-                        locale: selected,
-                        operation,
-                        input,
-                      }),
-                    )
-                : undefined
-            }
-            onActivity={
-              releaseId
-                ? (input) =>
-                    import("./ui").then(({ mutate }) =>
-                      mutate({
-                        action: "master_preview_activity",
-                        releaseId,
-                        input,
-                      }),
-                    )
-                : undefined
-            }
-            onGrade={
-              releaseId
-                ? (answers) =>
-                    import("./ui").then(({ mutate }) =>
-                      mutate({
-                        action: "master_preview_grade",
-                        releaseId,
-                        answers,
-                      }),
-                    )
-                : undefined
-            }
-          />
+          {isHtmlDelivery(object(r.data), selected) ? (
+            <SavedExperiencePreview
+              record={r}
+              language={selected}
+              dirty={false}
+              onSave={async () => undefined}
+            />
+          ) : (
+            <RuntimePreview
+              key={[id, releaseId || q.value?.revision || 0, selected].join(
+                ":",
+              )}
+              record={r}
+              bindings={
+                releaseId ? object(q.value?.manifest?.bindings) : bindings
+              }
+              locale={selected}
+              device={device}
+              onDetailAction={
+                releaseId
+                  ? (operation, input) =>
+                      import("./ui").then(({ mutate }) =>
+                        mutate({
+                          action: "master_preview_detail",
+                          releaseId,
+                          locale: selected,
+                          operation,
+                          input,
+                        }),
+                      )
+                  : undefined
+              }
+              onActivity={
+                releaseId
+                  ? (input) =>
+                      import("./ui").then(({ mutate }) =>
+                        mutate({
+                          action: "master_preview_activity",
+                          releaseId,
+                          input,
+                        }),
+                      )
+                  : undefined
+              }
+              onGrade={
+                releaseId
+                  ? (answers) =>
+                      import("./ui").then(({ mutate }) =>
+                        mutate({
+                          action: "master_preview_grade",
+                          releaseId,
+                          answers,
+                        }),
+                      )
+                  : undefined
+              }
+            />
+          )}
         </State>
       </div>
     </Dialog>

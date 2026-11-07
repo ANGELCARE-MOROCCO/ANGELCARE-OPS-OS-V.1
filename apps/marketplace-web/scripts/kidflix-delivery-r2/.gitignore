@@ -2,3 +2,6 @@ node_modules/
 preview/
 *.png
 browser-results.json
+
+r3-preview/
+r3-browser-results.json

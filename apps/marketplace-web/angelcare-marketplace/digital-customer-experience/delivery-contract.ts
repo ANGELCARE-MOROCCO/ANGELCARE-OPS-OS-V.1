@@ -220,8 +220,17 @@ export function attachInteractivePackage(
     delivery: { ...object(original.delivery), kind: "html" },
     interactivePackages: map,
     interactivePackage: ref,
-    defaultLocale: locale,
-    requiredLocales: [locale],
+    defaultLocale: text(original.defaultLocale) || locale,
+    requiredLocales: [
+      ...new Set([
+        ...(Array.isArray(original.requiredLocales)
+          ? original.requiredLocales.filter((l) =>
+              ["fr", "en", "ar"].includes(String(l)),
+            )
+          : []),
+        locale,
+      ]),
+    ],
     visibility: "free",
     mode: family.modes.includes(text(original.mode))
       ? original.mode

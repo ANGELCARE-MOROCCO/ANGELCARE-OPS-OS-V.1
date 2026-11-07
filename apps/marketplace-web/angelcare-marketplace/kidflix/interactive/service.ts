@@ -205,3 +205,16 @@ export async function cloneStudioPackage(c:MarketplaceRequestContext,sourceId:st
   files[index]={path:'kidflix.manifest.json',bytes:Buffer.from(JSON.stringify(manifest,null,2)+'\n')};
   return importPackage(c,rebuildPackageArchive(files),source.family_key,source.locale);
 }
+
+/** Bounded, searchable options for the final gate, including older package revisions. */
+export async function studioPackagePage(c:MarketplaceRequestContext,family:string,locale:string,input:{recordId:string;q?:unknown;page?:unknown}) {
+  authorize(c,'manage');
+  if(!['fr','en','ar'].includes(locale)||!/^[a-z-]{3,32}$/.test(family)||!uuid(input.recordId))throw Error('INVALID_STUDIO_FILTER');
+  const page=Math.max(1,Math.min(100000,Math.floor(Number(input.page)||1))),size=24,db=await createServiceClient();
+  let query=db.from(KF_PACKAGE_TABLE).select('id,manifest,locale,family_key,state,record_id,created_at',{count:'exact'}).eq('scope_key',scopeKey(c)).eq('family_key',family).eq('locale',locale).in('state',['validated','published']).or('record_id.is.null,record_id.eq.'+input.recordId);
+  const search=String(input.q||'').replace(/[^\p{L}\p{N} .-]/gu,' ').slice(0,120).trim();
+  if(search)query=query.ilike('manifest->>title','%'+search+'%');
+  const result=await query.order('created_at',{ascending:false}).order('id').range((page-1)*size,page*size-1);
+  if(result.error)check(result.error,'STUDIO_LIBRARY_UNAVAILABLE');
+  return {rows:(result.data||[]).map((p:any)=>({id:p.id,title:p.manifest?.title||'Untitled',locale:p.locale,family:p.family_key,state:p.state,recordId:p.record_id})),total:result.count||0,page,pageSize:size};
+}

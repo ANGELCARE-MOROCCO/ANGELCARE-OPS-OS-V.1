@@ -1,0 +1,344 @@
+{
+  "fr": {
+    "terms": {
+      "title": "Conditions d’utilisation",
+      "lead": "Les règles essentielles pour utiliser ANGELCARE Marketplace, comprendre une offre et suivre votre relation avec nos équipes.",
+      "sections": [
+        [
+          "Objet et services",
+          "ANGELCARE Marketplace permet de découvrir des services, produits, formations et solutions destinés aux familles, professionnels et organisations. Les informations propres à une offre, un devis, une commande ou un contrat complètent les présentes règles générales.",
+          "Les univers KidFlix et JOBKIX proposent des parcours distincts. Leurs fonctionnalités, les conditions associées aux contenus et les informations d’un employeur ou d’un partenaire doivent être consultées dans le parcours concerné."
+        ],
+        [
+          "Compte et utilisation responsable",
+          "Communiquez des informations exactes, maintenez vos coordonnées à jour et protégez vos identifiants. Signalez à notre équipe un accès suspect, une erreur de dossier ou une utilisation non autorisée.",
+          "N’utilisez pas la plateforme pour publier des informations trompeuses, porter atteinte aux droits d’autrui, transmettre des contenus illicites ou contourner les mesures de sécurité."
+        ],
+        [
+          "Offres, disponibilité et confirmation",
+          "Vérifiez le périmètre, le territoire, les conditions d’éligibilité, les inclusions, le tarif, les frais éventuels et les dates avant tout engagement. Une demande d’information ou de devis n’équivaut pas à une réservation confirmée.",
+          "Les conditions particulières présentées et acceptées dans votre parcours définissent la prestation commandée. Un élément non confirmé dans votre dossier ne doit pas être interprété comme une disponibilité ou une garantie."
+        ],
+        [
+          "Prix, commandes et paiement",
+          "Le montant, la devise, les modalités de paiement et les éventuels frais doivent être vérifiés dans l’offre ou la confirmation applicable. Conservez les justificatifs et la référence de votre dossier.",
+          "Ne communiquez jamais de code confidentiel de paiement ou de mot de passe par message. Toute contestation de paiement doit être signalée en précisant la référence concernée, sans transmettre de données bancaires sensibles."
+        ],
+        [
+          "Familles, enfants et informations sensibles",
+          "Une demande concernant un enfant doit être effectuée par son représentant ou une personne autorisée. Transmettez uniquement les informations nécessaires à l’évaluation ou à l’exécution du service.",
+          "Les données de santé, documents d’identité et informations familiales privées ne doivent pas être déposés dans un avis ou un espace public. Les contenus pédagogiques ne remplacent pas un avis médical ni une prise en charge d’urgence."
+        ],
+        [
+          "Modification, annulation et remboursement",
+          "Pour modifier ou annuler une demande, contactez l’équipe avec sa référence et les dates concernées. Le traitement dépend du type d’offre, de son état d’exécution, des conditions particulières communiquées et des droits légaux applicables.",
+          "Aucun délai, frais d’annulation ou taux de remboursement uniforme n’est présumé pour toutes les offres. Les droits impératifs de rétractation et de protection du consommateur restent applicables lorsqu’ils sont ouverts. Un accusé de réception ne constitue pas à lui seul une décision de remboursement."
+        ],
+        [
+          "Contenus, apprentissage et droits",
+          "Respectez les droits attachés aux textes, images, marques, ressources et logiciels. Un accès gratuit à une ressource n’emporte pas automatiquement l’autorisation de la revendre ou de la redistribuer commercialement.",
+          "Les conditions affichées avec une ressource ou une formation précisent son usage. Une attestation de suivi ne doit pas être assimilée à une qualification réglementée sans indication explicite et vérifiable."
+        ],
+        [
+          "Recrutement, partenaires et liens externes",
+          "Une offre d’emploi, une candidature ou un contact professionnel ne garantit ni recrutement, ni visa, ni résultat commercial. Vérifiez l’identité de l’interlocuteur et les conditions du parcours concerné.",
+          "Un lien externe peut mener vers un service soumis à ses propres conditions. Vérifiez l’adresse du destinataire avant de transmettre une candidature, une pièce ou un paiement."
+        ],
+        [
+          "Assistance, réclamations et droits",
+          "Adressez votre demande au contact ANGELCARE en indiquant la référence, les faits utiles et la solution recherchée. Conservez une copie des échanges.",
+          "Les présentes informations ne suppriment aucun droit impératif du consommateur et ne créent pas de renonciation aux recours prévus par la réglementation applicable. Les documents particuliers déjà communiqués dans votre dossier restent à consulter."
+        ]
+      ]
+    },
+    "privacy": {
+      "title": "Politique de confidentialité",
+      "lead": "Comprendre les données utiles à votre parcours, leurs finalités et les moyens de demander une information ou d’exercer vos droits.",
+      "sections": [
+        [
+          "Périmètre et point de contact",
+          "Cette page concerne les parcours ANGELCARE Marketplace. Pour toute question relative à vos données, utilisez le contact ANGELCARE et précisez « Confidentialité » ainsi que le parcours concerné.",
+          "Un employeur, un professionnel ou un partenaire peut traiter des données sous sa propre responsabilité. Consultez les informations qu’il fournit avant de lui transmettre des données."
+        ],
+        [
+          "Informations que vous transmettez",
+          "Selon les fonctionnalités utilisées, les informations peuvent comprendre vos coordonnées, votre compte, vos demandes, vos commandes, vos candidatures, les documents nécessaires à votre dossier et les échanges avec les équipes.",
+          "Pour un service familial, seules les informations utiles concernant l’enfant, son représentant et les besoins d’accompagnement doivent être communiquées. Évitez les données privées dans les champs publics."
+        ],
+        [
+          "Données techniques et choix de confidentialité",
+          "Des données techniques peuvent être nécessaires au fonctionnement d’une session, à la sécurité, aux transactions et au diagnostic des incidents. Les mesures facultatives d’audience relèvent des choix proposés dans le panneau de confidentialité.",
+          "La page Cookies décrit les catégories de technologies et la manière de gérer vos préférences. Consulter une page ne remplace pas le consentement requis pour un traitement facultatif."
+        ],
+        [
+          "Finalités et conditions de traitement",
+          "Les données servent, selon le parcours, à répondre à une demande, préparer ou exécuter un service, gérer un compte ou une commande, accompagner une candidature, traiter une réclamation et assurer la sécurité.",
+          "Les conditions de traitement dépendent de la finalité : service demandé, obligations applicables ou consentement lorsqu’il est requis. Une autorisation facultative doit rester distincte des informations nécessaires à votre demande."
+        ],
+        [
+          "Enfants et données sensibles",
+          "Le représentant autorisé doit limiter les données concernant un enfant aux besoins réels du service. Une information de santé ou un document sensible appelle un échange privé avec l’équipe compétente.",
+          "Ne transmettez pas de données sensibles dans les avis publics, les commentaires ou une pièce destinée à être diffusée. En cas d’erreur, demandez rapidement leur retrait et précisez l’emplacement concerné."
+        ],
+        [
+          "Personnes et prestataires concernés",
+          "Selon le besoin, les informations utiles peuvent être communiquées aux équipes en charge du dossier, au professionnel ou partenaire concerné et aux prestataires techniques ou de paiement intervenant dans le parcours.",
+          "La communication doit rester liée à la finalité concernée. Les coordonnées d’un prestataire, son rôle et les informations particulières applicables à votre dossier peuvent être demandés à notre équipe."
+        ],
+        [
+          "Conservation et suppression",
+          "La conservation doit tenir compte de la durée du parcours, du suivi des demandes, des obligations applicables et de la gestion des contestations. La clôture d’un compte n’entraîne pas nécessairement l’effacement immédiat de toutes les pièces justificatives.",
+          "Vous pouvez demander les informations de conservation applicables à votre catégorie de données et solliciter une rectification ou un effacement dans les conditions prévues par la réglementation. Aucun délai unique n’est annoncé pour toutes les catégories."
+        ],
+        [
+          "Services tiers et hébergement",
+          "L’utilisation d’un prestataire technique ou d’un service externe peut impliquer un traitement distinct ou un hébergement dans un autre pays. Demandez les informations propres à votre parcours lorsque cela est pertinent.",
+          "Pour obtenir des précisions sur les destinataires, les pays d’hébergement ou les conditions d’un transfert, adressez une demande à notre équipe en précisant le service concerné."
+        ],
+        [
+          "Sécurité et prudence",
+          "Protégez votre compte, choisissez un mot de passe approprié et signalez les connexions suspectes. Utilisez les moyens prévus pour transmettre les pièces nécessaires. Aucun service en ligne ne peut garantir un risque nul.",
+          "Ne transmettez jamais vos mots de passe, codes de validation ou codes confidentiels de paiement dans une demande de support."
+        ],
+        [
+          "Vos droits et vos demandes",
+          "La réglementation marocaine relative aux données personnelles prévoit notamment des droits d’accès, de rectification et d’opposition, selon les conditions applicables. Une vérification proportionnée de votre identité peut être nécessaire pour protéger vos données.",
+          "Contactez ANGELCARE en décrivant la demande et le parcours concerné. Vous pouvez également consulter la CNDP et la saisir selon les voies qu’elle prévoit. Une opposition à un usage facultatif ne signifie pas nécessairement l’effacement de pièces conservées pour une obligation légale."
+        ],
+        [
+          "Évolutions et informations propres au dossier",
+          "Cette information générale peut être complétée par les notices d’un formulaire, d’un service ou d’un partenaire. Consultez la version et les informations spécifiques présentées lors de votre démarche.",
+          "Pour obtenir une clarification ou signaler une incohérence, communiquez uniquement la référence nécessaire et votre moyen de contact."
+        ]
+      ]
+    }
+  },
+  "en": {
+    "terms": {
+      "title": "Terms of use",
+      "lead": "Essential rules for using ANGELCARE Marketplace, understanding an offer and following your relationship with our teams.",
+      "sections": [
+        [
+          "Purpose and services",
+          "ANGELCARE Marketplace provides access to services, products, training and solutions for families, professionals and organisations. The information attached to an offer, quotation, order or contract supplements these general rules.",
+          "KidFlix and JOBKIX have distinct journeys. Check the conditions attached to their resources, features and any employer or partner involved."
+        ],
+        [
+          "Accounts and responsible use",
+          "Provide accurate information, keep your contact details current and protect your credentials. Report suspicious access, an incorrect record or unauthorised use to our team.",
+          "Do not use the platform to mislead others, infringe rights, submit unlawful content or bypass security measures."
+        ],
+        [
+          "Offers, availability and confirmation",
+          "Check scope, territory, eligibility, inclusions, price, any fees and dates before making a commitment. An enquiry or quotation request is not a confirmed booking.",
+          "The specific conditions presented and accepted in your journey define the service ordered. An unconfirmed item in your record is not a promise of availability or a guarantee."
+        ],
+        [
+          "Prices, orders and payments",
+          "Check the amount, currency, payment arrangements and any fees in the relevant offer or confirmation. Keep the supporting evidence and your record reference.",
+          "Never share confidential payment codes or passwords in a message. Report a disputed payment using the relevant reference without disclosing sensitive banking information."
+        ],
+        [
+          "Families, children and sensitive information",
+          "Requests concerning a child must be made by their representative or an authorised person. Provide only information needed to assess or perform the service.",
+          "Do not submit health information, identity documents or private family information in a public review or public area. Educational resources do not replace medical advice or emergency care."
+        ],
+        [
+          "Changes, cancellations and refunds",
+          "To change or cancel a request, contact the team with its reference and relevant dates. Handling depends on the offer type, performance status, specific conditions communicated and applicable legal rights.",
+          "No single cancellation period, fee or refund percentage is assumed for every offer. Mandatory withdrawal and consumer-protection rights remain available where applicable. A receipt acknowledgment is not itself a refund decision."
+        ],
+        [
+          "Content, learning and rights",
+          "Respect rights in text, imagery, brands, resources and software. Free access to a resource does not automatically permit resale or commercial redistribution.",
+          "Conditions shown with a resource or training programme govern its use. A participation certificate must not be presented as a regulated qualification without explicit, verifiable information."
+        ],
+        [
+          "Recruitment, partners and external links",
+          "A vacancy, application or professional contact does not guarantee employment, a visa or a commercial outcome. Verify the other party and the conditions of the relevant journey.",
+          "An external link may lead to a service with its own terms. Check the destination before sending an application, document or payment."
+        ],
+        [
+          "Support, complaints and rights",
+          "Contact ANGELCARE with your reference, relevant facts and requested resolution. Keep a copy of the exchanges.",
+          "These general rules do not remove mandatory consumer rights or waive statutory remedies. Also consult any specific documents already communicated in your record."
+        ]
+      ]
+    },
+    "privacy": {
+      "title": "Privacy policy",
+      "lead": "Understand the information relevant to your journey, why it is used and how to ask questions or exercise your rights.",
+      "sections": [
+        [
+          "Scope and contact",
+          "This page concerns ANGELCARE Marketplace journeys. For a question about your data, contact ANGELCARE and specify “Privacy” and the journey concerned.",
+          "An employer, professional or partner may process information under its own responsibility. Read its information before sharing data."
+        ],
+        [
+          "Information you provide",
+          "Depending on the features used, information may include contact and account details, requests, orders, applications, documents needed for your record and exchanges with teams.",
+          "For family services, provide only relevant information about the child, their representative and support needs. Avoid private information in public fields."
+        ],
+        [
+          "Technical data and privacy choices",
+          "Technical data may be necessary for sessions, security, transactions and incident diagnosis. Optional audience measurement is governed by choices offered in the privacy panel.",
+          "The Cookies page explains technology categories and preference controls. Viewing a page does not substitute for consent required for an optional purpose."
+        ],
+        [
+          "Purposes and conditions",
+          "Depending on the journey, information is used to answer a request, prepare or perform a service, manage an account or order, support an application, handle a complaint and maintain security.",
+          "The conditions for processing depend on purpose: the service requested, applicable obligations or consent where required. Optional permission must remain separate from information necessary for your request."
+        ],
+        [
+          "Children and sensitive data",
+          "An authorised representative should limit information about a child to the actual service needs. Health information and sensitive documents require a private exchange with the appropriate team.",
+          "Do not place sensitive data in public reviews, comments or a file intended for publication. If this happens accidentally, promptly request removal and identify the relevant location."
+        ],
+        [
+          "People and providers involved",
+          "Where relevant, necessary information may be shared with the team handling the record, the professional or partner concerned and technical or payment providers involved in the journey.",
+          "Sharing must remain connected to the relevant purpose. Ask our team about a provider, its role and the information applicable to your record."
+        ],
+        [
+          "Retention and deletion",
+          "Retention should reflect the journey, request follow-up, applicable obligations and handling of disputes. Closing an account does not necessarily delete every supporting record immediately.",
+          "Ask about retention for the relevant category and request correction or deletion under applicable conditions. No single period is stated for all categories."
+        ],
+        [
+          "Third parties and hosting",
+          "Using a technical provider or external service may involve separate processing or hosting in another country. Ask for information specific to your journey where relevant.",
+          "For details about recipients, hosting countries or arrangements for a transfer, ask our team and identify the service concerned."
+        ],
+        [
+          "Security and care",
+          "Protect your account, choose an appropriate password and report suspicious sign-ins. Use the intended channels for required documents. No online service can promise zero risk.",
+          "Never send passwords, verification codes or confidential payment codes in a support request."
+        ],
+        [
+          "Your rights and requests",
+          "Moroccan personal-data legislation provides rights including access, rectification and objection, subject to applicable conditions. Proportionate identity verification may be necessary to protect your data.",
+          "Contact ANGELCARE with your request and relevant journey. You may also consult the CNDP and use its complaint procedures. Objecting to an optional use does not necessarily erase records kept for a legal obligation."
+        ],
+        [
+          "Updates and record-specific information",
+          "This general information may be supplemented by notices for a form, service or partner. Consult the version and specific information presented during your journey.",
+          "To request clarification or report an inconsistency, provide only the necessary reference and a means of contacting you."
+        ]
+      ]
+    }
+  },
+  "ar": {
+    "terms": {
+      "title": "شروط الاستخدام",
+      "lead": "القواعد الأساسية لاستخدام سوق أنجل كير وفهم العروض ومتابعة علاقتك بفرقنا.",
+      "sections": [
+        [
+          "الغرض والخدمات",
+          "يتيح سوق أنجل كير اكتشاف خدمات ومنتجات وتكوينات وحلول للأسر والمهنيين والمؤسسات. وتكمل المعلومات الخاصة بالعرض أو عرض السعر أو الطلب أو العقد هذه القواعد العامة.",
+          "يوفر KidFlix وJOBKIX مسارات مستقلة. راجع شروط الموارد والوظائف والمعلومات التي يقدمها صاحب العمل أو الشريك المعني."
+        ],
+        [
+          "الحساب والاستخدام المسؤول",
+          "قدّم معلومات صحيحة وحدّث وسائل الاتصال واحمِ بيانات الدخول. أبلغ الفريق عن أي وصول مشبوه أو خطأ في ملف أو استخدام غير مصرح به.",
+          "لا تستخدم المنصة للتضليل أو انتهاك حقوق الآخرين أو إرسال محتوى غير مشروع أو تجاوز تدابير الأمان."
+        ],
+        [
+          "العروض والتوفر والتأكيد",
+          "تحقق من النطاق والمنطقة وشروط الأهلية والمشمولات والسعر والرسوم والتواريخ قبل الالتزام. لا يُعد طلب المعلومات أو عرض السعر حجزاً مؤكداً.",
+          "تحدد الشروط الخاصة المعروضة والمقبولة في مسارك الخدمة المطلوبة. ولا تعني المعلومة غير المؤكدة في الملف ضمان التوفر أو النتيجة."
+        ],
+        [
+          "الأسعار والطلبات والدفع",
+          "تحقق من المبلغ والعملة وطرق الدفع والرسوم في العرض أو التأكيد المعني. احتفظ بالمستندات ومرجع الملف.",
+          "لا تشارك رموز الدفع السرية أو كلمات المرور في الرسائل. عند الاعتراض على دفعة، أرسل المرجع المعني دون كشف معلومات بنكية حساسة."
+        ],
+        [
+          "الأسر والأطفال والمعلومات الحساسة",
+          "يجب أن يقدم الطلب المتعلق بطفل ممثله أو شخص مخول. أرسل المعلومات الضرورية فقط لتقييم الخدمة أو تنفيذها.",
+          "لا تضع بيانات صحية أو وثائق هوية أو معلومات أسرية خاصة في تقييم أو مساحة عامة. الموارد التربوية لا تعوض الرأي الطبي أو الرعاية الطارئة."
+        ],
+        [
+          "التعديل والإلغاء والاسترداد",
+          "لتعديل طلب أو إلغائه، تواصل مع الفريق مع ذكر المرجع والتواريخ. تعتمد المعالجة على نوع العرض ومرحلة التنفيذ والشروط الخاصة المبلغة والحقوق القانونية المطبقة.",
+          "لا تُفترض مهلة إلغاء أو رسوم أو نسبة استرداد موحدة لجميع العروض. تبقى حقوق التراجع وحماية المستهلك الإلزامية قائمة متى انطبقت. ولا يُعد تأكيد الاستلام وحده قراراً بالاسترداد."
+        ],
+        [
+          "المحتوى والتعلم والحقوق",
+          "احترم الحقوق المتعلقة بالنصوص والصور والعلامات والموارد والبرامج. إتاحة مورد مجاناً لا تمنح تلقائياً حق إعادة بيعه أو توزيعه تجارياً.",
+          "تحدد الشروط المصاحبة للمورد أو التكوين طريقة استخدامه. ولا تُعرض شهادة مشاركة باعتبارها مؤهلاً مهنياً منظماً دون بيان صريح وقابل للتحقق."
+        ],
+        [
+          "التوظيف والشركاء والروابط الخارجية",
+          "لا يضمن إعلان وظيفي أو ترشيح أو اتصال مهني التوظيف أو التأشيرة أو نتيجة تجارية. تحقق من هوية الطرف الآخر وشروط المسار المعني.",
+          "قد يقود الرابط الخارجي إلى خدمة لها شروطها الخاصة. تحقق من الوجهة قبل إرسال طلب ترشيح أو وثيقة أو دفع."
+        ],
+        [
+          "المساعدة والشكايات والحقوق",
+          "تواصل مع أنجل كير مع ذكر المرجع والوقائع المفيدة والحل المطلوب. احتفظ بنسخة من المراسلات.",
+          "لا تلغي هذه القواعد حقوق المستهلك الإلزامية ولا وسائل التظلم المقررة قانوناً. راجع كذلك الوثائق الخاصة التي سبق إبلاغها في ملفك."
+        ]
+      ]
+    },
+    "privacy": {
+      "title": "سياسة الخصوصية",
+      "lead": "افهم المعلومات اللازمة لمسارك وأغراض استخدامها وكيفية الاستفسار أو ممارسة حقوقك.",
+      "sections": [
+        [
+          "النطاق والتواصل",
+          "تتعلق هذه الصفحة بمسارات سوق أنجل كير. للاستفسار عن بياناتك، تواصل مع أنجل كير واذكر «الخصوصية» والمسار المعني.",
+          "قد يعالج صاحب عمل أو مهني أو شريك البيانات تحت مسؤوليته. راجع المعلومات التي يقدمها قبل مشاركة البيانات معه."
+        ],
+        [
+          "المعلومات التي تقدمها",
+          "بحسب الوظائف المستخدمة، قد تشمل المعلومات وسائل الاتصال والحساب والطلبات والمشتريات والترشيحات والوثائق اللازمة للملف والمراسلات مع الفرق.",
+          "للخدمات الأسرية، قدّم فقط المعلومات المفيدة عن الطفل وممثله واحتياجات المرافقة. تجنب المعلومات الخاصة في الحقول العامة."
+        ],
+        [
+          "البيانات التقنية وخيارات الخصوصية",
+          "قد تكون البيانات التقنية ضرورية للجلسات والأمان والمعاملات وتشخيص الأعطال. وتخضع قياسات الجمهور الاختيارية للخيارات المقدمة في لوحة الخصوصية.",
+          "توضح صفحة ملفات الارتباط فئات التقنيات وإدارة التفضيلات. لا تعوض زيارة صفحة الموافقة المطلوبة لغرض اختياري."
+        ],
+        [
+          "الأغراض وشروط المعالجة",
+          "تُستخدم المعلومات، حسب المسار، للرد على طلب أو إعداد خدمة أو تنفيذها أو إدارة حساب أو طلب شراء أو مرافقة ترشيح أو معالجة شكاية أو ضمان الأمان.",
+          "تختلف شروط المعالجة حسب الغرض: الخدمة المطلوبة أو الالتزامات المطبقة أو الموافقة عند لزومها. ويجب فصل الإذن الاختياري عن المعلومات الضرورية للطلب."
+        ],
+        [
+          "الأطفال والبيانات الحساسة",
+          "ينبغي للممثل المخول حصر بيانات الطفل في حاجات الخدمة الفعلية. تستلزم المعلومات الصحية والوثائق الحساسة تبادلاً خاصاً مع الفريق المختص.",
+          "لا تضع البيانات الحساسة في التقييمات أو التعليقات العامة أو وثيقة معدة للنشر. عند الخطأ، اطلب إزالتها سريعاً وحدد موضعها."
+        ],
+        [
+          "الفرق ومقدمو الخدمات المعنيون",
+          "عند الحاجة، قد تُشارك المعلومات الضرورية مع الفريق المكلف بالملف أو المهني أو الشريك المعني أو مقدمي الخدمات التقنية والدفع المشاركين في المسار.",
+          "يجب أن ترتبط المشاركة بالغرض المعني. يمكنك طلب معلومات عن مقدم الخدمة ودوره والمعلومات الخاصة بملفك من الفريق."
+        ],
+        [
+          "الاحتفاظ والحذف",
+          "ينبغي أن تراعي مدة الاحتفاظ المسار ومتابعة الطلبات والالتزامات المطبقة وتسوية النزاعات. لا يؤدي إغلاق الحساب بالضرورة إلى الحذف الفوري لجميع الوثائق المثبتة.",
+          "يمكنك الاستفسار عن الاحتفاظ بالفئة المعنية وطلب التصحيح أو الحذف وفق الشروط المطبقة. لا تُحدد هنا مدة موحدة لجميع الفئات."
+        ],
+        [
+          "الخدمات الخارجية والاستضافة",
+          "قد يستلزم استخدام مقدم تقني أو خدمة خارجية معالجة منفصلة أو استضافة في بلد آخر. اطلب المعلومات الخاصة بمسارك عند الاقتضاء.",
+          "للاستفسار عن الجهات المتلقية أو بلدان الاستضافة أو شروط النقل، وجّه طلباً للفريق مع تحديد الخدمة المعنية."
+        ],
+        [
+          "الأمان والحذر",
+          "احمِ حسابك واختر كلمة مرور مناسبة وأبلغ عن تسجيلات الدخول المشبوهة. استخدم الوسائل المخصصة لإرسال الوثائق اللازمة. لا يمكن لأي خدمة إلكترونية ضمان انعدام المخاطر.",
+          "لا ترسل كلمات المرور أو رموز التحقق أو رموز الدفع السرية في طلب دعم."
+        ],
+        [
+          "حقوقك وطلباتك",
+          "ينص التشريع المغربي للبيانات الشخصية، حسب الشروط المطبقة، على حقوق منها الولوج والتصحيح والتعرض. وقد يلزم تحقق متناسب من الهوية لحماية البيانات.",
+          "تواصل مع أنجل كير لشرح الطلب والمسار المعني. يمكنك كذلك الرجوع إلى اللجنة الوطنية واستعمال مساطر الشكايات المتاحة لديها. ولا يعني التعرض لاستعمال اختياري بالضرورة حذف وثائق محفوظة لالتزام قانوني."
+        ],
+        [
+          "التحديثات والمعلومات الخاصة بالملف",
+          "قد تكمل هذه المعلومات العامة إشعارات تخص استمارة أو خدمة أو شريكاً. راجع النسخة والمعلومات الخاصة المقدمة أثناء مسارك.",
+          "لطلب توضيح أو الإبلاغ عن تناقض، قدّم المرجع الضروري فقط ووسيلة للتواصل معك."
+        ]
+      ]
+    }
+  }
+}

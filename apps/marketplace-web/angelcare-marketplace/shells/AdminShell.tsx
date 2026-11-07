@@ -53,9 +53,10 @@ export async function AdminShell({ context, children }: { context: MarketplaceRe
   const canDce = hasMarketplacePermission(context,'marketplace.digital_experience.view')
   const jobkixEntries = accessibleJobkixAdminEntries(context)
   const jobkixWorkspaces: AdminShellWorkspace[] = jobkixEntries.length ? [{href:JOBKIX_HUB_PATH,domain:'jobkix',label:'JOBKIX · Admin & workspaces',dynamic:false}, ...jobkixEntries.map(entry=>({href:entry.href,domain:'jobkix',label:'JOBKIX · '+entry.title,dynamic:false}))] : []
-  const snapshot = await getAdminShellSnapshot()
+  const snapshot = await getAdminShellSnapshot(context)
   return (
     <AdminShellChrome
+      locale={context.locale}
       actorDisplayName={context.actor.displayName}
       actorEmail={context.actor.email}
       roleKeys={context.roleKeys}

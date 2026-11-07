@@ -2,16 +2,18 @@
 import { useState } from "react";
 import { creationId } from "../creation-model";
 import { tr } from "../types";
-import { mutate, query, useUI } from "./ui";
+import { query, useUI, useReceiptMutation, useWorkingState } from "./ui";
 import s from "./delivery.module.css";
 export function DeliveryDraftRepair({ family }: { family: string }) {
   const { locale, boot } = useUI(),
-    [rows, setRows] = useState<any[]>([]),
+    [rows, setRows] = useWorkingState<any[]>("delivery-repairs."+family+".rows",[]),
     [selected, setSelected] = useState<string[]>([]),
     [busy, setBusy] = useState(false),
     [reviewed, setReviewed] = useState(false),
     [error, setError] = useState(""),
-    [receipts, setReceipts] = useState<Record<string, string>>({});
+    [receipts, setReceipts] = useWorkingState<Record<string, string>>("delivery-repairs."+family+".receipts",{});
+  const mutate=useReceiptMutation();
+  const groups=Object.entries(rows.reduce<Record<string,number>>((out,row)=>{for(const fix of row.changes)out[fix.reason]=(out[fix.reason]||0)+1;return out},{}));
   const t = (en: string, fr: string, ar: string) => tr([en, fr, ar], locale);
   async function scan() {
     setBusy(true);
@@ -101,6 +103,8 @@ export function DeliveryDraftRepair({ family }: { family: string }) {
       {error && <p role="alert">{error}</p>}
       {rows.length > 0 && (
         <>
+          <p>{groups.map(([reason,count])=>reason+" · "+count).join(" | ")}</p>
+          <p>{Object.values(receipts).filter(r=>r==="saved").length} / {rows.length} {t("drafts repaired", "brouillons corrigés", "مسودات مصححة")}</p>
           <table>
             <thead>
               <tr>
