@@ -393,6 +393,8 @@ export function SeoPowerTools({
         }),
         body = await res.json();
       if (!res.ok) throw Error(body.error?.message || "Lecture indisponible.");
+      if (!body.data || !Array.isArray(body.data.projects))
+        throw Error("Lecture SEO non exploitable. Le dernier tableau de bord valide est conservé.");
       if (token === sequence.current) {
         setData(body.data);
         setPage(p);
@@ -427,6 +429,10 @@ export function SeoPowerTools({
         body = await res.json();
       if (!res.ok)
         throw Error(body.error?.message || "Opération non confirmée.");
+      if (body.data === null || typeof body.data === "undefined")
+        throw Error("Commande sans résultat vérifiable ; aucune réussite n’a été déclarée.");
+      if (action === "run" && !Array.isArray(record(body.data).results))
+        throw Error("Exécution sans reçu de lot exploitable. Vérifiez le journal.");
       pending.current = null;
       setNotice(
         action === "run"

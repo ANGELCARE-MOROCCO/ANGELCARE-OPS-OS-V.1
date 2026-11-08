@@ -7,11 +7,9 @@ import {
   ChevronLeft,
   ChevronRight,
   Clock3,
-  ExternalLink,
   FileSearch,
   Globe2,
   Layers3,
-  Pause,
   Play,
   RefreshCw,
   Search,
@@ -21,10 +19,11 @@ import {
   X,
 } from "lucide-react";
 import { type Row, type Snapshot, record } from "./model";
-import { batchMessage, health, recovery } from "./operations-model";
+import { batchMessage, recovery } from "./operations-model";
 import { SeoPowerTools } from "./NativeWorkspace";
 import s from "./operations.module.css";
 import { GrowthWorkspace } from "./GrowthWorkspace";
+import { SeoExecutiveCommand } from "./SeoExecutiveCommand";
 const API = "/api/angelcare-marketplace/admin/seo-power";
 const NAV = [
   ["overview", "Pilotage", Activity],
@@ -212,6 +211,10 @@ export function SeoPowerWorkspace({ initial }: { initial: Snapshot }) {
             " · " +
             (v.requestId || ""),
         );
+      if (v.data === null || typeof v.data === "undefined")
+        throw Error("Réponse sans résultat vérifiable. Aucune réussite n’est déclarée ; consulter le journal avant de reprendre.");
+      if (action === "run" && !Array.isArray(record(v.data).results))
+        throw Error("Le moteur ne renvoie pas de reçu de lot exploitable. Vérifiez les exécutions persistantes.");
       request.current = null;
       setNotice(
         action === "run"
@@ -369,6 +372,7 @@ export function SeoPowerWorkspace({ initial }: { initial: Snapshot }) {
         ))}
       </div>
       <nav className={s.nav} aria-label="SEO POWER">
+            <a className={s.googleRouteLink} href="/angelcare-marketplace/admin/seo-power/google-intelligence"><Globe2 size={17}/> Google Intelligence</a>
         {NAV.map(([id, label, Icon]) => (
           <button
             key={id}
@@ -429,143 +433,25 @@ export function SeoPowerWorkspace({ initial }: { initial: Snapshot }) {
         />
       ) : null}
       {tab === "overview" ? (
-        <>
-          <div className={s.metrics}>
-            {[
-              ["waiting", "En attente"],
-              ["running", "En cours"],
-              ["failed", "Échecs non repris"],
-              ["verified", "Publications vérifiées"],
-              ["unscanned", "Pages jamais inspectées"],
-              ["stale", "Observations anciennes"],
-            ].map(([k, label]) => (
-              <section key={k}>
-                <span>{label}</span>
-                <strong>
-                  {!data.ready || ops.version !== 2 ? "—" : sum(k)}
-                </strong>
-                <small>
-                  {k === "verified"
-                    ? "Résultat public confirmé"
-                    : k === "stale"
-                      ? "Selon la cadence de chaque univers"
-                      : "Comptage complet en base"}
-                </small>
-              </section>
-            ))}
-          </div>
-          <div className={s.worldGrid}>
-            {projects.map((p) => {
-              const h = health(p, runtime, clock),
-                project = data.projects.find((v) => v.id === p.id),
-                policy = record(p.policy),
-                execution = record(p.execution);
-              return (
-                <article className={s.worldCard} key={String(p.id)}>
-                  <div className={s.cardHead}>
-                    <Globe2 />
-                    <h2>{project?.name || String(p.world)}</h2>
-                    <span
-                      className={s.state}
-                      data-state={stale ? "unverified" : h.state}
-                    >
-                      {stale ? "Données anciennes" : h.label}
-                    </span>
-                  </div>
-                  <p>{h.reason}</p>
-                  <dl>
-                    <dt>File due / en attente</dt>
-                    <dd>
-                      {Number(p.due)} / {Number(p.waiting)}
-                    </dd>
-                    <dt>Budget utilisé aujourd’hui UTC</dt>
-                    <dd>
-                      {Number(p.used)} / {Number(policy.crawlBudget)}
-                    </dd>
-                    <dt>Dernière observation</dt>
-                    <dd>{stamp(p.last_observation)}</dd>
-                    <dt>Dernière exécution terminée</dt>
-                    <dd>{stamp(execution.finished_at)}</dd>
-                    <dt>Plus ancienne attente</dt>
-                    <dd>{stamp(p.oldest_waiting)}</dd>
-                    <dt>Prochaine tâche due</dt>
-                    <dd>{stamp(p.next_due)}</dd>
-                    <dt>Mode</dt>
-                    <dd>
-                      {policy.scheduleEnabled ? "Planifié" : "Manuel"} ·{" "}
-                      {p.enabled ? "Univers activé" : "En pause"}
-                    </dd>
-                  </dl>
-                  <div className={s.actions}>
-                    <button
-                      disabled={!enabled || draining || p.enabled !== true}
-                      onClick={() => void act("run", { projectId: p.id })}
-                    >
-                      <Play size={15} />
-                      Exécuter un lot
-                    </button>
-                    <button
-                      onClick={() => {
-                        selectWorld(String(p.id));
-                        go("priorities");
-                      }}
-                    >
-                      Examiner
-                      <ArrowRight size={15} />
-                    </button>
-                    {project ? (
-                      <button
-                        disabled={!enabled || draining}
-                        onClick={() =>
-                          void act("project", {
-                            ...project,
-                            enabled: !project.enabled,
-                          })
-                        }
-                      >
-                        {project.enabled ? (
-                          <Pause size={14} />
-                        ) : (
-                          <Play size={14} />
-                        )}{" "}
-                        {project.enabled ? "Mettre en pause" : "Reprendre"}
-                      </button>
-                    ) : null}
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-          <section className={s.panel}>
-            <div className={s.sectionHead}>
-              <div>
-                <small>DE LA DÉCOUVERTE À LA PREUVE</small>
-                <h2>Un parcours, des résultats distincts</h2>
-              </div>
-              <button onClick={() => setGuide(true)}>
-                Préparer un parcours
-                <ArrowRight size={15} />
-              </button>
-            </div>
-            <div className={s.journey}>
-              {[
-                "1 · Inventorier",
-                "2 · Inspecter",
-                "3 · Corriger et autoriser",
-                "4 · Publier",
-                "5 · Vérifier le public",
-              ].map((t) => (
-                <div key={t}>{t}</div>
-              ))}
-            </div>
-            <p>
-              Une tâche exécutée ne prouve ni une correction réussie, ni une
-              indexation. Les publications vérifiées et les réponses IndexNow
-              sont suivies séparément. Le trafic organique n’est pas mesuré par
-              ces contrôles.
-            </p>
-          </section>
-        </>
+        <SeoExecutiveCommand
+          snapshot={data}
+          operations={ops}
+          runtime={runtime}
+          selectedWorld={world}
+          connected={connected}
+          stale={stale}
+          canManage={Boolean(rights.manage) && Boolean(data.ready) && !data.operationsError}
+          isBusy={busy || draining}
+          now={clock}
+          onNavigate={(destination, projectId) => {
+            if (projectId && worldRef.current !== projectId) selectWorld(projectId);
+            go(destination);
+          }}
+          onAction={act}
+          onGuidedStart={() => setGuide(true)}
+          onRunTracked={() => { go("executions"); void drain(); }}
+          onRefresh={() => void load()}
+        />
       ) : null}
       {tab === "priorities" ? (
         <>
@@ -977,13 +863,14 @@ export function SeoPowerWorkspace({ initial }: { initial: Snapshot }) {
             {detail.page_id ? (
               <div className={s.actions}>
                 <button
-                  disabled={!enabled}
+                  disabled={!enabled || detailRecovery.kind === "policy" || detailRecovery.kind === "configuration"}
                   onClick={() =>
                     void act("queue", {
                       pageIds: [detail.page_id],
                       kind: "crawl",
                     })
                   }
+                  title={detailRecovery.kind === "policy" ? "Le crawler ne contourne pas robots.txt ; examinez la directive." : detailRecovery.kind === "configuration" ? "Résoudre d’abord la configuration." : undefined}
                 >
                   Réinspecter la page
                 </button>
@@ -1125,9 +1012,8 @@ export function SeoPowerWorkspace({ initial }: { initial: Snapshot }) {
                           Annuler la tâche
                         </button>
                       ) : null}
-                      {["failed", "cancelled"].includes(String(j.state)) ||
-                      followup.code ||
-                      mismatch ? (
+                      {(["failed", "cancelled"].includes(String(j.state)) || followup.code) &&
+                      rec.kind === "retry" && Number(j.attempts || 0) < 3 && !mismatch ? (
                         <button
                           disabled={!enabled || draining}
                           title={
@@ -1144,6 +1030,15 @@ export function SeoPowerWorkspace({ initial }: { initial: Snapshot }) {
                         <button onClick={() => go("automation")}>
                           Configurer
                         </button>
+                      ) : null}
+                      {rec.kind === "source" ? (
+                        <button onClick={() => go("corrections")}>Corriger dans la source</button>
+                      ) : null}
+                      {rec.kind === "rescan" && j.page_id ? (
+                        <button disabled={!enabled || draining} onClick={() => void act("queue", {pageIds:[j.page_id],kind:"crawl"})}>Réinspecter la page</button>
+                      ) : null}
+                      {rec.kind === "policy" ? (
+                        <button onClick={() => openJob(j)}>Vérifier robots & politique</button>
                       ) : null}
                       <small>
                         {mismatch

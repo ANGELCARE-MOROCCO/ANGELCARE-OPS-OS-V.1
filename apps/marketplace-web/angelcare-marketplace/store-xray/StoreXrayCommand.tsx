@@ -11,17 +11,11 @@ import {
 } from 'lucide-react'
 import type { XraySession, XraySummary, XrayVisitorProfile } from './types'
 import styles from './store-xray.module.css'
+import { GlobalRadarCommand } from './GlobalRadarCommand'
 
 type ApiEnvelope<T> = { data?: T; error?: { message?: string } }
 type Tab = 'live' | 'visitors' | 'journeys' | 'commerce' | 'discovery' | 'experience' | 'performance' | 'errors' | 'alerts' | 'capabilities'
 type Segment = 'all' | 'active' | 'returning' | 'known' | 'high-intent' | 'friction' | 'errors' | 'sanila' | 'checkout' | 'booking'
-
-const COUNTRY_POSITIONS: Record<string, [number, number]> = {
-  MA: [45, 47], FR: [49, 37], ES: [46, 41], PT: [43, 41], BE: [50, 34], GB: [46, 30],
-  DE: [53, 34], IT: [54, 43], NL: [51, 31], CH: [51, 39], US: [22, 38], CA: [20, 24],
-  QA: [65, 51], AE: [68, 52], SA: [63, 54], DZ: [48, 51], TN: [53, 48], EG: [58, 52],
-  SN: [38, 57], CI: [40, 64],
-}
 
 function flag(code: string | null | undefined) {
   if (!code || code.length !== 2 || code === '??') return '🌐'
@@ -154,10 +148,6 @@ export function StoreXrayCommand({ initial }: { initial: XraySummary }) {
   }), [snapshot.sessionsLive, query, device, country, intent, segment, returningVisitors])
 
   const activeSessions = filtered.filter((session) => session.active)
-  const mapPoints = snapshot.countries.slice(0, 24).map((item, index) => {
-    const [x, y] = COUNTRY_POSITIONS[item.code] || [76 + (index % 5) * 3, 70 + Math.floor(index / 5) * 3]
-    return { ...item, x, y }
-  })
   const compareSessions = compare.map((key) => snapshot.sessionsLive.find((session) => session.sessionKey === key)).filter((value): value is XraySession => Boolean(value))
 
   const tabs: Array<[Tab, string]> = [
@@ -168,9 +158,9 @@ export function StoreXrayCommand({ initial }: { initial: XraySummary }) {
   return <div className={styles.shell}>
     <section className={styles.hero}>
       <div className={styles.heroIdentity}>
-        <div className={styles.eyebrow}><span className={styles.liveDot}/> MARKETPLACE INTELLIGENCE · LIVE STORE X-RAY MAX</div>
-        <h1>Chaque visiteur. Chaque chemin. Chaque signal business et technique.</h1>
-        <p>Présence live, Visitor 360, acquisition, parcours, conversion canonique, friction, performance et alertes — sans replay vidéo ni collecte de valeurs saisies.</p>
+        <div className={styles.eyebrow}><span className={styles.liveDot}/> ANGELCARE GLOBAL OPERATIONS · COMMAND NETWORK</div>
+        <h1>GLOBAL INTELLIGENCE · Observatoire du monde en temps réel.</h1>
+        <p>Tours de contrôle virtuelles, radar géographique réel, identité visiteurs, événements commerciaux, intentions, frictions, alertes et analyses opérationnelles — aucun signal fabriqué.</p>
       </div>
       <div className={styles.heroControls}>
         <label className={styles.selectControl}><Clock3 size={14}/><select value={windowMinutes} onChange={(event) => setWindowMinutes(Number(event.target.value))}><option value={15}>15 min</option><option value={30}>30 min</option><option value={60}>1 h</option><option value={180}>3 h</option><option value={1440}>24 h</option></select></label>
@@ -197,14 +187,12 @@ export function StoreXrayCommand({ initial }: { initial: XraySummary }) {
 
       <AlertStrip alerts={snapshot.alerts} onOpen={() => setTab('alerts')}/>
 
-      <section className={styles.liveGrid}>
-        <article className={styles.mapCard}>
-          <div className={styles.cardHead}><div><small>LIVE GEOGRAPHY</small><h2>Présence mondiale</h2></div><span className={styles.livePill}><span className={styles.liveDot}/>{snapshot.activeNow} actifs</span></div>
-          <div className={styles.worldMap}><div className={styles.mapGrid}/><div className={`${styles.continent} ${styles.c1}`}/><div className={`${styles.continent} ${styles.c2}`}/><div className={`${styles.continent} ${styles.c3}`}/><div className={`${styles.continent} ${styles.c4}`}/><div className={`${styles.continent} ${styles.c5}`}/>{mapPoints.map((point) => <button key={point.code} className={styles.mapPoint} style={{ left: `${point.x}%`, top: `${point.y}%` }} title={`${point.code} · ${point.count}`} onClick={() => { setCountry(point.code); setTab('visitors') }}>{point.count}</button>)}<span className={styles.mapCaption}>Trusted edge geo quand latitude/longitude sont disponibles · fallback pays pour la visualisation</span></div>
-          <div className={styles.countryStrip}>{snapshot.countries.slice(0, 10).map((item) => <button key={item.code} onClick={() => { setCountry(item.code); setTab('visitors') }}><span>{flag(item.code)}</span><strong>{item.code}</strong><em>{item.count}</em></button>)}</div>
-        </article>
-        <article className={styles.feedCard}><div className={styles.cardHead}><div><small>LIVE PATH STREAM</small><h2>Ce qui se passe maintenant</h2></div><Activity size={18}/></div><div className={styles.feed}>{snapshot.feed.slice(0, 24).map((item) => <button key={item.id} onClick={() => setSelected(snapshot.sessionsLive.find((s) => s.sessionKey === item.sessionKey) || null)}><span className={styles.feedTime}>{new Date(item.at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span><span className={styles.feedFlag}>{flag(item.countryCode)}</span><span className={styles.feedCopy}><strong>{item.label}</strong><small>{item.pathname}</small></span><span className={styles.intent} data-intent={item.intent}>{intentLabel(item.intent)}</span></button>)}</div></article>
-      </section>
+      <GlobalRadarCommand
+        snapshot={snapshot}
+        onVisitor={setSelected}
+        onCountry={(code) => { setCountry(code); setTab('visitors') }}
+        onTab={setTab}
+      />
 
       <section className={styles.panel}><div className={styles.cardHead}><div><small>ACTIVE VISITORS</small><h2>Visiteurs dans le magasin</h2></div><button className={styles.linkButton} onClick={() => setTab('visitors')}>Tout voir <ChevronRight size={14}/></button></div><VisitorTable sessions={activeSessions.slice(0, 14)} onOpen={setSelected} compare={compare} onCompare={setCompare}/></section>
       <section className={styles.breakdownGrid}><Breakdown title="Sources" icon={Route} items={snapshot.sources}/><Breakdown title="Appareils" icon={Smartphone} items={snapshot.devices}/><Breakdown title="Intentions" icon={MousePointer2} items={snapshot.intents.map((item) => ({ ...item, key: intentLabel(item.key) }))}/></section>

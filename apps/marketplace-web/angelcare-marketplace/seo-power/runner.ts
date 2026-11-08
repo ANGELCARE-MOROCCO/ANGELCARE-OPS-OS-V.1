@@ -177,6 +177,8 @@ async function processBatch(projectId: string | null = null) {
         p_result: result,
         p_error: error,
       });
+      if (!["succeeded", "queued", "failed"].includes(String(record(finished).state || "")))
+        throw new SeoFault("JOB_FINISH_UNCONFIRMED", "Le moteur n’a pas retourné de reçu de finalisation exploitable. L’état de la tâche doit être vérifié avant toute reprise.", 503);
       results.push({
         id: job.id,
         kind: job.kind,

@@ -6,3 +6,23 @@
 @media(max-width:1500px){.kpiGridMax{grid-template-columns:repeat(4,minmax(0,1fr))}.funnelGrid{grid-template-columns:repeat(3,minmax(0,1fr))}.visitor360Hero{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:1200px){.kpiGridMax{grid-template-columns:repeat(2,minmax(0,1fr))}.funnelGrid,.journeyGrid,.experienceGrid{grid-template-columns:1fr}.visitor360Hero{grid-template-columns:repeat(2,minmax(0,1fr))}.routeInsightTable a{grid-template-columns:minmax(0,1fr) 70px 70px 40px 14px}}
 @media(max-width:720px){.kpiGridMax{grid-template-columns:1fr 1fr}.funnelGrid{grid-template-columns:1fr}.visitor360Hero{grid-template-columns:1fr 1fr}.compareGrid{grid-template-columns:1fr}.alertStrip>div span{display:none}.routeInsightTable a{grid-template-columns:minmax(0,1fr) 55px 14px}.routeInsightTable a>span:nth-of-type(2),.routeInsightTable a>span:nth-of-type(3){display:none}}
+
+
+/* GLOBAL INTELLIGENCE R1 — desktop operational skin. Existing workspaces preserved. */
+.shell{background:linear-gradient(180deg,#f1f7fb 0%,#f6fafd 42%,#fcfdff 100%);padding:22px 27px 60px}
+.hero{border-radius:25px;border-color:#cfe1ef;padding:28px 30px;background:radial-gradient(circle at 82% 0%,rgba(94,174,237,.16),transparent 34%),radial-gradient(circle at 4% 86%,rgba(52,198,156,.10),transparent 26%),#fff;box-shadow:0 20px 52px rgba(26,64,96,.055)}
+.hero h1{font-size:36px;letter-spacing:-.045em;font-weight:950;color:#163b60}
+.hero p{max-width:650px;font-size:12px;color:#668299}
+.eyebrow{color:#1678bb;font-weight:950;letter-spacing:.15em}
+.tabs{background:#fff;border-color:#d4e6f0;box-shadow:0 10px 33px rgba(28,75,109,.065);border-radius:15px;gap:5px;padding:8px;top:7px}
+.tabs button,.tabLink{font-size:11px;border-radius:11px;padding:11px 13px}
+.tabs .tabActive{background:linear-gradient(120deg,#17568f,#318ccc);box-shadow:0 6px 18px rgba(24,98,162,.19)}
+.kpiGridMax{gap:11px}
+.kpi{min-height:107px;border-radius:17px;border-color:#dbe8f1;box-shadow:0 11px 27px rgba(22,61,95,.045)}
+.kpi[data-emphasis=true]{background:linear-gradient(136deg,#12619c,#279aca)}
+.kpi strong{font-size:25px;font-weight:950}
+.panel,.breakdown,.feedCard,.mapCard{border-radius:19px;border-color:#d8e7f0;box-shadow:0 10px 32px rgba(22,61,95,.05)}
+.table th{background:#eef6fb;color:#54718a}
+.table tbody tr:hover{background:#f0f9ff}
+.cardHead h2{font-weight:900;letter-spacing:-.025em}
+.alertStrip{border-radius:14px}

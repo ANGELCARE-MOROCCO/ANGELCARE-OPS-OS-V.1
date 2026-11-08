@@ -89,6 +89,8 @@ export function GrowthWorkspace({
         throw Error(
           v.error?.message || "Growth indisponible. Appliquez sa migration.",
         );
+      if (!v.data || typeof v.data !== "object")
+        throw Error("Snapshot Growth sans données exploitables ; dernière observation conservée.");
       if (token === seq.current && mounted.current) {
         setData(v.data);
         setError("");
@@ -163,6 +165,8 @@ export function GrowthWorkspace({
             " · " +
             (v.requestId || ""),
         );
+      if (v.data === null || typeof v.data === "undefined")
+        throw Error("Action Growth sans reçu exploitable. Aucune réussite déclarée.");
       pending.current = null;
       setNotice("Action confirmée · " + v.requestId);
       await load();

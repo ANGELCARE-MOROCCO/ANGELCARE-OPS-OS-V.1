@@ -454,3 +454,33 @@
     width: 100%;
   }
 }
+
+/* SEO POWER EXECUTIVE R1 · growth lab editorial polish, scoped CSS module */
+.root{--ink:#163a59;--muted:#6a849b;--line:#dce7f1;--green:#197aa1;color:var(--ink)}
+.hero{border:1px solid #dce7f1;border-radius:19px;padding:21px 24px;background:radial-gradient(circle at 80% 25%,rgba(29,164,194,.09),transparent 36%),linear-gradient(115deg,#fff,#f6fbff);box-shadow:0 14px 36px rgba(23,65,102,.04)}
+.hero span{color:#218eb3;letter-spacing:.12em}
+.root h2{font-size:25px;letter-spacing:-.05em;color:#164366}
+.root h3{color:#244f71;letter-spacing:-.02em}
+.root button,.dialog button{border-radius:10px;border-color:#d9e6ef;font-weight:800;transition:background .15s ease,border-color .15s ease}
+.root button:hover:not(:disabled),.dialog button:hover:not(:disabled){border-color:#aad4e5;background:#eff8fd}
+.root button:focus-visible,.dialog button:focus-visible{outline-color:#96d3ed}
+.status{background:#f6fbff;border:1px solid #e1edf5;border-radius:12px;margin:10px 0;padding:12px 14px}
+.status strong{color:#197c9c}
+.metrics article{border:1px solid #dce8f0;border-radius:15px;box-shadow:0 7px 22px rgba(24,65,110,.035);min-height:118px}
+.metrics strong{color:#1b5680;font-size:30px;letter-spacing:-.045em;font-variant-numeric:tabular-nums}
+.tabs{background:#fff;border:1px solid #dce7f0;border-radius:12px;padding:6px;box-shadow:0 7px 20px rgba(23,65,102,.035);gap:4px;margin:15px 0}
+.tabs button{border:1px solid transparent;border-radius:9px;color:#67849b}
+.tabs button[aria-current=page]{background:linear-gradient(135deg,#195f95,#1688a5);border-color:#1b75a8;color:#fff}
+.panel,.worldGrid>article{border:1px solid #dce7f1;border-radius:17px;box-shadow:0 9px 27px rgba(25,64,104,.035);background:#fff}
+.root th{background:#f3f8fc;color:#567a94}
+.root table{border:1px solid #e2eaf2;border-radius:12px;overflow:hidden}
+.root tr:hover td{background:#fafcff}
+.root input,.root select,.dialog input{border-color:#d8e6ef;border-radius:9px}
+.badge{border-radius:8px}
+.badge[data-state=ready],.badge[data-state=published]{background:#e8f8ef;color:#157552;border-color:#ccead9}
+.badge[data-state=candidate],.badge[data-state=stale]{background:#fff8e9;color:#ac792b;border-color:#f1dfbb}
+.root .notice{background:#eef9f4;border-color:#d2eadf;color:#1e7455}
+.dialog{border:1px solid #d9e7f1;border-radius:21px;box-shadow:0 30px 100px rgba(18,53,82,.2)}
+.dialog::backdrop{background:rgba(15,38,65,.43);backdrop-filter:blur(3px)}
+.dialog article{border-color:#dce8f0;border-radius:12px}
+@media(prefers-reduced-motion:reduce){.root *{animation:none!important;transition:none!important}}

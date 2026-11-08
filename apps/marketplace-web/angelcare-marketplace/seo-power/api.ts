@@ -329,6 +329,10 @@ export async function post(request: Request) {
       action === "run"
         ? await runBatch(input.projectId ? uuid(input.projectId) : null)
         : await perform(action, input, ctx, requestKey);
+    if (data === null || typeof data === "undefined")
+      throw new SeoFault("RESULT_UNCONFIRMED", "Aucun résultat exploitable n’a été confirmé par le moteur. La commande n’est pas déclarée réussie.", 503);
+    if (action === "run" && !Array.isArray(record(data).results))
+      throw new SeoFault("RUN_RECEIPT_UNCONFIRMED", "Le traitement n’a pas retourné le résultat du lot. Vérifiez l’exécution persistante avant une nouvelle tentative.", 503);
     return NextResponse.json({ data, requestId: rid });
   } catch (e) {
     return failure(e, rid);

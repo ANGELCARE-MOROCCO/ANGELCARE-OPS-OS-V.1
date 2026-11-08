@@ -1071,3 +1071,34 @@
     animation: none;
   }
 }
+
+/* SEO POWER EXECUTIVE R1 · inherited expert editor polish, scoped CSS module */
+.root{--ink:#163a5c;--muted:#70879d;--line:#dce7ef;--green:#196d9f;max-width:none;background:linear-gradient(180deg,#f9fcff,#f5faff);padding:22px;border:1px solid #e1ebf3;border-radius:20px;color:var(--ink)}
+.hero{background:#fff;border:1px solid #dae7f0;padding:20px 23px;border-radius:18px;box-shadow:0 11px 30px rgba(21,61,105,.04)}
+.eyebrow{color:#2480ae;letter-spacing:.13em;font-weight:900}
+.hero h1{letter-spacing:-.055em;color:#173c5e}
+.hero h1 span{color:#7390a8}
+.heroActions small{color:#8a9dae}
+.root button,.button{border-radius:10px;border-color:#dbe6ef;font-weight:800;transition:border-color .15s ease,background .15s ease,box-shadow .15s ease}
+.root button:hover:not(:disabled),.button:hover{background:#f0f8fd;border-color:#add4e9}
+.root .primary{background:linear-gradient(135deg,#176da8,#1689a0);border-color:#1779ac;color:#fff}
+.root .primary:hover{background:linear-gradient(135deg,#195d91,#157e98);color:#fff}
+.scopeBar{border-color:#dce7f0;border-radius:13px;box-shadow:0 6px 18px rgba(23,64,110,.03)}
+.worlds button[data-active=true]{background:#e5f4fe;color:#176b9b;border-color:#a5d3e8}
+.tabs{border:1px solid #dce7f0;border-radius:12px;padding:6px;background:#fff;gap:5px;margin:16px 0 20px;box-shadow:0 7px 18px rgba(24,64,104,.035)}
+.tabs button{border-radius:9px;color:#637f99;font-size:11px;font-weight:850}
+.tabs button[data-active=true]{background:linear-gradient(135deg,#195f93,#177ba9);border-color:#196c9a;color:#fff}
+.stats>section,.panel,.projectGrid article{border:1px solid #dce7f0;border-radius:17px;background:#fff;box-shadow:0 10px 28px rgba(25,67,103,.035)}
+.stats strong{font-size:32px;color:#184f7e;letter-spacing:-.055em;font-variant-numeric:tabular-nums}
+.panelHead small,.editorOpening small{color:#288eb9;letter-spacing:.12em}
+.pipeline>div{background:#f5faff;border:1px solid #e3edf4;border-top:3px solid #2388b7;border-radius:12px}
+.notice{background:#f1f8ff;border-color:#d4e7f5;border-left-color:#238ab2;color:#315d7e;border-radius:11px}
+.root input,.root textarea,.root select{border-color:#d6e4ef;border-radius:10px}
+.root input:focus-visible,.root textarea:focus-visible,.root select:focus-visible,.root button:focus-visible{outline-color:#8bc7e4}
+.root table{border:1px solid #dce7f0;border-radius:12px;overflow:hidden}
+.root th{background:#f2f8fc;color:#587a92}
+.root tr:hover td{background:#fcfdff}
+.dialog{border-radius:22px;border:1px solid #d8e7f1;box-shadow:0 30px 95px rgba(22,53,82,.22)}
+.dialog::backdrop{background:rgba(17,40,65,.45);backdrop-filter:blur(3px)}
+.dialog h2{color:#183b5d;letter-spacing:-.03em}
+@media(prefers-reduced-motion:reduce){.root *{animation:none!important;transition:none!important}}
