@@ -116,7 +116,7 @@ function ResourceCard({ r, locale }: { r: Resource; locale: Locale }) {
           <img data-imagery-owner="resource-owned" data-imagery-record={r.id}
             src={r.image}
             width={420}
-            height={380}
+            height={420}
             loading="lazy"
             decoding="async"
             alt={r.imageAlt || r.title}
