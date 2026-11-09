@@ -70,7 +70,7 @@ test("failed slides are skipped, all-failed never loops, optional nonloop ends",
  const frames=[{id:A},{id:B},{id:C},{id:D}];
  assert.equal(nextPlayableIndex(frames,0,new Set([B,C])),3);
  assert.equal(nextPlayableIndex(frames,3,new Set([B,C])),0);
- assert.equal(nextPlayableIndex(frames,2,new Set([A,B]),-1),null);
+ assert.equal(nextPlayableIndex(frames,2,new Set([A,B]),-1,false),null);
  assert.equal(nextPlayableIndex(frames,0,new Set([B,C,D])),0);
  assert.equal(nextPlayableIndex(frames,0,new Set([A,B,C,D])),null);
  assert.equal(nextPlayableIndex(frames,3,new Set(),1,false),null);
