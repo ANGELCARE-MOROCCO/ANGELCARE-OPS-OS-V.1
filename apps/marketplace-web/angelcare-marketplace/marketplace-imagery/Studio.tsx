@@ -35,6 +35,8 @@ import {
   Copy,
   History,
   SlidersHorizontal,
+  GripVertical,
+  FolderOpen,
 } from "lucide-react";
 import {
   useUI,
@@ -113,6 +115,7 @@ type UploadItem = {
   page: string;
   slot: string;
   mobileFor?: string;
+  replaceFor?: string;
 };
 async function nativePost(url: string, data: any) {
   const r = await fetch("/api/angelcare-marketplace/admin/media" + url, {
@@ -178,6 +181,7 @@ export function ImageryStudio() {
     activeSlot = useRef(selected),
     queue = useRef<UploadItem[]>([]),
     uploading = useRef(false),
+    uploadInput = useRef<HTMLInputElement>(null),
     alive = useRef(true);
   activePage.current = page;
   activeSlot.current = selected;
@@ -572,16 +576,30 @@ export function ImageryStudio() {
             mobileZoom: 1,
             duration: 0,
           };
-          if (p.images.length >= 12) return old;
+          const sequential = !!resolveSlot(item.page, item.slot)?.sequence;
+          if (item.replaceFor) {
+            if (!p.images.some((scene) => scene.id === item.replaceFor)) return old;
+            return {
+              ...old,
+              slots: {
+                ...old.slots,
+                [item.slot]: {
+                  ...p,
+                  images: p.images.map((scene) => scene.id === item.replaceFor
+                    ? { ...scene, src: asset.url, assetId: asset.id, alt: asset.title || item.name }
+                    : scene),
+                },
+              },
+            };
+          }
+          if (sequential && p.images.length >= 12) return old;
           return {
             ...old,
             slots: {
               ...old.slots,
               [item.slot]: {
                 ...p,
-                images: resolveSlot(item.page, item.slot)?.sequence
-                  ? [...p.images, image]
-                  : [image],
+                images: sequential ? [...p.images, image] : [image],
               },
             },
           };
@@ -599,7 +617,10 @@ export function ImageryStudio() {
       setError("Choose one replacement for small navigation artwork.");
       return;
     }
-    if (files.length + images.length > 12) {
+    const pending = queue.current.filter((item) =>
+      item.page === page && item.slot === descriptor.id &&
+      !item.replaceFor && !["ready", "failed"].includes(item.state)).length;
+    if (descriptor.sequence && files.length + images.length + pending > 12) {
       setError("Use up to twelve images per placement.");
       return;
     }
@@ -613,6 +634,21 @@ export function ImageryStudio() {
       slot: descriptor.id,
     }));
     queue.current.push(...batch);
+    setUploads([...queue.current]);
+    void processQueue();
+  }
+  function uploadReplace(files: FileList | null, targetId: string) {
+    if (!canEdit || !files?.length) return;
+    if (files.length !== 1 || !images.some((entry) => entry.id === targetId)) {
+      setError("Select one valid replacement image.");
+      return;
+    }
+    const file = files[0];
+    queue.current.push({
+      id: newId(), name: file.name, file, state: "queued", progress: 0,
+      page, slot: descriptor.id, replaceFor: targetId,
+    });
+    setSlideId(targetId);
     setUploads([...queue.current]);
     void processQueue();
   }
@@ -645,20 +681,22 @@ export function ImageryStudio() {
   return (
     <div className={s.studio}>
       <header className={s.title}>
-        <div>
-          <span className={s.eyebrow}>ANGELCARE · VISUAL OPERATIONS</span>
-          <h1>AngelCare Imagery Studio</h1>
-          <p>Homepage + 12 storefronts · Images, framing, slideshows and visual effects.</p>
+        <div className={s.titleLead}>
+          <span className={s.titleSymbol}><Images size={23} /></span>
+          <div><span className={s.eyebrow}>ANGELCARE MARKETPLACE · VISUAL OPERATIONS</span>
+            <h1>AngelCare Imagery Studio</h1>
+            <p>Homepage + 12 storefronts · Images, framing, slideshows and visual effects.</p></div>
         </div>
-        <span className={s.status}>
-          <CheckCircle2 size={15} />
-          {dirty
-            ? "Unsaved changes"
-            : changed.length
-              ? "Draft differs from live"
-              : "Saved configuration"}{" "}
-          · r{revision}
-        </span>
+        <div className={s.headerActions}>
+          <span className={s.status} data-state={dirty ? "unsaved" : changed.length || hostChanged ? "pending" : "saved"}>
+            {dirty || changed.length || hostChanged ? <AlertCircle size={15} /> : <CheckCircle2 size={15} />}
+            {dirty ? "Unsaved changes" : changed.length || hostChanged ? "Draft differs from live" : "Saved configuration"}
+            <small>r{revision}</small>
+          </span>
+          <button type="button" className={s.headerSecondary} disabled={!canEdit || busy || loading || !dirty} onClick={() => void operate("angelcare_imagery_save")}><Save size={15} /> Save draft</button>
+          <button type="button" className={s.headerSecondary} onClick={() => { setDirectory(false); setEditing(false); setBefore(false); }}><Eye size={15} /> Preview</button>
+          <button type="button" className={s.headerPublish} disabled={!canPublish || busy || loading || dirty || (!changed.length && !hostChanged)} onClick={() => { setPublishTargets(changed); setReview(true); }}><Send size={15} /> Publish</button>
+        </div>
       </header>
       <section className={s.scopeBar} aria-label="Publication scope">
         <label>Public hostname<input aria-label="Public hostname" value={publicHostname} disabled={!canEdit || busy || loading} onChange={e=>setPublicHostname(e.target.value)} placeholder="my.angelcarehub.com" /></label>
