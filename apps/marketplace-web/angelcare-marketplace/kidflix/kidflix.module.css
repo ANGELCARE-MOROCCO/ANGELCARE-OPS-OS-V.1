@@ -4268,3 +4268,20 @@
   .root .headerV2 .headerActions {gap:3px;}
   .root .headerV2 .headerV2Language {padding-inline-start:3px;}
 }
+
+/* Legacy KidFlix experience cards, not editorial artwork or hero media. */
+.root .resourceCard .cardMedia,
+.root .largeCard .cardMedia,
+.root .todaySmall .cardMedia,
+.root .videoTile .cardMedia {
+  aspect-ratio: 1;
+  height: auto;
+  min-height: 0;
+  align-self: start;
+}
+.root .resourceCard .cardMedia > a > img,
+.root .resourceCard:hover .cardMedia > a > img {
+  object-fit: contain;
+  object-position: center;
+  transform: none;
+}
