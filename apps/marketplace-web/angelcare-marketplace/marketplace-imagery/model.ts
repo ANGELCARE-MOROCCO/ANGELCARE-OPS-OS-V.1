@@ -1,6 +1,6 @@
 import { pageSlots, resolveSlot } from "./registry";
 import { PAGE_KEYS } from "./pages";
-import { galleryURL } from "./asset-url";
+import { imageReferenceIssue } from "./asset-url";
 export const PAGES: string[] = [...PAGE_KEYS];
 export const ICONS = [
   "flame",
@@ -166,8 +166,6 @@ const choice = (v: any, options: readonly string[], name: string) => {
 const bool = (v: any) => v === true;
 const id = (v: any) =>
   typeof v === "string" && /^[a-zA-Z0-9][a-zA-Z0-9-]{1,90}$/.test(v);
-const uuid = (v: any) =>
-  typeof v === "string" && /^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(v);
 function badges(v: any): Badge[] {
   if (!Array.isArray(v) || v.length > 2)
     throw Error("Choose up to two badges.");
@@ -274,15 +272,17 @@ export function normalizeConfig(
     )
       throw Error("Small navigation artwork uses one static image.");
     const ids = new Set();
-    const images = v.images.map((raw: any) => {
+    const images = v.images.map((raw: any, index: number) => {
       const a = obj(raw);
       if (!id(a.id) || ids.has(a.id))
         throw Error("Images need distinct stable IDs.");
       ids.add(a.id);
-      if (!galleryURL(a.src) || !uuid(a.assetId))
-        throw Error("Select an approved native image.");
-      if (a.mobile && (!galleryURL(a.mobile) || !uuid(a.mobileAssetId)))
-        throw Error("Select an approved mobile image.");
+      const issue = imageReferenceIssue(a.src, a.assetId);
+      if (issue) throw Error("Placement " + key + ", image " + (index + 1) + ": " + issue);
+      if (a.mobile) {
+        const mobileIssue = imageReferenceIssue(a.mobile, a.mobileAssetId);
+        if (mobileIssue) throw Error("Placement " + key + ", mobile image " + (index + 1) + ": " + mobileIssue);
+      }
       const point = (p: any) => ({
         x: bounded(p?.x, 0, 100, "focal x"),
         y: bounded(p?.y, 0, 100, "focal y"),

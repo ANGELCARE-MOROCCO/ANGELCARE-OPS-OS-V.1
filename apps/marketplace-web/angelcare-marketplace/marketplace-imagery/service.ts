@@ -8,7 +8,7 @@ import {
 } from "../digital-customer-experience/repository";
 import { stable } from "../digital-customer-experience/experience-contract";
 import { isId } from "../digital-customer-experience/model";
-import { publicHost } from "./asset-url";
+import { publicHost, imageReferenceIssue } from "./asset-url";
 import {
   emptyConfig,
   normalizeConfig,
@@ -112,12 +112,15 @@ async function validateMedia(c: Context, config: Config) {
     if (
       !a ||
       !a.mime?.startsWith("image/") ||
+      a.processingState === "failed" ||
       (a.expiresAt && Date.parse(a.expiresAt) <= Date.now())
     )
       throw err(
         "DEPENDENCY_BLOCKED",
         "An assigned image was withdrawn or expired. Choose an active image before publishing.",
       );
+    if (imageReferenceIssue(a.url, id))
+      throw err("DEPENDENCY_BLOCKED", "Native image record has an invalid delivery URL or mismatched identity. Refresh the Media Library.");
     assets.set(id, a);
   }
   for (const slot of Object.values(config.slots))

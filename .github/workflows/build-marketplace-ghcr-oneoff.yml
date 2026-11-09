@@ -35,6 +35,14 @@ jobs:
       - name: Verify Marketplace source route constitution
         run: node apps/marketplace-web/scripts/release/verify-marketplace-release-constitution.mjs source
 
+      - name: Set up Node 24 for Imagery native-media regression gate
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Verify canonical AngelCare imagery media contract
+        run: node --experimental-strip-types --test apps/marketplace-web/scripts/angelcare-marketplace/verify-imagery-native-url-contract.test.mjs
+
       - name: Purge stale Marketplace build outputs
         run: |
           rm -rf apps/marketplace-web/.next

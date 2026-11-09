@@ -44,6 +44,7 @@ import {
   mutate,
 } from "./client";
 import { pageTitle, pagePath } from "./pages";
+import { imageReferenceIssue } from "./asset-url";
 import { NativeImagePicker } from "../kidflix/StudioPickers";
 
 
@@ -373,6 +374,12 @@ export function ImageryStudio() {
     asset: { id: string; url: string; title: string },
     mobile = false,
   ) {
+    const issue = imageReferenceIssue(asset?.url, asset?.id);
+    if (issue) {
+      setError("Unable to assign this native image: " + issue);
+      return;
+    }
+    setError("");
     if (mobile && image) {
       patchImage({ mobile: asset.url, mobileAssetId: asset.id });
       return;
@@ -552,6 +559,9 @@ export function ImageryStudio() {
           throw Error(
             "Uploaded image is not available in the native media vault.",
           );
+        const uploadedIssue = imageReferenceIssue(asset.url, asset.id);
+        if (uploadedIssue)
+          throw Error("Native upload cannot be assigned: " + uploadedIssue);
         if (
           activePage.current !== item.page ||
           activeSlot.current !== item.slot
