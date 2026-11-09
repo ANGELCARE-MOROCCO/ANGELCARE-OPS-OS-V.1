@@ -41,8 +41,36 @@ jobs:
           rm -rf apps/marketplace-web/.turbo
           rm -rf apps/marketplace-web/node_modules/.cache
 
-      - name: Install Nixpacks
-        run: curl -sSL https://nixpacks.com/install.sh | bash
+      - name: Install pinned Nixpacks with retries and fallback
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="v1.41.0"
+          BASE="https://github.com/railwayapp/nixpacks/releases/download/${VERSION}"
+          TMP="$(mktemp -d)"
+          trap 'rm -rf "$TMP"' EXIT
+          download() {
+            local asset="$1"
+            curl --fail --show-error --location \
+              --retry 5 --retry-all-errors --retry-delay 3 \
+              --connect-timeout 15 --max-time 120 \
+              --output "$TMP/$asset" "$BASE/$asset"
+          }
+          DEB="nixpacks-${VERSION}-amd64.deb"
+          if download "$DEB"; then
+            sudo dpkg -i "$TMP/$DEB"
+          else
+            echo "::warning::Debian download failed; trying official musl archive"
+            ARCHIVE="nixpacks-${VERSION}-x86_64-unknown-linux-musl.tar.gz"
+            download "$ARCHIVE"
+            mkdir -p "$TMP/unpacked"
+            tar -xzf "$TMP/$ARCHIVE" -C "$TMP/unpacked"
+            EXECUTABLE="$(find "$TMP/unpacked" -type f -name nixpacks -print -quit)"
+            test -n "$EXECUTABLE"
+            sudo install -m 0755 "$EXECUTABLE" /usr/local/bin/nixpacks
+          fi
+          command -v nixpacks
+          nixpacks --version
 
       - name: Override Nixpacks auto apt packages
         run: |
