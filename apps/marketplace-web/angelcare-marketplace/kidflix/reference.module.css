@@ -2014,3 +2014,16 @@
     background: linear-gradient(270deg, #fffcf4 0%, #fffcf4f5 64%, #fffcf4c9 84%, transparent);
   }
 }
+
+/* KidFlix public experience covers: consistent square frame across
+   storefront layout variants and responsive overrides. */
+.resourceImage,
+.home .resourceImage,
+.storefront[data-reference-layout] .resourceImage {
+  aspect-ratio: 1;
+  height: auto;
+  min-height: 0;
+}
+.resourceCard:hover .resourceImage img {
+  transform: none;
+}
