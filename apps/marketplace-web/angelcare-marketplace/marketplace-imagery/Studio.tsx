@@ -838,7 +838,7 @@ export function ImageryStudio() {
         <>
           <div className={s.editor} aria-busy={loading || busy}>
             <aside className={s.map}>
-              <h2>Page image map</h2>
+              <div className={s.mapHeading}><div><h2>Page image map</h2><p>Manage the visual placements of {title(page)}.</p></div><span>{slots.length} slots</span></div>
               <label className={s.search}>
                 <Search size={15} />
                 <input
@@ -849,13 +849,14 @@ export function ImageryStudio() {
                 />
               </label>
               <div className={s.filters}>
-                {["all", "changed", "defaults", "attention"].map((k) => (
-                  <button
-                    key={k}
-                    aria-pressed={filter === k}
-                    onClick={() => setFilter(k)}
-                  >
-                    {k === "attention" ? "Needs attention" : k}
+                {([
+                  ["all", slots.length],
+                  ["changed", slots.filter((d) => changed.includes(d.id)).length],
+                  ["defaults", slots.filter((d) => !config.slots[d.id]).length],
+                  ["attention", slots.filter((d) => (frameReady && rendered.length > 0 && !rendered.includes(d.id)) || !!config.slots[d.id]?.images.some((i) => !i.enabled)).length],
+                ] as const).map(([key, count]) => (
+                  <button key={key} type="button" aria-pressed={filter === key} onClick={() => setFilter(key)}>
+                    {key === "all" ? "All" : key === "changed" ? "Changed" : key === "defaults" ? "Defaults" : "Attention"} <b>{count}</b>
                   </button>
                 ))}
               </div>
@@ -863,7 +864,7 @@ export function ImageryStudio() {
                 {[...new Set(visibleSlots.map((d) => d.section))].map(
                   (section) => (
                     <section key={section}>
-                      <h3>{section.replaceAll(".", " · ")}</h3>
+                      <h3>{section.replaceAll(".", " · ")} <span>{visibleSlots.filter((d) => d.section === section).length}</span></h3>
                       {visibleSlots
                         .filter((d) => d.section === section)
                         .map((d) => (
@@ -883,10 +884,8 @@ export function ImageryStudio() {
                             </span>
                             <span>
                               <strong>{d.label}</strong>
-                              <small>
-                                {d.owner === "shared" ? "Shared" : "Page only"}
-                                {changed.includes(d.id) ? " · Changed" : ""}
-                              </small>
+                              <small>{config.slots[d.id]?.images.length || 0} / {d.sequence ? 12 : 1} images · {config.slots[d.id]?.images.length ? config.slots[d.id]?.mode || "Single" : "Original"}</small>
+                              <small>{changed.includes(d.id) ? "● Changed · " : ""}{d.owner === "shared" ? "Shared" : "Page only"}</small>
                             </span>
                           </button>
                         ))}
@@ -931,6 +930,7 @@ export function ImageryStudio() {
               ) : null}
             </aside>
             <section className={s.canvas}>
+              <div className={s.canvasHeading}><div><h2>Live page preview</h2><p>{title(page)} · {before ? "Published version" : "Current draft"}</p></div><span data-ready={frameReady}>{frameReady ? "Preview connected" : "Loading preview"}</span></div>
               <div className={s.canvasBar}>
                 <button
                   aria-pressed={editing}
@@ -961,6 +961,7 @@ export function ImageryStudio() {
                   {before ? "Before" : "After"}
                 </button>
               </div>
+              <div className={s.previewAddress}><span>{pagePath(page, previewLocale)}</span><small>{previewLocale.toUpperCase()} · {Math.round(scale * 100)}%</small></div>
               <div ref={stage} className={s.stage}>
                 <div style={{ width: device * scale, height: 1050 * scale }}>
                   <iframe
@@ -991,16 +992,16 @@ export function ImageryStudio() {
             </section>
             <aside className={s.inspector}>
               <div className={s.inspectHeading}>
-                <div>
-                  <h2>{descriptor?.label}</h2>
-                  <small>
-                    {descriptor?.section} · {descriptor?.id}
-                  </small>
-                </div>
-                <span>{page === "shared" ? "Shared" : "Page only"}</span>
+                <span className={s.inspectThumbnail}><Thumbnail slot={descriptor} src={source} /></span>
+                <div className={s.inspectMeta}><h2>{descriptor?.label || "Image placement"}</h2>
+                  <p>{descriptor?.section} · {descriptor?.sequence ? "Slideshow-ready" : "Static artwork"}</p>
+                  <small>{images.length} / {descriptor?.sequence ? 12 : 1} images · {current.mode} · {descriptor?.id}</small></div>
+                <span className={s.inspectStatus}>{changed.includes(descriptor?.id) || dirty ? "Modified" : "Ready"}</span>
               </div>
-              <div className={s.largeThumb}>
-                <Thumbnail slot={descriptor} src={source} />
+              <div className={s.inspectAux}>
+                <strong>{title(page)}</strong>
+                <small>{descriptor?.sequence ? "Up to 12 images per placement" : "One static image for this placement"}</small>
+                <span className={s.capacity} data-full={images.length === (descriptor?.sequence ? 12 : 1)}>{images.length} / {descriptor?.sequence ? 12 : 1} used</span>
               </div>
               <div className={s.tabs}>
                 {["images", "framing", "playback", "badges"].map((t) => (
