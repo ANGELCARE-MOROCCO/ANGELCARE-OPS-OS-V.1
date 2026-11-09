@@ -154,7 +154,7 @@ function ResourceCard({
             src={item.image}
             alt={item.imageAlt || item.title}
             width={320}
-            height={300}
+            height={320}
             loading="lazy"
             decoding="async"
             onError={(e) => {
@@ -1060,7 +1060,7 @@ export function ReferenceStorefront({
                   <img
                     data-imagery-owner="resource-owned" data-imagery-record={r.id} src={r.image}
                     width={100}
-                    height={90}
+                    height={100}
                     alt=""
                     loading="lazy"
                   />
