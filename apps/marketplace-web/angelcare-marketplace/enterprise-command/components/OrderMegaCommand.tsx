@@ -13,16 +13,16 @@ const txt = (record: Record<string, unknown> | null | undefined, key: string) =>
 const obj = (value: unknown): Record<string, unknown> => value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {}
 const money = (value: unknown) => `${Number(value || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Dh`
 
-async function loadOrder(orderId: string): Promise<OrderMegaDossier> {
-  const response = await fetch(`/api/angelcare-marketplace/admin/enterprise-command/orders/${orderId}`, { cache: 'no-store' })
+async function loadOrder(orderId: string,complete=false): Promise<OrderMegaDossier> {
+  const response = await fetch(complete?`/api/angelcare-marketplace/admin/orders/${orderId}/workspace`:`/api/angelcare-marketplace/admin/enterprise-command/orders/${orderId}`, { cache: 'no-store' })
   const payload = await response.json() as Envelope<OrderMegaDossier> & { error?: { message?: string } }
   if (!response.ok || !('data' in payload)) throw new Error(payload.error?.message || 'Commande indisponible.')
-  return payload.data
+  return complete?(payload.data as unknown as {dossier:OrderMegaDossier}).dossier:payload.data
 }
 
-export function OrderMegaCommand({ orderId, initialData, permissions = readOnlyOrderPermissions }: { orderId: string; initialData?: OrderMegaDossier; permissions?: OrderCommandPermissions }) {
+export function OrderMegaCommand({ orderId, initialData, permissions = readOnlyOrderPermissions,complete=false,initialTab='Command' }: { orderId: string; initialData?: OrderMegaDossier; permissions?: OrderCommandPermissions;complete?:boolean;initialTab?:string }) {
   const [data, setData] = useState<OrderMegaDossier | null>(initialData || null)
-  const [tab, setTab] = useState('Command')
+  const [tab, setTab] = useState(initialTab)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
   const [busy, setBusy] = useState(false)
@@ -31,22 +31,22 @@ export function OrderMegaCommand({ orderId, initialData, permissions = readOnlyO
 
   const reload = useCallback(async () => {
     try {
-      setData(await loadOrder(orderId))
+      setData(await loadOrder(orderId,complete))
       setError('')
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Commande indisponible.')
     }
-  }, [orderId])
+  }, [orderId,complete])
   useEffect(() => {
     if (initialData) return
     let active = true
-    void loadOrder(orderId).then((payload) => {
+    void loadOrder(orderId,complete).then((payload) => {
       if (active) { setData(payload); setError('') }
     }).catch((cause: unknown) => {
       if (active) setError(cause instanceof Error ? cause.message : 'Commande indisponible.')
     })
     return () => { active = false }
-  }, [initialData, orderId])
+  }, [initialData, orderId,complete])
 
   const financial = useMemo(() => obj(data?.order.financial_status), [data])
   const fulfillment = useMemo(() => obj(data?.order.fulfillment_status), [data])

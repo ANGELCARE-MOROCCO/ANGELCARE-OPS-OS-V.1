@@ -1,3 +1,4 @@
+import { readAllPages } from '../operational-intake/pagination'
 import { createServiceClient } from '@/lib/supabase/server'
 import { hasMarketplacePermission, requireMarketplaceWorkspaceApiContext } from '../auth/context'
 import { MarketplaceError } from '../server/errors'
@@ -11,7 +12,7 @@ const READ_LIMIT = 180
 function dependency(error: { message: string } | null, section: string) {
   if (error) throw new MarketplaceError('CONFIGURATION_ERROR', `Supplier Command 360: ${section} unavailable. Apply the additive SQL migration before using the workspace.`, { cause: error })
 }
-export async function supplierSnapshot() {
+export async function supplierSnapshot(options:{complete?:boolean;operationsOnly?:boolean}={}) {
   const db = await createServiceClient()
   const tables: Array<[string, string, number]> = [
     ['suppliers','angelcare_marketplace_suppliers',250],
@@ -35,8 +36,14 @@ export async function supplierSnapshot() {
     ['tasks','ac_sc_tasks',180],
     ['audit','ac_sc_audit',READ_LIMIT],
   ]
-  const results = await Promise.all(tables.map(async ([name, table, limit]) => {
+  const requestedTables=options.operationsOnly?tables.filter(([name])=>['suppliers','offers','purchases','purchaseLines','availability','shipments','shipmentEvents','tasks','audit'].includes(name)):tables
+  const results = await Promise.all(requestedTables.map(async ([name, table, limit]) => {
     const q = db.from(table).select('*')
+    if(options.complete){
+      const primary=name==='profiles'?'supplier_id':name==='commercials'?'offer_id':'id'
+      const data=await readAllPages<Row>(()=>{const query=db.from(table).select('*').order(primary);return name==='catalog'?query.in('kind',['product','kit']):query})
+      return [name,data] as const
+    }
     const r = name === 'catalog' ? await q.in('kind',['product','kit']).limit(limit) : await q.limit(limit)
     dependency(r.error, table)
     return [name, r.data || []] as const

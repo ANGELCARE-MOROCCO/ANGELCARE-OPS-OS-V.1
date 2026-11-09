@@ -20,7 +20,7 @@ export async function handleBusinessPulse(request:Request){const id=requestId(re
 export async function handleMissions(request:Request){const id=requestId(request);try{await requireMarketplaceApiContext();return apiSuccess(await fulfillmentMissionSnapshot(),{requestId:id})}catch(e){return apiFailure(e,id)}}
 export async function handleSegments(request:Request){const id=requestId(request);try{await requireMarketplaceApiContext();const body=request.method==='POST'?await parseJsonObject(request):{};return apiSuccess(await segmentPreview(body),{requestId:id})}catch(e){return apiFailure(e,id)}}
 export async function handleTemplates(request:Request){const id=requestId(request);try{await requireMarketplaceApiContext();if(request.method==='GET')return apiSuccess(await listDocumentTemplates(),{requestId:id});const body=await parseJsonObject(request);return apiSuccess(await saveDocumentTemplate(body as any),{requestId:id})}catch(e){return apiFailure(e,id)}}
-export async function handleTemplateVersions(request:Request,templateKey:DocumentTemplateKey){const id=requestId(request);try{await requireMarketplaceApiContext();if(request.method==='GET')return apiSuccess(await listDocumentTemplateVersions(templateKey),{requestId:id});if(request.method==='POST'){const body=await parseJsonObject(request);return apiSuccess(await restoreDocumentTemplateVersion({templateKey,versionNumber:Number(body.versionNumber)}),{requestId:id})}throw new Error('Méthode non prise en charge.')}catch(e){return apiFailure(e,id)}}
+export async function handleTemplateVersions(request:Request,templateKey:DocumentTemplateKey){const id=requestId(request);try{await requireMarketplaceApiContext();if(request.method==='GET')return apiSuccess(await listDocumentTemplateVersions(templateKey,new URL(request.url).searchParams.get('locale')||undefined),{requestId:id});if(request.method==='POST'){const body=await parseJsonObject(request);return apiSuccess(await restoreDocumentTemplateVersion({templateKey,versionNumber:Number(body.versionNumber),locale:text(body.locale)||undefined}),{requestId:id})}throw new Error('Méthode non prise en charge.')}catch(e){return apiFailure(e,id)}}
 async function existingCatalogKeys(db:any,inputRows:Record<string,unknown>[],doctrineKey:string){
   const definition=requireProductDoctrine(doctrineKey)
   const keys=[...new Set(inputRows.map(r=>text(normalizeProductImportRow(r,definition).item_key)).filter(Boolean))]
@@ -254,8 +254,10 @@ export async function handleDocumentExport(request:Request){
     const objectId=text(body.objectId)
     const templateKey=(text(body.templateKey)||(type==='customer'?'customer_dossier':type==='order'?'order_summary':type==='invoice'?'invoice':type==='receipt'?'receipt':type==='subscription'?'subscription_summary':type==='provider'?'provider_mission':type==='product'?'product_sheet':'order_summary')) as DocumentTemplateKey
     const templates=await listDocumentTemplates()
-    const template=templates.find(t=>t.template_key===templateKey)||templates[0]
-    if(!template)throw new Error('Aucun template document disponible.')
+    const requestedLocale=text(body.locale)
+    if(requestedLocale&&!['fr','en','ar'].includes(requestedLocale))throw new Error('Langue de modèle invalide.')
+    const template=requestedLocale?templates.find(t=>t.template_key===templateKey&&t.locale===requestedLocale):templates.find(t=>t.template_key===templateKey)||templates[0]
+    if(!template)throw new Error(requestedLocale?'Aucun modèle actif de ce type dans la langue demandée. Préparez ce modèle dans le studio.':'Aucun template document disponible.')
     let reference='',title='',subtitle='',sections:Array<{key?:string;title:string;rows:Array<[string,unknown]>}>=[]
 
     if(type==='customer'){

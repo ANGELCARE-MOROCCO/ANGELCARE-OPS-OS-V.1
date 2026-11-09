@@ -1,0 +1,162 @@
+{
+  "repo": "/Users/user/Desktop/angelcare-platform",
+  "status": "applied",
+  "entries": [
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/enterprise-command/components/OrderInlineOperations.tsx",
+      "before_sha256": "a8707d453260bb588474d17951e5deea1dc30f456cf7834f7c6946224ec173cd",
+      "after_sha256": "6d10a9eee62d2293828797796e3976db321edf4aba49a724e23ec105e51e3f2d",
+      "mode": 420
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/enterprise-command/components/OrderMegaCommand.tsx",
+      "before_sha256": "3a07fd6ff15fe9cf23f1a825c313b7c16bc6037fb5d48464da4c249c1b595a4e",
+      "after_sha256": "d090bb35ef925b0654522d9eef86ce026a523eab90f550a3d4ba4abd03c4e0c8",
+      "mode": 420
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/enterprise-command/repository.ts",
+      "before_sha256": "9e988ef76900fecf9a2a1c0aac38dd0b26b3b7e4a9b6b9355829e282803ce3e1",
+      "after_sha256": "1edaac8cf8898ebc5be4093fa209906779da3701811d2208a92b687468146f66",
+      "mode": 420
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/enterprise-command/sovereign-repository.ts",
+      "before_sha256": "8ceaeb9d14915c1f11834262e4a327f28017e74aa7e541b6a8535f6f30b9f212",
+      "after_sha256": "0e6211976192d4e4122e625bc6e41cc87d21393c3fb7f7a70676b028ed73225c",
+      "mode": 420
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/orders360/Dialogs.tsx",
+      "before_sha256": null,
+      "after_sha256": "5600a4f2644c6b7ed89b465aa51fa4aaa07df755f6b502091fa5b59919c93e57",
+      "mode": 420
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/orders360/OrderDetail.tsx",
+      "before_sha256": null,
+      "after_sha256": "d03fa257bc5c3b6f1875b3d8b28aa8925d09b3ebc67df1350d7ad313b6e04d7a",
+      "mode": 420
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/orders360/Planning.tsx",
+      "before_sha256": null,
+      "after_sha256": "b4a7aca9a1e7e5a55d8fba578f9b323ab66f35f58c12b93c1aefdfe7a14abe35",
+      "mode": 420
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/orders360/SupplierDesk.tsx",
+      "before_sha256": null,
+      "after_sha256": "6db4eb67514044cf8229c7d26a817a7825d3cdcb795c3222157ef848b2dd9cc0",
+      "mode": 420
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/orders360/Workspace.tsx",
+      "before_sha256": null,
+      "after_sha256": "3522be18f3a473fd12b7e9e0f95328c3fe360c8f7af9e74fe6916b658e87c644",
+      "mode": 420
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/orders360/capabilities.ts",
+      "before_sha256": null,
+      "after_sha256": "7512998ff07bdea7dc54454f1cbb763e85b1559fa730e5d9bf698526c882a028",
+      "mode": 420
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/orders360/model.ts",
+      "before_sha256": null,
+      "after_sha256": "bb374a59e60be72230bd5a727b8615113a1230fe904a50151bbb6cdec3ea0f79",
+      "mode": 420
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/orders360/orders360.module.css",
+      "before_sha256": null,
+      "after_sha256": "4cd4d37a9f1d3522835019afa33a8f176bd7f6f4abf6090fe4cf5b572c22a3cc",
+      "mode": 420
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/orders360/ui.tsx",
+      "before_sha256": null,
+      "after_sha256": "aa739bbaa635e1b37c0ef3134fd982db8df42b739938fa9770506588ce98bc59",
+      "mode": 420
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/supplier-command-360/server.ts",
+      "before_sha256": "d2b5c658428edbaa933b14d1dcdf8d16a2224aed2c89cbe58fdf7686ecaf3e09",
+      "after_sha256": "aae8f34df960ca56ef42880e5559a48f2b2ecbc80b29e68b3600c031471f0416",
+      "mode": 420
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/supplier-ops-max/OperationsMax.tsx",
+      "before_sha256": "fd9889f766ad9a4adf29013e918d37739169d08468b3903226e08be36c3ef2a8",
+      "after_sha256": "0ee5420871fd722e7329db0526c82d1917067e6a0dd6d6ded993982f2c71ea99",
+      "mode": 384
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/transaction-flight-deck/repository.ts",
+      "before_sha256": "7a97dba0be06da1893ab510176c4b828fd6372fc35fa4c63cdb8340de9afcf4e",
+      "after_sha256": "de1ed3436d1d6b09ac177d7c6a4c79259108941ec613b78f7f583bee527a0bb3",
+      "mode": 420
+    },
+    {
+      "path": "apps/marketplace-web/angelcare-marketplace/transaction-flight-deck/types.ts",
+      "before_sha256": "057380d51e7d4395b6d4d93d0da8258aa672614b109e585e511cb5a785aa7329",
+      "after_sha256": "436914085005f09816e0b61396426ae49c8b178d3045b76f01efe4c9eb8e80a9",
+      "mode": 420
+    },
+    {
+      "path": "apps/marketplace-web/app/angelcare-marketplace/(protected)/admin/orders/page.tsx",
+      "before_sha256": "1a1da852b332d096fdd1c79bc606e9ed496ea287b342ad20693f117626733036",
+      "after_sha256": "debb63c900f17c485a5cde89db0aabf3d3d87a9776e19593451848deae9c60ba",
+      "mode": 420
+    },
+    {
+      "path": "apps/marketplace-web/app/api/angelcare-marketplace/admin/orders/[orderId]/workspace/route.ts",
+      "before_sha256": null,
+      "after_sha256": "a963f2187be9b9dc77304cd679524a92e3f994d0148115f77403454b45ad6243",
+      "mode": 420
+    },
+    {
+      "path": "apps/marketplace-web/app/api/angelcare-marketplace/admin/orders/suppliers/route.ts",
+      "before_sha256": null,
+      "after_sha256": "183f3b992e6606e677907f91f78099601bd57fb0c74978a09a8fdc747312dd66",
+      "mode": 420
+    },
+    {
+      "path": "apps/marketplace-web/app/api/angelcare-marketplace/admin/orders/workspace/route.ts",
+      "before_sha256": null,
+      "after_sha256": "c3fc86d47ac9d9d942aaa3b10fbcb4f771dbb6f877645d1ab034d0f4fad34e21",
+      "mode": 420
+    },
+    {
+      "path": "apps/marketplace-web/package.json",
+      "before_sha256": "25396da29274954ae4cf19a5345d8b26141a21ef951b9fdc1154e59a1a629718",
+      "after_sha256": "717f48f90016007b3088453da1ba89c4ea9c00656f0754dba6ccdadc476eb2d6",
+      "mode": 420
+    },
+    {
+      "path": "apps/marketplace-web/scripts/orders360/fixtures.ts",
+      "before_sha256": null,
+      "after_sha256": "862a0b162b477d7c6ee59ec24e19f7175e531ca262f9af0336c0c9e80cbb1990",
+      "mode": 420
+    },
+    {
+      "path": "apps/marketplace-web/scripts/orders360/verify.cjs",
+      "before_sha256": null,
+      "after_sha256": "411b4cfe6db50f1a419b8278d48a82e8c5859f12d45ee4497ccf2e0f946c237d",
+      "mode": 420
+    },
+    {
+      "path": "apps/marketplace-web/tsconfig.orders360.json",
+      "before_sha256": null,
+      "after_sha256": "aa064380fe1749ab12967b1dd2e52af5e22995a7dcff0afcef4768e3195080ce",
+      "mode": 420
+    },
+    {
+      "path": "docs/orders360/README.md",
+      "before_sha256": null,
+      "after_sha256": "9e2dc73606cca78ab08e225beb016b3a454a865157ada016c6d4cebc8b0b22e7",
+      "mode": 420
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "angelcare-marketplace/orders360/**/*.ts",
+    "angelcare-marketplace/orders360/**/*.tsx",
+    "app/angelcare-marketplace/(protected)/admin/orders/page.tsx",
+    "app/api/angelcare-marketplace/admin/orders/workspace/route.ts",
+    "app/api/angelcare-marketplace/admin/orders/suppliers/route.ts",
+    "app/api/angelcare-marketplace/admin/orders/[orderId]/workspace/route.ts",
+    "scripts/orders360/fixtures.ts",
+    "app/api/angelcare-marketplace/admin/orders/authority/route.ts",
+    "app/api/angelcare-marketplace/admin/orders/[orderId]/authority/route.ts",
+    "scripts/orders360/authority-fixtures.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next"
+  ]
+}

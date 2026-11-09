@@ -54,8 +54,8 @@ function FormInput({field,value,onValue}:{field:FormField;value:unknown;onValue:
 function utcFromLocal(v:unknown):string{const d=new Date(String(v));if(!Number.isFinite(d.valueOf()))throw Error('Valid date/time required');return d.toISOString()}
 function sanitizeError(e:unknown){return e instanceof Error?e.message:String(e)}
 
-export function OperationsMax(){
- const [active,setActive]=useState<Space>('pricing'),[data,setData]=useState<Snapshot|null>(null)
+export function OperationsMax({embedded=false,initialSpace='pricing'}:{embedded?:boolean;initialSpace?:Space}={}){
+ const [active,setActive]=useState<Space>(initialSpace),[data,setData]=useState<Snapshot|null>(null)
  const [loading,setLoading]=useState(true),[busy,setBusy]=useState(false),[error,setError]=useState(''),[success,setSuccess]=useState('')
  const [filter,setFilter]=useState(''),[current,setCurrent]=useState(''),[form,setForm]=useState<FormPlan|null>(null),[reason,setReason]=useState('')
  const [preview,setPreview]=useState<{landedUsd:string;marginPercent:string|null}|null>(null)
@@ -120,7 +120,7 @@ export function OperationsMax(){
  }
  const transitions:Record<string,string[]>={draft:['review','cancelled'],review:['approved','draft','cancelled'],approved:['issued','cancelled'],issued:['accepted','cancelled'],accepted:['shipped','cancelled'],shipped:['received']}
  const shipTransitions:Record<string,string[]>={preparing:['dispatched','exception'],dispatched:['in_transit','exception'],in_transit:['delivered','exception'],exception:['preparing','in_transit']}
- return <div className={css.root}>
+ return <div className={css.root} data-orders360-embedded={embedded}>
   <div className={css.hero}>
    <div><span className={css.eyebrow}><Layers3 size={13}/> ANGELCARE · SUPPLIER OPERATIONS STUDIO</span><h1>Supplier Operations <span>MAX</span></h1><p>Enterprise execution · Workspaces 11–16 · Production data only</p></div>
    <div className={css.heroAction}><a className={css.link} href="/angelcare-marketplace/admin/supplier-command-360"><ArrowLeft size={14}/> Workspaces 01–10</a><button className={css.primary} disabled={loading||busy} onClick={async()=>{setBusy(true);try{await reload();setSuccess('Latest canonical supplier snapshot loaded.')}catch(e){setError(sanitizeError(e))}finally{setBusy(false)}}}><RefreshCw size={14}/> Refresh live</button></div>

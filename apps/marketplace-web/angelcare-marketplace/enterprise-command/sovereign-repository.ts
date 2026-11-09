@@ -126,6 +126,12 @@ export async function operateOrder(input:{context:MarketplaceRequestContext;orde
   const beforeResult=await db.from('angelcare_marketplace_journeys').select('*').eq('id',input.orderId).single()
   if(beforeResult.error||!beforeResult.data)throw new MarketplaceError('NOT_FOUND','Commande introuvable.')
   const before=beforeResult.data as Row
+  if ((input.context.tenantId && before.tenant_id !== input.context.tenantId) || (input.context.territoryId && before.territory_id !== input.context.territoryId)) throw new MarketplaceError('SCOPE_MISMATCH','Cette commande ne relève pas de votre périmètre.')
+  if (input.body.expectedUpdatedAt !== undefined && text(input.body.expectedUpdatedAt) !== text(before.updated_at)) throw new MarketplaceError('CONFLICT','La commande a changé. Rechargez son dossier avant de réessayer.')
+  for (const key of ['scheduledStartAt','scheduledEndAt','nextActionDueAt']) if (input.body[key] && !Number.isFinite(new Date(text(input.body[key])).valueOf())) throw new MarketplaceError('VALIDATION_ERROR','Date invalide.')
+  const start=input.body.scheduledStartAt===undefined?before.scheduled_start_at:input.body.scheduledStartAt
+  const end=input.body.scheduledEndAt===undefined?before.scheduled_end_at:input.body.scheduledEndAt
+  if(start && end && new Date(text(end)).valueOf()<=new Date(text(start)).valueOf()) throw new MarketplaceError('VALIDATION_ERROR','La fin doit être postérieure au début.')
   const payload:Row={updated_at:new Date().toISOString()}
   if(input.body.scheduledStartAt!==undefined)payload.scheduled_start_at=text(input.body.scheduledStartAt)||null
   if(input.body.scheduledEndAt!==undefined)payload.scheduled_end_at=text(input.body.scheduledEndAt)||null
@@ -138,12 +144,14 @@ export async function operateOrder(input:{context:MarketplaceRequestContext;orde
     let serviceAddress:Row|null=null
     if(input.body.serviceAddressId){
       const addressResult=await db.from('angelcare_marketplace_customer_addresses').select('*').eq('id',text(input.body.serviceAddressId)).maybeSingle()
-      if(addressResult.data)serviceAddress=addressResult.data as Row
+      if(addressResult.error || !addressResult.data) throw new MarketplaceError('NOT_FOUND','Adresse introuvable.')
+      serviceAddress=addressResult.data as Row
+      if(serviceAddress.customer_account_id!==before.customer_account_id || serviceAddress.status!=='active') throw new MarketplaceError('VALIDATION_ERROR','Choisissez une adresse active appartenant au client de cette commande.')
     }
     payload.fulfillment_status={...current,
       provider_id:text(input.body.providerId)||current.provider_id||null,
       provider_name:text(input.body.providerName)||current.provider_name||null,
-      provider_snapshot:obj(input.body.providerSnapshot),
+      provider_snapshot:input.body.providerSnapshot===undefined?(current.provider_snapshot||{}):obj(input.body.providerSnapshot),
       service_address_id:text(input.body.serviceAddressId)||current.service_address_id||null,
       service_address:serviceAddress||current.service_address||null,
       status:text(input.body.fulfillmentStatus)||current.status||text(before.status),
@@ -151,8 +159,11 @@ export async function operateOrder(input:{context:MarketplaceRequestContext;orde
   }
   const keys=Object.keys(payload).filter(key=>key!=='updated_at')
   if(!keys.length)throw new MarketplaceError('VALIDATION_ERROR','Aucune modification opérationnelle fournie.')
-  const {data,error}=await db.from('angelcare_marketplace_journeys').update(payload).eq('id',input.orderId).select('*').single()
-  if(error||!data)throw new MarketplaceError('INTERNAL_ERROR','Modification opérationnelle impossible.')
+  let mutation=db.from('angelcare_marketplace_journeys').update(payload).eq('id',input.orderId)
+  if(before.updated_at)mutation=mutation.eq('updated_at',before.updated_at)
+  const {data,error}=await mutation.select('*').maybeSingle()
+  if(error)throw new MarketplaceError('INTERNAL_ERROR','Modification opérationnelle impossible.')
+  if(!data)throw new MarketplaceError('CONFLICT','Le dossier a été modifié simultanément. Rechargez-le avant de réessayer.')
   await db.from('angelcare_marketplace_journey_events').insert({journey_id:input.orderId,event_key:'sovereign_operator_update',title:'Commande opérée depuis le Command OS',description:text(input.body.reason)||'Mise à jour opérateur',status:text(data.status),authority_type:'admin',evidence:{before:Object.fromEntries(keys.map(key=>[key,before[key]])),after:Object.fromEntries(keys.map(key=>[key,data[key]]))},customer_visible:false,occurred_at:new Date().toISOString(),created_by:input.context.actor.id}).then(()=>null,()=>null)
   await writeMarketplaceAudit({context:input.context,requestId:randomUUID(),action:'marketplace.order.sovereign_operated',objectType:'marketplace_journey',objectId:input.orderId,result:'success',severity:'info',beforeValue:before,afterValue:data,reason:text(input.body.reason)||'Command OS',source:'sovereign-enterprise-admin',request:input.request})
   return data

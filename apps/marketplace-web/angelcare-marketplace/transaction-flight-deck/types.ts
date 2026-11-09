@@ -5,7 +5,7 @@ export type DrawerKind='order'|'triage'|'mission'|'provider'|'schedule'|'excepti
 export type FlightDeckOrder={
  id:string;reference:string;title:string;journeyType:string;status:string;stage:FlightStage;severity:FlightSeverity;riskLevel:string
  customerId:string|null;customerName:string;customerTier:string;territoryId:string|null;territoryName:string
- amount:number;captured:number;refunded:number;outstanding:number;paymentStatus:string
+ currency?:string;source?:string;amount:number;captured:number;refunded:number;outstanding:number;paymentStatus:string
  scheduledStart:string|null;scheduledEnd:string|null;providerId:string|null;providerName:string;fulfillmentStatus:string
  nextAction:string;nextActionDueAt:string|null;createdAt:string;updatedAt:string
  lineCount:number;missionId:string|null;missionReference:string|null;missionStatus:string|null;fulfillmentCaseId:string|null
