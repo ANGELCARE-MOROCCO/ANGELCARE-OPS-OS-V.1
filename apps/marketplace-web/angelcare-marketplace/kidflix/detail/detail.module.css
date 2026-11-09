@@ -3225,3 +3225,21 @@
 .reference .rail .resourceImage img {min-height:0!important;height:68px!important;}
 .reference .readingCanvas iframe{height:clamp(270px,28vh,345px);}
 .reference .position{padding-top:4px;}
+
+/* Public related-experience cover frames remain square, overriding
+   legacy compact rails that imposed 68px-wide rectangular previews. */
+.detail .resourceImage,
+.reference.detail .resourceImage,
+.reference.detail .rail .resourceImage {
+  aspect-ratio: 1;
+  height: auto !important;
+  min-height: 0 !important;
+}
+.reference.detail .resourceImage img,
+.reference.detail .rail .resourceImage img {
+  width: 100%;
+  height: 100% !important;
+  max-height: 100%;
+  object-fit: contain !important;
+  object-position: center;
+}
