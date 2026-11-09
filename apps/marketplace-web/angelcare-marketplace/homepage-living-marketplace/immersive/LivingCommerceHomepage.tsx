@@ -1,7 +1,8 @@
 "use client";
 import { imageryToken } from "../../marketplace-imagery/pages";
 import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink';
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { ImageryContext } from "../../marketplace-imagery/Runtime";
 import {
   ArrowUpRight,
   Check,
@@ -129,6 +130,7 @@ export function LivingCommerceHomepage({
 }: {
   experience: HomepageExperience;
 }) {
+  const imagery = useContext(ImageryContext);
   const { locale } = experience,
     t = (value: Words) => translate(value, locale),
     base = `/angelcare-marketplace/${locale}`,
@@ -253,7 +255,13 @@ export function LivingCommerceHomepage({
       (item, index, source) =>
         source.findIndex((candidate) => candidate.id === item.id) === index,
     );
-  const playing = !paused && !hover && !reduced && heroVisible && visible;
+  const heroSlot = "home.visual.living-commerce-homepage.1." + imageryToken(scene.world);
+  const managedHero = imagery.config.slots[heroSlot];
+  // Let a published native slideshow own the image rotation for this exact
+  // hero placement. Unconfigured chapters retain the original 8-second rhythm.
+  const nativeHeroRotates = managedHero?.mode === "slideshow" &&
+    managedHero.autoplay && managedHero.images.filter(image => image.enabled).length > 1;
+  const playing = !paused && !hover && !reduced && heroVisible && visible && !nativeHeroRotates;
   useEffect(() => {
     const media = matchMedia("(prefers-reduced-motion: reduce)"),
       motion = () => setReduced(media.matches),

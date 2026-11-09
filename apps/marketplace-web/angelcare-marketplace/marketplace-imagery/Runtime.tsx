@@ -38,6 +38,7 @@ import {
 } from "./model";
 import s from "./imagery.module.css";
 import { resolveSlot } from "./registry";
+import { nextPlayableIndex } from "./public-runtime-contract";
 import { pageFromPath } from "./pages";
 const icons: Record<string, any> = {
   flame: Flame,
@@ -313,6 +314,7 @@ export function Artwork({
     [ready, setReady] = useState(""),
     [prior, setPrior] = useState(""),
     [failed, setFailed] = useState(false),
+    [originalFailed, setOriginalFailed] = useState(false),
     [paused, setPaused] = useState(false),
     [hover, setHover] = useState(false),
     [visible, setVisible] = useState(true),
@@ -321,7 +323,9 @@ export function Artwork({
     [mobile, setMobile] = useState(false),
     [interactive, setInteractive] = useState(false),
     root = useRef<HTMLSpanElement>(null),
-    generation = useRef(0);
+    generation = useRef(0),
+    readyRef = useRef(""),
+    unavailable = useRef(new Set<string>());
   const signature = JSON.stringify(images),
     image = images[index] || images[0],
     source = mobile && image?.mobile ? image.mobile : image?.src;
@@ -338,11 +342,15 @@ export function Artwork({
       });
   }, [key, section, label, condition, sequence, props.src, ctx.register]);
   useEffect(() => {
+    generation.current++;
+    unavailable.current.clear();
+    readyRef.current = "";
     setIndex(0);
     setReady("");
     setPrior("");
     setFailed(false);
   }, [signature]);
+  useEffect(() => setOriginalFailed(false), [props.src]);
   useEffect(() => {
     if (!key || (!setting && !ctx.editing)) return;
     const motion = matchMedia("(prefers-reduced-motion: reduce)"),
@@ -382,27 +390,32 @@ export function Artwork({
     }
   }, [ctx.previewScene, ctx.selected, key, signature, ctx.editing]);
   useEffect(() => {
-    if (!source) return;
+    if (!source || !image) return;
     const epoch = ++generation.current,
       img = new Image();
     img.src = source;
-    img
-      .decode()
-      .then(() => {
-        if (generation.current !== epoch) return;
-        setReady((old) => {
-          setPrior(old);
-          return source;
-        });
-        setFailed(false);
-      })
-      .catch(() => {
-        if (generation.current === epoch) setFailed(true);
-      });
-    return () => {
-      ++generation.current;
-    };
-  }, [source]);
+    void img.decode().then(() => {
+      if (generation.current !== epoch) return;
+      unavailable.current.delete(image.id);
+      if (readyRef.current !== source) {
+        const lastGood = readyRef.current;
+        readyRef.current = source;
+        setPrior(lastGood);
+        setReady(source);
+      }
+      setFailed(false);
+    }).catch(() => {
+      if (generation.current !== epoch) return;
+      // Do not discard the previously decoded frame or unmount the placement.
+      unavailable.current.add(image.id);
+      setFailed(true);
+      const next = nextPlayableIndex(
+        images, index, unavailable.current, 1, setting?.loop !== false,
+      );
+      if (next !== null && next !== index) setIndex(next);
+    });
+    return () => { ++generation.current; };
+  }, [source, image?.id, index, signature, setting?.loop]);
   useEffect(() => {
     if (!setting && !ctx.editing) return;
     if (!root.current) return;
@@ -415,42 +428,27 @@ export function Artwork({
     return () => observer.disconnect();
   }, [!!setting, ctx.editing]);
   useEffect(() => {
-    if (
-      !setting?.autoplay ||
-      !sequence ||
-      images.length < 2 ||
-      paused ||
-      hover ||
-      !visible ||
-      !foreground ||
-      reduced ||
-      !ready ||
-      failed
-    )
+    if (!setting?.autoplay || !sequence || images.length < 2 ||
+        paused || hover || !visible || !foreground || reduced || !ready)
       return;
-    if (index === images.length - 1 && !setting.loop) return;
-    const next = (index + 1) % images.length,
-      img = new Image();
-    img.src =
-      mobile && images[next].mobile ? images[next].mobile : images[next].src;
+    // The current scene needs to finish decoding before its display timer starts.
+    if (readyRef.current !== source) return;
+    const next = nextPlayableIndex(images, index, unavailable.current, 1, setting.loop);
+    if (next === null || next === index) return;
+    const nextImage = images[next];
+    const nextSource = mobile && nextImage.mobile ? nextImage.mobile : nextImage.src;
+    // Warm browser cache; the decode effect remains the single commit authority.
+    const preload = new Image();
+    preload.src = nextSource;
+    void preload.decode().catch(() => {});
     const timer = setTimeout(
       () => setIndex(next),
       image?.duration || setting.interval,
     );
     return () => clearTimeout(timer);
   }, [
-    setting,
-    signature,
-    index,
-    paused,
-    hover,
-    visible,
-    foreground,
-    reduced,
-    ready,
-    failed,
-    mobile,
-    sequence,
+    setting, signature, index, paused, hover, visible, foreground,
+    reduced, ready, mobile, source, sequence,
   ]);
   useEffect(() => {
     if (!prior) return;
@@ -516,8 +514,19 @@ export function Artwork({
           style={undefined}
           alt={props.alt || ""}
           aria-hidden={ready ? true : undefined}
+          // An original editorial image failing must never trigger its parent
+          // to unmount valid native publication layers.
+          onError={(event) => {
+            setOriginalFailed(true);
+            if (!images.length) props.onError?.(event);
+          }}
         />
       )}
+      {!ready && originalFailed && images.length > 0 && unavailable.current.size >= images.length ? (
+        <span className={s.unavailable} role="img" aria-label="Image temporarily unavailable">
+          <span>Image temporarily unavailable</span>
+        </span>
+      ) : null}
       {ready ? (
         <>
           {prior && setting?.transition !== "cut" ? (
@@ -554,7 +563,7 @@ export function Artwork({
               e.preventDefault();
               e.stopPropagation();
               setPaused(true);
-              setIndex((index + images.length - 1) % images.length);
+              setIndex(nextPlayableIndex(images, index, unavailable.current, -1) ?? index);
             }}
           >
             ‹
@@ -569,7 +578,7 @@ export function Artwork({
               e.preventDefault();
               e.stopPropagation();
               setPaused(true);
-              setIndex((index + 1) % images.length);
+              setIndex(nextPlayableIndex(images, index, unavailable.current) ?? index);
             }}
           >
             ›

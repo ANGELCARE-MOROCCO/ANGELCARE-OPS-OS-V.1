@@ -222,6 +222,19 @@
 .selectionLabel {
   display: none;
 }
+.unavailable {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(145deg, #eef4fb, #f9fbff);
+  color: #607696;
+  font: 600 12px/1.5 system-ui, sans-serif;
+  text-align: center;
+  padding: 18px;
+  z-index: 1;
+}
 .error {
   position: absolute;
   bottom: 0;

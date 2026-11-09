@@ -46,6 +46,9 @@ jobs:
       - name: Verify KidFlix multilingual experience cover contract
         run: node --experimental-strip-types --test apps/marketplace-web/scripts/angelcare-marketplace/verify-kidflix-multilingual-covers.test.mjs
 
+      - name: Verify public Imagery Studio runtime recovery
+        run: node --experimental-strip-types --test apps/marketplace-web/scripts/angelcare-marketplace/verify-imagery-public-runtime.test.mjs
+
       - name: Purge stale Marketplace build outputs
         run: |
           rm -rf apps/marketplace-web/.next

@@ -9,6 +9,7 @@ import {
 import { stable } from "../digital-customer-experience/experience-contract";
 import { isId } from "../digital-customer-experience/model";
 import { publicHost, imageReferenceIssue } from "./asset-url";
+import { reconcilePublishedImagery, type NativeImageRecord } from "./public-runtime-contract";
 import {
   emptyConfig,
   normalizeConfig,
@@ -305,16 +306,29 @@ export async function publicImagery(hostValue: string, page: string) {
   const result = await db.from('ac_dce_records').select('data').eq('kind','setting').eq('key',key(page)).neq('lifecycle','archived').eq('data->>liveHost',host).maybeSingle();
   if(result.error)throw Error('ANGELCARE_IMAGERY_AUTHORITY_UNAVAILABLE');
   if(!result.data?.data?.publishedAt)return {config:emptyConfig(),shared:emptyConfig()};
-  const config=normalizeConfig(result.data.data.live||emptyConfig(),page,true),ids=mediaRefs([config]),assets=new Map<string,string>();
-  for(let start=0;start<ids.length;start+=100){
-    const a=await db.from('angelcare_marketplace_media_assets').select('id,status,mime_type,public_url,desktop_url,rights_expires_at,metadata').in('id',ids.slice(start,start+100)).eq('status','active');
-    if(a.error)throw Error('ANGELCARE_IMAGES_UNAVAILABLE');
-    for(const m of a.data||[])if(m.mime_type?.startsWith('image/')&&m.metadata?.status!=='failed'&&(!m.rights_expires_at||Date.parse(m.rights_expires_at)>Date.now()))assets.set(m.id,m.public_url||m.desktop_url);
+  const config = normalizeConfig(result.data.data.live || emptyConfig(), page, true);
+  const ids = mediaRefs([config]);
+  const records: NativeImageRecord[] = [];
+  for (let start = 0; start < ids.length; start += 100) {
+    const query = await db.from("angelcare_marketplace_media_assets")
+      .select("id,status,mime_type,public_url,desktop_url,rights_expires_at,metadata")
+      .in("id", ids.slice(start, start + 100))
+      .eq("status", "active");
+    if (query.error) throw Error("ANGELCARE_IMAGES_UNAVAILABLE");
+    records.push(...(query.data || []));
   }
-  for(const [slot,setting]of Object.entries(config.slots)){
-    const hadImages=setting.images.length>0;
-    setting.images=setting.images.filter(i=>assets.get(i.assetId)===i.src&&(!i.mobile||assets.get(i.mobileAssetId)===i.mobile));
-    if(hadImages&&!setting.images.length)delete config.slots[slot];
+  // URLs can change after publishing, but a new URL is trusted only if the
+  // matching native asset is still active, authorized and an image.
+  const resolved = reconcilePublishedImagery(
+    config, records, (url, id) => imageReferenceIssue(url, id) === null,
+  );
+  if (resolved.rejected || resolved.refreshed || resolved.mobileFallbacks) {
+    console.warn("ANGELCARE_PUBLIC_IMAGERY_RECONCILIATION", {
+      page,
+      rejected: resolved.rejected,
+      refreshed: resolved.refreshed,
+      mobileFallbacks: resolved.mobileFallbacks,
+    });
   }
-  return {config,shared:emptyConfig()};
+  return { config: resolved.config, shared: emptyConfig() };
 }
