@@ -34,7 +34,7 @@ export function ReferenceCard({
               src={r.image}
               alt={r.imageAlt || ""}
               width={600}
-              height={440}
+              height={600}
               loading="lazy"
               decoding="async"
             />
