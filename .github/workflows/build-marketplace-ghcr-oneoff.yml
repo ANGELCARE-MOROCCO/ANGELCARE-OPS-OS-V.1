@@ -43,6 +43,9 @@ jobs:
       - name: Verify canonical AngelCare imagery media contract
         run: node --experimental-strip-types --test apps/marketplace-web/scripts/angelcare-marketplace/verify-imagery-native-url-contract.test.mjs
 
+      - name: Verify KidFlix multilingual experience cover contract
+        run: node --experimental-strip-types --test apps/marketplace-web/scripts/angelcare-marketplace/verify-kidflix-multilingual-covers.test.mjs
+
       - name: Purge stale Marketplace build outputs
         run: |
           rm -rf apps/marketplace-web/.next

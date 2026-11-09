@@ -5,6 +5,8 @@ import p from "./production.module.css";
 import { BASE } from "../types";
 import { DossierStudio } from "./DossierStudio";
 import { DossierSource } from "./DossierSource";
+import { MultilingualCoverStudio } from "./MultilingualCoverStudio";
+import { withLocalizedCoverAssetId } from "../cover-contract";
 import { organisationFieldKey as organisationField } from "../workspace-contract";
 import { isHtmlDelivery } from "../delivery-contract";
 import w from "./dossier-workspace.module.css";
@@ -1925,7 +1927,22 @@ export function Editor({
                 {tab === "media" && (
                   <>
                     <div className={s.formGrid}>
-                      {field(
+                      {["experience", "bundle", "template"].includes(draft.kind || "") ? (
+                        <div style={{ gridColumn: "1 / -1" }}>
+                          <MultilingualCoverStudio
+                            data={d}
+                            readOnly={readOnly}
+                            busy={busy}
+                            onShared={(id) => dataPatch({ coverAssetId: id || null })}
+                            onLocalized={(which, id) => dataPatch({
+                              locales: withLocalizedCoverAssetId(d, which, id).locales,
+                            })}
+                            chooseImage={(onSelected) => setPicker({
+                              type: "media", mime: ["image/"], set: onSelected,
+                            })}
+                          />
+                        </div>
+                      ) : field(
                         {
                           key: "coverAssetId",
                           label: message(

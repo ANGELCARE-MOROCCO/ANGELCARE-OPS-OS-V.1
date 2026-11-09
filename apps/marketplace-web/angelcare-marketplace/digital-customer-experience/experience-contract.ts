@@ -1,6 +1,7 @@
 import { activeDeliveryData } from "./delivery-contract";
 import { applyEditionOrder } from "./experience-depth";
 import { FAMILIES } from "./registry";
+import { effectiveCoverAssetId } from "./cover-contract";
 import { translationCoverage } from "./localisation";
 import {
   array,
@@ -205,6 +206,9 @@ export function editionProjection(r: DceRecord, locale: Locale): DceRecord {
     for (const k of mediaKeys) if (Object.hasOwn(local, k)) dst[k] = local[k];
   };
   mediaOverride(data, source);
+  // Explicitly resolve fallback, including legacy empty localized overrides.
+  // Only the chosen locale is projected into this immutable release.
+  data.coverAssetId = effectiveCoverAssetId(source, locale);
   for (const c of f?.collections || [])
     array(data[c.key]).forEach((u, i) => {
       mediaOverride(u, array(source[c.key])[i] || {});

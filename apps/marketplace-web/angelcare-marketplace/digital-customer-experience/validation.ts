@@ -2,6 +2,7 @@ import { activeDeliveryData, fieldAppliesToDelivery, isHtmlDelivery } from "./de
 import {FOCUS,classificationChoices} from "../kidflix/storefront-reference/taxonomy";
 import { detailExperienceIssues } from "./detail-experience";
 import { depthIssues } from "./experience-depth";
+import { effectiveCoverAssetId } from "./cover-contract";
 import { activeField, translationCoverage } from "./localisation";
 import {
   compatibleDefinition,
@@ -52,10 +53,11 @@ export function capabilityIssues(
     add(n.path, "LEGACY_CONFLICT", n.message);
   if (!family || !["experience", "template", "bundle"].includes(record.kind))
     return issues;
-  // The cover is one canonical top-level native reference, not a localized field.
-  // The former boolean expression rejected valid covers (and missed certain drafts).
-  if (["experience", "bundle"].includes(record.kind) && !text(d.coverAssetId))
-    issues.push({ path: "coverAssetId", code: "PUBLIC_COVER_REQUIRED", severity: "error", message: ["Choose the image for this resource’s storefront card.", "Choisissez l’image de la carte publique de cette ressource.", "اختر صورة بطاقة هذا المورد في الواجهة العامة."] });
+  // An edition must have an effective native cover, either language-specific or shared.
+  // Individual edition projections narrow defaultLocale to the selected published language.
+  const coverLocale = (["en", "fr", "ar"].includes(text(d.defaultLocale)) ? text(d.defaultLocale) : "en") as Locale;
+  if (["experience", "bundle"].includes(record.kind) && !effectiveCoverAssetId(d, coverLocale))
+    issues.push({ path: "coverAssetId", code: "PUBLIC_COVER_REQUIRED", severity: "error", message: ["Choose the image for this language’s storefront card or provide a shared fallback.", "Choisissez une couverture pour cette édition ou une couverture commune.", "اختر غلافاً لهذا الإصدار أو غلافاً مشتركاً."] });
   issues.push(...depthIssues(d, family));
   if (record.kind !== "template" && !isHtmlDelivery(d))
     issues.push(...detailExperienceIssues(family, d));
@@ -511,6 +513,11 @@ export function mediaSlots(
       slots.push({ path, id: value, mime });
   };
   add("coverAssetId", data.coverAssetId, ["image/"]);
+  // Verify localized cover MIME types in the same native media authority.
+  // During edition publication, only the selected edition locale survives projection.
+  for (const [locale, overrides] of Object.entries(object(data.locales)))
+    if (["en", "fr", "ar"].includes(locale))
+      add("locales." + locale + ".coverAssetId", object(overrides).coverAssetId, ["image/"]);
   for (const f of family.fields) if (f.key !== "coverAssetId") add(f.key, data[f.key], f.mime);
   for (const c of family.collections)
     for (const row of array(data[c.key]).filter(row => c.key !== "outputs" || row.enabled !== false))
