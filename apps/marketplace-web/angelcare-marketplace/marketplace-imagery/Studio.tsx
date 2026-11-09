@@ -134,7 +134,7 @@ export function ImageryStudio() {
     canPublish = boot.actor.rights.publish;
   const [scopeKey, setScopeKey] = useState(""),
     [page, setPage] = useState("home"),
-    [directory, setDirectory] = useState(true),
+    [directory, setDirectory] = useState(false),
     [summaries, setSummaries] = useState<any[]>([]),
     [config, setConfig] = useState<Config>(emptyConfig),
     [shared, setShared] = useState<Config>(emptyConfig),
@@ -1060,7 +1060,7 @@ export function ImageryStudio() {
                               </label>
                             </div>
                             <button type="button" className={s.tileImage} aria-pressed={image?.id === entry.id}
-                              aria-label={"Select image " + (n + 1)} onClick={() => setSlideId(entry.id)}>
+                              aria-label={"Select image " + (n + 1)} onClick={() => { setSlideId(entry.id); setMobilePick(false); }}>
                               <img src={entry.src} alt={entry.alt || "Image"} loading="lazy" />
                               {entry.mobile ? <span className={s.mobileBadge}>Mobile</span> : null}
                             </button>
