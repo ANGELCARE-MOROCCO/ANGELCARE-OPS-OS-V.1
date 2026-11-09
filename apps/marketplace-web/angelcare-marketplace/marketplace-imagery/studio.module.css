@@ -1108,3 +1108,169 @@
 }
 
 .scopeBar {display:flex;align-items:end;flex-wrap:wrap;gap:14px;padding:16px 20px;border:1px solid #dce5ed;border-radius:14px;background:#f7fafc;margin:16px 0}.scopeBar label{display:grid;gap:6px;font-size:12px;font-weight:700;color:#263d56}.scopeBar input,.scopeBar select{min-height:40px;padding:8px 12px;border:1px solid #cdd9e5;border-radius:8px;background:white;color:#20344a}.scopeBar p{flex:1;min-width:200px;color:#5f7288;font-size:12px;line-height:1.6;margin:0}
+
+
+/* ANGELCARE IMAGERY STUDIO PRO MAX BODY R2 — isolated; never styles the admin shell. */
+.studio{--pm-ink:#142845;--pm-muted:#66758a;--pm-line:#e0e8f3;--pm-blue:#1564f6;background:#f7faff;color:var(--pm-ink);border:1px solid var(--pm-line);border-radius:17px;overflow:hidden;box-shadow:0 12px 38px #224a8310}
+.studio .title{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:17px 22px;border-bottom:1px solid var(--pm-line);background:#fff;margin:0;min-height:92px}
+.studio .titleLead{display:flex;align-items:center;gap:14px;min-width:0}
+.studio .titleSymbol{width:45px;height:45px;display:grid;place-items:center;background:#eaf2ff;color:#1265ea;border-radius:12px;flex-shrink:0}
+.studio .titleLead .eyebrow{color:#2360be;font-weight:800;font-size:9px;letter-spacing:.12em}
+.studio .titleLead h1{font-size:23px;font-weight:850;letter-spacing:-.035em;line-height:1.12;margin:4px 0}
+.studio .titleLead p{font-size:11px;color:#65758e;line-height:1.45}
+.studio .headerActions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.studio .headerActions button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:36px;padding:8px 12px;border:1px solid #d5dfeb;background:#fff;border-radius:8px;color:#203552;font-size:11px;font-weight:750;white-space:nowrap}
+.studio .headerActions button:hover:not(:disabled){border-color:#6da2ff;background:#f1f7ff}
+.studio .headerActions .headerPublish{background:#1262ee;border-color:#1262ee;color:#fff;box-shadow:0 4px 10px #145df028}
+.studio .headerActions .headerPublish:hover:not(:disabled){background:#004ed6;border-color:#004ed6;color:#fff}
+.studio .title .status{display:inline-flex;align-items:center;gap:5px;padding:7px 9px;border:1px solid #d1e8d9;border-radius:7px;background:#f0fcf5;color:#17663c;font-size:10px;white-space:nowrap}
+.studio .title .status[data-state="pending"],.studio .title .status[data-state="unsaved"]{border-color:#ffddb0;background:#fff8e9;color:#aa5c0e}
+.studio .title .status small{font-size:9px;color:inherit;opacity:.75}
+.studio .scopeBar{background:#fbfdff;border-bottom:1px solid var(--pm-line)}
+.studio .editor{display:grid;grid-template-columns:minmax(210px,245px) minmax(370px,1fr) minmax(455px,560px);min-height:680px;height:min(1120px,calc(100vh - 245px));background:#fff;gap:0;overflow:hidden}
+.studio .map,.studio .canvas,.studio .inspector{min-width:0;min-height:0}
+.studio .map{display:flex;flex-direction:column;padding:15px 11px;background:#fbfcff;border-right:1px solid var(--pm-line);overflow:hidden}
+.studio .mapHeading{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.studio .mapHeading h2{font-size:15px;font-weight:850;letter-spacing:-.02em;margin:0}
+.studio .mapHeading p{font-size:10px;color:var(--pm-muted);margin:5px 0 0;line-height:1.4}
+.studio .mapHeading>span{font-size:9px;color:#1a64da;background:#eaf2ff;border-radius:20px;padding:5px 7px;white-space:nowrap}
+.studio .map .search{background:#fff;border:1px solid #dce5f0;border-radius:8px;min-height:35px}
+.studio .filters{display:flex;gap:4px;flex-wrap:wrap;margin:11px 0}
+.studio .filters button{display:inline-flex;align-items:center;gap:4px;min-height:26px;background:#fff;border:1px solid #e0e8f3;border-radius:6px;padding:4px 6px;color:#455870;font-size:9px}
+.studio .filters button b{font-size:9px;color:inherit}
+.studio .filters button[aria-pressed="true"]{background:#ebf3ff;border-color:#80adfa;color:#1159d3}
+.studio .map nav{flex:1;overflow-y:auto;min-height:0;max-height:none;scrollbar-width:thin}
+.studio .map nav section{border-bottom:1px solid #eaf0f7;padding:9px 0}
+.studio .map nav section>h3{display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:850;padding:4px 6px;margin:0 0 8px}
+.studio .map nav section>h3 span{font-size:9px;color:#647991;padding:3px 6px;border-radius:12px;background:#ecf2fa}
+.studio .map nav section>button{min-height:66px;border:1px solid transparent;border-radius:8px;display:flex;align-items:center;gap:8px;padding:6px;text-align:left;width:100%;background:transparent}
+.studio .map nav section>button:hover{background:#edf5ff}
+.studio .map nav section>button.selected{border-color:#8cafff;background:#eff5ff;box-shadow:inset 3px 0 #236afb}
+.studio .map .thumb{width:48px;min-width:48px;height:44px;border-radius:6px;overflow:hidden;background:#edf2f9}
+.studio .map .thumb img{width:100%;height:100%;object-fit:cover}
+.studio .map nav section>button>span:last-child{min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:3px}
+.studio .map nav section>button strong{font-size:10px;line-height:1.3;color:#173658;overflow-wrap:anywhere}
+.studio .map nav section>button small{font-size:8px;line-height:1.3;color:#647894}
+.studio .canvas{display:flex;flex-direction:column;padding:14px 13px;overflow:hidden;background:#f9fbff;border-right:1px solid var(--pm-line)}
+.studio .canvasHeading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.studio .canvasHeading h2{font-size:14px;font-weight:850;margin:0}
+.studio .canvasHeading p{font-size:10px;color:#64768d;margin:4px 0 0}
+.studio .canvasHeading span{font-size:9px;border:1px solid #dbe5f2;border-radius:50px;padding:5px 8px;color:#697e9a;background:#fff}
+.studio .canvasHeading span[data-ready="true"]{color:#15764a;border-color:#c4ebd7;background:#effcf6}
+.studio .canvasBar{background:#fff;border:1px solid var(--pm-line);border-radius:8px;padding:6px;flex-wrap:wrap}
+.studio .previewAddress{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:9px 0;padding:9px 11px;background:#fff;border:1px solid #e1eaf4;border-radius:7px;font-size:10px;color:#415875}
+.studio .previewAddress span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.studio .previewAddress small{white-space:nowrap;color:#577497}
+.studio .stage{background:#fff;border:1px solid #e2e9f2;border-radius:10px;box-shadow:0 5px 18px #1a3b6a10;flex:1;min-height:0;max-height:none;overflow:auto}
+.studio .canvasNote{margin-top:8px!important;border:1px solid #e2eaf4;border-radius:7px;font-size:9px}
+.studio .inspector{display:flex;flex-direction:column;overflow:hidden;background:#fff}
+.studio .inspectHeading{display:flex;gap:10px;align-items:center;padding:13px 14px 10px;border-bottom:1px solid #ecf1f8}
+.studio .inspectThumbnail{display:block;width:61px;min-width:61px;height:53px;border-radius:7px;background:#eff5fc;overflow:hidden}
+.studio .inspectThumbnail img{display:block;width:100%;height:100%;object-fit:cover}
+.studio .inspectMeta{flex:1;min-width:0}
+.studio .inspectMeta h2{font-size:13px;line-height:1.3;font-weight:850;margin:0 0 3px}
+.studio .inspectMeta p{font-size:9px;color:#4c6280;margin:0 0 4px}
+.studio .inspectMeta small{font-size:8px;color:#778aa3;display:block;overflow-wrap:anywhere}
+.studio .inspectStatus{font-size:9px;color:#167b48;background:#e8f9ee;border-radius:20px;padding:5px 7px;white-space:nowrap}
+.studio .inspectAux{display:flex;align-items:center;gap:8px;padding:8px 14px;background:#fcfdff;border-bottom:1px solid #edf2f7;font-size:10px}
+.studio .inspectAux strong{white-space:nowrap}
+.studio .inspectAux small{font-size:9px;color:#7b8fa7;flex:1}
+.studio .capacity{font-size:9px;font-weight:800;background:#eaf1ff;color:#1259cb;border-radius:20px;padding:5px 8px;white-space:nowrap}
+.studio .capacity[data-full="true"]{background:#f2f4f7;color:#627083}
+.studio .tabs{padding:5px 12px 0;border-bottom:1px solid #e6edf6;flex-shrink:0}
+.studio .tabs button{font-size:10px;padding:9px 3px}
+.studio .inspectorBody{flex:1;max-height:none;min-height:0;overflow-y:auto;overflow-x:hidden;padding:13px 13px 20px;gap:11px}
+.studio .inspectorSectionTitle{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.studio .inspectorSectionTitle h3{font-size:12px;font-weight:850;margin:0}
+.studio .inspectorSectionTitle p{font-size:9px;color:#73859c;margin:4px 0 0}
+.studio .inspectorSectionTitle>span{font-size:9px;font-weight:850;white-space:nowrap;padding:5px 8px;border-radius:20px;background:#edf4ff;color:#135ee7}
+.studio .ingestRow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:9px;align-items:stretch}
+.studio .ingestRow .upload{display:flex;min-height:101px;align-items:center;justify-content:center;gap:4px;border:1px dashed #8aaff3;background:#f8fbff;border-radius:9px;padding:11px 9px}
+.studio .ingestRow .upload strong{font-size:11px}
+.studio .ingestRow .upload small{font-size:9px;line-height:1.3}
+.studio .ingestRow .upload input{font-size:8px;width:100%;max-width:230px}
+.studio .libraryAction{border:1px solid #e0e8f1;background:#fff;min-width:0;border-radius:9px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;padding:10px 6px}
+.studio .libraryAction>svg{color:#2464de}
+.studio .libraryAction strong{font-size:10px}
+.studio .libraryAction button{max-width:100%;font-size:10px!important;padding:6px 8px}
+.studio .sequenceBar{display:flex;justify-content:space-between;align-items:end;gap:8px;padding-top:3px}
+.studio .sequenceBar div{display:flex;flex-direction:column;gap:3px}
+.studio .sequenceBar strong{font-size:11px}
+.studio .sequenceBar span,.studio .sequenceBar small{font-size:9px;color:#73859a}
+.studio .sequenceBar small{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.studio .sequenceGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.studio .sequenceTile,.studio .emptyTile{position:relative;min-width:0;aspect-ratio:1.1;border:1px solid #dfe7f1;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 5px #18396708}
+.studio .sequenceTile[data-active="true"]{border:2px solid #2472fa;box-shadow:0 0 0 2px #d9e8ff}
+.studio .sequenceTile[data-enabled="false"] .tileImage img{opacity:.5;filter:grayscale(.45)}
+.studio .tileTop{position:absolute;top:4px;left:4px;right:4px;display:flex;align-items:center;justify-content:space-between;z-index:1;pointer-events:none}
+.studio .tileTop b{display:grid;place-items:center;border-radius:5px;background:#fffffff2;color:#23476e;width:18px;height:18px;font-size:9px;box-shadow:0 1px 3px #23426b18}
+.studio .tileToggle{pointer-events:auto;cursor:pointer;display:flex;align-items:center}
+.studio .tileToggle input{position:absolute;opacity:0;width:1px;height:1px}
+.studio .tileToggle span{display:block;width:26px;height:15px;border-radius:12px;background:#c7d0dd;position:relative;box-shadow:0 0 0 1px #fff}
+.studio .tileToggle span:before{content:"";position:absolute;top:3px;left:3px;width:9px;height:9px;border-radius:50%;background:#fff;transition:transform .16s}
+.studio .tileToggle input:checked+span{background:#1564f6}
+.studio .tileToggle input:checked+span:before{transform:translateX(11px)}
+.studio .tileToggle input:focus-visible+span{outline:2px solid #0e5ef0;outline-offset:2px}
+.studio .tileImage{height:calc(100% - 29px);width:100%;padding:0;border:0;display:block;background:#f1f6fe;position:relative;overflow:hidden}
+.studio .tileImage img{width:100%;height:100%;object-fit:cover}
+.studio .mobileBadge{position:absolute;bottom:4px;left:4px;border-radius:3px;background:#e9f1ff;color:#155fe2;font-size:8px;font-weight:750;padding:2px 4px}
+.studio .tileActions{height:29px;display:flex;align-items:center;justify-content:space-evenly;gap:1px;padding:2px 3px;border-top:1px solid #e7edf6}
+.studio .tileActions>span,.studio .tileActions button,.studio .tileReplace{display:inline-grid;place-items:center;min-width:18px;min-height:20px;border:0;background:transparent;padding:2px;color:#5c718c;border-radius:4px}
+.studio .tileActions button:hover:not(:disabled),.studio .tileReplace:hover{background:#e9f1ff;color:#155bd6}
+.studio .tileReplace{cursor:pointer;position:relative}
+.studio .tileReplace input{position:absolute;inset:0;opacity:0;width:100%;height:100%;font-size:0;cursor:pointer}
+.studio .emptyTile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border:1px dashed #c6d6e9;background:#f8fbff;color:#7090b5}
+.studio .emptyTile span{position:absolute;top:5px;left:6px;font-size:9px;color:#738ca9}
+.studio .emptyTile small{font-size:9px}
+.studio .emptyTile:hover:not(:disabled){border-color:#1772ed;background:#eaf4ff;color:#1661d7}
+.studio .editorDetails{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:start;border-top:1px solid #e7edf7;padding-top:11px}
+.studio .detailCard{min-width:0;padding:10px;border:1px solid #e4ebf5;background:#fdfefe;border-radius:10px;display:flex;flex-direction:column;gap:9px}
+.studio .detailHeading{display:flex;align-items:center;justify-content:space-between;gap:5px}
+.studio .detailHeading h3{font-size:10px;font-weight:800;line-height:1.3}
+.studio .detailHeading span{font-size:8px;background:#edf3ff;color:#1a63da;padding:4px 6px;border-radius:20px}
+.studio .detailCard .field{font-size:9px;gap:4px}
+.studio .detailCard input,.studio .detailCard select{font-size:10px!important;min-width:0;max-width:100%}
+.studio .focalInline{display:grid;grid-template-columns:85px minmax(0,1fr);gap:8px}
+.studio .focalCompact{position:relative;width:85px;min-height:82px;overflow:hidden;border:1px solid #d9e7f8;border-radius:7px;background-size:cover;background-position:center;background-color:#edf4fc;cursor:crosshair}
+.studio .focalCompact span{position:absolute;transform:translate(-50%,-50%);display:grid;place-items:center;width:17px;height:17px;border:2px solid white;border-radius:50%;background:#2377f3;color:#fff;font-size:12px}
+.studio .compactControls{display:flex;flex-direction:column;gap:5px}
+.studio .mobileAction{display:flex;align-items:center;gap:5px;flex-wrap:wrap;border-top:1px solid #e6ecf5;padding-top:7px}
+.studio .mobileAction span{display:inline-flex;gap:4px;align-items:center;flex:1;font-size:9px}
+.studio .mobileAction button,.studio .detailsFooter button{font-size:9px;color:#185fcf;background:#eef4ff;border:1px solid #d8e6ff;padding:5px 7px;border-radius:5px}
+.studio .usageNote{font-size:9px;line-height:1.5;color:#7c8ca1}
+.studio .modeSwitch{display:flex;background:#f3f6fa;border-radius:8px;padding:3px;gap:3px}
+.studio .modeSwitch button{flex:1;padding:7px 4px;border-radius:6px;background:transparent;color:#526782;border:1px solid transparent;font-size:9px}
+.studio .modeSwitch button[aria-pressed="true"]{background:#eaf2ff;border-color:#97baff;color:#1056d0;font-weight:800}
+.studio .detailCard .toggle{font-size:9px}
+.studio .detailsFooter{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.studio .detailsFooter button{display:inline-flex;align-items:center;gap:4px}
+.studio .placementUtilities{display:flex;justify-content:space-between;align-items:center;gap:8px;border-top:1px solid #e6edf6;padding-top:9px}
+.studio .placementUtilities>button{display:inline-flex;align-items:center;gap:6px;font-size:10px}
+@media(min-width:1700px){
+  .studio .editor{grid-template-columns:minmax(230px,270px) minmax(430px,1fr) minmax(525px,620px)}
+  .studio .sequenceGrid{gap:9px}
+}
+@media(max-width:1350px){
+  .studio .editor{grid-template-columns:200px minmax(270px,1fr) minmax(385px,440px)}
+  .studio .sequenceGrid{gap:5px}
+  .studio .editorDetails{grid-template-columns:1fr}
+  .studio .headerActions{gap:5px}
+}
+@media(max-width:1050px){
+  .studio .title{align-items:flex-start;flex-wrap:wrap}
+  .studio .editor{height:auto;min-height:620px;grid-template-columns:210px minmax(300px,1fr)}
+  .studio .inspector{grid-column:1/-1;overflow:visible}
+  .studio .inspectorBody{max-height:none;overflow:visible}
+  .studio .editorDetails{grid-template-columns:1fr 1fr}
+  .studio .map nav{max-height:620px}
+}
+@media(max-width:750px){
+  .studio .editor{display:flex;flex-direction:column}
+  .studio .map{max-height:400px}
+  .studio .canvas{min-height:470px}
+  .studio .inspector{overflow:visible}
+  .studio .editorDetails{grid-template-columns:1fr}
+  .studio .sequenceGrid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .studio .headerActions{justify-content:flex-start}
+  .studio .inspectAux{flex-wrap:wrap}
+}
