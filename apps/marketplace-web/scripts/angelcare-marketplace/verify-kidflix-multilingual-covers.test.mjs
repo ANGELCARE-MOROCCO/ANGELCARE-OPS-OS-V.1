@@ -62,7 +62,7 @@ test("actual editor, edition projection, native validator and public manifest pa
  assert.match(model,/"coverAssetId"/);
  assert.match(service,/editionProjection\(r, l\)/);
  assert.match(service,/publicManifest\(p, v.bindings\)/);
- const coverRoute=readFileSync(new URL("../../../../app/api/kidflix/cover/route.ts",root),"utf8");
+ const coverRoute=readFileSync(new URL("../../app/api/kidflix/cover/route.ts",root),"utf8");
  assert.match(coverRoute,/detail.manifest.definition/);
  assert.match(coverRoute,/COVER_NOT_PUBLISHED/);
 });
