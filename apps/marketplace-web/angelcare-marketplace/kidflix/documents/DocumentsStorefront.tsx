@@ -154,7 +154,7 @@ function DocumentCard({
             alt={resource.imageAlt || resource.title}
             loading="lazy"
             width={360}
-            height={225}
+            height={360}
           />
         ) : (
           <span className={s.noCover}>
@@ -1183,7 +1183,7 @@ export function DocumentsStorefront({
                           alt={r.title}
                           loading="lazy"
                           width={200}
-                          height={160}
+                          height={200}
                         />
                       ) : (
                         <ArtIcon index={0} />
@@ -1355,7 +1355,7 @@ export function DocumentsStorefront({
                         data-imagery-owner="resource-owned" data-imagery-record={r.id} src={r.image}
                         alt=""
                         width={40}
-                        height={35}
+                        height={40}
                         loading="lazy"
                       />
                     ) : (
@@ -1492,7 +1492,7 @@ export function DocumentsStorefront({
                       data-imagery-owner="resource-owned" data-imagery-record={r.id} src={r.image}
                       alt=""
                       width={110}
-                      height={130}
+                      height={110}
                       loading="lazy"
                     />
                   ) : (
