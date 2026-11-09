@@ -1020,170 +1020,143 @@ export function ImageryStudio() {
               >
                 {tab === "images" ? (
                   <>
-                    <h3>Image sequence</h3>
-                    <div className={s.sequence}>
-                      {images.map((i, n) => (
-                        <div
-                          key={i.id}
-                          draggable
-                          onDragStart={() => {
-                            drag.current = i.id;
-                          }}
-                          onDragOver={(e) => e.preventDefault()}
-                          onDrop={() => reorder(drag.current, i.id)}
-                          className={image?.id === i.id ? s.activeSlide : ""}
-                        >
-                          <button
-                            onClick={() => setSlideId(i.id)}
-                            aria-label={"Select image " + (n + 1)}
-                          >
-                            <img src={i.src} alt="" />
-                          </button>
-                          <span>
-                            {n + 1}
-                            <input
-                              type="checkbox"
-                              aria-label={"Enable image " + (n + 1)}
-                              checked={i.enabled}
-                              onChange={(e) =>
-                                patch({
-                                  images: images.map((v) =>
-                                    v.id === i.id
-                                      ? { ...v, enabled: e.target.checked }
-                                      : v,
-                                  ),
-                                })
-                              }
-                            />
-                            <button
-                              aria-label={"Move image " + (n + 1) + " earlier"}
-                              disabled={n === 0}
-                              onClick={() => reorder(i.id, images[n - 1].id)}
-                            >
-                              <ArrowUp size={11} />
-                            </button>
-                            <button
-                              aria-label={"Remove image " + (n + 1)}
-                              onClick={() =>
-                                patch({
-                                  images: images.filter((v) => v.id !== i.id),
-                                })
-                              }
-                            >
-                              <Trash2 size={11} />
-                            </button>
-                          </span>
-                        </div>
-                      ))}
+                    <div className={s.inspectorSectionTitle}>
+                      <div><h3>Placement images</h3><p>{descriptor?.sequence ? "Manage up to 12 images, order and visibility." : "Static artwork: one approved image."}</p></div>
+                      <span>{images.length} / {descriptor?.sequence ? 12 : 1} used</span>
                     </div>
-                    {!images.length ? (
-                      <p className={s.help}>
-                        Original page artwork is active. Upload or select an
-                        image to replace it.
-                      </p>
-                    ) : null}
-                    <label
-                      className={s.upload}
-                      onDragOver={(e) => e.preventDefault()}
-                      onDrop={(e) => {
-                        e.preventDefault();
-                        upload(e.dataTransfer.files);
-                      }}
-                    >
-                      <Upload size={20} />
-                      <strong>Upload images</strong>
-                      <small>Drop files or choose from your computer</small>
-                      <input
-                        type="file"
-                        multiple
-                        accept="image/png,image/jpeg,image/webp,image/avif"
-                        onChange={(e) => {
-                          upload(e.target.files);
-                          e.target.value = "";
-                        }}
-                      />
-                    </label>
-                    <NativeImagePicker onSelect={(a) => addAsset(a)} />
-                    {image ? (
-                      <>
-                        <button onClick={() => setMobilePick(!mobilePick)}>
-                          Choose a mobile replacement
-                        </button>
-                        {mobilePick ? (
-                          <NativeImagePicker
-                            onSelect={(a) => {
-                              addAsset(a, true);
-                              setMobilePick(false);
-                            }}
-                          />
-                        ) : null}
-                        <Field label="Image description">
-                          <textarea
-                            maxLength={500}
-                            value={image.alt}
-                            onChange={(e) =>
-                              patchImage({ alt: e.target.value })
-                            }
-                          />
-                        </Field>
-                        <details className={s.usage}>
-                          <summary>Where this image is assigned</summary>
-                          <p>
-                            Saved drafts across your pages. Removing an
-                            assignment keeps the original media file.
-                          </p>
-                          {[
-                            ...new Set([
-                              ...Object.entries(config.slots).flatMap(
-                                ([id, value]) =>
-                                  value.images.some(
-                                    (i) =>
-                                      i.assetId === image.assetId ||
-                                      i.mobileAssetId === image.assetId,
-                                  )
-                                    ? [title(page) + " · " + id]
-                                    : [],
-                              ),
-                              ...summaries
-                                .filter((row) => row.page !== page)
-                                .flatMap((row) =>
-                                  (row.usage || [])
-                                    .filter(
-                                      (u: any) =>
-                                        u.assetId === image.assetId ||
-                                        u.mobileAssetId === image.assetId,
-                                    )
-                                    .map(
-                                      (u: any) =>
-                                        title(row.page) + " · " + u.slot,
-                                    ),
-                                ),
-                            ]),
-                          ].map((item) => (
-                            <small key={item}>{item}</small>
-                          ))}
-                        </details>
-                      </>
-                    ) : null}
-                    <Toggle
-                      label="Hide this editorial artwork"
-                      value={current.hidden}
-                      disabled={page === "shared"}
-                      onChange={(hidden) => patch({ hidden })}
-                    />
-                    <button
-                      onClick={() => {
-                        setTargets([]);
-                        setCopyOpen(true);
-                      }}
-                    >
-                      <Copy size={14} />
-                      Apply to other placements…
-                    </button>
-                    <p className={s.help}>
-                      Replacement affects this position only. Shared navigation
-                      changes affect all public pages.
-                    </p>
+                    <div className={s.ingestRow}>
+                      <label className={s.upload} onDragOver={(e) => e.preventDefault()}
+                        onDrop={(e) => { e.preventDefault(); upload(e.dataTransfer.files); }}>
+                        <Upload size={21} /><strong>Upload images</strong>
+                        <small>Drop PNG, JPEG, WebP or AVIF · 30 MB max / image</small>
+                        <input ref={uploadInput} type="file" multiple={!!descriptor?.sequence}
+                          accept="image/png,image/jpeg,image/webp,image/avif"
+                          onChange={(e) => { upload(e.target.files); e.target.value = ""; }} />
+                      </label>
+                      <div className={s.libraryAction}>
+                        <FolderOpen size={18} /><strong>Native media library</strong>
+                        <NativeImagePicker onSelect={(asset) => addAsset(asset)} />
+                      </div>
+                    </div>
+                    <div className={s.sequenceBar}>
+                      <div><strong>{descriptor?.sequence ? "Image sequence" : "Static placement"}</strong>
+                        <span>{images.filter((i) => i.enabled).length} enabled · {images.length} / {descriptor?.sequence ? 12 : 1} used</span></div>
+                      <small><GripVertical size={13} /> Drag to reorder</small>
+                    </div>
+                    <div className={s.sequenceGrid} role="list" aria-label="Images in the selected placement">
+                      {Array.from({ length: descriptor?.sequence ? 12 : 1 }, (_, n) => {
+                        const entry = images[n];
+                        return entry ? (
+                          <div role="listitem" key={entry.id} className={s.sequenceTile}
+                            data-active={image?.id === entry.id} data-enabled={entry.enabled}
+                            draggable onDragStart={() => { drag.current = entry.id; }}
+                            onDragOver={(e) => e.preventDefault()}
+                            onDrop={(e) => { e.preventDefault(); reorder(drag.current, entry.id); }}>
+                            <div className={s.tileTop}><b>{n + 1}</b>
+                              <label className={s.tileToggle} title="Enable image">
+                                <input type="checkbox" aria-label={"Enable image " + (n + 1)} checked={entry.enabled}
+                                  onChange={(e) => patch({ images: images.map((v) => v.id === entry.id ? { ...v, enabled: e.target.checked } : v) })} />
+                                <span />
+                              </label>
+                            </div>
+                            <button type="button" className={s.tileImage} aria-pressed={image?.id === entry.id}
+                              aria-label={"Select image " + (n + 1)} onClick={() => setSlideId(entry.id)}>
+                              <img src={entry.src} alt={entry.alt || "Image"} loading="lazy" />
+                              {entry.mobile ? <span className={s.mobileBadge}>Mobile</span> : null}
+                            </button>
+                            <div className={s.tileActions}>
+                              <span title="Drag to reorder"><GripVertical size={13} /></span>
+                              <button type="button" disabled={n === 0} aria-label={"Move image " + (n + 1) + " earlier"}
+                                onClick={() => reorder(entry.id, images[n - 1].id)}><ArrowUp size={12} /></button>
+                              <button type="button" disabled={n === images.length - 1} aria-label={"Move image " + (n + 1) + " later"}
+                                onClick={() => reorder(entry.id, images[n + 1].id)}><ArrowDown size={12} /></button>
+                              <label className={s.tileReplace} title={"Replace image " + (n + 1)}>
+                                <RotateCcw size={12} />
+                                <input type="file" accept="image/png,image/jpeg,image/webp,image/avif"
+                                  aria-label={"Replace image " + (n + 1)}
+                                  onChange={(e) => { uploadReplace(e.target.files, entry.id); e.target.value = ""; }} />
+                              </label>
+                              <button type="button" aria-label={"Remove image " + (n + 1)}
+                                onClick={() => patch({ images: images.filter((v) => v.id !== entry.id) })}><Trash2 size={12} /></button>
+                            </div>
+                          </div>
+                        ) : (
+                          <button key={"empty-" + n} type="button" className={s.emptyTile}
+                            disabled={!canEdit || busy || loading}
+                            aria-label={"Upload image into empty position " + (n + 1)}
+                            onClick={() => uploadInput.current?.click()}>
+                            <span>{n + 1}</span><Plus size={18} /><small>Add image</small>
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <div className={s.editorDetails}>
+                      <section className={s.detailCard}>
+                        <div className={s.detailHeading}><h3>Selected image settings</h3><span>{image ? "Image " + (images.indexOf(image) + 1) : "Choose an image"}</span></div>
+                        {image ? (<>
+                          <Field label="Alternative text"><input type="text" maxLength={500} value={image.alt}
+                            onChange={(e) => patchImage({ alt: e.target.value })} /></Field>
+                          <div className={s.focalInline}>
+                            <button type="button" className={s.focalCompact}
+                              aria-label="Set desktop focal point" style={{ backgroundImage: "url(" + JSON.stringify(image.src) + ")" }}
+                              onClick={(e) => {
+                                const box = e.currentTarget.getBoundingClientRect();
+                                patchImage({ focal: {
+                                  x: Math.round(Math.max(0, Math.min(100, (e.clientX - box.left) / box.width * 100))),
+                                  y: Math.round(Math.max(0, Math.min(100, (e.clientY - box.top) / box.height * 100))),
+                                } });
+                              }}>
+                              <span style={{ left: image.focal.x + "%", top: image.focal.y + "%" }}>+</span>
+                            </button>
+                            <div className={s.compactControls}>
+                              <Field label="Zoom"><input type="number" min={1} max={2} step={0.05}
+                                value={image.zoom} onChange={(e) => patchImage({ zoom: Number(e.target.value) })} /></Field>
+                              <Field label="Image fit"><select value={image.fit}
+                                onChange={(e) => patchImage({ fit: e.target.value as Scene["fit"] })}>
+                                <option value="contain">Contain · show all</option>
+                                <option value="cover">Cover · fill frame</option>
+                              </select></Field>
+                            </div>
+                          </div>
+                          <div className={s.mobileAction}>
+                            <span><Smartphone size={15} /> {image.mobile ? "Mobile variant assigned" : "No mobile variant"}</span>
+                            <button type="button" onClick={() => setMobilePick(!mobilePick)}>{mobilePick ? "Close" : image.mobile ? "Change" : "Set mobile image"}</button>
+                          </div>
+                          {mobilePick ? <NativeImagePicker onSelect={(asset) => {
+                            patchImage({ mobile: asset.url, mobileAssetId: asset.id }); setMobilePick(false);
+                          }} /> : null}
+                          <small className={s.usageNote}>Settings apply only to this placement. The original media-vault asset is preserved.</small>
+                        </>) : <p className={s.help}>Upload or choose an image to edit its framing and alternative text.</p>}
+                      </section>
+                      <section className={s.detailCard}>
+                        <div className={s.detailHeading}><h3>Playback preview</h3><span>{descriptor?.sequence ? "Slideshow-ready" : "Static"}</span></div>
+                        {descriptor?.sequence ? (<>
+                          <div className={s.modeSwitch}>
+                            <button type="button" aria-pressed={current.mode === "slideshow"} onClick={() => patch({ mode: "slideshow" })}>Slideshow</button>
+                            <button type="button" aria-pressed={current.mode === "single"} onClick={() => patch({ mode: "single" })}>Single image</button>
+                          </div>
+                          <div className={s.two}>
+                            <Field label="Interval (seconds)"><input type="number" min={1.5} max={30} step={0.5}
+                              value={current.interval / 1000} onChange={(e) => patch({ interval: Number(e.target.value) * 1000 })} /></Field>
+                            <Field label="Transition"><select value={current.transition}
+                              onChange={(e) => patch({ transition: e.target.value as Placement["transition"] })}>
+                              <option value="fade">Fade</option><option value="slide">Slide</option><option value="cut">Cut</option>
+                            </select></Field>
+                          </div>
+                          <Toggle label="Autoplay" value={current.autoplay} onChange={(autoplay) => patch({ autoplay })} />
+                          <Toggle label="Loop sequence" value={current.loop} onChange={(loop) => patch({ loop })} />
+                          <Toggle label="Visitor arrows & pause" value={current.controls} onChange={(controls) => patch({ controls })} />
+                        </>) : <p className={s.help}>Static artwork has no slideshow playback.</p>}
+                        <div className={s.detailsFooter}>
+                          <button type="button" onClick={() => setTab("framing")}><SlidersHorizontal size={13} /> Advanced framing</button>
+                          <button type="button" onClick={() => setTab("playback")}><Eye size={13} /> Full playback</button>
+                        </div>
+                      </section>
+                    </div>
+                    <div className={s.placementUtilities}>
+                      <Toggle label="Hide this editorial artwork" value={current.hidden} disabled={page === "shared"} onChange={(hidden) => patch({ hidden })} />
+                      <button type="button" onClick={() => { setTargets([]); setCopyOpen(true); }}><Copy size={14} /> Apply to other placements</button>
+                    </div>
                   </>
                 ) : null}
                 {tab === "framing" ? (
