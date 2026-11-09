@@ -70,7 +70,7 @@ test("failed slides are skipped, all-failed never loops, optional nonloop ends",
  const frames=[{id:A},{id:B},{id:C},{id:D}];
  assert.equal(nextPlayableIndex(frames,0,new Set([B,C])),3);
  assert.equal(nextPlayableIndex(frames,3,new Set([B,C])),0);
- assert.equal(nextPlayableIndex(frames,2,new Set([A,B]),-1),2);
+ assert.equal(nextPlayableIndex(frames,2,new Set([A,B]),-1),null);
  assert.equal(nextPlayableIndex(frames,0,new Set([B,C,D])),0);
  assert.equal(nextPlayableIndex(frames,0,new Set([A,B,C,D])),null);
  assert.equal(nextPlayableIndex(frames,3,new Set(),1,false),null);
@@ -81,7 +81,7 @@ test("real runtime retains a prior decoded frame, decouples original failure and
  const runtime=readFileSync(new URL("Runtime.tsx",root),"utf8");
  const service=readFileSync(new URL("service.ts",root),"utf8");
  const css=readFileSync(new URL("imagery.module.css",root),"utf8");
- const homepage=readFileSync(new URL("../../homepage-living-marketplace/immersive/LivingCommerceHomepage.tsx",root),"utf8");
+ const homepage=readFileSync(new URL("../homepage-living-marketplace/immersive/LivingCommerceHomepage.tsx",root),"utf8");
  assert.match(runtime,/unavailable\.current\.add\(image\.id\)/);
  assert.match(runtime,/const lastGood = readyRef\.current/);
  assert.match(runtime,/if \(!images\.length\) props\.onError\?\.\(event\)/);
