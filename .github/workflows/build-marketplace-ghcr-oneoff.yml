@@ -447,6 +447,24 @@ jobs:
         working-directory: apps/marketplace-web/scripts/seo-power-ci
         run: npm ci --ignore-scripts --no-audit --no-fund
 
+      - name: Verify real R3 browser playback on candidate image
+        working-directory: apps/marketplace-web/scripts/seo-power-ci
+        shell: bash
+        run: |
+          set -euo pipefail
+          CID="$(docker run -d -e ANGELCARE_IMAGERY_R3_TEST=1 -p 127.0.0.1::3000 "${IMAGE}:${TARGET_SHA}")"
+          trap 'docker rm -f "$CID" >/dev/null 2>&1 || true' EXIT
+          PORT="$(docker port "$CID" 3000/tcp | head -1 | awk -F: '{print $NF}')"
+          export IMAGERY_R3_CANDIDATE_ORIGIN="http://127.0.0.1:${PORT}"
+          export CHROME_PATH="$(command -v google-chrome || command -v chromium || true)"
+          test -n "$CHROME_PATH"
+          for N in $(seq 1 90); do
+            if curl -fsS --max-time 10 "$IMAGERY_R3_CANDIDATE_ORIGIN/__angelcare-imagery-r3-ci" >/dev/null; then break; fi
+            if [ "$N" = "90" ]; then echo "Imagery R3 test route unavailable"; exit 1; fi
+            sleep 1
+          done
+          node ../angelcare-marketplace/verify-imagery-r3-browser.mjs
+
       - name: Audit the exact Marketplace candidate with Lighthouse CI
         working-directory: apps/marketplace-web/scripts/seo-power-ci
         shell: bash
