@@ -610,7 +610,7 @@ export function Artwork({
               setFailed(true);
               const next = nextPlayableIndex(images, index, unavailable.current);
               if (next !== null && next !== index) setIndex(next);
-            }
+            }}
             alt={image?.alt || props.alt || ""}
             style={{
               objectFit: image?.fit || "cover",
