@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
+import { fileURLToPath } from "node:url";
 const require = createRequire(import.meta.url);
 import { nextPlayableIndex, reconcilePublishedImagery } from "../../angelcare-marketplace/marketplace-imagery/public-runtime-contract.ts";
 
@@ -98,8 +99,8 @@ test("real runtime retains a prior decoded frame, decouples original failure and
 
 test("the real care promotion is seeded as a slideshow-capable production placement",()=>{
  const root=new URL("../../angelcare-marketplace/marketplace-imagery/",import.meta.url);
- const seeds=require(new URL("slot-seeds.json",root));
- const rules=require(new URL("slot-rules.json",root));
+ const seeds=require(fileURLToPath(new URL("slot-seeds.json",root)));
+ const rules=require(fileURLToPath(new URL("slot-rules.json",root)));
  const live=seeds.find(s=>s.id===careSlot);
  assert.ok(live,"the care placement must be registered, not invented by tests");
  assert.equal(live.sequence,true);
