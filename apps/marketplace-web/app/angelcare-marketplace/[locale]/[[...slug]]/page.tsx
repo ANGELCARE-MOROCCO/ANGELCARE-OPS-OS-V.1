@@ -75,7 +75,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
     const studioHomepage = await getPublishedStudioHomepage({ locale }).catch(() => null)
     if (studioHomepage) {
       return (
-        <GlobalPublicShell seoPath={seoPath} seoBase={seoBase} locale={locale} navigation={studioHomepage.navigation} variant="marketplace">
+        <GlobalPublicShell seoPath={seoPath} seoBase={seoBase} locale={locale} navigation={studioHomepage.navigation} variant="marketplace" homepageRenderer="studio">
           <PublicPageRenderer experience={studioHomepage} locale={locale} />
         </GlobalPublicShell>
       )
@@ -100,6 +100,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
           locale={locale}
           navigation={homepage.navigation}
           variant="marketplace"
+          homepageRenderer="flagship"
         >
           <HomepageFlagship experience={homepage} />
         </GlobalPublicShell>
@@ -134,7 +135,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
           }
 
     return (
-      <GlobalPublicShell seoPath={seoPath} seoBase={seoBase} locale={locale} navigation={[]} variant="marketplace">
+      <GlobalPublicShell seoPath={seoPath} seoBase={seoBase} locale={locale} navigation={[]} variant="marketplace" homepageRenderer="continuity">
         <main
           dir={locale === 'ar' ? 'rtl' : 'ltr'}
           style={{

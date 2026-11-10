@@ -21,12 +21,12 @@ import { getPublicStorefrontNavigation } from '../../public-experience-authority
 
 const localeNames={fr:'FR',en:'EN',ar:'AR'} as const
 
-export async function GlobalPublicShell({locale,navigation,children,preview=false,variant='standard',contentElement='main',seoPath,seoBase}:{locale:'fr'|'en'|'ar';navigation:CmsMenuItem[];children:ReactNode;preview?:boolean;variant?:'standard'|'marketplace';contentElement?:'main'|'div';seoPath?:string;seoBase?:Metadata}){
+export async function GlobalPublicShell({locale,navigation,children,preview=false,variant='standard',contentElement='main',seoPath,seoBase,homepageRenderer}:{locale:'fr'|'en'|'ar';navigation:CmsMenuItem[];children:ReactNode;preview?:boolean;variant?:'standard'|'marketplace';contentElement?:'main'|'div';seoPath?:string;seoBase?:Metadata;homepageRenderer?:string}){
   const ContentElement=contentElement
   const marketplace=variant==='marketplace'
   const structuredData=preview?null:await buildStructuredData('MARKETPLACE')
   const storefrontNavigation=marketplace?getPublicStorefrontNavigation(locale):[]
-  return <div id="angelcare-marketplace-top" className={styles.publicRoot} data-variant={variant} dir={locale==='ar'?'rtl':'ltr'} lang={locale}>
+  return <div id="angelcare-marketplace-top" className={styles.publicRoot} data-variant={variant} data-imagery-homepage-renderer={homepageRenderer} dir={locale==='ar'?'rtl':'ltr'} lang={locale}>
     {structuredData?<script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(structuredData).replace(/</g,'\\u003c')}}/>:null}
     {marketplace ? <>
       <div className={styles.marketTop}><div><span>Copyright ANGELCARE MARKET PLACE</span><div><Link href={`/angelcare-marketplace/${locale}/trust`}>Trust & Quality</Link><Link href={`/angelcare-marketplace/${locale}/account/support`}>{locale==='ar'?'الدعم':locale==='en'?'Support':'Support'}</Link><Link href={`/angelcare-marketplace/${locale}/professionals`}>{locale==='ar'?'المحترفون':locale==='en'?'Professionals':'Professionnels'}</Link></div></div></div>
