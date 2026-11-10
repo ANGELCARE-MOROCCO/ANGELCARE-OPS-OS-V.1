@@ -628,6 +628,7 @@ export function LivingCommerceHomepage({
             const slot = "home.visual.living-commerce-homepage.2." + imageryToken(value.image);
             const placement = imagery.config.slots[slot];
             const playable = placement?.mode === "slideshow" && !placement.hidden &&
+              placement.controls === true &&
               placement.images.filter((image) => image.enabled).length > 1;
             return (
               <div className={styles.promoTile} key={value.key} data-imagery-promotion={slot}>

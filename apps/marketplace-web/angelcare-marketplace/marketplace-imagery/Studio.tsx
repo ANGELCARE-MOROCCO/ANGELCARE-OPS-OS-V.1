@@ -51,6 +51,7 @@ import { NativeImagePicker } from "../kidflix/StudioPickers";
 
 import { BadgeIcon } from "./Runtime";
 import { BatchTools, CopyPageImagery } from "./BatchTools";
+import { LiveDeliveryInspector } from "./LiveDeliveryInspector";
 import { pageSlots, resolveSlot, type Slot } from "./registry";
 import {
   PAGES,
@@ -140,6 +141,7 @@ export function ImageryStudio() {
     [config, setConfig] = useState<Config>(emptyConfig),
     [shared, setShared] = useState<Config>(emptyConfig),
     [live, setLive] = useState<Config>(emptyConfig),
+    [liveDelivery, setLiveDelivery] = useState<any>(null),
     [saved, setSaved] = useState<Config>(emptyConfig),
     [revision, setRevision] = useState(0),
     [draftHash, setDraftHash] = useState(""),
@@ -216,6 +218,7 @@ export function ImageryStudio() {
         setConfig(v.draft);
         setSaved(v.draft);
         setLive(v.live);
+        setLiveDelivery(v.liveDelivery || null);
         setRevision(v.record?.revision || 0);
         setDraftHash(v.draftHash);
         setUndo([]);
@@ -447,6 +450,15 @@ export function ImageryStudio() {
       );
       const v = await query<any>({ op: "angelcare_imagery", page: "all" });
       setSummaries(v.pages);
+      if (action === "angelcare_imagery_publish") {
+        try {
+          const verification = await query<any>({ op: "angelcare_imagery", page });
+          setLiveDelivery(verification.liveDelivery || null);
+        } catch {
+          setLiveDelivery(null);
+          setMessage("Published, but the public delivery audit is unavailable. Verify before confirming live imagery.");
+        }
+      }
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -940,7 +952,7 @@ export function ImageryStudio() {
               ) : null}
             </aside>
             <section className={s.canvas}>
-              <div className={s.canvasHeading}><div><h2>Live page preview</h2><p>{title(page)} · {before ? "Published version" : "Current draft"}</p></div><span data-ready={frameReady}>{frameReady ? "Preview connected" : "Loading preview"}</span></div>
+              <div className={s.canvasHeading}><div><h2>Workspace page preview</h2><p>{title(page)} · {before ? "Published snapshot (not a browser live audit)" : "Current draft (not live)"}</p></div><span data-ready={frameReady}>{frameReady ? "Preview connected" : "Loading preview"}</span></div>
               <div className={s.canvasBar}>
                 <button
                   aria-pressed={editing}
@@ -1013,6 +1025,18 @@ export function ImageryStudio() {
                 <small>{descriptor?.sequence ? "Up to 12 images per placement" : "One static image for this placement"}</small>
                 <span className={s.capacity} data-full={images.length === (descriptor?.sequence ? 12 : 1)}>{images.length} / {descriptor?.sequence ? 12 : 1} used</span>
               </div>
+              <LiveDeliveryInspector
+                placementId={descriptor?.id || ""}
+                live={live}
+                liveDelivery={liveDelivery}
+                liveHostname={liveHostname}
+                draft={config}
+                previewVisible={rendered.includes(descriptor?.id || "")}
+                onRefresh={async () => {
+                  const result = await query<any>({ op: "angelcare_imagery", page });
+                  setLiveDelivery(result.liveDelivery || null);
+                }}
+              />
               <div className={s.tabs}>
                 {["images", "framing", "playback", "badges"].map((t) => (
                   <button

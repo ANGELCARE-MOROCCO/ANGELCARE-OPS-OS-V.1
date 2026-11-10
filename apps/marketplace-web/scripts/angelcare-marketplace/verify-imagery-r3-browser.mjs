@@ -41,6 +41,8 @@ try {
   // A real React component hydrates after the original editorial image.
   await testCase("three", async (page, count) => {
     assert.equal(count, 3);
+    assert.equal(await page.$("[data-r3-external-controls]"), null,
+      "Arrows must be absent when the admin Visitor controls toggle is off.");
     await page.hover("[data-r3-promotion-link]"); // Hovering over a link cannot freeze autoplay.
     await waitFrame(page, 2);
     const readable = await page.$eval(selector, el =>
@@ -79,7 +81,7 @@ try {
     assert.equal(count, 12);
     await waitFrame(page, 2);
   });
-  await testCase("three", async (page, count) => {
+  await testCase("three-controls", async (page, count) => {
     assert.equal(count, 3);
     await new Promise(resolve => setTimeout(resolve, 1850));
     const first = await page.$eval(selector, el => el.getAttribute("data-imagery-frame"));

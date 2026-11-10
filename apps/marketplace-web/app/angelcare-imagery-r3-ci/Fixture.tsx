@@ -37,7 +37,7 @@ export function ImageryR3Fixture() {
         slots: {
           [SLOT]: {
             ...placement(), mode: "slideshow", autoplay: true, loop: true,
-            controls: true, interval: 1500, transition: "fade", speed: 250,
+            controls: choice === "three-controls", interval: 1500, transition: "fade", speed: 250,
             images: sources.map((name, i) => ciScene(asset(name), i)),
           },
         },
@@ -62,7 +62,7 @@ export function ImageryR3Fixture() {
               src={testCase === "broken-original" ? "/no-original-r3.jpg" : asset("care")}
               alt="Opening promotion · home-services" />
           </a>
-          {images.length > 1 ? (
+          {images.length > 1 && configuration.slots[SLOT]?.controls ? (
             <div data-r3-external-controls role="group" aria-label="Promotion images"
               style={{ position: "absolute", top: 5, right: 5, display: "flex", gap: 4, zIndex: 8 }}>
               <button type="button" aria-label="Previous image"

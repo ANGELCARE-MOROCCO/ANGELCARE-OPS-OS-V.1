@@ -126,6 +126,7 @@ test("P0 wrappers preserve managed images and linked promotions have outside-lin
  const home=readFileSync(new URL("homepage-living-marketplace/immersive/LivingCommerceHomepage.tsx",root),"utf8");
  assert.match(home,/data-imagery-promotion=\{slot\}/);
  assert.match(home,/angelcare-imagery-navigate/);
+ assert.match(home,/placement\.controls === true/);
  const runtime=readFileSync(new URL("marketplace-imagery/Runtime.tsx",root),"utf8");
  assert.match(runtime,/data-imagery-failed=\{failedCount\}/);
  assert.match(runtime,/data-imagery-delivery-status=\{deliveryStatus\}/);

@@ -84,6 +84,19 @@ export async function imageryRead(c: Context, page: string, history = false) {
     };
   }
   const r = await current(c, page);
+  // The operator's live report follows the same exact hostname and native-vault
+  // reconciliation path as the public endpoint. A draft is never mistaken for live.
+  let liveDelivery: Awaited<ReturnType<typeof publicImagery>> | null = null;
+  if (r?.data?.liveHost && r?.data?.publishedAt) {
+    try {
+      liveDelivery = await publicImagery(String(r.data.liveHost), page);
+    } catch {
+      liveDelivery = {
+        config: emptyConfig(), shared: emptyConfig(),
+        diagnostics: { status: "delivery-error", page, slots: {} },
+      };
+    }
+  }
   let versions: any[] = [];
   if (history && r) {
     const db = await createServiceClient(),
@@ -101,6 +114,7 @@ export async function imageryRead(c: Context, page: string, history = false) {
     record: r,
     draft: r?.data?.draft || emptyConfig(),
     live: r?.data?.live || emptyConfig(),
+    liveDelivery,
     draftHash: hash({config:r?.data?.draft || emptyConfig(),host:r?.data?.draftHost || ""}),
     versions,
   };
