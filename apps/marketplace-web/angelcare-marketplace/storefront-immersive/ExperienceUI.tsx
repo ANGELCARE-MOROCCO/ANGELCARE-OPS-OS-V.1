@@ -1,7 +1,8 @@
 "use client";
 import { ManagedImage } from "../marketplace-imagery/ManagedImage";
+import { ImageryContext } from "../marketplace-imagery/Runtime";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import {
   ArrowLeft,
@@ -38,21 +39,24 @@ export function Photo({
   contain?: boolean;
   priority?: boolean;
 }) {
+  const imagery = useContext(ImageryContext);
+  const fullSlot = slot && (slot.startsWith(imagery.page + ".") ? slot : imagery.page + "." + slot);
+  const managed = !!(fullSlot && imagery.config.slots[fullSlot]);
   const [failed, setFailed] = useState(false);
-  useEffect(() => setFailed(false), [src]);
+  useEffect(() => setFailed(false), [src, managed]);
   const safe = offerMedia(src);
   return (
     <div
       className={contain ? s.offerPhoto : s.editorialPhoto}
       data-media-fit={contain ? "contain" : "cover"}
     >
-      {safe && !failed ? (
+      {safe && (!failed || managed) ? (
         <ManagedImage slot={slot}
           src={safe}
           alt={alt}
           loading={priority ? "eager" : "lazy"}
           decoding="async"
-          onError={() => setFailed(true)}
+          onError={() => { if (!managed) setFailed(true); }}
         />
       ) : (
         <div className={s.mediaEmpty}>

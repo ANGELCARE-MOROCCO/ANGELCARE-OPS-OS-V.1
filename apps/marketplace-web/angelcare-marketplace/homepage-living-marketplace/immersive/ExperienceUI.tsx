@@ -1,7 +1,8 @@
 "use client";
 import { ManagedImage } from "../../marketplace-imagery/ManagedImage";
+import { ImageryContext } from "../../marketplace-imagery/Runtime";
 import Link from '@/angelcare-marketplace/navigation-care-orbit/CareOrbitLink';
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import {
   ArrowUpRight,
@@ -42,22 +43,25 @@ export function Photo({
   priority?: boolean;
   contain?: boolean;
 }) {
+  const imagery = useContext(ImageryContext);
+  const fullSlot = slot && (slot.startsWith(imagery.page + ".") ? slot : imagery.page + "." + slot);
+  const managed = !!(fullSlot && imagery.config.slots[fullSlot]);
   const displaySrc = contain ? offerMediaUrl(src) : src;
   const [failed, setFailed] = useState(false);
-  useEffect(() => setFailed(false), [src]);
+  useEffect(() => setFailed(false), [src, managed]);
   return (
     <div
       className={contain ? styles.containedPhoto : styles.editorialPhoto}
       data-media-fit={contain ? "contain" : "cover"}
-      data-media-state={src && !failed ? "ready" : "missing"}
+      data-media-state={managed ? "managed" : src && !failed ? "ready" : "missing"}
     >
-      {displaySrc && !failed ? (
+      {displaySrc && (!failed || managed) ? (
         <ManagedImage slot={slot}
           src={displaySrc}
           alt={alt}
           loading={priority ? "eager" : "lazy"}
           decoding="async"
-          onError={() => setFailed(true)}
+          onError={() => { if (!managed) setFailed(true); }}
         />
       ) : (
         <span className={styles.noPhoto}>

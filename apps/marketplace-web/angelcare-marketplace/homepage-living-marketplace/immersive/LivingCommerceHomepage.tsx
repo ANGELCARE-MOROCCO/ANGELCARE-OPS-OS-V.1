@@ -624,18 +624,31 @@ export function LivingCommerceHomepage({
           {[
             { key: "home-services", image: "care", label: C.care },
             { key: "kits", image: "kits", label: C.kitFallback },
-          ].map((value) => (
-            <Link href={worldHref(value.key)} key={value.key}>
-              <Photo slot={"visual.living-commerce-homepage.2." + imageryToken(value.image)} src={editorial(value.image)} />
-              <div>
-                <span>
-                  {worlds.find((world) => world.key === value.key)?.label}
-                </span>
-                <strong>{t(value.label)}</strong>
-                <ArrowUpRight size={24} />
+          ].map((value) => {
+            const slot = "home.visual.living-commerce-homepage.2." + imageryToken(value.image);
+            const placement = imagery.config.slots[slot];
+            const playable = placement?.mode === "slideshow" && !placement.hidden &&
+              placement.images.filter((image) => image.enabled).length > 1;
+            return (
+              <div className={styles.promoTile} key={value.key} data-imagery-promotion={slot}>
+                <Link href={worldHref(value.key)}>
+                  <Photo slot={"visual.living-commerce-homepage.2." + imageryToken(value.image)} src={editorial(value.image)} />
+                  <div>
+                    <span>{worlds.find((world) => world.key === value.key)?.label}</span>
+                    <strong>{t(value.label)}</strong>
+                    <ArrowUpRight size={24} />
+                  </div>
+                </Link>
+                {playable ? <div className={styles.promoSlideshowControls} role="group"
+                  aria-label={locale === "fr" ? "Images promotionnelles" : locale === "ar" ? "الصور الترويجية" : "Promotion images"}>
+                  <button type="button" aria-label={locale === "fr" ? "Image précédente" : locale === "ar" ? "الصورة السابقة" : "Previous image"}
+                    onClick={() => window.dispatchEvent(new CustomEvent("angelcare-imagery-navigate", { detail: { slot, direction: -1 } }))}>‹</button>
+                  <button type="button" aria-label={locale === "fr" ? "Image suivante" : locale === "ar" ? "الصورة التالية" : "Next image"}
+                    onClick={() => window.dispatchEvent(new CustomEvent("angelcare-imagery-navigate", { detail: { slot, direction: 1 } }))}>›</button>
+                </div> : null}
               </div>
-            </Link>
-          ))}
+            );
+          })}
         </aside>
       </section>
 

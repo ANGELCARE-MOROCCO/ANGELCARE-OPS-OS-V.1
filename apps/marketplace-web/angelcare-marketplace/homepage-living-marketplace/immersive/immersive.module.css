@@ -457,7 +457,15 @@
   min-width: 0;
 }
 
-.heroSide > a {
+.heroSide > .promoTile {
+  position: relative;
+  min-height: 176px;
+  min-width: 0;
+}
+.heroSide > .promoTile > a {
+  display: block;
+  width: 100%;
+  height: 100%;
   position: relative;
   min-height: 176px;
   overflow: hidden;
@@ -466,6 +474,31 @@
   box-shadow: 0 4px 15px #082d6918;
 }
 
+.promoSlideshowControls {
+  position: absolute;
+  inset-inline-end: 12px;
+  top: 11px;
+  z-index: 8;
+  display: flex;
+  gap: 5px;
+}
+.promoSlideshowControls button {
+  color: #143963;
+  background: #fff;
+  border: 1px solid #c6dbef;
+  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 1px 5px #001b2840;
+  cursor: pointer;
+  font: 700 23px/1 system-ui, sans-serif;
+}
+.promoSlideshowControls button:focus-visible {
+  outline: 3px solid #236de8;
+  outline-offset: 2px;
+}
 .heroSide .editorialPhoto:after {
   content: "";
   position: absolute;
@@ -473,7 +506,7 @@
   background: linear-gradient(0deg, #082d69ed, transparent 92%);
 }
 
-.heroSide > a > div:last-child {
+.heroSide > .promoTile > a > div:last-child {
   position: absolute;
   inset-inline: 14px;
   bottom: 12px;
@@ -3100,11 +3133,11 @@
   margin-top: 4px;
 }
 
-.heroSide > a:nth-child(2) .editorialPhoto:after {
+.heroSide > .promoTile:nth-child(2) .editorialPhoto:after {
   background: linear-gradient(0deg, #b00a57ed, transparent 92%);
 }
 
-.heroSide > a:nth-child(2) span {
+.heroSide > .promoTile:nth-child(2) > a span {
   background: #ffd133;
   color: #082d69;
 }

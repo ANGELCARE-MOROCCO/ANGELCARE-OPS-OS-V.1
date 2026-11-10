@@ -314,6 +314,8 @@ export function Artwork({
     [ready, setReady] = useState(""),
     [prior, setPrior] = useState(""),
     [failed, setFailed] = useState(false),
+    [failedCount, setFailedCount] = useState(0),
+    [recoveries, setRecoveries] = useState(0),
     [originalFailed, setOriginalFailed] = useState(false),
     [paused, setPaused] = useState(false),
     [hover, setHover] = useState(false),
@@ -345,6 +347,8 @@ export function Artwork({
     generation.current++;
     unavailable.current.clear();
     readyRef.current = "";
+    setFailedCount(0);
+    setRecoveries(0);
     setIndex(0);
     setReady("");
     setPrior("");
@@ -397,6 +401,7 @@ export function Artwork({
     void img.decode().then(() => {
       if (generation.current !== epoch) return;
       unavailable.current.delete(image.id);
+      setFailedCount(unavailable.current.size);
       if (readyRef.current !== source) {
         const lastGood = readyRef.current;
         readyRef.current = source;
@@ -408,6 +413,7 @@ export function Artwork({
       if (generation.current !== epoch) return;
       // Do not discard the previously decoded frame or unmount the placement.
       unavailable.current.add(image.id);
+      setFailedCount(unavailable.current.size);
       setFailed(true);
       const next = nextPlayableIndex(
         images, index, unavailable.current, 1, setting?.loop !== false,
@@ -416,10 +422,39 @@ export function Artwork({
     });
     return () => { ++generation.current; };
   }, [source, image?.id, index, signature, setting?.loop]);
+  // All unavailable frames are a real state transition. Retry twice with
+  // backoff, never resetting an already decoded frame while recovering.
+  useEffect(() => {
+    if (!images.length || failedCount < images.length || recoveries >= 2) return;
+    const timer = setTimeout(() => {
+      unavailable.current.clear();
+      setFailedCount(0);
+      setRecoveries((count) => count + 1);
+      setIndex(0);
+    }, 6000 * (recoveries + 1));
+    return () => clearTimeout(timer);
+  }, [failedCount, recoveries, signature]);
+  // Linked promotions use controls outside the anchor; their actions are
+  // routed by the real registered slot rather than nested invalid buttons.
+  useEffect(() => {
+    if (!key || setting?.mode !== "slideshow" || images.length < 2) return;
+    const navigate = (event: Event) => {
+      const detail = (event as CustomEvent<{ slot: string; direction: 1 | -1 }>).detail;
+      if (!detail || detail.slot !== key) return;
+      setPaused(true);
+      setIndex((current) => nextPlayableIndex(
+        images, current, unavailable.current, detail.direction === -1 ? -1 : 1,
+      ) ?? current);
+    };
+    window.addEventListener("angelcare-imagery-navigate", navigate);
+    return () => window.removeEventListener("angelcare-imagery-navigate", navigate);
+  }, [key, setting?.mode, signature]);
   useEffect(() => {
     if (!setting && !ctx.editing) return;
     if (!root.current) return;
-    setInteractive(!!root.current.closest("a,button"));
+    const insideLink = !!root.current.closest("a,button");
+    setInteractive(insideLink);
+    if (insideLink) setHover(false);
     const observer = new IntersectionObserver(
       ([e]) => setVisible(e.isIntersecting),
       { threshold: 0.05 },
@@ -429,7 +464,7 @@ export function Artwork({
   }, [!!setting, ctx.editing]);
   useEffect(() => {
     if (!setting?.autoplay || !sequence || images.length < 2 ||
-        paused || hover || !visible || !foreground || reduced || !ready)
+        paused || (hover && !interactive) || !visible || !foreground || reduced || !ready)
       return;
     // The current scene needs to finish decoding before its display timer starts.
     if (readyRef.current !== source) return;
@@ -448,7 +483,7 @@ export function Artwork({
     return () => clearTimeout(timer);
   }, [
     setting, signature, index, paused, hover, visible, foreground,
-    reduced, ready, mobile, source, sequence,
+    reduced, ready, mobile, source, sequence, interactive,
   ]);
   useEffect(() => {
     if (!prior) return;
@@ -491,14 +526,17 @@ export function Artwork({
       aria-hidden={enabled ? undefined : props["aria-hidden"]}
       data-imagery-art
       data-imagery-kind={kind}
+      data-imagery-count={images.length}
+      data-imagery-frame={index + 1}
+      data-imagery-failed={failedCount}
       data-transition={setting?.transition || "cut"}
       data-hidden={setting?.hidden || undefined}
       data-slow-zoom={(setting?.slowZoom && !reduced) || undefined}
       className={`${props.className || ""} ${s.art}`}
       style={style}
-      onMouseEnter={() => setHover(true)}
+      onMouseEnter={() => { if (!interactive) setHover(true); }}
       onMouseLeave={() => setHover(false)}
-      onFocusCapture={() => setHover(true)}
+      onFocusCapture={() => { if (!interactive) setHover(true); }}
       onBlurCapture={(e) => {
         if (!e.currentTarget.contains(e.relatedTarget)) setHover(false);
       }}
@@ -522,7 +560,7 @@ export function Artwork({
           }}
         />
       )}
-      {!ready && originalFailed && images.length > 0 && unavailable.current.size >= images.length ? (
+      {!ready && originalFailed && images.length > 0 && failedCount >= images.length ? (
         <span className={s.unavailable} role="img" aria-label="Image temporarily unavailable">
           <span>Image temporarily unavailable</span>
         </span>
@@ -536,6 +574,18 @@ export function Artwork({
             key={ready}
             className={`${s.layer} ${s.current}`}
             src={ready}
+            onError={() => {
+              const visibleScene = images.find((candidate) =>
+                (mobile && candidate.mobile ? candidate.mobile : candidate.src) === ready,
+              );
+              if (visibleScene) {
+                unavailable.current.add(visibleScene.id);
+                setFailedCount(unavailable.current.size);
+              }
+              setFailed(true);
+              const next = nextPlayableIndex(images, index, unavailable.current);
+              if (next !== null && next !== index) setIndex(next);
+            }
             alt={image?.alt || props.alt || ""}
             style={{
               objectFit: image?.fit || "cover",
