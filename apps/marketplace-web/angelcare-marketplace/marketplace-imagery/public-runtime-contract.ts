@@ -54,7 +54,7 @@ export function reconcilePublishedImagery(
   records: readonly NativeImageRecord[],
   validUrl: (url: string, id: string) => boolean,
   now = Date.now(),
-): { config: Config; rejected: number; refreshed: number; mobileFallbacks: number } {
+) {
   const native = new Map(records.map(record => [record.id, record]));
   let rejected = 0, refreshed = 0, mobileFallbacks = 0;
   const slotCounts: Record<string, {
