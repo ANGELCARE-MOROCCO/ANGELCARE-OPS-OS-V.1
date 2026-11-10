@@ -459,7 +459,7 @@ jobs:
           export CHROME_PATH="$(command -v google-chrome || command -v chromium || true)"
           test -n "$CHROME_PATH"
           for N in $(seq 1 90); do
-            if curl -fsS --max-time 10 "$IMAGERY_R3_CANDIDATE_ORIGIN/__angelcare-imagery-r3-ci" >/dev/null; then break; fi
+            if curl -fsS --max-time 10 "$IMAGERY_R3_CANDIDATE_ORIGIN/angelcare-imagery-r3-ci" >/dev/null; then break; fi
             if [ "$N" = "90" ]; then echo "Imagery R3 test route unavailable"; exit 1; fi
             sleep 1
           done

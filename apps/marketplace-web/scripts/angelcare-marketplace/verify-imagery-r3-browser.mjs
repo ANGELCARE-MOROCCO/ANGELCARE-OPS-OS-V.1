@@ -21,7 +21,7 @@ async function testCase(name, fn, reduced = false) {
     if (reduced) await page.emulateMediaFeatures([
       { name: "prefers-reduced-motion", value: "reduce" },
     ]);
-    const response = await page.goto(origin + "/__angelcare-imagery-r3-ci?case=" + name,
+    const response = await page.goto(origin + "/angelcare-imagery-r3-ci?case=" + name,
       { waitUntil: "domcontentloaded", timeout: 30000 });
     assert.equal(response?.status(), 200, "The CI-only candidate fixture must be running.");
     await page.waitForSelector(selector + '[data-imagery-count]', { timeout: 20000 });
