@@ -75,6 +75,7 @@ export const ImageryContext = createContext<{
   editing: boolean;
   selected: string;
   previewScene: string;
+  deliveryStatus: string;
   register: (d: Descriptor) => void;
 }>({
   page: "home",
@@ -83,6 +84,7 @@ export const ImageryContext = createContext<{
   editing: false,
   selected: "",
   previewScene: "",
+  deliveryStatus: "initial",
   register: () => {},
 });
 export function ImageryProvider({ children }: { children: ReactNode }) {
@@ -97,7 +99,8 @@ export function ImageryProvider({ children }: { children: ReactNode }) {
     }),
     [editing, setEditing] = useState(false),
     [selected, setSelected] = useState(""),
-    [previewScene, setPreviewScene] = useState("");
+    [previewScene, setPreviewScene] = useState(""),
+    [deliveryStatus, setDeliveryStatus] = useState("initial");
   const slots = useRef(new Map<string, Descriptor>());
   const previewOverride = useRef(false);
   const register = useCallback(
@@ -121,23 +124,42 @@ export function ImageryProvider({ children }: { children: ReactNode }) {
     previewOverride.current = false;
     setEditing(false);
     setSelected("");
+    if (page === "other") {
+      setDeliveryStatus("unsupported-page");
+      return;
+    }
     const ac = new AbortController();
-    if (page === "other") return () => ac.abort();
-    fetch("/api/angelcare-marketplace/imagery?page=" + encodeURIComponent(page), {
-      signal: ac.signal,
-      cache: "no-store",
-    })
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then((v) => {
-        if (!ac.signal.aborted && !previewOverride.current)
-          setState({
-            page,
-            config: v.config || emptyConfig(),
-            shared: v.shared || emptyConfig(),
-          });
-      })
-      .catch(() => {});
-    return () => ac.abort();
+    let active = true, attempts = 0;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    setDeliveryStatus("loading");
+    const load = async () => {
+      try {
+        const response = await fetch(
+          "/api/angelcare-marketplace/imagery?page=" + encodeURIComponent(page),
+          { signal: ac.signal, cache: "no-store" },
+        );
+        if (!response.ok) throw Error("HTTP " + response.status);
+        const value = await response.json();
+        if (!active || previewOverride.current) return;
+        setState({
+          page,
+          config: value.config || emptyConfig(),
+          shared: value.shared || emptyConfig(),
+        });
+        setDeliveryStatus(value.diagnostics?.status || "published");
+      } catch {
+        if (!active || ac.signal.aborted || previewOverride.current) return;
+        if (attempts < 3) {
+          setDeliveryStatus("retrying");
+          timer = setTimeout(() => { attempts++; void load(); }, [700, 1800, 4000][attempts]);
+        } else {
+          setDeliveryStatus("unavailable");
+          console.warn("ANGELCARE_PUBLIC_IMAGERY_READ_FAILED", { page, attempts: attempts + 1 });
+        }
+      }
+    };
+    void load();
+    return () => { active = false; ac.abort(); if (timer) clearTimeout(timer); };
   }, [page]);
   useEffect(() => {
     if (!preview || parent === window) return;
@@ -146,6 +168,7 @@ export function ImageryProvider({ children }: { children: ReactNode }) {
       const v = e.data;
       if (v?.type !== "angelcare-imagery-preview" || v.page !== page) return;
       previewOverride.current = true;
+      setDeliveryStatus("preview");
       setState({
         page,
         config: v.config || emptyConfig(),
@@ -204,12 +227,14 @@ export function ImageryProvider({ children }: { children: ReactNode }) {
         editing,
         selected,
         previewScene,
+        deliveryStatus,
         register,
       }}
     >
       <div
         className={s.scope}
         data-imagery-editing={editing || undefined}
+        data-imagery-delivery-status={deliveryStatus}
         onClickCapture={click}
       >
         {children}
@@ -421,7 +446,7 @@ export function Artwork({
       if (next !== null && next !== index) setIndex(next);
     });
     return () => { ++generation.current; };
-  }, [source, image?.id, index, signature, setting?.loop]);
+  }, [source, image?.id, index, signature, setting?.loop, recoveries]);
   // All unavailable frames are a real state transition. Retry twice with
   // backoff, never resetting an already decoded frame while recovering.
   useEffect(() => {

@@ -299,13 +299,15 @@ export async function imageryCommand(c: Context, cmd: any) {
   return { ...result.data, draftHash: hash({config:draft,host:data.draftHost || ""}) };
 }
 export async function publicImagery(hostValue: string, page: string) {
-  if (!PAGES.includes(page)) return { config: emptyConfig(), shared: emptyConfig() };
+  if (!PAGES.includes(page))
+    return { config: emptyConfig(), shared: emptyConfig(), diagnostics: { status: "unsupported-page", page, slots: {} } };
   const host = publicHost(hostValue), db = await createServiceClient();
   // A published AngelCare page binds its own tenant/territory to an explicit host.
   // KidFlix homepage settings are never used as AngelCare's public authority.
   const result = await db.from('ac_dce_records').select('data').eq('kind','setting').eq('key',key(page)).neq('lifecycle','archived').eq('data->>liveHost',host).maybeSingle();
   if(result.error)throw Error('ANGELCARE_IMAGERY_AUTHORITY_UNAVAILABLE');
-  if(!result.data?.data?.publishedAt)return {config:emptyConfig(),shared:emptyConfig()};
+  if (!result.data?.data?.publishedAt)
+    return { config: emptyConfig(), shared: emptyConfig(), diagnostics: { status: "not-published-for-host", page, slots: {} } };
   const config = normalizeConfig(result.data.data.live || emptyConfig(), page, true);
   const ids = mediaRefs([config]);
   const records: NativeImageRecord[] = [];
@@ -330,5 +332,11 @@ export async function publicImagery(hostValue: string, page: string) {
       mobileFallbacks: resolved.mobileFallbacks,
     });
   }
-  return { config: resolved.config, shared: emptyConfig() };
+  return {
+    config: resolved.config, shared: emptyConfig(),
+    diagnostics: {
+      status: "published", page, slots: resolved.slotCounts,
+      totals: { rejected: resolved.rejected, refreshed: resolved.refreshed, mobileFallbacks: resolved.mobileFallbacks },
+    },
+  };
 }

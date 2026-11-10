@@ -57,26 +57,39 @@ export function reconcilePublishedImagery(
 ): { config: Config; rejected: number; refreshed: number; mobileFallbacks: number } {
   const native = new Map(records.map(record => [record.id, record]));
   let rejected = 0, refreshed = 0, mobileFallbacks = 0;
+  const slotCounts: Record<string, {
+    published: number; enabledPublished: number; delivered: number;
+    enabledDelivered: number; rejected: number; mobileFallbacks: number;
+  }> = {};
   const slots: Config["slots"] = {};
   for (const [slotId, placement] of Object.entries(config.slots)) {
     const resolved: typeof placement.images = [];
+    let slotRejected = 0, slotMobileFallbacks = 0;
     for (const scene of placement.images) {
       const src = canonical(native.get(scene.assetId), scene.assetId, validUrl, now);
-      if (!src) { rejected++; continue; }
+      if (!src) { rejected++; slotRejected++; continue; }
       let mobile = "";
       let mobileAssetId = "";
       if (scene.mobile) {
         mobile = canonical(native.get(scene.mobileAssetId), scene.mobileAssetId, validUrl, now);
         if (mobile) mobileAssetId = scene.mobileAssetId;
-        else mobileFallbacks++;
+        else { mobileFallbacks++; slotMobileFallbacks++; }
       }
       if (scene.src !== src || (!!mobile && scene.mobile !== mobile)) refreshed++;
       resolved.push({ ...scene, src, mobile, mobileAssetId });
     }
+    slotCounts[slotId] = {
+      published: placement.images.length,
+      enabledPublished: placement.images.filter(scene => scene.enabled).length,
+      delivered: resolved.length,
+      enabledDelivered: resolved.filter(scene => scene.enabled).length,
+      rejected: slotRejected,
+      mobileFallbacks: slotMobileFallbacks,
+    };
     // If a configured slot loses every authorized image, use the original page
     // artwork again rather than mounting a managed component with nothing to show.
     if (placement.images.length > 0 && resolved.length === 0) continue;
     slots[slotId] = { ...placement, images: resolved };
   }
-  return { config: { ...config, slots }, rejected, refreshed, mobileFallbacks };
+  return { config: { ...config, slots }, rejected, refreshed, mobileFallbacks, slotCounts };
 }
