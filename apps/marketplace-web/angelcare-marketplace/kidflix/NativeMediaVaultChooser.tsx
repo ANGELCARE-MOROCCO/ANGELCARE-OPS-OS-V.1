@@ -451,7 +451,7 @@ export function NativeMediaVaultChooser({ max, excludeIds = [], onClose, onConfi
                   <button type="button" className={s.cardSelect} disabled={!!issue || (limited && !checked)} onClick={() => toggle(a)}
                     aria-pressed={checked} aria-label={(checked ? "Remove " : "Select ") + a.title}>
                     <span className={s.checkbox}>{checked && <Check size={13}/>}</span>
-                    <div className={s.thumb}>{a.url ? <img src={a.url} alt="" loading="lazy" /> : <ImageIcon size={28}/>}</div>
+                    <div className={s.thumb}>{a.mime.startsWith("image/") && a.url ? <img src={a.url} alt="" loading="lazy" /> : <FileImage size={28}/>}</div>
                     <div className={s.cardBody}><strong title={a.title}>{a.title}</strong>
                       <small>{a.width && a.height ? a.width + " × " + a.height + " · " : ""}{a.mime.split("/")[1]?.toUpperCase()} · {fmt(a.size)}</small>
                       <div className={s.cardBadges}><span data-tone={publishedSafe(a) ? "good" : "neutral"}>{publishedSafe(a) ? "Rights approved" : a.rights || "Rights unverified"}</span>
@@ -475,10 +475,10 @@ export function NativeMediaVaultChooser({ max, excludeIds = [], onClose, onConfi
           <div className={s.inspectorTitle}><strong>Asset preview</strong><small>{selected.length} selected</small></div>
           {activeAsset ? <>
             <div className={s.largeImage}>
-              {activeAsset.url && <img src={activeAsset.url} alt={activeAsset.alt || activeAsset.title} />}
-              <button type="button" onClick={() => setExpanded(x => !x)} aria-label={expanded ? "Exit large preview" : "Enlarge preview"}><Maximize2 size={16}/></button>
+              {activeAsset.mime.startsWith("image/") && activeAsset.url ? <img src={activeAsset.url} alt={activeAsset.alt || activeAsset.title} /> : <FileImage size={42}/>}
+              <button type="button" disabled={!activeAsset.mime.startsWith("image/")} onClick={() => setExpanded(x => !x)} aria-label={expanded ? "Exit large preview" : "Enlarge preview"}><Maximize2 size={16}/></button>
             </div>
-            {expanded && <div className={s.zoom} role="dialog" aria-label="Large image preview" onClick={() => setExpanded(false)}>
+            {expanded && activeAsset.mime.startsWith("image/") && <div className={s.zoom} role="dialog" aria-label="Large image preview" onClick={() => setExpanded(false)}>
               <img src={activeAsset.url} alt={activeAsset.alt || activeAsset.title}/>
               <button type="button" onClick={() => setExpanded(false)}><X size={18}/> Close</button>
             </div>}
@@ -499,7 +499,7 @@ export function NativeMediaVaultChooser({ max, excludeIds = [], onClose, onConfi
               ].map(([name,value]) => <div key={name}><dt>{name}</dt><dd title={value}>{text(value)}</dd></div>)}
             </dl>
             <div className={s.inspectActions}>
-              <button type="button" onClick={() => void testImage(activeAsset)}><Eye size={15}/>
+              <button type="button" disabled={!activeAsset.mime.startsWith("image/")} onClick={() => void testImage(activeAsset)}><Eye size={15}/>
                 {probe[activeAsset.id] === "testing" ? "Testing…" : probe[activeAsset.id] === "ok" ? "Decoded ✓" : probe[activeAsset.id] === "failed" ? "Image failed" : "Verify image"}</button>
               <button type="button" onClick={() => navigator.clipboard.writeText(activeAsset.id)}><Copy size={15}/> Copy ID</button>
               <a href={activeAsset.url} target="_blank" rel="noreferrer"><Maximize2 size={15}/> Open source</a>
