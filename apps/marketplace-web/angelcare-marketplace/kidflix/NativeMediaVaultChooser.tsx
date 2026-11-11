@@ -347,7 +347,7 @@ export function NativeMediaVaultChooser({ max, excludeIds = [], onClose, onConfi
             <label className={s.field}><strong>Aspect ratio</strong><select value={filters.ratio}
               onChange={e => setFacet("ratio", e.target.value)}><option value="">All aspect ratios</option>
                 {["1:1","16:9","4:3","3:4"].map(x => <option key={x}>{x}</option>)}</select></label>
-            <label className={s.field}><strong><FolderOpen size={14}/>Folder</strong>
+            <div className={s.field}><strong><FolderOpen size={14}/>Folder</strong>
               <select value={folder} disabled={folderLoading || !!folderError}
                 onChange={e=>{setFolder(e.target.value);setPage(1)}} aria-label="Native folder">
                 <option value="">All native folders ({folderRows.length})</option>
@@ -357,7 +357,7 @@ export function NativeMediaVaultChooser({ max, excludeIds = [], onClose, onConfi
                 {folderError && <small role="alert">{folderError}</small>}
                 <label className={s.check}><input type="checkbox" checked={includeChildren}
                  onChange={e=>{setIncludeChildren(e.target.checked);setPage(1)}}/>
-                 Include nested folders</label></label>
+                 Include nested folders</label></div>
             {(["collection","category","language","uploader"] as const).map(key =>
               <label className={s.field} key={key}><strong>{key === "uploader" ? "Uploaded by" : key[0].toUpperCase() + key.slice(1)}</strong>
                 <input value={filters[key]} placeholder={"Search " + key} list={"vault-" + key + "-suggestions"}
