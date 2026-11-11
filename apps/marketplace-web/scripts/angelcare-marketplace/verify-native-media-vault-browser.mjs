@@ -29,13 +29,26 @@ await page.setViewport({width:1600,height:960,deviceScaleFactor:1});
 page.setDefaultTimeout(20000);
 try {
   await page.setRequestInterception(true);
+  const observedQueries=[];
   page.on("request", request => {
     const url=new URL(request.url());
     if (url.pathname==="/api/angelcare-marketplace/admin/digital-customer-experience") {
+      const op=url.searchParams.get("op") || "native";
+      observedQueries.push(Object.fromEntries(url.searchParams));
+      if(op==="vault_folders") {
+        void request.respond({status:200,contentType:"application/json",
+          body:JSON.stringify({data:{
+            rows:[{id:"folder-ci",name:"Educational assets",parent_id:null,status:"active",item_count:5}],
+            total:1,page:1,pageSize:500,complete:true,
+          }})});
+        return;
+      }
       const search=(url.searchParams.get("q") || "").toLowerCase();
       const rows=assets.filter(a => (a.fileName+" "+a.title).toLowerCase().includes(search));
+      const pageSize=Number(url.searchParams.get("pageSize") || 100);
       void request.respond({status:200,contentType:"application/json",
-        body:JSON.stringify({data:{rows,total:rows.length,page:1,pageSize:24}})});
+        body:JSON.stringify({data:{rows,total:rows.length,inventoryTotal:assets.length,
+          page:1,pageSize,matchedBeforePagination:true}})});
     } else void request.continue();
   });
   const response=await page.goto(origin+"/angelcare-media-vault-ci",{waitUntil:"domcontentloaded",timeout:30000});
@@ -62,7 +75,30 @@ try {
   });
   console.log("NATIVE_MEDIA_VAULT_DESKTOP_LAYOUT=" + JSON.stringify(layout));
   assert.equal(layout.inspectorVisible,true,"Desktop inspector must be visibly rendered");
-  const selectAndVerify = async (title, expectedCount) => {
+  await page.waitForSelector('select[aria-label="Native folder"] option[value="folder-ci"]');
+  const folderLabel=await page.$eval('select[aria-label="Native folder"]', el =>
+    [...el.options].find(o=>o.value==="folder-ci")?.textContent);
+  assert.match(folderLabel,/Educational assets/,"Real native folder names must appear instead of IDs");
+  await page.select('select[aria-label="Results per page"]',"500");
+  await page.waitForFunction(() =>
+    document.querySelector('select[aria-label="Results per page"]')?.value==="500");
+  await page.waitForFunction(() =>
+    document.querySelector('[data-native-media-vault]')?.textContent?.includes("5 total assets in vault"));
+  assert.ok(observedQueries.some(x=>x.pageSize==="500" && x.vault==="true"),
+    "500 records per page must be requested from the server");
+  await page.select('select[aria-label="Results per page"]',"100");
+  await page.select('select[aria-label="Results per page"]',"20");
+  assert.ok(observedQueries.some(x=>x.pageSize==="20"),
+    "20 records per page must be requested from the server");
+  await page.select('select[aria-label="Results per page"]',"100");
+  await page.select('select[aria-label="Native folder"]',"folder-ci");
+  assert.ok(observedQueries.some(x=>x.folderId==="folder-ci"),
+    "Folder must be filtered by canonical native folder ID on server");
+  await page.select('select[aria-label="Native folder"]',"");
+  const recency=await page.$('select option[value="2"]');
+  assert.ok(recency,"2-minute window must be present");
+  console.log("NATIVE_MEDIA_VAULT_DIRECTORY_AND_PAGES=PASS");
+    const selectAndVerify = async (title, expectedCount) => {
     const selector = 'article button[aria-label="Select ' + title + '"]';
     const before = await page.$eval(selector, el => ({
       disabled:el.disabled,
