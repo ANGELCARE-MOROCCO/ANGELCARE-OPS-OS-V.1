@@ -56,7 +56,7 @@ test("native media vault advanced inventory, real folder authority and global se
  assert.match(repo,/vaultFolders\(c, input\)/);
  assert.match(authority,/angelcare_marketplace_media_folders/);
  assert.match(authority,/angelcare_marketplace_media_assets/);
- assert.match(authority,/result\.count \?\? 0/);
+ assert.match(authority,/total=r\.count \?\? 0/);
  assert.match(authority,/const postFilter=Boolean/);
  assert.match(authority,/const filtered=rows\.filter/);
  assert.match(authority,/filtered\.slice\(\(page-1\)\*pageSize,page\*pageSize\)/);
