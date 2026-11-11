@@ -11,7 +11,7 @@ import {
   Image as ImageIcon, Info, Layers3, List, Loader2, Maximize2, Search,
   ShieldCheck, SlidersHorizontal, Sparkles, Tags, UploadCloud, X,
 } from "lucide-react";
-import { Dialog, query, useQuery, useUI } from "../digital-customer-experience/components/ui";
+import { Dialog, mutate, useQuery, useUI } from "../digital-customer-experience/components/ui";
 import {
   addUniqueAssets, assetIssue, mediaPassesClientFilters, normalizeNativeAsset,
   publishedSafe, reorderAsset, type NativeMediaAsset, type MediaClientFilters,
@@ -41,7 +41,7 @@ const seen = (id: string, all: NativeMediaAsset[]) => all.some(item => item.id =
 const text = (v: string) => v || "Not recorded";
 
 export function NativeMediaVaultChooser({ max, excludeIds = [], onClose, onConfirm }: Props) {
-  const { locale } = useUI();
+  const { locale, boot } = useUI();
   const [search, setSearch] = useState("");
   const [debounced, setDebounced] = useState("");
   const [page, setPage] = useState(1);
@@ -182,7 +182,11 @@ export function NativeMediaVaultChooser({ max, excludeIds = [], onClose, onConfi
           files: [{ fileName: file.name, mimeType: file.type, sizeBytes: file.size, checksumSha256: sha256 }],
         });
         const check = Array.isArray(preflight) ? preflight[0] : preflight;
-        if (check?.duplicate?.id) continue;
+        if (check?.duplicate?.id) {
+          if (boot?.actor?.rights?.manage)
+            await mutate({ action: "register_media", nativeId: check.duplicate.id });
+          continue;
+        }
         if (check?.state === "FAILED" || check?.errors?.length) throw Error(check.errors?.join(" · ") || "Media rejected.");
         const session = await post("/upload-session", {
           fileName: file.name, mimeType: file.type, sizeBytes: file.size,
@@ -197,6 +201,11 @@ export function NativeMediaVaultChooser({ max, excludeIds = [], onClose, onConfi
         await post("/" + session.assetId + "/complete", {
           checksumSha256: sha256, sizeBytes: file.size, mimeType: file.type,
         });
+        if (boot?.actor?.rights?.manage) {
+          await mutate({ action: "register_media", nativeId: session.assetId });
+        } else {
+          setUploadError("Image uploaded, but registration requires Media Vault management permission.");
+        }
       }
       response.reload();
       setPage(1);
