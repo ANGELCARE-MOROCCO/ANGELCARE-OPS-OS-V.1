@@ -34,6 +34,7 @@ export type MediaClientFilters = {
   tag: string;
   uploader: string;
   used: string;
+  dateRange: string;
   readyOnly: boolean;
   hasAlt: boolean;
   publishedSafe: boolean;
@@ -78,6 +79,11 @@ export function mediaPassesClientFilters(a: NativeMediaAsset, f: MediaClientFilt
   if (f.ratio && (!ratio || (f.ratio === "1:1" ? Math.abs(ratio - 1) > .04 : f.ratio === "16:9" ? Math.abs(ratio - 16 / 9) > .16 : f.ratio === "4:3" ? Math.abs(ratio - 4 / 3) > .12 : Math.abs(ratio - 3 / 4) > .12))) return false;
   if (!match(a.category, f.category) || !match(a.collection, f.collection) || !match(a.language, f.language) || !match(a.uploadedBy, f.uploader)) return false;
   if (f.tag && !a.tags.some(tag => match(tag, f.tag))) return false;
+  if (f.dateRange) {
+    const days = Number(f.dateRange);
+    const stamp = Date.parse(a.updatedAt || a.createdAt);
+    if (!Number.isFinite(days) || !Number.isFinite(stamp) || Date.now() - stamp > days * 86400000) return false;
+  }
   if (f.readyOnly && !["ready", "complete", "completed", "optimized"].includes(a.processingState.toLowerCase())) return false;
   if (f.hasAlt && !a.alt.trim()) return false;
   if (f.publishedSafe && !publishedSafe(a)) return false;

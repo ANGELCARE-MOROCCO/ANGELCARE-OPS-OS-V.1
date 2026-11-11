@@ -26,7 +26,7 @@ type Props = {
 };
 const emptyFilters: MediaClientFilters = {
   orientation: "", ratio: "", category: "", collection: "", language: "",
-  tag: "", uploader: "", used: "", readyOnly: false, hasAlt: false,
+  tag: "", uploader: "", used: "", dateRange: "", readyOnly: false, hasAlt: false,
   publishedSafe: false, unusedOnly: false,
 };
 const options = (rows: NativeMediaAsset[], key: keyof NativeMediaAsset): string[] =>
@@ -288,6 +288,12 @@ export function NativeMediaVaultChooser({ max, excludeIds = [], onClose, onConfi
             <label className={s.field}><strong>Usage</strong><select value={filters.used}
               onChange={e => setFacet("used", e.target.value)}><option value="">Any usage</option>
                 <option value="used">Used in content</option></select></label>
+            <label className={s.field}><strong><Clock3 size={14}/>Date range</strong>
+              <select value={filters.dateRange} onChange={e => setFacet("dateRange", e.target.value)}>
+                <option value="">Any date</option>
+                <option value="7">Last 7 days</option><option value="30">Last 30 days</option>
+                <option value="90">Last 90 days</option><option value="365">Last 12 months</option>
+              </select></label>
             <label className={s.field}><strong>Sort by</strong><select value={sort} onChange={e => setSort(e.target.value)}>
               <option value="name-asc">Filename A–Z</option><option value="name-desc">Filename Z–A</option>
               <option value="recent">Recently updated</option><option value="largest">Largest first</option>

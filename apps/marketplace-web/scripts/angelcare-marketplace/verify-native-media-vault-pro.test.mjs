@@ -6,7 +6,7 @@ const base = (id, other = {}) => normalizeNativeAsset({
  status:"active", rights:"approved", expiresAt:null, optimizationStatus:"ready", width:1200, height:1200, alt:"Wooden learning toys",
  ...other,
 });
-const filters = {orientation:"",ratio:"",category:"",collection:"",language:"",tag:"",uploader:"",used:"",readyOnly:false,hasAlt:false,publishedSafe:false,unusedOnly:false};
+const filters = {orientation:"",ratio:"",category:"",collection:"",language:"",tag:"",uploader:"",used:"",dateRange:"",readyOnly:false,hasAlt:false,publishedSafe:false,unusedOnly:false};
 test("normalize native media metadata and eligibility without inventing status",()=>{
  const a=base("123",{metadata:{tags:["montessori"], width:1200,height:1200},usageCount:4});
  assert.equal(a.width,1200);
