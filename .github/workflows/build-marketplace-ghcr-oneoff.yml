@@ -467,6 +467,7 @@ jobs:
             sleep 1
           done
           node ../angelcare-marketplace/verify-imagery-r3-browser.mjs
+          node ../angelcare-marketplace/verify-native-media-vault-browser.mjs
 
       - name: Audit the exact Marketplace candidate with Lighthouse CI
         working-directory: apps/marketplace-web/scripts/seo-power-ci
