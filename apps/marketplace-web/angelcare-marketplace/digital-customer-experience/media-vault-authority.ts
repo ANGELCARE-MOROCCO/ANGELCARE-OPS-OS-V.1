@@ -53,7 +53,7 @@ export function folderHierarchy(rows: Row[]): NativeVaultFolder[] {
       id: String(r.id), name: text(r.name) || "Untitled folder",
       slug: text(r.slug), parentId: r.parent_id ? String(r.parent_id) : null,
       status: text(r.status), path: "", depth: 0,
-      itemCount: typeof r.item_count === "number" ? r.item_count : null,
+      itemCount: null,
     });
   }
   const visit = (id: string, seen: Set<string>): {path: string; depth: number} => {
@@ -73,7 +73,7 @@ export function folderHierarchy(rows: Row[]): NativeVaultFolder[] {
 }
 const folderToRow = (r: Row) => ({
   id:r.id, name:r.name, slug:r.slug, parent_id:r.parent_id,
-  status:r.status, item_count:r.item_count,
+  status:r.status, item_count:null,
 });
 export async function vaultFolders(c: Context, input: Input) {
   permitted(c);
@@ -81,7 +81,7 @@ export async function vaultFolders(c: Context, input: Input) {
   const page = Math.max(1, Math.floor(number(input.page ?? 1, 1, 100000)));
   const pageSize = 500;
   const r = await db.from("angelcare_marketplace_media_folders")
-    .select("id,name,slug,parent_id,status,item_count", {count:"exact"})
+    .select("id,name,slug,parent_id,status", {count:"exact"})
     .order("name", {ascending:true}).order("id", {ascending:true})
     .range((page-1)*pageSize,page*pageSize-1);
   if (r.error) throw new MarketplaceError("DEPENDENCY_BLOCKED", "Native folder directory could not be read: " + r.error.message);
@@ -105,7 +105,7 @@ async function allFolders(db: Awaited<ReturnType<typeof createServiceClient>>) {
   const result: Row[] = [];
   for(let page = 0; ;page++) {
     const r = await db.from("angelcare_marketplace_media_folders")
-      .select("id,name,slug,parent_id,status,item_count").order("id").range(page*500,page*500+499);
+      .select("id,name,slug,parent_id,status").order("id").range(page*500,page*500+499);
     if(r.error) throw new MarketplaceError("DEPENDENCY_BLOCKED","Could not traverse native folders: " + r.error.message);
     result.push(...(r.data||[]));
     if((r.data||[]).length < 500) break;

@@ -67,3 +67,21 @@ test("native media vault advanced inventory, real folder authority and global se
  for(const x of ["2,5,10,15,30,60","dateFrom","dateTo","folderRows","minSize","minWidth"])
   assert.ok(chooser.includes(x),x+" filter is missing");
 });
+
+test("native folder query matches columns present in canonical schema",async()=>{
+ const { readFileSync }=await import("node:fs");
+ const { fileURLToPath }=await import("node:url");
+ const root=new URL("../../angelcare-marketplace/",import.meta.url);
+ const read=p=>readFileSync(fileURLToPath(new URL(p,root)),"utf8");
+ const schema=read("../supabase/migrations/20260804053000_angelcare_marketplace_complete_commerce_administration_universe.sql");
+ const source=read("digital-customer-experience/media-vault-authority.ts");
+ const chooser=read("kidflix/NativeMediaVaultChooser.tsx");
+ const first=schema.indexOf("create table if not exists public.angelcare_marketplace_media_folders(");
+ const next=schema.indexOf("create table if not exists public.angelcare_marketplace_media_assets(",first);
+ assert.ok(first>=0 && next>first);
+ assert.ok(!schema.slice(first,next).includes("item_count"));
+ assert.ok(!source.includes('select("id,name,slug,parent_id,status,item_count"'));
+ assert.ok(source.includes('select("id,name,slug,parent_id,status"'));
+ for(const status of ["active","archived","processing","paused","failed"])
+   assert.ok(chooser.includes('<option value="'+status+'">'),status);
+});

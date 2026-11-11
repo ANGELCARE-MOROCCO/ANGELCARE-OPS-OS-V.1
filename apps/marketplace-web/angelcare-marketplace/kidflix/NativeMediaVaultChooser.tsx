@@ -329,8 +329,8 @@ export function NativeMediaVaultChooser({ max, excludeIds = [], onClose, onConfi
             <label className={s.field}><strong>Asset lifecycle</strong>
              <select aria-label="Asset lifecycle" value={statusFilter} onChange={e=>{setStatusFilter(e.target.value);setPage(1)}}>
               <option value="all">All statuses</option><option value="active">Active</option>
-              <option value="archived">Archived</option><option value="draft">Draft</option>
-              <option value="processing">Processing</option>
+              <option value="archived">Archived</option><option value="processing">Processing</option>
+              <option value="paused">Paused</option><option value="failed">Failed</option>
              </select></label>
             <label className={s.field}><strong><ShieldCheck size={14}/>Rights status</strong>
               <input value={rights} placeholder="Any rights status" list="vault-rights-values"
