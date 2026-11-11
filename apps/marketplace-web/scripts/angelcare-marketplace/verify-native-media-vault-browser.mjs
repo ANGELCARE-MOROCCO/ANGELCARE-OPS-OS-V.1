@@ -79,25 +79,31 @@ try {
   const folderLabel=await page.$eval('select[aria-label="Native folder"]', el =>
     [...el.options].find(o=>o.value==="folder-ci")?.textContent);
   assert.match(folderLabel,/Educational assets/,"Real native folder names must appear instead of IDs");
-  await page.select('select[aria-label="Results per page"]',"500");
-  await page.waitForFunction(() =>
-    document.querySelector('select[aria-label="Results per page"]')?.value==="500");
-  await page.waitForFunction(() =>
-    document.querySelector('[data-native-media-vault]')?.textContent?.includes("5 total assets in vault"));
+  async function selectWithServerResponse(selector,value,key,expected) {
+    const next=page.waitForResponse(response => {
+      if(!response.url().includes("/admin/digital-customer-experience")) return false;
+      const url=new URL(response.url());
+      return url.searchParams.get("op")==="native" &&
+        (expected === null ? !url.searchParams.has(key) : url.searchParams.get(key)===expected);
+    },{timeout:12000});
+    await page.select(selector,value);
+    await next;
+  }
+  for(const size of ["500","100","20","100"])
+    await selectWithServerResponse('select[aria-label="Results per page"]',size,"pageSize",size);
   assert.ok(observedQueries.some(x=>x.pageSize==="500" && x.vault==="true"),
     "500 records per page must be requested from the server");
-  await page.select('select[aria-label="Results per page"]',"100");
-  await page.select('select[aria-label="Results per page"]',"20");
-  assert.ok(observedQueries.some(x=>x.pageSize==="20"),
+  assert.ok(observedQueries.some(x=>x.pageSize==="20" && x.vault==="true"),
     "20 records per page must be requested from the server");
-  await page.select('select[aria-label="Results per page"]',"100");
-  await page.select('select[aria-label="Native folder"]',"folder-ci");
+  await selectWithServerResponse('select[aria-label="Native folder"]',"folder-ci","folderId","folder-ci");
   assert.ok(observedQueries.some(x=>x.folderId==="folder-ci"),
     "Folder must be filtered by canonical native folder ID on server");
-  await page.select('select[aria-label="Native folder"]',"");
-  const recency=await page.$('select option[value="2"]');
-  assert.ok(recency,"2-minute window must be present");
-  console.log("NATIVE_MEDIA_VAULT_DIRECTORY_AND_PAGES=PASS");
+  await selectWithServerResponse('select[aria-label="Native folder"]',"","folderId",null);
+  await selectWithServerResponse('select[aria-label="Time window"]',"2","recentMinutes","2");
+  assert.ok(observedQueries.some(x=>x.recentMinutes==="2"),
+    "2-minute relative filter must reach the server");
+  await selectWithServerResponse('select[aria-label="Time window"]',"","recentMinutes",null);
+  console.log("NATIVE_MEDIA_VAULT_DIRECTORY_PAGES_RECENCY=PASS");
     const selectAndVerify = async (title, expectedCount) => {
     const selector = 'article button[aria-label="Select ' + title + '"]';
     const before = await page.$eval(selector, el => ({

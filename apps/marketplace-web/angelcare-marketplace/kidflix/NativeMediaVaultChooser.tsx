@@ -380,7 +380,7 @@ export function NativeMediaVaultChooser({ max, excludeIds = [], onClose, onConfi
                  <option value="updated">Last modified</option>
                 </select></label>
              <label className={s.field}><strong>Added / modified within</strong>
-               <select value={recentMinutes} onChange={e=>{setRecentMinutes(e.target.value);setPage(1)}}>
+               <select aria-label="Time window" value={recentMinutes} onChange={e=>{setRecentMinutes(e.target.value);setPage(1)}}>
                <option value="">Any time / custom range</option>
                {([2,5,10,15,30,60,120,360,720,1440,10080,43200] as const)
                  .map(n=><option value={String(n)} key={n}>{n<60?n+" minutes":n<1440?(n/60)+" hours":(n/1440)+" days"}</option>)}
