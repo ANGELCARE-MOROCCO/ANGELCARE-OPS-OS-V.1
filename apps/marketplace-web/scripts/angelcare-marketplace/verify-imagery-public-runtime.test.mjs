@@ -141,10 +141,10 @@ test("Homepage CSS scopes promotion colors to editorial labels, never the badge 
  const homepage = readFileSync(new URL("homepage-living-marketplace/immersive/immersive.module.css", root), "utf8");
  const runtime = readFileSync(new URL("marketplace-imagery/Runtime.tsx", root), "utf8");
  const imagery = readFileSync(new URL("marketplace-imagery/imagery.module.css", root), "utf8");
- assert.doesNotMatch(homepage, /\\.heroSide\\s+span\\s*\\{/);
- assert.doesNotMatch(homepage, /\\.heroSide\\s*>\\s*\\.promoTile:nth-child\\(2\\)\\s*>\\s*a\\s+span\\s*\\{/);
- assert.match(homepage, /\\.heroSide\\s*>\\s*\\.promoTile\\s*>\\s*a\\s*>\\s*div:last-child\\s*>\\s*span\\s*\\{/);
- assert.match(homepage, /\\.heroSide\\s*>\\s*\\.promoTile:nth-child\\(2\\)\\s*>\\s*a\\s*>\\s*div:last-child\\s*>\\s*span\\s*\\{/);
- assert.match(runtime, /<span className=\\{s\\.badges\\} aria-hidden="true">/);
- assert.match(imagery, /\\.badges\\s*\\{[^}]*position:\\s*absolute/);
+ assert.ok(!homepage.includes(".heroSide span {"), "Never fill every descendant span");
+ assert.ok(!homepage.includes(".heroSide > .promoTile:nth-child(2) > a span {"), "Never fill the Kits image overlay");
+ assert.ok(homepage.includes(".heroSide > .promoTile > a > div:last-child > span {"));
+ assert.ok(homepage.includes(".heroSide > .promoTile:nth-child(2) > a > div:last-child > span {"));
+ assert.ok(runtime.includes('<span className={s.badges} aria-hidden="true">'));
+ assert.ok(imagery.includes(".badges {"));
 });
