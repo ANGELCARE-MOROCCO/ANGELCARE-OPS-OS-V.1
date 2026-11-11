@@ -22,6 +22,10 @@ const assets = imageIds.map((id,i) => ({
 const browser=await puppeteer.launch({executablePath:chrome,headless:true,
   args:["--no-sandbox","--disable-dev-shm-usage","--disable-gpu"]});
 const page=await browser.newPage();
+// The Media Vault is an approved full desktop workspace. Puppeteer's
+// default 800x600 viewport hides the inspector and can scroll an asset
+// underneath the sticky selection tray, creating misleading click results.
+await page.setViewport({width:1600,height:960,deviceScaleFactor:1});
 page.setDefaultTimeout(20000);
 try {
   await page.setRequestInterception(true);
@@ -47,13 +51,48 @@ try {
   assert.equal(columns.filters,true);
   assert.equal(columns.inspector,true);
   assert.equal(columns.tray,true);
+  const layout = await page.$eval('[data-native-media-vault="pro-max"]',el => {
+    const inspector = el.querySelector('aside[class*="inspector"]');
+    const tray = el.querySelector('footer');
+    return {
+      viewport: {width:innerWidth,height:innerHeight},
+      inspectorVisible: !!inspector && getComputedStyle(inspector).display !== "none",
+      trayVisible: !!tray && getComputedStyle(tray).display !== "none",
+    };
+  });
+  console.log("NATIVE_MEDIA_VAULT_DESKTOP_LAYOUT=" + JSON.stringify(layout));
+  assert.equal(layout.inspectorVisible,true,"Desktop inspector must be visibly rendered");
   const selectAndVerify = async (title, expectedCount) => {
-    await page.click('article button[aria-label="Select ' + title + '"]');
-    await page.waitForFunction(({title,expectedCount}) => {
-      const selected = [...document.querySelectorAll('[data-native-media-vault="pro-max"] footer img')]
-        .map(image => image.getAttribute("alt"));
-      return selected.length === expectedCount && selected.includes(title);
-    }, {timeout:8000}, {title,expectedCount});
+    const selector = 'article button[aria-label="Select ' + title + '"]';
+    const before = await page.$eval(selector, el => ({
+      disabled:el.disabled,
+      ineligible:el.closest('article')?.getAttribute('data-ineligible'),
+      reason:el.closest('article')?.querySelector('[class*="blockReason"]')?.textContent || "",
+    }));
+    console.log("NATIVE_MEDIA_VAULT_BEFORE=" + title + ":" + JSON.stringify(before));
+    assert.equal(before.disabled,false,title + ": asset must be selectable");
+    await page.click(selector);
+    try {
+      await page.waitForFunction(({title,expectedCount}) => {
+        const selected = [...document.querySelectorAll('[data-native-media-vault="pro-max"] footer img')]
+          .map(image => image.getAttribute("alt"));
+        return selected.length === expectedCount && selected.includes(title);
+      }, {timeout:8000}, {title,expectedCount});
+    } catch(error) {
+      const detail=await page.$eval(selector, el => {
+        const rect=el.getBoundingClientRect();
+        const hit=document.elementFromPoint(rect.left + rect.width / 2,rect.top + rect.height / 2);
+        return {
+          disabled:el.disabled,pressed:el.getAttribute('aria-pressed'),
+          ineligible:el.closest('article')?.getAttribute('data-ineligible'),
+          hitTag:hit?.tagName,hitLabel:hit?.getAttribute('aria-label'),
+          selected:[...document.querySelectorAll('[data-native-media-vault="pro-max"] footer img')]
+            .map(img=>img.alt),
+        };
+      });
+      console.error("NATIVE_MEDIA_VAULT_CLICK_FAILED=" + title + ":" + JSON.stringify(detail));
+      throw error;
+    }
     console.log("NATIVE_MEDIA_VAULT_SELECTED=" + title + ":" + expectedCount);
   };
   await selectAndVerify("Care Montessori",1);
