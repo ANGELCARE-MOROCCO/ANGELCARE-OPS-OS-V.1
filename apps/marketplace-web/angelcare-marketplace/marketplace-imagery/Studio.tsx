@@ -394,9 +394,9 @@ export function ImageryStudio() {
     setError("");
   }
   function addAsset(asset: { id: string; url: string; title: string }, mobile = false) {
+    const issue = imageReferenceIssue(asset?.url, asset?.id);
+    if (issue) { setError("Unable to assign this native image: " + issue); return; }
     if (mobile && image) {
-      const issue = imageReferenceIssue(asset.url, asset.id);
-      if (issue) { setError("Unable to assign this native image: " + issue); return; }
       patchImage({ mobile: asset.url, mobileAssetId: asset.id });
       return;
     }
