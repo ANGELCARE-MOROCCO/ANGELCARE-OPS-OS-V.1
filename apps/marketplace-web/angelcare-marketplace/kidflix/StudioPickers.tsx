@@ -10,125 +10,36 @@ import {
 } from "../digital-customer-experience/components/ui";
 import { tr, type Locale } from "./catalogue";
 import s from "../digital-customer-experience/components/workspace.module.css";
+import { NativeMediaVaultChooser } from "./NativeMediaVaultChooser";
+import type { NativeMediaAsset } from "./native-media-vault-contract";
+
+export type NativePickerSelection = Pick<NativeMediaAsset, "id" | "url" | "title">;
 export function NativeImagePicker({
-  onSelect,
+  onSelect, onSelectMany, max = 12, excludeIds = [], disabled = false,
 }: {
-  onSelect: (asset: { id: string; url: string; title: string }) => void;
+  onSelect: (asset: NativePickerSelection) => void;
+  onSelectMany?: (assets: NativePickerSelection[]) => void;
+  max?: number;
+  excludeIds?: string[];
+  disabled?: boolean;
 }) {
-  const { locale } = useUI(),
-    [open, setOpen] = useState(false);
-  return (
-    <>
-      <Button icon="Images" onClick={() => setOpen(true)}>
-        <T
-          v={[
-            "Choose from Media Library",
-            "Choisir dans la médiathèque",
-            "اختر من مكتبة الوسائط",
-          ]}
-        />
-      </Button>
-      {open ? (
-        <MediaChooser
-          onSelect={(a) => {
-            onSelect(a);
-            setOpen(false);
-          }}
-          onClose={() => setOpen(false)}
-        />
-      ) : null}
-    </>
-  );
-}
-function MediaChooser({
-  onSelect,
-  onClose,
-}: {
-  onSelect: (a: any) => void;
-  onClose: () => void;
-}) {
-  const { locale } = useUI(),
-    [search, setSearch] = useState(""),
-    [page, setPage] = useState(1),
-    q = useQuery<any>(
-      {
-        op: "native",
-        type: "media",
-        mime: "image/",
-        q: search,
-        page,
-        pageSize: 24,
-      },
-      { rows: [], total: 0 },
-    );
-  return (
-    <Dialog
-      wide
-      title={
-        <T
-          v={[
-            "Native images · existing vault",
-            "Images natives · coffre existant",
-            "الصور الأصلية · الخزنة الحالية",
-          ]}
-        />
-      }
-      onClose={onClose}
-    >
-      <input
-        type="search"
-        aria-label={tr(
-          ["Search images", "Rechercher des images", "ابحث عن الصور"],
-          locale,
-        )}
-        placeholder={tr(
-          ["Search images", "Rechercher des images", "ابحث عن الصور"],
-          locale,
-        )}
-        value={search}
-        onChange={(e) => {
-          setSearch(e.target.value);
-          setPage(1);
-        }}
-      />
-      <State {...q} retry={q.reload}>
-        <div className={s.definitionBoard}>
-          {q.value.rows.map((a: any) => (
-            <button
-              type="button"
-              className={s.rowCard}
-              key={a.id}
-              disabled={
-                !a.url || (a.expiresAt && Date.parse(a.expiresAt) <= Date.now())
-              }
-              onClick={() => onSelect(a)}
-            >
-              <img
-                src={a.url}
-                alt=""
-                style={{ width: "100%", height: 110, objectFit: "contain" }}
-              />
-              <strong>{a.title}</strong>
-            </button>
-          ))}
-        </div>
-        <div className={s.actions}>
-          <Button disabled={page === 1} onClick={() => setPage((v) => v - 1)}>
-            <T v={["Previous", "Précédent", "السابق"]} />
-          </Button>
-          <span>
-            {page} / {Math.max(1, Math.ceil(q.value.total / 24))}
-          </span>
-          <Button
-            disabled={page * 24 >= q.value.total}
-            onClick={() => setPage((v) => v + 1)}
-          >
-            <T v={["Next", "Suivant", "التالي"]} />
-          </Button>
-        </div>
-      </State>
-    </Dialog>
-  );
+  const [open, setOpen] = useState(false);
+  return <>
+    <Button icon="Images" disabled={disabled} onClick={() => setOpen(true)}>
+      <T v={["Choose from Media Library", "Choisir dans la médiathèque", "اختر من مكتبة الوسائط"]} />
+    </Button>
+    {open ? <NativeMediaVaultChooser
+      max={onSelectMany ? Math.max(1, Math.min(12, max)) : 1}
+      excludeIds={excludeIds}
+      onClose={() => setOpen(false)}
+      onConfirm={assets => {
+        const values = assets.map(({id,url,title}) => ({id,url,title}));
+        if (onSelectMany) onSelectMany(values);
+        else if (values[0]) onSelect(values[0]);
+        setOpen(false);
+      }}
+    /> : null}
+  </>;
 }
 export function FeaturedResourcePicker({
   language,

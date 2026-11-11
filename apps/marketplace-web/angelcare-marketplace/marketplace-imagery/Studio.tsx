@@ -373,41 +373,34 @@ export function ImageryStudio() {
         images: images.map((i) => (i.id === image.id ? { ...i, ...value } : i)),
       });
   }
-  function addAsset(
-    asset: { id: string; url: string; title: string },
-    mobile = false,
-  ) {
-    const issue = imageReferenceIssue(asset?.url, asset?.id);
-    if (issue) {
-      setError("Unable to assign this native image: " + issue);
-      return;
+  function addAssets(assets: { id: string; url: string; title: string }[]) {
+    const used = new Set(images.map(item => item.assetId));
+    const incoming = assets.filter(item => !used.has(item.id) && (used.add(item.id), true));
+    const limit = descriptor.sequence ? 12 - images.length : 1;
+    if (incoming.length > limit) { setError("Use up to twelve images per placement."); return; }
+    for (const asset of incoming) {
+      const issue = imageReferenceIssue(asset.url, asset.id);
+      if (issue) { setError("Unable to assign this native image: " + issue); return; }
     }
+    if (!incoming.length) return;
+    const next: Scene[] = incoming.map(asset => ({
+      id: newId(), src: asset.url, assetId: asset.id,
+      mobile: "", mobileAssetId: "", enabled: true, alt: asset.title,
+      focal: { x: 50, y: 50 }, mobileFocal: { x: 50, y: 50 },
+      fit: "cover", zoom: 1, mobileZoom: 1, duration: 0,
+    }));
+    patch({ images: descriptor.sequence ? [...images, ...next] : [next[0]] });
+    setSlideId(next[0].id);
     setError("");
+  }
+  function addAsset(asset: { id: string; url: string; title: string }, mobile = false) {
     if (mobile && image) {
+      const issue = imageReferenceIssue(asset.url, asset.id);
+      if (issue) { setError("Unable to assign this native image: " + issue); return; }
       patchImage({ mobile: asset.url, mobileAssetId: asset.id });
       return;
     }
-    if (images.length >= 12) {
-      setError("Use up to twelve images.");
-      return;
-    }
-    const next: Scene = {
-      id: newId(),
-      src: asset.url,
-      assetId: asset.id,
-      mobile: "",
-      mobileAssetId: "",
-      enabled: true,
-      alt: asset.title,
-      focal: { x: 50, y: 50 },
-      mobileFocal: { x: 50, y: 50 },
-      fit: "cover",
-      zoom: 1,
-      mobileZoom: 1,
-      duration: 0,
-    };
-    patch({ images: descriptor.sequence ? [...images, next] : [next] });
-    setSlideId(next.id);
+    addAssets([asset]);
   }
   async function operate(action: string, extra: any = {}) {
     setBusy(true);
@@ -1069,7 +1062,13 @@ export function ImageryStudio() {
                       </label>
                       <div className={s.libraryAction}>
                         <FolderOpen size={18} /><strong>Native media library</strong>
-                        <NativeImagePicker onSelect={(asset) => addAsset(asset)} />
+                        <NativeImagePicker
+                          onSelect={(asset) => addAsset(asset)}
+                          onSelectMany={descriptor?.sequence ? addAssets : undefined}
+                          max={descriptor?.sequence ? Math.max(1, 12 - images.length) : 1}
+                          excludeIds={images.map(item => item.assetId)}
+                          disabled={!canEdit || busy || loading || images.length >= (descriptor?.sequence ? 12 : 1)}
+                        />
                       </div>
                     </div>
                     <div className={s.sequenceBar}>

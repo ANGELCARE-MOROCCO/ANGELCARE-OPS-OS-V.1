@@ -470,7 +470,7 @@ export async function native(
   if (search)
     q =
       type === "media"
-        ? q.ilike("file_name", "%" + search + "%")
+        ? q.or("file_name.ilike.%" + search + "%,asset_key.ilike.%" + search + "%,alt_text_fr.ilike.%" + search + "%")
         : type === "offers"
           ? q.or(
               `name_fr.ilike.%${search}%,name_en.ilike.%${search}%,item_key.ilike.%${search}%`,
@@ -507,7 +507,23 @@ export async function native(
             status: r.status,
             rights: r.rights_status || r.license_type,
             expiresAt: r.rights_expires_at,
-            processingState: r.metadata?.status || null,
+            processingState: r.optimization_status || r.metadata?.status || null,
+            fileName: r.file_name,
+            assetKey: r.asset_key,
+            alt: r.alt_text_fr || r.alt_text_en || r.metadata?.alt || "",
+            width: r.width || r.metadata?.width || null,
+            height: r.height || r.metadata?.height || null,
+            folderId: r.folder_id || "",
+            folderName: r.metadata?.folder_name || r.metadata?.folder || "",
+            collection: r.metadata?.collection || "",
+            category: r.metadata?.category || "",
+            language: r.metadata?.language || "",
+            uploadedBy: r.metadata?.uploaded_by || "",
+            tags: Array.isArray(r.metadata?.tags) ? r.metadata.tags : [],
+            usageCount: r.usage_count ?? r.metadata?.usage_count ?? null,
+            variants: r.metadata?.variants?.length ?? null,
+            createdAt: r.created_at || "",
+            updatedAt: r.updated_at || "",
             metadata: {
               sha256: r.metadata?.sha256,
               width: r.metadata?.width,
