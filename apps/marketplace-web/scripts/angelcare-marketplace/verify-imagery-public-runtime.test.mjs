@@ -135,3 +135,16 @@ test("P0 wrappers preserve managed images and linked promotions have outside-lin
  const shell=readFileSync(new URL("public-universe/components/GlobalPublicShell.tsx",root),"utf8");
  assert.match(shell,/data-imagery-homepage-renderer/);
 });
+
+test("Homepage CSS scopes promotion colors to editorial labels, never the badge overlay", () => {
+ const root = new URL("../../angelcare-marketplace/", import.meta.url);
+ const homepage = readFileSync(new URL("homepage-living-marketplace/immersive/immersive.module.css", root), "utf8");
+ const runtime = readFileSync(new URL("marketplace-imagery/Runtime.tsx", root), "utf8");
+ const imagery = readFileSync(new URL("marketplace-imagery/imagery.module.css", root), "utf8");
+ assert.doesNotMatch(homepage, /\\.heroSide\\s+span\\s*\\{/);
+ assert.doesNotMatch(homepage, /\\.heroSide\\s*>\\s*\\.promoTile:nth-child\\(2\\)\\s*>\\s*a\\s+span\\s*\\{/);
+ assert.match(homepage, /\\.heroSide\\s*>\\s*\\.promoTile\\s*>\\s*a\\s*>\\s*div:last-child\\s*>\\s*span\\s*\\{/);
+ assert.match(homepage, /\\.heroSide\\s*>\\s*\\.promoTile:nth-child\\(2\\)\\s*>\\s*a\\s*>\\s*div:last-child\\s*>\\s*span\\s*\\{/);
+ assert.match(runtime, /<span className=\\{s\\.badges\\} aria-hidden="true">/);
+ assert.match(imagery, /\\.badges\\s*\\{[^}]*position:\\s*absolute/);
+});

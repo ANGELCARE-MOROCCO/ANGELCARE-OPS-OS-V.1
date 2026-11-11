@@ -515,7 +515,7 @@
   gap: 7px;
 }
 
-.heroSide span {
+.heroSide > .promoTile > a > div:last-child > span {
   display: block;
   font-size: 10px;
   letter-spacing: 0.03em;
@@ -526,7 +526,7 @@
   font-weight: 800;
 }
 
-.heroSide strong {
+.heroSide > .promoTile > a > div:last-child > strong {
   display: block;
   margin-top: 8px;
   font-family: Georgia, serif;
@@ -534,7 +534,7 @@
   line-height: 1.05;
 }
 
-.heroSide svg {
+.heroSide > .promoTile > a > div:last-child > svg {
   margin-top: 12px;
   width: 20px;
   height: 20px;
@@ -3137,7 +3137,7 @@
   background: linear-gradient(0deg, #b00a57ed, transparent 92%);
 }
 
-.heroSide > .promoTile:nth-child(2) > a span {
+.heroSide > .promoTile:nth-child(2) > a > div:last-child > span {
   background: #ffd133;
   color: #082d69;
 }
@@ -3545,7 +3545,7 @@
     display: none;
   }
 
-  .heroSide strong {
+  .heroSide > .promoTile > a > div:last-child > strong {
     font-size: 19px;
   }
 
@@ -4890,7 +4890,7 @@
     min-height: 140px;
   }
 
-  .heroSide strong {
+  .heroSide > .promoTile > a > div:last-child > strong {
     font-size: 19px;
   }
 
@@ -5219,7 +5219,7 @@
     font-size: 10px;
   }
 
-  .heroSide strong {
+  .heroSide > .promoTile > a > div:last-child > strong {
     font-size: 17px;
   }
 
@@ -5395,7 +5395,7 @@
     min-height: 140px;
   }
 
-  .heroSide strong {
+  .heroSide > .promoTile > a > div:last-child > strong {
     font-size: 19px;
   }
 
