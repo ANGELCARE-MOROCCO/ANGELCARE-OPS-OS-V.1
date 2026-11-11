@@ -47,9 +47,18 @@ try {
   assert.equal(columns.filters,true);
   assert.equal(columns.inspector,true);
   assert.equal(columns.tray,true);
-  await page.click('article button[aria-label="Select Care Montessori"]');
-  await page.click('article button[aria-label="Select Shapes and sorting"]');
-  await page.click('article button[aria-label="Select Early reading"]');
+  const selectAndVerify = async (title, expectedCount) => {
+    await page.click('article button[aria-label="Select ' + title + '"]');
+    await page.waitForFunction(({title,expectedCount}) => {
+      const selected = [...document.querySelectorAll('[data-native-media-vault="pro-max"] footer img')]
+        .map(image => image.getAttribute("alt"));
+      return selected.length === expectedCount && selected.includes(title);
+    }, {timeout:8000}, {title,expectedCount});
+    console.log("NATIVE_MEDIA_VAULT_SELECTED=" + title + ":" + expectedCount);
+  };
+  await selectAndVerify("Care Montessori",1);
+  await selectAndVerify("Shapes and sorting",2);
+  await selectAndVerify("Early reading",3);
   const selected=await page.$$eval('[data-native-media-vault="pro-max"] footer img',
     imgs => imgs.map(img => img.getAttribute("alt")));
   assert.deepEqual(selected,["Care Montessori","Shapes and sorting","Early reading"]);
