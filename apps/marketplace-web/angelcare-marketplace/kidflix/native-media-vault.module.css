@@ -128,3 +128,10 @@
 @media(max-width:1300px){.content{grid-template-columns:205px minmax(0,1fr) 252px}.assetGrid{grid-template-columns:repeat(3,minmax(0,1fr))}.toolbar{flex-wrap:wrap}.savedView{flex-basis:200px}.shell{height:calc(100dvh - 116px)}}
 @media(max-width:1060px){.content{grid-template-columns:185px minmax(0,1fr)}.inspector{display:none}.assetGrid{grid-template-columns:repeat(3,minmax(0,1fr))}.trayLabel{flex-basis:150px}}
 @media(max-height:760px){.shell{min-height:0;height:calc(100dvh - 112px)}.top{gap:8px;padding:10px}.tray{min-height:76px}}
+
+/* Complete-vault advanced filters: accessible white desktop controls. */
+.filterScroll .field>input:not([type="checkbox"]){display:block;width:100%;min-width:0;padding:8px 9px;border:1px solid #e1e3ed;background:#fff;border-radius:7px;color:#394360;font-size:11px}
+.filterScroll .field>input[type="datetime-local"]{font-size:10px}
+.filterScroll .field>input:focus-visible{outline:2px solid #8a60ef;outline-offset:1px}
+.catalogActions>.field{display:flex;flex-direction:row;align-items:center;gap:6px;font-size:10px;font-weight:800;color:#69718a}
+.catalogActions>.field select{min-width:76px;max-width:95px;padding:6px 20px 6px 7px;font-size:11px;background:#fff;border:1px solid #d9ddeb;border-radius:6px}

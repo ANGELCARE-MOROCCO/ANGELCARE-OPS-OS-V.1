@@ -11,7 +11,7 @@ import {
   Image as ImageIcon, Info, Layers3, List, Loader2, Maximize2, Search,
   ShieldCheck, SlidersHorizontal, Sparkles, Tags, UploadCloud, X,
 } from "lucide-react";
-import { Dialog, mutate, useQuery, useUI } from "../digital-customer-experience/components/ui";
+import { Dialog, mutate, query, useQuery, useUI } from "../digital-customer-experience/components/ui";
 import {
   addUniqueAssets, assetIssue, mediaPassesClientFilters, normalizeNativeAsset,
   publishedSafe, reorderAsset, type NativeMediaAsset, type MediaClientFilters,
@@ -45,7 +45,21 @@ export function NativeMediaVaultChooser({ max, excludeIds = [], onClose, onConfi
   const [search, setSearch] = useState("");
   const [debounced, setDebounced] = useState("");
   const [page, setPage] = useState(1);
-  const [mime, setMime] = useState("image/");
+  const [mime, setMime] = useState("");
+  const [pageSize, setPageSize] = useState<20 | 100 | 500>(100);
+  const [minSize,setMinSize] = useState("");
+  const [maxSize,setMaxSize] = useState("");
+  const [minWidth,setMinWidth] = useState("");
+  const [minHeight,setMinHeight] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [recentMinutes, setRecentMinutes] = useState("");
+  const [dateField, setDateField] = useState("created");
+  const [includeChildren, setIncludeChildren] = useState(true);
+  const [folderRows, setFolderRows] = useState<{id:string;name:string;parent_id:string|null;status:string;item_count:number|null}[]>([]);
+  const [folderLoading,setFolderLoading] = useState(true);
+  const [folderError,setFolderError] = useState("");
+  const [dateFrom,setDateFrom] = useState("");
+  const [dateTo,setDateTo] = useState("");
   const [format, setFormat] = useState("");
   const [rights, setRights] = useState("");
   const [processing, setProcessing] = useState("");
@@ -80,37 +94,83 @@ export function NativeMediaVaultChooser({ max, excludeIds = [], onClose, onConfi
     window.addEventListener("keydown", key);
     return () => window.removeEventListener("keydown", key);
   }, []);
-  const pageSize = 24;
-  const response = useQuery<{ rows: Record<string, unknown>[]; total: number }>({
-    op: "native", type: "media", mime: format ? "image/" + format : mime,
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setFolderLoading(true); setFolderError("");
+      try {
+        const rows: typeof folderRows = [];
+        for(let next = 1; next <= 200; next++) {
+          const data = await query<{rows:typeof folderRows;total:number;complete:boolean}>({
+            op:"vault_folders",page:next,
+          });
+          if(cancelled) return;
+          rows.push(...data.rows);
+          if(data.complete) {
+            setFolderRows(rows);
+            setFolderLoading(false);
+            return;
+          }
+        }
+        throw Error("Folder directory exceeds the safe page limit; full listing unavailable.");
+      } catch(error) {
+        if(!cancelled) {
+          setFolderError(error instanceof Error ? error.message : "Folder directory unavailable");
+          setFolderLoading(false);
+        }
+      }
+    })();
+    return () => {cancelled=true};
+  },[]);
+  const folderPaths = useMemo(() => {
+    const nodes=new Map(folderRows.map(f=>[f.id,f]));
+    const cache=new Map<string,string>();
+    function path(id:string, seen=new Set<string>()):string {
+      const row=nodes.get(id);
+      if(!row) return "Unresolved folder";
+      if(cache.has(id)) return cache.get(id)!;
+      if(seen.has(id)) return "Folder cycle / " + row.name;
+      seen.add(id);
+      const label=row.name || "Untitled folder";
+      const value=row.parent_id && nodes.has(row.parent_id)
+        ? path(row.parent_id,seen) + " / " + label : label;
+      cache.set(id,value);seen.delete(id);return value;
+    }
+    return new Map(folderRows.map(f=>[f.id,path(f.id)]));
+  },[folderRows]);
+  const response = useQuery<{
+    rows: Record<string, unknown>[]; total: number;inventoryTotal:number;
+    matchedBeforePagination?:boolean; page:number;pageSize:number;
+  }>({
+    op: "native", type: "media", vault:"true",
+    mime: format ? "image/" + format : mime,
     q: debounced, page, pageSize,
-  }, { rows: [], total: 0 });
+    status:statusFilter,folderId:folder,includeChildren:String(includeChildren),
+    rights,processing,sort,
+    orientation:filters.orientation,ratio:filters.ratio,
+    category:filters.category,collection:filters.collection,
+    language:filters.language,uploader:filters.uploader,tag:filters.tag,
+    used:filters.unusedOnly ? "unused" : filters.used,
+    readyOnly:String(filters.readyOnly),hasAlt:String(filters.hasAlt),
+    publishedSafe:String(filters.publishedSafe),
+    dateField,recentMinutes,
+    minSize,maxSize,minWidth,minHeight,
+    dateFrom: recentMinutes || !dateFrom ? "" : new Date(dateFrom).toISOString(),
+    dateTo: recentMinutes || !dateTo ? "" : new Date(dateTo).toISOString(),
+  }, { rows: [], total: 0, inventoryTotal:0, page, pageSize });
   const all = useMemo(() => response.value.rows.map(normalizeNativeAsset), [response.value.rows]);
-  const filtered = useMemo(() => {
-    const data = all.filter(a =>
-      (!rights || a.rights.toLowerCase() === rights) &&
-      (!processing || a.processingState.toLowerCase() === processing) &&
-      (!folder || a.folderId === folder) &&
-      mediaPassesClientFilters(a, filters)
-    );
-    return [...data].sort((a, b) => {
-      if (sort === "largest") return b.size - a.size;
-      if (sort === "smallest") return a.size - b.size;
-      if (sort === "name-desc") return b.title.localeCompare(a.title);
-      if (sort === "recent") return Date.parse(b.updatedAt || b.createdAt || "") - Date.parse(a.updatedAt || a.createdAt || "") || a.title.localeCompare(b.title);
-      return a.title.localeCompare(b.title);
-    });
-  }, [all, rights, processing, folder, filters, sort]);
+  // Filters and sorting run server-side against all matching records BEFORE pagination.
+  const filtered=all;
   const resultCount = Number(response.value.total || 0);
   const totalPages = Math.max(1, Math.ceil(resultCount / pageSize));
   const shown = Math.min(resultCount, (page - 1) * pageSize + all.length);
   const facets = useMemo(() => ({
     categories: options(all, "category"), collections: options(all, "collection"),
-    folders: [...new Map(all.filter(x => x.folderId).map(x => [x.folderId, { id: x.folderId, title: x.folderName || x.folderId }])).values()],
+    folders: folderRows.map(x=>({id:x.id,title:folderPaths.get(x.id) || x.name})),
     languages: options(all, "language"), uploaders: options(all, "uploadedBy"),
     rights: options(all, "rights"), processing: options(all, "processingState"),
     tags: [...new Set(all.flatMap(x => x.tags))].sort(),
-  }), [all]);
+  }), [all,folderRows,folderPaths]);
   const activeAsset = active || selected.at(-1) || filtered[0] || null;
   const limited = selected.length >= max;
   const isEligible = (a: NativeMediaAsset) => !assetIssue(a) && !excluded.has(a.id);
@@ -122,7 +182,7 @@ export function NativeMediaVaultChooser({ max, excludeIds = [], onClose, onConfi
     setActive(a);
   }
   function setFacet(key: keyof MediaClientFilters, value: string | boolean) {
-    setFilters(v => ({ ...v, [key]: value }));
+    setPage(1); setFilters(v => ({ ...v, [key]: value }));
   }
   function preset(value: string) {
     setView(value);
@@ -132,16 +192,18 @@ export function NativeMediaVaultChooser({ max, excludeIds = [], onClose, onConfi
       ...(value === "square" ? { orientation: "square" } : {}),
     });
     setRights(""); setProcessing(""); setFormat(""); setFolder("");
-    setPage(1);
+    setRecentMinutes(""); setDateFrom("");setDateTo("");
+    setMime("");setStatusFilter("all");setMinSize("");setMaxSize("");setMinWidth("");setMinHeight("");setPage(1);
   }
   const reset = () => { preset("all"); setSearch(""); };
-  const hasFilters = Boolean(search || rights || processing || format || folder ||
+  const hasFilters = Boolean(search || rights || processing || format || folder || recentMinutes || dateFrom || dateTo || minSize || maxSize || minWidth || minHeight || statusFilter!=="all" || mime ||
     Object.values(filters).some(Boolean));
   const chips = [
     ...(format ? [{ label: "Format: " + format.toUpperCase(), remove: () => setFormat("") }] : []),
     ...(rights ? [{ label: "Rights: " + rights, remove: () => setRights("") }] : []),
     ...(processing ? [{ label: "Processing: " + processing, remove: () => setProcessing("") }] : []),
-    ...(folder ? [{ label: "Folder", remove: () => setFolder("") }] : []),
+    ...(folder ? [{ label: "Folder: " + (folderPaths.get(folder)||"Unresolved"), remove: () => {setFolder("");setPage(1)} }] : []),
+    ...(recentMinutes ? [{label:"Last "+recentMinutes+" minutes",remove:()=>setRecentMinutes("")}] : []),
     ...Object.entries(filters).filter(([, value]) => Boolean(value)).map(([key, value]) => ({
       label: key.replace(/([A-Z])/g, " $1") + (typeof value === "string" ? ": " + value : ""),
       remove: () => setFacet(key as keyof MediaClientFilters, typeof value === "boolean" ? false : ""),
@@ -254,17 +316,30 @@ export function NativeMediaVaultChooser({ max, excludeIds = [], onClose, onConfi
             <button onClick={reset} type="button">Reset all</button></div>
           <div className={s.filterScroll}>
             <div className={s.field}><strong><FileImage size={14}/>Media type</strong>
-              <label className={s.check}><input type="checkbox" checked readOnly /> Images <span>{resultCount || "—"}</span></label>
-              <small>This selector only assigns image assets.</small></div>
+              <label className={s.field}><select aria-label="Media type" value={mime}
+                onChange={e=>{setMime(e.target.value);setFormat("");setPage(1)}}>
+                <option value="">All native media</option>
+                <option value="image">Images</option><option value="video">Video</option>
+                <option value="audio">Audio</option><option value="application">Documents / other</option>
+              </select></label>
+              <small>All authorized vault assets appear. Non-image media cannot be assigned to image-only slots.</small></div>
             <label className={s.field}><strong>Format</strong><select value={format} onChange={e => {setFormat(e.target.value);setPage(1);}}>
               <option value="">All image formats</option><option value="png">PNG</option><option value="jpeg">JPEG</option>
               <option value="webp">WebP</option><option value="avif">AVIF</option></select></label>
+            <label className={s.field}><strong>Asset lifecycle</strong>
+             <select aria-label="Asset lifecycle" value={statusFilter} onChange={e=>{setStatusFilter(e.target.value);setPage(1)}}>
+              <option value="all">All statuses</option><option value="active">Active</option>
+              <option value="archived">Archived</option><option value="draft">Draft</option>
+              <option value="processing">Processing</option>
+             </select></label>
             <label className={s.field}><strong><ShieldCheck size={14}/>Rights status</strong>
-              <select value={rights} onChange={e => setRights(e.target.value)}><option value="">Any rights status</option>
-                {facets.rights.map(x => <option value={x.toLowerCase()} key={x}>{x}</option>)}</select></label>
+              <input value={rights} placeholder="Any rights status" list="vault-rights-values"
+                onChange={e=>{setRights(e.target.value);setPage(1)}}/>
+              <datalist id="vault-rights-values">{facets.rights.map(x=><option key={x} value={x}/>)}</datalist></label>
             <label className={s.field}><strong><CircleCheck size={14}/>Processing status</strong>
-              <select value={processing} onChange={e => setProcessing(e.target.value)}><option value="">Any processing status</option>
-                {facets.processing.map(x => <option value={x.toLowerCase()} key={x}>{x}</option>)}</select></label>
+              <input value={processing} placeholder="Any processing status" list="vault-processing-values"
+                onChange={e=>{setProcessing(e.target.value);setPage(1)}}/>
+              <datalist id="vault-processing-values">{facets.processing.map(x=><option key={x} value={x}/>)}</datalist></label>
             <label className={s.field}><strong>Orientation</strong><select value={filters.orientation}
               onChange={e => setFacet("orientation",e.target.value)}><option value="">All orientations</option>
                 <option value="square">Square</option><option value="landscape">Landscape</option>
@@ -273,30 +348,64 @@ export function NativeMediaVaultChooser({ max, excludeIds = [], onClose, onConfi
               onChange={e => setFacet("ratio", e.target.value)}><option value="">All aspect ratios</option>
                 {["1:1","16:9","4:3","3:4"].map(x => <option key={x}>{x}</option>)}</select></label>
             <label className={s.field}><strong><FolderOpen size={14}/>Folder</strong>
-              <select value={folder} onChange={e => setFolder(e.target.value)}><option value="">All folders</option>
-                {facets.folders.map(x => <option key={x.id} value={x.id}>{x.title}</option>)}</select></label>
+              <select value={folder} disabled={folderLoading || !!folderError}
+                onChange={e=>{setFolder(e.target.value);setPage(1)}} aria-label="Native folder">
+                <option value="">All native folders ({folderRows.length})</option>
+                {facets.folders.map(x=><option key={x.id} value={x.id}>{x.title}</option>)}
+                </select>
+                {folderLoading && <small>Loading complete native folder directory…</small>}
+                {folderError && <small role="alert">{folderError}</small>}
+                <label className={s.check}><input type="checkbox" checked={includeChildren}
+                 onChange={e=>{setIncludeChildren(e.target.checked);setPage(1)}}/>
+                 Include nested folders</label></label>
             {(["collection","category","language","uploader"] as const).map(key =>
               <label className={s.field} key={key}><strong>{key === "uploader" ? "Uploaded by" : key[0].toUpperCase() + key.slice(1)}</strong>
-                <select value={filters[key]} onChange={e => setFacet(key, e.target.value)}>
-                  <option value="">Any {key}</option>
-                  {(key === "collection" ? facets.collections : key === "category" ? facets.categories : key === "language" ? facets.languages : facets.uploaders)
-                    .map(x => <option key={x}>{x}</option>)}</select></label>
+                <input value={filters[key]} placeholder={"Search " + key} list={"vault-" + key + "-suggestions"}
+                 onChange={e => setFacet(key,e.target.value)}/>
+                <datalist id={"vault-" + key + "-suggestions"}>
+                 {(key === "collection" ? facets.collections : key === "category" ? facets.categories : key === "language" ? facets.languages : facets.uploaders)
+                  .map(x => <option value={x} key={x}/>)}
+                </datalist></label>
             )}
             <label className={s.field}><strong><Tags size={14}/>Tags</strong>
-              <select value={filters.tag} onChange={e => setFacet("tag", e.target.value)}>
-                <option value="">All tags</option>{facets.tags.map(x => <option key={x}>{x}</option>)}</select></label>
+              <input value={filters.tag} placeholder="Search tags in vault" list="vault-tag-suggestions"
+               onChange={e=>setFacet("tag",e.target.value)}/>
+               <datalist id="vault-tag-suggestions">{facets.tags.map(x=><option key={x} value={x}/>)}</datalist></label>
             <label className={s.field}><strong>Usage</strong><select value={filters.used}
               onChange={e => setFacet("used", e.target.value)}><option value="">Any usage</option>
                 <option value="used">Used in content</option></select></label>
-            <label className={s.field}><strong><Clock3 size={14}/>Date range</strong>
-              <select value={filters.dateRange} onChange={e => setFacet("dateRange", e.target.value)}>
-                <option value="">Any date</option>
-                <option value="7">Last 7 days</option><option value="30">Last 30 days</option>
-                <option value="90">Last 90 days</option><option value="365">Last 12 months</option>
-              </select></label>
-            <label className={s.field}><strong>Sort by</strong><select value={sort} onChange={e => setSort(e.target.value)}>
+            <label className={s.field}><strong><Clock3 size={14}/>Date field</strong>
+                <select value={dateField} onChange={e=>{setDateField(e.target.value);setPage(1)}}>
+                 <option value="created">Date added/uploaded</option>
+                 <option value="updated">Last modified</option>
+                </select></label>
+             <label className={s.field}><strong>Added / modified within</strong>
+               <select value={recentMinutes} onChange={e=>{setRecentMinutes(e.target.value);setPage(1)}}>
+               <option value="">Any time / custom range</option>
+               {([2,5,10,15,30,60,120,360,720,1440,10080,43200] as const)
+                 .map(n=><option value={String(n)} key={n}>{n<60?n+" minutes":n<1440?(n/60)+" hours":(n/1440)+" days"}</option>)}
+               </select></label>
+             <label className={s.field}><strong>From (custom)</strong>
+               <input type="datetime-local" value={dateFrom} onChange={e=>{setDateFrom(e.target.value);setRecentMinutes("");setPage(1)}}/>
+             </label>
+             <label className={s.field}><strong>To (custom)</strong>
+               <input type="datetime-local" value={dateTo} onChange={e=>{setDateTo(e.target.value);setRecentMinutes("");setPage(1)}}/>
+             </label>
+            <label className={s.field}><strong>Minimum width (px)</strong>
+             <input type="number" min="0" value={minWidth} onChange={e=>{setMinWidth(e.target.value);setPage(1)}}/>
+            </label>
+            <label className={s.field}><strong>Minimum height (px)</strong>
+             <input type="number" min="0" value={minHeight} onChange={e=>{setMinHeight(e.target.value);setPage(1)}}/>
+            </label>
+            <label className={s.field}><strong>Minimum file size (bytes)</strong>
+             <input type="number" min="0" value={minSize} onChange={e=>{setMinSize(e.target.value);setPage(1)}}/>
+            </label>
+            <label className={s.field}><strong>Maximum file size (bytes)</strong>
+             <input type="number" min="0" value={maxSize} onChange={e=>{setMaxSize(e.target.value);setPage(1)}}/>
+            </label>
+            <label className={s.field}><strong>Sort by</strong><select value={sort} onChange={e => {setSort(e.target.value);setPage(1)}}>
               <option value="name-asc">Filename A–Z</option><option value="name-desc">Filename Z–A</option>
-              <option value="recent">Recently updated</option><option value="largest">Largest first</option>
+              <option value="recent">Recently added</option><option value="updated">Recently updated</option><option value="oldest">Oldest first</option><option value="largest">Largest first</option>
               <option value="smallest">Smallest first</option></select></label>
             <div className={s.toggles}>
               {([{key:"readyOnly",label:"Ready only"},{key:"hasAlt",label:"Has alt text"},
@@ -305,7 +414,7 @@ export function NativeMediaVaultChooser({ max, excludeIds = [], onClose, onConfi
                   <input type="checkbox" checked={filters[x.key]} onChange={e => setFacet(x.key, e.target.checked)} />
                   <span>{x.label}</span></label>)}
             </div>
-            <p className={s.filterNote}><Info size={13}/> Filename/format searches cover the vault; other facets operate on this loaded page and never imply global totals.</p>
+            <p className={s.filterNote}><Info size={13}/>All filters are evaluated against the complete authorized vault before pagination. Filtered totals come from the server.</p>
           </div>
         </aside>
         <main className={s.catalog}>
@@ -316,8 +425,15 @@ export function NativeMediaVaultChooser({ max, excludeIds = [], onClose, onConfi
             {hasFilters && <button type="button" className={s.clear} onClick={reset}>Clear all</button>}
           </div>
           <div className={s.catalogTop}><div><strong>{resultCount.toLocaleString()} assets</strong>
-            <small>Showing {resultCount ? (page - 1) * pageSize + 1 : 0}–{shown} · {filtered.length} match current-page filters</small></div>
-            <div className={s.catalogActions}><button type="button" className={grid ? s.activeView : ""} onClick={() => setGrid(true)} aria-label="Grid view"><Grid2X2 size={17}/></button>
+            <small>Showing {resultCount ? (page - 1) * pageSize + 1 : 0}–{shown} matching globally · {Number(response.value.inventoryTotal ?? resultCount).toLocaleString()} total assets in vault</small></div>
+            <div className={s.catalogActions}>
+             <label className={s.field}>Per page
+              <select aria-label="Results per page" value={pageSize}
+               onChange={e=>{setPageSize(Number(e.target.value) as 20|100|500);setPage(1)}}>
+               <option value={20}>20</option><option value={100}>100</option><option value={500}>500</option>
+              </select>
+             </label>
+             <button type="button" className={grid ? s.activeView : ""} onClick={() => setGrid(true)} aria-label="Grid view"><Grid2X2 size={17}/></button>
               <button type="button" className={!grid ? s.activeView : ""} onClick={() => setGrid(false)} aria-label="List view"><List size={17}/></button>
               <button type="button" className={s.refresh} onClick={() => response.reload()} aria-label="Refresh media">Refresh</button></div></div>
           <div className={s.scroller}>
@@ -371,7 +487,7 @@ export function NativeMediaVaultChooser({ max, excludeIds = [], onClose, onConfi
             <dl className={s.metadata}>
               {[
                 ["Asset ID", activeAsset.id],["Filename", activeAsset.fileName],
-                ["Alt text", activeAsset.alt], ["Folder", activeAsset.folderName || activeAsset.folderId],
+                ["Alt text", activeAsset.alt], ["Folder", folderPaths.get(activeAsset.folderId) || activeAsset.folderName || "Root / Unfiled"],
                 ["Collection", activeAsset.collection],["Category", activeAsset.category],
                 ["Dimensions", activeAsset.width ? activeAsset.width + " × " + activeAsset.height + " px" : ""],
                 ["File size", fmt(activeAsset.size)],["Format (MIME)", activeAsset.mime],

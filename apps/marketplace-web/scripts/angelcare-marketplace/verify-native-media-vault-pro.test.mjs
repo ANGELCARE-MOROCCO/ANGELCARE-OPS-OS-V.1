@@ -43,3 +43,27 @@ test("existing consumers and sequence editors retain native picker contracts", a
  for(const p of ["marketplace-imagery/Studio.tsx","kidflix/imagery/Studio.tsx"])
   assert.match(code(p),/onSelectMany=/);
 });
+
+test("native media vault advanced inventory, real folder authority and global search are wired",async()=>{
+ const { readFileSync }=await import("node:fs");
+ const { fileURLToPath }=await import("node:url");
+ const root=new URL("../../angelcare-marketplace/",import.meta.url);
+ const read=p=>readFileSync(fileURLToPath(new URL(p,root)),"utf8");
+ const repo=read("digital-customer-experience/repository.ts");
+ const authority=read("digital-customer-experience/media-vault-authority.ts");
+ const chooser=read("kidflix/NativeMediaVaultChooser.tsx");
+ assert.match(repo,/vaultMedia\(c, input\)/);
+ assert.match(repo,/vaultFolders\(c, input\)/);
+ assert.match(authority,/angelcare_marketplace_media_folders/);
+ assert.match(authority,/angelcare_marketplace_media_assets/);
+ assert.match(authority,/result\.count \?\? 0/);
+ assert.match(authority,/const postFilter=Boolean/);
+ assert.match(authority,/const filtered=rows\.filter/);
+ assert.match(authority,/filtered\.slice\(\(page-1\)\*pageSize,page\*pageSize\)/);
+ assert.match(chooser,/op:"vault_folders"/);
+ assert.match(chooser,/vault:"true"/);
+ assert.match(chooser,/includeChildren/);
+ assert.match(chooser,/setPageSize\(Number\(e\.target\.value\)/);
+ for(const x of ["2,5,10,15,30,60","dateFrom","dateTo","folderRows","minSize","minWidth"])
+  assert.ok(chooser.includes(x),x+" filter is missing");
+});

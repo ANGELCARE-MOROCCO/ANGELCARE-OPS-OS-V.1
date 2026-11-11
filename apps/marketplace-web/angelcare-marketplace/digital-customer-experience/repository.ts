@@ -1,4 +1,5 @@
 import { activeDeliveryData, activeDeliveryRecord, isHtmlDelivery } from "./delivery-contract";
+import { vaultMedia, vaultFolders } from "./media-vault-authority";
 import { parseCsv } from "./imports";
 import { safeMediaUrl } from "../kidflix/media-url";
 import {
@@ -2958,6 +2959,9 @@ export async function read(c: Context, input: Record<string, unknown>) {
   if (op === "bootstrap") return bootstrap(c, number(input.days, 30));
   if (op === "record") return record(c, text(input.id));
   if (op === "history") return revisions(c, text(input.id), input);
+  if (op === "vault_folders") return vaultFolders(c, input);
+  if (op === "native" && text(input.type) === "media" && input.vault === "true")
+    return vaultMedia(c, input);
   if (op === "native") return native(c, text(input.type), input);
   if (op === "template") {
     authorize(c, "view");
