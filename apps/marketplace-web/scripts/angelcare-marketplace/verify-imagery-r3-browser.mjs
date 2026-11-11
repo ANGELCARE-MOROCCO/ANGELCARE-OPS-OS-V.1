@@ -133,7 +133,14 @@ try {
         el => getComputedStyle(el).backgroundColor);
       assert.equal(label, name === "badges-kits" ? "rgb(255, 209, 51)" : "rgb(244, 45, 120)",
         name + ": editorial promotional label colors must remain intact");
-      await page.hover("[data-r3-promotion-link]");
+      // Badge fixture elements may be outside the viewport due to their
+      // promotional parent layout; dispatch the real bubbling mouseover event
+      // instead of asking Puppeteer for a non-clickable coordinate.
+      await page.evaluate(() => {
+        const link = document.querySelector("[data-r3-promotion-link]");
+        if (!link) throw Error("Promotion link is missing from the badge test.");
+        link.dispatchEvent(new MouseEvent("mouseover", { bubbles: true }));
+      });
       await page.waitForFunction(([sel, first]) =>
         Number(document.querySelector(sel)?.getAttribute("data-imagery-frame")) !== first,
         { timeout: 7500 }, [art, 1]);
