@@ -1,0 +1,9 @@
+.accountFrame{min-height:100vh;isolation:isolate}
+.accountFrame :global([data-footer-personalization]){display:none!important}
+.accountLegal{max-width:1520px;margin:0 auto;padding:24px clamp(16px,3vw,48px) 32px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:20px;background:#fff;color:#40324f;font-size:12px}
+.accountLegal>span{font-size:13px;font-weight:900;letter-spacing:.07em}
+.accountLegal>span small{display:block;color:#867b91;font-size:11px;font-weight:500;letter-spacing:normal;margin-top:6px}
+.accountLegal nav{display:flex;align-items:center;flex-wrap:wrap;gap:12px 24px}
+.accountLegal nav a{text-decoration:none;color:#6e577b}
+.accountLegal nav a:hover{text-decoration:underline;text-underline-offset:4px}
+@media(max-width:780px){.accountLegal{padding:22px 18px calc(112px + env(safe-area-inset-bottom,0px));gap:14px}.accountLegal nav{gap:10px 17px}}
