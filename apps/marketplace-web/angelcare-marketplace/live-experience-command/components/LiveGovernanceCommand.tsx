@@ -39,7 +39,7 @@ const tabs: Array<{ mode: LiveGovernanceMode; label: string }> = [
   { mode: 'history', label: 'Historique' }, { mode: 'settings', label: 'Settings' },
 ]
 
-async function send(mode: LiveGovernanceMode, method: 'POST' | 'PATCH', body: Row) {
+async function send(mode: LiveGovernanceMode, method: 'POST' | 'PATCH' | 'DELETE', body: Row) {
   const response = await fetch(`/api/angelcare-marketplace/admin/live-experience/${mode}`, {
     method, headers: { 'content-type': 'application/json' }, body: JSON.stringify(body),
   })
@@ -53,9 +53,10 @@ export function LiveGovernanceCommand({ mode, rows, canManage,canPublish=false,c
   const requestAction = useGovernedAction()
   const definition = definitions[mode]
   const Icon = definition.icon
+  const [showTrash,setShowTrash]=useState(false)
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState('')
-  const [editingId, setEditingId] = useState('')
+  const [editingId, setEditingId] = useState(''),[rowVersion,setRowVersion]=useState(1)
   const [currentStatus, setCurrentStatus] = useState('')
   const [key, setKey] = useState('')
   const [name, setName] = useState('')
@@ -82,7 +83,7 @@ export function LiveGovernanceCommand({ mode, rows, canManage,canPublish=false,c
   const active = useMemo(() => rows.filter((row) => ['active', 'running', 'scheduled', 'ready'].includes(text(row.status))).length, [rows])
   const statuses = useMemo(() => new Set(rows.map((row) => text(row.status || row.record_type || 'recorded'))), [rows])
 
-  async function execute(method: 'POST' | 'PATCH', body: Row) {
+  async function execute(method: 'POST' | 'PATCH' | 'DELETE', body: Row) {
     if (!canManage) { setMessage('Lecture seule · l’autorité Live Experience manage est requise.'); return }
     setBusy(true); setMessage('')
     try {
@@ -95,7 +96,7 @@ export function LiveGovernanceCommand({ mode, rows, canManage,canPublish=false,c
   }
 
   function selectRow(row: Row) {
-    setEditingId(text(row.id))
+    setEditingId(text(row.id));setRowVersion(Number(row.row_version)||1)
     setCurrentStatus(text(row.status))
     setKey(text(row.audience_key || row.placement_key || row.schedule_key || row.experiment_key || row.capability_key))
     setName(text(row.name || row.label || row.description))
@@ -120,7 +121,7 @@ export function LiveGovernanceCommand({ mode, rows, canManage,canPublish=false,c
     else if (mode === 'schedules') body = { id: editingId || undefined, schedule_key: key, campaign_id: campaignId, starts_at: startsAt?new Date(startsAt+'Z').toISOString():null, ends_at: endsAt?new Date(endsAt+'Z').toISOString():null, timezone, recurrence: { frequency,days:list(weekdays),start_time:startTime,end_time:endTime }, status: editingId ? currentStatus : 'draft' }
     else if (mode === 'experiments') body = { id: editingId || undefined, experiment_key: key, name, objective, variants: [{ key: 'control', label: variantA, weight: weightA }, { key: 'variant_b', label: variantB, weight: Math.max(0, 100 - weightA) }], allocation: { objective }, control_variant: 'control', starts_at: startsAt?new Date(startsAt+'Z').toISOString():null, ends_at: endsAt?new Date(endsAt+'Z').toISOString():null, winner_variant: winnerVariant || null, evidence: { note: evidence }, status: editingId ? currentStatus : 'draft' }
     else body = { id: editingId || undefined, capability_key: key, kind: capabilityKind, description: name, status: editingId ? currentStatus : 'active' }
-    void execute(editingId ? 'PATCH' : 'POST', body)
+    void execute(editingId ? 'PATCH' : 'POST', editingId?{...body,row_version:rowVersion}:body)
   }
 
   async function transition(row: Row, nextStatus: string) {
@@ -134,9 +135,22 @@ export function LiveGovernanceCommand({ mode, rows, canManage,canPublish=false,c
       permission: 'marketplace.live_experience.manage / publish selon la transition', danger: ['closed', 'archived', 'cancelled', 'inactive'].includes(nextStatus),
     })
     if (!reason) return
-    await execute('PATCH', { action: 'transition', id: row.id, nextStatus, reason })
+    await execute('PATCH', { action: 'transition', id: row.id, nextStatus, reason,version:Number(row.row_version)||1 })
   }
 
+  async function lifecycle(row:Row,action:'trash'|'restore'){
+    if(mode==='history'||mode==='settings'||!canManage||busy)return
+    const name=text(row.name||row.label||row.audience_key||row.placement_key||row.schedule_key||row.experiment_key||row.id)
+    const reason=await requestAction({title:action==='trash'?'Mettre en corbeille':'Restaurer',objectLabel:name,currentState:text(row.status),nextState:action,consequence:action==='trash'?'Le serveur vérifie les dépendances actives avant de masquer cet objet.':'L’objet est restauré inactif, jamais publié automatiquement.',reversibility:'Réversible sans suppression de l’historique.',permission:'marketplace.live_experience.manage',danger:action==='trash'})
+    if(!reason)return
+    await execute('PATCH',{action,id:row.id,version:Number(row.row_version)||1,reason})
+  }
+  function duplicate(row:Row){
+    if(mode==='history'||mode==='settings'||!canManage)return
+    selectRow(row);setEditingId('');setRowVersion(1)
+    setKey((text(row.audience_key||row.placement_key||row.schedule_key||row.experiment_key)||'copy')+'-copy-'+Date.now())
+    setCurrentStatus('draft');setMessage('Copie prête dans l’éditeur. Vérifiez puis cliquez sur Créer en brouillon.')
+  }
   return <main className={styles.shell} data-readonly={!canManage}>
     <section className={styles.hero}><div><span>{definition.eyebrow}</span><h1>{definition.title}</h1><p>{definition.copy}</p></div><aside><Icon/><div><b>{rows.length}</b><small>objets gouvernés</small></div><div><strong>{active}</strong><small>actifs / programmés</small></div></aside></section>
     <nav className={styles.modeTabs} aria-label="Gouvernance Live Experience">{tabs.map((tab) => <Link key={tab.mode} data-active={mode === tab.mode} href={`/angelcare-marketplace/admin/live-experience-command/${tab.mode}`}>{tab.label}</Link>)}</nav>
@@ -153,6 +167,6 @@ export function LiveGovernanceCommand({ mode, rows, canManage,canPublish=false,c
       <button type="button" disabled={busy || !canManage || !key || (mode !== 'schedules' && !name)} onClick={save}>{busy ? 'Enregistrement…' : editingId ? 'Enregistrer les changements' : 'Créer en brouillon'}</button>
     </div></section> : null}
     {message ? <div className={styles.message}>{message}</div> : null}
-    <section className={styles.table}><header><strong>Registre source</strong><span>Statut</span><span>Commandes gouvernées</span></header>{rows.map((row, index) => { const id = text(row.id || index); const label = text(row.name || row.label || row.audience_key || row.placement_key || row.schedule_key || row.experiment_key || row.capability_key || row.action || id); const status = text(row.status || row.record_type || 'recorded'); const next = mode === 'history' ? [] : lifecycle[mode][status] || []; return <article key={`${id}-${index}`} tabIndex={mode==='history'?undefined:0} onKeyDown={e=>{if(mode!=='history'&&(e.key==='Enter'||e.key===' ')){e.preventDefault();selectRow(row)}}} onClick={() => mode !== 'history' && selectRow(row)}><div><strong>{label}</strong><small>{text(row.object_type || row.family || row.kind || row.objective || row.created_at || row.updated_at)}</small></div><span>{status}</span><div className={styles.actions}>{mode !== 'history' ? next.map((nextStatus) => <button type="button" key={nextStatus} disabled={busy || !canManage||(['active','running','winner','scheduled'].includes(nextStatus)&&!canPublish)} onClick={(event) => { event.stopPropagation(); void transition(row, nextStatus) }}>{nextStatus}</button>) : <small>{text(row.created_at)}</small>}</div></article> })}{!rows.length ? <div className={styles.empty}>Aucun objet persisté. Créez le premier élément depuis l’éditeur structuré.</div> : null}</section>
+    <div className={styles.lifecycleToolbar}><strong>Registre des autorités · actions auditables</strong><button type="button" aria-pressed={showTrash} data-active={showTrash} onClick={()=>setShowTrash(x=>!x)}>{showTrash?'Retour aux autorités actives':'Ouvrir la corbeille'}</button></div><section className={styles.table}><header><strong>Registre source</strong><span>Statut</span><span>Commandes gouvernées</span></header>{rows.filter(r=>mode==='history'||Boolean(r.deleted_at)===showTrash).map((row, index) => { const id = text(row.id || index); const label = text(row.name || row.label || row.audience_key || row.placement_key || row.schedule_key || row.experiment_key || row.capability_key || row.action || id); const status = text(row.status || row.record_type || 'recorded'); const next = mode === 'history' ? [] : lifecycle[mode][status] || []; return <article key={`${id}-${index}`} tabIndex={mode==='history'?undefined:0} onKeyDown={e=>{if(mode!=='history'&&(e.key==='Enter'||e.key===' ')){e.preventDefault();selectRow(row)}}} onClick={() => mode !== 'history' && selectRow(row)}><div><strong>{label}</strong><small>{text(row.object_type || row.family || row.kind || row.objective || row.created_at || row.updated_at)}</small></div><span>{status}</span><div className={styles.actions}>{mode !== 'history' && !row.deleted_at ? next.map((nextStatus) => <button type="button" key={nextStatus} disabled={busy || !canManage||(['active','running','winner','scheduled'].includes(nextStatus)&&!canPublish)} onClick={(event) => { event.stopPropagation(); void transition(row, nextStatus) }}>{nextStatus}</button>) : mode==='history' ? <small>{text(row.created_at)}</small>:null}{mode!=='history'&&mode!=='settings'?(row.deleted_at?<button type="button" disabled={busy||!canManage} onClick={event=>{event.stopPropagation();void lifecycle(row,'restore')}}>Restaurer</button>:<><button type="button" disabled={busy||!canManage} onClick={event=>{event.stopPropagation();duplicate(row)}}>Dupliquer</button><button type="button" disabled={busy||!canManage} onClick={event=>{event.stopPropagation();void lifecycle(row,'trash')}}>Supprimer</button></>):null}</div></article> })}{!rows.length ? <div className={styles.empty}>Aucun objet persisté. Créez le premier élément depuis l’éditeur structuré.</div> : null}</section>
   </main>
 }

@@ -91,3 +91,14 @@ export function requiredCapabilities(c:LiveCampaign){
  if(c.experiment_id)keys.add(`${c.kind}.experiments`)
  return [...keys]
 }
+
+/** Global customer interruption budget. Applies across different campaigns, unlike per-campaign caps. */
+export type LiveInterruptionState={sessionId:string;events:number[];dismissedUntil:number}
+export function globalInterruptionEligible(state:LiveInterruptionState,sessionId:string,now=Date.now()){
+ const recent=state.events.filter(v=>Number.isFinite(v)&&v<=now)
+ if(state.dismissedUntil>now)return false
+ if(state.sessionId===sessionId&&recent.filter(v=>now-v<43200000).length>=2)return false
+ if(recent.filter(v=>now-v<86400000).length>=4)return false
+ if(recent.some(v=>now-v<900000))return false
+ return true
+}

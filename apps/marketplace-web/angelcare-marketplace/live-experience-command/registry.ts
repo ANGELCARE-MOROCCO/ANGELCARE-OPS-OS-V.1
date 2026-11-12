@@ -8,7 +8,201 @@ export const LIVE_PURPOSES=[...POPUP_PURPOSES,...BROADCAST_PURPOSES,...PROOF_PUR
 export const POPUP_THEMES=[{"key":"popup_sovereign_navy","kind":"popup","name":{"fr":"Sovereign Navy Focus","en":"Sovereign Navy Focus","ar":"تركيز كحلي سيادي"},"tokens":{"family":"popup","composition":"authority_split","background":"#071c38","surface":"#102d54","accent":"#61d8ff","text":"#ffffff","density":"balanced","media":"side"}},{"key":"popup_luminous_white","kind":"popup","name":{"fr":"Luminous White Executive","en":"Luminous White Executive","ar":"أبيض تنفيذي مضيء"},"tokens":{"family":"popup","composition":"executive_card","background":"#f7fbff","surface":"#ffffff","accent":"#0b5ea8","text":"#0a2340","density":"airy","media":"top"}},{"key":"popup_aurora_privilege","kind":"popup","name":{"fr":"Aurora Privilege","en":"Aurora Privilege","ar":"امتياز الشفق"},"tokens":{"family":"popup","composition":"benefit_theatre","background":"#08244b","surface":"#123e72","accent":"#8ee9ff","secondary":"#c6a15b","text":"#ffffff","density":"rich","media":"ambient"}},{"key":"popup_editorial_theatre","kind":"popup","name":{"fr":"Editorial Experience Theatre","en":"Editorial Experience Theatre","ar":"مسرح التجربة التحريرية"},"tokens":{"family":"popup","composition":"media_editorial","background":"#eff6ff","surface":"#ffffff","accent":"#bd1f36","text":"#102c4a","density":"story","media":"hero"}},{"key":"popup_precision_command","kind":"popup","name":{"fr":"Precision Conversion Command","en":"Precision Conversion Command","ar":"قيادة تحويل دقيقة"},"tokens":{"family":"popup","composition":"data_command","background":"#071729","surface":"#0d2a48","accent":"#36c6f4","text":"#ffffff","density":"compact","media":"minimal"}}] as LiveTheme[]
 export const BROADCAST_THEMES=[{"key":"broadcast_navy_authority","kind":"broadcast","name":{"fr":"Navy Authority Ribbon","en":"Navy Authority Ribbon","ar":"شريط سلطة كحلي"},"tokens":{"family":"broadcast","composition":"ribbon","background":"#061f3e","accent":"#5ad2ff","text":"#ffffff"}},{"key":"broadcast_icy_glass","kind":"broadcast","name":{"fr":"Icy Glass Live Panel","en":"Icy Glass Live Panel","ar":"لوحة زجاجية جليدية"},"tokens":{"family":"broadcast","composition":"glass_panel","background":"rgba(229,246,255,.95)","accent":"#0876bd","text":"#092a46"}},{"key":"broadcast_executive_white","kind":"broadcast","name":{"fr":"Executive White Signal","en":"Executive White Signal","ar":"إشارة تنفيذية بيضاء"},"tokens":{"family":"broadcast","composition":"white_signal","background":"#ffffff","accent":"#0a4b87","text":"#0b2946"}},{"key":"broadcast_aurora_privilege","kind":"broadcast","name":{"fr":"Aurora Privilege Broadcast","en":"Aurora Privilege Broadcast","ar":"بث امتياز الشفق"},"tokens":{"family":"broadcast","composition":"aurora","background":"#0a315b","accent":"#8cecff","secondary":"#d8b66f","text":"#ffffff"}},{"key":"broadcast_critical_ops","kind":"broadcast","name":{"fr":"Critical Operations Command","en":"Critical Operations Command","ar":"قيادة العمليات الحرجة"},"tokens":{"family":"broadcast","composition":"critical","background":"#671b2a","accent":"#ffd5dc","text":"#ffffff"}}] as LiveTheme[]
 export const PROOF_THEMES=[{"key":"proof_precision_commerce","kind":"proof","name":{"fr":"Precision Commerce","en":"Precision Commerce","ar":"تجارة دقيقة"},"tokens":{"family":"proof","composition":"metric_card","background":"#ffffff","accent":"#0a6fb5","text":"#0d2e4d"}},{"key":"proof_premium_urgency","kind":"proof","name":{"fr":"Premium Urgency","en":"Premium Urgency","ar":"استعجال فاخر"},"tokens":{"family":"proof","composition":"countdown","background":"#1d2340","accent":"#ffcb6b","text":"#ffffff"}},{"key":"proof_trust_evidence","kind":"proof","name":{"fr":"Trust Evidence","en":"Trust Evidence","ar":"دليل الثقة"},"tokens":{"family":"proof","composition":"evidence","background":"#edf9f6","accent":"#18866b","text":"#123b34"}},{"key":"proof_wallet_privilege","kind":"proof","name":{"fr":"Wallet Privilege","en":"Wallet Privilege","ar":"امتياز المحفظة"},"tokens":{"family":"proof","composition":"wallet_compare","background":"#082b54","accent":"#8ee8ff","secondary":"#d9b469","text":"#ffffff"}},{"key":"proof_live_activity","kind":"proof","name":{"fr":"Live Activity Signal","en":"Live Activity Signal","ar":"إشارة نشاط مباشر"},"tokens":{"family":"proof","composition":"activity","background":"#f7fbff","accent":"#bd1f36","text":"#122f4d"}}] as LiveTheme[]
-export const LIVE_THEMES=[...POPUP_THEMES,...BROADCAST_THEMES,...PROOF_THEMES]
+
+/** Ten independent, light-first 2026 popup compositions. System themes are immutable; clone campaigns to customize. */
+export const PREMIUM_POPUP_THEMES:LiveTheme[]=[
+  {
+    "key": "popup_atrium_editorial",
+    "kind": "popup",
+    "name": {
+      "en": "Editorial Atrium",
+      "fr": "Atrium éditorial",
+      "ar": "ردهة تحريرية"
+    },
+    "tokens": {
+      "family": "popup",
+      "composition": "atrium",
+      "background": "#FFFBF7",
+      "surface": "#F1E5E6",
+      "accent": "#9E346D",
+      "text": "#312338",
+      "density": "airy",
+      "media": "hero"
+    }
+  },
+  {
+    "key": "popup_terracotta_terrace",
+    "kind": "popup",
+    "name": {
+      "en": "Terracotta Terrace",
+      "fr": "Terrasse terracotta",
+      "ar": "شرفة الطين"
+    },
+    "tokens": {
+      "family": "popup",
+      "composition": "terrace",
+      "background": "#FCF1E4",
+      "surface": "#F5DFD4",
+      "accent": "#A54E43",
+      "text": "#422C33",
+      "density": "balanced",
+      "media": "side"
+    }
+  },
+  {
+    "key": "popup_botanical_care",
+    "kind": "popup",
+    "name": {
+      "en": "Botanical Care",
+      "fr": "Canopée végétale",
+      "ar": "رعاية نباتية"
+    },
+    "tokens": {
+      "family": "popup",
+      "composition": "botanical",
+      "background": "#F4FCF5",
+      "surface": "#E3F4EA",
+      "accent": "#257D62",
+      "text": "#203A34",
+      "density": "airy",
+      "media": "side"
+    }
+  },
+  {
+    "key": "popup_lilac_editorial",
+    "kind": "popup",
+    "name": {
+      "en": "Lilac Editorial",
+      "fr": "Editorial lilas",
+      "ar": "تحريري ليلكي"
+    },
+    "tokens": {
+      "family": "popup",
+      "composition": "lilac",
+      "background": "#FCF7FF",
+      "surface": "#F2E8FF",
+      "accent": "#7A4AAD",
+      "text": "#39214D",
+      "density": "balanced",
+      "media": "hero"
+    }
+  },
+  {
+    "key": "popup_compact_precision",
+    "kind": "popup",
+    "name": {
+      "en": "Compact Precision",
+      "fr": "Précision compacte",
+      "ar": "دقة مختصرة"
+    },
+    "tokens": {
+      "family": "popup",
+      "composition": "precision",
+      "background": "#F8F7FB",
+      "surface": "#EEEAF4",
+      "accent": "#58468F",
+      "text": "#2D2940",
+      "density": "airy",
+      "media": "side"
+    }
+  },
+  {
+    "key": "popup_bento_mosaic",
+    "kind": "popup",
+    "name": {
+      "en": "Bento Mosaic",
+      "fr": "Mosaïque Bento",
+      "ar": "فسيفساء بينتو"
+    },
+    "tokens": {
+      "family": "popup",
+      "composition": "bento",
+      "background": "#FFF7FA",
+      "surface": "#F9E6F1",
+      "accent": "#BA367F",
+      "text": "#39263A",
+      "density": "balanced",
+      "media": "side"
+    }
+  },
+  {
+    "key": "popup_museum_gallery",
+    "kind": "popup",
+    "name": {
+      "en": "Museum Gallery",
+      "fr": "Galerie musée",
+      "ar": "معرض متحفي"
+    },
+    "tokens": {
+      "family": "popup",
+      "composition": "museum",
+      "background": "#FAF7F2",
+      "surface": "#EEE5DD",
+      "accent": "#A06141",
+      "text": "#302624",
+      "density": "airy",
+      "media": "hero"
+    }
+  },
+  {
+    "key": "popup_glass_aurora",
+    "kind": "popup",
+    "name": {
+      "en": "Glass Aurora",
+      "fr": "Verre aurore",
+      "ar": "زجاج الشفق"
+    },
+    "tokens": {
+      "family": "popup",
+      "composition": "glass",
+      "background": "#F8FFFE",
+      "surface": "#DDF7F2",
+      "accent": "#2A8B85",
+      "text": "#253B3D",
+      "density": "balanced",
+      "media": "side"
+    }
+  },
+  {
+    "key": "popup_heritage_ledger",
+    "kind": "popup",
+    "name": {
+      "en": "Heritage Ledger",
+      "fr": "Registre héritage",
+      "ar": "سجل تراثي"
+    },
+    "tokens": {
+      "family": "popup",
+      "composition": "ledger",
+      "background": "#FAF7F5",
+      "surface": "#F0E8E4",
+      "accent": "#814F68",
+      "text": "#3A2C39",
+      "density": "airy",
+      "media": "side"
+    }
+  },
+  {
+    "key": "popup_warm_cinema",
+    "kind": "popup",
+    "name": {
+      "en": "Warm Cinema",
+      "fr": "Cinéma chaleureux",
+      "ar": "سينما دافئة"
+    },
+    "tokens": {
+      "family": "popup",
+      "composition": "cinema",
+      "background": "#FFF8F5",
+      "surface": "#F9E4E2",
+      "accent": "#AD4B77",
+      "text": "#30253C",
+      "density": "balanced",
+      "media": "hero"
+    }
+  }
+] as LiveTheme[]
+export const LIVE_THEMES=[...POPUP_THEMES,...PREMIUM_POPUP_THEMES,...BROADCAST_THEMES,...PROOF_THEMES]
 export const LIVE_PRESETS:LivePreset[]=LIVE_PURPOSES.flatMap((purpose)=>LIVE_THEMES.filter((theme)=>theme.kind===purpose.kind).map((theme)=>({key:`${purpose.key}__${theme.key}`,kind:purpose.kind,purposeKey:purpose.key,themeKey:theme.key,name:{fr:`${purpose.name.fr} · ${theme.name.fr}`,en:`${purpose.name.en} · ${theme.name.en}`,ar:`${purpose.name.ar} · ${theme.name.ar}`},configuration:{placement:purpose.defaultPlacement,trigger:purpose.defaultTrigger,parameters:purpose.parameters,tokens:theme.tokens}})))
 export const LIVE_PRESET_COUNTS={popup:POPUP_PURPOSES.length*POPUP_THEMES.length,broadcast:BROADCAST_PURPOSES.length*BROADCAST_THEMES.length,proof:PROOF_PURPOSES.length*PROOF_THEMES.length,total:LIVE_PRESETS.length}
 export const SAFE_FALLBACK={campaigns:[],purposes:LIVE_PURPOSES,themes:LIVE_THEMES,presets:LIVE_PRESETS,capabilities:LIVE_CAPABILITIES,placements:LIVE_PLACEMENTS,audiences:[],experiments:[],schedules:[],sources:[],analytics:{impressions:0,interactions:0,conversions:0,dismissals:0},counts:{campaigns:0,live:0,scheduled:0,popups:0,broadcasts:0,proof:0,presets:LIVE_PRESETS.length,capabilities:LIVE_CAPABILITIES.length,conflicts:0}}
