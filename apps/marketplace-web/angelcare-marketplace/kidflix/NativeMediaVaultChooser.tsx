@@ -509,7 +509,7 @@ export function NativeMediaVaultChooser({ max, acceptedMimePrefixes = ["image/"]
         </aside>
       </div>
       <footer className={s.tray}>
-        <div className={s.trayLabel}><Layers3 size={20}/><div><strong>Selected {selected.length} / {max}</strong>
+        <div className={s.trayLabel}><Layers3 size={20}/><div><strong>Selected {selected.length} / {max>500 ? '∞' : max}</strong>
           <small>Drag or use arrows to reorder your selection.</small></div></div>
         <div className={s.trayItems}>
           {selected.map((a,i) => <div className={s.selectedAsset} key={a.id} draggable
