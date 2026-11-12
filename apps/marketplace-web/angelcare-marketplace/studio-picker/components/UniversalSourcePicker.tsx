@@ -199,7 +199,7 @@ export function UniversalSourcePicker(props:UniversalPickerProps){
     </div>
     <button className={styles.openButton} type="button" disabled={disabled} onClick={()=>{setLegacyMediaMode(false);setOpen(true)}}><Search size={16}/><span>{refs.length||legacyValue?'Modifier la sélection':'Choisir dans AngelCare Marketplace'}</span><ChevronRight size={16}/></button>
     {media && open && !legacyMediaMode ? <NativeMediaVaultChooser
-      max={mode==='single'?1:Math.max(1,12-refs.length)}
+      max={mode==='single'?1:Number.MAX_SAFE_INTEGER}
       acceptedMimePrefixes={[]}
       excludeIds={mode==='multiple'?refs.map(row=>row.entityId):[]}
       onClose={()=>setOpen(false)}
