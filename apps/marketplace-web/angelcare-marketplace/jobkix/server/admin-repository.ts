@@ -35,6 +35,21 @@ export async function adminFile(slug:string,id:string){
  const result=await db.rpc('jobkix_admin_file_download',{p_actor:uuid(context.actor.id),p_file:uuid(id),p_area:slug,p_purpose:'Authorized JOBKIX '+slug+' evidence review in native administration.'});
  if(result.error)throw dependencyError(result.error);return object(result.data);
 }
+export async function verifyEditorialMediaAsset(id:string) {
+ await nativeAdmin('editorial');
+ await nativeMediaPermission();
+ const db=await createServiceClient(), validId=uuid(id);
+ const {data,error}=await db.from('angelcare_marketplace_media_assets')
+   .select('id,mime_type,rights_status,rights_expires_at,status,file_name')
+   .eq('id',validId).maybeSingle();
+ if(error)throw dependencyError(error);
+ if(!data||data.status!=='active'||
+   !['image/jpeg','image/png','image/webp','image/avif'].includes(data.mime_type)||
+   !['owned','licensed','public_domain'].includes(data.rights_status)||
+   (data.rights_expires_at&&Date.parse(data.rights_expires_at)<=Date.now()))
+   throw new JobkixFault('INVALID_INPUT');
+ return {id:validId,name:data.file_name,rights:data.rights_status};
+}
 export async function readEditorialMedia(query:string){
  await nativeAdmin('editorial');await nativeMediaPermission();
  const q=text(query,'q',0,120);if(!/^[\p{L}\p{M}\p{N}\s'’._-]*$/u.test(q))throw new JobkixFault('INVALID_INPUT');
