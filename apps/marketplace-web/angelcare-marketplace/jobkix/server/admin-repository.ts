@@ -40,7 +40,7 @@ export async function verifyEditorialMediaAsset(id:string) {
  await nativeMediaPermission();
  const db=await createServiceClient(), validId=uuid(id);
  const {data,error}=await db.from('angelcare_marketplace_media_assets')
-   .select('id,mime_type,rights_status,rights_expires_at,status,file_name')
+   .select('id,mime_type,rights_status,rights_expires_at,status,file_name,desktop_url,public_url')
    .eq('id',validId).maybeSingle();
  if(error)throw dependencyError(error);
  if(!data||data.status!=='active'||
@@ -48,6 +48,8 @@ export async function verifyEditorialMediaAsset(id:string) {
    !['owned','licensed','public_domain'].includes(data.rights_status)||
    (data.rights_expires_at&&Date.parse(data.rights_expires_at)<=Date.now()))
    throw new JobkixFault('INVALID_INPUT');
+ try { editorialPublicUrl(data.desktop_url||data.public_url); }
+ catch { throw new JobkixFault('INVALID_INPUT'); }
  return {id:validId,name:data.file_name,rights:data.rights_status};
 }
 export async function readEditorialMedia(query:string){
