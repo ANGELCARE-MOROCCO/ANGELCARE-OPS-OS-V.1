@@ -52,6 +52,9 @@ jobs:
       - name: Verify Media Vault R4 cross-workspace propagation
         run: node --experimental-strip-types --test apps/marketplace-web/scripts/angelcare-marketplace/verify-media-vault-r4-propagation.test.mjs
 
+      - name: Verify Live Experience 360 source and lifecycle contracts
+        run: node --experimental-strip-types --test apps/marketplace-web/scripts/angelcare-marketplace/verify-live-experience-360-source.test.mjs
+
       - name: Verify public Imagery Studio runtime recovery
         run: node --experimental-strip-types --test apps/marketplace-web/scripts/angelcare-marketplace/verify-imagery-public-runtime.test.mjs
 
