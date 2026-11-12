@@ -69,8 +69,29 @@ import { HtmlActivityEditor } from "./HtmlActivity";
 import { FamilyWorkbench } from "./FamilyWorkbench";
 import { RuntimePreview } from "./Preview";
 import s from "./workspace.module.css";
+import { NativeMediaVaultChooser } from "../../kidflix/NativeMediaVaultChooser";
 const message = (en: string, fr: string, ar: string) => [en, fr, ar] as const;
-export function Picker({
+export function Picker(props: {
+  type: "media" | "offers" | "record" | "staff" | "customers";
+  kind?: string;
+  mime?: string[];
+  family?: string;
+  onSelect: (id: string) => void;
+  onClose: () => void;
+}) {
+  if (props.type === "media") return <NativeMediaVaultChooser
+    max={1}
+    acceptedMimePrefixes={props.mime || []}
+    onClose={props.onClose}
+    onConfirm={assets => {
+      if (!assets[0]) return;
+      props.onSelect(assets[0].id);
+      props.onClose();
+    }}
+  />;
+  return <LegacyReferencePicker {...props} />;
+}
+function LegacyReferencePicker({
   type,
   onSelect,
   onClose,

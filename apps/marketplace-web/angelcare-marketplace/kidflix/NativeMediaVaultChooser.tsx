@@ -20,6 +20,7 @@ import s from "./native-media-vault.module.css";
 
 type Props = {
   max: number;
+  acceptedMimePrefixes?: readonly string[];
   excludeIds?: string[];
   onClose: () => void;
   onConfirm: (assets: NativeMediaAsset[]) => void;
@@ -40,7 +41,7 @@ const date = (v: string | null) => v && !Number.isNaN(Date.parse(v))
 const seen = (id: string, all: NativeMediaAsset[]) => all.some(item => item.id === id);
 const text = (v: string) => v || "Not recorded";
 
-export function NativeMediaVaultChooser({ max, excludeIds = [], onClose, onConfirm }: Props) {
+export function NativeMediaVaultChooser({ max, acceptedMimePrefixes = ["image/"], excludeIds = [], onClose, onConfirm }: Props) {
   const { locale, boot } = useUI();
   const [search, setSearch] = useState("");
   const [debounced, setDebounced] = useState("");
@@ -143,7 +144,7 @@ export function NativeMediaVaultChooser({ max, excludeIds = [], onClose, onConfi
     matchedBeforePagination?:boolean; page:number;pageSize:number;
   }>({
     op: "native", type: "media", vault:"true",
-    mime: format ? "image/" + format : mime,
+    mime: format ? "image/" + format : mime || (acceptedMimePrefixes.length === 1 ? acceptedMimePrefixes[0] : ""),
     q: debounced, page, pageSize,
     status:statusFilter,folderId:folder,includeChildren:String(includeChildren),
     rights,processing,sort,
@@ -173,12 +174,12 @@ export function NativeMediaVaultChooser({ max, excludeIds = [], onClose, onConfi
   }), [all,folderRows,folderPaths]);
   const activeAsset = active || selected.at(-1) || filtered[0] || null;
   const limited = selected.length >= max;
-  const isEligible = (a: NativeMediaAsset) => !assetIssue(a) && !excluded.has(a.id);
+  const isEligible = (a: NativeMediaAsset) => !assetIssue(a, Date.now(), acceptedMimePrefixes) && !excluded.has(a.id);
   function toggle(a: NativeMediaAsset) {
     if (!isEligible(a)) return;
     setSelected(current => seen(a.id, current)
       ? current.filter(item => item.id !== a.id)
-      : addUniqueAssets(current, [a], max, excludeIds));
+      : addUniqueAssets(current, [a], max, excludeIds, acceptedMimePrefixes));
     setActive(a);
   }
   function setFacet(key: keyof MediaClientFilters, value: string | boolean) {
@@ -302,7 +303,7 @@ export function NativeMediaVaultChooser({ max, excludeIds = [], onClose, onConfi
           </select></label>
           <input ref={uploadRef} type="file" accept="image/png,image/jpeg,image/webp,image/avif"
             multiple={max > 1} hidden onChange={e => void upload(e)} />
-          <button type="button" className={s.uploadButton} disabled={uploading}
+          <button type="button" className={s.uploadButton} disabled={uploading || (acceptedMimePrefixes.length > 0 && !acceptedMimePrefixes.some(prefix => "image/".startsWith(prefix) || prefix.startsWith("image/")))}
             onClick={() => uploadRef.current?.click()}><UploadCloud size={16} />{uploading ? "Uploading…" : "Upload new media"}</button>
           <button type="button" className={s.cancelButton} onClick={onClose}>Cancel</button>
           <button type="button" className={s.confirmButton} disabled={!selected.length || uploading}
@@ -446,7 +447,7 @@ export function NativeMediaVaultChooser({ max, excludeIds = [], onClose, onConfi
             {!response.loading && !response.error && filtered.length > 0 && <div className={grid ? s.assetGrid : s.assetList}>
               {filtered.map(a => {
                 const checked = seen(a.id, selected);
-                const issue = assetIssue(a) || (excluded.has(a.id) ? "Already assigned to this placement" : "");
+                const issue = assetIssue(a, Date.now(), acceptedMimePrefixes) || (excluded.has(a.id) ? "Already assigned to this placement" : "");
                 return <article key={a.id} className={s.assetCard} data-selected={checked} data-ineligible={!!issue}>
                   <button type="button" className={s.cardSelect} disabled={!!issue || (limited && !checked)} onClick={() => toggle(a)}
                     aria-pressed={checked} aria-label={(checked ? "Remove " : "Select ") + a.title}>
@@ -454,7 +455,7 @@ export function NativeMediaVaultChooser({ max, excludeIds = [], onClose, onConfi
                     <div className={s.thumb}>{a.mime.startsWith("image/") && a.url ? <img src={a.url} alt="" loading="lazy" /> : <FileImage size={28}/>}</div>
                     <div className={s.cardBody}><strong title={a.title}>{a.title}</strong>
                       <small>{a.width && a.height ? a.width + " × " + a.height + " · " : ""}{a.mime.split("/")[1]?.toUpperCase()} · {fmt(a.size)}</small>
-                      <div className={s.cardBadges}><span data-tone={publishedSafe(a) ? "good" : "neutral"}>{publishedSafe(a) ? "Rights approved" : a.rights || "Rights unverified"}</span>
+                      <div className={s.cardBadges}><span data-tone={publishedSafe(a, Date.now(), acceptedMimePrefixes) ? "good" : "neutral"}>{publishedSafe(a, Date.now(), acceptedMimePrefixes) ? "Rights approved" : a.rights || "Rights unverified"}</span>
                         <span data-tone="blue">{a.processingState || "Unknown status"}</span></div>
                       <small className={s.usage}>Used in: {a.usageCount ?? "—"}</small>
                     </div>
@@ -483,7 +484,7 @@ export function NativeMediaVaultChooser({ max, excludeIds = [], onClose, onConfi
               <button type="button" onClick={() => setExpanded(false)}><X size={18}/> Close</button>
             </div>}
             <div className={s.assetTitle}><strong>{activeAsset.title}</strong>
-              <span data-good={publishedSafe(activeAsset)}>{publishedSafe(activeAsset) ? "Published-safe" : "Review rights"}</span></div>
+              <span data-good={publishedSafe(activeAsset, Date.now(), acceptedMimePrefixes)}>{publishedSafe(activeAsset, Date.now(), acceptedMimePrefixes) ? "Published-safe" : "Review rights"}</span></div>
             <dl className={s.metadata}>
               {[
                 ["Asset ID", activeAsset.id],["Filename", activeAsset.fileName],
@@ -515,7 +516,7 @@ export function NativeMediaVaultChooser({ max, excludeIds = [], onClose, onConfi
             onDragStart={() => {dragRef.current = i;}}
             onDragOver={e => e.preventDefault()}
             onDrop={(e: DragEvent) => {e.preventDefault(); if (dragRef.current !== null) setSelected(rows => reorderAsset(rows,dragRef.current!,i));dragRef.current=null;}}>
-            <span className={s.position}>{i+1}</span><img src={a.url} alt={a.title}/>
+            <span className={s.position}>{i+1}</span>{a.mime.startsWith("image/") ? <img src={a.url} alt={a.title}/> : <FileImage aria-label={a.title} size={28}/>}
             <button type="button" onClick={() => setSelected(rows => rows.filter(x => x.id !== a.id))} aria-label={"Remove "+a.title}><X size={13}/></button>
             <div className={s.reorder}>
               <button type="button" disabled={i===0} onClick={() => setSelected(rows => reorderAsset(rows,i,i-1))} aria-label={"Move "+a.title+" earlier"}><ArrowLeft size={13}/></button>

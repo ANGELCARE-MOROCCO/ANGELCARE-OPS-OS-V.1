@@ -85,3 +85,22 @@ test("native folder query matches columns present in canonical schema",async()=>
  for(const status of ["active","archived","processing","paused","failed"])
    assert.ok(chooser.includes('<option value="'+status+'">'),status);
 });
+
+test("R4: media-type policies retain image-only safety while allowing DCE PDF/video/audio", () => {
+ const pdf=base("dce-pdf",{mime:"application/pdf",url:"/api/angelcare-marketplace/media/dce.pdf"});
+ const video=base("dce-video",{mime:"video/mp4",url:"/api/angelcare-marketplace/media/dce.mp4"});
+ assert.match(assetIssue(pdf),/does not accept/);
+ assert.equal(assetIssue(pdf,Date.now(),[]),"");
+ assert.equal(assetIssue(pdf,Date.now(),["application/pdf"]),"");
+ assert.match(assetIssue(video,Date.now(),["application/pdf"]),/does not accept/);
+ assert.deepEqual(addUniqueAssets([],[pdf,video],4,[],["application/pdf"]).map(x=>x.id),["dce-pdf"]);
+});
+test("R4: DCE media pickers use the common vault and non-media references remain legacy", () => {
+ const editor=readFileSync(new URL("../../angelcare-marketplace/digital-customer-experience/components/Editor.tsx",import.meta.url),"utf8");
+ const create=readFileSync(new URL("../../angelcare-marketplace/digital-customer-experience/components/CreationControls.tsx",import.meta.url),"utf8");
+ for(const code of [editor,create]){
+  assert.match(code,/NativeMediaVaultChooser/);
+  assert.match(code,/type === "media"/);
+  assert.match(code,/Legacy(?:Creation)?ReferencePicker/);
+ }
+});

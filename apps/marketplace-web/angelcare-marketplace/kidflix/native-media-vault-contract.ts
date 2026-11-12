@@ -60,17 +60,17 @@ export function normalizeNativeAsset(raw: Record<string, unknown>): NativeMediaA
     variants: raw.variants === null || raw.variants === undefined ? null : n(raw.variants),
   };
 }
-export function assetIssue(a: NativeMediaAsset, now = Date.now()): string {
+export function assetIssue(a: NativeMediaAsset, now = Date.now(), allowedMimePrefixes: readonly string[] = ["image/"]): string {
   if (!a.id || !a.url) return "No native media delivery URL";
   if (!/^\/(?!\/)|^https:\/\//i.test(a.url)) return "Unsupported media URL";
-  if (!a.mime.startsWith("image/")) return "This placement requires an image";
+  if (allowedMimePrefixes.length && !allowedMimePrefixes.some(prefix => a.mime.startsWith(prefix))) return "This placement does not accept " + (a.mime || "unknown media type");
   if (a.status && a.status !== "active") return "Asset is not active";
   if (a.expiresAt && Number.isFinite(Date.parse(a.expiresAt)) && Date.parse(a.expiresAt) <= now) return "Media rights expired";
   if (["rejected", "revoked", "denied", "blocked", "expired"].includes(a.rights.toLowerCase())) return "Media rights are not approved";
   return "";
 }
-export function publishedSafe(a: NativeMediaAsset, now = Date.now()): boolean {
-  return !assetIssue(a, now) && ["approved", "cleared", "verified", "owned", "licensed", "rights_approved"].includes(a.rights.toLowerCase());
+export function publishedSafe(a: NativeMediaAsset, now = Date.now(), allowedMimePrefixes: readonly string[] = ["image/"]): boolean {
+  return !assetIssue(a, now, allowedMimePrefixes) && ["approved", "cleared", "verified", "owned", "licensed", "rights_approved"].includes(a.rights.toLowerCase());
 }
 export function mediaPassesClientFilters(a: NativeMediaAsset, f: MediaClientFilters): boolean {
   const ratio = a.width > 0 && a.height > 0 ? a.width / a.height : 0;
@@ -91,12 +91,12 @@ export function mediaPassesClientFilters(a: NativeMediaAsset, f: MediaClientFilt
   if (f.used === "used" && (a.usageCount === null || a.usageCount < 1)) return false;
   return true;
 }
-export function addUniqueAssets(current: NativeMediaAsset[], incoming: NativeMediaAsset[], max: number, blocked: readonly string[] = []): NativeMediaAsset[] {
+export function addUniqueAssets(current: NativeMediaAsset[], incoming: NativeMediaAsset[], max: number, blocked: readonly string[] = [], allowedMimePrefixes: readonly string[] = ["image/"]): NativeMediaAsset[] {
   const ids = new Set([...blocked, ...current.map(x => x.id)]);
   const result = [...current];
   for (const asset of incoming) {
     if (result.length >= max) break;
-    if (ids.has(asset.id) || assetIssue(asset)) continue;
+    if (ids.has(asset.id) || assetIssue(asset, Date.now(), allowedMimePrefixes)) continue;
     ids.add(asset.id);
     result.push(asset);
   }

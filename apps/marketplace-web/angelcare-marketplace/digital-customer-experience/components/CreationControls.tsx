@@ -16,6 +16,7 @@ import {
 } from "../creation-model";
 import { Button, Icon, State, useQuery, useUI } from "./ui";
 import s from "./creation.module.css";
+import { NativeMediaVaultChooser } from "../../kidflix/NativeMediaVaultChooser";
 const words = (en: string, fr: string, ar: string): Tri => [en, fr, ar];
 const optionNames: Record<string, Tri> = {
   allowed: words("Allowed", "Autorisées", "مسموح"),
@@ -97,7 +98,29 @@ export function referenceFor(
     choose,
   };
 }
-export function CreationReferencePicker({
+export function CreationReferencePicker(props: {
+  request: ReferenceRequest;
+  onClose: () => void;
+}) {
+  if (props.request.type === "media") return <NativeMediaVaultChooser
+    max={1}
+    acceptedMimePrefixes={props.request.mime || []}
+    onClose={props.onClose}
+    onConfirm={assets => {
+      const asset = assets[0];
+      if (!asset) return;
+      props.request.choose({
+        ...asset,
+        file_name: asset.fileName,
+        mime_type: asset.mime,
+        media_type: asset.mime.split("/")[0],
+      });
+      props.onClose();
+    }}
+  />;
+  return <LegacyCreationReferencePicker {...props} />;
+}
+function LegacyCreationReferencePicker({
   request,
   onClose,
 }: {
