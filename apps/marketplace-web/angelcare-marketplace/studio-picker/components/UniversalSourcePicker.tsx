@@ -9,6 +9,7 @@ import { studioSourceAdminHref } from '../admin-destinations'
 import { exactLegacyEntity, isStudioSourceReference, normalizeSourceReferences } from '../reference'
 import type { UniversalPickerFilter, UniversalPickerProps } from '../types'
 import styles from './universal-source-picker.module.css'
+import { NativeMediaVaultChooser } from '../../kidflix/NativeMediaVaultChooser'
 
 const PAGE_SIZE=24
 const statusLabel=(value?:string)=>{
@@ -59,6 +60,7 @@ export function UniversalSourcePicker(props:UniversalPickerProps){
   const refs=useMemo(()=>normalizeSourceReferences(value),[value])
   const legacyValue=typeof value==='string'?value:''
   const [open,setOpen]=useState(false)
+  const [legacyMediaMode,setLegacyMediaMode]=useState(false)
   const [activeSource,setActiveSource]=useState(sourceId||allowedSources?.[0]||refs[0]?.sourceId||'')
   const [descriptor,setDescriptor]=useState<StudioSourceDescriptor|null>(null)
   const [availableSources,setAvailableSources]=useState<StudioSourceDescriptor[]>([])
@@ -195,8 +197,21 @@ export function UniversalSourcePicker(props:UniversalPickerProps){
       {refs.map(reference=><SelectionCard key={refKey(reference)} reference={reference} entity={entities[refKey(reference)]} validation={validations[refKey(reference)]} onRemove={()=>remove(reference)} adminBridge={adminBridge}/>)}
       {legacyValue&&!refs.length?(legacyEntity?<SelectionCard reference={legacyEntity.canonicalRef} entity={legacyEntity} onRemove={()=>onChange(null)} adminBridge={adminBridge}/>:<LegacySelectionCard value={legacyValue} onRemove={()=>onChange(null)}/>):null}
     </div>
-    <button className={styles.openButton} type="button" disabled={disabled} onClick={()=>setOpen(true)}><Search size={16}/><span>{refs.length||legacyValue?'Modifier la sélection':'Choisir dans AngelCare Marketplace'}</span><ChevronRight size={16}/></button>
-    {open?<div className={styles.overlay} onMouseDown={event=>{if(event.currentTarget===event.target)setOpen(false)}}>
+    <button className={styles.openButton} type="button" disabled={disabled} onClick={()=>{setLegacyMediaMode(false);setOpen(true)}}><Search size={16}/><span>{refs.length||legacyValue?'Modifier la sélection':'Choisir dans AngelCare Marketplace'}</span><ChevronRight size={16}/></button>
+    {media && open && !legacyMediaMode ? <NativeMediaVaultChooser
+      max={mode==='single'?1:Math.max(1,12-refs.length)}
+      acceptedMimePrefixes={[]}
+      excludeIds={mode==='multiple'?refs.map(row=>row.entityId):[]}
+      onClose={()=>setOpen(false)}
+      onConfirm={assets=>{
+        const additions=assets.map(asset=>({sourceId:'media.assets',entityId:asset.id}));
+        onChange(mode==='single' ? additions[0] || null : [...refs,...additions]);
+        setOpen(false);
+      }}
+    /> : null}
+    {media && open && !legacyMediaMode ? <button type="button" className={styles.openButton}
+       onClick={()=>setLegacyMediaMode(true)}>Ouvrir le sélecteur canonique de secours</button> : null}
+    {open && (!media || legacyMediaMode) ? <div className={styles.overlay} onMouseDown={event=>{if(event.currentTarget===event.target)setOpen(false)}}>
       <div className={styles.dialog} role="dialog" aria-modal="true" aria-label={label} ref={dialogRef} onKeyDown={onDialogKeyDown}>
         <header className={styles.dialogHeader}><div><span className={styles.kicker}>ANGELCARE · SOURCE CANONIQUE</span><h3>{descriptor?.labelPlural||label}</h3><p>{descriptor?.description||'Sélectionnez une ressource existante. Aucune donnée métier n’est copiée dans Studio.'}</p></div><button className={styles.closeButton} type="button" onClick={()=>setOpen(false)} aria-label="Fermer"><X size={19}/></button></header>
         {(allowedSources?.length||0)>1?<div className={styles.sourceTabs} role="tablist" aria-label="Type de source">{sourceCandidates.map(source=><button key={source.id} type="button" role="tab" aria-selected={activeSource===source.id} data-active={activeSource===source.id||undefined} onClick={()=>{setActiveSource(source.id);setQuery('');setResults([]);setNextCursor(null)}}>{source.labelPlural}</button>)}</div>:null}
