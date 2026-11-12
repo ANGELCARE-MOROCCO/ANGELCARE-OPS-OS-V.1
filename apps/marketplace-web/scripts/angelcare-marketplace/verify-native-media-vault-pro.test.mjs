@@ -1,4 +1,5 @@
 import { test } from "node:test";
+import { readFileSync } from "node:fs";
 import assert from "node:assert/strict";
 import { normalizeNativeAsset, assetIssue, addUniqueAssets, mediaPassesClientFilters, reorderAsset, publishedSafe } from "../../angelcare-marketplace/kidflix/native-media-vault-contract.ts";
 const base = (id, other = {}) => normalizeNativeAsset({
