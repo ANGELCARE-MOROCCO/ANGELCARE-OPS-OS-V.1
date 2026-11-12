@@ -209,8 +209,8 @@ export function UniversalSourcePicker(props:UniversalPickerProps){
         setOpen(false);
       }}
     /> : null}
-    {media && open && !legacyMediaMode ? <button type="button" className={styles.openButton}
-       onClick={()=>setLegacyMediaMode(true)}>Ouvrir le sélecteur canonique de secours</button> : null}
+    {media ? <button type="button" className={styles.openButton} disabled={disabled}
+       onClick={()=>{setLegacyMediaMode(true);setOpen(true)}}>Ouvrir le sélecteur canonique de secours</button> : null}
     {open && (!media || legacyMediaMode) ? <div className={styles.overlay} onMouseDown={event=>{if(event.currentTarget===event.target)setOpen(false)}}>
       <div className={styles.dialog} role="dialog" aria-modal="true" aria-label={label} ref={dialogRef} onKeyDown={onDialogKeyDown}>
         <header className={styles.dialogHeader}><div><span className={styles.kicker}>ANGELCARE · SOURCE CANONIQUE</span><h3>{descriptor?.labelPlural||label}</h3><p>{descriptor?.description||'Sélectionnez une ressource existante. Aucune donnée métier n’est copiée dans Studio.'}</p></div><button className={styles.closeButton} type="button" onClick={()=>setOpen(false)} aria-label="Fermer"><X size={19}/></button></header>
