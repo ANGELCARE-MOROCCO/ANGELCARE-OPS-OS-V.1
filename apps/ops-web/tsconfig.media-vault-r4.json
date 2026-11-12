@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "plugins": []
+  },
+  "include": [
+    "next-env.d.ts",
+    "app/(protected)/social-command/_components/MediaVaultPicker.tsx",
+    "app/api/social-command/media-vault/[...segments]/route.ts",
+    "lib/social-command/media-vault.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next",
+    "_archive",
+    "_restore_*",
+    "recovery"
+  ]
+}

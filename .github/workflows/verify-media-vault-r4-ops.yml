@@ -5,6 +5,9 @@ on:
     branches: [upgrade/next-angelcare-upgrade]
     paths:
       - "apps/ops-web/app/(protected)/social-command/_components/MediaVaultPicker.tsx"
+      - "apps/ops-web/lib/social-command/media-vault.ts"
+      - "apps/ops-web/app/api/social-command/media-vault/**"
+      - "apps/ops-web/tsconfig.media-vault-r4.json"
       - "apps/ops-web/app/(protected)/social-command/_components/MediaVaultPicker.module.css"
       - "apps/marketplace-web/scripts/angelcare-marketplace/verify-media-vault-r4-propagation.test.mjs"
       - ".github/workflows/verify-media-vault-r4-ops.yml"
@@ -26,6 +29,8 @@ jobs:
       - name: Install locked Operations dependencies
         working-directory: apps/ops-web
         run: npm ci --no-audit --no-fund
-      - name: Verify Operations TypeScript
+      - name: Verify Operations R4 TypeScript
         working-directory: apps/ops-web
-        run: npx tsc --noEmit --pretty false
+        env:
+          NODE_OPTIONS: --max-old-space-size=5120
+        run: npx tsc -p tsconfig.media-vault-r4.json --noEmit --incremental false --pretty false
