@@ -31,3 +31,93 @@
 .campaignActions button{display:inline-flex;align-items:center;gap:8px;min-height:41px;padding:10px 13px;border-radius:12px;background:#f3e9f9;border:1px solid #e4cce9;color:#643880;font-weight:800}
 .campaignActions button:last-child{background:#fff0f4;border-color:#f2cddd;color:#9f3569}
 .trashToggle[data-active=true]{background:#58358c!important;color:white!important}
+
+/* ANGELCARE LXC360: ten genuinely separate, brand-white-first popup compositions */
+.experience[data-kind=popup][data-variant=atrium]{grid-template-columns:1fr;max-width:900px;border-radius:9px;box-shadow:0 20px 50px #38223220}
+.experience[data-kind=popup][data-variant=atrium] .story{padding:55px 75px;text-align:center}
+.experience[data-kind=popup][data-variant=atrium] .story h2{font:500 clamp(34px,5vw,66px)/1.08 Georgia,serif;max-width:19ch;margin:18px auto}
+.experience[data-kind=popup][data-variant=atrium] .eyebrow{justify-content:center}
+.experience[data-kind=popup][data-variant=atrium] .message{margin-inline:auto}
+.experience[data-kind=popup][data-variant=atrium] .visual{order:-1;min-height:180px;max-height:265px}
+.experience[data-kind=popup][data-variant=terrace]{grid-template-columns:1.1fr .9fr;border-radius:8px 75px 8px 8px}
+.experience[data-kind=popup][data-variant=terrace] .visual{order:2;margin:22px;border-radius:100px 9px 100px 9px;min-height:340px}
+.experience[data-kind=popup][data-variant=terrace] .story{padding:45px 55px}
+.experience[data-kind=popup][data-variant=terrace] .story h2{font:500 clamp(32px,4vw,56px)/1.1 Georgia,serif}
+.experience[data-kind=popup][data-variant=terrace] .eyebrow{letter-spacing:.2em}
+.experience[data-kind=popup][data-variant=botanical]{grid-template-columns:1fr;max-width:850px;border-radius:56px 56px 19px 56px}
+.experience[data-kind=popup][data-variant=botanical] .visual{order:-1;max-height:230px;min-height:180px;border-radius:50px 50px 100px 19px}
+.experience[data-kind=popup][data-variant=botanical] .story{padding:40px 60px;text-align:center}
+.experience[data-kind=popup][data-variant=botanical] .story h2{font:500 clamp(32px,4vw,54px)/1.1 Georgia,serif;max-width:none}
+.experience[data-kind=popup][data-variant=botanical] .message{margin-inline:auto}
+.experience[data-kind=popup][data-variant=botanical] .eyebrow{justify-content:center}
+.experience[data-kind=popup][data-variant=lilac]{grid-template-columns:1fr .84fr;border-radius:25px}
+.experience[data-kind=popup][data-variant=lilac] .story{padding:50px 28px 50px 55px}
+.experience[data-kind=popup][data-variant=lilac] .visual{order:2;min-height:360px;clip-path:ellipse(77% 75% at 70% 50%)}
+.experience[data-kind=popup][data-variant=lilac] .eyebrow{text-transform:none;letter-spacing:.02em;font-family:Georgia,serif;font-size:14px}
+.experience[data-kind=popup][data-variant=lilac] .story h2{font-size:clamp(32px,4vw,59px)}
+.experience[data-kind=popup][data-variant=precision]{grid-template-columns:1fr;max-width:740px;border-radius:15px;border-top:7px solid var(--lx-accent)}
+.experience[data-kind=popup][data-variant=precision] .visual{display:none}
+.experience[data-kind=popup][data-variant=precision] .story{padding:38px 46px}
+.experience[data-kind=popup][data-variant=precision] .story h2{max-width:28ch;font-size:clamp(28px,3vw,40px);letter-spacing:-.025em}
+.experience[data-kind=popup][data-variant=precision] .blocks{grid-template-columns:repeat(2,minmax(0,1fr))}
+.experience[data-kind=popup][data-variant=precision] .block[data-block=action]{grid-column:1/-1}
+.experience[data-kind=popup][data-variant=bento]{grid-template-columns:1fr 1fr;gap:13px;padding:19px;border-radius:34px}
+.experience[data-kind=popup][data-variant=bento] .story{padding:35px;background:#fff;border-radius:25px}
+.experience[data-kind=popup][data-variant=bento] .visual{order:2;min-height:330px;border-radius:25px}
+.experience[data-kind=popup][data-variant=bento] .offerPanel{border-radius:13px}
+.experience[data-kind=popup][data-variant=bento] .story h2{font-size:clamp(32px,4vw,52px)}
+.experience[data-kind=popup][data-variant=museum]{grid-template-columns:1fr;max-width:880px;border-radius:0}
+.experience[data-kind=popup][data-variant=museum] .visual{order:-1;min-height:220px;max-height:300px;margin:18px 18px 0;border:1px solid #d7c4b8}
+.experience[data-kind=popup][data-variant=museum] .story{padding:37px 70px}
+.experience[data-kind=popup][data-variant=museum] .story h2{font:500 clamp(33px,4.5vw,59px)/1.12 Georgia,serif;max-width:25ch}
+.experience[data-kind=popup][data-variant=museum] .eyebrow{border-bottom:1px solid var(--lx-accent);padding-bottom:13px}
+.experience[data-kind=popup][data-variant=glass]{grid-template-columns:.85fr 1.15fr;border:1px solid #a6d9d0;border-radius:40px;backdrop-filter:blur(20px)}
+.experience[data-kind=popup][data-variant=glass] .visual{background:linear-gradient(125deg,#e4f9f4,#fff)}
+.experience[data-kind=popup][data-variant=glass] .story{padding:48px 50px}
+.experience[data-kind=popup][data-variant=glass] .aura{background:radial-gradient(circle at 18% 12%,#8de6d742,transparent 59%)}
+.experience[data-kind=popup][data-variant=glass] .story h2{font-size:clamp(31px,3.8vw,54px)}
+.experience[data-kind=popup][data-variant=ledger]{grid-template-columns:1fr;max-width:930px;border-radius:4px;border:2px solid #8b6b7d}
+.experience[data-kind=popup][data-variant=ledger] .visual{display:none}
+.experience[data-kind=popup][data-variant=ledger] .story{padding:42px 57px}
+.experience[data-kind=popup][data-variant=ledger] .eyebrow{border-bottom:2px solid var(--lx-accent);padding-bottom:17px}
+.experience[data-kind=popup][data-variant=ledger] .story h2{font:500 clamp(31px,4vw,54px)/1.12 Georgia,serif;max-width:none}
+.experience[data-kind=popup][data-variant=ledger] .blocks{border-top:1px solid #dfd1d7;padding-top:16px}
+.experience[data-kind=popup][data-variant=cinema]{grid-template-columns:1.1fr .9fr;min-height:390px;border-radius:14px 58px 14px 58px}
+.experience[data-kind=popup][data-variant=cinema] .visual{order:2;clip-path:polygon(8% 0,100% 0,100% 100%,0 100%)}
+.experience[data-kind=popup][data-variant=cinema] .story{padding:45px 60px}
+.experience[data-kind=popup][data-variant=cinema] .story h2{font-size:clamp(34px,4.6vw,62px);letter-spacing:-.055em}
+.experience[data-kind=popup][data-variant=cinema] .actionRow a{border-radius:99px}
+@media(max-width:760px){
+.experience[data-kind=popup][data-variant=atrium]{display:grid!important;grid-template-columns:1fr!important;min-height:0;border-radius:22px!important;padding:0!important}
+.experience[data-kind=popup][data-variant=atrium] .story{padding:25px!important;text-align:start!important}
+.experience[data-kind=popup][data-variant=atrium] .visual{clip-path:none!important;order:-1!important;min-height:150px;max-height:210px;border-radius:0!important;margin:0!important}
+.experience[data-kind=popup][data-variant=terrace]{display:grid!important;grid-template-columns:1fr!important;min-height:0;border-radius:22px!important;padding:0!important}
+.experience[data-kind=popup][data-variant=terrace] .story{padding:25px!important;text-align:start!important}
+.experience[data-kind=popup][data-variant=terrace] .visual{clip-path:none!important;order:-1!important;min-height:150px;max-height:210px;border-radius:0!important;margin:0!important}
+.experience[data-kind=popup][data-variant=botanical]{display:grid!important;grid-template-columns:1fr!important;min-height:0;border-radius:22px!important;padding:0!important}
+.experience[data-kind=popup][data-variant=botanical] .story{padding:25px!important;text-align:start!important}
+.experience[data-kind=popup][data-variant=botanical] .visual{clip-path:none!important;order:-1!important;min-height:150px;max-height:210px;border-radius:0!important;margin:0!important}
+.experience[data-kind=popup][data-variant=lilac]{display:grid!important;grid-template-columns:1fr!important;min-height:0;border-radius:22px!important;padding:0!important}
+.experience[data-kind=popup][data-variant=lilac] .story{padding:25px!important;text-align:start!important}
+.experience[data-kind=popup][data-variant=lilac] .visual{clip-path:none!important;order:-1!important;min-height:150px;max-height:210px;border-radius:0!important;margin:0!important}
+.experience[data-kind=popup][data-variant=precision]{display:grid!important;grid-template-columns:1fr!important;min-height:0;border-radius:22px!important;padding:0!important}
+.experience[data-kind=popup][data-variant=precision] .story{padding:25px!important;text-align:start!important}
+.experience[data-kind=popup][data-variant=precision] .visual{clip-path:none!important;order:-1!important;min-height:150px;max-height:210px;border-radius:0!important;margin:0!important}
+.experience[data-kind=popup][data-variant=bento]{display:grid!important;grid-template-columns:1fr!important;min-height:0;border-radius:22px!important;padding:0!important}
+.experience[data-kind=popup][data-variant=bento] .story{padding:25px!important;text-align:start!important}
+.experience[data-kind=popup][data-variant=bento] .visual{clip-path:none!important;order:-1!important;min-height:150px;max-height:210px;border-radius:0!important;margin:0!important}
+.experience[data-kind=popup][data-variant=museum]{display:grid!important;grid-template-columns:1fr!important;min-height:0;border-radius:22px!important;padding:0!important}
+.experience[data-kind=popup][data-variant=museum] .story{padding:25px!important;text-align:start!important}
+.experience[data-kind=popup][data-variant=museum] .visual{clip-path:none!important;order:-1!important;min-height:150px;max-height:210px;border-radius:0!important;margin:0!important}
+.experience[data-kind=popup][data-variant=glass]{display:grid!important;grid-template-columns:1fr!important;min-height:0;border-radius:22px!important;padding:0!important}
+.experience[data-kind=popup][data-variant=glass] .story{padding:25px!important;text-align:start!important}
+.experience[data-kind=popup][data-variant=glass] .visual{clip-path:none!important;order:-1!important;min-height:150px;max-height:210px;border-radius:0!important;margin:0!important}
+.experience[data-kind=popup][data-variant=ledger]{display:grid!important;grid-template-columns:1fr!important;min-height:0;border-radius:22px!important;padding:0!important}
+.experience[data-kind=popup][data-variant=ledger] .story{padding:25px!important;text-align:start!important}
+.experience[data-kind=popup][data-variant=ledger] .visual{clip-path:none!important;order:-1!important;min-height:150px;max-height:210px;border-radius:0!important;margin:0!important}
+.experience[data-kind=popup][data-variant=cinema]{display:grid!important;grid-template-columns:1fr!important;min-height:0;border-radius:22px!important;padding:0!important}
+.experience[data-kind=popup][data-variant=cinema] .story{padding:25px!important;text-align:start!important}
+.experience[data-kind=popup][data-variant=cinema] .visual{clip-path:none!important;order:-1!important;min-height:150px;max-height:210px;border-radius:0!important;margin:0!important}
+.experience[data-kind=popup][data-variant=ledger] .visual,.experience[data-kind=popup][data-variant=precision] .visual{display:none!important}
+.experience[data-kind=popup][data-variant=precision] .blocks{grid-template-columns:1fr}
+}

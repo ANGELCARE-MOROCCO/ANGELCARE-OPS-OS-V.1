@@ -2,7 +2,7 @@
 import {useState,useEffect,type CSSProperties,type ReactNode} from 'react'
 import {ArrowUpRight,Check,ChevronDown,Clock3,Compass,Layers3,ShieldCheck,Sparkles,X} from 'lucide-react'
 import type {LiveLocale,ResolvedLiveExperience} from '../types'
-import {recipeFor,visualVariant} from '../compositions'
+import {recipeFor,visualVariant,VISUAL_VARIANTS} from '../compositions'
 import {object,safeDestination,strings,textValue} from '../experience-contract'
 import {saveSelection,selectionHref} from '../../atomic-offer-experience/selection'
 import styles from '../studio-2030.module.css'
@@ -13,7 +13,7 @@ const readable=(value:unknown)=>typeof value==='string'||typeof value==='number'
 function values(fields:Record<string,unknown>,keys:string[]){return keys.flatMap(key=>{const value=fields[key];return Array.isArray(value)?value.filter(v=>typeof v==='string').map(v=>({key,value:String(v)})):readable(value)?[{key,value:readable(value)}]:[]}).slice(0,8)}
 export function ExperienceComposition({item,locale,onDismiss,preview=false,onEngage}:{item:ResolvedLiveExperience;locale:LiveLocale;onDismiss?:()=>void;preview?:boolean;onEngage?:(event:string)=>void}){
  const r=recipeFor(item.purposeKey),t=labels[locale],offer=item.offer,fields=offer?.fields||{},[choices,setChoices]=useState<Record<string,unknown>>({}),[expanded,setExpanded]=useState(false)
- const variant=visualVariant(item.themeKey),title=item.content.title||r.title[locale],image=textValue(item.media.asset_url)||offer?.image
+ const variant=VISUAL_VARIANTS.includes(item.tokens.composition as typeof VISUAL_VARIANTS[number])?item.tokens.composition:visualVariant(item.themeKey),title=item.content.title||r.title[locale],image=textValue(item.media.asset_url)||offer?.image
  const defaultHref=safeDestination(item.content.cta_href),nativeAction=item.conversion.action==='link'?null:item.conversion.action==='configure'&&offer?`/angelcare-marketplace/${locale}/experience/${encodeURIComponent(offer.slug)}/configure`:offer?.href
  const href=nativeAction||defaultHref
  const selectedHref=href&&Object.keys(choices).length?selectionHref(href,choices):href
