@@ -58,6 +58,62 @@ export async function listMediaVault(input:Record<string,unknown>,actor:SocialCo
   return {assets,categories:cats,collections:cols,stats:{active:active.length,archived:all.filter(a=>a.lifecycle_status==="archived").length,trashed:all.filter(a=>a.lifecycle_status==="trashed").length,ready:active.filter(a=>a.status==="ready").length,images:active.filter(a=>a.mime_type.startsWith("image/")).length,videos:active.filter(a=>a.mime_type.startsWith("video/")).length,favorites:active.filter(a=>a.favorite).length,categories:cats.filter(c=>c.status==="active").length,collections:cols.filter(c=>c.status==="active").length,bytes:active.reduce((n,a)=>n+Number(a.size_bytes||0),0)},permissions:mediaVaultPermissions(actor)}
 }
 
+export async function listMediaVaultPicker(input:Record<string,unknown>,actor:SocialCommandActor){
+ requirePermission(actor,"view");
+ const db=await socialDb();
+ const page=Math.max(1,Math.min(100000,Math.floor(Number(input.page)||1)));
+ const requested=Number(input.pageSize);
+ const pageSize=requested===20||requested===500?requested:100;
+ const categoryId=cleanString(input.category,120),collectionId=cleanString(input.collection,120);
+ const term=cleanString(input.q,250).toLocaleLowerCase();
+ const mime=cleanString(input.mime,60),orientation=cleanString(input.orientation,25),usage=cleanString(input.usage,30);
+ const kind=cleanString(input.kind,20),campaignId=cleanString(input.campaignId,120);
+ const field=input.dateField==="updated_at"?"updated_at":"created_at";
+ const minutes=Number(input.recentMinutes||0);
+ if(input.recentMinutes && (!Number.isInteger(minutes)||minutes<1||minutes>525600))throw Error("MEDIA_PICKER_INVALID_RECENT_INTERVAL");
+ const since=minutes?new Date(Date.now()-minutes*60000).toISOString():"";
+ const [allCats,allCols]=await Promise.all([categories(),collections()]);
+ const candidates:MediaVaultAsset[]=[];
+ let inventoryTotal=0,complete=false;
+ // Exhaustive authorized scan, independent of the legacy library's 1,200-row cap.
+ // Database predicates narrow recent-time and lifecycle searches BEFORE scanning.
+ for(let batch=0;batch<200;batch++){
+  let q=db.from("social_command_media_assets").select("*")
+   .neq("status","deleted").eq("status","ready")
+   .or("lifecycle_status.eq.active,lifecycle_status.is.null");
+  if(since)q=q.gte(field,since);
+  const {data,error}=await q.order("created_at",{ascending:false}).order("id",{ascending:true})
+   .range(batch*500,batch*500+499);
+  if(error)throw error;
+  const records=data||[];
+  inventoryTotal+=records.length;
+  if(records.length){
+   const hydrated=await hydrate(records);
+   for(const a of hydrated){
+    if(campaignId&&a.campaign_id&&a.campaign_id!==campaignId)continue;
+    if(kind&&!(kind==="image"?a.mime_type.startsWith("image/"):kind==="video"?a.mime_type.startsWith("video/"):true))continue;
+    if(mime&&!a.mime_type.startsWith(mime))continue;
+    if(categoryId&&!a.categories.some(c=>c.id===categoryId))continue;
+    if(collectionId&&!a.collections.some(c=>c.id===collectionId))continue;
+    if(usage==="used"&&a.usage_count<1||usage==="unused"&&a.usage_count!==0)continue;
+    const w=a.width||0,h=a.height||0,ratio=h?w/h:0;
+    if(orientation==="square"&&Math.abs(ratio-1)>.05)continue;
+    if(orientation==="portrait"&&(!ratio||ratio>=.95))continue;
+    if(orientation==="landscape"&&ratio<=1.05)continue;
+    if(term&&![a.title,a.original_filename,a.description,...a.tags,...a.categories.map(c=>c.name),...a.collections.map(c=>c.name)].join(" ").toLocaleLowerCase().includes(term))continue;
+    candidates.push(a);
+   }
+  }
+  if(records.length<500){complete=true;break}
+ }
+ if(!complete)throw Error("MEDIA_VAULT_INVENTORY_SCAN_LIMIT: source contains more assets than the verified scan limit");
+ return {
+  assets:candidates.slice((page-1)*pageSize,page*pageSize),
+  total:candidates.length,inventoryTotal,page,pageSize,complete:true,
+  categories:allCats,collections:allCols,
+ };
+}
+
 export async function getMediaVaultAsset(id:string,actor:SocialCommandActor){requirePermission(actor,"view");const db=await socialDb();const {data,error}=await db.from("social_command_media_assets").select("*").eq("id",id).maybeSingle();if(error)throw error;if(!data)throw new Error("Media asset not found");return (await hydrate([data]))[0]}
 
 async function replaceCategories(assetId:string,ids:string[]){const db=await socialDb();const {error:del}=await db.from("social_command_media_category_links").delete().eq("asset_id",assetId);if(del)throw del;if(ids.length){const {error}=await db.from("social_command_media_category_links").insert([...new Set(ids)].map(category_id=>({asset_id:assetId,category_id})));if(error)throw error}}

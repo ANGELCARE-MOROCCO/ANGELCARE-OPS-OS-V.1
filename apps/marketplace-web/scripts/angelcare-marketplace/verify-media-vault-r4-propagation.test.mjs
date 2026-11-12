@@ -59,7 +59,7 @@ test("R4 JobKix enforces native editorial rights with an authorized server read"
 test("R4 Windows Social Command uses its own authority with premium filters and inspector",()=>{
  const picker=ops("app/(protected)/social-command/_components/MediaVaultPicker.tsx");
  const styles=ops("app/(protected)/social-command/_components/MediaVaultPicker.module.css");
- assert.match(picker,/\/api\/social-command\/media-vault\/library/);
+ assert.match(picker,/\/api\/social-command\/media-vault\/picker/);
  assert.match(picker,/data-media-picker-r4="windows"/);
  assert.match(picker,/2,5,10,15,30,60,120,1440/);
  assert.match(picker,/pageSize/);
@@ -67,6 +67,13 @@ test("R4 Windows Social Command uses its own authority with premium filters and 
  assert.match(picker,/selectedIds/);
  assert.match(styles,/\.grid\{/);
  assert.match(styles,/\.inspector\{/);
+ const server=ops("lib/social-command/media-vault.ts");
+ const route=ops("app/api/social-command/media-vault/[...segments]/route.ts");
+ assert.match(server,/listMediaVaultPicker/);
+ assert.match(server,/MEDIA_VAULT_INVENTORY_SCAN_LIMIT/);
+ assert.match(server,/recentMinutes/);
+ assert.match(server,/candidates\.slice\(\(page-1\)\*pageSize,page\*pageSize\)/);
+ assert.match(route,/route==="picker"/);
 });
 test("R4 does not change the Marketplace media source registry or database ownership",()=>{
  const studio=source("studio-source-registry/adapters/index.ts");

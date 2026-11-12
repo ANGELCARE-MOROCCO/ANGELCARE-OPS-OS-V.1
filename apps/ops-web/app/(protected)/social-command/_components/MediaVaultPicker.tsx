@@ -1,42 +1,29 @@
 "use client"
-import {useEffect,useMemo,useState} from "react"
+import {useEffect,useState} from "react"
 import {Check,ChevronLeft,ChevronRight,Clock3,FolderKanban,Grid2X2,HardDrive,Images,List,Search,ShieldCheck,SlidersHorizontal,X} from "lucide-react"
 import styles from "./MediaVaultPicker.module.css"
 import type {MediaVaultAsset,MediaVaultBootstrap} from "@/lib/social-command/media-vault-types"
 type Props={selectedIds:string[];onChange:(ids:string[])=>void;campaignId?:string;label?:string;kind?:"image"|"video";max?:number}
-async function load(){
- const r=await fetch("/api/social-command/media-vault/library?lifecycle=active&status=ready",{cache:"no-store"})
+type PickerPayload=Pick<MediaVaultBootstrap,"assets"|"categories"|"collections">&{total:number;inventoryTotal:number;page:number;pageSize:number;complete:boolean}
+async function load(params:Record<string,string|number|undefined>){
+ const qs=new URLSearchParams()
+ for(const [key,value] of Object.entries(params))if(value!==undefined&&String(value)!=="")qs.set(key,String(value))
+ const r=await fetch("/api/social-command/media-vault/picker?"+qs.toString(),{cache:"no-store"})
  const p=await r.json().catch(()=>({ok:false,error:"HTTP "+r.status}))
  if(!r.ok||p?.ok===false)throw Error(p?.error||"HTTP "+r.status)
- return p.data as MediaVaultBootstrap
+ return p.data as PickerPayload
 }
 const fmt=(v:number)=>v>1048576?(v/1048576).toFixed(1)+" MB":(v/1024).toFixed(0)+" KB"
 export default function MediaVaultPicker({selectedIds,onChange,campaignId,label="MEDIA VAULT",kind,max}:Props){
- const [open,setOpen]=useState(false),[data,setData]=useState<MediaVaultBootstrap|null>(null),[error,setError]=useState(""),[loading,setLoading]=useState(false)
+ const [open,setOpen]=useState(false),[data,setData]=useState<PickerPayload|null>(null),[error,setError]=useState(""),[loading,setLoading]=useState(false)
  const [q,setQ]=useState(""),[category,setCategory]=useState(""),[collection,setCollection]=useState(""),[mime,setMime]=useState("")
  const [recent,setRecent]=useState(""),[dateField,setDateField]=useState<"created_at"|"updated_at">("created_at"),[orientation,setOrientation]=useState(""),[usage,setUsage]=useState("")
  const [page,setPage]=useState(1),[pageSize,setPageSize]=useState<20|100|500>(100),[view,setView]=useState<"grid"|"list">("grid")
  const [active,setActive]=useState<MediaVaultAsset|null>(null)
- useEffect(()=>{if(!open)return;let alive=true;setLoading(true);setError("");load().then(x=>{if(alive)setData(x)}).catch(e=>{if(alive)setError(e instanceof Error?e.message:String(e))}).finally(()=>{if(alive)setLoading(false)});return()=>{alive=false}},[open])
+ useEffect(()=>{if(!open)return;let alive=true;setLoading(true);setError("");load({q,category,collection,mime,recentMinutes:recent,dateField,orientation,usage,page,pageSize,kind,campaignId}).then(x=>{if(alive)setData(x)}).catch(e=>{if(alive)setError(e instanceof Error?e.message:String(e))}).finally(()=>{if(alive)setLoading(false)});return()=>{alive=false}},[open,q,category,collection,mime,recent,dateField,orientation,usage,page,pageSize,campaignId,kind])
  useEffect(()=>{setPage(1)},[q,category,collection,mime,recent,dateField,orientation,usage,pageSize])
- const filtered=useMemo(()=>{
-  const term=q.toLocaleLowerCase(),cutoff=recent?Date.now()-Number(recent)*60000:0
-  return (data?.assets||[]).filter(a=>{
-   if(campaignId&&a.campaign_id&&a.campaign_id!==campaignId)return false
-   if(kind&&!(kind==="image"?a.mime_type.startsWith("image/"):a.mime_type.startsWith("video/")))return false
-   if(mime&&!a.mime_type.startsWith(mime))return false
-   if(category&&!a.categories.some(c=>c.id===category))return false
-   if(collection&&!a.collections.some(c=>c.id===collection))return false
-   if(usage==="used"&&a.usage_count<1||usage==="unused"&&a.usage_count!==0)return false
-   const width=a.width||0,height=a.height||0,ratio=height?width/height:0
-   if(orientation==="square"&&Math.abs(ratio-1)>.05)return false
-   if(orientation==="portrait"&&(!ratio||ratio>=.95))return false
-   if(orientation==="landscape"&&ratio<=1.05)return false
-   if(cutoff&&(!Number.isFinite(Date.parse(a[dateField]||""))||Date.parse(a[dateField]||"")<cutoff))return false
-   return !term||[a.title,a.original_filename,a.description,...a.tags,...a.categories.map(x=>x.name),...a.collections.map(x=>x.name)].join(" ").toLocaleLowerCase().includes(term)
-  })
- },[data,q,category,collection,mime,recent,dateField,orientation,usage,campaignId,kind])
- const totalPages=Math.max(1,Math.ceil(filtered.length/pageSize)),items=filtered.slice((page-1)*pageSize,page*pageSize)
+ const filtered=data?.assets||[];
+ const totalPages=Math.max(1,Math.ceil((data?.total||0)/pageSize)),items=filtered;
  const inspected=active||items[0]||null
  function toggle(id:string){if(selectedIds.includes(id))onChange(selectedIds.filter(x=>x!==id));else if(!max||selectedIds.length<max)onChange([...selectedIds,id])}
  function reset(){setQ("");setCategory("");setCollection("");setMime("");setRecent("");setOrientation("");setUsage("")}
@@ -57,9 +44,9 @@ export default function MediaVaultPicker({selectedIds,onChange,campaignId,label=
      <label>Usage<select value={usage} onChange={e=>setUsage(e.target.value)}><option value="">All usage</option><option value="used">Used</option><option value="unused">Unused</option></select></label>
      <label><Clock3 size={13}/> Date field<select value={dateField} onChange={e=>setDateField(e.target.value as "created_at"|"updated_at")}><option value="created_at">Uploaded</option><option value="updated_at">Last modified</option></select></label>
      <label>Uploaded within<select value={recent} onChange={e=>setRecent(e.target.value)}><option value="">Any time</option>{[2,5,10,15,30,60,120,1440,10080,43200].map(n=><option key={n} value={n}>{n<60?n+" minutes":n===60?"1 hour":n===1440?"24 hours":n===10080?"7 days":n===43200?"30 days":n/60+" hours"}</option>)}</select></label>
-     <p>Windows Vault filters operate on its authorized API snapshot. Marketplace Media Vault uses a separate media authority.</p>
+     <p>Filters run against the complete authorized Windows Vault catalogue before server pagination. Marketplace Media Vault uses a separate media authority.</p>
     </aside>
-    <main className={styles.center}><div className={styles.centerHead}><div><strong>{filtered.length} matching assets</strong><small>{data?.assets.length||0} loaded · page {page} of {totalPages}</small></div><div><button onClick={()=>setView("grid")} aria-pressed={view==="grid"} aria-label="Grid view"><Grid2X2 size={16}/></button><button onClick={()=>setView("list")} aria-pressed={view==="list"} aria-label="List view"><List size={16}/></button></div></div>
+    <main className={styles.center}><div className={styles.centerHead}><div><strong>{data?.total||0} matching assets</strong><small>{data?.inventoryTotal||0} scanned · {filtered.length} on this page · page {page} of {totalPages}</small></div><div><button onClick={()=>setView("grid")} aria-pressed={view==="grid"} aria-label="Grid view"><Grid2X2 size={16}/></button><button onClick={()=>setView("list")} aria-pressed={view==="list"} aria-label="List view"><List size={16}/></button></div></div>
      {loading?<div className={styles.state}>Loading authorized media…</div>:null}
      {error?<div className={styles.state} role="alert">{error}</div>:null}
      {!loading&&!error?<div className={view==="grid"?styles.grid:styles.list}>{items.map(a=><article className={styles.card} data-selected={selectedIds.includes(a.id)} key={a.id}>
