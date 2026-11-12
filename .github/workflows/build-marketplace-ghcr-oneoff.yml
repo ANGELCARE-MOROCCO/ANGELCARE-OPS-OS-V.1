@@ -49,6 +49,9 @@ jobs:
       - name: Verify shared native Media Vault picker contract
         run: node --experimental-strip-types --test apps/marketplace-web/scripts/angelcare-marketplace/verify-native-media-vault-pro.test.mjs
 
+      - name: Verify Media Vault R4 cross-workspace propagation
+        run: node --experimental-strip-types --test apps/marketplace-web/scripts/angelcare-marketplace/verify-media-vault-r4-propagation.test.mjs
+
       - name: Verify public Imagery Studio runtime recovery
         run: node --experimental-strip-types --test apps/marketplace-web/scripts/angelcare-marketplace/verify-imagery-public-runtime.test.mjs
 

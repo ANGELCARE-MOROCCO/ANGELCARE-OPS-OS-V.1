@@ -1,0 +1,31 @@
+name: Verify Media Vault R4 Operations
+on:
+  workflow_dispatch:
+  push:
+    branches: [upgrade/next-angelcare-upgrade]
+    paths:
+      - "apps/ops-web/app/(protected)/social-command/_components/MediaVaultPicker.tsx"
+      - "apps/ops-web/app/(protected)/social-command/_components/MediaVaultPicker.module.css"
+      - "apps/marketplace-web/scripts/angelcare-marketplace/verify-media-vault-r4-propagation.test.mjs"
+      - ".github/workflows/verify-media-vault-r4-ops.yml"
+permissions:
+  contents: read
+jobs:
+  operations-picker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: apps/ops-web/package-lock.json
+      - name: Verify cross-system picker integration contract
+        run: node --experimental-strip-types --test apps/marketplace-web/scripts/angelcare-marketplace/verify-media-vault-r4-propagation.test.mjs
+      - name: Install locked Operations dependencies
+        working-directory: apps/ops-web
+        run: npm ci --no-audit --no-fund
+      - name: Verify Operations TypeScript
+        working-directory: apps/ops-web
+        run: npx tsc --noEmit --pretty false
