@@ -33,7 +33,7 @@ export async function activeCustomCreatives():Promise<{themes:LiveTheme[];preset
 export async function liveCreativeCommand(type:'theme'|'preset',action:string,payload:Row,context:MarketplaceRequestContext){
  if(!['create','update','duplicate','activate','pause','archive','trash','restore'].includes(action))throw new MarketplaceError('VALIDATION_ERROR','Commande de création inconnue.')
  const db=await createServiceClient()
- const {data,error:dbError}=await db.rpc('ac_live_creative_command_360',{p_type:type,p_action:action,p_data:payload,p_actor:context.actor.id,p_expected_version:Number(payload.version)||null,p_reason:text(payload.reason)})
+ const {data,error:dbError}=await db.rpc('ac_live_creative_command_360',{p_type:type,p_action:action,p_data:payload,p_actor:context.actor.id,p_version:Number(payload.version)||null,p_reason:text(payload.reason)})
  if(dbError||!data)throw error('appliquer '+action,dbError)
  return data as CreativeRecord
 }
