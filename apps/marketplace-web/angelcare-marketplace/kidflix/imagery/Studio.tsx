@@ -43,6 +43,7 @@ import {
 } from "../../digital-customer-experience/components/ui";
 import { WORLDS, path } from "../catalogue";
 import { NativeImagePicker } from "../StudioPickers";
+import { imageReferenceIssue } from "../../marketplace-imagery/asset-url";
 import { Atlas } from "../home-reference/HomeShell";
 import { ArtIcon } from "../documents/DocumentShell";
 import { Art } from "../storefront-reference/CategoryShell";
@@ -386,6 +387,10 @@ export function ImageryStudio() {
     const incoming = assets.filter(item => !seen.has(item.id) && (seen.add(item.id), true));
     const limit = descriptor.sequence ? 12 - images.length : 1;
     if (incoming.length > limit) { setError("Use up to twelve images."); return; }
+    for (const asset of incoming) {
+      const issue = imageReferenceIssue(asset.url, asset.id);
+      if (issue) { setError("Unable to assign this native image: " + issue); return; }
+    }
     if (!incoming.length) return;
     const next: Scene[] = incoming.map(asset => ({
       id: newId(), src: asset.url, assetId: asset.id, mobile: "", mobileAssetId: "",
@@ -398,7 +403,9 @@ export function ImageryStudio() {
     setError("");
   }
   function addAsset(asset: { id: string; url: string; title: string }, mobile = false) {
-    if (mobile && image) { patchImage({ mobile: asset.url, mobileAssetId: asset.id }); return; }
+    const issue = imageReferenceIssue(asset?.url, asset?.id);
+    if (issue) { setError("Unable to assign this native image: " + issue); return; }
+    if (mobile && image) { patchImage({ mobile: asset.url, mobileAssetId: asset.id }); setError(""); return; }
     addAssets([asset]);
   }
   async function operate(action: string, extra: any = {}) {
@@ -551,6 +558,8 @@ export function ImageryStudio() {
           throw Error(
             "Uploaded image is not available in the native media vault.",
           );
+        const uploadedIssue = imageReferenceIssue(asset.url, asset.id);
+        if (uploadedIssue) throw Error("Native upload cannot be assigned: " + uploadedIssue);
         if (
           activePage.current !== item.page ||
           activeSlot.current !== item.slot

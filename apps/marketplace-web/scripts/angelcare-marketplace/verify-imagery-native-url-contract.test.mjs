@@ -62,3 +62,24 @@ test("edit, upload, mobile, twelve-image and authoritative service guards are wi
   assert.match(service,/assets\.get\(image\.assetId\)\?\.url !== image\.src/);
   assert.match(service,/assets\.get\(image\.mobileAssetId\)\?\.url !== image\.mobile/);
 });
+
+// KidFlix Page Imagery must use the same native URL and asset identity contract.
+test("KidFlix Page Imagery draft/save, selection and server honor the native vault", () => {
+  const dir = new URL("../../angelcare-marketplace/kidflix/imagery/", import.meta.url);
+  const model = readFileSync(new URL("model.ts", dir), "utf8");
+  const studio = readFileSync(new URL("Studio.tsx", dir), "utf8");
+  const service = readFileSync(new URL("service.ts", dir), "utf8");
+  assert.equal(imageReferenceIssue(path, asset), null);
+  assert.equal(imageReferenceIssue(path + "?variant=mobile", asset), null);
+  assert.match(model, /import\s*\{\s*imageReferenceIssue\s*\}\s*from\s*"\.\.\/\.\.\/marketplace-imagery\/asset-url"/);
+  assert.doesNotMatch(model, /import\s*\{\s*galleryURL\s*\}\s*from\s*"\.\.\/gallery-contract"/);
+  assert.match(model, /imageReferenceIssue\(a\.src,\s*a\.assetId\)/);
+  assert.match(model, /imageReferenceIssue\(a\.mobile,\s*a\.mobileAssetId\)/);
+  assert.match(model, /Placement\s*["']/);
+  assert.match(studio, /imageReferenceIssue\(asset\.url,\s*asset\.id\)/);
+  assert.match(studio, /imageReferenceIssue\(asset\?\.url,\s*asset\?\.id\)/);
+  assert.match(studio, /uploadedIssue = imageReferenceIssue\(asset\.url,\s*asset\.id\)/);
+  assert.match(service, /imageReferenceIssue\(a\.url,\s*id\)/);
+  assert.match(service, /assets\.get\(image\.assetId\)\?\.url\s*!==\s*image\.src/);
+  assert.match(service, /assets\.get\(image\.mobileAssetId\)\?\.url\s*!==\s*image\.mobile/);
+});
