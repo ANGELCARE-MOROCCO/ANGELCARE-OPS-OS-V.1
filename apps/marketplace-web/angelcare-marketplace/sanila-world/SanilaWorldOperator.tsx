@@ -13,7 +13,12 @@ const visible=(p:SanilaWorldPageState)=>Boolean(p.publishedData)&&!p.deletedAt
 const trim=(x:string)=>x.trim()
 export function SanilaWorldOperator({section,initialWorld,onChange}:Props){
  const [world,setWorld]=useState(initialWorld),[busy,setBusy]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState('')
- const [slug,setSlug]=useState(''),[title,setTitle]=useState(''),[selected,setSelected]=useState('accueil')
+ const [slug,setSlug]=useState(''),[title,setTitle]=useState('')
+ const [selected,setSelected]=useState('accueil')
+ const [pageTitle,setPageTitle]=useState(initialWorld.pages.accueil?.title||'')
+ const [pageNav,setPageNav]=useState(initialWorld.pages.accueil?.nav||'')
+ const [pageTheme,setPageTheme]=useState(initialWorld.pages.accueil?.themeKey||'')
+ const [pageNavVisible,setPageNavVisible]=useState(Boolean(initialWorld.pages.accueil?.showInNav))
  const [themeKey,setThemeKey]=useState(''),[themeName,setThemeName]=useState('')
  const [color,setColor]=useState('#9b7133'),[paper,setPaper]=useState('#ffffff'),[ink,setInk]=useState('#10243f'),[soft,setSoft]=useState('#edf3fb'),[layout,setLayout]=useState<SanilaWorldTheme['layout']>('editorial')
  const [navSlug,setNavSlug]=useState(''),[navLabel,setNavLabel]=useState('')
@@ -39,7 +44,7 @@ export function SanilaWorldOperator({section,initialWorld,onChange}:Props){
   try{const r=await fetch('/api/angelcare-marketplace/admin/sanila/world',{cache:'no-store'});const b=await r.json();if(!r.ok||!b.ok)throw new Error(b.error||'Erreur chargement');setWorld(b.state);onChange?.(b.state);setNotice('Données rechargées')}catch(e){setError(String(e))}finally{setBusy(false)}
  }
  const act=(a:string,p:Record<string,unknown>={})=>void action(a,p)
- const select=(key:string)=>{setSelected(key);const p=world.pages[key];setSeoTitle(p?.seo?.title||p?.title||'');setSeoDescription(p?.seo?.description||'');setNoindex(Boolean(p?.seo?.noindex))}
+ const select=(key:string)=>{setSelected(key);const p=world.pages[key];setSeoTitle(p?.seo?.title||p?.title||'');setSeoDescription(p?.seo?.description||'');setNoindex(Boolean(p?.seo?.noindex));setPageTitle(p?.title||'');setPageNav(p?.nav||'');setPageTheme(p?.themeKey||'');setPageNavVisible(Boolean(p?.showInNav))}
  const themeFields=(t:SanilaWorldTheme)=>({key:themeKey||t.key,name:themeName||t.name,layout,colors:{paper,ink,accent:color,soft}})
  return <div className={styles.root}>
   <section className={styles.panel}>
@@ -54,8 +59,19 @@ export function SanilaWorldOperator({section,initialWorld,onChange}:Props){
     <div className={styles.sectionHead}><div><span>PAGE FACTORY</span><h2>Créer une vraie route publique</h2></div><FilePlus2/></div>
     <div className={styles.actions}><input aria-label="Slug de page" placeholder="nouvelle-page" value={slug} onChange={e=>setSlug(e.target.value)}/><input aria-label="Titre" placeholder="Titre de la page" value={title} onChange={e=>setTitle(e.target.value)}/><button type="button" className={styles.primaryButton} disabled={busy||!slug||!title} onClick={()=>void action('create_page',{slug:trim(slug),title:trim(title)}).then(result=>{if(result){select(trim(slug));setSlug('');setTitle('')}})}>Créer la page</button></div>
    </section>
+   <section className={styles.panel}><div className={styles.sectionHead}><div><span>PAGE PROPERTIES</span><h2>Identité, navigation et thème par page</h2></div></div>
+    <div className={styles.actions}><select aria-label="Page à configurer" value={selected} onChange={e=>select(e.target.value)}>{pages.filter(p=>!p.deletedAt).map(p=><option key={p.slug} value={p.slug}>{p.nav} · {p.slug}</option>)}</select>
+    <input aria-label="Titre de la page" value={pageTitle} onChange={e=>setPageTitle(e.target.value)} placeholder="Titre"/>
+    <input aria-label="Libellé navigation" value={pageNav} onChange={e=>setPageNav(e.target.value)} placeholder="Navigation"/>
+    <select aria-label="Thème de page" value={pageTheme} onChange={e=>setPageTheme(e.target.value)}><option value="">Thème global</option>{themes.filter(t=>!t.archivedAt).map(t=><option key={t.key} value={t.key}>{t.name}</option>)}</select>
+    <label><input type="checkbox" checked={pageNavVisible} onChange={e=>setPageNavVisible(e.target.checked)}/> Visible dans la navigation</label>
+    <button disabled={busy||!target||SANILA_LOCKED_ROUTES.has(selected)} className={styles.primaryButton} type="button" onClick={()=>act('edit_page',{slug:selected,title:pageTitle,nav:pageNav,themeKey:pageTheme||null,showInNav:pageNavVisible})}><Save size={15}/> Enregistrer</button></div>
+   </section>
    <section className={styles.panel}><div className={styles.sectionHead}><div><span>PAGE REGISTRY</span><h2>Pages SANILA et opérations</h2></div></div>
-    <div className={styles.tableWrap}><table className={styles.table}><thead><tr><th>Page / slug</th><th>État</th><th>Protection</th><th>Opérations</th></tr></thead><tbody>{pages.map(p=><tr key={p.slug}><td><strong>{p.title}</strong><div><code>{p.slug}</code></div></td><td>{p.deletedAt?'Corbeille':p.status}</td><td>{!p.isCustom||SANILA_LOCKED_ROUTES.has(p.slug)?'Système':'Personnalisable'}</td><td><div className={styles.actions}><Link href={'/angelcare-marketplace/admin/sanila/studio?route='+encodeURIComponent(p.slug)}>Éditer</Link>{visible(p)?<Link target="_blank" href={root+(p.slug==='accueil'?'':'/'+p.slug)}><ExternalLink size={14}/> Public</Link>:null}<button disabled={busy} type="button" onClick={()=>{const name=window.prompt('Slug pour la copie de '+p.slug);if(name)act('duplicate_page',{sourceSlug:p.slug,slug:name,title:p.title+' — copie'})}}><Copy size={14}/> Dupliquer</button>{p.deletedAt?<button disabled={busy} type="button" onClick={()=>act('restore_page',{slug:p.slug})}><Undo2 size={14}/> Restaurer</button>:p.isCustom&&!SANILA_LOCKED_ROUTES.has(p.slug)?<button disabled={busy} type="button" onClick={()=>{if(window.confirm('Déplacer '+p.slug+' vers la corbeille ?'))act('trash_page',{slug:p.slug})}}><Trash2 size={14}/> Supprimer</button>:null}</div></td></tr>)}</tbody></table></div>
+    <div className={styles.tableWrap}><table className={styles.table}><thead><tr><th>Page / slug</th><th>État</th><th>Protection</th><th>Opérations</th></tr></thead><tbody>{pages.map(p=><tr key={p.slug}><td><strong>{p.title}</strong><div><code>{p.slug}</code></div></td><td>{p.deletedAt?'Corbeille':p.pausedAt?'Pause':p.status}</td><td>{!p.isCustom||SANILA_LOCKED_ROUTES.has(p.slug)?'Système':'Personnalisable'}</td><td><div className={styles.actions}><Link href={'/angelcare-marketplace/admin/sanila/studio?route='+encodeURIComponent(p.slug)}>Éditer</Link>{visible(p)?<Link target="_blank" href={root+(p.slug==='accueil'?'':'/'+p.slug)}><ExternalLink size={14}/> Public</Link>:null}<button disabled={busy} type="button" onClick={()=>{const name=window.prompt('Slug pour la copie de '+p.slug);if(name)act('duplicate_page',{sourceSlug:p.slug,slug:name,title:p.title+' — copie'})}}><Copy size={14}/> Dupliquer</button>{p.deletedAt?<button disabled={busy} type="button" onClick={()=>act('restore_page',{slug:p.slug})}><Undo2 size={14}/> Restaurer</button>:p.isCustom&&!SANILA_LOCKED_ROUTES.has(p.slug)?<>
+      <button disabled={busy} type="button" onClick={()=>act(p.pausedAt?'resume_page':'pause_page',{slug:p.slug})}>{p.pausedAt?'Réactiver':'Pause'}</button>
+      <button disabled={busy} type="button" onClick={()=>{if(window.confirm('Déplacer '+p.slug+' vers la corbeille ?'))act('trash_page',{slug:p.slug})}}><Trash2 size={14}/> Supprimer</button>
+     </>:null}</div></td></tr>)}</tbody></table></div>
    </section>
   </>:null}
   {section==='themes'?<>

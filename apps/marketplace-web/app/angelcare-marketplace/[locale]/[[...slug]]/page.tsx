@@ -44,7 +44,7 @@ async function nativeMetadata({ params }: { params: Promise<{ locale: string; sl
       if(!child||SANILA_LOCKED_ROUTES.has(child))return original
       const world=await getSanilaWorldState().catch(()=>null)
       const page=world?.pages[child]
-      if(!page?.publishedData||page.deletedAt)return original
+      if(!page?.publishedData||page.deletedAt||page.pausedAt)return original
       return {
         ...original,
         title:page.seo?.title||page.title,
@@ -55,7 +55,7 @@ async function nativeMetadata({ params }: { params: Promise<{ locale: string; sl
     const child=slug.slice('sanila/'.length)
     const world=await getSanilaWorldState().catch(()=>null)
     const page=world?.pages[child]
-    if(!page||!page.publishedData||page.deletedAt||SANILA_LOCKED_ROUTES.has(child))
+    if(!page||!page.publishedData||page.deletedAt||page.pausedAt||SANILA_LOCKED_ROUTES.has(child))
       return {title:'SANILA — Page indisponible',robots:{index:false,follow:false}}
     return {
       title:page.seo?.title||page.title,
@@ -96,7 +96,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
     if(!isSanilaPublicRoute(slug)){
       const world=await getSanilaWorldState().catch(()=>null)
       const record=world?.pages[sanilaSlug]
-      if(!record?.publishedData||record.deletedAt||SANILA_LOCKED_ROUTES.has(sanilaSlug))notFound()
+      if(!record?.publishedData||record.deletedAt||record.pausedAt||SANILA_LOCKED_ROUTES.has(sanilaSlug))notFound()
     }
     return <SanilaPublicUniverse slug={sanilaSlug} locale={locale}/>
   }

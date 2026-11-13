@@ -6,7 +6,7 @@ import { applySanilaWorldAction } from '@/angelcare-marketplace/sanila-world/wor
 export const runtime='nodejs'
 export const dynamic='force-dynamic'
 type Action=Parameters<typeof applySanilaWorldAction>[1]
-const actions=new Set<Action>(['create_page','duplicate_page','save_page','edit_page','trash_page','restore_page',
+const actions=new Set<Action>(['create_page','duplicate_page','save_page','edit_page','trash_page','restore_page','pause_page','resume_page',
  'upsert_theme','duplicate_theme','trash_theme','restore_theme','set_theme','set_navigation','set_shell',
  'import_bundle','publish','rollback'])
 function failure(error:unknown){

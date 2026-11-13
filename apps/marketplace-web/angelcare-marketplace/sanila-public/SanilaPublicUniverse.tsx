@@ -11,7 +11,7 @@ export async function SanilaPublicUniverse({slug,locale}:{slug:string;locale:str
   const world=await getSanilaWorldState().catch(()=>null)
   const page=world?.pages[slug]
   const isLocked=SANILA_LOCKED_ROUTES.has(slug)
-  const published=!isLocked&&!page?.deletedAt&&page?.publishedData
+  const published=!isLocked&&!page?.deletedAt&&!page?.pausedAt&&page?.publishedData
   const Source=SANILA_PAGE_COMPONENTS[slug]
   if(!published&&!Source)return null
   const themeKey=(page?.publishedThemeKey&&world?.publishedThemes?.[page.publishedThemeKey]&&!world.publishedThemes[page.publishedThemeKey].archivedAt)?page.publishedThemeKey:(world?.publishedThemeKey||'sanila-signature')

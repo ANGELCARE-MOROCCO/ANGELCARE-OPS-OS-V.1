@@ -58,6 +58,14 @@ jobs:
       - name: Verify SANILA World Studio 360 source and publication contracts
         run: node --experimental-strip-types --test apps/marketplace-web/scripts/angelcare-marketplace/verify-sanila-world-360-source.test.mjs
 
+      - name: Typecheck SANILA World 360 and Footer before Marketplace image compilation
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd apps/marketplace-web
+          npm ci --ignore-scripts --no-audit --no-fund
+          NODE_OPTIONS=--max-old-space-size=8192 npx tsc -p tsconfig.sanila-world-360.json --pretty false
+
       - name: Verify public Imagery Studio runtime recovery
         run: node --experimental-strip-types --test apps/marketplace-web/scripts/angelcare-marketplace/verify-imagery-public-runtime.test.mjs
 

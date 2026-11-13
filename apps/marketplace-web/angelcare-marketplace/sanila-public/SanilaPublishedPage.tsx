@@ -9,7 +9,10 @@ import styles from './SanilaPublished.module.css'
 type Props={ data:Data; theme?:SanilaWorldTheme|null; eyebrow?:string }
 function displayLink(href:unknown):string|null{
   const v=String(href||'')
-  return v.startsWith('/angelcare-marketplace/fr/sanila')||v.startsWith('#')?v:null
+  return v.startsWith('#')||(
+    v.startsWith('/')&&!v.startsWith('//')&&!v.includes('..')&&!/[<>"'\\\r\n]/.test(v)&&
+    (v.startsWith('/angelcare-marketplace/')||/^\/angelcare-360-[a-z-]+\//.test(v))
+  )?v:null
 }
 export function SanilaPublishedPage({data,theme,eyebrow}:Props){
   const safe=validateSanilaDocument(data)

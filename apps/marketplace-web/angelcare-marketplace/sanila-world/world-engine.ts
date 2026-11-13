@@ -32,7 +32,9 @@ function text(v:unknown,max=200){const s=String(v??'').trim();if(s.length>max)er
 function safeUrl(value:unknown):string {
   const s=text(value,500)
   if(!s)return ''
-  if(s.startsWith('/angelcare-marketplace/fr/sanila')||s.startsWith('/api/angelcare-marketplace/media/')||s.startsWith('/sanila/')||s.startsWith('#'))return s
+  if(s.startsWith('#'))return s
+  if(s.startsWith('/')&&!s.startsWith('//')&&!s.includes('..')&&!/[<>"'\\\r\n]/.test(s)&&
+    (s.startsWith('/angelcare-marketplace/')||s.startsWith('/sanila/')||s.startsWith('/api/angelcare-marketplace/media/')||/^\/angelcare-360-[a-z-]+\//.test(s)))return s
   if(s.startsWith('https://'))return s
   return err('URL non autorisée : '+s.slice(0,80))
 }
@@ -74,7 +76,7 @@ export function validateSanilaTheme(v:unknown,existing:Record<string,SanilaWorld
 }
 export function sanilaSourceState():SanilaWorldState {
   const pages=Object.fromEntries(SANILA_PAGE_BLUEPRINTS.map(p=>[p.slug,{
-    slug:p.slug,title:p.title,nav:p.nav,status:'source' as const,updatedAt:null,data:null,publishedData:null,deletedAt:null,isCustom:false,
+    slug:p.slug,title:p.title,nav:p.nav,status:'source' as const,updatedAt:null,data:null,publishedData:null,deletedAt:null,pausedAt:null,isCustom:false,
     seo:{title:p.title,description:p.subtitle,noindex:false},themeKey:null,showInNav:false,
   }]))
   return {version:1,worldKey:SANILA_WORLD_KEY,status:'source',revision:0,sourceFingerprint:null,importedAt:null,importedBy:null,
@@ -111,7 +113,7 @@ export function normalizeSanilaState(value:unknown):SanilaWorldState{
   next.version=1;next.worldKey=SANILA_WORLD_KEY
   return next
 }
-type Action='create_page'|'duplicate_page'|'save_page'|'edit_page'|'trash_page'|'restore_page'|'upsert_theme'|'duplicate_theme'|'trash_theme'|'restore_theme'|'set_theme'|'set_navigation'|'set_shell'|'register_import'|'import_bundle'|'publish'|'rollback'
+type Action='create_page'|'duplicate_page'|'save_page'|'edit_page'|'trash_page'|'restore_page'|'pause_page'|'resume_page'|'upsert_theme'|'duplicate_theme'|'trash_theme'|'restore_theme'|'set_theme'|'set_navigation'|'set_shell'|'register_import'|'import_bundle'|'publish'|'rollback'
 function draftPage(p:SanilaWorldPageState,now:string):SanilaWorldPageState{return {...p,status:'draft',updatedAt:now}}
 export function applySanilaWorldAction(value:SanilaWorldState,action:Action,payload:Record<string,unknown>,actor:string,now:string):SanilaWorldState {
   const next=normalizeSanilaState(value),pages=next.pages,themes=next.themes!
@@ -122,16 +124,18 @@ export function applySanilaWorldAction(value:SanilaWorldState,action:Action,payl
       const s=slug();if(pages[s])err('Le slug existe déjà.')
       const title=text(payload.title,200)||err('Titre obligatoire.')
       pages[s]={slug:s,title,nav:text(payload.nav,80)||title,status:'draft',updatedAt:now,data:null,publishedData:null,
-        themeKey:null,showInNav:false,isCustom:true,deletedAt:null,seo:{title,description:'',noindex:false}};break
+        themeKey:null,showInNav:false,isCustom:true,deletedAt:null,pausedAt:null,seo:{title,description:'',noindex:false}};break
     }
     case 'duplicate_page':{
       const s=slug(),source=page(validateSanilaSlug(payload.sourceSlug))
       if(pages[s])err('Le slug existe déjà.')
       pages[s]={...JSON.parse(JSON.stringify(source)),slug:s,title:text(payload.title,200)||source.title+' — copie',nav:text(payload.nav,80)||source.nav,
-        data:source.data||source.publishedData||null,publishedData:null,status:'draft',isCustom:true,deletedAt:null,updatedAt:now};break
+        data:source.data||source.publishedData||null,publishedData:null,status:'draft',isCustom:true,deletedAt:null,pausedAt:null,updatedAt:now};break
     }
     case 'save_page':case 'edit_page':{
-      const s=slug(),old=page(s);if(old.deletedAt)err('Restaurer cette page avant de la modifier.')
+      const s=slug(),old=page(s)
+      if(SANILA_LOCKED_ROUTES.has(s))err('Page métier protégée : dupliquez avant édition.')
+      if(old.deletedAt)err('Restaurer cette page avant de la modifier.')
       const data=payload.data===undefined?old.data:validateSanilaDocument(payload.data)
       const meta=record(payload.seo)
       const seo=payload.seo===undefined?old.seo:{title:text(meta.title,160),description:text(meta.description,300),noindex:meta.noindex===true}
@@ -144,11 +148,21 @@ export function applySanilaWorldAction(value:SanilaWorldState,action:Action,payl
     }
     case 'trash_page':{
       const s=slug();if(!page(s).isCustom||SANILA_LOCKED_ROUTES.has(s))err('Page système protégée : clonage autorisé, suppression interdite.')
-      pages[s]={...page(s),status:'trashed',deletedAt:now,updatedAt:now,publishedData:null};break
+      pages[s]={...page(s),status:'trashed',deletedAt:now,pausedAt:null,updatedAt:now,publishedData:null};break
     }
     case 'restore_page':{
       const s=slug();if(!page(s).deletedAt)err('Page non supprimée.')
-      pages[s]={...page(s),status:'draft',deletedAt:null,updatedAt:now};break
+      pages[s]={...page(s),status:'draft',deletedAt:null,pausedAt:null,updatedAt:now};break
+    }
+    case 'pause_page':{
+      const s=slug(),p=page(s)
+      if(!p.isCustom||p.deletedAt)err('Page système ou supprimée : pause indisponible.')
+      pages[s]={...p,pausedAt:now,updatedAt:now};break
+    }
+    case 'resume_page':{
+      const s=slug(),p=page(s)
+      if(!p.isCustom||!p.pausedAt)err('Page non suspendue.')
+      pages[s]={...p,pausedAt:null,updatedAt:now};break
     }
     case 'upsert_theme':{const item=validateSanilaTheme(payload.theme,themes);themes[item.key]=item;break}
     case 'duplicate_theme':{
@@ -191,7 +205,7 @@ export function applySanilaWorldAction(value:SanilaWorldState,action:Action,payl
         const data=validateSanilaDocument(item.data)
         const title=text(item.title,200)||s;const meta=record(item.seo)
         pages[s]={...prior,slug:s,title,nav:text(item.nav,100)||title,isCustom:prior?.isCustom??!SANILA_PAGE_BLUEPRINTS.some(p=>p.slug===s),
-          data,publishedData:prior?.publishedData||null,status:'draft',deletedAt:null,updatedAt:now,showInNav:item.showInNav===true,
+          data,publishedData:prior?.publishedData||null,status:'draft',deletedAt:null,pausedAt:null,updatedAt:now,showInNav:item.showInNav===true,
           seo:{title:text(meta.title,160)||title,description:text(meta.description,300),noindex:meta.noindex===true},
           themeKey:typeof item.themeKey==='string'&&themes[item.themeKey]&&!themes[item.themeKey].archivedAt?item.themeKey:prior?.themeKey||null}
       }
@@ -208,10 +222,13 @@ export function applySanilaWorldAction(value:SanilaWorldState,action:Action,payl
       }
       next.publishedThemeKey=next.themeKey
       next.publishedThemes=JSON.parse(JSON.stringify(themes))
-      next.publishedNavigation=(next.navigation||[]).filter(n=>{
+      const navigation=[...(next.navigation||[]),...Object.values(pages).filter(p=>p.showInNav&&!p.deletedAt).map(p=>({slug:p.slug,label:p.nav}))]
+      const seen=new Set<string>()
+      next.publishedNavigation=navigation.filter(n=>{
         const target=pages[n.slug]
-        return Boolean(target&&!target.deletedAt&&(target.publishedData||SANILA_LOCKED_ROUTES.has(n.slug)))
-      })
+        if(seen.has(n.slug)||!target||target.deletedAt||target.pausedAt||(!target.publishedData&&!SANILA_LOCKED_ROUTES.has(n.slug)))return false
+        seen.add(n.slug);return true
+      }).slice(0,30)
       next.publishedShell={...next.shell}
       next.publishedAt=now;next.publishedBy=actor;break
     }

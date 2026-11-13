@@ -23,6 +23,7 @@ export function SanilaWorldStudio({initialState}:{initialState:SanilaWorldState}
  const safe=(value:string)=>world.pages[value]?.data||sanilaInitialPuckData(value)
  const switchPage=(value:string)=>{setSlug(value);setDraft(safe(value));setMessage('Brouillon prêt')}
  async function save(next:Data=draft,options:Record<string,unknown>={}){
+  if(SANILA_LOCKED_ROUTES.has(slug)){setMessage('Cette page métier est protégée ; dupliquez-la pour créer une nouvelle page.');return}
   setBusy(true);setMessage('Enregistrement…')
   try{
     const r=await fetch('/api/angelcare-marketplace/admin/sanila/world',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({action:'edit_page',expectedRevision:world.revision,payload:{slug,data:next,...options}})})
@@ -54,6 +55,7 @@ export function SanilaWorldStudio({initialState}:{initialState:SanilaWorldState}
     <div className={styles.actions}><NativeExperienceMediaPicker locale="fr" disabled={busy} onSelect={asset=>{setDraft(prev=>({...prev,content:[...prev.content,{type:'SanilaImage',props:{id:'sanila-native-'+crypto.randomUUID(),src:asset.url,alt:asset.title||'Photo SANILA',title:asset.title||''}}]}));setMessage('Image native ajoutée en brouillon. Enregistrez pour persister.')}}/><span className={styles.notice}><ImagePlus size={16}/> Native Media Vault</span></div>
    </div>
    <p role="status" className={styles.status}>{message}</p>
-   <div className={styles.studio}><Puck key={slug+'-'+(route?.updatedAt||'source')} config={SANILA_PUCK_CONFIG} data={draft} onChange={setDraft} onPublish={next=>void save(next)} dnd={{behavior:'auto'}} iframe={{enabled:false}}/></div>
+   {protectedPage?<div className={styles.notice}>Le contenu de cette page est protégé par les workflows SANILA. Utilisez « Dupliquer » dans Pages pour créer une page éditable.</div>:
+    <div className={styles.studio}><Puck key={slug+'-'+(route?.updatedAt||'source')} config={SANILA_PUCK_CONFIG} data={draft} onChange={setDraft} onPublish={next=>void save(next)} dnd={{behavior:'auto'}} iframe={{enabled:false}}/></div>}
  </div>
 }

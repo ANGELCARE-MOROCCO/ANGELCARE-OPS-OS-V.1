@@ -30,6 +30,7 @@ export type SanilaWorldPageState = {
   showInNav?: boolean
   isCustom?: boolean
   deletedAt?: string | null
+  pausedAt?: string | null
 }
 export type SanilaWorldRelease = {
   revision: number
