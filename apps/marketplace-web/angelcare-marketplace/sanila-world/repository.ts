@@ -2,133 +2,79 @@ import 'server-only'
 import type { Data } from '@puckeditor/core'
 import { createServiceClient } from '@/lib/supabase/server'
 import type { MarketplaceRequestContext } from '@/angelcare-marketplace/domain/types'
-import { SANILA_PAGE_BLUEPRINTS } from '@/angelcare-marketplace/sanila-public/pageBlueprints'
-import type { SanilaWorldState } from '@/angelcare-marketplace/sanila-admin/types'
-import { SANILA_WORLD_CONFIG_KEY, SANILA_WORLD_KEY } from './contract'
+import type { SanilaWorldState } from '../sanila-admin/types'
+import { SANILA_WORLD_CONFIG_KEY } from './contract'
+import { applySanilaWorldAction, normalizeSanilaState, sanilaSourceState } from './world-engine'
 
-function sourceState(): SanilaWorldState {
-  const pages = Object.fromEntries(SANILA_PAGE_BLUEPRINTS.map((page) => [page.slug, {
-    slug: page.slug,
-    title: page.title,
-    nav: page.nav,
-    status: 'source' as const,
-    updatedAt: null,
-    data: null,
-  }]))
-  return {
-    version: 1,
-    worldKey: SANILA_WORLD_KEY,
-    status: 'source',
-    revision: 0,
-    sourceFingerprint: null,
-    importedAt: null,
-    importedBy: null,
-    packageName: null,
-    shell: { header: true, footer: true, navigation: true },
-    workflows: { demo: true, contact: true, onboarding: true, protectedDemoAccess: true },
-    pages,
-    publishedAt: null,
-    publishedBy: null,
+type Action=Parameters<typeof applySanilaWorldAction>[1]
+export class SanilaWorldConflict extends Error {constructor(){super('SANILA_VERSION_CONFLICT : un autre opérateur a modifié le monde public. Actualisez avant de réessayer.')}}
+
+export async function getSanilaWorldState():Promise<SanilaWorldState>{
+  const db=await createServiceClient()
+  const {data,error}=await db.from('angelcare_marketplace_configurations').select('value')
+    .eq('config_key',SANILA_WORLD_CONFIG_KEY).is('territory_id',null).is('tenant_id',null).is('locale',null).maybeSingle()
+  if(error)throw error
+  return data?normalizeSanilaState(data.value):sanilaSourceState()
+}
+
+export async function mutateSanilaWorld({action,payload={},context,expectedRevision}:{action:Action;payload?:Record<string,unknown>;context:MarketplaceRequestContext;expectedRevision:number}){
+  const db=await createServiceClient()
+  const {data:existing,error:readError}=await db.from('angelcare_marketplace_configurations').select('id,version,value')
+    .eq('config_key',SANILA_WORLD_CONFIG_KEY).is('territory_id',null).is('tenant_id',null).is('locale',null).maybeSingle()
+  if(readError)throw readError
+  const current=existing?normalizeSanilaState(existing.value):sanilaSourceState()
+  if(!Number.isInteger(expectedRevision)||expectedRevision!==current.revision)throw new SanilaWorldConflict()
+  const next=applySanilaWorldAction(current,action,payload,context.actor.id,new Date().toISOString())
+  if(action==='publish'||action==='import_bundle'){
+    const refs=new Set<string>()
+    for(const p of Object.values(next.pages)){
+      if(p.deletedAt)continue
+      const document=action==='publish'?p.publishedData:p.data
+      if(!document)continue
+      for(const item of document.content){
+        if(item.type!=='SanilaImage')continue
+        const raw=String(item.props?.src||'')
+        const match=/^\/api\/angelcare-marketplace\/media\/([a-f0-9-]{36})(?:\/|$)/i.exec(raw)
+        if(match)refs.add(match[1])
+        else if(!raw.startsWith('/sanila/'))throw new Error('Asset non natif sur la page '+p.slug)
+      }
+    }
+    if(refs.size){
+      const ids=[...refs]
+      const {data:assets,error}=await db.from('angelcare_marketplace_media_assets').select('id,status').in('id',ids)
+      if(error)throw error
+      const active=new Set((assets||[]).filter(r=>r.status==='active').map(r=>r.id))
+      for(const id of ids)if(!active.has(id))throw new Error('Asset SANILA manquant, inactif ou non approuvé : '+id)
+    }
   }
-}
-
-function normalize(value: unknown): SanilaWorldState {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) return sourceState()
-  const row = value as Partial<SanilaWorldState>
-  const base = sourceState()
-  return {
-    ...base,
-    ...row,
-    version: 1,
-    worldKey: SANILA_WORLD_KEY,
-    shell: { ...base.shell, ...(row.shell || {}) },
-    workflows: { ...base.workflows, ...(row.workflows || {}) },
-    pages: { ...base.pages, ...(row.pages || {}) },
+  if(existing){
+    const {data:updated,error}=await db.from('angelcare_marketplace_configurations').update({
+      value:next,version:Number(existing.version||1)+1,updated_by:context.actor.id,updated_at:new Date().toISOString()
+    }).eq('id',existing.id).eq('version',existing.version).select('id').maybeSingle()
+    if(error)throw error
+    if(!updated)throw new SanilaWorldConflict()
+  }else{
+    const {error}=await db.from('angelcare_marketplace_configurations').insert({
+      config_key:SANILA_WORLD_CONFIG_KEY,label:'SANILA Sovereign Public World',
+      description:'Public documents, themes, releases and native import for SANILA.',
+      value:next,value_type:'json',category:'SANILA Sovereign World',
+      editable:true,sensitive:false,territory_id:null,tenant_id:null,locale:null,
+      version:1,updated_by:context.actor.id
+    })
+    if(error)throw error
   }
+  const verified=await getSanilaWorldState()
+  if(verified.revision!==next.revision)throw new SanilaWorldConflict()
+  return verified
 }
-
-export async function getSanilaWorldState(): Promise<SanilaWorldState> {
-  const db = await createServiceClient()
-  const { data, error } = await db.from('angelcare_marketplace_configurations')
-    .select('value')
-    .eq('config_key', SANILA_WORLD_CONFIG_KEY)
-    .is('territory_id', null)
-    .is('tenant_id', null)
-    .is('locale', null)
-    .maybeSingle()
-  if (error || !data) return sourceState()
-  return normalize(data.value)
+export async function saveSanilaWorldPage(input:{slug:string;data:Data;context:MarketplaceRequestContext;expectedRevision?:number}){
+  return mutateSanilaWorld({action:'save_page',payload:{slug:input.slug,data:input.data},context:input.context,
+    expectedRevision:input.expectedRevision??(await getSanilaWorldState()).revision})
 }
-
-async function persist(state: SanilaWorldState, context: MarketplaceRequestContext): Promise<SanilaWorldState> {
-  const db = await createServiceClient()
-  const current = await db.from('angelcare_marketplace_configurations')
-    .select('id,version')
-    .eq('config_key', SANILA_WORLD_CONFIG_KEY)
-    .is('territory_id', null)
-    .is('tenant_id', null)
-    .is('locale', null)
-    .maybeSingle()
-  if (current.error) throw current.error
-  if (current.data) {
-    const { error } = await db.from('angelcare_marketplace_configurations').update({
-      value: state,
-      version: Number(current.data.version || 1) + 1,
-      updated_by: context.actor.id,
-      updated_at: new Date().toISOString(),
-    }).eq('id', current.data.id)
-    if (error) throw error
-    return state
-  }
-  const { error } = await db.from('angelcare_marketplace_configurations').insert({
-    config_key: SANILA_WORLD_CONFIG_KEY,
-    label: 'SANILA Sovereign Public World',
-    description: 'Autorité isolée du workspace SANILA pour le world public multi-page.',
-    value: state,
-    value_type: 'json',
-    category: 'SANILA Sovereign World',
-    editable: true,
-    sensitive: false,
-    territory_id: null,
-    tenant_id: null,
-    locale: null,
-    version: 1,
-    updated_by: context.actor.id,
-  })
-  if (error) throw error
-  return state
+export async function publishSanilaWorld(context:MarketplaceRequestContext,expectedRevision?:number){
+  return mutateSanilaWorld({action:'publish',context,expectedRevision:expectedRevision??(await getSanilaWorldState()).revision})
 }
-
-export async function saveSanilaWorldImport(input: { packageName: string; fingerprint: string; context: MarketplaceRequestContext }) {
-  const current = await getSanilaWorldState()
-  const now = new Date().toISOString()
-  return persist({
-    ...current,
-    status: 'draft',
-    revision: current.revision + 1,
-    packageName: input.packageName,
-    sourceFingerprint: input.fingerprint,
-    importedAt: now,
-    importedBy: input.context.actor.id,
-  }, input.context)
-}
-
-export async function saveSanilaWorldPage(input: { slug: string; data: Data; context: MarketplaceRequestContext }) {
-  const current = await getSanilaWorldState()
-  const page = current.pages[input.slug]
-  if (!page) throw new Error('Route SANILA inconnue.')
-  const now = new Date().toISOString()
-  return persist({
-    ...current,
-    status: 'draft',
-    revision: current.revision + 1,
-    pages: { ...current.pages, [input.slug]: { ...page, status: 'draft', updatedAt: now, data: input.data } },
-  }, input.context)
-}
-
-export async function publishSanilaWorld(context: MarketplaceRequestContext) {
-  const current = await getSanilaWorldState()
-  const now = new Date().toISOString()
-  const pages = Object.fromEntries(Object.entries(current.pages).map(([slug, page]) => [slug, page.data ? { ...page, status: 'published' as const } : page]))
-  return persist({ ...current, status: 'published', revision: current.revision + 1, pages, publishedAt: now, publishedBy: context.actor.id }, context)
+export async function saveSanilaWorldImport(input:{packageName:string;fingerprint:string;context:MarketplaceRequestContext}):Promise<never>{
+  void input
+  throw new Error('L’ancien import ne stockait que le nom du ZIP. Utilisez le nouveau manifeste SANILA v1.')
 }

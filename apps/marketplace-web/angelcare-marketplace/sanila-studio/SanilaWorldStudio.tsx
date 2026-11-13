@@ -1,47 +1,59 @@
 'use client'
-
-import { Puck, type Data } from '@puckeditor/core'
+import {Puck,type Data} from '@puckeditor/core'
 import '@puckeditor/core/puck.css'
-import { useSearchParams } from 'next/navigation'
-import { useMemo, useState } from 'react'
-import { Save, ExternalLink, ShieldCheck } from 'lucide-react'
-import { SANILA_WORLD_ROUTES } from '@/angelcare-marketplace/sanila-world/contract'
-import type { SanilaWorldState } from '@/angelcare-marketplace/sanila-admin/types'
-import { SANILA_PUCK_CONFIG } from './puck'
-import { sanilaInitialPuckData } from './initial-data'
+import {useSearchParams} from 'next/navigation'
+import {useMemo,useState} from 'react'
+import {Save,ExternalLink,ShieldCheck,ImagePlus,RefreshCcw} from 'lucide-react'
+import type {SanilaWorldState} from '../sanila-admin/types'
+import {SANILA_DEFAULT_THEME_KEY,SANILA_LOCKED_ROUTES} from '../sanila-world/world-engine'
+import {NativeExperienceMediaPicker} from '../live-experience-command/components/NativeExperienceMediaPicker'
+import {SANILA_PUCK_CONFIG} from './puck'
+import {sanilaInitialPuckData} from './initial-data'
 import styles from './sanila-studio.module.css'
-
-export function SanilaWorldStudio({ initialState }: { initialState: SanilaWorldState }) {
-  const searchParams = useSearchParams()
-  const requested = searchParams.get('route') || 'accueil'
-  const initialSlug = initialState.pages[requested] ? requested : 'accueil'
-  const [slug, setSlug] = useState(initialSlug)
-  const [state, setState] = useState(initialState)
-  const [message, setMessage] = useState('Prêt')
-  const data = useMemo(() => state.pages[slug]?.data || sanilaInitialPuckData(slug), [slug, state])
-  const [draft, setDraft] = useState<Data>(data)
-
-  async function save(next = draft) {
-    setMessage('Enregistrement…')
-    const response = await fetch('/api/angelcare-marketplace/admin/sanila/world', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ action: 'save_page', slug, data: next }) })
-    const body = await response.json()
-    if (!response.ok || !body.ok) { setMessage(body.error || 'Échec enregistrement'); return }
-    setState(body.state)
-    setDraft(next)
-    setMessage('Enregistré')
-  }
-
-  function switchPage(nextSlug: string) {
-    setSlug(nextSlug)
-    setDraft(state.pages[nextSlug]?.data || sanilaInitialPuckData(nextSlug))
-    setMessage('Prêt')
-  }
-
-  return <div>
-    <div style={{display:'flex',gap:10,alignItems:'center',justifyContent:'space-between',marginBottom:14,flexWrap:'wrap'}}>
-      <div style={{display:'flex',gap:8,alignItems:'center',flexWrap:'wrap'}}><select value={slug} onChange={(event)=>switchPage(event.target.value)}>{SANILA_WORLD_ROUTES.map((route)=><option key={route.slug} value={route.slug}>{route.nav} · {route.slug}</option>)}</select><span style={{fontSize:12,fontWeight:800,color:'#5e7487'}}>{message}</span></div>
-      <div style={{display:'flex',gap:8}}><a href={SANILA_WORLD_ROUTES.find((route)=>route.slug===slug)?.href} target="_blank" rel="noreferrer"><ExternalLink size={14}/> Public</a><button type="button" onClick={()=>void save()}><Save size={14}/> Enregistrer</button><span style={{display:'inline-flex',alignItems:'center',gap:5,fontSize:11,fontWeight:850}}><ShieldCheck size={14}/> SANILA isolé</span></div>
+export function SanilaWorldStudio({initialState}:{initialState:SanilaWorldState}){
+ const params=useSearchParams()
+ const requested=params.get('route')||'accueil'
+ const [world,setWorld]=useState(initialState)
+ const [slug,setSlug]=useState(world.pages[requested]?requested:'accueil')
+ const [draft,setDraft]=useState<Data>(()=>world.pages[world.pages[requested]?requested:'accueil']?.data||sanilaInitialPuckData(world.pages[requested]?requested:'accueil'))
+ const [message,setMessage]=useState('Prêt'),[busy,setBusy]=useState(false)
+ const route=world.pages[slug]
+ const themes=world.themes||{}
+ const available=useMemo(()=>Object.values(world.pages).filter(p=>!p.deletedAt),[world])
+ const safe=(value:string)=>world.pages[value]?.data||sanilaInitialPuckData(value)
+ const switchPage=(value:string)=>{setSlug(value);setDraft(safe(value));setMessage('Brouillon prêt')}
+ async function save(next:Data=draft,options:Record<string,unknown>={}){
+  setBusy(true);setMessage('Enregistrement…')
+  try{
+    const r=await fetch('/api/angelcare-marketplace/admin/sanila/world',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({action:'edit_page',expectedRevision:world.revision,payload:{slug,data:next,...options}})})
+    const b=await r.json()
+    if(!r.ok||!b.ok)throw new Error(b.error||'Échec enregistrement')
+    setWorld(b.state);setDraft(next);setMessage('Enregistré · révision '+b.state.revision)
+  }catch(e){setMessage(e instanceof Error?e.message:'Échec enregistrement')}finally{setBusy(false)}
+ }
+ async function refresh(){
+  const r=await fetch('/api/angelcare-marketplace/admin/sanila/world',{cache:'no-store'})
+  const b=await r.json()
+  if(b.ok){setWorld(b.state);setDraft(b.state.pages[slug]?.data||sanilaInitialPuckData(slug));setMessage('Source rechargée')}
+ }
+ const protectedPage=SANILA_LOCKED_ROUTES.has(slug)
+ return <div className={styles.studioPage}>
+   <div className={styles.toolbar}>
+    <div><strong>WORLD STUDIO 360</strong><p>Composer en brouillon · visualiser puis publier depuis Publication</p></div>
+    <div className={styles.actions}>
+      <select value={slug} aria-label="Page à éditer" onChange={e=>switchPage(e.target.value)}>{available.map(p=><option key={p.slug} value={p.slug}>{p.nav} · {p.slug}</option>)}</select>
+      <a href={'/angelcare-marketplace/admin/sanila/preview?route='+encodeURIComponent(slug)} target="_blank" rel="noreferrer"><ExternalLink size={15}/> Prévisualiser</a>
+      <a href={'/angelcare-marketplace/fr/sanila'+(slug==='accueil'?'':'/'+slug)} target="_blank" rel="noreferrer"><ExternalLink size={15}/> Public</a>
+      <button type="button" disabled={busy} onClick={()=>void refresh()}><RefreshCcw size={15}/></button>
+      <button type="button" disabled={busy||protectedPage} onClick={()=>void save()}><Save size={15}/> Enregistrer</button>
     </div>
-    <div className={styles.studio}><Puck key={`${slug}-${state.pages[slug]?.updatedAt || 'source'}`} config={SANILA_PUCK_CONFIG} data={draft} onChange={next=>setDraft(next)} onPublish={next=>save(next)} dnd={{behavior:'auto'}} iframe={{enabled:false}} /></div>
-  </div>
+   </div>
+   {protectedPage?<p className={styles.notice}><ShieldCheck size={17}/> Cette page contient un parcours métier protégé. Le formulaire et l’authentification restent sous leur code natif et ne sont pas remplacés par une publication Puck.</p>:null}
+   <div className={styles.toolbar}>
+    <label>Thème de la page <select aria-label="Thème page" value={route?.themeKey||''} onChange={e=>void save(draft,{themeKey:e.target.value||null})} disabled={busy}><option value="">Thème global ({themes[world.themeKey||SANILA_DEFAULT_THEME_KEY]?.name})</option>{Object.values(themes).filter(t=>!t.archivedAt).map(t=><option key={t.key} value={t.key}>{t.name}</option>)}</select></label>
+    <div className={styles.actions}><NativeExperienceMediaPicker locale="fr" disabled={busy} onSelect={asset=>{setDraft(prev=>({...prev,content:[...prev.content,{type:'SanilaImage',props:{id:'sanila-native-'+crypto.randomUUID(),src:asset.url,alt:asset.title||'Photo SANILA',title:asset.title||''}}]}));setMessage('Image native ajoutée en brouillon. Enregistrez pour persister.')}}/><span className={styles.notice}><ImagePlus size={16}/> Native Media Vault</span></div>
+   </div>
+   <p role="status" className={styles.status}>{message}</p>
+   <div className={styles.studio}><Puck key={slug+'-'+(route?.updatedAt||'source')} config={SANILA_PUCK_CONFIG} data={draft} onChange={setDraft} onPublish={next=>void save(next)} dnd={{behavior:'auto'}} iframe={{enabled:false}}/></div>
+ </div>
 }

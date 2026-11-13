@@ -1,0 +1,57 @@
+{
+  "format": "sanila-world-package",
+  "version": 1,
+  "pages": [
+    {
+      "slug": "campus-excellence",
+      "title": "Campus Excellence",
+      "nav": "Campus",
+      "themeKey": "editorial-ivory",
+      "showInNav": true,
+      "seo": {
+        "title": "Campus Excellence — SANILA",
+        "description": "Découvrir les solutions SANILA pour votre établissement.",
+        "noindex": false
+      },
+      "data": {
+        "root": {
+          "props": {}
+        },
+        "content": [
+          {
+            "type": "SanilaHero",
+            "props": {
+              "id": "campus-hero",
+              "eyebrow": "CAMPUS",
+              "title": "Une nouvelle vision de votre établissement",
+              "body": "Conception et organisation scolaires avec SANILA.",
+              "label": "Demander une démonstration",
+              "href": "/angelcare-marketplace/fr/sanila/demonstration",
+              "tone": "white"
+            }
+          },
+          {
+            "type": "SanilaFeatureGrid",
+            "props": {
+              "id": "campus-features",
+              "title": "Un environnement cohérent",
+              "items": [
+                {
+                  "title": "Pilotage",
+                  "body": "Les décisions sont contextualisées."
+                },
+                {
+                  "title": "Opérations",
+                  "body": "Un langage partagé dans l’établissement."
+                }
+              ],
+              "tone": "soft"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "themes": [],
+  "assets": []
+}

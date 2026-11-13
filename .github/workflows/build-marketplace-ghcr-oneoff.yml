@@ -55,6 +55,9 @@ jobs:
       - name: Verify Live Experience 360 source and lifecycle contracts
         run: node --experimental-strip-types --test apps/marketplace-web/scripts/angelcare-marketplace/verify-live-experience-360-source.test.mjs
 
+      - name: Verify SANILA World Studio 360 source and publication contracts
+        run: node --experimental-strip-types --test apps/marketplace-web/scripts/angelcare-marketplace/verify-sanila-world-360-source.test.mjs
+
       - name: Verify public Imagery Studio runtime recovery
         run: node --experimental-strip-types --test apps/marketplace-web/scripts/angelcare-marketplace/verify-imagery-public-runtime.test.mjs
 

@@ -22,7 +22,7 @@ const trustLinks = [
   ['FAQ', 'faq'],
 ]
 
-export function SanilaHeader() {
+export function SanilaHeader({extraLinks=[]}:{extraLinks?:Array<{slug:string;label:string}>}) {
   return (
     <header className={styles.header}>
       <div className={styles.utilityBar}>
@@ -49,6 +49,7 @@ export function SanilaHeader() {
             <div className={`${styles.navPanel} ${styles.navPanelCompact}`}><div className={styles.navPanelLinks}>{trustLinks.map(([label, slug]) => <Link href={sanilaHref(slug)} key={slug}>{label}<SanilaIcon name="arrow" size={12} /></Link>)}</div></div>
           </details>
           <Link href={sanilaHref('ressources')}>Ressources</Link>
+          {extraLinks.slice(0,7).map(item=><Link key={item.slug} href={sanilaHref(item.slug)}>{item.label}</Link>)}
         </nav>
         <div className={styles.headerActions}>
           <Link className={styles.headerLogin} href={sanilaHref('connexion')}>Accéder à SANILA</Link>
@@ -63,6 +64,7 @@ export function SanilaHeader() {
             <Link href={sanilaHref('securite')}>Sécurité</Link>
             <Link href={sanilaHref('mise-en-service')}>Mise en service</Link>
             <Link href={sanilaHref('demonstration')}>Démonstration</Link>
+            {extraLinks.slice(0,12).map(item=><Link key={item.slug} href={sanilaHref(item.slug)}>{item.label}</Link>)}
             <Link href={sanilaHref('connexion')}>Accéder à SANILA</Link>
           </div>
         </details>

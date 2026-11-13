@@ -13,6 +13,8 @@ import { GlobalPublicShell } from '@/angelcare-marketplace/public-universe/compo
 import { PublicPageRenderer } from '@/angelcare-marketplace/public-universe/components/PublicPageRenderer'
 import { getPublicPage, getPublishedStudioHomepage, publicRoutePath } from '@/angelcare-marketplace/public-universe/repository'
 import { SanilaPublicUniverse } from '@/angelcare-marketplace/sanila-public/SanilaPublicUniverse'
+import { getSanilaWorldState } from '@/angelcare-marketplace/sanila-world/repository'
+import { SANILA_LOCKED_ROUTES } from '@/angelcare-marketplace/sanila-world/world-engine'
 import { isSanilaPublicRoute, resolveSanilaPublicSlug } from '@/angelcare-marketplace/sanila-public/content'
 import { getSanilaPublicMetadata } from '@/angelcare-marketplace/sanila-public/metadata'
 import { resolvePublishedDictionary } from '@/angelcare-marketplace/localization-intelligence/runtime'
@@ -35,7 +37,33 @@ async function nativeMetadata({ params }: { params: Promise<{ locale: string; sl
   const translated = (value: string | null | undefined) => value ? dictionary?.bySource[value] || value : undefined
   const slug = current.slug?.length ? publicRoutePath(current.slug) : 'accueil'
   const alias = canonicalAlias(locale, slug)
-  if (locale === 'fr' && isSanilaPublicRoute(slug)) return getSanilaPublicMetadata(slug)
+  if(locale==='fr'&&(slug==='sanila'||slug.startsWith('sanila/'))){
+    if(isSanilaPublicRoute(slug)){
+      const original=getSanilaPublicMetadata(slug)
+      const child=resolveSanilaPublicSlug(slug)
+      if(!child||SANILA_LOCKED_ROUTES.has(child))return original
+      const world=await getSanilaWorldState().catch(()=>null)
+      const page=world?.pages[child]
+      if(!page?.publishedData||page.deletedAt)return original
+      return {
+        ...original,
+        title:page.seo?.title||page.title,
+        description:page.seo?.description||undefined,
+        robots:{index:!page.seo?.noindex,follow:true},
+      }
+    }
+    const child=slug.slice('sanila/'.length)
+    const world=await getSanilaWorldState().catch(()=>null)
+    const page=world?.pages[child]
+    if(!page||!page.publishedData||page.deletedAt||SANILA_LOCKED_ROUTES.has(child))
+      return {title:'SANILA — Page indisponible',robots:{index:false,follow:false}}
+    return {
+      title:page.seo?.title||page.title,
+      description:page.seo?.description||undefined,
+      robots:{index:!page.seo?.noindex,follow:true},
+      alternates:{canonical:'/angelcare-marketplace/fr/sanila/'+child},
+    }
+  }
   if (alias) return { title: 'ANGELCARE Marketplace', alternates: { canonical: `/angelcare-marketplace/${locale}/${alias}` } }
   if (slug === 'accueil') {
     const studioHomepage = await getPublishedStudioHomepage({ locale }).catch(() => null)
@@ -62,10 +90,15 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
   const slug = current.slug?.length ? publicRoutePath(current.slug) : 'accueil'
   const alias = canonicalAlias(locale, slug)
   if (alias) permanentRedirect(`/angelcare-marketplace/${locale}/${alias}`)
-  if (locale === 'fr' && isSanilaPublicRoute(slug)) {
-    const sanilaSlug = resolveSanilaPublicSlug(slug)
-    if (!sanilaSlug) notFound()
-    return <SanilaPublicUniverse slug={sanilaSlug} locale={locale} />
+  if(locale==='fr'&&(slug==='sanila'||slug.startsWith('sanila/'))){
+    const sanilaSlug=resolveSanilaPublicSlug(slug)||slug.slice('sanila/'.length)
+    if(!sanilaSlug)notFound()
+    if(!isSanilaPublicRoute(slug)){
+      const world=await getSanilaWorldState().catch(()=>null)
+      const record=world?.pages[sanilaSlug]
+      if(!record?.publishedData||record.deletedAt||SANILA_LOCKED_ROUTES.has(sanilaSlug))notFound()
+    }
+    return <SanilaPublicUniverse slug={sanilaSlug} locale={locale}/>
   }
   if (slug === 'accueil') {
     // MODERN STUDIO HOMEPAGE AUTHORITY — blue/green, fail-open.
@@ -203,4 +236,4 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
   return <GlobalPublicShell seoPath={seoPath} seoBase={seoBase} locale={locale} navigation={result.navigation} variant={slug==='contact'?'marketplace':'standard'}><PublicPageRenderer experience={result} locale={locale}/></GlobalPublicShell>
 }
 
-export async function generateMetadata(props:{params:Promise<{locale:string;slug?:string[]}>}):Promise<Metadata>{const p=await props.params;const base=await nativeMetadata(props);if(p.locale==='fr'&&isSanilaPublicRoute(p.slug?.join('/')||'accueil'))return base;return seoMetadata('angelcare',`/angelcare-marketplace/${p.locale}${p.slug?.length?"/"+p.slug.join("/"):""}`,base);}
+export async function generateMetadata(props:{params:Promise<{locale:string;slug?:string[]}>}):Promise<Metadata>{const p=await props.params;const base=await nativeMetadata(props);if(p.locale==='fr'&&(p.slug?.[0]==='sanila'))return base;return seoMetadata('angelcare',`/angelcare-marketplace/${p.locale}${p.slug?.length?"/"+p.slug.join("/"):""}`,base);}

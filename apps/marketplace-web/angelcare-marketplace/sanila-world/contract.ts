@@ -7,7 +7,7 @@ export const SANILA_PUBLIC_ROUTE_PREFIX = '/angelcare-marketplace/fr/sanila'
 export const SANILA_WORLD_SECTIONS = [
   'command', 'demo', 'requests', 'access', 'sessions', 'prospects',
   'public-world', 'studio', 'pages', 'shell', 'navigation', 'forms',
-  'media', 'seo', 'publication', 'audit', 'health',
+  'media', 'themes', 'seo', 'publication', 'audit', 'health',
 ] as const
 
 export type SanilaWorldSection = typeof SANILA_WORLD_SECTIONS[number]

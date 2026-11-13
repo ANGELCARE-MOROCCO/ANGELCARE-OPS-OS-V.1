@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import type { Config } from '@puckeditor/core'
 import styles from './sanila-studio.module.css'
 
@@ -21,7 +22,7 @@ function Section({ children, tone = 'white' }: { children: React.ReactNode; tone
 
 export const SANILA_PUCK_CONFIG: Config = {
   categories: {
-    sanila: { title: 'SANILA · Sections', defaultExpanded: true, components: ['SanilaHero', 'SanilaEditorial', 'SanilaFeatureGrid', 'SanilaProcess', 'SanilaProof', 'SanilaCTA', 'SanilaWorkflowBridge'] },
+    sanila: { title: 'SANILA · Sections', defaultExpanded: true, components: ['SanilaHero', 'SanilaEditorial', 'SanilaFeatureGrid', 'SanilaProcess', 'SanilaProof', 'SanilaCTA', 'SanilaWorkflowBridge', 'SanilaImage'] },
   },
   components: {
     SanilaHero: {
@@ -59,6 +60,15 @@ export const SANILA_PUCK_CONFIG: Config = {
       fields: { title: { type: 'text', label: 'Titre' }, body: { type: 'textarea', label: 'Texte' }, label: { type: 'text', label: 'CTA' }, href: { type: 'text', label: 'Destination' }, tone: toneField },
       defaultProps: { title: 'Voir SANILA avec votre réalité.', body: 'Passez d’une lecture générique à une démonstration contextualisée.', label: 'Demander une démonstration', href: '/angelcare-marketplace/fr/sanila/demonstration', tone: 'navy' },
       render: (props: any) => <Section tone={props.tone}><h2>{props.title}</h2><p>{props.body}</p>{props.href && props.label ? <Link className={styles.cta} href={props.href}>{props.label}</Link> : null}</Section>,
+    },
+    SanilaImage:{
+      label:'SANILA · Image Native',
+      fields:{src:{type:'text',label:'URL native Media Vault'},alt:{type:'text',label:'Texte alternatif'},title:{type:'text',label:'Légende'}},
+      defaultProps:{src:'/sanila/sanila-operating-system-logo.png',alt:'SANILA',title:''},
+      render:(props:any)=><figure style={{position:'relative',height:380,margin:0,background:'#edf3f8',overflow:'hidden'}}>
+        <Image src={props.src||'/sanila/sanila-operating-system-logo.png'} alt={props.alt||'SANILA'} fill sizes="100vw" unoptimized style={{objectFit:'cover'}}/>
+        {props.title?<figcaption style={{position:'absolute',bottom:12,left:15,background:'#fff',padding:'8px 15px',color:'#142b42'}}>{props.title}</figcaption>:null}
+      </figure>,
     },
     SanilaWorkflowBridge: {
       label: 'SANILA Workflow Bridge',
