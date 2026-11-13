@@ -16,6 +16,8 @@ import {
   CheckCircle2,
   GitCompareArrows,
   Search,
+  Sparkles,
+  Layers3,
   X,
 } from "lucide-react";
 import type {
@@ -70,6 +72,18 @@ import {
   type Selection,
 } from "./model";
 import s from "./journey.module.css";
+import p from "./premium.module.css";
+import { campaignSet } from "./media";
+import {
+  ChapterNavigation,
+  ExplorerIdentity,
+  HeroExhibit,
+  JourneyFinder,
+  ModuleGraphic,
+  ProjectBoard,
+  UniverseMark,
+} from "./PremiumJourney";
+import type { JourneyResult } from "./journey-search";
 
 type Detail = {
   title: string;
@@ -88,16 +102,27 @@ function SourceImage({
   alt,
   eager = false,
   className = "",
+  sizes,
 }: {
   name: string;
   alt: string;
   eager?: boolean;
   className?: string;
+  sizes?: string;
 }) {
   return (
     <ManagedImage
-      slot={`journey.${name}`}
+      slot={`journey-r4.${name}`}
       src={asset(name)}
+      srcSet={campaignSet(name)}
+      sizes={
+        sizes ||
+        (eager
+          ? "(min-width: 1600px) 720px, 52vw"
+          : "(min-width: 1600px) 640px, 44vw")
+      }
+      width={1536}
+      height={1024}
       alt={alt}
       loading={eager ? "eager" : "lazy"}
       decoding="async"
@@ -138,6 +163,24 @@ export function EstablishmentsExperience({
     experience.territoryCode,
   );
   const [detail, setDetail] = useState<Detail | null>(null);
+  const [panel, setPanel] = useState<"finder" | "project" | null>(null);
+  useEffect(() => {
+    const shortcut = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (
+        event.key !== "/" ||
+        event.ctrlKey ||
+        event.metaKey ||
+        event.altKey ||
+        target?.closest("input, textarea, select, [contenteditable], dialog")
+      )
+        return;
+      event.preventDefault();
+      setPanel("finder");
+    };
+    window.addEventListener("keydown", shortcut);
+    return () => window.removeEventListener("keydown", shortcut);
+  }, []);
 
   const [motionChoice, setMotionChoice] = useSessionValue(
     "ac.establishments.motion.v3",
@@ -170,6 +213,7 @@ export function EstablishmentsExperience({
       currentView.current = next;
       setView(next);
       setDetail(null);
+      setPanel(null);
       const target = window.location.hash.split("/")[1];
       if (target)
         requestAnimationFrame(() =>
@@ -229,6 +273,7 @@ export function EstablishmentsExperience({
     currentView.current = next;
     setView(next);
     setDetail(null);
+    setPanel(null);
     setActiveSection("ew-explorer");
     history.pushState(
       null,
@@ -335,6 +380,34 @@ export function EstablishmentsExperience({
       },
     });
   }
+  function chooseResult(result: JourneyResult) {
+    setPanel(null);
+    navigate(result.view);
+    if (result.type === "invitation") {
+      requestAnimationFrame(freeYear);
+    } else if (result.type === "formula") {
+      const formula = FORMULAS.find((item) => item.id === result.target);
+      if (formula) formulaDetail(formula);
+    } else if (result.type === "module") {
+      const module = MODULES.find((item) => item.id === result.target);
+      if (module) moduleDetail(module);
+    } else if (result.type === "offer") {
+      const offer = experience.items.find((item) => item.id === result.target);
+      if (offer) offerDetail(offer);
+    } else {
+      history.pushState(
+        null,
+        "",
+        `${location.pathname}${location.search}#produits/${result.target}`,
+      );
+      requestAnimationFrame(() =>
+        document.getElementById(result.target)?.scrollIntoView({
+          block: "start",
+          behavior: motion ? "smooth" : "instant",
+        }),
+      );
+    }
+  }
   const selectedKeys = project.map((item) => item.key);
   return (
     <JourneyContext.Provider value={view}>
@@ -365,13 +438,13 @@ export function EstablishmentsExperience({
             behavior: motion ? "smooth" : "instant",
           });
         }}
-        className={s.world}
-        data-establishments-journey="R3"
+        className={`${s.world} ${p.premium}`}
+        data-establishments-journey="R4"
         data-view={view}
         data-motion={motion ? "on" : "off"}
       >
         <nav
-          className={s.gateway}
+          className={`${s.gateway} ${p.gateway}`}
           aria-label="Les trois spécialités Établissements"
         >
           <span className={s.breadcrumb}>
@@ -385,71 +458,112 @@ export function EstablishmentsExperience({
                 aria-current={view === item.key ? "page" : undefined}
                 onClick={(event) => follow(event, item.key)}
               >
-                {item.label}
+                <img
+                  src={asset(item.image).replace(".png", "-640.png")}
+                  width={60}
+                  height={49}
+                  alt=""
+                  decoding="async"
+                />
+                <span>
+                  {item.label}
+                  <small>
+                    {item.key === "conseil"
+                      ? "3 leviers · 9 formules"
+                      : item.key === "partner-os"
+                        ? "20 capacités · 1 an gratuit"
+                        : "16 univers · votre projet"}
+                  </small>
+                </span>
                 <ArrowRight size={14} />
               </JourneyLink>
             ))}
           </div>
         </nav>
-        <nav className={s.anchors} aria-label="Dans cette expérience">
-          <JourneyLink
-            href="#ew-explorer"
-            aria-current={
-              activeSection === "ew-explorer" ? "location" : undefined
-            }
-          >
-            Explorer <ArrowDown size={13} />
-          </JourneyLink>
-          <JourneyLink
-            href="#ew-stories"
-            aria-current={
-              activeSection === "ew-stories" ? "location" : undefined
-            }
-          >
-            {view === "produits"
-              ? "Les 16 univers"
-              : view === "partner-os"
-                ? "L’écosystème"
-                : "Les trois leviers"}
-          </JourneyLink>
-          <JourneyLink
-            href="#ew-why"
-            aria-current={activeSection === "ew-why" ? "location" : undefined}
-          >
-            Pourquoi AngelCare
-          </JourneyLink>
-          <JourneyLink
-            href="#world-enquiry"
-            aria-current={
-              activeSection === "world-enquiry" ? "location" : undefined
-            }
-          >
-            Mon projet <span>{project.length || ""}</span>
-          </JourneyLink>
-          <JourneyLink
-            href="#ew-questions"
-            aria-current={
-              activeSection === "ew-questions" ? "location" : undefined
-            }
-          >
-            Questions utiles
-          </JourneyLink>
-          <button
-            type="button"
-            aria-pressed={motion}
-            disabled={systemReduced}
-            title={
-              systemReduced
-                ? "Préférence de mouvement réduit du système"
-                : undefined
-            }
-            onClick={() => setMotionChoice((value) => !value)}
-          >
-            Animations {motion ? "activées" : "réduites"}
-          </button>
+        <nav
+          className={`${s.anchors} ${p.anchors}`}
+          aria-label="Dans cette expérience"
+        >
+          <div className={p.sectionLinks}>
+            <JourneyLink
+              href="#ew-explorer"
+              aria-current={
+                activeSection === "ew-explorer" ? "location" : undefined
+              }
+            >
+              Explorer <ArrowDown size={13} />
+            </JourneyLink>
+            <JourneyLink
+              href="#ew-stories"
+              aria-current={
+                activeSection === "ew-stories" ? "location" : undefined
+              }
+            >
+              {view === "produits"
+                ? "Les 16 univers"
+                : view === "partner-os"
+                  ? "L’écosystème"
+                  : "Les trois leviers"}
+            </JourneyLink>
+            <JourneyLink
+              href="#ew-why"
+              aria-current={activeSection === "ew-why" ? "location" : undefined}
+            >
+              Pourquoi AngelCare
+            </JourneyLink>
+            <JourneyLink
+              href="#world-enquiry"
+              aria-current={
+                activeSection === "world-enquiry" ? "location" : undefined
+              }
+            >
+              Mon projet <span>{project.length || ""}</span>
+            </JourneyLink>
+            <JourneyLink
+              href="#ew-questions"
+              aria-current={
+                activeSection === "ew-questions" ? "location" : undefined
+              }
+            >
+              Questions utiles
+            </JourneyLink>
+          </div>
+          <div className={p.navTools}>
+            <button
+              type="button"
+              className={p.utility}
+              aria-keyshortcuts="/"
+              title="Chercher une solution · raccourci /"
+              onClick={() => setPanel("finder")}
+            >
+              <Search size={14} />
+              Trouver une solution
+            </button>
+            <button
+              type="button"
+              className={p.utility}
+              onClick={() => setPanel("project")}
+            >
+              <Layers3 size={14} />
+              Ma sélection ({project.length})
+            </button>
+            <button
+              type="button"
+              aria-pressed={motion}
+              disabled={systemReduced}
+              title={
+                systemReduced
+                  ? "Préférence de mouvement réduit du système"
+                  : undefined
+              }
+              onClick={() => setMotionChoice((value) => !value)}
+            >
+              Animations {motion ? "activées" : "réduites"}
+            </button>
+          </div>
         </nav>
-        <section className={s.hero}>
-          <div className={s.heroCopy}>
+        <section className={`${s.hero} ${p.hero}`}>
+          <div className={`${s.heroCopy} ${p.copy}`}>
             <span className={s.eyebrow}>
               {view === "conseil"
                 ? "Diagnostic partenariat gratuit"
@@ -502,25 +616,34 @@ export function EstablishmentsExperience({
               </small>
             )}
           </div>
-          <div className={s.heroMedia}>
+          <div className={`${s.heroMedia} ${p.photo}`}>
             <SourceImage
               name={selectedView.image}
               alt={
                 view === "partner-os"
-                  ? "Professionnelle et aperçu illustratif de Partner OS, source approuvée"
+                  ? "Professionnelle et aperçu illustratif de Partner OS, scène illustrative"
                   : view === "produits"
-                    ? "Produits et équipements éducatifs, source approuvée"
-                    : "Accompagnement des équipes, enfants et familles, source approuvée"
+                    ? "Produits et équipements éducatifs, scène illustrative"
+                    : "Accompagnement des équipes, enfants et familles, scène illustrative"
               }
               eager
             />
+            <HeroExhibit view={view} />
           </div>
         </section>
         <section
           id="ew-explorer"
-          className={s.explorer}
+          className={`${s.explorer} ${p.explorer}`}
           aria-label="Exploration des offres"
         >
+          <ExplorerIdentity
+            view={view}
+            count={
+              experience.items.filter(
+                (item) => item.kind === "product" || item.kind === "kit",
+              ).length
+            }
+          />
           {view === "conseil" ? (
             <ProgrammeExplorer
               offers={experience.items}
@@ -552,7 +675,7 @@ export function EstablishmentsExperience({
           />
         </section>
         <section
-          className={s.crossroads}
+          className={`${s.crossroads} ${p.crossroads}`}
           aria-label="Accéder aux autres spécialités"
         >
           {VIEWS.filter((item) => item.key !== view).map((item) => (
@@ -579,7 +702,7 @@ export function EstablishmentsExperience({
         )}
         <Why view={view} />
         <JourneyFAQ view={view} />
-        <section className={s.method} data-reveal>
+        <section className={`${s.method} ${p.method}`} data-reveal>
           <Heading
             eyebrow="Une démarche concrète"
             title={
@@ -649,6 +772,22 @@ export function EstablishmentsExperience({
         >
           {notice}
         </p>
+        {panel === "finder" && (
+          <JourneyFinder
+            offers={experience.items}
+            onChoose={chooseResult}
+            onClose={() => setPanel(null)}
+          />
+        )}
+        {panel === "project" && (
+          <ProjectBoard
+            project={project}
+            view={view}
+            territory={experience.territoryCode}
+            remove={(key) => dispatch({ type: "remove", key })}
+            onClose={() => setPanel(null)}
+          />
+        )}
         {detail && (
           <DetailDialog
             detail={detail}
@@ -774,6 +913,25 @@ function ProgrammeExplorer({
         Trois leviers complémentaires. Neuf formules de référence à étudier
         selon votre contexte.
       </Heading>
+      <div
+        className={p.guidedNeeds}
+        role="group"
+        aria-label="Choisir mon objectif"
+      >
+        <span>
+          <Sparkles size={16} />
+          Votre priorité aujourd’hui ?
+        </span>
+        {FAMILIES.map((item) => (
+          <button
+            key={item.key}
+            aria-pressed={family === item.key}
+            onClick={() => setFamily(family === item.key ? "all" : item.key)}
+          >
+            {item.purpose}
+          </button>
+        ))}
+      </div>
       <div className={s.priorities}>
         {FAMILIES.map((item) => (
           <button
@@ -870,7 +1028,7 @@ function ProgrammeExplorer({
       <p className={s.resultsStatus} role="status">
         {filtered.length} formule{filtered.length > 1 ? "s" : ""} à étudier
       </p>
-      <div className={s.offerGrid}>
+      <div className={`${s.offerGrid} ${p.offerGrid}`}>
         {filtered.map((formula) => {
           const familyInfo = FAMILIES.find(
             (item) => item.key === formula.family,
@@ -880,15 +1038,25 @@ function ProgrammeExplorer({
           return (
             <article
               key={formula.id}
-              className={s.formulaCard}
+              className={`${s.formulaCard} ${p.formulaCard}`}
               data-family={formula.family}
               data-selected={prepared}
             >
               <SourceImage
                 name={FORMULA_IMAGES[formula.id] || familyInfo.image}
                 alt={`Illustration du programme ${familyInfo.name}`}
+                sizes="(min-width: 1600px) 430px, 30vw"
               />
               <div>
+                <span className={p.cardTag}>
+                  <CheckCircle2 size={11} />
+                  {
+                    ["Démarrer", "Structurer", "Approfondir"][
+                      Number(formulaLevel(formula))
+                    ]
+                  }
+                </span>
+                <br />
                 <span className={s.cardEyebrow}>{familyInfo.name}</span>
                 <h3>{formula.name}</h3>
                 <ul>
@@ -1166,13 +1334,10 @@ function PartnerExplorer({
           </button>
         ))}
       </div>
-      <div className={s.moduleGrid}>
+      <div className={`${s.moduleGrid} ${p.moduleGrid}`}>
         {modules.slice((safePage - 1) * 8, safePage * 8).map((module) => (
           <article key={module.id} data-group={module.group}>
-            <SourceImage
-              name={module.image}
-              alt={`Présentation illustrative : ${module.title}`}
-            />
+            <ModuleGraphic module={module} />
             <span className={s.moduleBadge}>
               <ModuleIcon group={module.group} id={module.id} />
               {module.group}
@@ -1206,8 +1371,8 @@ function PartnerExplorer({
 
 function ProgrammeStories() {
   return (
-    <section id="ew-stories" className={s.stories}>
-      <div className={s.editorialIntro}>
+    <section id="ew-stories" className={`${s.stories} ${p.stories}`}>
+      <div className={`${s.editorialIntro} ${p.editorialIntro}`}>
         <SourceImage
           name="child-experience"
           alt="Atelier accompagné avec les enfants"
@@ -1230,10 +1395,10 @@ function ProgrammeStories() {
         <article
           key={story.family}
           data-reveal
-          className={s.programmeStory}
+          className={`${s.programmeStory} ${p.programmeStory}`}
           data-family={story.family}
         >
-          <div className={s.storyImage}>
+          <div className={`${s.storyImage} ${p.storyImage}`}>
             <SourceImage name={story.image} alt={story.title} />
             <span>
               0{index + 1} / {FAMILIES[index].name}
@@ -1243,7 +1408,7 @@ function ProgrammeStories() {
             <span className={s.eyebrow}>{FAMILIES[index].purpose}</span>
             <h2>{story.title}</h2>
             <p>{story.text}</p>
-            <div className={s.pointGrid}>
+            <div className={`${s.pointGrid} ${p.pointGrid}`}>
               {story.points.map((point, pointIndex) => (
                 <div key={point}>
                   <CheckCircle2 size={19} />
@@ -1273,37 +1438,76 @@ function ProgrammeStories() {
 }
 function ProductStories() {
   return (
-    <section id="ew-stories" className={s.stories}>
+    <section id="ew-stories" className={`${s.stories} ${p.stories}`}>
       <Heading title="16 univers. Une ambition : donner de la valeur à chaque détail.">
         Votre établissement a besoin d’un ensemble visible, organisé et
         rassurant.
       </Heading>
+      <ChapterNavigation />
       {PRODUCT_CHAPTERS.map((chapter, index) => (
-        <article key={chapter.title} data-reveal className={s.productChapter}>
-          <div className={s.chapterHero}>
+        <article
+          key={chapter.title}
+          id={`ew-chapter-${index + 1}`}
+          data-reveal
+          className={`${s.productChapter} ${p.productChapter}`}
+        >
+          <div className={`${s.chapterHero} ${p.chapterHero}`}>
             <div>
               <span className={s.eyebrow}>
                 Chapitre {["I", "II", "III", "IV"][index]}
               </span>
               <h2>{chapter.title}</h2>
+              <p>
+                {
+                  [
+                    "Votre identité commence avant la première visite. Faites vivre une présence accueillante, visible et cohérente.",
+                    "L’espace n’est pas un décor. C’est un outil pour manipuler, découvrir et gagner en autonomie.",
+                    "Une organisation claire se voit dans les petits détails qui rassurent les équipes et les familles.",
+                    "La qualité devient plus tangible quand les équipes partagent leurs outils, leurs repères et leurs responsabilités.",
+                  ][index]
+                }
+              </p>
+              <span className={p.chapterLabel}>
+                <CheckCircle2 size={13} />4 univers complémentaires · sélection
+                sur devis
+              </span>
             </div>
             <SourceImage name={chapter.image} alt={chapter.title} />
-            <SourceImage
-              name={chapter.detail}
-              alt="Exemples de supports de cet univers"
-            />
           </div>
-          <div className={s.universes}>
+          <div className={`${s.universes} ${p.universes}`}>
             {chapter.universes.map((universe, subindex) => (
               <section key={universe.title}>
-                <span>{String(index * 4 + subindex + 1).padStart(2, "0")}</span>
+                <UniverseMark index={index * 4 + subindex} />
                 <h3>{universe.title}</h3>
                 <p>{universe.text}</p>
+                <small>
+                  {
+                    [
+                      "Première impression · identité",
+                      "Repères visuels · cohérence",
+                      "Supports de terrain · organisation",
+                      "Pratiques partagées · continuité",
+                    ][index]
+                  }
+                </small>
               </section>
             ))}
           </div>
         </article>
       ))}
+      <div className={p.discoveryClose}>
+        <div>
+          <span>DE L’INSPIRATION À VOTRE SÉLECTION</span>
+          <h3>Donnez une suite concrète aux besoins de votre établissement.</h3>
+          <p>
+            Retrouvez les offres publiées, leurs caractéristiques et leurs
+            conditions dans l’explorateur.
+          </p>
+        </div>
+        <JourneyLink className={s.primary} href="#ew-explorer">
+          Composer ma sélection <ArrowRight size={16} />
+        </JourneyLink>
+      </div>
     </section>
   );
 }
@@ -1316,8 +1520,8 @@ function PartnerStories({ onFree }: { onFree: () => void }) {
     "Suivre les détails avant qu’ils se dispersent.",
   ];
   return (
-    <section id="ew-stories" className={s.stories}>
-      <div className={s.editorialIntro}>
+    <section id="ew-stories" className={`${s.stories} ${p.stories}`}>
+      <div className={`${s.editorialIntro} ${p.editorialIntro}`}>
         <SourceImage
           name="os-people-intro"
           alt="Une équipe autour du projet de l’établissement"
@@ -1339,7 +1543,7 @@ function PartnerStories({ onFree }: { onFree: () => void }) {
           <article
             key={group}
             data-reveal
-            className={s.osChapter}
+            className={`${s.osChapter} ${p.osChapter}`}
             data-group={group}
           >
             <SourceImage
@@ -1464,7 +1668,7 @@ function Why({ view }: { view: View }) {
             ],
           ];
   return (
-    <section id="ew-why" className={s.why} data-reveal>
+    <section id="ew-why" className={`${s.why} ${p.why}`} data-reveal>
       <Heading
         title={
           view === "partner-os"
@@ -1475,7 +1679,11 @@ function Why({ view }: { view: View }) {
       <div>
         {reasons.map(([title, body, image]) => (
           <article key={title}>
-            <SourceImage name={image} alt="" />
+            <SourceImage
+              name={image}
+              alt=""
+              sizes="(min-width: 1600px) 340px, 23vw"
+            />
             <h3>{title}</h3>
             <p>{body}</p>
           </article>
@@ -1525,6 +1733,14 @@ function DetailDialog({
         <div className={s.detailPicture}>
           <OfferImage item={detail.native} />
         </div>
+      ) : detail.selection.kind === "module" &&
+        MODULES.find((item) => `module:${item.id}` === detail.selection.key) ? (
+        <ModuleGraphic
+          module={MODULES.find(
+            (item) => `module:${item.id}` === detail.selection.key,
+          )!}
+          large
+        />
       ) : (
         <SourceImage name={detail.image} alt="" />
       )}

@@ -1,0 +1,353 @@
+{
+  "version": "R4",
+  "scope": "French establishments body only",
+  "generatedAt": "2026-11-13",
+  "format": "PNG only",
+  "policy": "Generated campaign illustrations. Live catalogue photographs, prices, availability, IDs and action routes remain authoritative. Native 1536×1024 output; 640/960 are downsampled delivery variants, not recovered 4K detail. No claim of real customers, premises or testimonials.",
+  "references": [
+    "Approved consulting/products/Partner OS samples and their R2 editorial crops",
+    "Generated consulting scene as photographic art-direction reference"
+  ],
+  "assets": [
+    {
+      "key": "consulting",
+      "kind": "AI-generated illustrative campaign",
+      "nativeDimensions": [
+        1536,
+        1024
+      ],
+      "notExactSellableSKU": true,
+      "variants": [
+        {
+          "file": "consulting-campaign-640.png",
+          "width": 640,
+          "height": 427,
+          "bytes": 518836,
+          "sha256": "b7b4b9d9c43d140b49804ec25b4d7f99a344b2d99c7c608442b8bab0b0b15d18"
+        },
+        {
+          "file": "consulting-campaign-960.png",
+          "width": 960,
+          "height": 640,
+          "bytes": 1086880,
+          "sha256": "82bdac602f9a80b54ec0fc75f16accc0d52fdbde9792372721b8fafcbb5e9aec"
+        },
+        {
+          "file": "consulting-campaign.png",
+          "width": 1536,
+          "height": 1024,
+          "bytes": 2681923,
+          "sha256": "3b1c40694d15e9bc25342f710a64d41104667e228a81f5ec35fea6cd42c254ac"
+        }
+      ],
+      "prompt": "High-resolution editorial campaign: consultant and nursery director, children manipulating learning tools, warm white/oak navy coral teal palette; no text/logos/UI; illustrative scene.",
+      "promptRecord": "brief recorded from generation instruction"
+    },
+    {
+      "key": "partner",
+      "kind": "AI-generated illustrative campaign",
+      "nativeDimensions": [
+        1536,
+        1024
+      ],
+      "notExactSellableSKU": true,
+      "variants": [
+        {
+          "file": "partner-campaign-640.png",
+          "width": 640,
+          "height": 427,
+          "bytes": 481410,
+          "sha256": "1ec064a0d740c939ba65173ff859480a016c562b5c0358fe50f579f5412de106"
+        },
+        {
+          "file": "partner-campaign-960.png",
+          "width": 960,
+          "height": 640,
+          "bytes": 997868,
+          "sha256": "ad0cd86cfb4b3bb8373d3ed2f323cc6e5361a3525a749c88c9dd66aa69ad59dc"
+        },
+        {
+          "file": "partner-campaign.png",
+          "width": 1536,
+          "height": 1024,
+          "bytes": 2423982,
+          "sha256": "df3eebab0741cf80388b5aeca7f2acec9a488565dadfce8d1c547cbed0d3e9c2"
+        }
+      ],
+      "prompt": "Premium preschool owner in cream blazer with natural thumbs up, bright office laptop turned away; sharp anatomy; no text/logo/UI, illustrative campaign not testimonial.",
+      "promptRecord": "brief recorded from generation instruction"
+    },
+    {
+      "key": "products",
+      "kind": "AI-generated illustrative campaign",
+      "nativeDimensions": [
+        1536,
+        1024
+      ],
+      "notExactSellableSKU": true,
+      "variants": [
+        {
+          "file": "products-campaign-640.png",
+          "width": 640,
+          "height": 427,
+          "bytes": 405679,
+          "sha256": "e87b5aaa9f57fbc4c21459ea3502ad599e96ae6a5c99b11b77dc8449116b8335"
+        },
+        {
+          "file": "products-campaign-960.png",
+          "width": 960,
+          "height": 640,
+          "bytes": 885681,
+          "sha256": "10bfc4dc30eece8378b702d7e89d19d4534ec2746d29f8a6492c6926923b1abd"
+        },
+        {
+          "file": "products-campaign.png",
+          "width": 1536,
+          "height": 1024,
+          "bytes": 2380584,
+          "sha256": "2b84f7d54c8722ed541df0743b0046e0a8ca4f62f6970861e70730f051fec985"
+        }
+      ],
+      "prompt": "Premium preschool equipment studio still life: oak chair, wooden learning tools, blank routine board, abstract rollup, navy folder/polo, emotion cards; no letters/logo/prices, illustrative categories not exact SKUs.",
+      "promptRecord": "brief recorded from generation instruction"
+    },
+    {
+      "key": "eduplay",
+      "kind": "AI-generated illustrative campaign",
+      "nativeDimensions": [
+        1536,
+        1024
+      ],
+      "notExactSellableSKU": true,
+      "variants": [
+        {
+          "file": "eduplay-campaign-640.png",
+          "width": 640,
+          "height": 427,
+          "bytes": 540140,
+          "sha256": "85ee860c8c44bcffe433be1b52b8b75e5246bbc270c8bbfe0084157b9b618c30"
+        },
+        {
+          "file": "eduplay-campaign-960.png",
+          "width": 960,
+          "height": 640,
+          "bytes": 1132214,
+          "sha256": "afdc94f4e434ea47e37a93317040e70d5f96761432e353b2335306fffdb994d5"
+        },
+        {
+          "file": "eduplay-campaign.png",
+          "width": 1536,
+          "height": 1024,
+          "bytes": 2817495,
+          "sha256": "3e88f701fe37ba13a4daed251cc9572fb7860b95c7f188e8f69b212977e19a98"
+        }
+      ],
+      "prompt": "Teacher in plain navy polo with three preschool children sorting Montessori wooden tools, clear expressions/accurate hands, bright oak nursery, no words/logos/UI, illustrative campaign.",
+      "promptRecord": "brief recorded from generation instruction"
+    },
+    {
+      "key": "academy",
+      "kind": "AI-generated illustrative campaign",
+      "nativeDimensions": [
+        1536,
+        1024
+      ],
+      "notExactSellableSKU": true,
+      "variants": [
+        {
+          "file": "academy-campaign-640.png",
+          "width": 640,
+          "height": 427,
+          "bytes": 521999,
+          "sha256": "d6999d3b4bb80dabeca25fe312568495df0836076386ae72d525306c91d6ef6c"
+        },
+        {
+          "file": "academy-campaign-960.png",
+          "width": 960,
+          "height": 640,
+          "bytes": 1093248,
+          "sha256": "45476a474e2a6d6b8c890684e5d62684352347043936e87bcccaa4668b451117"
+        },
+        {
+          "file": "academy-campaign.png",
+          "width": 1536,
+          "height": 1024,
+          "bytes": 2703065,
+          "sha256": "eca664b9d7a39908131d6ac1db83581e8e9e53fb352357e8fa5ba5a61e66de08"
+        }
+      ],
+      "prompt": "Create one exceptionally sharp premium commercial editorial photograph, 3:2 landscape, for AngelCare preschool professional academy campaign. Five diverse adult female preschool educators and a navy-blazer female mentor collaborate around an oak table with blank worksheets, wooden learning tools, closed navy folders, one blank whiteboard in bright sophisticated nursery training room. Natural happy confident faces, convincing anatomy, hands mostly resting clearly on table. Moroccan/international professional context, tasteful white oak navy teal mustard coral palette, luminous daylight, layered composition, human warmth and established consulting firm quality. Follow reference's photographic art direction, not identities. No text, writing, logo, watermark, UI, badges, certificates or fabricated data. Original illustrative campaign scene, not a real testimonial.",
+      "promptRecord": "verbatim"
+    },
+    {
+      "key": "parents",
+      "kind": "AI-generated illustrative campaign",
+      "nativeDimensions": [
+        1536,
+        1024
+      ],
+      "notExactSellableSKU": true,
+      "variants": [
+        {
+          "file": "parents-campaign-640.png",
+          "width": 640,
+          "height": 427,
+          "bytes": 545638,
+          "sha256": "c997ec7d2239152f25a7b3a1a9aba7219ca3914c6ac8c2a234e8b0bc35b5060d"
+        },
+        {
+          "file": "parents-campaign-960.png",
+          "width": 960,
+          "height": 640,
+          "bytes": 1162965,
+          "sha256": "e36eeb0c0c44d5d9a230fe16173c872032993161514c09b63c95b3771fd07986"
+        },
+        {
+          "file": "parents-campaign.png",
+          "width": 1536,
+          "height": 1024,
+          "bytes": 2961564,
+          "sha256": "6eba29888150aa65a60cda0aaffb150f7cc5d60328740236148f938c6fd40b9f"
+        }
+      ],
+      "prompt": "One extremely sharp premium commercial editorial photograph, landscape 3:2, preschool family trust consulting campaign. Warm professional nursery director in plain navy blazer on left conversing with a happy mother and father seated on right, a preschool child at small oak activity table foreground. Beautiful modern white/oak nursery reception, indoor greenery, subtle mustard coral teal accents. Genuine natural expressions and clear faces, anatomically correct hands, rich layered scene, bright sophisticated daylight, editorial photography for an established education firm. Match photographic tone of reference without copying people. No text, logo, badges, UI, watermark, fake testimonials or certificates.",
+      "promptRecord": "verbatim"
+    },
+    {
+      "key": "classroom",
+      "kind": "AI-generated illustrative campaign",
+      "nativeDimensions": [
+        1536,
+        1024
+      ],
+      "notExactSellableSKU": true,
+      "variants": [
+        {
+          "file": "classroom-campaign-640.png",
+          "width": 640,
+          "height": 427,
+          "bytes": 563566,
+          "sha256": "6c0b105e3235889796f502168f7a958503aa140fea8010b0c1feac313b500125"
+        },
+        {
+          "file": "classroom-campaign-960.png",
+          "width": 960,
+          "height": 640,
+          "bytes": 1208940,
+          "sha256": "d10807a2452b17834a584b3fe27c4d591f571c98891c3d5b5d7cf250df3588ac"
+        },
+        {
+          "file": "classroom-campaign.png",
+          "width": 1536,
+          "height": 1024,
+          "bytes": 3092619,
+          "sha256": "9bec5f6cde739e103edeb31babc33215e95491ed6f797b74cc72e04aba056e2f"
+        }
+      ],
+      "prompt": "One high-resolution extremely sharp luxury commercial interior photograph landscape 3:2 of an exceptionally organized modern kindergarten classroom. Child-height warm oak tables and chairs, beautifully ordered Montessori shelves, activity trays, geometric shape wall panels WITHOUT letters, calm reading nook, tactile equipment, navy teal coral mustard accents on white architecture, big windows and indoor greenery. Rich realistic surfaces, architectural precision, welcoming busy learning environment, premium international preschool marketplace editorial campaign. No people, text, logos, watermarks, UI, prices or invented branded products. Illustrative environment not an exact sellable SKU.",
+      "promptRecord": "verbatim"
+    },
+    {
+      "key": "welcome",
+      "kind": "AI-generated illustrative campaign",
+      "nativeDimensions": [
+        1536,
+        1024
+      ],
+      "notExactSellableSKU": true,
+      "variants": [
+        {
+          "file": "welcome-campaign-640.png",
+          "width": 640,
+          "height": 427,
+          "bytes": 535856,
+          "sha256": "6be3c90150622353bb6d18da7b8d70323c14c8e686b0b516bd1a01190fd01a0a"
+        },
+        {
+          "file": "welcome-campaign-960.png",
+          "width": 960,
+          "height": 640,
+          "bytes": 1154684,
+          "sha256": "8f687287aaf695c16773586c8651a705210cec986ccc8320fa37a0e9a79afe7c"
+        },
+        {
+          "file": "welcome-campaign.png",
+          "width": 1536,
+          "height": 1024,
+          "bytes": 2956068,
+          "sha256": "d4f3af22029eadb3e18e2a29f280530a993879dc255f89203da8881c2be7b681"
+        }
+      ],
+      "prompt": "Exceptionally sharp premium architectural commercial photograph 3:2 landscape of a modern preschool entrance and welcoming reception, white and warm oak, sophisticated navy coral teal mustard colour accents, generous indoor plants, blank freestanding welcome sign with simple abstract shapes and no text, a beautiful child-height check-in desk, a tasteful small balloon cluster and parent seating. Natural bright daylight, credible commercial design, rich layered equipment and surfaces. Match reference photographic warmth. No people, letters, signage text, logos, UI, watermark. Illustrative preschool environment not exact sellable products.",
+      "promptRecord": "verbatim"
+    },
+    {
+      "key": "operations",
+      "kind": "AI-generated illustrative campaign",
+      "nativeDimensions": [
+        1536,
+        1024
+      ],
+      "notExactSellableSKU": true,
+      "variants": [
+        {
+          "file": "operations-campaign-640.png",
+          "width": 640,
+          "height": 427,
+          "bytes": 443398,
+          "sha256": "4c17985e89fce93de9d331c4c49e2fa656ffc5755a6af28392e6d17a8e71e4e5"
+        },
+        {
+          "file": "operations-campaign-960.png",
+          "width": 960,
+          "height": 640,
+          "bytes": 961430,
+          "sha256": "2e572bbde3ef3cb5fec1ea4eea476d3f0827f2e41f6206444cec2a5cb371f2dd"
+        },
+        {
+          "file": "operations-campaign.png",
+          "width": 1536,
+          "height": 1024,
+          "bytes": 2501135,
+          "sha256": "086f3c17b742ff8746f25a646f9df8d756bc3ad4534b75df90596d54ef46d1e6"
+        }
+      ],
+      "prompt": "Extremely sharp premium commercial still life photograph landscape 3:2 of an organized preschool operations and safety preparation desk. Beautiful oak desk, closed navy ring folders, blank checklists with simple lines and checkmarks but no words, neat transparent trays, blank geometric pictogram cards, first-aid case with plain red cross, blank cream clipboard, teal planner, mustard pencils, small plant. Background bright nursery cabinetry. Sophisticated high quality editorial commercial composition, daylight, white navy coral teal mustard palette. No people, text, numbers, words, fake certificates, brands, logos, UI or watermark. Illustrative categories not an exact product SKU.",
+      "promptRecord": "verbatim"
+    },
+    {
+      "key": "team",
+      "kind": "AI-generated illustrative campaign",
+      "nativeDimensions": [
+        1536,
+        1024
+      ],
+      "notExactSellableSKU": true,
+      "variants": [
+        {
+          "file": "team-campaign-640.png",
+          "width": 640,
+          "height": 427,
+          "bytes": 471196,
+          "sha256": "e58eaa8ea40ed0554c64385419d565926642130e8b1ae361b7ea5449f309ac31"
+        },
+        {
+          "file": "team-campaign-960.png",
+          "width": 960,
+          "height": 640,
+          "bytes": 1028294,
+          "sha256": "2c81c640c8216cfb18e6d381eef23f0c30649f8a72688f91cd650ba033479349"
+        },
+        {
+          "file": "team-campaign.png",
+          "width": 1536,
+          "height": 1024,
+          "bytes": 2723391,
+          "sha256": "58ade12b4e8de6dbde6630fa05a74b9aa7acd4a2d0f59c7c381a875028de9186"
+        }
+      ],
+      "prompt": "Extremely sharp premium commercial studio still life photograph landscape 3:2 for preschool team equipment campaign. One elegant plain navy polo on wooden hanger, matching navy tote bag with NO logo, blank name badge, blank cream planner, plain navy folder, wooden educational manipulatives, small oak chair at edge. Rich layered refined arrangement with white plaster, oak, teal and coral geometric display plinths, warm daylight and detailed crisp fabric. Established international education marketplace advertising quality. No text, letters, logos, UI, watermark or invented claims. Illustrative category scene not exact sellable SKU.",
+      "promptRecord": "verbatim"
+    }
+  ]
+}

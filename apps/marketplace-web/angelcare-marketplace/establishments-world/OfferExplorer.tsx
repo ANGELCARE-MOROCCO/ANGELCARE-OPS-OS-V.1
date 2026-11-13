@@ -37,6 +37,7 @@ import type { View } from "./content";
 import { useSessionValue } from "./useJourneyState";
 import { Pagination } from "./ExplorerControls";
 import s from "./journey.module.css";
+import p from "./premium.module.css";
 export function OfferImage({ item }: { item: DiscoveryItem }) {
   const [failed, setFailed] = useState(false);
   useEffect(() => setFailed(false), [item.media_url]);
@@ -471,7 +472,7 @@ export function NativeExplorer({
           <small>{compared.length} dans cette spécialité</small>
         </div>
       )}
-      <div className={s.nativeGrid}>
+      <div className={`${s.nativeGrid} ${p.nativeGrid}`}>
         {visible.slice((page - 1) * perPage, page * perPage).map((item) => {
           const info = projection(item),
             action = nativeAction(item, "fr", experience.territoryCode),
@@ -479,12 +480,12 @@ export function NativeExplorer({
           return (
             <article
               key={item.id}
-              className={s.nativeCard}
+              className={`${s.nativeCard} ${p.nativeCard}`}
               data-offer-id={item.id}
               data-selected={inProject}
             >
               <button
-                className={s.offerPicture}
+                className={`${s.offerPicture} ${p.offerPicture}`}
                 aria-label={`Aperçu de ${item.name}`}
                 onClick={() => onDetail(item)}
               >
@@ -495,6 +496,12 @@ export function NativeExplorer({
                 </span>
               </button>
               <div>
+                <span className={p.publishedTag}>
+                  <Check size={11} />
+                  Offre publiée ·{" "}
+                  {PRICE_LABELS[item.price_mode] || "Conditions à consulter"}
+                </span>
+                <br />
                 <span className={s.cardEyebrow}>
                   {item.category_title || "Offre Établissements"}
                 </span>

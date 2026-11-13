@@ -1,7 +1,6 @@
 export type View = "conseil" | "partner-os" | "produits";
 export type Family = "edup" | "academy" | "parents";
-export const ASSET_ROOT = "/angelcare-marketplace/establishments-r2/";
-export const asset = (name: string) => `${ASSET_ROOT}${name}.png`;
+export { CAMPAIGN_ROOT as ASSET_ROOT, campaignAsset as asset } from "./media";
 export const VIEWS: {
   key: View;
   label: string;

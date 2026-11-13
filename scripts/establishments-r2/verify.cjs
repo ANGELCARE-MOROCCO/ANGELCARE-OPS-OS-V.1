@@ -186,7 +186,7 @@ check("nine formulas, twenty capabilities and sixteen universes", () => {
   );
   assert.equal(new Set(c.FORMULAS.map((x) => x.id)).size, 9);
 });
-check("all 40 source images resolve only under establishments", () => {
+check("all 40 R4 campaign placements resolve only under establishments", () => {
   const provenance = JSON.parse(
     fs.readFileSync(
       path.join(
@@ -200,15 +200,15 @@ check("all 40 source images resolve only under establishments", () => {
     const name = a.asset.replace(".png", "");
     const slot = registry.resolveSlot(
       "establishments",
-      "establishments.journey." + name,
+      "establishments.journey-r4." + name,
     );
     assert.equal(
       slot.source,
-      "/angelcare-marketplace/establishments-r2/" + a.asset,
+      c.asset(name),
     );
     assert.ok(fs.existsSync(path.join(app, "public", slot.source)));
     assert.equal(
-      registry.resolveSlot("families", "families.journey." + name),
+      registry.resolveSlot("families", "families.journey-r4." + name),
       undefined,
     );
   }
@@ -382,4 +382,4 @@ check(
   },
 );
 require.extensions[".ts"] = previous;
-console.log(`ESTABLISHMENTS_R3_CONTRACTS=PASS (${count})`);
+console.log(`ESTABLISHMENTS_R4_CONTRACTS=PASS (${count})`);

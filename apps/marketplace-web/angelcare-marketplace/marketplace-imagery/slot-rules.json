@@ -931,13 +931,13 @@
     "conditional": "sectionSetting('family-services','media_url','/angelcare-marketplace/homepage/family-showcase.svg') === '/angelcare-marketplace/homepage/family-showcase.svg'"
   },
   {
-    "key": "journey",
+    "key": "journey-r4",
     "pages": [
       "establishments"
     ],
     "dynamic": true,
-    "section": "Établissements · Parcours approuvés",
-    "label": "Visuel de parcours Établissements",
+    "section": "Établissements · Campagnes R4",
+    "label": "Campagne haute définition Établissements",
     "sequence": true
   }
 ]
