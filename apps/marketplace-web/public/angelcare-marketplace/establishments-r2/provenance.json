@@ -1,0 +1,845 @@
+{
+  "version": 1,
+  "assets": [
+    {
+      "asset": "consulting-hero.png",
+      "source": "01-image.png",
+      "source_sha256": "11b4c64fee2b3b7cd0fc861fe43df8004228dfe53c1996caea0f000f2edfa594",
+      "page": null,
+      "normalized_crop": [
+        0.35,
+        0.014,
+        0.999,
+        0.144
+      ],
+      "rendered_crop_pixels": [
+        442,
+        266
+      ],
+      "output_pixels": [
+        1000,
+        602
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "partner-hero.png",
+      "source": "02-image.png",
+      "source_sha256": "e9d69c285ba4b50399e068b63e72255e353912524b946fdf780b3a86e4dcd797",
+      "page": null,
+      "normalized_crop": [
+        0.35,
+        0.014,
+        0.999,
+        0.153
+      ],
+      "rendered_crop_pixels": [
+        442,
+        284
+      ],
+      "output_pixels": [
+        1000,
+        643
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "products-hero.png",
+      "source": "03-image.png",
+      "source_sha256": "8f298e4e20a8148a72fda45c19359a29abe2c950354c9b482c12d5e53169f589",
+      "page": null,
+      "normalized_crop": [
+        0.39,
+        0.014,
+        0.999,
+        0.12
+      ],
+      "rendered_crop_pixels": [
+        415,
+        217
+      ],
+      "output_pixels": [
+        1000,
+        523
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "child-experience.png",
+      "source": "01-ACB2BCRECHE-MATERNELLEPC2-2-.pdf",
+      "source_sha256": "4d21f0d00245f9c6a1adcc101d0f05584e78ebfab2e0363bb37bc7955ae8b347",
+      "page": 1,
+      "normalized_crop": [
+        0.55,
+        0.15,
+        0.995,
+        0.61
+      ],
+      "rendered_crop_pixels": [
+        750,
+        548
+      ],
+      "output_pixels": [
+        1000,
+        731
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "edupplay.png",
+      "source": "01-ACB2BCRECHE-MATERNELLEPC2-2-.pdf",
+      "source_sha256": "4d21f0d00245f9c6a1adcc101d0f05584e78ebfab2e0363bb37bc7955ae8b347",
+      "page": 8,
+      "normalized_crop": [
+        0.565,
+        0.005,
+        0.994,
+        0.225
+      ],
+      "rendered_crop_pixels": [
+        723,
+        262
+      ],
+      "output_pixels": [
+        1000,
+        362
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "academy.png",
+      "source": "01-ACB2BCRECHE-MATERNELLEPC2-2-.pdf",
+      "source_sha256": "4d21f0d00245f9c6a1adcc101d0f05584e78ebfab2e0363bb37bc7955ae8b347",
+      "page": 10,
+      "normalized_crop": [
+        0.59,
+        0.005,
+        0.994,
+        0.235
+      ],
+      "rendered_crop_pixels": [
+        681,
+        274
+      ],
+      "output_pixels": [
+        1000,
+        402
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "parents.png",
+      "source": "01-ACB2BCRECHE-MATERNELLEPC2-2-.pdf",
+      "source_sha256": "4d21f0d00245f9c6a1adcc101d0f05584e78ebfab2e0363bb37bc7955ae8b347",
+      "page": 11,
+      "normalized_crop": [
+        0.58,
+        0.01,
+        0.995,
+        0.235
+      ],
+      "rendered_crop_pixels": [
+        700,
+        268
+      ],
+      "output_pixels": [
+        1000,
+        383
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "consulting-deliverables.png",
+      "source": "01-ACB2BCRECHE-MATERNELLEPC2-2-.pdf",
+      "source_sha256": "4d21f0d00245f9c6a1adcc101d0f05584e78ebfab2e0363bb37bc7955ae8b347",
+      "page": 7,
+      "normalized_crop": [
+        0.04,
+        0.25,
+        0.64,
+        0.7
+      ],
+      "rendered_crop_pixels": [
+        1011,
+        536
+      ],
+      "output_pixels": [
+        1011,
+        536
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "consulting-method.png",
+      "source": "01-image.png",
+      "source_sha256": "11b4c64fee2b3b7cd0fc861fe43df8004228dfe53c1996caea0f000f2edfa594",
+      "page": null,
+      "normalized_crop": [
+        0.02,
+        0.875,
+        0.42,
+        0.908
+      ],
+      "rendered_crop_pixels": [
+        272,
+        68
+      ],
+      "output_pixels": [
+        1000,
+        250
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "welcome.png",
+      "source": "02-B2B-CRECHE-ITEMS-CATALOGUE-3-.pdf",
+      "source_sha256": "c293f269877b0aaa3123c35225821bf6c885fbaf8700841b56ef3538b451f231",
+      "page": 5,
+      "normalized_crop": [
+        0.59,
+        0.102,
+        0.925,
+        0.255
+      ],
+      "rendered_crop_pixels": [
+        399,
+        258
+      ],
+      "output_pixels": [
+        1000,
+        647
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "signage.png",
+      "source": "02-B2B-CRECHE-ITEMS-CATALOGUE-3-.pdf",
+      "source_sha256": "c293f269877b0aaa3123c35225821bf6c885fbaf8700841b56ef3538b451f231",
+      "page": 10,
+      "normalized_crop": [
+        0.59,
+        0.102,
+        0.925,
+        0.255
+      ],
+      "rendered_crop_pixels": [
+        399,
+        258
+      ],
+      "output_pixels": [
+        1000,
+        647
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "classroom.png",
+      "source": "02-B2B-CRECHE-ITEMS-CATALOGUE-3-.pdf",
+      "source_sha256": "c293f269877b0aaa3123c35225821bf6c885fbaf8700841b56ef3538b451f231",
+      "page": 20,
+      "normalized_crop": [
+        0.46,
+        0.102,
+        0.925,
+        0.255
+      ],
+      "rendered_crop_pixels": [
+        554,
+        258
+      ],
+      "output_pixels": [
+        1000,
+        466
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "administration.png",
+      "source": "02-B2B-CRECHE-ITEMS-CATALOGUE-3-.pdf",
+      "source_sha256": "c293f269877b0aaa3123c35225821bf6c885fbaf8700841b56ef3538b451f231",
+      "page": 25,
+      "normalized_crop": [
+        0.46,
+        0.102,
+        0.925,
+        0.255
+      ],
+      "rendered_crop_pixels": [
+        554,
+        258
+      ],
+      "output_pixels": [
+        1000,
+        466
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "safety.png",
+      "source": "02-B2B-CRECHE-ITEMS-CATALOGUE-3-.pdf",
+      "source_sha256": "c293f269877b0aaa3123c35225821bf6c885fbaf8700841b56ef3538b451f231",
+      "page": 30,
+      "normalized_crop": [
+        0.46,
+        0.102,
+        0.925,
+        0.255
+      ],
+      "rendered_crop_pixels": [
+        554,
+        258
+      ],
+      "output_pixels": [
+        1000,
+        466
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "activities.png",
+      "source": "02-B2B-CRECHE-ITEMS-CATALOGUE-3-.pdf",
+      "source_sha256": "c293f269877b0aaa3123c35225821bf6c885fbaf8700841b56ef3538b451f231",
+      "page": 36,
+      "normalized_crop": [
+        0.46,
+        0.102,
+        0.925,
+        0.255
+      ],
+      "rendered_crop_pixels": [
+        554,
+        258
+      ],
+      "output_pixels": [
+        1000,
+        466
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "furniture.png",
+      "source": "02-B2B-CRECHE-ITEMS-CATALOGUE-3-.pdf",
+      "source_sha256": "c293f269877b0aaa3123c35225821bf6c885fbaf8700841b56ef3538b451f231",
+      "page": 41,
+      "normalized_crop": [
+        0.46,
+        0.102,
+        0.925,
+        0.255
+      ],
+      "rendered_crop_pixels": [
+        554,
+        258
+      ],
+      "output_pixels": [
+        1000,
+        466
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "parent-tools.png",
+      "source": "02-B2B-CRECHE-ITEMS-CATALOGUE-3-.pdf",
+      "source_sha256": "c293f269877b0aaa3123c35225821bf6c885fbaf8700841b56ef3538b451f231",
+      "page": 46,
+      "normalized_crop": [
+        0.46,
+        0.102,
+        0.925,
+        0.255
+      ],
+      "rendered_crop_pixels": [
+        554,
+        258
+      ],
+      "output_pixels": [
+        1000,
+        466
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "inclusion.png",
+      "source": "02-B2B-CRECHE-ITEMS-CATALOGUE-3-.pdf",
+      "source_sha256": "c293f269877b0aaa3123c35225821bf6c885fbaf8700841b56ef3538b451f231",
+      "page": 49,
+      "normalized_crop": [
+        0.46,
+        0.102,
+        0.925,
+        0.255
+      ],
+      "rendered_crop_pixels": [
+        554,
+        258
+      ],
+      "output_pixels": [
+        1000,
+        466
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "uniforms.png",
+      "source": "02-B2B-CRECHE-ITEMS-CATALOGUE-3-.pdf",
+      "source_sha256": "c293f269877b0aaa3123c35225821bf6c885fbaf8700841b56ef3538b451f231",
+      "page": 55,
+      "normalized_crop": [
+        0.46,
+        0.102,
+        0.925,
+        0.255
+      ],
+      "rendered_crop_pixels": [
+        554,
+        258
+      ],
+      "output_pixels": [
+        1000,
+        466
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "audit.png",
+      "source": "02-B2B-CRECHE-ITEMS-CATALOGUE-3-.pdf",
+      "source_sha256": "c293f269877b0aaa3123c35225821bf6c885fbaf8700841b56ef3538b451f231",
+      "page": 60,
+      "normalized_crop": [
+        0.46,
+        0.102,
+        0.925,
+        0.255
+      ],
+      "rendered_crop_pixels": [
+        554,
+        258
+      ],
+      "output_pixels": [
+        1000,
+        466
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "os-overview.png",
+      "source": "03-ACB2BCRECHE.pdf",
+      "source_sha256": "655d1e8350f8fd4c94a55eba97b99da4567c8f21a0d778d6600177eeabe1db1f",
+      "page": 4,
+      "normalized_crop": [
+        0.43,
+        0.055,
+        0.99,
+        0.365
+      ],
+      "rendered_crop_pixels": [
+        470,
+        369
+      ],
+      "output_pixels": [
+        1000,
+        785
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "os-admissions.png",
+      "source": "03-ACB2BCRECHE.pdf",
+      "source_sha256": "655d1e8350f8fd4c94a55eba97b99da4567c8f21a0d778d6600177eeabe1db1f",
+      "page": 6,
+      "normalized_crop": [
+        0.43,
+        0.055,
+        0.99,
+        0.365
+      ],
+      "rendered_crop_pixels": [
+        470,
+        369
+      ],
+      "output_pixels": [
+        1000,
+        785
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "os-communication.png",
+      "source": "03-ACB2BCRECHE.pdf",
+      "source_sha256": "655d1e8350f8fd4c94a55eba97b99da4567c8f21a0d778d6600177eeabe1db1f",
+      "page": 7,
+      "normalized_crop": [
+        0.43,
+        0.055,
+        0.99,
+        0.365
+      ],
+      "rendered_crop_pixels": [
+        470,
+        369
+      ],
+      "output_pixels": [
+        1000,
+        785
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "os-activities.png",
+      "source": "03-ACB2BCRECHE.pdf",
+      "source_sha256": "655d1e8350f8fd4c94a55eba97b99da4567c8f21a0d778d6600177eeabe1db1f",
+      "page": 8,
+      "normalized_crop": [
+        0.43,
+        0.055,
+        0.99,
+        0.365
+      ],
+      "rendered_crop_pixels": [
+        470,
+        369
+      ],
+      "output_pixels": [
+        1000,
+        785
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "os-crm.png",
+      "source": "03-ACB2BCRECHE.pdf",
+      "source_sha256": "655d1e8350f8fd4c94a55eba97b99da4567c8f21a0d778d6600177eeabe1db1f",
+      "page": 9,
+      "normalized_crop": [
+        0.43,
+        0.055,
+        0.99,
+        0.365
+      ],
+      "rendered_crop_pixels": [
+        470,
+        369
+      ],
+      "output_pixels": [
+        1000,
+        785
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "os-services.png",
+      "source": "03-ACB2BCRECHE.pdf",
+      "source_sha256": "655d1e8350f8fd4c94a55eba97b99da4567c8f21a0d778d6600177eeabe1db1f",
+      "page": 10,
+      "normalized_crop": [
+        0.43,
+        0.055,
+        0.99,
+        0.365
+      ],
+      "rendered_crop_pixels": [
+        470,
+        369
+      ],
+      "output_pixels": [
+        1000,
+        785
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "os-quotes.png",
+      "source": "03-ACB2BCRECHE.pdf",
+      "source_sha256": "655d1e8350f8fd4c94a55eba97b99da4567c8f21a0d778d6600177eeabe1db1f",
+      "page": 12,
+      "normalized_crop": [
+        0.43,
+        0.055,
+        0.99,
+        0.365
+      ],
+      "rendered_crop_pixels": [
+        470,
+        369
+      ],
+      "output_pixels": [
+        1000,
+        785
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "os-finance.png",
+      "source": "03-ACB2BCRECHE.pdf",
+      "source_sha256": "655d1e8350f8fd4c94a55eba97b99da4567c8f21a0d778d6600177eeabe1db1f",
+      "page": 13,
+      "normalized_crop": [
+        0.43,
+        0.055,
+        0.99,
+        0.365
+      ],
+      "rendered_crop_pixels": [
+        470,
+        369
+      ],
+      "output_pixels": [
+        1000,
+        785
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "os-payments.png",
+      "source": "03-ACB2BCRECHE.pdf",
+      "source_sha256": "655d1e8350f8fd4c94a55eba97b99da4567c8f21a0d778d6600177eeabe1db1f",
+      "page": 14,
+      "normalized_crop": [
+        0.43,
+        0.055,
+        0.99,
+        0.365
+      ],
+      "rendered_crop_pixels": [
+        470,
+        369
+      ],
+      "output_pixels": [
+        1000,
+        785
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "os-team.png",
+      "source": "03-ACB2BCRECHE.pdf",
+      "source_sha256": "655d1e8350f8fd4c94a55eba97b99da4567c8f21a0d778d6600177eeabe1db1f",
+      "page": 15,
+      "normalized_crop": [
+        0.43,
+        0.055,
+        0.99,
+        0.365
+      ],
+      "rendered_crop_pixels": [
+        470,
+        369
+      ],
+      "output_pixels": [
+        1000,
+        785
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "programme-team.png",
+      "source": "01-ACB2BCRECHE-MATERNELLEPC2-2-.pdf",
+      "source_sha256": "4d21f0d00245f9c6a1adcc101d0f05584e78ebfab2e0363bb37bc7955ae8b347",
+      "page": 9,
+      "normalized_crop": [
+        0.65,
+        0.055,
+        0.994,
+        0.225
+      ],
+      "rendered_crop_pixels": [
+        580,
+        202
+      ],
+      "output_pixels": [
+        1000,
+        348
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "programme-coaching.png",
+      "source": "01-ACB2BCRECHE-MATERNELLEPC2-2-.pdf",
+      "source_sha256": "4d21f0d00245f9c6a1adcc101d0f05584e78ebfab2e0363bb37bc7955ae8b347",
+      "page": 10,
+      "normalized_crop": [
+        0.62,
+        0.655,
+        0.835,
+        0.82
+      ],
+      "rendered_crop_pixels": [
+        362,
+        197
+      ],
+      "output_pixels": [
+        1000,
+        544
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "parent-direction.png",
+      "source": "01-ACB2BCRECHE-MATERNELLEPC2-2-.pdf",
+      "source_sha256": "4d21f0d00245f9c6a1adcc101d0f05584e78ebfab2e0363bb37bc7955ae8b347",
+      "page": 14,
+      "normalized_crop": [
+        0.6,
+        0.085,
+        0.995,
+        0.425
+      ],
+      "rendered_crop_pixels": [
+        666,
+        405
+      ],
+      "output_pixels": [
+        1000,
+        608
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "os-people-intro.png",
+      "source": "02-image.png",
+      "source_sha256": "e9d69c285ba4b50399e068b63e72255e353912524b946fdf780b3a86e4dcd797",
+      "page": null,
+      "normalized_crop": [
+        0.004,
+        0.39,
+        0.407,
+        0.453
+      ],
+      "rendered_crop_pixels": [
+        275,
+        129
+      ],
+      "output_pixels": [
+        1000,
+        469
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "os-people-direction.png",
+      "source": "02-image.png",
+      "source_sha256": "e9d69c285ba4b50399e068b63e72255e353912524b946fdf780b3a86e4dcd797",
+      "page": null,
+      "normalized_crop": [
+        0.004,
+        0.455,
+        0.407,
+        0.517
+      ],
+      "rendered_crop_pixels": [
+        275,
+        127
+      ],
+      "output_pixels": [
+        1000,
+        462
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "os-people-admissions.png",
+      "source": "02-image.png",
+      "source_sha256": "e9d69c285ba4b50399e068b63e72255e353912524b946fdf780b3a86e4dcd797",
+      "page": null,
+      "normalized_crop": [
+        0.004,
+        0.52,
+        0.407,
+        0.582
+      ],
+      "rendered_crop_pixels": [
+        275,
+        127
+      ],
+      "output_pixels": [
+        1000,
+        462
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "os-people-commerce.png",
+      "source": "02-image.png",
+      "source_sha256": "e9d69c285ba4b50399e068b63e72255e353912524b946fdf780b3a86e4dcd797",
+      "page": null,
+      "normalized_crop": [
+        0.004,
+        0.585,
+        0.407,
+        0.645
+      ],
+      "rendered_crop_pixels": [
+        275,
+        123
+      ],
+      "output_pixels": [
+        1000,
+        447
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "os-people-team.png",
+      "source": "02-image.png",
+      "source_sha256": "e9d69c285ba4b50399e068b63e72255e353912524b946fdf780b3a86e4dcd797",
+      "page": null,
+      "normalized_crop": [
+        0.004,
+        0.65,
+        0.407,
+        0.708
+      ],
+      "rendered_crop_pixels": [
+        275,
+        119
+      ],
+      "output_pixels": [
+        1000,
+        433
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "os-people-followup.png",
+      "source": "02-image.png",
+      "source_sha256": "e9d69c285ba4b50399e068b63e72255e353912524b946fdf780b3a86e4dcd797",
+      "page": null,
+      "normalized_crop": [
+        0.004,
+        0.71,
+        0.407,
+        0.764
+      ],
+      "rendered_crop_pixels": [
+        275,
+        111
+      ],
+      "output_pixels": [
+        1000,
+        404
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    },
+    {
+      "asset": "os-people-year.png",
+      "source": "02-image.png",
+      "source_sha256": "e9d69c285ba4b50399e068b63e72255e353912524b946fdf780b3a86e4dcd797",
+      "page": null,
+      "normalized_crop": [
+        0.004,
+        0.78,
+        0.407,
+        0.841
+      ],
+      "rendered_crop_pixels": [
+        275,
+        125
+      ],
+      "output_pixels": [
+        1000,
+        455
+      ],
+      "processing": "source crop; Lanczos presentation resampling; no generative enhancement"
+    }
+  ]
+}

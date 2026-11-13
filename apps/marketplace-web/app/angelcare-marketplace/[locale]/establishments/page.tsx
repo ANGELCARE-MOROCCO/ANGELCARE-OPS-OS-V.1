@@ -1,4 +1,6 @@
-import {businessTerritoryFromSearch} from '@/angelcare-marketplace/business-worlds/repository'
+import {businessTerritoryFromSearch, prepareBusinessStorefront} from '@/angelcare-marketplace/business-worlds/repository'
+import {EstablishmentsExperience} from '@/angelcare-marketplace/establishments-world/Experience'
+import {GlobalPublicShell} from '@/angelcare-marketplace/public-universe/components/GlobalPublicShell'
 import { storefrontMetadata,storefrontNativeMetadata } from '@/angelcare-marketplace/seo-power/storefronts'
 import {PublicEstablishmentsExperience} from '@/angelcare-marketplace/b2b-verticals/components/PublicEstablishmentsExperience'
 import {publicVerticalSnapshot} from '@/angelcare-marketplace/b2b-verticals/repository'
@@ -12,6 +14,12 @@ export default async function Page({params,searchParams}:{params:Promise<{locale
 
  const {locale:raw}=await params
  const locale=raw==='ar'?'ar':raw==='en'?'en':'fr'
+ // The approved reference pages concern the French Établissements body only.
+ // Shared shell, other storefronts and existing EN/AR runtime keep their authority.
+ if(locale==='fr'){
+  const catalogue=await prepareBusinessStorefront(await storefrontExperience({locale,key:'establishments',territoryCode}),'establishments')
+  return <GlobalPublicShell locale={locale} navigation={[]} variant="marketplace"><EstablishmentsExperience experience={catalogue}/></GlobalPublicShell>
+ }
  const [snapshot,experience,storefront]=await Promise.all([
   publicVerticalSnapshot('establishment'),
   getPublishedSurface('establishments',{locale}).catch(()=>null),

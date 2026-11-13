@@ -929,5 +929,15 @@
     "expression": "sectionSetting('family-services','media_url','/angelcare-marketplace/homepage/family-showcase.svg')",
     "suffix": "",
     "conditional": "sectionSetting('family-services','media_url','/angelcare-marketplace/homepage/family-showcase.svg') === '/angelcare-marketplace/homepage/family-showcase.svg'"
+  },
+  {
+    "key": "journey",
+    "pages": [
+      "establishments"
+    ],
+    "dynamic": true,
+    "section": "Établissements · Parcours approuvés",
+    "label": "Visuel de parcours Établissements",
+    "sequence": true
   }
 ]

@@ -1643,5 +1643,325 @@
     "sequence": true,
     "owner": "editable",
     "source": "/angelcare-marketplace/storefront-imagery-r3/academy/professional.webp"
+  },
+  {
+    "id": "establishments.journey.consulting-hero",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Hero · Conseil & programmes",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/consulting-hero.png"
+  },
+  {
+    "id": "establishments.journey.partner-hero",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Hero · Partner OS",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/partner-hero.png"
+  },
+  {
+    "id": "establishments.journey.products-hero",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Hero · Produits & équipements",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/products-hero.png"
+  },
+  {
+    "id": "establishments.journey.child-experience",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Expérience enfant",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/child-experience.png"
+  },
+  {
+    "id": "establishments.journey.edupplay",
+    "section": "Établissements · Parcours approuvés",
+    "label": "EduPlay · Ateliers",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/edupplay.png"
+  },
+  {
+    "id": "establishments.journey.academy",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Academy Pro · Équipes",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/academy.png"
+  },
+  {
+    "id": "establishments.journey.parents",
+    "section": "Établissements · Parcours approuvés",
+    "label": "ParentTrust · Familles",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/parents.png"
+  },
+  {
+    "id": "establishments.journey.consulting-deliverables",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Livrables & suivi",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/consulting-deliverables.png"
+  },
+  {
+    "id": "establishments.journey.consulting-method",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Méthode & accompagnement",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/consulting-method.png"
+  },
+  {
+    "id": "establishments.journey.welcome",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Accueil & identité",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/welcome.png"
+  },
+  {
+    "id": "establishments.journey.signage",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Signalétique",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/signage.png"
+  },
+  {
+    "id": "establishments.journey.classroom",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Classe & pédagogie",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/classroom.png"
+  },
+  {
+    "id": "establishments.journey.administration",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Administration",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/administration.png"
+  },
+  {
+    "id": "establishments.journey.safety",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Sécurité",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/safety.png"
+  },
+  {
+    "id": "establishments.journey.activities",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Activités",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/activities.png"
+  },
+  {
+    "id": "establishments.journey.furniture",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Mobilier & aménagement",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/furniture.png"
+  },
+  {
+    "id": "establishments.journey.parent-tools",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Supports parents",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/parent-tools.png"
+  },
+  {
+    "id": "establishments.journey.inclusion",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Inclusion",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/inclusion.png"
+  },
+  {
+    "id": "establishments.journey.uniforms",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Uniformes & équipe",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/uniforms.png"
+  },
+  {
+    "id": "establishments.journey.audit",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Préparation aux audits",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/audit.png"
+  },
+  {
+    "id": "establishments.journey.os-overview",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Partner OS · Vue d’ensemble",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-overview.png"
+  },
+  {
+    "id": "establishments.journey.os-admissions",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Partner OS · Admissions",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-admissions.png"
+  },
+  {
+    "id": "establishments.journey.os-communication",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Partner OS · Communication",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-communication.png"
+  },
+  {
+    "id": "establishments.journey.os-activities",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Partner OS · Activités",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-activities.png"
+  },
+  {
+    "id": "establishments.journey.os-crm",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Partner OS · CRM",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-crm.png"
+  },
+  {
+    "id": "establishments.journey.os-services",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Partner OS · Services",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-services.png"
+  },
+  {
+    "id": "establishments.journey.os-quotes",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Partner OS · Devis",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-quotes.png"
+  },
+  {
+    "id": "establishments.journey.os-finance",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Partner OS · Finances",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-finance.png"
+  },
+  {
+    "id": "establishments.journey.os-payments",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Partner OS · Paiements",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-payments.png"
+  },
+  {
+    "id": "establishments.journey.os-team",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Partner OS · Équipes",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-team.png"
+  },
+  {
+    "id": "establishments.journey.programme-team",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Academy Pro · Pratiques d’équipe",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/programme-team.png"
+  },
+  {
+    "id": "establishments.journey.programme-coaching",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Academy Pro · Coaching",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/programme-coaching.png"
+  },
+  {
+    "id": "establishments.journey.parent-direction",
+    "section": "Établissements · Parcours approuvés",
+    "label": "ParentTrust · Direction & familles",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/parent-direction.png"
+  },
+  {
+    "id": "establishments.journey.os-people-intro",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Partner OS · Un fil conducteur",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-intro.png"
+  },
+  {
+    "id": "establishments.journey.os-people-direction",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Partner OS · Décider ensemble",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-direction.png"
+  },
+  {
+    "id": "establishments.journey.os-people-admissions",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Partner OS · Parcours admissions",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-admissions.png"
+  },
+  {
+    "id": "establishments.journey.os-people-commerce",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Partner OS · Engagements commerciaux",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-commerce.png"
+  },
+  {
+    "id": "establishments.journey.os-people-team",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Partner OS · Équipes & opérations",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-team.png"
+  },
+  {
+    "id": "establishments.journey.os-people-followup",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Partner OS · Suivi quotidien",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-followup.png"
+  },
+  {
+    "id": "establishments.journey.os-people-year",
+    "section": "Établissements · Parcours approuvés",
+    "label": "Partner OS · Une année pour commencer",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-year.png"
   }
 ]
