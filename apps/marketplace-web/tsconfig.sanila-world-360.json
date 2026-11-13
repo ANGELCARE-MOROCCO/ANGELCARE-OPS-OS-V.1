@@ -17,7 +17,19 @@
     "angelcare-marketplace/sanila-public/components/SanilaShell.tsx",
     "app/api/angelcare-marketplace/admin/sanila/world/route.ts",
     "app/angelcare-marketplace/(protected)/admin/sanila/preview/page.tsx",
-    "angelcare-marketplace/footer-studio/components/FooterStudioCommand.tsx"
+    "angelcare-marketplace/footer-studio/components/FooterStudioCommand.tsx",
+    "angelcare-marketplace/live-experience-command/components/LiveGovernanceCommand.tsx",
+    "angelcare-marketplace/live-experience-command/components/LiveExperienceCommand.tsx",
+    "angelcare-marketplace/live-experience-command/components/LiveCreativeCommand.tsx",
+    "angelcare-marketplace/live-experience-command/components/LiveProofSources.tsx",
+    "angelcare-marketplace/live-experience-command/components/NativeExperienceMediaPicker.tsx",
+    "angelcare-marketplace/live-experience-command/components/LiveExperienceLayer.tsx",
+    "angelcare-marketplace/live-experience-command/components/ExperienceComposition.tsx",
+    "angelcare-marketplace/live-experience-command/repository.ts",
+    "angelcare-marketplace/live-experience-command/creative-360.ts",
+    "angelcare-marketplace/customer-commerce/components/CustomerPortalCommand.tsx",
+    "angelcare-marketplace/customer-commerce/components/CustomerPortalNavigation.tsx",
+    "angelcare-marketplace/customer-commerce/components/CustomerContinueStrip.tsx"
   ],
   "exclude": [
     "node_modules",
