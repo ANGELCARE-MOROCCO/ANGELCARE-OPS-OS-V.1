@@ -44,8 +44,9 @@ export function validateSanilaSlug(v:unknown):string{
   return slug
 }
 export function validateSanilaDocument(v:unknown):Data {
-  const doc=record(v); const content=doc.content
-  if(!Array.isArray(content)||content.length>80)err('Document Puck invalide ou supérieur à 80 sections.')
+  const doc=record(v)
+  const content:unknown[]=Array.isArray(doc.content)?doc.content:err('Document Puck invalide.')
+  if(content.length>80)err('Document Puck supérieur à 80 sections.')
   const normalized=content.map((item:unknown,index:number)=>{
     const row=record(item);if(!COMPONENTS.has(String(row.type)))err('Composant SANILA non autorisé.')
     const props=record(row.props)
@@ -54,8 +55,9 @@ export function validateSanilaDocument(v:unknown):Data {
       if(props[key]!==undefined)clean[key]=key==='href'||key==='src'?safeUrl(props[key]):text(props[key],key==='body'?6000:500)
     }
     if(props.items!==undefined){
-      if(!Array.isArray(props.items)||props.items.length>24)err('Collection de sections invalide.')
-      clean.items=props.items.map((x:unknown)=>({title:text(record(x).title,200),body:text(record(x).body,1000)}))
+      const items:unknown[]=Array.isArray(props.items)?props.items:err('Collection de sections invalide.')
+      if(items.length>24)err('Collection de sections invalide.')
+      clean.items=items.map((x:unknown)=>({title:text(record(x).title,200),body:text(record(x).body,1000)}))
     }
     return {type:String(row.type),props:clean}
   })
@@ -182,10 +184,10 @@ export function applySanilaWorldAction(value:SanilaWorldState,action:Action,payl
     }
     case 'set_theme':{const key=text(payload.key,64);if(!themes[key]||themes[key].archivedAt)err('Thème indisponible.');next.themeKey=key;break}
     case 'set_navigation':{
-      const items=payload.navigation
-      if(!Array.isArray(items)||items.length>30)err('Navigation invalide.')
+      const items:unknown[]=Array.isArray(payload.navigation)?payload.navigation:err('Navigation invalide.')
+      if(items.length>30)err('Navigation invalide.')
       const seen=new Set<string>()
-      next.navigation=items.map(v=>{const a=record(v),s=validateSanilaSlug(a.slug);if(seen.has(s)||!pages[s]||pages[s].deletedAt)err('Navigation : route inconnue ou doublon.');seen.add(s);return {slug:s,label:text(a.label,70)}});break
+      next.navigation=items.map((v:unknown)=>{const a=record(v),s=validateSanilaSlug(a.slug);if(seen.has(s)||!pages[s]||pages[s].deletedAt)err('Navigation : route inconnue ou doublon.');seen.add(s);return {slug:s,label:text(a.label,70)}});break
     }
     case 'set_shell':{
       const shell=record(payload.shell)
@@ -195,8 +197,9 @@ export function applySanilaWorldAction(value:SanilaWorldState,action:Action,payl
     case 'import_bundle':{
       const manifest=record(payload.bundle)
       if(manifest.format!=='sanila-world-package'||manifest.version!==1)err('Manifest SANILA v1 requis.')
-      const importedPages=manifest.pages,importedThemes=manifest.themes
-      if(!Array.isArray(importedPages)||!Array.isArray(importedThemes)||importedPages.length>60||importedThemes.length>30)err('Dimensions du package invalides.')
+      const importedPages:unknown[]=Array.isArray(manifest.pages)?manifest.pages:err('Pages du package invalides.')
+      const importedThemes:unknown[]=Array.isArray(manifest.themes)?manifest.themes:err('Thèmes du package invalides.')
+      if(importedPages.length>60||importedThemes.length>30)err('Dimensions du package invalides.')
       for(const input of importedThemes){const theme=validateSanilaTheme(input,themes);themes[theme.key]=theme}
       for(const input of importedPages){
         const item=record(input),s=validateSanilaSlug(item.slug)
@@ -234,7 +237,7 @@ export function applySanilaWorldAction(value:SanilaWorldState,action:Action,payl
     }
     case 'rollback':{
       const desired=Number(payload.revision),release=(next.releases||[]).find(r=>r.revision===desired)
-      if(!release)err('Révision publiée introuvable.')
+      if(!release)throw new Error('Révision publiée introuvable.')
       next.pages=JSON.parse(JSON.stringify(release.pages));next.themeKey=release.themeKey;next.publishedThemeKey=release.themeKey
       next.themes=JSON.parse(JSON.stringify(release.themes||SANILA_DEFAULT_THEMES))
       next.publishedThemes=JSON.parse(JSON.stringify(release.themes||SANILA_DEFAULT_THEMES))
