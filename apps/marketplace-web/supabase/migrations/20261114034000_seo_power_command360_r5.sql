@@ -352,7 +352,7 @@ END $$;
 
 -- R5 respects paused campaign assignments during R4 claiming. Preexisting R4 claim semantics retained.
 create or replace function public.ac_seo_power_r4_claim(p_project uuid default null) returns jsonb
-language plpgsql security definer set search_path=pg_catalog,public as $
+language plpgsql security definer set search_path=pg_catalog,public as $$
 declare c jsonb;pr public.ac_seo_power_projects;j public.ac_seo_power_jobs;
  token uuid; gc int;pc int;oc int;lb int;attempt_cap int;budget int; used_pages bigint;
 begin
@@ -423,14 +423,14 @@ begin
   return to_jsonb(j)||jsonb_build_object('project',to_jsonb(pr),'page',(select to_jsonb(p) from public.ac_seo_power_pages p where p.id=j.page_id));
  end loop;
  return null;
-end $;
+end $$;
 
 
 -- Atomic governance operations. The SQL ledger records every successful activation
 -- and capacity change, even when Command Center is being disabled.
 CREATE OR REPLACE FUNCTION public.ac_seo_power_r5_activate(
  p_enabled boolean,p_expected integer,p_actor uuid
-) RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path=pg_catalog,public AS $
+) RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path=pg_catalog,public AS $$
 DECLARE c public.ac_seo_power_r5_control;
 BEGIN
  IF p_actor IS NULL OR p_expected<1 THEN RAISE EXCEPTION 'R5_INVALID_ACTOR_OR_REVISION'; END IF;
@@ -441,11 +441,11 @@ BEGIN
  VALUES('governance',CASE WHEN p_enabled THEN 'activated' ELSE 'deactivated' END,
  jsonb_build_object('actor',p_actor,'revision',c.revision,'enabled',c.enabled));
  RETURN to_jsonb(c);
-END $;
+END $$;
 
 CREATE OR REPLACE FUNCTION public.ac_seo_power_r5_capacity_save(
  p_capacity jsonb,p_expected timestamptz,p_actor uuid
-) RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path=pg_catalog,public AS $
+) RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path=pg_catalog,public AS $$
 DECLARE c public.ac_seo_power_r4_control;
 BEGIN
  IF p_actor IS NULL OR jsonb_typeof(p_capacity)<>'object' OR p_expected IS NULL
@@ -458,7 +458,7 @@ BEGIN
  INSERT INTO public.ac_seo_power_r5_events(category,event,detail)
  VALUES('capacity','updated',jsonb_build_object('actor',p_actor,'updatedAt',c.updated_at,'capacity',c.capacity));
  RETURN to_jsonb(c);
-END $;
+END $$;
 
 
 -- Safe, idempotent recovery. The original failure remains immutable; a later
@@ -473,7 +473,7 @@ CREATE TABLE IF NOT EXISTS public.ac_seo_power_r5_retry_receipts(
 
 CREATE OR REPLACE FUNCTION public.ac_seo_power_r5_retry_job(
  p_id uuid,p_actor uuid,p_request text
-) RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path=pg_catalog,public AS $
+) RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path=pg_catalog,public AS $$
 DECLARE j public.ac_seo_power_jobs; pg public.ac_seo_power_pages;
  pr public.ac_seo_power_projects; prior jsonb; jid uuid; outcome text;
 BEGIN
@@ -510,13 +510,13 @@ BEGIN
  INSERT INTO public.ac_seo_power_r5_events(job_id,category,event,detail)
  VALUES(j.id,'recovery','requested',jsonb_build_object('actor',p_actor,'replacementJob',jid,'outcome',outcome));
  RETURN prior;
-END $;
+END $$;
 
 -- Explicit, bounded grouped recovery. Individual eligibility is evaluated
 -- by the same authoritative retry function. No historical failure is reset.
 CREATE OR REPLACE FUNCTION public.ac_seo_power_r5_recover_group(
  p_project uuid,p_code text,p_limit integer,p_actor uuid,p_request text
-) RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path=pg_catalog,public AS $
+) RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path=pg_catalog,public AS $$
 DECLARE j public.ac_seo_power_jobs; old jsonb; answer jsonb;
  queued integer=0; prerequisite integer=0; skipped integer=0; inspected integer=0;
 BEGIN
@@ -549,7 +549,7 @@ BEGIN
  INSERT INTO public.ac_seo_power_r5_events(category,event,detail)
  VALUES('recovery','group_requested',jsonb_build_object('actor',p_actor,'code',p_code,'summary',answer));
  RETURN answer;
-END $;
+END $$;
 
 -- Access restricted to service_role through the authenticated, permission-checked app API.
 DO $$ DECLARE t text; f record;

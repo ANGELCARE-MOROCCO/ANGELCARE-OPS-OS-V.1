@@ -23,6 +23,12 @@ test("R5 migration is strictly additive and defaults disabled",()=>{
   assert.match(sql,/ac_seo_power_r5_recover_group/);
   assert.match(sql,/ac_seo_power_r5_retry_receipts/);
   assert.match(sql,/R5_POLICY_OR_SOURCE_REVIEW_REQUIRED/);
+  const functionCount=[...sql.matchAll(/create or replace function\s+public\./gi)].length;
+  assert.equal(functionCount,14,"Unexpected migration function count");
+  assert.equal((sql.match(/\$\$/g)||[]).length,(functionCount+2)*2,"Unpaired PL/pgSQL dollar delimiters");
+  assert.doesNotMatch(sql,/\b(?:AS|as) \$(?!\$)/);
+  assert.doesNotMatch(sql,/\b(?:END|end) \$;/);
+
   assert.match(sql,/request_key text NOT NULL/);
 
   assert.match(sql,/campaign\.state='paused'/);
