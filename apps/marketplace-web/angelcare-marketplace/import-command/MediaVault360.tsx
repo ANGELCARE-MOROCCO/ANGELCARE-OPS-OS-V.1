@@ -257,7 +257,7 @@ export function MediaVault360({canManage,refreshKey,onInventory,onChanged}:Props
      {loading?<div className={s.catalogState}><Loader2 size={26}/> Recherche dans le vault…</div>:null}
      {!loading&&!rows.length?<div className={s.catalogState}><Search size={26}/> Aucun média correspondant. Modifiez les filtres ou vérifiez le dossier.</div>:null}
      <div className={grid?s.grid:s.list}>{rows.map(a=><article className={s.asset} key={a.id} data-selected={Boolean(selected[a.id])} data-focused={focused?.id===a.id}>
-       <div className={s.preview}><button className={s.assetMain} onClick={()=>void setFocus(a)} aria-label={"Inspecter "+a.fileName}>{a.mediaType==="image"&&a.url?<img src={a.url} alt={a.alt||a.fileName} loading="lazy"/>:<span className={s.fallback}><FileImage size={27}/>{a.mediaType||"Fichier"}</span>}</button><label className={s.assetCheck}><input type="checkbox" checked={Boolean(selected[a.id])} onChange={e=>select(a,e.target.checked)}/></label></div>
+       <div className={s.preview}><button className={s.assetMain} onClick={()=>void setFocus(a)} aria-label={"Inspecter "+a.fileName}>{a.mime.startsWith("image/")&&a.url?<img src={a.url} alt={a.alt||a.fileName} loading="lazy"/>:<span className={s.fallback}><FileImage size={27}/>{a.mime||"Fichier"}</span>}</button><label className={s.assetCheck}><input type="checkbox" checked={Boolean(selected[a.id])} onChange={e=>select(a,e.target.checked)}/></label></div>
        <div className={s.assetInfo}><button title="Inspecter le média" onClick={()=>void setFocus(a)}><b>{a.fileName||a.assetKey}</b></button><small>{a.mime||"—"} · {formatMarketplaceFileSize(a.size)} {a.width&&a.height?" · "+a.width+"×"+a.height:""}</small><div><span data-active={a.status==="active"} className={s.state}>{a.status||"Inconnu"}</span><span className={s.uses}>{a.usageCount===null?"Usages —":fmt(a.usageCount)+" usages"}</span></div></div>
        <button className={s.assetMore} onClick={()=>void setFocus(a)} aria-label="Ouvrir l'inspecteur"><MoreHorizontal size={17}/></button>
       </article>)}</div>
@@ -265,7 +265,7 @@ export function MediaVault360({canManage,refreshKey,onInventory,onChanged}:Props
     </div>
     <aside className={s.inspector}>
       {focused?<><div className={s.inspectorHeader}><strong>INSPECTEUR MEDIA 360</strong><button onClick={()=>{setFocused(null);setDetail(null)}} aria-label="Fermer"><X size={17}/></button></div>
-        <div className={s.inspectorImage}>{focused.mediaType==="image"&&focused.url?<img src={focused.url} alt={focused.alt||focused.fileName}/>:<FileImage size={40}/>}</div>
+        <div className={s.inspectorImage}>{focused.mime.startsWith("image/")&&focused.url?<img src={focused.url} alt={focused.alt||focused.fileName}/>:<FileImage size={40}/>}</div>
         <h3>{focused.fileName||focused.assetKey}</h3><span className={s.state} data-active={focused.status==="active"}>{focused.status||"Inconnu"}</span>
         <div className={s.inspectorTabs}>{([["detail","Détails"],["languages","Langues"],["rights","Droits"],["usages","Usages"]] as const).map(([v,label])=><button key={v} data-active={tab===v} onClick={()=>setTab(v)}>{label}</button>)}</div>
         {detailError?<div className={s.error}>{detailError}</div>:null}
