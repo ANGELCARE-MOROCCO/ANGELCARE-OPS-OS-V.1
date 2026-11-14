@@ -66,6 +66,8 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
  const [drafts,setDrafts]=useState<SavedDraft[]>([]);
  const [quote,setQuote]=useState<Quote|null>(null);
  const [customerDetails,setCustomerDetails]=useState<CustomerDetails|null>(null);
+ const [mediaById,setMediaById]=useState<Record<string,string>>({});
+ const fetchedMedia=useRef(new Set<string>());
  const [saveState,setSaveState]=useState<"idle"|"saving"|"saved"|"error">("idle");
  const [busy,setBusy]=useState(false);
  const [priceBusy,setPriceBusy]=useState(false);
@@ -110,6 +112,20 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
  useEffect(()=>{latestDraft.current=draft;setNotice("")},[draft]);
  const customers=useMemo(()=>options.customers.filter(x=>(x.display_name+" "+x.public_reference+" "+(x.email||"")+" "+(x.phone||"")).toLowerCase().includes(customerQuery.toLowerCase())).slice(0,18),[options.customers,customerQuery]);
  const items=useMemo(()=>options.items.filter(x=>(x.name_fr+" "+x.public_reference+" "+(x.category_key||"")).toLowerCase().includes(itemQuery.toLowerCase())).slice(0,Math.min(searchLimit,80)),[options.items,itemQuery,searchLimit]);
+ const mediaCandidates=useMemo(()=>[...new Set([
+  ...draft.lines.map(l=>l.itemId),...(itemSearchOpen?items.slice(0,40).map(i=>i.id):[])
+ ])],[draft.lines,itemSearchOpen,items]);
+ useEffect(()=>{
+  const remaining=mediaCandidates.filter(id=>!fetchedMedia.current.has(id)).slice(0,40);
+  if(!remaining.length)return;
+  remaining.forEach(id=>fetchedMedia.current.add(id));
+  let active=true;
+  void fetch(API+"?mediaFor="+encodeURIComponent(remaining.join(",")),{credentials:"same-origin",cache:"no-store"})
+   .then(r=>parseResponse<Record<string,string>>(r))
+   .then(images=>{if(active)setMediaById(v=>({...v,...images}))})
+   .catch(()=>{remaining.forEach(id=>fetchedMedia.current.delete(id))});
+  return()=>{active=false};
+ },[mediaCandidates]);
  const customer=options.customers.find(x=>x.id===draft.customerAccountId);
  const chosen= draft.lines.find(x=>x.id===selectedLine)||draft.lines[0];
  const chosenCatalog=options.items.find(x=>x.id===chosen?.itemId);
@@ -265,7 +281,7 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
       {(tab==="customer"||tab==="basket")?<div className={s.basketView}>
        <div className={s.tableScroll}><table className={s.basket}><thead><tr><th>Prestation / Produit</th><th>Configuration</th><th>Qté</th><th>Prix unitaire</th><th>Remise</th><th>Total</th><th/></tr></thead><tbody>
        {draft.lines.map(line=>{const item=options.items.find(i=>i.id===line.itemId),priced=quote?.lines.find(q=>q.itemId===line.itemId);return <tr key={line.id} data-selected={chosen?.id===line.id} onClick={()=>setSelectedLine(line.id)}>
-        <td><div className={s.productCell}><span className={s.productThumb}><Package size={23}/></span><div><strong>{item?.name_fr||"Article du catalogue"}</strong><small>{item?.public_reference}</small><span className={s.greenChip}>{item?.kind||"Article"}</span></div></div></td>
+        <td><div className={s.productCell}><span className={s.productThumb}>{mediaById[line.itemId]?<img src={mediaById[line.itemId]} alt="" loading="lazy"/>:<Package size={23}/>}</span><div><strong>{item?.name_fr||"Article du catalogue"}</strong><small>{item?.public_reference}</small><span className={s.greenChip}>{item?.kind||"Article"}</span></div></div></td>
         <td><div className={s.configMini}><span><CalendarClock size={12}/>{line.configuration.sessions} séance(s)</span><span><Users size={12}/>{line.configuration.children} participant(s)</span><span><Clock3 size={12}/>{line.configuration.minutes} min</span></div></td>
         <td><span className={s.qty}><button aria-label="Diminuer quantité" onClick={e=>{e.stopPropagation();linePatch(line.id,{quantity:Math.max(1,line.quantity-1)})}}><Minus size={12}/></button>{line.quantity}<button aria-label="Augmenter quantité" onClick={e=>{e.stopPropagation();linePatch(line.id,{quantity:Math.min(1000,line.quantity+1)})}}><Plus size={12}/></button></span></td>
         <td><b>{priced?money(priced.unitPrice,priced.currency):item?.price_mode==="quote_only"?"Sur devis":"À calculer"}</b></td>
@@ -276,7 +292,7 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
        {!draft.lines.length?<tr><td colSpan={7}><div className={s.emptyBasket}><ShoppingCart size={26}/><strong>Composez votre panier commercial</strong><p>Ajoutez des prestations et produits réels depuis le catalogue AngelCare.</p></div></td></tr>:null}
        </tbody></table></div>
        <div className={s.addBar}><label className={s.search}><Search size={16}/><input aria-label="Rechercher une prestation" placeholder="Ajouter une prestation / produit (nom, catégorie, référence…)" value={itemQuery} onFocus={()=>setItemSearchOpen(true)} onChange={e=>{setItemQuery(e.target.value);setSearchLimit(12);setItemSearchOpen(true)}}/></label><button className={s.outlineGreen} onClick={()=>setItemSearchOpen(v=>!v)}><Plus size={15}/> Ajouter une prestation / produit</button></div>
-       {itemSearchOpen?<div className={s.itemResults}><div className={s.resultsHead}>CATALOGUE AUTORISÉ · {items.length} résultats visibles <button onClick={()=>setItemSearchOpen(false)}><X size={14}/></button></div>{items.map(i=><button key={i.id} onClick={()=>addItem(i.id)}><span className={s.productThumb}><Package size={19}/></span><span><b>{itemLabel(i)}</b><small>{i.public_reference} · {i.kind} · {i.availability_status}</small></span><strong>{i.price_mode==="quote_only"?"Sur devis":money(Number(i.price_amount||0),i.currency_label)}</strong><Plus size={16}/></button>)}{items.length>=searchLimit&&searchLimit<80?<button onClick={()=>setSearchLimit(v=>Math.min(80,v+20))}>Afficher plus de résultats</button>:null}</div>:null}
+       {itemSearchOpen?<div className={s.itemResults}><div className={s.resultsHead}>CATALOGUE AUTORISÉ · {items.length} résultats visibles <button onClick={()=>setItemSearchOpen(false)}><X size={14}/></button></div>{items.map(i=><button key={i.id} onClick={()=>addItem(i.id)}><span className={s.productThumb}>{mediaById[i.id]?<img src={mediaById[i.id]} alt="" loading="lazy"/>:<Package size={19}/>}</span><span><b>{itemLabel(i)}</b><small>{i.public_reference} · {i.kind} · {i.availability_status}</small></span><strong>{i.price_mode==="quote_only"?"Sur devis":money(Number(i.price_amount||0),i.currency_label)}</strong><Plus size={16}/></button>)}{items.length>=searchLimit&&searchLimit<80?<button onClick={()=>setSearchLimit(v=>Math.min(80,v+20))}>Afficher plus de résultats</button>:null}</div>:null}
        {chosen?<div className={s.lineConfig}><div className={s.configHeading}><h4><Settings2 size={16}/> Configuration de la ligne sélectionnée</h4><span>{chosenCatalog?.name_fr||"Offre sélectionnée"}</span></div>
        <div className={s.configFields}><Field title="Nombre de séances"><input type="number" min={1} max={365} value={chosen.configuration.sessions} onChange={e=>configPatch({sessions:Math.max(1,Number(e.target.value))})}/></Field>
        <Field title="Nombre d'enfants / participants"><input type="number" min={1} max={100} value={chosen.configuration.children} onChange={e=>configPatch({children:Math.max(1,Number(e.target.value))})}/></Field>

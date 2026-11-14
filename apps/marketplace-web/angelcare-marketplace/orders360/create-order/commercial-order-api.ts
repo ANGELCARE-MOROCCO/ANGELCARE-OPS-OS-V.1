@@ -1,11 +1,11 @@
 
 import "server-only";
 import {NextResponse} from "next/server";
-import {requireMarketplaceApiContext,hasMarketplacePermission} from "../auth/context";
-import {requireCustomerSameOrigin} from "../customer-commerce/customer-access-api";
+import {requireMarketplaceApiContext,hasMarketplacePermission} from "../../auth/context";
+import {requireCustomerSameOrigin} from "../../customer-commerce/customer-access-api";
 import {createServiceClient} from "@/lib/supabase/server";
-import {apiFailure,apiSuccess,parseJsonObject,requestId} from "../server/request";
-import {MarketplaceError} from "../server/errors";
+import {apiFailure,apiSuccess,parseJsonObject,requestId} from "../../server/request";
+import {MarketplaceError} from "../../server/errors";
 
 type Row=Record<string,unknown>;
 const asRow=(v:unknown):Row=>v&&typeof v==="object"&&!Array.isArray(v)?v as Row:{};
@@ -92,6 +92,29 @@ export async function commercialGet(request:Request){
      id:x.id,city:x.city||"",address_line:x.address_line||"",label:x.label||"Adresse"
     }))
    },{requestId:rid});
+  }
+  const mediaFor=url.searchParams.get("mediaFor");
+  if(mediaFor){
+   const ids=[...new Set(mediaFor.split(",").filter(Boolean))];
+   if(ids.length>40||ids.some(x=>!UUID.test(x)))throw new MarketplaceError("VALIDATION_ERROR","Liste d'images du catalogue invalide.");
+   if(!ids.length)return apiSuccess({}, {requestId:rid});
+   const published=await scoped(db.from("angelcare_marketplace_catalog_items").select("id")
+     .in("id",ids).eq("status","published"),ctx);
+   if(published.error)fail(published.error,"Catalogue accessible");
+   const allowed=(published.data||[]).map(x=>x.id);
+   if(!allowed.length)return apiSuccess({}, {requestId:rid});
+   const media=await db.from("angelcare_marketplace_catalog_item_media")
+    .select("catalog_item_id,asset_url,media_key,status,sort_order")
+    .in("catalog_item_id",allowed).eq("status","active")
+    .order("sort_order",{ascending:true}).limit(250);
+   if(media.error)fail(media.error,"Vignettes du catalogue");
+   const selected:Record<string,string>={};
+   for(const row of media.data||[]){
+     if(selected[row.catalog_item_id])continue;
+     const url=typeof row.asset_url==="string"?row.asset_url:"";
+     if(url.startsWith("/")||url.startsWith("https://"))selected[row.catalog_item_id]=url;
+   }
+   return apiSuccess(selected,{requestId:rid});
   }
   if(url.searchParams.get("drafts")==="1"){
    const rows=await scoped(db.from("angelcare_marketplace_commercial_drafts_r7").select(
