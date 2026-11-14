@@ -38,6 +38,8 @@ import { useSessionValue } from "./useJourneyState";
 import { Pagination } from "./ExplorerControls";
 import s from "./journey.module.css";
 import p from "./premium.module.css";
+import c from "./commercial.module.css";
+import { catalogueWindow } from "./catalogue-window";
 export function OfferImage({ item }: { item: DiscoveryItem }) {
   const [failed, setFailed] = useState(false);
   useEffect(() => setFailed(false), [item.media_url]);
@@ -147,8 +149,26 @@ export function NativeExplorer({
     10,
     (value) => ([10, 20, 40].includes(Number(value)) ? Number(value) : 10),
   );
-  const pages = Math.max(1, Math.ceil(visible.length / perPage)),
-    page = Math.min(filters.page, pages);
+  const [expansion, setExpansion] = useState({ key: "", pages: 0 });
+  const windowKey = JSON.stringify([
+    view,
+    experience.territoryCode,
+    filters,
+    category,
+    availability,
+    factValue,
+    q,
+    perPage,
+    filters.savedOnly ? selections.saved : [],
+    visible.map((item) => item.id),
+  ]);
+  const cataloguePage = catalogueWindow(
+    visible.length,
+    perPage,
+    filters.page,
+    expansion.key === windowKey ? expansion.pages : 0,
+  );
+  const { pages, page } = cataloguePage;
   const compared = channelItems.filter((item) =>
     selections.compared.includes(item.id),
   );
@@ -220,18 +240,18 @@ export function NativeExplorer({
   return (
     <section
       id="ew-native-explorer"
-      className={s.nativeExplorer}
+      className={`${s.nativeExplorer} ${c.catalogue}`}
       aria-label="Offres publiées du catalogue"
     >
-      <div className={s.nativeHeading}>
+      <div className={s.nativeHeading} data-native-title>
         <div>
           <span className={s.eyebrow}>
-            Des offres réelles. Vos critères. Votre sélection.
+            Vos critères. Des solutions à étudier.
           </span>
           <h3>
             {view === "produits"
-              ? "Le catalogue publié"
-              : "Offres actuellement publiées"}
+              ? "Les produits pour votre établissement"
+              : "Nos offres pour votre établissement"}
           </h3>
         </div>
         <span>
@@ -239,10 +259,11 @@ export function NativeExplorer({
           {experience.territoryCode ? ` · ${experience.territoryCode}` : ""}
         </span>
       </div>
-      <div className={s.catalogueScope}>
+      <div className={s.catalogueScope} data-catalogue-scope>
         <label className={s.selectLabel}>
           Affichage
           <select
+            aria-label="Affichage"
             value={filters.scope}
             onChange={(event) =>
               change({
@@ -260,11 +281,11 @@ export function NativeExplorer({
         </label>
         <p>
           {filters.scope === "all"
-            ? "Toutes les offres éligibles de ce storefront sont visibles, y compris les solutions B2B classées comme services."
-            : "Besoin d’une solution classée autrement ? Élargissez aux offres Établissements, puis filtrez le catalogue."}
+            ? "Retrouvez les différentes solutions Établissements et affinez votre sélection selon vos besoins."
+            : "Vous pouvez élargir la sélection aux autres solutions Établissements, puis affiner vos critères."}
         </p>
       </div>
-      <div className={s.toolbar}>
+      <div className={s.toolbar} data-native-toolbar>
         <label>
           <Search size={17} />
           <span className={s.sr}>Rechercher une offre publiée</span>
@@ -277,6 +298,7 @@ export function NativeExplorer({
         <label className={s.selectLabel}>
           Catégorie
           <select
+            aria-label="Catégorie"
             value={category}
             onChange={(event) => change({ category: event.target.value })}
           >
@@ -291,6 +313,7 @@ export function NativeExplorer({
         <label className={s.selectLabel}>
           Disponibilité
           <select
+            aria-label="Disponibilité"
             value={availability}
             onChange={(event) => change({ availability: event.target.value })}
           >
@@ -310,6 +333,7 @@ export function NativeExplorer({
         <label className={s.selectLabel}>
           Tarification
           <select
+            aria-label="Tarification"
             value={filters.priceMode}
             onChange={(event) => change({ priceMode: event.target.value })}
           >
@@ -323,6 +347,7 @@ export function NativeExplorer({
         <label className={s.selectLabel}>
           Trier
           <select
+            aria-label="Trier"
             value={filters.sort}
             onChange={(event) => change({ sort: event.target.value })}
           >
@@ -335,6 +360,7 @@ export function NativeExplorer({
       {categories.length > 1 && (
         <div
           className={s.categoryRail}
+          data-native-categories
           role="group"
           aria-label="Rayons du catalogue"
         >
@@ -363,7 +389,7 @@ export function NativeExplorer({
           ))}
         </div>
       )}
-      <div className={s.explorerUtilities}>
+      <div className={s.explorerUtilities} data-native-utilities>
         <button
           className={s.savedFilter}
           aria-pressed={filters.savedOnly}
@@ -416,6 +442,7 @@ export function NativeExplorer({
         <label className={s.selectLabel}>
           Résultats par page
           <select
+            aria-label="Résultats par page"
             value={perPage}
             onChange={(event) => {
               setPerPage(Number(event.target.value));
@@ -472,8 +499,8 @@ export function NativeExplorer({
           <small>{compared.length} dans cette spécialité</small>
         </div>
       )}
-      <div className={`${s.nativeGrid} ${p.nativeGrid}`}>
-        {visible.slice((page - 1) * perPage, page * perPage).map((item) => {
+      <div className={`${s.nativeGrid} ${p.nativeGrid}`} data-native-grid>
+        {visible.slice(cataloguePage.start, cataloguePage.end).map((item) => {
           const info = projection(item),
             action = nativeAction(item, "fr", experience.territoryCode),
             inProject = selected.includes(`offer:${item.id}`);
@@ -498,7 +525,7 @@ export function NativeExplorer({
               <div>
                 <span className={p.publishedTag}>
                   <Check size={11} />
-                  Offre publiée ·{" "}
+                  Catalogue ·{" "}
                   {PRICE_LABELS[item.price_mode] || "Conditions à consulter"}
                 </span>
                 <br />
@@ -610,6 +637,29 @@ export function NativeExplorer({
             </JourneyLink>
           )}
         </div>
+      )}
+      {cataloguePage.remaining > 0 && (
+        <div className={c.loadMore}>
+          <button
+            onClick={() =>
+              setExpansion((previous) => ({
+                key: windowKey,
+                pages: (previous.key === windowKey ? previous.pages : 0) + 1,
+              }))
+            }
+          >
+            Afficher {cataloguePage.nextCount} offre
+            {cataloguePage.nextCount > 1 ? "s" : ""} de plus{" "}
+            <ArrowRight size={16} />
+          </button>
+        </div>
+      )}
+      {visible.length > 0 && (
+        <p className={c.displayed} role="status">
+          Offres {cataloguePage.start + 1} à {cataloguePage.end} sur{" "}
+          {visible.length} · {cataloguePage.shown} affichée
+          {cataloguePage.shown > 1 ? "s" : ""}
+        </p>
       )}
       <Pagination
         page={page}
