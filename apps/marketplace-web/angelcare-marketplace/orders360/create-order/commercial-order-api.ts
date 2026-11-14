@@ -58,6 +58,7 @@ const safePayload=(v:unknown):Row=>{
  }
  if(body.customerAccountId)uuid(body.customerAccountId,"Client");
  if(body.territoryId)uuid(body.territoryId,"Territoire");
+ if(body.sourceOrderId)uuid(body.sourceOrderId,"Commande source");
  return body;
 };
 
@@ -75,7 +76,7 @@ export async function commercialGet(request:Request){
    if(!customer.data)throw new MarketplaceError("NOT_FOUND","Client introuvable dans votre périmètre.");
    const [journeys,addresses]=await Promise.all([
     db.from("angelcare_marketplace_journeys")
-     .select("id,created_at,financial_status").eq("customer_account_id",id)
+     .select("id,public_reference,title,created_at,financial_status").eq("customer_account_id",id)
      .order("created_at",{ascending:false}).limit(100),
     db.from("angelcare_marketplace_customer_addresses")
      .select("id,city,address_line,label,status").eq("customer_account_id",id).eq("status","active")
@@ -88,6 +89,10 @@ export async function commercialGet(request:Request){
    return apiSuccess({
     orderCount:journeys.data?.length||0,value:Math.round(sum*100)/100,
     lastOrderAt:journeys.data?.[0]?.created_at||null,
+    recentOrders:(journeys.data||[]).slice(0,8).map(x=>({
+     id:x.id,public_reference:x.public_reference||"",title:x.title||"",
+     created_at:x.created_at
+    })),
     addresses:(addresses.data||[]).map(x=>({
      id:x.id,city:x.city||"",address_line:x.address_line||"",label:x.label||"Adresse"
     }))
@@ -162,11 +167,12 @@ export async function commercialGet(request:Request){
 export async function commercialPost(request:Request){
  const rid=requestId(request);
  try{
-  const ctx=await requireMarketplaceApiContext("marketplace.operations.missions.create");
   requireCustomerSameOrigin(request);
   const raw=await parseJsonObject(request);
   if(JSON.stringify(raw).length>270000)throw new MarketplaceError("VALIDATION_ERROR","Requête trop volumineuse.");
   const action=str(raw.action,4,36),input=asRow(raw.input);
+  const ctx=await requireMarketplaceApiContext(action==="approve"
+    ?"marketplace.operations.missions.manage":"marketplace.operations.missions.create");
   const actor=uuid(ctx.actor.id,"Opérateur");
   const reqKey=str(raw.requestKey,8,160);
   const db=await createServiceClient();

@@ -225,3 +225,8 @@
 .importPanel .savedChoice{width:100%;display:flex;align-items:center;gap:11px;text-align:left;border:1px solid #e1ece5;border-radius:8px;padding:11px;background:#fff;color:#2b5d46;font-size:11px}
 .savedChoice span{flex:1;color:#315b46}
 .savedChoice:hover{background:#ecf7f1}
+
+.historicalOrder{display:grid;grid-template-columns:1fr auto;gap:4px 7px;padding:8px 2px;border-bottom:1px solid #edf2ee;font-size:10px}
+.historicalOrder b{font-size:10px;color:#205e46}
+.historicalOrder>span{font-size:9px;color:#778d82;grid-column:1}
+.historicalOrder small{font-size:9px;color:#7e9185;grid-column:2;grid-row:1/3}

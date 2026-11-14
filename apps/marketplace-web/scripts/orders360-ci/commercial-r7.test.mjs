@@ -35,6 +35,10 @@ test("Every critical UI action hits a guarded server authority",()=>{
  assert.match(ui,/Modèles/);
  assert.match(ui,/importPriorOrder/);
  assert.match(ui,/applyTemplate/);
+ assert.match(ui,/sourceOrderId/);
+ assert.match(ui,/recurringReady/);
+ assert.match(sql,/R7_RENEWAL_SOURCE_REQUIRED/);
+ assert.match(sql,/R7_RECURRENCE_REQUIRED/);
  assert.match(api,/customerOrders/);
  assert.match(api,/orderLines/);
  assert.match(api,/mediaFor/);

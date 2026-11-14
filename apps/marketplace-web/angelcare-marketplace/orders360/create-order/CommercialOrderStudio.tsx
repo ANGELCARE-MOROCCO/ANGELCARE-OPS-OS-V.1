@@ -15,14 +15,14 @@ import s from "./commercial-order-studio.module.css";
 type Mode="quick"|"expert"|"quote"|"subscription"|"b2b"|"renewal";
 type Tab="customer"|"basket"|"configuration"|"planning"|"pricing"|"payment"|"contracts"|"validation";
 type Line={id:string;itemId:string;quantity:number;unitPrice:number|null;discountAmount:number;configuration:{sessions:number;children:number;minutes:number;frequency:string;options:string[];note:string}};
-type Draft={mode:Mode;customerAccountId:string;guestName:string;guestEmail:string;guestPhone:string;territoryId:string;city:string;address:string;scheduledStartAt:string;scheduledEndAt:string;paymentMode:string;paymentStatus:"pending"|"invoice_later";notes:string;familyRequestId:string|null;inquiryId:string|null;lines:Line[];contractNote:string;depositPercent:number};
+type Draft={mode:Mode;customerAccountId:string;guestName:string;guestEmail:string;guestPhone:string;territoryId:string;city:string;address:string;scheduledStartAt:string;scheduledEndAt:string;paymentMode:string;paymentStatus:"pending"|"invoice_later";notes:string;familyRequestId:string|null;inquiryId:string|null;sourceOrderId:string|null;lines:Line[];contractNote:string;depositPercent:number};
 type QuoteLine={itemId:string;title:string;quantity:number;unitPrice:number;discount:number;subtotal:number;net:number;currency:string;requiresApproval:boolean};
 type Quote={lines:QuoteLine[];subtotal:number;discount:number;net:number;total:number;currency:string;requiresApproval:boolean;taxStatus:string;warnings?:string[]};
 type Receipt={id?:string;public_reference?:string;orderId?:string;status?:string};
 type PriorOrder={id:string;public_reference:string;created_at:string;title:string;journey_type:string};
 type PriorLine={catalog_item_id:string;quantity:number;unit_price:number;discount_amount:number;configuration:unknown};
 type Envelope<T>={data?:T;error?:{message?:string;code?:string};requestId?:string};
-type CustomerDetails={orderCount:number;value:number;lastOrderAt:string|null;addresses:Array<{id:string;city:string;address_line:string;label:string}>};
+type CustomerDetails={orderCount:number;value:number;lastOrderAt:string|null;recentOrders:Array<{id:string;public_reference:string;title:string;created_at:string}>;addresses:Array<{id:string;city:string;address_line:string;label:string}>};
 type SavedDraft={id:string;version:number;status:string;mode:Mode;payload:Draft;approval_state:string;created_at:string;updated_at:string;submitted_order_id?:string|null};
 
 const API="/api/angelcare-marketplace/admin/orders/commercial-studio";
@@ -41,7 +41,7 @@ const itemLabel=(v:AssistedOrderOptions["items"][number])=>v.name_fr||v.public_r
 const money=(v:number,currency="MAD")=>Number(v||0).toLocaleString("fr-FR",{minimumFractionDigits:2,maximumFractionDigits:2})+" "+(currency==="Dh"?"MAD":currency);
 const dt=(v:string|null|undefined)=>v?new Date(v).toLocaleString("fr-FR",{dateStyle:"short",timeStyle:"short"}):"—";
 const newLine=(itemId:string):Line=>({id:crypto.randomUUID(),itemId,quantity:1,unitPrice:null,discountAmount:0,configuration:{sessions:1,children:1,minutes:60,frequency:"unique",options:[],note:""}});
-const createDraft=(q?:Record<string,string|undefined>):Draft=>({mode:q?.mode==="quote"?"quote":"expert",customerAccountId:q?.customer||"",guestName:q?.guestName||"",guestEmail:q?.guestEmail||"",guestPhone:q?.guestPhone||"",territoryId:"",city:q?.city||"",address:"",scheduledStartAt:"",scheduledEndAt:"",paymentMode:"none",paymentStatus:"pending",notes:"",familyRequestId:q?.familyRequest||null,inquiryId:q?.inquiry||null,lines:[],contractNote:"",depositPercent:0});
+const createDraft=(q?:Record<string,string|undefined>):Draft=>({mode:q?.mode==="quote"?"quote":"expert",customerAccountId:q?.customer||"",guestName:q?.guestName||"",guestEmail:q?.guestEmail||"",guestPhone:q?.guestPhone||"",territoryId:"",city:q?.city||"",address:"",scheduledStartAt:"",scheduledEndAt:"",paymentMode:"none",paymentStatus:"pending",notes:"",familyRequestId:q?.familyRequest||null,inquiryId:q?.inquiry||null,sourceOrderId:null,lines:[],contractNote:"",depositPercent:0});
 const asObj=(v:unknown):Record<string,unknown>=>v&&typeof v==="object"&&!Array.isArray(v)?v as Record<string,unknown>:{};
 const parseResponse=async<T,>(response:Response):Promise<T>=>{
  const body=await response.json() as Envelope<T>;
@@ -144,7 +144,10 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
  const paymentReady=draft.mode==="quote"||Boolean(draft.paymentMode&&draft.paymentMode!=="none");
  const contractReady=draft.mode!=="b2b"&&draft.mode!=="subscription"||Boolean(draft.contractNote.trim());
  const approvalReady=!approvalRequired||approval==="approved";
- const valid=customerReady&&basketReady&&pricingReady&&paymentReady&&contractReady&&approvalReady&&!isDirty&&saveState==="saved";
+ const renewalReady=draft.mode!=="renewal"||Boolean(draft.sourceOrderId);
+ const recurringReady=draft.mode!=="subscription"||Boolean(draft.scheduledStartAt&&draft.lines.some(l=>l.configuration.sessions>1&&l.configuration.frequency!=="unique"));
+ const modeReady=renewalReady&&recurringReady;
+ const valid=customerReady&&basketReady&&pricingReady&&paymentReady&&contractReady&&approvalReady&&modeReady&&!isDirty&&saveState==="saved";
  const amount=quote?.total??0;
  const currency=quote?.currency||"MAD";
  const selectedPrice=quote?.lines.find(x=>x.itemId===chosen?.itemId);
@@ -239,7 +242,7 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
       unitPrice:Number(x.unit_price)||0,discountAmount:Math.max(0,Number(x.discount_amount)||0),
       configuration:{...newLine(x.catalog_item_id).configuration,...asObj(x.configuration)}}));
    if(!lines.length)throw new Error("Aucune ligne catalogue réutilisable. Les articles archivés sont exclus.");
-   update({lines:[...draft.lines,...lines]});setShowOrderImport(false);setTab("basket");
+   update({lines:[...draft.lines,...lines],sourceOrderId:draft.mode==="renewal"?order.id:draft.sourceOrderId});setShowOrderImport(false);setTab("basket");
    setNotice(lines.length+" lignes ajoutées depuis la commande "+order.public_reference+".");
   }catch(e){setError(e instanceof Error?e.message:"Import de panier impossible.")}
   finally{setImportBusy(false)}
@@ -304,7 +307,8 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
         <div className={s.clientStats}><div><ShoppingCart size={15}/><b>{customerDetails?.orderCount??"—"}</b><small>Commandes</small></div><div><Layers3 size={15}/><b>{customerDetails?money(customerDetails.value):"—"}</b><small>Valeur historique</small></div></div>
         <div className={s.infoRows}><div><span>Dernière commande</span><b>{dt(customerDetails?.lastOrderAt)}</b></div><div><span>Référence</span><b>{customer.public_reference}</b></div><div><span>Statut financier</span><b>Voir Finance 360</b></div></div>
         <details><summary><MapPin size={14}/> Adresses enregistrées ({customerDetails?.addresses.length??0})</summary>{customerDetails?.addresses.map(a=><button key={a.id} className={s.addressButton} onClick={()=>update({address:a.address_line,city:a.city})}>{a.label||a.city}: {a.address_line}</button>)}</details>
-        <details><summary><History size={14}/> Notes et historique</summary><p className={s.help}>Consulter les événements dans le dossier client, sans créer de faits fictifs.</p></details>
+        <details><summary><History size={14}/> Notes et historique ({customerDetails?.recentOrders.length??0})</summary>
+       {customerDetails?.recentOrders?.length?customerDetails.recentOrders.map(o=><div className={s.historicalOrder} key={o.id}><b>{o.public_reference||o.id.slice(0,8)}</b><span>{o.title||"Commande"}</span><small>{dt(o.created_at)}</small></div>):<p className={s.help}>Aucun historique commercial disponible pour ce client.</p>}</details>
        </div>:<div className={s.guestForm}><span className={s.eyebrow}>NOUVEAU CLIENT / INVITÉ</span><Field title="Nom complet"><input value={draft.guestName} onChange={e=>update({guestName:e.target.value})} placeholder="Nom et prénom"/></Field><Field title="Email"><input type="email" value={draft.guestEmail} onChange={e=>update({guestEmail:e.target.value})}/></Field><Field title="Téléphone"><input value={draft.guestPhone} onChange={e=>update({guestPhone:e.target.value})}/></Field><p className={s.help}>Choisissez un client existant ou renseignez un invité avec un contact valide.</p></div>}
       </Section>
       <button className={s.secondaryWide} onClick={()=>setShowDrafts(v=>!v)}><FolderOpen size={15}/> Mes brouillons ({drafts.length}) <ChevronDown size={14}/></button>
@@ -355,7 +359,7 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
       {tab==="validation"?<div className={s.contentPanel}><Section title="DOSSIER DE VALIDATION" icon={ClipboardCheck}><div className={s.validationList}>{[
         ["Client identifié et joignable",customerReady],["Panier canonique et prix serveur",basketReady&&pricingReady],
         ["Mode de règlement choisi",paymentReady],["Conditions contractuelles applicables",contractReady],
-        ["Approbation requise",approvalReady],["Brouillon persisté",!isDirty&&saveState==="saved"]
+        ["Approbation requise",approvalReady],["Renouvellement / récurrence",modeReady],["Brouillon persisté",!isDirty&&saveState==="saved"]
        ].map(([label,ok],i)=><div key={i}><span>{ok?<CheckCircle2 size={18}/>:<AlertCircle size={18}/>}</span><b>{label}</b><Status ok={Boolean(ok)} label={ok?"Vérifié":"À finaliser"}/></div>)}</div><p className={s.help}>Toutes les étapes sont vérifiées une dernière fois côté serveur. Les prestations nécessitant une capacité réelle restent à confirmer par les équipes Planning.</p></Section></div>:null}
      </main>
      <aside className={s.rightCol}>
@@ -376,6 +380,7 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
          ["Conditions de paiement définies",paymentReady,"payment"],
          ["Contrat / conditions vérifiés",contractReady,"contracts"],
          ["Approbation commerciale",approvalReady,"validation"],
+         ["Mode commercial configuré",modeReady,draft.mode==="subscription"?"planning":"basket"],
          ["Brouillon sauvegardé",!isDirty&&saveState==="saved","validation"]
         ].map(([label,ok,to],i)=><button key={i} onClick={()=>setTab(to as Tab)}><span className={s.checkSymbol}>{ok?<Check size={14}/>:<Clock3 size={14}/>}</span><span>{label}</span><Status ok={Boolean(ok)} label={ok?"OK":"À finaliser"}/><ChevronRight size={14}/></button>)}</div>
        </Section>
