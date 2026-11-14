@@ -36,6 +36,7 @@ create table if not exists public.ac_seo_power_r4_attempts (
 );
 create index if not exists ac_seo_power_r4_due_idx on public.ac_seo_power_jobs(project_id,due_at,id)
  where state='queued';
+create index if not exists ac_seo_power_r4_budget_idx on public.ac_seo_power_jobs(project_id,started_at,page_id) where kind='crawl';
 create index if not exists ac_seo_power_r4_claim_idx on public.ac_seo_power_jobs(project_id,kind,due_at)
  where state in ('queued','running');
 create index if not exists ac_seo_power_r4_attempt_open_idx on public.ac_seo_power_r4_attempts(started_at)
@@ -121,7 +122,7 @@ end $$;
 create or replace function public.ac_seo_power_r4_claim(p_project uuid default null) returns jsonb
 language plpgsql security definer set search_path=pg_catalog,public as $$
 declare c jsonb;pr public.ac_seo_power_projects;j public.ac_seo_power_jobs;
- token uuid; gc int;pc int;oc int;lb int;attempt_cap int;budget int;
+ token uuid; gc int;pc int;oc int;lb int;attempt_cap int;budget int; used_pages bigint;
 begin
  perform pg_advisory_xact_lock(hashtextextended('seo-power-r4-claim',0));
  select capacity into c from public.ac_seo_power_r4_control where singleton and enabled=true;
@@ -156,14 +157,17 @@ begin
   if (select count(*) from public.ac_seo_power_jobs where project_id=pr.id and state='running' and lease_until>=now())>=pc then continue;end if;
   if (select count(*) from public.ac_seo_power_jobs x join public.ac_seo_power_projects pp on pp.id=x.project_id
       where pp.origin=pr.origin and x.state='running' and x.lease_until>=now())>=oc then continue;end if;
-  if (select count(*) from public.ac_seo_power_jobs where project_id=pr.id and started_at>=date_trunc('day',now()))>=budget then continue;end if;
+  -- Budget counts unique crawl pages rather than every auxiliary task or repeated network attempt.
+  select count(distinct page_id) into used_pages from public.ac_seo_power_jobs where
+    project_id=pr.id and kind='crawl' and started_at>=date_trunc('day',now());
   select * into j from public.ac_seo_power_jobs where project_id=pr.id and state='queued' and due_at<=now()
+    and (kind<>'crawl' or used_pages<budget)
     order by case kind when 'verify' then 0 when 'crawl' then 1 when 'links' then 2 else 3 end,
     due_at,created_at for update skip locked limit 1;
   if not found then continue;end if;
   if j.kind='links' and not exists(select 1 from public.ac_seo_power_pages p where p.id=j.page_id and jsonb_typeof(p.facts->'links')='array') then
     update public.ac_seo_power_jobs set state='cancelled',error='R4_DEPENDENCY_CRAWL_REQUIRED',finished_at=now() where id=j.id;
-    perform public.ac_seo_power_r4_enqueue(j.page_id,'crawl',jsonb_build_object('prerequisiteFor','links'));
+    -- Do not acquire page locks while holding a claimed job lock; the next scheduler tick queues the prerequisite.
     continue;
   end if;
   if j.kind='indexnow' and not exists(select 1 from public.ac_seo_power_pages p
