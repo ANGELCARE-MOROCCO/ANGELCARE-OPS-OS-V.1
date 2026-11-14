@@ -1,0 +1,45 @@
+name: SEO POWER R4 Isolated Verification
+
+on:
+  push:
+    branches:
+      - feature/seo-power-scale-r4-20261114
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backend-contract:
+    name: Verify R4 Backend — No public UI changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: apps/marketplace-web/package-lock.json
+      - name: Test pure R4 capacity and security contracts
+        run: node --experimental-strip-types --test apps/marketplace-web/scripts/seo-power-ci/r4-engine.test.mjs
+      - name: Install exact Marketplace dependency lock
+        working-directory: apps/marketplace-web
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Typecheck R4 backend and imported dependencies
+        working-directory: apps/marketplace-web
+        env:
+          NODE_OPTIONS: --max-old-space-size=8192
+        run: npx tsc -p tsconfig.seo-power-r4.json --pretty false
+      - name: Prevent frontend and publishing-file mutations
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=3ca827396b1ab8a534e9cf30903ca7bf2c3f952d
+          git diff --name-only "$BASE" HEAD | tee /tmp/r4-diff.txt
+          if grep -Ev '^(apps/marketplace-web/angelcare-marketplace/seo-power/(runner|model|network|crawler|scale-r4|scale-r4-runtime)\.ts|apps/marketplace-web/supabase/migrations/20261114012000_seo_power_scale_engine_r4\.sql|apps/marketplace-web/scripts/seo-power-ci/r4-engine\.test\.mjs|apps/marketplace-web/tsconfig\.seo-power-r4\.json|apps/marketplace-web/angelcare-marketplace/seo-power/SEO_POWER_SCALE_R4_RELEASE\.md|\.github/workflows/seo-power-r4-verify\.yml)$' /tmp/r4-diff.txt; then
+            echo "R4_UI_SCOPE_VIOLATION"; exit 1
+          fi
+          echo "R4_FRONTEND_UNMODIFIED=PASS"

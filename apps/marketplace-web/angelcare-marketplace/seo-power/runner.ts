@@ -16,6 +16,8 @@ import { publicIndexNowKey } from "./public";
 import { refresh } from "./actions";
 import { recovery } from "./operations-model";
 import { growthTick } from "./growth-service";
+import { resolveScaleR4 } from "./scale-r4-runtime";
+import type { ScaleR4 } from "./scale-r4";
 
 export async function authorizedWorker(token: string) {
   if (token.length < 40 || token.length > 200) return false;
@@ -33,15 +35,16 @@ export async function authorizedWorker(token: string) {
     timingSafeEqual(Buffer.from(actual), Buffer.from(expected))
   );
 }
-async function processBatch(projectId: string | null = null) {
+async function processBatch(projectId: string | null = null, scale: ScaleR4 | null = null) {
   const started = Date.now(),
     results: Row[] = [];
-  for (let i = 0; i < 2 && Date.now() - started < 15000; i++) {
-    const claimed = await rpc("ac_seo_power_claim", { p_project: projectId });
+  for (let i = 0; i < (scale?.jobsPerWorker ?? 2) && Date.now() - started < (scale ? 45000 : 15000); i++) {
+    const claimed = await rpc(scale ? "ac_seo_power_r4_claim" : "ac_seo_power_claim", { p_project: projectId });
     if (!claimed) break;
     const job = record(claimed),
       project = projectRow(job.project),
       page = job.page as Page;
+    if(scale) project.policy={...project.policy,linksPerPage:scale.linksPerPage,timeoutSeconds:scale.requestTimeoutSeconds,crawlBudget:scale.dailyJobsPerProject};
     let result: Row = {},
       error: string | null = null;
     try {
@@ -56,16 +59,18 @@ async function processBatch(projectId: string | null = null) {
           );
         const links = page.facts.links,
           offset = Number(record(job.payload).offset || 0),
-          slice = links.slice(offset, offset + 3),
+          slice = links.slice(offset, offset + (scale ? Math.min(4,scale.linkBatchSize) : 3)),
           checked = await checkLinks(
             project,
             slice.map((l) => new URL(l.url).pathname),
+            scale ? Math.min(4,scale.linkBatchSize) : 3,
+            scale ? 4 : 1,
           );
         result = {
           checked,
           checkedCount: slice.length,
           total: links.length,
-          nextOffset: offset + 3 < links.length ? offset + 3 : null,
+          nextOffset: offset + slice.length < links.length ? offset + slice.length : null,
         };
       } else if (job.kind === "verify") {
         const change = await getChange(String(record(job.payload).changeId)),
@@ -136,7 +141,7 @@ async function processBatch(projectId: string | null = null) {
             method: "POST",
             body: JSON.stringify(submission),
             maxBytes: 100000,
-            timeoutMs: 8000,
+            timeoutMs: scale ? Math.min(20000,scale.requestTimeoutSeconds * 1000) : 8000,
             allowedPath: (p) => {
               if (p !== "/indexnow")
                 throw new SeoFault("INDEXNOW_ENDPOINT", "Endpoint inattendu.");
@@ -171,7 +176,8 @@ async function processBatch(projectId: string | null = null) {
       };
     }
     try {
-      const finished = await rpc("ac_seo_power_finish", {
+      if(scale){const renewed=await rpc("ac_seo_power_r4_heartbeat",{p_id:job.id,p_token:job.lease_token});if(renewed!==true)throw new SeoFault("R4_HEARTBEAT_FAILED","Bail R4 indisponible avant finalisation.",503);}
+      const finished = await rpc(scale ? "ac_seo_power_r4_finish" : "ac_seo_power_finish", {
         p_id: job.id,
         p_token: job.lease_token,
         p_result: result,
@@ -205,11 +211,11 @@ async function processBatch(projectId: string | null = null) {
                 "Inventaire de découverte indisponible.",
                 503,
               );
-            if ((count.count || 0) < 10000) {
+            if ((count.count || 0) < (scale?.maxPagesPerProject ?? 10000)) {
               const added = await client
                 .from("ac_seo_power_pages")
                 .upsert(
-                  paths.slice(0, 10000 - (count.count || 0)).map((path) => ({
+                  paths.slice(0, (scale?.maxPagesPerProject ?? 10000) - (count.count || 0)).map((path) => ({
                     project_id: project.id,
                     path,
                     locale: path.split("/")[2],
@@ -225,8 +231,8 @@ async function processBatch(projectId: string | null = null) {
                   503,
                 );
               if (record(job.payload).discover === true)
-                for (const row of (added.data || []).slice(0, 10))
-                  await rpc("ac_seo_power_enqueue", {
+                for (const row of (added.data || []).slice(0, scale?.discoveryBatchSize ?? 10))
+                  await rpc(scale ? "ac_seo_power_r4_enqueue" : "ac_seo_power_enqueue", {
                     p_page: row.id,
                     p_kind: "crawl",
                     p_payload: { discover: true },
@@ -289,7 +295,7 @@ async function processBatch(projectId: string | null = null) {
           result.nextOffset !== null &&
           result.nextOffset !== undefined
         )
-          await rpc("ac_seo_power_enqueue", {
+          await rpc(scale ? "ac_seo_power_r4_enqueue" : "ac_seo_power_enqueue", {
             p_page: page.id,
             p_kind: "links",
             p_payload: { offset: result.nextOffset },
@@ -300,7 +306,7 @@ async function processBatch(projectId: string | null = null) {
           result.verified === true &&
           project.policy.indexNowEnabled
         )
-          await rpc("ac_seo_power_enqueue", {
+          await rpc(scale ? "ac_seo_power_r4_enqueue" : "ac_seo_power_enqueue", {
             p_page: page.id,
             p_kind: "indexnow",
             p_payload: {},
@@ -346,48 +352,51 @@ export async function runBatch(
   projectId: string | null = null,
   source: "manual" | "scheduler" = "manual",
 ) {
+  // R4 is opt-in in both the deployment environment and Supabase. Legacy is the default.
+  const scale=await resolveScaleR4();
   const requestStarted = Date.now();
-  const executionId = await rpc("ac_seo_power_execution", {
-    p_project: projectId,
-    p_source: source,
+  const executionId = await rpc("ac_seo_power_execution",{
+    p_project:projectId,p_source:source
   });
   try {
-    const growth = await growthTick(projectId);
-    const batch =
-      Date.now() - requestStarted < 15000
+    // When activated, R4 schedules stale inventory incrementally instead of the
+    // legacy fixed daily page selection. Inactive deployments never call this RPC.
+    if(scale) await rpc("ac_seo_power_r4_schedule_due",{});
+    const growth=await growthTick(projectId);
+    let batch:Awaited<ReturnType<typeof processBatch>>;
+    if(scale){
+      const remaining=Date.now()-requestStarted;
+      const workerCount=remaining<12000 ? 0 : scale.workersPerTick;
+      const parallel=await Promise.all(Array.from({length:workerCount},()=>
+        processBatch(projectId,scale)
+      ));
+      batch={
+        results:parallel.flatMap(w=>w.results),
+        elapsedMs:Date.now()-requestStarted,
+        remaining:workerCount===0
+          ? "R4: croissance terminée, prochain cycle pour l'exécution."
+          : "R4: charge persistante reprise aux prochains passages."
+      };
+    }else{
+      batch=Date.now()-requestStarted<15000
         ? await processBatch(projectId)
-        : {
-            results: [] as Row[],
-            elapsedMs: Date.now() - requestStarted,
-            remaining:
-              "Exploration reportée au prochain lot après le passage Growth.",
-          };
-    const problems = batch.results.filter(
-      (r) =>
-        r.error ||
-        r.state === "unconfirmed" ||
-        r.state === "failed" ||
-        r.verified === false ||
-        r.followup,
+        : {results:[] as Row[],elapsedMs:Date.now()-requestStarted,
+          remaining:"Exploration reportée au prochain lot après le passage Growth."};
+    }
+    const problems=batch.results.filter(r=>
+      r.error || r.state==="unconfirmed" || r.state==="failed" || r.verified===false || r.followup
     ).length;
-    const answer = {
-      ...batch,
-      elapsedMs: Date.now() - requestStarted,
-      growth,
-      problems: problems + (record(growth).error ? 1 : 0),
+    const answer={
+      ...batch,elapsedMs:Date.now()-requestStarted,growth,
+      problems:problems+(record(growth).error?1:0),
       executionId,
+      ...(scale?{engine:"r4",workers:scale.workersPerTick}:{}),
     };
-    await rpc("ac_seo_power_execution", {
-      p_id: executionId,
-      p_result: answer,
-    });
+    await rpc("ac_seo_power_execution",{p_id:executionId,p_result:answer});
     return answer;
-  } catch (e) {
-    const fatal = e instanceof SeoFault ? e.code : "EXECUTION_INTERRUPTED";
-    await rpc("ac_seo_power_execution", {
-      p_id: executionId,
-      p_result: { fatal, problems: 1 },
-    });
+  }catch(e){
+    const fatal=e instanceof SeoFault?e.code:"EXECUTION_INTERRUPTED";
+    await rpc("ac_seo_power_execution",{p_id:executionId,p_result:{fatal,problems:1}});
     throw e;
   }
 }

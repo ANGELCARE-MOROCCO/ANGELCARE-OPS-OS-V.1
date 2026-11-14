@@ -1,0 +1,22 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "types/**/*.d.ts",
+    "angelcare-marketplace/seo-power/scale-r4.ts",
+    "angelcare-marketplace/seo-power/scale-r4-runtime.ts",
+    "angelcare-marketplace/seo-power/model.ts",
+    "angelcare-marketplace/seo-power/network.ts",
+    "angelcare-marketplace/seo-power/crawler.ts",
+    "angelcare-marketplace/seo-power/runner.ts",
+    "angelcare-marketplace/seo-power/api.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next"
+  ]
+}

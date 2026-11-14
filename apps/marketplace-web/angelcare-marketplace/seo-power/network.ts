@@ -60,7 +60,7 @@ export async function safeRead(
   },
 ): Promise<Response> {
   const origin = canonicalOrigin(options.origin),
-    deadline = Date.now() + Math.min(options.timeoutMs || 8000, 12000),
+    deadline = Date.now() + Math.min(options.timeoutMs || 8000, 45000),
     maxBytes = options.maxBytes || 3 * 1024 * 1024;
   async function once(target: URL, redirects: URL[]): Promise<Response> {
     if (

@@ -238,9 +238,9 @@ export function targetUrl(input: string, project: Project): URL {
 export function parsePolicy(input: unknown): Policy {
   const v = record(input);
   return {
-    crawlBudget: integer(v.crawlBudget, 5, 1000, 120),
-    linksPerPage: integer(v.linksPerPage, 1, 100, 30),
-    timeoutSeconds: integer(v.timeoutSeconds, 3, 12, 8),
+    crawlBudget: integer(v.crawlBudget, 5, 100000, 120),
+    linksPerPage: integer(v.linksPerPage, 1, 1000, 30),
+    timeoutSeconds: integer(v.timeoutSeconds, 3, 45, 8),
     intervalHours: integer(v.intervalHours, 1, 168, 24),
     scheduleEnabled: v.scheduleEnabled === true,
     indexNowEnabled: v.indexNowEnabled === true,

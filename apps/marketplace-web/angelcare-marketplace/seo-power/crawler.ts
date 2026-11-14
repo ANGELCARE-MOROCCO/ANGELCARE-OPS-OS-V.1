@@ -30,7 +30,7 @@ export async function inspectWithClient(
       maxConcurrency: 1,
       maxRequestRetries: 0,
       navigationTimeoutSecs: project.policy.timeoutSeconds + 2,
-      requestHandlerTimeoutSecs: 15,
+      requestHandlerTimeoutSecs: Math.max(15, project.policy.timeoutSeconds + 8),
       ignoreHttpErrorStatusCodes: [400, 401, 403, 404, 410, 429, 500, 502, 503],
       async requestHandler({ $, request, response }) {
         const final = targetUrl(request.loadedUrl || request.url, project),
@@ -61,7 +61,7 @@ export async function inspectWithClient(
               const u = new URL($(el).attr("href") || "", final);
               if (u.search || u.hash) return;
               const url = targetUrl(u.href, project);
-              if (seen.has(url.pathname) || links.length >= 100) return;
+              if (seen.has(url.pathname) || links.length >= Math.min(1000, project.policy.linksPerPage)) return;
               seen.add(url.pathname);
               links.push({
                 url: url.href,
@@ -204,34 +204,31 @@ export async function inspectPage(
  * Avoid importing Linkinator in Next.js route initialization or running a
  * transient loopback HTTP server for a status already obtained from the target.
  */
-export async function checkLinks(project: Project, paths: string[]) {
+export async function checkLinks(project: Project, paths: string[], limit=3, concurrency=1) {
   const results: {
-    url: string;
-    state: "OK" | "BROKEN" | "SKIPPED";
-    status: number;
-  }[] = [];
-  for (const path of paths.slice(0, 3)) {
-    const target = targetUrl(path, project);
-    const response = await safeRead(target, {
-      origin: project.origin,
-      timeoutMs: project.policy.timeoutSeconds * 1000,
-      allowedPath: (p) => {
-        publicPath(p, project.world);
-      },
-    });
-    const status = response.statusCode;
-    const botChallenge = String(
-      response.headers["cf-mitigated"] || "",
-    ).toLowerCase();
-    const state: "OK" | "BROKEN" | "SKIPPED" =
-      status === 429 ||
-      status === 999 ||
-      (status === 403 && botChallenge === "challenge")
-        ? "SKIPPED"
-        : status >= 200 && status < 400
-          ? "OK"
-          : "BROKEN";
-    results.push({ url: target.href, state, status });
+    url:string;
+    state:"OK" | "BROKEN" | "SKIPPED";
+    status:number;
+  }[]=[];
+  const batch=paths.slice(0,Math.max(1,Math.min(limit,48)));
+  // Each wave is bounded by per-host concurrency. Never use unbounded Promise.all.
+  for(let offset=0;offset<batch.length;offset+=Math.max(1,Math.min(concurrency,4))) {
+    const wave=batch.slice(offset,offset+Math.max(1,Math.min(concurrency,4)));
+    const next=await Promise.all(wave.map(async path=>{
+      const target=targetUrl(path,project);
+      const response=await safeRead(target,{
+        origin:project.origin,
+        timeoutMs:project.policy.timeoutSeconds*1000,
+        allowedPath:p=>{publicPath(p,project.world);}
+      });
+      const status=response.statusCode;
+      const challenge=String(response.headers["cf-mitigated"]||"").toLowerCase();
+      const state:"OK"|"BROKEN"|"SKIPPED"=
+        status===429||status===999||(status===403&&challenge==="challenge") ? "SKIPPED" :
+        status>=200&&status<400 ? "OK" : "BROKEN";
+      return {url:target.href,state,status};
+    }));
+    results.push(...next);
   }
   return results;
 }
