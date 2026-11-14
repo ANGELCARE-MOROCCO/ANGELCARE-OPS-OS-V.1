@@ -157,15 +157,43 @@ export function MediaVault360({canManage,refreshKey,onInventory,onChanged}:Props
   })
  }
  async function archive(){
-  if(!canManage||!selection.length||!window.confirm("Archiver "+selection.length+" média(s) ? Vérifiez d'abord leurs utilisations."))return;
+  if(!canManage||!selection.length||!window.confirm("Archiver "+selection.length+" média(s) ? Le serveur bloquera tous les médias référencés."))return;
   await operation(async()=>{
-   let success=0,failed=0;
-   for(let i=0;i<selection.length;i+=3){
-    const outcomes=await Promise.allSettled(selection.slice(i,i+3).map(a=>mutate<ActionResult>(COMMERCE+"/media/"+encodeURIComponent(a.id),"DELETE")));
-    outcomes.forEach(x=>x.status==="fulfilled"?success++:failed++);
+   let success=0,blocked=0,failed=0;const blockedIds:string[]=[];
+   for(let i=0;i<selection.length;i+=50){
+    const batch=await mutate<{archived:number;blocked:number;failed:number;results:{id:string;state:string;reason:string}[]}>(
+      "/api/angelcare-marketplace/admin/imports/media/archive","POST",
+      {ids:selection.slice(i,i+50).map(a=>a.id)});
+    success+=batch.archived;blocked+=batch.blocked;failed+=batch.failed;
+    blockedIds.push(...batch.results.filter(x=>x.state!=="archived").map(x=>x.id));
    }
-   if(failed)throw Error(success+" archivés, "+failed+" refusés. Réexaminer les liens de référence.");
-   setNotice(success+" médias archivés.");setSelected({});
+   setNotice(success+" archivés · "+blocked+" protégés par des usages · "+failed+" erreurs.");
+   setSelected(previous=>Object.fromEntries(Object.entries(previous).filter(([id])=>blockedIds.includes(id))));
+  })
+ }
+ async function bulkMetadata(mode:"alt"|"tag"){
+  if(!canManage||!selection.length)return;
+  if(selection.length>100){setError("Sélectionnez au maximum 100 actifs par action de masse.");return;}
+  const value=window.prompt(mode==="alt"?"Texte alternatif français commun (1–400 caractères) :":"Étiquette à ajouter (1–60 caractères) :");
+  if(value===null)return;
+  const text=value.trim();
+  if(text.length<1||text.length>(mode==="alt"?400:60)) {setError("Texte de métadonnées invalide.");return;}
+  if(!window.confirm("Appliquer la mise à jour à "+selection.length+" actif(s) ?"))return;
+  await operation(async()=>{
+   let updated=0;const errors:string[]=[];
+   for(let i=0;i<selection.length;i+=3){
+    const wave=await Promise.allSettled(selection.slice(i,i+3).map(async a=>{
+      const original=await get<MediaDetail>(COMMERCE+"/media/"+encodeURIComponent(a.id));
+      const payload=mode==="alt"
+        ?{alt_text_fr:text}
+        :{metadata:{...(original.metadata||{}),tags:[...new Set([...(Array.isArray(original.metadata?.tags)?original.metadata.tags.map(String):[]),text])]}};
+      await mutate<ActionResult>(COMMERCE+"/media/"+encodeURIComponent(a.id),"PATCH",payload);
+    }));
+    wave.forEach((r,j)=>{if(r.status==="fulfilled")updated++;else errors.push(selection[i+j].fileName)});
+   }
+   setNotice(updated+" métadonnées mises à jour.");
+   if(errors.length)setError(errors.length+" médias à réexaminer: "+errors.slice(0,6).join(", "));
+   setSelected({});
   })
  }
  async function createFolder(e:FormEvent<HTMLFormElement>){
@@ -191,6 +219,21 @@ export function MediaVault360({canManage,refreshKey,onInventory,onChanged}:Props
    const result=await mutate<MediaDetail>(session.completionUrl,"POST",
     {fileName:file.name,mimeType:file.type,sizeBytes:file.size,checksumSha256:sha,folderId:detail.folder_id,altTextFr:detail.alt_text_fr});
    setDetail(result);setNotice("Fichier remplacé. Vérifiez les usages et la livraison avant publication.");
+  })
+ }
+ async function deletePermanently(){
+  if(!focused||!canManage||!detail)return;
+  if(usageLoading||usages.length){setError("Suppression refusée : références existantes ou vérification des usages non terminée.");return;}
+  const reason=window.prompt("Motif d'audit obligatoire pour supprimer définitivement « "+focused.fileName+" » :");
+  if(!reason||reason.trim().length<8){setError("Motif d'audit de 8 caractères minimum requis.");return;}
+  if(!window.confirm("SUPPRIMER DÉFINITIVEMENT ce fichier ? Cette action ne peut pas être annulée."))return;
+  await operation(async()=>{
+   const response=await mutate<{deleted:boolean}>(
+    "/api/angelcare-marketplace/admin/media/"+encodeURIComponent(focused.id)+"/permanent-delete",
+    "POST",{confirmation:"SUPPRIMER DÉFINITIVEMENT",reason:reason.trim()});
+   if(!response.deleted)throw Error("La suppression n'a pas été confirmée.");
+   setFocused(null);setDetail(null);setSelected(prev=>{const updated={...prev};delete updated[focused.id];return updated});
+   setNotice("Suppression définitive confirmée et journalisée.");
   })
  }
  const exportSelection=()=>{
@@ -249,6 +292,8 @@ export function MediaVault360({canManage,refreshKey,onInventory,onChanged}:Props
       <div className={s.bulkActions}><button disabled={!canManage||!selection.length||busy} onClick={()=>setCreatingFolder(true)}><FolderPlus size={14}/> Nouveau dossier</button>
        <select aria-label="Dossier de destination" value={moveFolder} onChange={e=>setMoveFolder(e.target.value)}><option value="">Racine</option>{sortedFolders.map(f=><option value={f.id} key={f.id}>{folderPaths.get(f.id)?.path||f.name}</option>)}</select>
        <button disabled={!canManage||!selection.length||busy} onClick={()=>void bulkMove()}><Move size={14}/> Déplacer</button>
+       <button disabled={!canManage||!selection.length||busy} onClick={()=>void bulkMetadata("alt")}><Check size={14}/> Éditer alt FR</button>
+       <button disabled={!canManage||!selection.length||busy} onClick={()=>void bulkMetadata("tag")}><Tags size={14}/> Étiqueter</button>
        <button disabled={!canManage||!selection.length||busy} onClick={()=>void archive()}><Archive size={14}/> Archiver</button>
        <button disabled={!selection.length} onClick={exportSelection}><Download size={14}/> Export</button>
       </div>
@@ -282,7 +327,7 @@ export function MediaVault360({canManage,refreshKey,onInventory,onChanged}:Props
          <button className={s.primary} disabled={busy} type="submit"><Check size={15}/> Enregistrer</button>
         </form>:null}
         <div className={s.inspectActions}><button onClick={()=>void navigator.clipboard.writeText(focused.assetKey)}><Clipboard size={14}/> Copier la clé</button><a href={focused.url} target="_blank" rel="noreferrer"><ExternalLink size={14}/> Aperçu</a>
-        {canManage&&detail?<><input ref={replaceInput} type="file" accept="image/*,video/mp4,video/webm,application/pdf" className={s.fileHidden} onChange={(e:ChangeEvent<HTMLInputElement>)=>{const f=e.currentTarget.files?.[0];if(f)void replaceAsset(f);e.currentTarget.value=""}}/><button disabled={busy} onClick={()=>replaceInput.current?.click()}><RotateCcw size={14}/> Remplacer</button></>:null}</div>
+        {canManage&&detail?<><input ref={replaceInput} type="file" accept="image/*,video/mp4,video/webm,application/pdf" className={s.fileHidden} onChange={(e:ChangeEvent<HTMLInputElement>)=>{const f=e.currentTarget.files?.[0];if(f)void replaceAsset(f);e.currentTarget.value=""}}/><button disabled={busy} onClick={()=>replaceInput.current?.click()}><RotateCcw size={14}/> Remplacer</button><button disabled={busy||usageLoading||usages.length>0} onClick={()=>void deletePermanently()}><Trash2 size={14}/> Supprimer (gouverné)</button></>:null}</div>
        </>:<div className={s.emptyInspector}><ImageIcon size={31}/><strong>Sélectionnez un média</strong><p>Inspectez ses dimensions, son fichier, ses droits et toutes ses références.</p></div>}
     </aside>
    </div>

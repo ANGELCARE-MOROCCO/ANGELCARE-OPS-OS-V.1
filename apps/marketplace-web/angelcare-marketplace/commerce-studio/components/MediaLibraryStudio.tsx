@@ -128,7 +128,21 @@ export function MediaLibraryStudio({ initialMedia, initialFolders, catalogItems,
         return { ...item, error: errors.join(' '), state: errors.length ? 'FAILED' as const : 'READY' as const }
       })
       const eligible = local.filter(item => item.state === 'READY')
-      const remote = eligible.length ? await apiRequest<PreflightResult[]>('/api/angelcare-marketplace/admin/media/preflight', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ files: eligible.map(item => ({ fileName: item.file.name, mimeType: item.file.type, sizeBytes: item.file.size, checksumSha256: item.checksum, folderId: item.folderId || null })) }) }) : []
+      // Server preflight admits 250 files/request. Chunk large folder imports
+      // without changing the global order of checks and duplicate evidence.
+      const remote:PreflightResult[] = [];
+      for(let offset=0;offset<eligible.length;offset+=250){
+        const chunk=eligible.slice(offset,offset+250);
+        const checks=await apiRequest<PreflightResult[]>('/api/angelcare-marketplace/admin/media/preflight',{
+          method:'POST',headers:{'content-type':'application/json'},
+          body:JSON.stringify({files:chunk.map(item=>({
+            fileName:item.file.name,mimeType:item.file.type,sizeBytes:item.file.size,
+            checksumSha256:item.checksum,folderId:item.folderId||null,
+          }))}),
+        });
+        if(checks.length!==chunk.length)throw Error('Preflight incomplet : réponse serveur non conforme.');
+        remote.push(...checks);
+      }
       let index = 0
       setQueue(local.map(item => {
         if (item.state !== 'READY') return item

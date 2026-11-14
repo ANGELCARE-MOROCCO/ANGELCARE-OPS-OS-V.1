@@ -36,7 +36,7 @@ jobs:
           set -euo pipefail
           BASE=9e8e6be453063254f01ab9e230a5f90ccc91fdf9
           git diff --name-only "$BASE" HEAD | tee /tmp/r6-changed
-          if grep -Ev '^(apps/marketplace-web/(app/angelcare-marketplace/\(protected\)/admin/imports/\[section\]/page\.tsx|app/api/angelcare-marketplace/admin/imports/media/vault/route\.ts|angelcare-marketplace/(commerce-studio/(components/MediaLibraryStudio\.tsx|commerce-studio\.module\.css)|digital-customer-experience/media-vault-authority\.ts|import-command/(MediaVault360\.tsx|MediaImport360\.tsx|media-vault-r6\.module\.css))|scripts/media-vault-ci/r6-import-vault\.test\.mjs|tsconfig\.media-vault-r6\.json)|\.github/workflows/media-vault-r6-verify\.yml)$' /tmp/r6-changed; then
+          if grep -Ev '^(apps/marketplace-web/(app/angelcare-marketplace/\(protected\)/admin/imports/\[section\]/page\.tsx|app/api/angelcare-marketplace/admin/imports/media/(vault|archive)/route\.ts|angelcare-marketplace/(commerce-studio/(components/MediaLibraryStudio\.tsx|commerce-studio\.module\.css)|digital-customer-experience/media-vault-authority\.ts|import-command/(MediaVault360\.tsx|MediaImport360\.tsx|media-vault-r6\.module\.css))|scripts/media-vault-ci/r6-import-vault\.test\.mjs|tsconfig\.media-vault-r6\.json)|\.github/workflows/media-vault-r6-verify\.yml)$' /tmp/r6-changed; then
            echo R6_UNAUTHORIZED_SOURCE_CHANGE; exit 1
           fi
           echo R6_GLOBAL_SHELL_AND_PUBLIC_STOREFRONTS_UNMODIFIED=PASS

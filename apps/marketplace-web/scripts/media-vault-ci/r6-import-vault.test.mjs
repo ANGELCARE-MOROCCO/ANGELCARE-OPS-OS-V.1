@@ -17,6 +17,8 @@ test("R6 retains the canonical preflight, upload, manifest and mapping engine",(
  }
  assert.match(media,/media-r6-preflight/);
  assert.match(media,/media-r6-mapping/);
+ assert.match(media,/offset\+=250/);
+ assert.match(media,/checks\.length!==chunk\.length/);
  assert.match(media,/mode==='command360'\?null:<><section/);
 });
 test("Canonical vault endpoint requires media-view permission without weakening the DCE picker",()=>{
@@ -40,6 +42,18 @@ test("Vault explorer uses server-first filtering, pagination, rights and actual 
  assert.match(body,/<MediaVault360/);
  assert.match(body,/<MediaLibraryStudio/);
  assert.match(body,/onQueueChange=\{onQueue\}/);
+});
+test("Bulk archive and deletion remain governed",()=>{
+ const archive=read("app/api/angelcare-marketplace/admin/imports/media/archive/route.ts");
+ const vault=read("angelcare-marketplace/import-command/MediaVault360.tsx");
+ assert.match(archive,/requireMarketplaceApiContext\("marketplace.media.manage"\)/);
+ assert.match(archive,/assertAdminLoginSameOrigin/);
+ assert.match(archive,/listMediaUsageReferences/);
+ assert.match(archive,/if\(refs\.length\)/);
+ assert.match(archive,/writeMarketplaceAudit/);
+ assert.match(vault,/\/admin\/imports\/media\/archive/);
+ assert.match(vault,/permanent-delete/);
+ assert.match(vault,/bulkMetadata/);
 });
 test("No invented counts or destructive public publication",()=>{
  const body=read("angelcare-marketplace/import-command/MediaImport360.tsx");
