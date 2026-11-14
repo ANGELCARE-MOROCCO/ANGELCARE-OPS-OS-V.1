@@ -101,7 +101,7 @@ export async function commercialGet(request:Request){
    const published=await scoped(db.from("angelcare_marketplace_catalog_items").select("id")
      .in("id",ids).eq("status","published"),ctx);
    if(published.error)fail(published.error,"Catalogue accessible");
-   const allowed=(published.data||[]).map(x=>x.id);
+   const allowed=(published.data||[]).map((x:Row)=>String(x.id));
    if(!allowed.length)return apiSuccess({}, {requestId:rid});
    const media=await db.from("angelcare_marketplace_catalog_item_media")
     .select("catalog_item_id,asset_url,media_key,status,sort_order")
