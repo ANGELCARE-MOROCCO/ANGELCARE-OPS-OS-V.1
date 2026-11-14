@@ -19,6 +19,8 @@ type Draft={mode:Mode;customerAccountId:string;guestName:string;guestEmail:strin
 type QuoteLine={itemId:string;title:string;quantity:number;unitPrice:number;discount:number;subtotal:number;net:number;currency:string;requiresApproval:boolean};
 type Quote={lines:QuoteLine[];subtotal:number;discount:number;net:number;total:number;currency:string;requiresApproval:boolean;taxStatus:string;warnings?:string[]};
 type Receipt={id?:string;public_reference?:string;orderId?:string;status?:string};
+type PriorOrder={id:string;public_reference:string;created_at:string;title:string;journey_type:string};
+type PriorLine={catalog_item_id:string;quantity:number;unit_price:number;discount_amount:number;configuration:unknown};
 type Envelope<T>={data?:T;error?:{message?:string;code?:string};requestId?:string};
 type CustomerDetails={orderCount:number;value:number;lastOrderAt:string|null;addresses:Array<{id:string;city:string;address_line:string;label:string}>};
 type SavedDraft={id:string;version:number;status:string;mode:Mode;payload:Draft;approval_state:string;created_at:string;updated_at:string;submitted_order_id?:string|null};
@@ -63,6 +65,10 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
  const [itemQuery,setItemQuery]=useState("");
  const [itemSearchOpen,setItemSearchOpen]=useState(false);
  const [showDrafts,setShowDrafts]=useState(false);
+ const [showTemplates,setShowTemplates]=useState(false);
+ const [showOrderImport,setShowOrderImport]=useState(false);
+ const [priorOrders,setPriorOrders]=useState<PriorOrder[]>([]);
+ const [importBusy,setImportBusy]=useState(false);
  const [drafts,setDrafts]=useState<SavedDraft[]>([]);
  const [quote,setQuote]=useState<Quote|null>(null);
  const [customerDetails,setCustomerDetails]=useState<CustomerDetails|null>(null);
@@ -195,6 +201,15 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
    .then(r=>parseResponse<CustomerDetails>(r)).then(x=>{if(active)setCustomerDetails(x)}).catch(()=>{if(active)setCustomerDetails(null)});
   return ()=>{active=false};
  },[draft.customerAccountId]);
+ useEffect(()=>{
+  if(!showOrderImport||!draft.customerAccountId){setPriorOrders([]);return}
+  let active=true;
+  void fetch(API+"?customerOrders="+encodeURIComponent(draft.customerAccountId),{credentials:"same-origin",cache:"no-store"})
+   .then(r=>parseResponse<PriorOrder[]>(r))
+   .then(v=>{if(active)setPriorOrders(v)})
+   .catch(e=>{if(active)setError(e instanceof Error?e.message:"Historique indisponible.")});
+  return()=>{active=false};
+ },[showOrderImport,draft.customerAccountId]);
  useEffect(()=>{if(!ready)return;
   void fetch(API+"?drafts=1",{credentials:"same-origin",cache:"no-store"}).then(r=>parseResponse<SavedDraft[]>(r)).then(setDrafts).catch(()=>{});
   void fetch(API+"?approvals=1",{credentials:"same-origin",cache:"no-store"}).then(r=>parseResponse<Array<SavedDraft&{actor_id:string}>>(r)).then(setApprovalInbox).catch(()=>{});
@@ -207,6 +222,27 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
   setDraft(record.payload);lastSaved.current=JSON.stringify(record.payload);
   setApproval(record.approval_state||"none");setShowDrafts(false);setNotice("Brouillon restauré.");
   setTab("basket");
+ }
+ function applyTemplate(template:SavedDraft){
+  const lines=template.payload.lines.map(line=>({...line,id:crypto.randomUUID()}));
+  if(!lines.length){setError("Ce brouillon ne contient aucune prestation.");return}
+  update({lines:[...draft.lines,...lines]});setShowTemplates(false);setTab("basket");
+  setNotice(lines.length+" lignes reprises du brouillon précédent.");
+ }
+ async function importPriorOrder(order:PriorOrder){
+  setImportBusy(true);setError("");
+  try{
+   const res=await fetch(API+"?orderLines="+encodeURIComponent(order.id),{credentials:"same-origin",cache:"no-store"});
+   const prev=await parseResponse<PriorLine[]>(res);
+   const lines:Line[]=prev.filter(x=>options.items.some(i=>i.id===x.catalog_item_id))
+    .map(x=>({id:crypto.randomUUID(),itemId:x.catalog_item_id,quantity:Math.max(1,Number(x.quantity)||1),
+      unitPrice:Number(x.unit_price)||0,discountAmount:Math.max(0,Number(x.discount_amount)||0),
+      configuration:{...newLine(x.catalog_item_id).configuration,...asObj(x.configuration)}}));
+   if(!lines.length)throw new Error("Aucune ligne catalogue réutilisable. Les articles archivés sont exclus.");
+   update({lines:[...draft.lines,...lines]});setShowOrderImport(false);setTab("basket");
+   setNotice(lines.length+" lignes ajoutées depuis la commande "+order.public_reference+".");
+  }catch(e){setError(e instanceof Error?e.message:"Import de panier impossible.")}
+  finally{setImportBusy(false)}
  }
  async function requestApproval(){
   if(isDirty){setError("Enregistrez le brouillon avant une décision.");return}
@@ -277,7 +313,15 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
       {showDrafts?<div className={s.savedList}>{drafts.map(d=><button key={d.id} disabled={d.status!=="draft"} onClick={()=>void restore(d)}><b>{d.mode} · {d.id.slice(0,8)}</b><small>{dt(d.updated_at)} · v{d.version}</small><ChevronRight size={13}/></button>)}</div>:null}
      </aside>
      <main className={s.centerCol}>
-      <div className={s.centerHead}><div><h3><ShoppingCart size={18}/> {tab==="basket"||tab==="customer"?"PANIER DE LA COMMANDE":tabs.find(t=>t.id===tab)?.label.toUpperCase()} <small>{draft.lines.length} prestation(s)</small></h3></div><div className={s.centerActions}><button onClick={()=>{setTab("basket");setItemSearchOpen(true)}}><Layers3 size={14}/> Catalogue</button><button onClick={()=>{setTab("basket");setItemSearchOpen(true)}}><Plus size={14}/> Ajouter</button><button className={s.danger} onClick={()=>{if(window.confirm("Vider les lignes de ce brouillon ?"))update({lines:[]})}} disabled={!draft.lines.length}><Trash2 size={14}/> Vider</button></div></div>
+      <div className={s.centerHead}><div><h3><ShoppingCart size={18}/> {tab==="basket"||tab==="customer"?"PANIER DE LA COMMANDE":tabs.find(t=>t.id===tab)?.label.toUpperCase()} <small>{draft.lines.length} prestation(s)</small></h3></div><div className={s.centerActions}><button onClick={()=>{setShowTemplates(v=>!v);setShowOrderImport(false);setTab("basket")}}><Layers3 size={14}/> Modèles</button><button onClick={()=>{setShowOrderImport(v=>!v);setShowTemplates(false);setTab("basket")}} disabled={!draft.customerAccountId}><FolderOpen size={14}/> Importer panier</button><button className={s.danger} onClick={()=>{if(window.confirm("Vider les lignes de ce brouillon ?"))update({lines:[]})}} disabled={!draft.lines.length}><Trash2 size={14}/> Vider</button></div></div>
+      {showTemplates?<div className={s.importPanel}><div><b>COMPOSITIONS ENREGISTRÉES</b><button onClick={()=>setShowTemplates(false)} aria-label="Fermer"><X size={14}/></button></div>
+       <p>Reprendre les lignes d'un brouillon existant sans écraser le client ou le contexte de la commande actuelle.</p>
+       {drafts.filter(d=>d.status==="draft"&&d.payload.lines.length>0).length?drafts.filter(d=>d.status==="draft"&&d.payload.lines.length>0).map(d=><button className={s.savedChoice} key={d.id} onClick={()=>applyTemplate(d)}><Layers3 size={16}/><span>{d.mode} · {d.payload.lines.length} ligne(s) · {dt(d.updated_at)}</span><Plus size={14}/></button>):<p>Aucun modèle issu de brouillon disponible.</p>}
+      </div>:null}
+      {showOrderImport?<div className={s.importPanel}><div><b>PANIERS HISTORIQUES · CLIENT SÉLECTIONNÉ</b><button onClick={()=>setShowOrderImport(false)} aria-label="Fermer"><X size={14}/></button></div>
+       <p>Récupérer uniquement les lignes catalogue encore disponibles d'une commande réellement enregistrée.</p>
+       {priorOrders.length?priorOrders.map(o=><button className={s.savedChoice} disabled={importBusy} key={o.id} onClick={()=>void importPriorOrder(o)}><History size={16}/><span>{o.public_reference} · {o.title} · {dt(o.created_at)}</span><Copy size={14}/></button>):<p>Pas de commande historique réutilisable pour ce client.</p>}
+      </div>:null}
       {(tab==="customer"||tab==="basket")?<div className={s.basketView}>
        <div className={s.tableScroll}><table className={s.basket}><thead><tr><th>Prestation / Produit</th><th>Configuration</th><th>Qté</th><th>Prix unitaire</th><th>Remise</th><th>Total</th><th/></tr></thead><tbody>
        {draft.lines.map(line=>{const item=options.items.find(i=>i.id===line.itemId),priced=quote?.lines.find(q=>q.itemId===line.itemId);return <tr key={line.id} data-selected={chosen?.id===line.id} onClick={()=>setSelectedLine(line.id)}>

@@ -93,6 +93,29 @@ export async function commercialGet(request:Request){
     }))
    },{requestId:rid});
   }
+  const customerOrders=url.searchParams.get("customerOrders");
+  if(customerOrders){
+   const id=uuid(customerOrders,"Client");
+   const customer=await scoped(db.from("angelcare_marketplace_customer_accounts").select("id").eq("id",id),ctx).maybeSingle();
+   if(customer.error||!customer.data)throw new MarketplaceError("SCOPE_MISMATCH","Client non autorisé.");
+   const result=await scoped(db.from("angelcare_marketplace_journeys")
+    .select("id,public_reference,created_at,title,journey_type,customer_account_id")
+    .eq("customer_account_id",id).order("created_at",{ascending:false}).limit(25),ctx);
+   if(result.error)fail(result.error,"Historique des paniers");
+   return apiSuccess(result.data||[],{requestId:rid});
+  }
+  const orderLines=url.searchParams.get("orderLines");
+  if(orderLines){
+   const id=uuid(orderLines,"Commande");
+   const journey=await scoped(db.from("angelcare_marketplace_journeys")
+    .select("id,customer_account_id").eq("id",id),ctx).maybeSingle();
+   if(journey.error||!journey.data)throw new MarketplaceError("NOT_FOUND","Commande non disponible.");
+   const res=await db.from("angelcare_marketplace_order_lines")
+    .select("catalog_item_id,quantity,unit_price,discount_amount,configuration,status,sort_order")
+    .eq("journey_id",id).neq("status","removed").order("sort_order").limit(60);
+   if(res.error)fail(res.error,"Lignes précédentes");
+   return apiSuccess((res.data||[]).filter(x=>Boolean(x.catalog_item_id)),{requestId:rid});
+  }
   const mediaFor=url.searchParams.get("mediaFor");
   if(mediaFor){
    const ids=[...new Set(mediaFor.split(",").filter(Boolean))];

@@ -215,3 +215,13 @@
 
 /* Real canonical catalogue thumbnails, instead of artwork placeholders. */
 .productThumb img{height:100%;width:100%;object-fit:cover;display:block}
+
+/* Approved Modèles / Importer panier operational drawers. */
+.importPanel{margin:0 12px 10px;background:#f9fcfa;border:1px solid #d8e8dc;border-radius:10px;padding:11px;display:flex;flex-direction:column;gap:6px;max-height:255px;overflow:auto}
+.importPanel>div:first-child{display:flex;align-items:center;gap:12px;justify-content:space-between}
+.importPanel>div:first-child b{font-size:10px;color:#07674a;letter-spacing:.35px}
+.importPanel>div:first-child button{border:0;background:none;padding:5px;display:flex;color:#5b776b}
+.importPanel p{font-size:10px;color:#718a7c;line-height:1.5;margin:4px 0}
+.importPanel .savedChoice{width:100%;display:flex;align-items:center;gap:11px;text-align:left;border:1px solid #e1ece5;border-radius:8px;padding:11px;background:#fff;color:#2b5d46;font-size:11px}
+.savedChoice span{flex:1;color:#315b46}
+.savedChoice:hover{background:#ecf7f1}
