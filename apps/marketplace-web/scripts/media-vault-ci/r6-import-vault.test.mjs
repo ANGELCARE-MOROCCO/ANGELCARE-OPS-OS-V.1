@@ -49,6 +49,11 @@ test("Bulk archive and deletion remain governed",()=>{
  assert.match(archive,/requireMarketplaceApiContext\("marketplace.media.manage"\)/);
  assert.match(archive,/assertAdminLoginSameOrigin/);
  assert.match(archive,/listMediaUsageReferences/);
+ const usage=read("app/api/angelcare-marketplace/admin/imports/media/usage/[assetId]/route.ts");
+ assert.match(usage,/requireMarketplaceApiContext\("marketplace.media.view"\)/);
+ assert.match(usage,/listMediaUsageReferences/);
+ assert.match(vault,/\/admin\/imports\/media\/usage\//);
+
  assert.match(archive,/if\(refs\.length\)/);
  assert.match(archive,/writeMarketplaceAudit/);
  assert.match(vault,/\/admin\/imports\/media\/archive/);

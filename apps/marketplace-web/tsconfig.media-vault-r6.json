@@ -13,7 +13,8 @@
     "angelcare-marketplace/import-command/MediaVault360.tsx",
     "angelcare-marketplace/commerce-studio/components/MediaLibraryStudio.tsx",
     "angelcare-marketplace/digital-customer-experience/media-vault-authority.ts",
-    "app/api/angelcare-marketplace/admin/imports/media/archive/route.ts"
+    "app/api/angelcare-marketplace/admin/imports/media/archive/route.ts",
+    "app/api/angelcare-marketplace/admin/imports/media/usage/[assetId]/route.ts"
   ],
   "exclude": [
     "node_modules",

@@ -123,7 +123,7 @@ export function MediaVault360({canManage,refreshKey,onInventory,onChanged}:Props
   try{setDetail(await get<MediaDetail>(COMMERCE+"/media/"+encodeURIComponent(a.id)))}catch(e){setDetailError(errorOf(e))}
  },[]);
  useEffect(()=>{if(!focused)return;let cancelled=false;setUsageLoading(true);
-  get<Usage[]>("/api/angelcare-marketplace/admin/media/"+encodeURIComponent(focused.id)+"/usage")
+  get<Usage[]>("/api/angelcare-marketplace/admin/imports/media/usage/"+encodeURIComponent(focused.id))
   .then(v=>{if(!cancelled)setUsages(v)}).catch(e=>{if(!cancelled)setDetailError(errorOf(e))})
   .finally(()=>{if(!cancelled)setUsageLoading(false)});return()=>{cancelled=true}
  },[focused?.id]);
