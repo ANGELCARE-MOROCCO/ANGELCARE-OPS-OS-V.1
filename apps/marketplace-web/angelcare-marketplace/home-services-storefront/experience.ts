@@ -1,3 +1,4 @@
+import {manualMembership} from '../storefront-placement/model'
 import type { CatalogLocale, DiscoveryItem } from '../catalog-discovery/types'
 import { familyWords, familyPrice, familyAvailability, familyAvailable, familyDetailHref, familyRequestHref, type FamilyWords } from '../families-storefront/experience'
 export { familyWords as serviceWords, familyPrice as servicePrice, familyAvailability as serviceAvailability, familyAvailable as serviceAvailable, familyDetailHref as serviceDetailHref, familyRequestHref as serviceRequestHref }
@@ -14,7 +15,7 @@ export const SERVICE_GROUPS: readonly { key: ServiceGroup; label: FamilyWords; t
 const capabilities: Record<string,ServiceGroup> = {'advanced-childcare':'care','home-care-postpartum':'baby','advanced-awakening-home':'activities','special-needs-home-support':'support','event-childcare':'events'}
 const atomicGroups: Record<string,ServiceGroup> = {'home-childcare-one-time':'care','home-childcare-recurring':'care','school-pickup-care':'care','overnight-extended-care':'care','emergency-last-minute-care':'care','hotel-travel-childcare':'care','holiday-excursion-programme':'events','events-group-childcare':'events','montessori-home-service':'activities','learning-homework-support':'activities','non-medical-support-service':'support'}
 export function serviceGroup(item:DiscoveryItem):ServiceGroup { return atomicGroups[String(item.metadata.experience_schema_key||'')] || capabilities[String(item.metadata.home_service_capability||'')] || 'other' }
-export function isHomeServiceOffer(item:DiscoveryItem) { if(item.kind!=='service'||item.metadata.home_service_assignment!==true)return false;const schema=String(item.metadata.experience_schema_key||'');return schema?!!atomicGroups[schema]:['one_time_service','recurring_service'].includes(String(item.metadata.home_service_sellable_type||'')) }
+export function isHomeServiceOffer(item:DiscoveryItem) { const manual=manualMembership(item,'home-services');if(manual!==undefined)return manual; if(item.kind!=='service'||item.metadata.home_service_assignment!==true)return false;const schema=String(item.metadata.experience_schema_key||'');return schema?!!atomicGroups[schema]:['one_time_service','recurring_service'].includes(String(item.metadata.home_service_sellable_type||'')) }
 export function serviceGroupLabel(key:ServiceGroup,locale:CatalogLocale){return familyWords(SERVICE_GROUPS.find(group=>group.key===key)!.label,locale)}
 export function serviceDetails(item:DiscoveryItem):Record<string,string>{const value=item.metadata.home_service_details;return value&&typeof value==='object'&&!Array.isArray(value)?Object.fromEntries(Object.entries(value).filter((entry):entry is [string,string]=>typeof entry[1]==='string'&&entry[1].length>0)):{}}
 export const serviceTokens=(value:string|undefined)=>[...new Set((value||'').split('|').map(part=>part.trim()).filter(Boolean))]
@@ -44,3 +45,10 @@ export function selectHomeServices(items:readonly DiscoveryItem[],filters:Servic
  })
 }
 export function serviceFilterQuery(filters:ServiceFilters){const params=new URLSearchParams();if(filters.q)params.set('q',filters.q);if(filters.group!=='all')params.set('group',filters.group);if(filters.duration)params.set('duration',filters.duration);if(filters.availableOnly)params.set('available','1');if(filters.maxPrice!==null)params.set('max',String(filters.maxPrice));if(filters.sort!=='recommended')params.set('sort',filters.sort);if(filters.view!=='grid')params.set('view',filters.view);if(filters.page>1)params.set('page',String(filters.page));return params}
+
+/** Preserve the identity of deliberately cross-merchandised offers. */
+export function serviceOfferLabel(item:DiscoveryItem,locale:CatalogLocale){
+ if(item.kind==='service')return serviceGroupLabel(serviceGroup(item),locale)
+ const labels:Partial<Record<DiscoveryItem['kind'],FamilyWords>>={product:['Produit','Product','منتج'],kit:['Kit','Kit','حقيبة'],training:['Formation','Training','تكوين'],audit:['Évaluation','Assessment','تقييم'],saas_module:['Solution digitale','Digital solution','حل رقمي']}
+ return familyWords(labels[item.kind]||['Offre','Offer','عرض'],locale)
+}

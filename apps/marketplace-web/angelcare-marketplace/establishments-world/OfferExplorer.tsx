@@ -1,4 +1,5 @@
 "use client";
+import {belongsToEstablishmentView} from '../storefront-placement/model';
 import { JourneyLink } from "./JourneyLink";
 import Link from "next/link";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
@@ -94,7 +95,7 @@ export function NativeExplorer({
     () =>
       filters.scope === "all"
         ? experience.items
-        : experience.items.filter((item) => channel(item) === view),
+        : experience.items.filter((item) => belongsToEstablishmentView(item, view)),
     [experience.items, view, filters.scope],
   );
   const categories = [

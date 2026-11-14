@@ -1,3 +1,7 @@
+import {
+  automaticEstablishmentView,
+  belongsToEstablishmentView,
+} from "../storefront-placement/model";
 import type { DiscoveryItem } from "../catalog-discovery/types";
 import { unavailable } from "../storefront-immersive/contract";
 import { projection } from "../business-worlds/merchandising";
@@ -10,10 +14,7 @@ export function schema(item: DiscoveryItem): string {
   return String(item.metadata.experience_schema_key || "");
 }
 export function channel(item: DiscoveryItem): View {
-  if (schema(item) === "partner-os-plan" || item.kind === "saas_module")
-    return "partner-os";
-  if (item.kind === "product" || item.kind === "kit") return "produits";
-  return "conseil";
+  return automaticEstablishmentView(item);
 }
 export function blocked(item: DiscoveryItem): boolean {
   return (
@@ -47,7 +48,8 @@ export function filterOffers(
   const query = searchText(options.query);
   const result = items.filter(
     (item) =>
-      (options.view === "all" || channel(item) === options.view) &&
+      (options.view === "all" ||
+        belongsToEstablishmentView(item, options.view)) &&
       (!options.priceMode ||
         options.priceMode === "all" ||
         item.price_mode === options.priceMode) &&
@@ -98,7 +100,8 @@ export function linkedOffer(
         item.item_key,
         (
           item.metadata.experience_configuration as
-            Record<string, unknown> | undefined
+            | Record<string, unknown>
+            | undefined
         )?.programme_key,
       ].some(
         (key) =>

@@ -1,3 +1,4 @@
+import {manualMembership} from '../storefront-placement/model'
 import type { CatalogLocale, DiscoveryItem } from '@/angelcare-marketplace/catalog-discovery/types'
 import { FAMILY_ATOMIC_STORIES, isFamilyAtomicSchemaKey, type FamilyAtomicSchemaKey } from './contract'
 
@@ -64,10 +65,12 @@ export function familyAction(item: DiscoveryItem, locale: CatalogLocale) {
   if (key === 'activity-subscription-box') return familyWords(['Découvrir l’abonnement', 'Explore subscription', 'استكشفوا الاشتراك'], locale)
   if (key === 'digital-learning-resource') return familyWords(['Découvrir la ressource', 'Explore resource', 'استكشفوا المورد'], locale)
   if (item.kind === 'product' || item.kind === 'kit') return familyWords(['Découvrir & commander', 'Explore & order', 'استكشفوا واطلبوا'], locale)
+  if (item.kind !== 'service') return familyWords(['Découvrir l’offre', 'Explore offer', 'استكشفوا العرض'], locale)
   return familyWords(['Découvrir & réserver', 'Explore & book', 'استكشفوا واحجزوا'], locale)
 }
 export type FamilyDisplayKey = FamilyAtomicSchemaKey | 'postpartum' | 'home-activities' | 'event-care' | 'family-offers'
 export function isFamilyOffer(item: DiscoveryItem) {
+  const manual=manualMembership(item,'families');if(manual!==undefined)return manual
   const schema = familySchema(item)
   if (isFamilyAtomicSchemaKey(schema)) return ['service', 'product', 'kit'].includes(item.kind) || (item.kind === 'training' && schema === 'preschool-admission')
   // A different explicit schema retains its own storefront and operational authority.

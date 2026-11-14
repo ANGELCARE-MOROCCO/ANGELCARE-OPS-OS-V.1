@@ -42,6 +42,7 @@ export interface BusinessProjection {
   authority: string;
   categories: string[];
   reason:
+    | "manual_placement"
     | "canonical_membership"
     | "native_doctrine"
     | "professional_audience"
