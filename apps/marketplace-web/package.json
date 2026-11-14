@@ -260,7 +260,9 @@
     "marketplace-studio:verify:catalogue:09": "node scripts/angelcare-marketplace/verify-studio-catalogue-category-09.mjs",
     "marketplace-studio:verify:catalogue:10": "node scripts/angelcare-marketplace/verify-studio-catalogue-category-10.mjs",
     "orders360:test": "node scripts/orders360/verify.cjs && node scripts/orders360/verify-authorities.cjs",
-    "orders360:typecheck": "NODE_OPTIONS=--max-old-space-size=8192 tsc -p tsconfig.orders360.json --pretty false"
+    "orders360:typecheck": "NODE_OPTIONS=--max-old-space-size=8192 tsc -p tsconfig.orders360.json --pretty false",
+    "storefront-placement:verify": "node scripts/storefront-placement/verify.cjs",
+    "storefront-placement:typecheck": "tsc -p tsconfig.storefront-placement.json --pretty false"
   },
   "dependencies": {
     "@google/genai": "^2.12.0",

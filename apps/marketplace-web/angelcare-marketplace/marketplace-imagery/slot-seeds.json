@@ -1645,323 +1645,323 @@
     "source": "/angelcare-marketplace/storefront-imagery-r3/academy/professional.webp"
   },
   {
-    "id": "establishments.journey.consulting-hero",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.consulting-hero",
+    "section": "Établissements · Campagnes R4",
     "label": "Hero · Conseil & programmes",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/consulting-hero.png"
+    "source": "/angelcare-marketplace/establishments-r4/consulting-campaign.png"
   },
   {
-    "id": "establishments.journey.partner-hero",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.partner-hero",
+    "section": "Établissements · Campagnes R4",
     "label": "Hero · Partner OS",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/partner-hero.png"
+    "source": "/angelcare-marketplace/establishments-r4/partner-campaign.png"
   },
   {
-    "id": "establishments.journey.products-hero",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.products-hero",
+    "section": "Établissements · Campagnes R4",
     "label": "Hero · Produits & équipements",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/products-hero.png"
+    "source": "/angelcare-marketplace/establishments-r4/products-campaign.png"
   },
   {
-    "id": "establishments.journey.child-experience",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.child-experience",
+    "section": "Établissements · Campagnes R4",
     "label": "Expérience enfant",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/child-experience.png"
+    "source": "/angelcare-marketplace/establishments-r4/eduplay-campaign.png"
   },
   {
-    "id": "establishments.journey.edupplay",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.edupplay",
+    "section": "Établissements · Campagnes R4",
     "label": "EduPlay · Ateliers",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/edupplay.png"
+    "source": "/angelcare-marketplace/establishments-r4/eduplay-campaign.png"
   },
   {
-    "id": "establishments.journey.academy",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.academy",
+    "section": "Établissements · Campagnes R4",
     "label": "Academy Pro · Équipes",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/academy.png"
+    "source": "/angelcare-marketplace/establishments-r4/academy-campaign.png"
   },
   {
-    "id": "establishments.journey.parents",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.parents",
+    "section": "Établissements · Campagnes R4",
     "label": "ParentTrust · Familles",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/parents.png"
+    "source": "/angelcare-marketplace/establishments-r4/parents-campaign.png"
   },
   {
-    "id": "establishments.journey.consulting-deliverables",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.consulting-deliverables",
+    "section": "Établissements · Campagnes R4",
     "label": "Livrables & suivi",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/consulting-deliverables.png"
+    "source": "/angelcare-marketplace/establishments-r4/operations-campaign.png"
   },
   {
-    "id": "establishments.journey.consulting-method",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.consulting-method",
+    "section": "Établissements · Campagnes R4",
     "label": "Méthode & accompagnement",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/consulting-method.png"
+    "source": "/angelcare-marketplace/establishments-r4/academy-campaign.png"
   },
   {
-    "id": "establishments.journey.welcome",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.welcome",
+    "section": "Établissements · Campagnes R4",
     "label": "Accueil & identité",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/welcome.png"
+    "source": "/angelcare-marketplace/establishments-r4/welcome-campaign.png"
   },
   {
-    "id": "establishments.journey.signage",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.signage",
+    "section": "Établissements · Campagnes R4",
     "label": "Signalétique",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/signage.png"
+    "source": "/angelcare-marketplace/establishments-r4/welcome-campaign.png"
   },
   {
-    "id": "establishments.journey.classroom",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.classroom",
+    "section": "Établissements · Campagnes R4",
     "label": "Classe & pédagogie",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/classroom.png"
+    "source": "/angelcare-marketplace/establishments-r4/classroom-campaign.png"
   },
   {
-    "id": "establishments.journey.administration",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.administration",
+    "section": "Établissements · Campagnes R4",
     "label": "Administration",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/administration.png"
+    "source": "/angelcare-marketplace/establishments-r4/operations-campaign.png"
   },
   {
-    "id": "establishments.journey.safety",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.safety",
+    "section": "Établissements · Campagnes R4",
     "label": "Sécurité",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/safety.png"
+    "source": "/angelcare-marketplace/establishments-r4/operations-campaign.png"
   },
   {
-    "id": "establishments.journey.activities",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.activities",
+    "section": "Établissements · Campagnes R4",
     "label": "Activités",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/activities.png"
+    "source": "/angelcare-marketplace/establishments-r4/eduplay-campaign.png"
   },
   {
-    "id": "establishments.journey.furniture",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.furniture",
+    "section": "Établissements · Campagnes R4",
     "label": "Mobilier & aménagement",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/furniture.png"
+    "source": "/angelcare-marketplace/establishments-r4/classroom-campaign.png"
   },
   {
-    "id": "establishments.journey.parent-tools",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.parent-tools",
+    "section": "Établissements · Campagnes R4",
     "label": "Supports parents",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/parent-tools.png"
+    "source": "/angelcare-marketplace/establishments-r4/parents-campaign.png"
   },
   {
-    "id": "establishments.journey.inclusion",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.inclusion",
+    "section": "Établissements · Campagnes R4",
     "label": "Inclusion",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/inclusion.png"
+    "source": "/angelcare-marketplace/establishments-r4/eduplay-campaign.png"
   },
   {
-    "id": "establishments.journey.uniforms",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.uniforms",
+    "section": "Établissements · Campagnes R4",
     "label": "Uniformes & équipe",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/uniforms.png"
+    "source": "/angelcare-marketplace/establishments-r4/team-campaign.png"
   },
   {
-    "id": "establishments.journey.audit",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.audit",
+    "section": "Établissements · Campagnes R4",
     "label": "Préparation aux audits",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/audit.png"
+    "source": "/angelcare-marketplace/establishments-r4/operations-campaign.png"
   },
   {
-    "id": "establishments.journey.os-overview",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.os-overview",
+    "section": "Établissements · Campagnes R4",
     "label": "Partner OS · Vue d’ensemble",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/os-overview.png"
+    "source": "/angelcare-marketplace/establishments-r4/partner-campaign.png"
   },
   {
-    "id": "establishments.journey.os-admissions",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.os-admissions",
+    "section": "Établissements · Campagnes R4",
     "label": "Partner OS · Admissions",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/os-admissions.png"
+    "source": "/angelcare-marketplace/establishments-r4/parents-campaign.png"
   },
   {
-    "id": "establishments.journey.os-communication",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.os-communication",
+    "section": "Établissements · Campagnes R4",
     "label": "Partner OS · Communication",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/os-communication.png"
+    "source": "/angelcare-marketplace/establishments-r4/parents-campaign.png"
   },
   {
-    "id": "establishments.journey.os-activities",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.os-activities",
+    "section": "Établissements · Campagnes R4",
     "label": "Partner OS · Activités",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/os-activities.png"
+    "source": "/angelcare-marketplace/establishments-r4/eduplay-campaign.png"
   },
   {
-    "id": "establishments.journey.os-crm",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.os-crm",
+    "section": "Établissements · Campagnes R4",
     "label": "Partner OS · CRM",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/os-crm.png"
+    "source": "/angelcare-marketplace/establishments-r4/parents-campaign.png"
   },
   {
-    "id": "establishments.journey.os-services",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.os-services",
+    "section": "Établissements · Campagnes R4",
     "label": "Partner OS · Services",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/os-services.png"
+    "source": "/angelcare-marketplace/establishments-r4/products-campaign.png"
   },
   {
-    "id": "establishments.journey.os-quotes",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.os-quotes",
+    "section": "Établissements · Campagnes R4",
     "label": "Partner OS · Devis",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/os-quotes.png"
+    "source": "/angelcare-marketplace/establishments-r4/operations-campaign.png"
   },
   {
-    "id": "establishments.journey.os-finance",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.os-finance",
+    "section": "Établissements · Campagnes R4",
     "label": "Partner OS · Finances",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/os-finance.png"
+    "source": "/angelcare-marketplace/establishments-r4/operations-campaign.png"
   },
   {
-    "id": "establishments.journey.os-payments",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.os-payments",
+    "section": "Établissements · Campagnes R4",
     "label": "Partner OS · Paiements",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/os-payments.png"
+    "source": "/angelcare-marketplace/establishments-r4/operations-campaign.png"
   },
   {
-    "id": "establishments.journey.os-team",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.os-team",
+    "section": "Établissements · Campagnes R4",
     "label": "Partner OS · Équipes",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/os-team.png"
+    "source": "/angelcare-marketplace/establishments-r4/academy-campaign.png"
   },
   {
-    "id": "establishments.journey.programme-team",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.programme-team",
+    "section": "Établissements · Campagnes R4",
     "label": "Academy Pro · Pratiques d’équipe",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/programme-team.png"
+    "source": "/angelcare-marketplace/establishments-r4/academy-campaign.png"
   },
   {
-    "id": "establishments.journey.programme-coaching",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.programme-coaching",
+    "section": "Établissements · Campagnes R4",
     "label": "Academy Pro · Coaching",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/programme-coaching.png"
+    "source": "/angelcare-marketplace/establishments-r4/academy-campaign.png"
   },
   {
-    "id": "establishments.journey.parent-direction",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.parent-direction",
+    "section": "Établissements · Campagnes R4",
     "label": "ParentTrust · Direction & familles",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/parent-direction.png"
+    "source": "/angelcare-marketplace/establishments-r4/consulting-campaign.png"
   },
   {
-    "id": "establishments.journey.os-people-intro",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.os-people-intro",
+    "section": "Établissements · Campagnes R4",
     "label": "Partner OS · Un fil conducteur",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/os-people-intro.png"
+    "source": "/angelcare-marketplace/establishments-r4/academy-campaign.png"
   },
   {
-    "id": "establishments.journey.os-people-direction",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.os-people-direction",
+    "section": "Établissements · Campagnes R4",
     "label": "Partner OS · Décider ensemble",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/os-people-direction.png"
+    "source": "/angelcare-marketplace/establishments-r4/partner-campaign.png"
   },
   {
-    "id": "establishments.journey.os-people-admissions",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.os-people-admissions",
+    "section": "Établissements · Campagnes R4",
     "label": "Partner OS · Parcours admissions",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/os-people-admissions.png"
+    "source": "/angelcare-marketplace/establishments-r4/parents-campaign.png"
   },
   {
-    "id": "establishments.journey.os-people-commerce",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.os-people-commerce",
+    "section": "Établissements · Campagnes R4",
     "label": "Partner OS · Engagements commerciaux",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/os-people-commerce.png"
+    "source": "/angelcare-marketplace/establishments-r4/consulting-campaign.png"
   },
   {
-    "id": "establishments.journey.os-people-team",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.os-people-team",
+    "section": "Établissements · Campagnes R4",
     "label": "Partner OS · Équipes & opérations",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/os-people-team.png"
+    "source": "/angelcare-marketplace/establishments-r4/academy-campaign.png"
   },
   {
-    "id": "establishments.journey.os-people-followup",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.os-people-followup",
+    "section": "Établissements · Campagnes R4",
     "label": "Partner OS · Suivi quotidien",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/os-people-followup.png"
+    "source": "/angelcare-marketplace/establishments-r4/operations-campaign.png"
   },
   {
-    "id": "establishments.journey.os-people-year",
-    "section": "Établissements · Parcours approuvés",
+    "id": "establishments.journey-r4.os-people-year",
+    "section": "Établissements · Campagnes R4",
     "label": "Partner OS · Une année pour commencer",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/establishments-r2/os-people-year.png"
+    "source": "/angelcare-marketplace/establishments-r4/partner-campaign.png"
   }
 ]

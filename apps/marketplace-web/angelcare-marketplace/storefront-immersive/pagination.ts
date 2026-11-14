@@ -15,7 +15,7 @@ export async function completeStorefront(
   readPage: (input: PageInput) => Promise<DiscoverySearch>,
 ): Promise<StorefrontExperience> {
   // The existing generic loader uses 120. A short first page is already complete.
-  if (experience.items.length < 120) return experience;
+  if (experience.experienceConfig?.storefront_placement_resolved === true || experience.items.length < 120) return experience;
   const items = [...experience.items],
     seen = new Set(items.map((item) => item.id));
   let offset = experience.items.length;

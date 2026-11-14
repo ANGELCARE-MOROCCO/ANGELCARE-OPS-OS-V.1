@@ -25,6 +25,8 @@ import {
   type PublicFact,
 } from "./merchandising";
 
+import { normalizePlacement } from "../storefront-placement/model";
+
 type Row = Record<string, unknown>;
 const rows = (value: unknown): Row[] =>
   Array.isArray(value)
@@ -183,6 +185,7 @@ function mapPublicItem(
       experience_schema_version: Number(row.experience_schema_version || 1),
       experience_configuration: projectedConfig,
       business_storefront: business,
+      storefront_placement: normalizePlacement(row.storefront_placement),
     },
   };
 }
@@ -301,16 +304,21 @@ const publicSnapshot = cache(
     for (let start = 0; start < ids.length; start += 100) {
       const result = await db
         .from("angelcare_marketplace_catalog_items")
-        .select("id,attributes")
+        .select("id,attributes,experience_config")
         .eq("status", "published")
         .in("id", ids.slice(start, start + 100));
       check(result.error, "public offer fields");
       const attributes = new Map(
-        rows(result.data).map((row) => [string(row.id), row.attributes]),
+        rows(result.data).map((row) => [string(row.id), row]),
       );
       for (const row of catalogue)
-        if (attributes.has(string(row.id)))
-          row.attributes = attributes.get(string(row.id));
+        if (attributes.has(string(row.id))) {
+          const fields = attributes.get(string(row.id))!;
+          row.attributes = fields.attributes;
+          row.storefront_placement = normalizePlacement(
+            record(fields.experience_config).storefront_placement,
+          );
+        }
     }
     return { catalogue, memberships, territoryId };
   },
@@ -378,8 +386,19 @@ export async function businessExposure(
         audience.push("professional");
     }
     // Offers solely in draft/hidden categories never become eligible through a schema bridge.
+    const placement = normalizePlacement(row.storefront_placement);
     const reason = categories.length
-      ? candidateReason(world, schema, categories, audience)
+      ? placement.mode === "manual"
+        ? placement.storefronts.includes(world) &&
+          ![
+            "hidden",
+            "territory_restricted",
+            "cancelled",
+            "suspended",
+          ].includes(string(row.availability_status))
+          ? ("manual_placement" as const)
+          : null
+        : candidateReason(world, schema, categories, audience)
       : null;
     const valid = Boolean(reason && id && string(row.slug));
     records.push({
@@ -394,7 +413,10 @@ export async function businessExposure(
           ? "NO_PUBLIC_CATEGORY"
           : !string(row.slug)
             ? "NO_PUBLIC_SLUG"
-            : "OTHER_AUDIENCE_OR_DOCTRINE",
+            : placement.mode === "manual" &&
+                !placement.storefronts.includes(world)
+              ? "MANUAL_EXCLUSION"
+              : "OTHER_AUDIENCE_OR_DOCTRINE",
       destination: valid
         ? `/angelcare-marketplace/${locale}/marketplace/item/${encodeURIComponent(string(row.slug))}`
         : null,

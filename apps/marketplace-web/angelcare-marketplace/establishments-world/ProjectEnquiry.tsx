@@ -1,5 +1,12 @@
 "use client";
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import {
   ArrowRight,
   CheckCircle2,
@@ -24,12 +31,24 @@ export function ProjectEnquiry({
   view,
   brief,
   sourceRoute,
+  values: providedValues,
+  onValuesChange,
+  requestVersion = 0,
+  hasContext = false,
 }: {
   view: View;
   brief: string;
   sourceRoute: string;
+  values?: EnquiryValues;
+  onValuesChange?: Dispatch<SetStateAction<EnquiryValues>>;
+  requestVersion?: number;
+  hasContext?: boolean;
 }) {
-  const [values, setValues] = useState<EnquiryValues>({ ...EMPTY_ENQUIRY });
+  const [localValues, setLocalValues] = useState<EnquiryValues>({
+    ...EMPTY_ENQUIRY,
+  });
+  const values = providedValues || localValues;
+  const setValues = onValuesChange || setLocalValues;
   const [state, setState] = useState<"idle" | "sending" | "error" | "success">(
     "idle",
   );
@@ -46,6 +65,14 @@ export function ProjectEnquiry({
   const max = 2980;
   const combined = enquiryMessage(values.message, brief);
   const remaining = max - combined.length;
+  useEffect(() => {
+    // A new contextual request can reuse contact information without showing a prior success.
+    if (!lock.current) {
+      setState("idle");
+      setConfirmed(null);
+      setError("");
+    }
+  }, [requestVersion, view]);
   useEffect(
     () => () => {
       controller.current?.abort();
@@ -66,9 +93,14 @@ export function ProjectEnquiry({
     event.preventDefault();
     if (lock.current || state === "success") return;
     if (values.website) return;
-    if (!validEnquiry("establishments", values)) {
+    if (
+      !validEnquiry("establishments", {
+        ...values,
+        message: hasContext ? combined : values.message,
+      })
+    ) {
       setError(
-        "Complétez les coordonnées, un message de dix caractères minimum et votre accord de contact.",
+        "Complétez les coordonnées, votre besoin et votre accord de contact. Votre sujet préparé peut servir de contexte.",
       );
       return;
     }
@@ -257,10 +289,14 @@ export function ProjectEnquiry({
               </label>
             </div>
             <label>
-              <span>Votre contexte et vos besoins *</span>
+              <span>
+                {hasContext
+                  ? "Précisions complémentaires (facultatif)"
+                  : "Votre contexte et vos besoins *"}
+              </span>
               <textarea
-                required
-                minLength={10}
+                required={!hasContext}
+                minLength={hasContext ? undefined : 10}
                 maxLength={max}
                 name="message"
                 rows={5}

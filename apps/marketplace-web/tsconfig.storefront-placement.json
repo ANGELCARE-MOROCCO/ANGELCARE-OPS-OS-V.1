@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "scripts/storefront-placement/css.d.ts",
+    "angelcare-marketplace/storefront-placement/**/*.ts",
+    "angelcare-marketplace/storefront-placement/**/*.tsx",
+    "angelcare-marketplace/catalog-discovery/repository.ts",
+    "angelcare-marketplace/catalogue-population/components/OfferInspector.tsx",
+    "angelcare-marketplace/commerce-studio/components/ProductStudio.tsx",
+    "angelcare-marketplace/establishments-world/OfferExplorer.tsx",
+    "app/api/angelcare-marketplace/admin/catalog/items/[itemId]/storefront-placement/route.ts",
+    "app/angelcare-marketplace/(protected)/admin/catalog/items/[itemId]/storefronts/page.tsx"
+  ],
+  "exclude": ["node_modules"]
+}
