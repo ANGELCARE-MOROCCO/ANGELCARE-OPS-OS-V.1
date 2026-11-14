@@ -17,16 +17,28 @@ test("R5 migration is strictly additive and defaults disabled",()=>{
   assert.match(sql,/ac_seo_power_r5_campaign_jobs/);
   assert.match(sql,/ac_seo_power_r5_schedule_tick/);
   assert.match(sql,/ac_seo_power_r5_reconcile/);
+  assert.match(sql,/ac_seo_power_r5_activate/);
+  assert.match(sql,/ac_seo_power_r5_capacity_save/);
+  assert.match(sql,/ac_seo_power_r5_retry_job/);
+  assert.match(sql,/ac_seo_power_r5_recover_group/);
+  assert.match(sql,/ac_seo_power_r5_retry_receipts/);
+  assert.match(sql,/R5_POLICY_OR_SOURCE_REVIEW_REQUIRED/);
+  assert.match(sql,/request_key text NOT NULL/);
+
   assert.match(sql,/campaign\.state='paused'/);
   assert.doesNotMatch(sql,/DROP TABLE|TRUNCATE TABLE|DELETE FROM public\.ac_seo_power_/i);
 });
 test("Operator controls are real authorization-checked RPCs",()=>{
   assert.match(route,/requireMarketplaceApiContext/);
   assert.match(route,/if\(!access\(ctx\)\.manage\)/);
-  for(const name of ["campaign-start","campaign-pause","campaign-resume","campaign-cancel","schedule-save","capacity-save","job-retry","job-cancel"])
+  for(const name of ["campaign-start","campaign-pause","campaign-resume","campaign-cancel","schedule-save","capacity-save","job-retry","job-cancel","recover-group"])
     assert.ok(route.includes(name),"Missing "+name);
   assert.match(route,/SEO_POWER_COMMAND360_R5_ENABLED/);
   assert.match(route,/R4_INACTIVE/);
+  assert.match(route,/ac_seo_power_r5_activate/);
+  assert.match(route,/ac_seo_power_r5_capacity_save/);
+  assert.match(route,/ac_seo_power_r5_retry_job/);
+  assert.match(route,/ac_seo_power_r5_recover_group/);
 });
 test("Live execution data is server persisted, not invented",()=>{
   assert.match(ui,/progress===null/);
@@ -34,6 +46,8 @@ test("Live execution data is server persisted, not invented",()=>{
   assert.match(ui,/onAction\("campaign-resume"/);
   assert.match(ui,/onAction\("campaign-cancel"/);
   assert.match(ui,/setInterval/);
+  assert.match(ui,/RecoveryTable/);
+  assert.match(ui,/recover-group/);
   assert.match(ui,/LEGACY/);
   assert.match(ui,/LegacyWorkspace/);
   assert.match(ui,/GrowthWorkspace/);

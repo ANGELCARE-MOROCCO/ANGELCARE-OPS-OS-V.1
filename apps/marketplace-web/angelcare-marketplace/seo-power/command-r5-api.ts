@@ -56,11 +56,8 @@ export async function commandPost(request:Request){
       const scale=await resolveScaleR4();
       if(payload.enabled===true&&!scale)throw new SeoFault("R4_INACTIVE","R4 doit être actif avant Command 360.",409);
       const expected=integer(payload.revision,1,100000000);
-      const client=await db();
-      const update=await client.from("ac_seo_power_r5_control").update({enabled:payload.enabled===true,revision:expected+1,updated_at:new Date().toISOString()})
-        .eq("singleton",true).eq("revision",expected).select("enabled,revision,updated_at").single();
-      if(update.error||!update.data)throw new SeoFault("STALE_R5_REVISION","Configuration actualisée ailleurs; recharger le statut.",409);
-      return NextResponse.json({data:update.data,requestId:rid});
+      const confirmed=await rpc("ac_seo_power_r5_activate",{p_enabled:payload.enabled===true,p_expected:expected,p_actor:actor});
+      return NextResponse.json({data:confirmed,requestId:rid});
     }
     const scale=await resolveScaleR4();
     const client=await db();
@@ -111,15 +108,19 @@ export async function commandPost(request:Request){
       }
       if(Number(next.perOriginConcurrency)>Number(next.globalConcurrency)||Number(next.perProjectConcurrency)>Number(next.globalConcurrency))
         throw new SeoFault("CAPACITY_INCONSISTENT","La concurrence globale doit couvrir les limites par origine et projet.",400);
-      const applied=await client.from("ac_seo_power_r4_control").update({capacity:next})
-       .eq("singleton",true).eq("updated_at",nonBlank(payload.expectedUpdatedAt,10,100))
-       .select("enabled,capacity,updated_at").single();
-      if(applied.error||!applied.data)throw new SeoFault("STALE_CAPACITY","Configuration concurrente; recharger.",409);
-      result=applied.data;
+      result=await rpc("ac_seo_power_r5_capacity_save",{
+        p_capacity:next,p_expected:nonBlank(payload.expectedUpdatedAt,10,100),p_actor:actor
+      });
     }else if(action==="job-retry"){
-      result=await rpc("ac_seo_power_retry",{
-        p_id:uuid(payload.id),p_actor:actor,p_request:requestKey,
-        p_hash:(await import("./network")).hash({action:"retry-job",jobId:uuid(payload.id),actor,scope:"global"})
+      result=await rpc("ac_seo_power_r5_retry_job",{
+        p_id:uuid(payload.id),p_actor:actor,p_request:requestKey
+      });
+    }else if(action==="recover-group"){
+      result=await rpc("ac_seo_power_r5_recover_group",{
+        p_project:payload.projectId?uuid(payload.projectId):null,
+        p_code:nonBlank(payload.code,2,150),
+        p_limit:integer(payload.limit,1,100),
+        p_actor:actor,p_request:requestKey
       });
     }else if(action==="job-cancel"){
       result=await (await import("./actions")).perform("cancel",{id:uuid(payload.id)},ctx,requestKey);

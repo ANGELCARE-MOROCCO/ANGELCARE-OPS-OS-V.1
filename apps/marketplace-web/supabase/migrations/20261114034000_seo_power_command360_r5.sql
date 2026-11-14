@@ -398,6 +398,7 @@ begin
       select 1 from public.ac_seo_power_r5_campaign_jobs assigned
       join public.ac_seo_power_r5_campaigns campaign on campaign.id=assigned.campaign_id
       where assigned.job_id=ac_seo_power_jobs.id and campaign.state='paused'
+      and (select enabled from public.ac_seo_power_r5_control where singleton)=true
     )
     order by case kind when 'verify' then 0 when 'crawl' then 1 when 'links' then 2 else 3 end,
     due_at,created_at for update skip locked limit 1;
@@ -424,10 +425,136 @@ begin
  return null;
 end $;
 
+
+-- Atomic governance operations. The SQL ledger records every successful activation
+-- and capacity change, even when Command Center is being disabled.
+CREATE OR REPLACE FUNCTION public.ac_seo_power_r5_activate(
+ p_enabled boolean,p_expected integer,p_actor uuid
+) RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path=pg_catalog,public AS $
+DECLARE c public.ac_seo_power_r5_control;
+BEGIN
+ IF p_actor IS NULL OR p_expected<1 THEN RAISE EXCEPTION 'R5_INVALID_ACTOR_OR_REVISION'; END IF;
+ UPDATE public.ac_seo_power_r5_control SET enabled=p_enabled,revision=revision+1,updated_at=now()
+ WHERE singleton=true AND revision=p_expected RETURNING * INTO c;
+ IF NOT FOUND THEN RAISE EXCEPTION 'R5_STALE_CONTROL_REVISION'; END IF;
+ INSERT INTO public.ac_seo_power_r5_events(category,event,detail)
+ VALUES('governance',CASE WHEN p_enabled THEN 'activated' ELSE 'deactivated' END,
+ jsonb_build_object('actor',p_actor,'revision',c.revision,'enabled',c.enabled));
+ RETURN to_jsonb(c);
+END $;
+
+CREATE OR REPLACE FUNCTION public.ac_seo_power_r5_capacity_save(
+ p_capacity jsonb,p_expected timestamptz,p_actor uuid
+) RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path=pg_catalog,public AS $
+DECLARE c public.ac_seo_power_r4_control;
+BEGIN
+ IF p_actor IS NULL OR jsonb_typeof(p_capacity)<>'object' OR p_expected IS NULL
+ THEN RAISE EXCEPTION 'R5_INVALID_CAPACITY_REQUEST';END IF;
+ UPDATE public.ac_seo_power_r4_control
+ SET capacity=p_capacity,updated_at=now()
+ WHERE singleton=true AND updated_at=p_expected
+ RETURNING * INTO c;
+ IF NOT FOUND THEN RAISE EXCEPTION 'R5_STALE_CAPACITY_VERSION';END IF;
+ INSERT INTO public.ac_seo_power_r5_events(category,event,detail)
+ VALUES('capacity','updated',jsonb_build_object('actor',p_actor,'updatedAt',c.updated_at,'capacity',c.capacity));
+ RETURN to_jsonb(c);
+END $;
+
+
+-- Safe, idempotent recovery. The original failure remains immutable; a later
+-- successful job is the only authority that can mark it recovered.
+CREATE TABLE IF NOT EXISTS public.ac_seo_power_r5_retry_receipts(
+ actor_id uuid NOT NULL,
+ request_key text NOT NULL CHECK(length(request_key) BETWEEN 8 AND 160),
+ result jsonb NOT NULL,
+ created_at timestamptz NOT NULL DEFAULT now(),
+ PRIMARY KEY(actor_id,request_key)
+);
+
+CREATE OR REPLACE FUNCTION public.ac_seo_power_r5_retry_job(
+ p_id uuid,p_actor uuid,p_request text
+) RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path=pg_catalog,public AS $
+DECLARE j public.ac_seo_power_jobs; pg public.ac_seo_power_pages;
+ pr public.ac_seo_power_projects; prior jsonb; jid uuid; outcome text;
+BEGIN
+ IF p_actor IS NULL OR length(p_request) NOT BETWEEN 8 AND 160 THEN RAISE EXCEPTION 'R5_INVALID_RETRY_REQUEST';END IF;
+ IF (SELECT enabled FROM public.ac_seo_power_r5_control WHERE singleton) IS DISTINCT FROM true
+ THEN RAISE EXCEPTION 'R5_DISABLED';END IF;
+ PERFORM pg_advisory_xact_lock(hashtextextended('r5-retry:'||p_actor::text||':'||p_request,0));
+ SELECT result INTO prior FROM public.ac_seo_power_r5_retry_receipts WHERE actor_id=p_actor AND request_key=p_request;
+ IF FOUND THEN RETURN prior;END IF;
+ SELECT * INTO STRICT j FROM public.ac_seo_power_jobs WHERE id=p_id;
+ IF j.state NOT IN ('failed','cancelled') OR j.recovered_at IS NOT NULL THEN RAISE EXCEPTION 'R5_JOB_NOT_RETRYABLE';END IF;
+ IF coalesce(j.result->>'recovery','') IN ('policy','source') THEN
+  RAISE EXCEPTION 'R5_POLICY_OR_SOURCE_REVIEW_REQUIRED';
+ END IF;
+ SELECT * INTO STRICT pg FROM public.ac_seo_power_pages WHERE id=j.page_id;
+ SELECT * INTO STRICT pr FROM public.ac_seo_power_projects WHERE id=j.project_id;
+ IF NOT pr.enabled THEN RAISE EXCEPTION 'R5_PROJECT_PAUSED';END IF;
+ IF j.kind='verify' AND (pg.published_change_id IS DISTINCT FROM (j.payload->>'changeId')::uuid) THEN
+  RAISE EXCEPTION 'R5_VERIFICATION_SUPERSEDED';END IF;
+ IF j.kind='indexnow' AND
+  (coalesce((pr.policy->>'indexNowEnabled')::boolean,false)=false
+   OR pg.http_status IS DISTINCT FROM 200 OR pg.indexable IS DISTINCT FROM true)
+ THEN RAISE EXCEPTION 'R5_INDEXNOW_INELIGIBLE';END IF;
+ IF j.kind='links' AND (pg.facts IS NULL OR jsonb_typeof(pg.facts->'links')<>'array') THEN
+  jid=public.ac_seo_power_r4_enqueue(j.page_id,'crawl',jsonb_build_object('prerequisiteFor','links','recoveryOf',j.id));
+  outcome='crawl_prerequisite';
+ ELSE
+  jid=public.ac_seo_power_r4_enqueue(j.page_id,j.kind,j.payload);
+  outcome='queued';
+ END IF;
+ IF jid IS NULL THEN RAISE EXCEPTION 'R5_RETRY_NOT_ADMITTED';END IF;
+ prior=jsonb_build_object('jobId',jid,'previousJobId',j.id,'outcome',outcome,'world',pr.world,'kind',j.kind);
+ INSERT INTO public.ac_seo_power_r5_retry_receipts(actor_id,request_key,result) VALUES(p_actor,p_request,prior);
+ INSERT INTO public.ac_seo_power_r5_events(job_id,category,event,detail)
+ VALUES(j.id,'recovery','requested',jsonb_build_object('actor',p_actor,'replacementJob',jid,'outcome',outcome));
+ RETURN prior;
+END $;
+
+-- Explicit, bounded grouped recovery. Individual eligibility is evaluated
+-- by the same authoritative retry function. No historical failure is reset.
+CREATE OR REPLACE FUNCTION public.ac_seo_power_r5_recover_group(
+ p_project uuid,p_code text,p_limit integer,p_actor uuid,p_request text
+) RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path=pg_catalog,public AS $
+DECLARE j public.ac_seo_power_jobs; old jsonb; answer jsonb;
+ queued integer=0; prerequisite integer=0; skipped integer=0; inspected integer=0;
+BEGIN
+ IF p_actor IS NULL OR length(p_request) NOT BETWEEN 8 AND 80
+    OR length(p_code) NOT BETWEEN 2 AND 150 OR p_limit NOT BETWEEN 1 AND 100
+ THEN RAISE EXCEPTION 'R5_INVALID_RECOVERY_SCOPE';END IF;
+ IF (SELECT enabled FROM public.ac_seo_power_r5_control WHERE singleton) IS DISTINCT FROM true
+ THEN RAISE EXCEPTION 'R5_DISABLED';END IF;
+ IF p_code ~* '(ROBOTS_DISALLOWED|PRIVATE_ADDRESS|SSRF|UNSAFE|POLICY_BLOCKED|VERIFICATION_SUPERSEDED)' THEN
+  RAISE EXCEPTION 'R5_POLICY_REVIEW_REQUIRED';END IF;
+ PERFORM pg_advisory_xact_lock(hashtextextended('r5-recover:'||p_actor::text||':'||p_request,0));
+ SELECT result INTO old FROM public.ac_seo_power_r5_retry_receipts WHERE actor_id=p_actor AND request_key=p_request;
+ IF FOUND THEN RETURN old;END IF;
+ FOR j IN SELECT * FROM public.ac_seo_power_jobs
+  WHERE state='failed' AND recovered_at IS NULL AND (p_project IS NULL OR project_id=p_project)
+  AND coalesce(result->>'code',left(error,100),'UNKNOWN')=p_code
+  ORDER BY finished_at ASC NULLS LAST,id LIMIT p_limit
+ LOOP
+  inspected=inspected+1;
+  BEGIN
+   answer=public.ac_seo_power_r5_retry_job(j.id,p_actor,'item:'||p_request||':'||left(j.id::text,8));
+   IF answer->>'outcome'='crawl_prerequisite' THEN prerequisite=prerequisite+1;
+   ELSE queued=queued+1;END IF;
+  EXCEPTION WHEN OTHERS THEN skipped=skipped+1;
+  END;
+ END LOOP;
+ answer=jsonb_build_object('code',p_code,'inspected',inspected,'enqueued',queued,
+  'prerequisites',prerequisite,'skipped',skipped,'historicalFailuresPreserved',true);
+ INSERT INTO public.ac_seo_power_r5_retry_receipts(actor_id,request_key,result) VALUES(p_actor,p_request,answer);
+ INSERT INTO public.ac_seo_power_r5_events(category,event,detail)
+ VALUES('recovery','group_requested',jsonb_build_object('actor',p_actor,'code',p_code,'summary',answer));
+ RETURN answer;
+END $;
+
 -- Access restricted to service_role through the authenticated, permission-checked app API.
 DO $$ DECLARE t text; f record;
 BEGIN
- FOREACH t IN ARRAY ARRAY['control','campaigns','campaign_jobs','events','schedules','workers'] LOOP
+ FOREACH t IN ARRAY ARRAY['control','campaigns','campaign_jobs','events','schedules','workers','retry_receipts'] LOOP
   EXECUTE format('ALTER TABLE public.ac_seo_power_r5_%I ENABLE ROW LEVEL SECURITY',t);
   EXECUTE format('REVOKE ALL ON TABLE public.ac_seo_power_r5_%I FROM public,anon,authenticated',t);
   EXECUTE format('GRANT ALL ON TABLE public.ac_seo_power_r5_%I TO service_role',t);

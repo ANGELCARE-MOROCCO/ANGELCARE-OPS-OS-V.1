@@ -26,3 +26,9 @@
 - Historical SEO audit pages and publication safety stay governed by existing permissions.
 ## Rollback
 Disable R5 in the database governance interface, unset `SEO_POWER_COMMAND360_R5_ENABLED`, and deploy the previous frontend image if needed. Preserve R5 campaign/job/event tables and audit evidence. The R5 SQL overrides the R4 claim function to respect paused campaigns, so a complete database-level rollback requires a separately rehearsed restoration of the R4 claim function. Never automatically drop tables or clear historical jobs.
+
+## Incident & recovery upgrade
+- Grouped recovery is bounded to 100 source failures per request and is idempotent. The UI chooses 50 by default and scopes recovery to its displayed world.
+- Individual retries use R4 admission with typed eligibility. Links missing crawl facts queue the crawl prerequisite; prohibited or source-review failures cannot be blindly retried.
+- New recovery receipts preserve the original failed job and prevent duplicate replays. Historical failures are only reconciled on subsequent successful work.
+- Scheduler mutations use request keys with database uniqueness, while activation and capacity updates use atomic database transactions with audit events.
