@@ -32,8 +32,8 @@ const n=(v:unknown)=>Number(v||0);
 const stamp=(v:unknown)=>v&&!Number.isNaN(Date.parse(String(v)))?new Date(String(v)).toLocaleString("fr-FR",{dateStyle:"short",timeStyle:"medium"}):"—";
 const number=(v:unknown)=>new Intl.NumberFormat("fr-FR").format(n(v));
 const age=(v:unknown)=>v&&!Number.isNaN(Date.parse(String(v)))?Math.max(0,Math.round((Date.now()-Date.parse(String(v)))/1000)):null;
-const state=(v:unknown)=>({queued:"En attente",running:"En cours",completed:"Terminé",cancelled:"Annulé",paused:"En pause",failed:"Échec",succeeded:"Réussi",degraded:"Dégradé"}[String(v)]||String(v||"Non confirmé"));
-const kindLabel=(v:unknown)=>({crawl:"Exploration",links:"Maillage",verify:"Vérification",indexnow:"IndexNow"}[String(v)]||String(v||"—"));
+const state=(v:unknown)=>{const labels:Record<string,string>={queued:"En attente",running:"En cours",completed:"Terminé",cancelled:"Annulé",paused:"En pause",failed:"Échec",succeeded:"Réussi",degraded:"Dégradé"};return labels[String(v)]||String(v||"Non confirmé")};
+const kindLabel=(v:unknown)=>{const labels:Record<string,string>={crawl:"Exploration",links:"Maillage",verify:"Vérification",indexnow:"IndexNow"};return labels[String(v)]||String(v||"—")};
 const isTab=(v:string):v is Tab=>NAV.some(x=>x[0]===v);
 function exportJson(data:unknown,name:string){
  const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"}));
@@ -43,7 +43,7 @@ function Card({title,kicker,children,extra}:{title:string;kicker?:string;childre
  return <section className={s.panel}><div className={s.panelHead}><div>{kicker?<span className={s.kicker}>{kicker}</span>:null}<h2>{title}</h2></div>{extra}</div>{children}</section>;
 }
 function Metric({label,value,sub,tone="neutral",icon:Icon=Activity}:{label:string;value:unknown;sub:string;tone?:string;icon?:typeof Activity}){
- return <div className={s.metric} data-tone={tone}><div className={s.metricHead}><span>{label}</span><Icon size={17}/></div><strong>{value===null||value===undefined?"—":value}</strong><small>{sub}</small></div>;
+ return <div className={s.metric} data-tone={tone}><div className={s.metricHead}><span>{label}</span><Icon size={17}/></div><strong>{value===null||value===undefined?"—":String(value)}</strong><small>{sub}</small></div>;
 }
 function Badge({value}:{value:unknown}){return <span className={s.badge} data-state={String(value||"unknown")}>{state(value)}</span>}
 function Campaign({c,onAction,busy}:{c:Row;onAction:(action:string,input:Row)=>Promise<void>;busy:boolean}){
@@ -74,9 +74,8 @@ const CAPACITY=[
  ["scheduleBatchSize","Planification / passage",1,1000]
 ] as const;
 export function Command360({initial}:{initial:Snapshot}){
- const params=typeof window==="undefined"?new URLSearchParams():new URLSearchParams(window.location.search);
- const [tab,setTab]=useState<Tab>(()=>isTab(params.get("view")||"")?params.get("view") as Tab:"command");
- const [project,setProject]=useState(()=>params.get("project")||"");
+ const [tab,setTab]=useState<Tab>("command");
+ const [project,setProject]=useState("");
  const [data,setData]=useState<Row>({});
  const [ready,setReady]=useState(false);
  const [connected,setConnected]=useState(false);
@@ -94,6 +93,13 @@ export function Command360({initial}:{initial:Snapshot}){
  const [editingSchedule,setEditingSchedule]=useState<Row|null>(null);
  const seq=useRef(0),mounted=useRef(true),lastRequest=useRef<{signature:string;key:string}|null>(null);
  const rights=initial.permissions,canManage=Boolean(rights.manage),canGovern=Boolean(rights.publish);
+ useEffect(()=>{
+  const p=new URLSearchParams(location.search);
+  const requested=p.get("view")||"";
+  if(isTab(requested))setTab(requested);
+  const selected=p.get("project")||"";
+  if(initial.projects.some(project=>project.id===selected))setProject(selected);
+ },[initial.projects]);
  const selectTab=(next:Tab)=>{setTab(next);const u=new URL(location.href);u.searchParams.set("view",next);history.replaceState(null,"",u)};
  const selectProject=(next:string)=>{setProject(next);setQueuePage(1);const u=new URL(location.href);if(next)u.searchParams.set("project",next);else u.searchParams.delete("project");history.replaceState(null,"",u)};
  const refresh=useCallback(async(showSpinner=false)=>{

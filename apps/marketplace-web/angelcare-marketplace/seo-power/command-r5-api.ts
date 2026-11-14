@@ -54,7 +54,7 @@ export async function commandPost(request:Request){
     if(action==="activate"){
       if(!access(ctx).publish)throw new SeoFault("PUBLISH_REQUIRED","Activation réservée à un administrateur habilité.",403);
       const scale=await resolveScaleR4();
-      if(!scale)throw new SeoFault("R4_INACTIVE","R4 doit être actif avant Command 360.",409);
+      if(payload.enabled===true&&!scale)throw new SeoFault("R4_INACTIVE","R4 doit être actif avant Command 360.",409);
       const expected=integer(payload.revision,1,100000000);
       const client=await db();
       const update=await client.from("ac_seo_power_r5_control").update({enabled:payload.enabled===true,revision:expected+1,updated_at:new Date().toISOString()})
@@ -88,7 +88,7 @@ export async function commandPost(request:Request){
         p_name:nonBlank(payload.name,3,100),p_kind:nonBlank(payload.kind,4,20),
         p_interval:integer(payload.intervalMinutes,15,10080),
         p_limit:integer(payload.limit,1,1000),p_enabled:payload.enabled===true,
-        p_actor:actor,p_version:payload.id?integer(payload.version,1,1000000):null
+        p_actor:actor,p_request:requestKey,p_version:payload.id?integer(payload.version,1,1000000):null
       });
     }else if(action==="capacity-save"){
       if(!access(ctx).publish)throw new SeoFault("PUBLISH_REQUIRED","Droit renforcé nécessaire.",403);

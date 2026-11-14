@@ -69,8 +69,10 @@ CREATE TABLE IF NOT EXISTS public.ac_seo_power_r5_schedules (
   last_campaign_id uuid REFERENCES public.ac_seo_power_r5_campaigns(id),
   version integer NOT NULL DEFAULT 1,
   created_by uuid NOT NULL,
+  request_key text NOT NULL CHECK(length(request_key) BETWEEN 8 AND 160),
   created_at timestamptz NOT NULL DEFAULT now(),
-  updated_at timestamptz NOT NULL DEFAULT now()
+  updated_at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE(created_by,request_key)
 );
 CREATE INDEX IF NOT EXISTS ac_seo_power_r5_schedule_due ON public.ac_seo_power_r5_schedules(next_due_at)
  WHERE enabled=true;
@@ -299,23 +301,27 @@ END $$;
 
 CREATE OR REPLACE FUNCTION public.ac_seo_power_r5_schedule_save(
  p_id uuid,p_project uuid,p_name text,p_kind text,p_interval integer,p_limit integer,
- p_enabled boolean,p_actor uuid,p_version integer DEFAULT NULL)
+ p_enabled boolean,p_actor uuid,p_request text,p_version integer DEFAULT NULL)
 RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path=pg_catalog,public AS $$
 DECLARE s public.ac_seo_power_r5_schedules;
 BEGIN
  IF (SELECT enabled FROM public.ac_seo_power_r5_control WHERE singleton) IS DISTINCT FROM true THEN RAISE EXCEPTION 'R5_DISABLED';END IF;
- IF p_actor IS NULL OR length(trim(p_name)) NOT BETWEEN 3 AND 100
+ IF p_actor IS NULL OR length(p_request) NOT BETWEEN 8 AND 160 OR length(trim(p_name)) NOT BETWEEN 3 AND 100
  OR p_kind NOT IN ('crawl','links','verify','indexnow')
  OR p_interval NOT BETWEEN 15 AND 10080 OR p_limit NOT BETWEEN 1 AND 1000
  OR NOT EXISTS(SELECT 1 FROM public.ac_seo_power_projects WHERE id=p_project AND enabled)
  THEN RAISE EXCEPTION 'INVALID_R5_SCHEDULE';END IF;
  IF p_id IS NULL THEN
-  INSERT INTO public.ac_seo_power_r5_schedules(project_id,name,kind,interval_minutes,max_pages,enabled,created_by,next_due_at)
-  VALUES(p_project,trim(p_name),p_kind,p_interval,p_limit,p_enabled,p_actor,now()+make_interval(mins=>p_interval))
+  SELECT * INTO s FROM public.ac_seo_power_r5_schedules WHERE created_by=p_actor AND request_key=p_request;
+  IF FOUND THEN RETURN to_jsonb(s);END IF;
+  INSERT INTO public.ac_seo_power_r5_schedules(project_id,name,kind,interval_minutes,max_pages,enabled,created_by,request_key,next_due_at)
+  VALUES(p_project,trim(p_name),p_kind,p_interval,p_limit,p_enabled,p_actor,p_request,now()+make_interval(mins=>p_interval))
   RETURNING * INTO s;
  ELSE
+  SELECT * INTO s FROM public.ac_seo_power_r5_schedules WHERE id=p_id AND project_id=p_project;
+  IF FOUND AND s.created_by=p_actor AND s.request_key=p_request THEN RETURN to_jsonb(s);END IF;
   UPDATE public.ac_seo_power_r5_schedules SET name=trim(p_name),kind=p_kind,
-    interval_minutes=p_interval,max_pages=p_limit,enabled=p_enabled,
+    interval_minutes=p_interval,max_pages=p_limit,enabled=p_enabled,request_key=p_request,
     version=version+1,updated_at=now(),
     next_due_at=now()+make_interval(mins=>p_interval)
   WHERE id=p_id AND project_id=p_project AND version=p_version RETURNING * INTO s;
