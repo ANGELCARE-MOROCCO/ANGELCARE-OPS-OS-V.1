@@ -18,6 +18,7 @@ import { recovery } from "./operations-model";
 import { growthTick } from "./growth-service";
 import { resolveScaleR4 } from "./scale-r4-runtime";
 import type { ScaleR4 } from "./scale-r4";
+import { r5Enabled, r5WorkerId } from "./command-r5-runtime";
 
 export async function authorizedWorker(token: string) {
   if (token.length < 40 || token.length > 200) return false;
@@ -35,16 +36,21 @@ export async function authorizedWorker(token: string) {
     timingSafeEqual(Buffer.from(actual), Buffer.from(expected))
   );
 }
-async function processBatch(projectId: string | null = null, scale: ScaleR4 | null = null) {
+async function processBatch(projectId: string | null = null, scale: ScaleR4 | null = null, executionId: string | null = null, telemetry = false) {
   const started = Date.now(),
     results: Row[] = [];
   for (let i = 0; i < (scale?.jobsPerWorker ?? 2) && Date.now() - started < (scale ? 45000 : 15000); i++) {
     const claimed = await rpc(scale ? "ac_seo_power_r4_claim" : "ac_seo_power_claim", { p_project: projectId });
     if (!claimed) break;
     const job = record(claimed),
+
       project = projectRow(job.project),
       page = job.page as Page;
     if(scale) project.policy={...project.policy,linksPerPage:scale.linksPerPage,timeoutSeconds:scale.requestTimeoutSeconds,crawlBudget:scale.dailyJobsPerProject};
+    if(telemetry && executionId) {
+      try { await rpc("ac_seo_power_r5_job_event",{p_execution:executionId,p_job:job.id,p_event:"claimed",p_detail:{kind:job.kind,world:project.world}}); }
+      catch(e){console.warn("[seo-r5] job claim event not persisted",e instanceof Error?e.message:"unavailable")}
+    }
     let result: Row = {},
       error: string | null = null;
     try {
@@ -185,6 +191,10 @@ async function processBatch(projectId: string | null = null, scale: ScaleR4 | nu
       });
       if (!["succeeded", "queued", "failed"].includes(String(record(finished).state || "")))
         throw new SeoFault("JOB_FINISH_UNCONFIRMED", "Le moteur n’a pas retourné de reçu de finalisation exploitable. L’état de la tâche doit être vérifié avant toute reprise.", 503);
+      if(telemetry && executionId){
+        try{await rpc("ac_seo_power_r5_job_event",{p_execution:executionId,p_job:job.id,p_event:String(record(finished).state||"unconfirmed"),p_detail:{kind:job.kind,code:result.code||null,verified:result.verified??null,elapsedMs:Date.now()-started}})}
+        catch(e){console.warn("[seo-r5] terminal job event not persisted",e instanceof Error?e.message:"unavailable")}
+      }
       results.push({
         id: job.id,
         kind: job.kind,
@@ -354,11 +364,19 @@ export async function runBatch(
 ) {
   // R4 is opt-in in both the deployment environment and Supabase. Legacy is the default.
   const scale=await resolveScaleR4();
+  // R5 is an explicit two-key opt-in; absence of the migration/env preserves R4.
+  const telemetry=Boolean(scale)&&await r5Enabled();
   const requestStarted = Date.now();
   const executionId = await rpc("ac_seo_power_execution",{
     p_project:projectId,p_source:source
   });
   try {
+    if(telemetry){
+      await rpc("ac_seo_power_r5_worker_seen",{p_id:r5WorkerId(),p_source:source,p_engine:"r5",p_execution:executionId});
+      await rpc("ac_seo_power_r5_log",{p_category:"execution",p_event:"started",p_execution:executionId,p_detail:{source,projectId,engine:"r5"}});
+      await rpc("ac_seo_power_r5_reconcile",{});
+      if(source==="scheduler")await rpc("ac_seo_power_r5_schedule_tick",{});
+    }
     // When activated, R4 schedules stale inventory incrementally instead of the
     // legacy fixed daily page selection. Inactive deployments never call this RPC.
     if(scale) await rpc("ac_seo_power_r4_schedule_due",{});
@@ -368,7 +386,7 @@ export async function runBatch(
       const remaining=Date.now()-requestStarted;
       const workerCount=remaining<12000 ? 0 : scale.workersPerTick;
       const parallel=await Promise.all(Array.from({length:workerCount},()=>
-        processBatch(projectId,scale)
+        processBatch(projectId,scale,String(executionId),telemetry)
       ));
       batch={
         results:parallel.flatMap(w=>w.results),
@@ -393,10 +411,19 @@ export async function runBatch(
       ...(scale?{engine:"r4",workers:scale.workersPerTick}:{}),
     };
     await rpc("ac_seo_power_execution",{p_id:executionId,p_result:answer});
+    if(telemetry){
+      try{
+        await rpc("ac_seo_power_r5_reconcile",{});
+        await rpc("ac_seo_power_r5_log",{p_category:"execution",p_event:"finished",p_execution:executionId,
+          p_detail:{source,results:batch.results.length,problems:answer.problems,elapsedMs:answer.elapsedMs}});
+        await rpc("ac_seo_power_r5_worker_seen",{p_id:r5WorkerId(),p_source:source,p_engine:"r5",p_execution:executionId});
+      }catch(e){console.warn("[seo-r5] completion telemetry unavailable",e instanceof Error?e.message:"unavailable")}
+    }
     return answer;
   }catch(e){
     const fatal=e instanceof SeoFault?e.code:"EXECUTION_INTERRUPTED";
     await rpc("ac_seo_power_execution",{p_id:executionId,p_result:{fatal,problems:1}});
+    if(telemetry)try{await rpc("ac_seo_power_r5_log",{p_category:"execution",p_event:"failed",p_execution:executionId,p_detail:{fatal}})}catch{}
     throw e;
   }
 }

@@ -1,0 +1,44 @@
+name: SEO POWER Command 360 R5 Verification
+on:
+  push:
+    branches:
+      - feature/seo-power-command360-r5-20261114
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  command360:
+    name: R5 Premium Operations and Safety Gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: apps/marketplace-web/package-lock.json
+      - name: Verify Command Center 360 source contracts
+        run: node --test apps/marketplace-web/scripts/seo-power-ci/r5-command360.test.mjs
+      - name: Install exact Marketplace dependencies
+        working-directory: apps/marketplace-web
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Typecheck R5 Command Center and existing dependencies
+        working-directory: apps/marketplace-web
+        env:
+          NODE_OPTIONS: --max-old-space-size=8192
+        run: npx tsc -p tsconfig.seo-power-r5.json --pretty false
+      - name: Block unauthorized storefront and shell changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=d29297a53c32aced004cf4556301b9c89d409c68
+          git diff --name-only "$BASE" HEAD | tee /tmp/r5-diff.txt
+          if grep -Ev '^(apps/marketplace-web/angelcare-marketplace/seo-power/(Command360\.tsx|Workspace\.tsx|command360\.module\.css|command-r5-api\.ts|command-r5-runtime\.ts|runner\.ts|SEO_POWER_COMMAND360_R5_RELEASE\.md)|apps/marketplace-web/app/api/angelcare-marketplace/admin/seo-power/command/route\.ts|apps/marketplace-web/supabase/migrations/20261114034000_seo_power_command360_r5\.sql|apps/marketplace-web/scripts/seo-power-ci/r5-command360\.test\.mjs|apps/marketplace-web/tsconfig\.seo-power-r5\.json|\.github/workflows/seo-power-r5-verify\.yml)$' /tmp/r5-diff.txt; then
+            echo "R5_UNAUTHORIZED_SOURCE_CHANGE"; exit 1
+          fi
+          echo "PUBLIC_STOREFRONTS_UNCHANGED=PASS"

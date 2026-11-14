@@ -1,3 +1,2 @@
 "use client";
-
-export { SeoPowerWorkspace } from "./OperationsWorkspace";
+export { Command360 as SeoPowerWorkspace } from "./Command360";

@@ -1,0 +1,21 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "types/**/*.d.ts",
+    "angelcare-marketplace/seo-power/Command360.tsx",
+    "angelcare-marketplace/seo-power/Workspace.tsx",
+    "angelcare-marketplace/seo-power/command-r5-api.ts",
+    "angelcare-marketplace/seo-power/command-r5-runtime.ts",
+    "angelcare-marketplace/seo-power/runner.ts",
+    "app/api/angelcare-marketplace/admin/seo-power/command/route.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next"
+  ]
+}
