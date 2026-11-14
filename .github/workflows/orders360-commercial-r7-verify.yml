@@ -22,7 +22,7 @@ jobs:
         run: node --test apps/marketplace-web/scripts/orders360-ci/commercial-r7.test.mjs
       - name: Verify SQL parses under PostgreSQL dialect
         run: |
-          python3 -m pip install --quiet --user pglast==7.10
+          python3 -m pip install --quiet --user pglast==7.23
           python3 - <<'PY'
           from pathlib import Path
           from pglast import parse_sql
