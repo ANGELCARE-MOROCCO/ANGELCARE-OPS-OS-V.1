@@ -145,7 +145,12 @@ export function Command360({initial}:{initial:Snapshot}){
  const r4=record(data.r4),r4capacity=record(r4.capacity),ctrl=record(data.control),perf=record(data.performance);
  const campaigns=asRows(data.campaigns),events=asRows(data.events),workers=asRows(data.workers);
  const schedules=asRows(data.schedules),errors=asRows(data.errors),executions=asRows(data.latestExecutions),jobs=asRows(data.queue);
- const active=Boolean(data.engineFlag)&&Boolean(data.r4Effective)&&ctrl.enabled===true&&r4.enabled===true;
+ const activation=record(data.activation);
+ const r4Deployment=activation.r4Deployment===true;
+ const r4Database=activation.r4Database===true||r4.enabled===true;
+ const r5Deployment=activation.r5Deployment===true||data.engineFlag===true;
+ const r5Database=activation.r5Database===true||ctrl.enabled===true;
+ const active=r4Deployment&&r4Database&&r5Deployment&&r5Database;
  const canOperate=active&&canManage&&ready&&!busy;
  const stale=!connected||!ready||age(data.observedAt)===null||n(age(data.observedAt))>35;
  const scoped=project?initial.projects.filter(x=>x.id===project):initial.projects;
@@ -159,7 +164,7 @@ export function Command360({initial}:{initial:Snapshot}){
    <div className={s.heroText}><div className={s.overline}><span className={s.signal}/> ANGELCARE OPS OS · SEARCH OPERATIONS AUTHORITY</div>
     <h1>SEO POWER <em>Command Center 360</em></h1>
     <p>Un centre de décision professionnel. Exécutions persistantes, pilotage multi-univers, preuves techniques et autorité opérationnelle.</p>
-    <div className={s.heroMeta}><span><Radio size={14}/> {stale?"Télémétrie non confirmée":"Lecture serveur confirmée"}</span><span><Clock3 size={14}/> {stamp(data.observedAt)}</span><span><Cpu size={14}/> {active?"R4 + R5 actifs":"Activation non confirmée"}</span></div>
+    <div className={s.heroMeta}><span><Radio size={14}/> {stale?"Télémétrie non confirmée":"Lecture serveur confirmée"}</span><span><Clock3 size={14}/> {stamp(data.observedAt)}</span><span><Cpu size={14}/> {active?"R4 + R5 actifs":"Commandes R5 non activées"}</span></div>
    </div>
    <div className={s.heroActions}><button onClick={()=>void refresh(true)} disabled={loading}><RefreshCw size={16} className={loading?s.spin:""}/> Actualiser les preuves</button>
     <button onClick={()=>exportJson({observedAt:data.observedAt,world:project||"all",dashboard:data},"seo-power-evidence-"+new Date().toISOString().slice(0,10)+".json")} disabled={!ready}><Download size={16}/> Exporter le dossier</button>
@@ -170,7 +175,15 @@ export function Command360({initial}:{initial:Snapshot}){
   {error?<div role="alert" className={s.error}><AlertCircle size={16}/>{error}<button onClick={()=>setError("")} aria-label="Fermer"><X size={15}/></button></div>:null}
   {notice?<div role="status" className={s.success}><CheckCircle2 size={17}/>{notice}<button onClick={()=>setNotice("")} aria-label="Fermer"><X size={15}/></button></div>:null}
   {!ready?<div className={s.blocker}><ShieldAlert size={26}/><div><strong>Migration R5 ou lecture d'autorité non confirmée</strong><p>{String(data.reason||"Le centre garde les outils historiques disponibles. Installer la migration additive R5 puis actualiser.")}</p></div><button onClick={()=>selectTab("tools")}>Ouvrir les outils historiques</button></div>:null}
-  {ready&&!active?<div className={s.activation}><div><span className={s.kicker}>ACTIVATION GOUVERNÉE · EXÉCUTION PROTÉGÉE</span><strong>Le moteur de commande R5 est installé mais non pleinement actif.</strong><p>Déploiement R5: {data.engineFlag?"présent":"désactivé"} · Worker R4: {data.r4Effective?"actif":"inactif"} · DB R5: {ctrl.enabled?"active":"inactive"}. Aucun run n'est déclaré démarré tant que ces autorités ne concordent pas.</p></div>{canGovern&&data.engineFlag&&data.r4Effective&&ctrl.enabled!==true?<button className={s.solid} disabled={busy} onClick={()=>void action("activate",{enabled:true,revision:ctrl.revision})}><LockKeyhole size={15}/> Activer Command 360</button>:null}</div>:null}
+  {ready&&!active?<section className={s.activation} aria-labelledby="seo-activation">
+    <div className={s.activationIntro}><span className={s.kicker}>GOUVERNANCE DE PRODUCTION · R4 / R5</span><h2 id="seo-activation">La console est disponible. Les nouvelles campagnes sont encore verrouillées.</h2><p>Les {number(perf.queued)} jobs en attente et {number(perf.unresolved)} incidents sont réels. Les commandes R5 nécessitent quatre autorisations indépendantes.</p></div>
+    <div className={s.activationChecks}>
+     {[[r4Deployment,"R4 · serveur","SEO_POWER_ENGINE_R4_ENABLED"],[r4Database,"R4 · base","Autorité des workers"],[r5Deployment,"R5 · serveur","SEO_POWER_COMMAND360_R5_ENABLED"],[r5Database,"R5 · base","Command 360 gouverné"]].map(([ok,name,description],i)=><div key={i} data-ok={ok===true}><span>{ok===true?<CheckCircle2 size={16}/>:<AlertCircle size={16}/>}</span><div><b>{String(name)}</b><small>{String(description)}</small></div><strong>{ok===true?"Confirmé":"Action requise"}</strong></div>)}
+    </div>
+    <div className={s.activationActions}><button onClick={()=>selectTab("capacity")}><Cpu size={15}/> Voir le diagnostic</button><button onClick={()=>void refresh(true)} disabled={loading}><RefreshCw size={15}/> Recontrôler</button>
+    {canGovern&&r4Deployment&&r4Database&&r5Deployment&&!r5Database?<button className={s.solid} disabled={busy} onClick={()=>void action("activate",{enabled:true,revision:ctrl.revision})}><LockKeyhole size={15}/> Activer Command 360</button>:null}
+    </div>
+   </section>:null}
 
   {tab==="command"?<div className={s.workspace}>
     <div className={s.metricGrid}>
@@ -182,7 +195,12 @@ export function Command360({initial}:{initial:Snapshot}){
       <Metric label="Campagnes actives" value={number(activeCampaigns.length)} sub={number(campaigns.length)+" campagnes dans l'historique récent"} icon={Workflow}/>
     </div>
     <div className={s.twoColumns}><Card kicker="LIVE OPERATION PORTFOLIO" title="Exécutions sous surveillance" extra={<button onClick={()=>selectTab("live")}>Ouvrir le théâtre <ArrowRight size={14}/></button>}>
-     {campaigns.slice(0,3).length?campaigns.slice(0,3).map(c=><Campaign key={String(c.id)} c={c} onAction={action} busy={!canOperate}/>):<p className={s.empty}>Aucune campagne R5 persistée pour ce périmètre. Les jobs historiques restent consultables dans la file.</p>}
+     {campaigns.slice(0,3).length?campaigns.slice(0,3).map(c=><Campaign key={String(c.id)} c={c} onAction={action} busy={!canOperate}/>):<div className={s.operatorFallback}>
+     <div className={s.emptyCampaign}><div className={s.emptyCampaignIcon}><Workflow size={20}/></div><div><strong>Aucune campagne R5 créée</strong><p>Consultez les exécutions du moteur existant ci-dessous. La création de campagnes demande l'activation de R4 et R5.</p></div></div>
+     <div className={s.subhead}><span>DERNIÈRES EXÉCUTIONS ENREGISTRÉES</span><span>{executions.length} passages récents</span></div>
+     {executions.length?executions.slice(0,8).map(e=><div className={s.legacyRun} key={String(e.id)}><span className={s.runSource}>{e.source==="scheduler"?<CalendarClock size={15}/>:<Play size={15}/>}</span><span className={s.runDetails}><b>{e.source==="scheduler"?"Exécution planifiée":"Exécution manuelle"}</b><small>{stamp(e.started_at)} · {String(e.id).slice(0,8)}</small></span><Badge value={e.state}/></div>):<p className={s.empty}>Aucun reçu récent dans l'historique disponible.</p>}
+     <div className={s.fallbackActions}><button onClick={()=>selectTab("queue")}><ListChecks size={15}/> Examiner la file</button><button onClick={()=>selectTab("live")}>Suivi d'exécution <ArrowRight size={15}/></button></div>
+    </div>}
     </Card>
     <div className={s.stack}>
      <Card kicker="ORGANIC ASSET AUTHORITY" title="Trois univers, un portefeuille">

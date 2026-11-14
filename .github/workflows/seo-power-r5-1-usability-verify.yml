@@ -1,0 +1,36 @@
+name: SEO POWER Command 360 R5.1 Usability Repair
+on:
+  push:
+    branches:
+      - fix/seo-power-command360-live-state-20261114
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: apps/marketplace-web/package-lock.json
+      - name: Verify truthful activation and layout contracts
+        run: node --test apps/marketplace-web/scripts/seo-power-ci/r5-1-usability.test.mjs
+      - name: Install exact dependencies
+        working-directory: apps/marketplace-web
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: R5 strict TypeScript check
+        working-directory: apps/marketplace-web
+        run: npx tsc -p tsconfig.seo-power-r5.json --pretty false
+      - name: Protect non-SEO source
+        run: |
+          set -euo pipefail
+          git diff --name-only 32399b69f2682f5c45a744a9e93e3304e3cbd211 HEAD | tee /tmp/r5-1-diff
+          if grep -Ev '^(apps/marketplace-web/angelcare-marketplace/seo-power/(Command360\.tsx|command360\.module\.css|command-r5-api\.ts)|apps/marketplace-web/scripts/seo-power-ci/r5-1-usability\.test\.mjs|\.github/workflows/seo-power-r5-1-usability-verify\.yml)$' /tmp/r5-1-diff; then
+            echo "UNAUTHORIZED_FRONTEND_SCOPE"; exit 1
+          fi

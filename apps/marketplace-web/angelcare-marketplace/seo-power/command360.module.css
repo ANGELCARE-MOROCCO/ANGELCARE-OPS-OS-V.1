@@ -175,3 +175,55 @@
 @keyframes spin{to{transform:rotate(360deg)}}
 @media(max-width:1300px){.metricGrid{grid-template-columns:repeat(3,minmax(0,1fr))}.googleGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.twoColumns{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:760px){.root{padding:13px 10px 40px}.hero{flex-direction:column;align-items:stretch;padding:20px}.heroActions{align-self:flex-start;max-width:none}.switchRow{align-items:flex-start;flex-direction:column}.metricGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.capacityGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.processSteps{grid-template-columns:repeat(3,minmax(0,1fr))}.campaignGrid{grid-template-columns:1fr}.campaignFoot{align-items:flex-start;flex-direction:column}.formCapacity,.formCols{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* R5.1 production usability repair — compact desktop command/navigation and no empty tall panel */
+.root{width:100%;max-width:100%;overflow-x:clip;padding:18px clamp(18px,2vw,32px) 48px}
+.hero{min-height:unset;padding:22px 27px;align-items:center;gap:18px}
+.hero:before{right:-90px;top:-190px}
+.hero h1{font-size:clamp(26px,2vw,33px);margin:10px 0 8px}
+.hero p{max-width:730px;font-size:12px}
+.heroMeta{margin-top:12px;gap:13px}
+.heroActions{align-self:center;flex:0 0 300px;max-width:300px;justify-content:flex-end}
+.root .heroActions button{font-size:11px;padding:9px 11px}
+.switchRow{margin:13px 0 10px}
+.tabs{flex-wrap:wrap;overflow-x:visible;gap:6px;padding:7px;margin-bottom:14px;align-items:center}
+.root .tabs button{padding:10px 12px;min-height:39px;font-size:11px;flex:0 0 auto}
+.twoColumns{align-items:start;grid-template-columns:minmax(0,1.55fr) minmax(350px,1fr)}
+.stack{min-width:0}
+.panel{padding:19px}
+.panelHead{margin-bottom:13px}
+.panelHead h2{margin-top:4px}
+.metricGrid{gap:10px}
+.metric{min-height:104px;padding:13px 14px;gap:8px}
+.metric strong{font-size:clamp(20px,1.6vw,27px)}
+.activation{display:grid;grid-template-columns:minmax(290px,1fr) minmax(410px,1.45fr);gap:13px 18px;align-items:center;background:#fffaf0;border-color:#e8dcbf;padding:17px 19px}
+.activationIntro h2{font-weight:850;color:#6c5428;font-size:15px;margin:5px 0;letter-spacing:-.15px}
+.activationIntro p{font-size:11px;line-height:1.6;color:#877557;margin:5px 0}
+.activationChecks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.activationChecks>div{display:flex;align-items:center;gap:9px;border-radius:9px;border:1px solid #e8ddc7;background:#fffefa;padding:8px 10px;min-width:0}
+.activationChecks>div[data-ok=true]{border-color:#c8e4d4;background:#f6fcf8}
+.activationChecks>div>span{display:inline-flex;color:#b58533;flex:none}
+.activationChecks>div[data-ok=true]>span{color:#16865f}
+.activationChecks>div>div{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}
+.activationChecks b{color:#4d5e50;font-size:10px}
+.activationChecks small{font-size:9px;color:#93866c;overflow-wrap:anywhere}
+.activationChecks strong{margin:0;font-size:9px;color:#9b702e;white-space:nowrap}
+.activationChecks>div[data-ok=true] strong{color:#228264}
+.activationActions{display:flex;align-items:center;gap:7px;grid-column:1/-1;border-top:1px solid #eddfc5;padding-top:11px}
+.root .activationActions button{padding:8px 11px;font-size:10px}
+.operatorFallback{display:flex;flex-direction:column;gap:8px}
+.emptyCampaign{background:#f7faf8;border:1px solid #e6ede9;border-radius:10px;display:flex;gap:13px;align-items:center;padding:14px}
+.emptyCampaignIcon{width:39px;height:39px;display:flex;align-items:center;justify-content:center;background:#e2f1e9;color:#0c7e67;border-radius:10px;flex:none}
+.emptyCampaign strong{font-size:12px;display:block;color:#23463c}
+.emptyCampaign p{font-size:11px;margin:3px 0 0;line-height:1.5}
+.subhead{display:flex;justify-content:space-between;gap:12px;color:#799189;font-size:9px;font-weight:850;letter-spacing:1px;padding:10px 3px 4px}
+.subhead span:last-child{font-weight:600;letter-spacing:0;color:#9baaa2}
+.legacyRun{display:flex;align-items:center;gap:10px;padding:10px 5px;border-bottom:1px solid #edf2ee}
+.legacyRun:last-child{border-bottom:0}
+.runSource{height:30px;width:30px;background:#eaf3ee;color:#14856e;border-radius:8px;display:flex;align-items:center;justify-content:center;flex:none}
+.runDetails{flex:1;min-width:0}
+.runDetails b{font-size:11px;display:block}
+.runDetails small{font-size:10px;color:#8da199;display:block;margin-top:4px}
+.fallbackActions{display:flex;align-items:center;gap:8px;padding-top:10px}
+@media(max-width:1200px){.activation{grid-template-columns:1fr}.activationChecks{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{flex-wrap:wrap}.heroActions{max-width:none;flex:1 1 100%;justify-content:flex-start}.twoColumns{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:650px){.activationChecks{grid-template-columns:1fr}.root .tabs button{min-width:auto}.root{padding:10px 10px 28px}.hero{padding:17px}.heroActions{flex-wrap:wrap}}

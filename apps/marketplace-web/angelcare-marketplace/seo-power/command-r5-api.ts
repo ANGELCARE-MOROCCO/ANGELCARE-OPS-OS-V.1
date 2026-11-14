@@ -34,11 +34,20 @@ export async function commandGet(request:Request){
       return NextResponse.json({data:{ready:false,reason:"Migration Command 360 R5 non disponible.",code:status.error.code||"R5_MIGRATION_REQUIRED",observedAt:new Date().toISOString(),engineFlag:commandEnabled()},requestId:rid},{headers:{"Cache-Control":"no-store"}});
     }
     const data=record(status.data);
-    const liveEngine=await (async()=>{
-      if(!commandEnabled())return false;
-      try{return Boolean(await resolveScaleR4())}catch{return false}
-    })();
-    return NextResponse.json({data:{...data,ready:true,engineFlag:commandEnabled(),r4Effective:liveEngine},requestId:rid},{headers:{"Cache-Control":"no-store"}});
+    const r4Database=record(data.r4).enabled===true;
+    // R4 must be reported independently of the R5 flag. The previous code
+    // hid an enabled R4 worker whenever R5's environment flag was absent.
+    const r4Deployment=process.env.SEO_POWER_ENGINE_R4_ENABLED==="1";
+    const r5Deployment=commandEnabled();
+    const r5Database=record(data.control).enabled===true;
+    const activation={
+      r4Deployment,r4Database,r5Deployment,r5Database,
+      r4Effective:r4Deployment&&r4Database,
+      r5Effective:r4Deployment&&r4Database&&r5Deployment&&r5Database,
+    };
+    return NextResponse.json({data:{...data,ready:true,engineFlag:r5Deployment,
+      r4Effective:activation.r4Effective,activation},requestId:rid},
+      {headers:{"Cache-Control":"no-store"}});
   }catch(error){return failure(error,rid)}
 }
 export async function commandPost(request:Request){
