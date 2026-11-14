@@ -31,6 +31,8 @@ test("Every critical UI action hits a guarded server authority",()=>{
  assert.match(api,/customerAccountId/);
  assert.match(ui,/lastSaved\.current/);
  assert.match(ui,/submissionKey\.current/);
+ assert.match(ui,/setTab\("validation"\)/);
+ assert.doesNotMatch(ui,/nextTab\(\)/);
  assert.match(ui,/Importer panier/);
  assert.match(ui,/Modèles/);
  assert.match(ui,/importPriorOrder/);

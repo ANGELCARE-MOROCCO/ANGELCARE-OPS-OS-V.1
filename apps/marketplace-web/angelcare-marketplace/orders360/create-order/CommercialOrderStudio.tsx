@@ -174,7 +174,7 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
    revisionRef.current=Number(result.version||0);setRevision(revisionRef.current);
    lastSaved.current=signature;startSaveKey.current="";startSavePayload.current="";
    setDrafts(before=>[result,...before.filter(d=>d.id!==result.id)].slice(0,60));
-   setSaveState("saved");setApproval(result.approval_state||"none");setError("");
+   setSaveState(JSON.stringify(latestDraft.current)===signature?"saved":"idle");setApproval(result.approval_state||"none");setError("");
   }catch(e){setSaveState("error");setError(e instanceof Error?e.message:"Enregistrement indisponible.")}
   finally{saveBusy.current=false}
  }
@@ -268,7 +268,8 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
   finally{setBusy(false)}
  }
  async function submit(){
-  if(!valid||busy||!draftId||created)return;
+  if(busy||!draftId||created)return;
+  if(!valid){setTab("validation");setError("La commande n'est pas prête. Examinez les contrôles de validation et sauvegardez les modifications avant de soumettre.");return;}
   setBusy(true);setError("");
   const key=submissionKey.current||(submissionKey.current=crypto.randomUUID());
   try{
@@ -279,7 +280,6 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
   finally{setBusy(false)}
  }
  const readonlyPayment=["none","card","bank_transfer","invoice","ac_wallet","cash_on_delivery","manual_verified"];
- const nextTab=()=>{const idx=tabs.findIndex(t=>t.id===tab);setTab(tabs[Math.min(idx+1,tabs.length-1)].id)};
  return <div className={s.overlay} role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)close()}}>
   <div className={s.modal} ref={dialog} role="dialog" aria-modal="true" aria-labelledby="commercial-studio-title">
    <div className={s.header}>
@@ -393,7 +393,7 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
     {created?"Commande créée":saveState==="saving"?"Enregistrement…":saveState==="saved"?"Brouillon enregistré · version "+revision:saveState==="error"?"Échec de sauvegarde":"Modifications non enregistrées"}</div>
     <div className={s.footerActions}><button onClick={close}>Annuler</button><button onClick={()=>void save()} disabled={busy||created!==null}><Save size={16}/> Enregistrer</button>
      {approvalRequired&&approval!=="approved"?<button className={s.approvalBtn} onClick={()=>void requestApproval()} disabled={busy||isDirty||!draft.lines.length||approval==="requested"}><Users size={16}/>{approval==="requested"?"En attente d'approbation":"Demander validation"}</button>:null}
-     <button className={s.primary} disabled={busy||created!==null||!draft.lines.length} onClick={()=>tab==="validation"?void submit():nextTab()}>{busy?"Traitement…":tab==="validation"?"Créer la commande":"Continuer vers validation"} <ArrowRight size={16}/></button>
+     <button className={s.primary} disabled={busy||created!==null||!draft.lines.length} onClick={()=>tab==="validation"?void submit():setTab("validation")}>{busy?"Traitement…":tab==="validation"?"Créer la commande":"Continuer vers validation"} <ArrowRight size={16}/></button>
     </div>
    </footer>
   </div>
