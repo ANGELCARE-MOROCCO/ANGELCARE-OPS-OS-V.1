@@ -1,0 +1,21 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "types/**/*.d.ts",
+    "app/angelcare-marketplace/(protected)/admin/imports/[section]/page.tsx",
+    "app/api/angelcare-marketplace/admin/imports/media/vault/route.ts",
+    "angelcare-marketplace/import-command/MediaImport360.tsx",
+    "angelcare-marketplace/import-command/MediaVault360.tsx",
+    "angelcare-marketplace/commerce-studio/components/MediaLibraryStudio.tsx",
+    "angelcare-marketplace/digital-customer-experience/media-vault-authority.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next"
+  ]
+}

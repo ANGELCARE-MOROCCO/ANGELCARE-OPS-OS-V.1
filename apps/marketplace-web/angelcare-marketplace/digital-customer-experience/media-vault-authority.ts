@@ -13,10 +13,10 @@ const number = (v: unknown, min: number, max: number) => {
   return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : min;
 };
 const safeText = (v: unknown, max = 120) => text(v).slice(0, max);
-function permitted(c: Context) {
-  if (!hasMarketplacePermission(c, "marketplace.digital_experience.view") ||
-      !hasMarketplacePermission(c, "marketplace.media.view"))
-    throw new MarketplaceError("PERMISSION_DENIED", "Media Vault requires Digital Experience view and native Media view permission.");
+function permitted(c: Context, authority: "digital-experience" | "media-import" = "digital-experience") {
+  if (!hasMarketplacePermission(c, "marketplace.media.view") ||
+      (authority === "digital-experience" && !hasMarketplacePermission(c, "marketplace.digital_experience.view")))
+    throw new MarketplaceError("PERMISSION_DENIED", "Native Media Vault permission required.");
 }
 
 export type NativeVaultFolder = {
@@ -75,8 +75,8 @@ const folderToRow = (r: Row) => ({
   id:r.id, name:r.name, slug:r.slug, parent_id:r.parent_id,
   status:r.status, item_count:null,
 });
-export async function vaultFolders(c: Context, input: Input) {
-  permitted(c);
+export async function vaultFolders(c: Context, input: Input, authority: "digital-experience" | "media-import" = "digital-experience") {
+  permitted(c, authority);
   const db = await createServiceClient();
   const page = Math.max(1, Math.floor(number(input.page ?? 1, 1, 100000)));
   const pageSize = 500;
@@ -175,8 +175,8 @@ const mapAsset = (r: Row, byFolder: Map<string, NativeVaultFolder>) => {
     createdAt:r.created_at || "",updatedAt:r.updated_at || "",
   };
 };
-export async function vaultMedia(c: Context, input: Input) {
-  permitted(c);
+export async function vaultMedia(c: Context, input: Input, authority: "digital-experience" | "media-import" = "digital-experience") {
+  permitted(c, authority);
   const db=await createServiceClient();
   const pageSize=vaultPageSize(input);
   const page=Math.max(1,Math.floor(number(input.page ?? 1,1,100000)));

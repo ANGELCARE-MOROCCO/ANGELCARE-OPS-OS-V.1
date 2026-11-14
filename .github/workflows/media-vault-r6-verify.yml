@@ -1,0 +1,42 @@
+name: Media Import and Vault 360 R6 Verification
+on:
+  push:
+    branches:
+      - feature/media-import-vault360-r6-20261114
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  r6:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: apps/marketplace-web/package-lock.json
+      - name: Check source-level ingestion and vault contracts
+        run: node --test apps/marketplace-web/scripts/media-vault-ci/r6-import-vault.test.mjs
+      - name: Install marketplace dependencies
+        working-directory: apps/marketplace-web
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Typecheck R6 and all imported dependencies
+        working-directory: apps/marketplace-web
+        env:
+          NODE_OPTIONS: --max-old-space-size=8192
+        run: npx tsc -p tsconfig.media-vault-r6.json --pretty false
+      - name: Protected shell/storefront release boundary
+        run: |
+          set -euo pipefail
+          BASE=9e8e6be453063254f01ab9e230a5f90ccc91fdf9
+          git diff --name-only "$BASE" HEAD | tee /tmp/r6-changed
+          if grep -Ev '^(apps/marketplace-web/(app/angelcare-marketplace/\(protected\)/admin/imports/\[section\]/page\.tsx|app/api/angelcare-marketplace/admin/imports/media/vault/route\.ts|angelcare-marketplace/(commerce-studio/(components/MediaLibraryStudio\.tsx|commerce-studio\.module\.css)|digital-customer-experience/media-vault-authority\.ts|import-command/(MediaVault360\.tsx|MediaImport360\.tsx|media-vault-r6\.module\.css))|scripts/media-vault-ci/r6-import-vault\.test\.mjs|tsconfig\.media-vault-r6\.json)|\.github/workflows/media-vault-r6-verify\.yml)$' /tmp/r6-changed; then
+           echo R6_UNAUTHORIZED_SOURCE_CHANGE; exit 1
+          fi
+          echo R6_GLOBAL_SHELL_AND_PUBLIC_STOREFRONTS_UNMODIFIED=PASS

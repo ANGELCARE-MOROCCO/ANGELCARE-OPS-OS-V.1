@@ -78,3 +78,105 @@
 /* Business Import Command Pro Max — expert registry */
 .expertImportHero{display:grid;grid-template-columns:1fr 300px;gap:18px;padding:22px;border:1px solid #ead9db;border-radius:18px;background:linear-gradient(135deg,#fff 0%,#fff3f4 100%)}.expertImportHero>div>span,.expertSourcePanel header span,.expertImpactPanel header span,.expertExecutionGate>div>span{font-size:9px;letter-spacing:.14em;font-weight:900;color:#9a3f48}.expertImportHero h1{margin:5px 0 7px;font-size:25px;letter-spacing:-.035em}.expertImportHero p{margin:0;max-width:850px;color:#766467;font-size:12px;line-height:1.6}.expertImportHero aside{display:flex;flex-direction:column;justify-content:center;padding:15px;border:1px solid #efd6d9;border-radius:14px;background:rgba(255,255,255,.78);color:#8f2f37}.expertImportHero aside strong{margin-top:8px;font-size:11px;letter-spacing:.07em}.expertImportHero aside small{margin-top:4px;color:#80696c;line-height:1.5}.expertImportLayout{display:grid;grid-template-columns:220px minmax(360px,.82fr) minmax(390px,1.18fr);gap:12px;margin-top:14px}.expertResourceRail,.expertSourcePanel,.expertImpactPanel{min-width:0;padding:14px;border:1px solid #e1e7e4;border-radius:16px;background:#fff}.expertRailHeading{display:flex;gap:9px;align-items:center;padding:4px 4px 12px}.expertRailHeading div{display:flex;flex-direction:column}.expertRailHeading strong{font-size:12px}.expertRailHeading small{font-size:9px;color:#7b8883}.expertResourceRail section{display:grid;gap:4px;margin:8px 0 13px}.expertResourceRail section>span{padding:0 5px 4px;font-size:8px;letter-spacing:.12em;font-weight:900;color:#8b9692}.expertResourceRail button{border:0;border-radius:9px;background:transparent;padding:8px 9px;text-align:left;font-size:10px;color:#52605b;cursor:pointer}.expertResourceRail button:hover{background:#f6f8f7}.expertResourceRail button[data-active="true"]{background:#fff0f1;color:#8f2f37;font-weight:800}.expertExportLinks{display:grid;grid-template-columns:1fr 1fr;gap:6px;border-top:1px solid #edf0ef;padding-top:10px}.expertExportLinks a{display:flex;align-items:center;justify-content:center;gap:5px;padding:7px;border:1px solid #e0e6e3;border-radius:8px;color:#4e5d57;text-decoration:none;font-size:9px;font-weight:800}.expertSourcePanel header,.expertImpactPanel header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}.expertSourcePanel header h2,.expertImpactPanel header h2{margin:3px 0 0;font-size:17px}.expertSourcePanel header em{font-style:normal;padding:5px 7px;border-radius:999px;background:#f3f6f4;color:#60706a;font-size:8px;font-weight:850}.expertImpactPanel header>svg{color:#9a3f48}.expertMetricGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.expertMetricGrid article{padding:10px;border-radius:10px;background:#f7f9f8;border:1px solid #edf1ef}.expertMetricGrid strong{display:block;font-size:18px}.expertMetricGrid span{font-size:8px;letter-spacing:.09em;color:#7a8782}.expertMetricGrid article[data-risk="true"]{background:#fff0f1;color:#962f3a}.expertDiffList{display:grid;gap:5px;max-height:520px;overflow:auto;margin-top:10px}.expertDiffList article{display:grid;grid-template-columns:34px 78px minmax(80px,.8fr) minmax(120px,1.4fr);gap:7px;align-items:center;padding:8px;border:1px solid #edf1ef;border-radius:9px;font-size:9px}.expertDiffList article>span{color:#929d99}.expertDiffList article>strong{font-size:8px;color:#27644f}.expertDiffList article[data-action="blocked"]>strong{color:#a5323e}.expertDiffList article[data-action="unchanged"]{opacity:.63}.expertDiffList small,.expertDiffList em{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.expertDiffList em{font-style:normal;color:#66746f}.expertNote{font-size:9px;color:#788681}.expertEmpty{min-height:250px;display:grid;place-items:center;align-content:center;text-align:center;color:#7c8884}.expertEmpty strong{margin-top:7px;font-size:12px}.expertEmpty p{max-width:260px;font-size:10px;line-height:1.5}.expertExecutionGate{display:grid;grid-template-columns:1fr minmax(280px,.7fr) auto;gap:18px;align-items:center;margin-top:12px;padding:18px;border:1px solid #ead4d7;border-radius:16px;background:#fff7f7}.expertExecutionGate[data-ready="true"]{border-color:#cfe5da;background:#f4fbf7}.expertExecutionGate h2{margin:4px 0;font-size:17px}.expertExecutionGate p{margin:0;color:#6e7c76;font-size:10px}.expertExecutionGate label{display:flex;gap:8px;align-items:flex-start;font-size:10px;line-height:1.5;color:#53615c}.dangerAction{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 13px;border:1px solid #a53642;border-radius:10px;background:#98323d;color:#fff;font-weight:800;cursor:pointer}.dangerAction:disabled{opacity:.4;cursor:not-allowed}
 @media(max-width:1250px){.expertImportLayout{grid-template-columns:190px 1fr}.expertImpactPanel{grid-column:1/-1}.expertExecutionGate{grid-template-columns:1fr 1fr}.expertExecutionGate button{grid-column:1/-1}}@media(max-width:800px){.expertImportHero{grid-template-columns:1fr}.expertImportLayout{grid-template-columns:1fr}.expertResourceRail{display:none}.expertMetricGrid{grid-template-columns:1fr 1fr}.expertExecutionGate{grid-template-columns:1fr}.expertExecutionGate button{grid-column:auto}}
+
+/* Media Import & Vault Command Center R6: isolated, approved body-only visual doctrine. */
+.shell[data-import-command="r6"]{
+ --navy:#18493c;--navy2:#0b6b53;--blue:#08775d;--ink:#172e2a;
+ --muted:#708779;--line:#e0e9e2;--soft:#f6faf7;--green:#087b5a;
+ background:#fff;color:var(--ink);padding:12px 17px 18px;border:0;min-height:0;
+}
+.shell[data-import-command="r6"] .mediaOperationsGrid{
+ display:grid;grid-template-columns:minmax(300px,.92fr) minmax(0,1.75fr);
+ gap:14px;margin:0;align-items:start;
+}
+.shell[data-import-command="r6"] .uploadPanel{
+ background:#fff;border:1px solid #e1e9e3;border-radius:12px;
+ box-shadow:0 4px 18px #0b4d2a08;padding:17px;min-width:0;
+}
+.shell[data-import-command="r6"] .batchPanel{
+ border:1px solid #e1e9e3;border-radius:12px;min-height:360px;
+ background:#fff;box-shadow:0 4px 18px #0b4d2a08;min-width:0;
+ scroll-margin-top:24px;
+}
+.shell[data-import-command="r6"] .uploadPanel h2{
+ font-size:16px;font-weight:850;color:#183a30;margin:0 0 12px;
+ letter-spacing:-.3px;display:flex;align-items:center;gap:8px;
+}
+.shell[data-import-command="r6"] .uploadPanel h2 svg{color:#0a8362}
+.shell[data-import-command="r6"] .ingestionSourceGrid{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;
+ padding:9px;border:1px dashed #badbd0;background:#fbfefb;border-radius:12px;
+}
+.shell[data-import-command="r6"] .ingestionSourceGrid>*,.shell[data-import-command="r6"] .manifestSource{min-width:0}
+.shell[data-import-command="r6"] .ingestionSourceGrid>div{
+ border-radius:9px;min-height:135px;
+}
+.shell[data-import-command="r6"] .manifestSource{display:flex}
+.shell[data-import-command="r6"] .manifestSource>*{width:100%}
+.shell[data-import-command="r6"] .batchPanel>header{
+ padding:13px 16px;border-bottom-color:#e9efea;background:#f9fcfa;
+}
+.shell[data-import-command="r6"] .batchPanel>header span{color:#0d8b68;font-size:10px;letter-spacing:1px}
+.shell[data-import-command="r6"] .batchPanel>header h2{font-size:16px;font-weight:850;color:#193d31}
+.shell[data-import-command="r6"] .batchPanel>header>strong{
+ color:#18755a;font-size:10px;background:#eaf7ee;border-radius:6px;padding:7px 9px
+}
+.shell[data-import-command="r6"] .batchTableWrap{max-height:480px}
+.shell[data-import-command="r6"] .batchTable{min-width:950px}
+.shell[data-import-command="r6"] .batchTable th{
+ background:#f5f8f6;color:#556e61;font-size:9px;font-weight:850;letter-spacing:.35px;padding:11px
+}
+.shell[data-import-command="r6"] .batchTable td{font-size:10px;padding:11px 9px}
+.shell[data-import-command="r6"] .batchTable td:first-child{min-width:150px}
+.shell[data-import-command="r6"] .batchTable input,
+.shell[data-import-command="r6"] .batchTable select{
+ border:1px solid #dce7df;border-radius:7px;padding:8px 9px;
+ background:#fff;color:#1e4233;max-width:145px;min-height:34px;font-size:10px
+}
+.shell[data-import-command="r6"] .batchTable progress{accent-color:#0c8d69}
+.shell[data-import-command="r6"] .batchActions{gap:8px;margin-top:15px}
+.shell[data-import-command="r6"] .batchActions button,
+.shell[data-import-command="r6"] .postUploadActions button{
+ padding:10px 12px;font-size:10px;border:1px solid #cae2d5;
+ background:#fff;color:#136d53;border-radius:8px;
+}
+.shell[data-import-command="r6"] .batchActions button:first-child{
+ background:#eaf7ef;color:#087b57;border-color:#a8d5c1;
+}
+.shell[data-import-command="r6"] .batchActions button:nth-child(2){
+ background:#087a5a;color:#fff;border-color:#087a5a;
+}
+.shell[data-import-command="r6"] .batchActions button:disabled{opacity:.45}
+.shell[data-import-command="r6"] .uploadPanel .field{
+ color:#446653;font-size:10px;font-weight:850;
+}
+.shell[data-import-command="r6"] .uploadPanel select,
+.shell[data-import-command="r6"] .uploadPanel input{
+ color:#173c2c;background:#fff;border:1px solid #dce8df;border-radius:7px;
+}
+.shell[data-import-command="r6"] .folderBreadcrumb{background:#f4faf6;color:#527961}
+.shell[data-import-command="r6"] .storageHealthLink{
+ font-size:10px;border-color:#dfebe3;color:#0f7557;
+ background:#f7fcf8;
+}
+.shell[data-import-command="r6"] .mappingPreview{border-color:#dfebdf}
+.shell[data-import-command="r6"] .mappingPreview>header{background:#ecf8f1}
+.shell[data-import-command="r6"] .mappingPreview h3{color:#0d7454}
+.shell[data-import-command="r6"] .postUploadActions{border-color:#e0e9e1}
+.shell[data-import-command="r6"] button:focus-visible,
+.shell[data-import-command="r6"] input:focus-visible,
+.shell[data-import-command="r6"] select:focus-visible{
+ outline:3px solid #79c6a6;outline-offset:1px
+}
+@media(max-width:1440px){
+ .shell[data-import-command="r6"] .ingestionSourceGrid{grid-template-columns:1fr 1fr}
+ .shell[data-import-command="r6"] .manifestSource{grid-column:1/-1}
+}
+@media(max-width:1120px){
+ .shell[data-import-command="r6"] .mediaOperationsGrid{grid-template-columns:1fr}
+ .shell[data-import-command="r6"] .ingestionSourceGrid{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .shell[data-import-command="r6"] .manifestSource{grid-column:auto}
+}
+@media(max-width:800px){
+ .shell[data-import-command="r6"] .ingestionSourceGrid{grid-template-columns:1fr}
+}

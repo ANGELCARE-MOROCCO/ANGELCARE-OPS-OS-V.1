@@ -6,7 +6,7 @@ import { categoryNativeStudioData } from '@/angelcare-marketplace/category-nativ
 import { CsvImportStudio } from '@/angelcare-marketplace/category-native/components/CsvImportStudio'
 import { commerceStudioData } from '@/angelcare-marketplace/commerce-studio/repository'
 import { ImportExportStudio } from '@/angelcare-marketplace/commerce-studio/components/ImportExportStudio'
-import { MediaLibraryStudio } from '@/angelcare-marketplace/commerce-studio/components/MediaLibraryStudio'
+import { MediaImport360 } from '@/angelcare-marketplace/import-command/MediaImport360'
 import { ProductImportStudio } from '@/angelcare-marketplace/enterprise-command/components/ProductImportStudio'
 import { CsvCenter } from '@/angelcare-marketplace/localization-intelligence/components/CsvCenter'
 import { WalletPolicyImportStudio } from '@/angelcare-marketplace/customer-commerce/components/WalletPolicyImportStudio'
@@ -30,7 +30,7 @@ export default async function Page({params}:{params:Promise<{section:string}>}){
   }else if(section==='media'){
     const context=await requireMarketplacePageContext('marketplace.media.view')
     const data=await commerceStudioData(context)
-    content=<MediaLibraryStudio initialMedia={data.media} initialFolders={data.mediaFolders} catalogItems={data.catalogItems} mode="ingestion" canManage={hasMarketplacePermission(context,'marketplace.media.manage')}/>
+    content=<MediaImport360 initialMedia={data.media} initialFolders={data.mediaFolders} catalogItems={data.catalogItems} canManage={hasMarketplacePermission(context,'marketplace.media.manage')}/>
   }else if(section==='localization'){
     await requireMarketplacePageContext('marketplace.localization.access')
     content=<CsvCenter/>
