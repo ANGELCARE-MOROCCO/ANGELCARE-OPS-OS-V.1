@@ -1,0 +1,49 @@
+name: ANGELCARE Commercial Order Studio R7 Validation
+on:
+  push:
+    branches: [feature/orders360-commercial-studio-r7-20261114]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: apps/marketplace-web/package-lock.json
+      - name: Source and visual-parity contracts
+        run: node --test apps/marketplace-web/scripts/orders360-ci/commercial-r7.test.mjs
+      - name: Verify SQL parses under PostgreSQL dialect
+        run: |
+          python3 -m pip install --quiet --user pglast==7.10
+          python3 - <<'PY'
+          from pathlib import Path
+          from pglast import parse_sql
+          sql=Path('apps/marketplace-web/supabase/migrations/20261114115500_angelcare_commercial_order_studio_r7.sql').read_text()
+          statements=parse_sql(sql)
+          assert len(statements)>=10, len(statements)
+          print('R7_SQL_SYNTAX=PASS',len(statements))
+          PY
+      - name: Install exact Marketplace dependencies
+        working-directory: apps/marketplace-web
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: TypeScript compile
+        working-directory: apps/marketplace-web
+        env:
+          NODE_OPTIONS: --max-old-space-size=8192
+        run: npx tsc -p tsconfig.orders360-r7.json --pretty false
+      - name: Protected admin shell and storefront gate
+        run: |
+          set -euo pipefail
+          git diff --name-only c1eea64ffcf713ec93df07ac62c137170dc11d83 HEAD | tee /tmp/r7-diff
+          if grep -Ev '^(apps/marketplace-web/angelcare-marketplace/orders360/(Workspace\.tsx|create-order/.*)|apps/marketplace-web/app/api/angelcare-marketplace/admin/orders/commercial-studio/route\.ts|apps/marketplace-web/supabase/migrations/20261114115500_angelcare_commercial_order_studio_r7\.sql|apps/marketplace-web/scripts/orders360-ci/commercial-r7\.test\.mjs|apps/marketplace-web/tsconfig\.orders360-r7\.json|\.github/workflows/orders360-commercial-r7-verify\.yml)$' /tmp/r7-diff; then
+            echo 'OUT_OF_SCOPE_CHANGE'; exit 1
+          fi
+          echo 'ADMIN_SHELL_AND_STOREFRONT_PRESERVED=PASS'

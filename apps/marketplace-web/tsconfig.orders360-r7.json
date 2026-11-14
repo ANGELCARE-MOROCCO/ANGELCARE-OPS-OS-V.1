@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "types/**/*.d.ts",
+    "angelcare-marketplace/orders360/create-order/**/*.ts",
+    "angelcare-marketplace/orders360/create-order/**/*.tsx",
+    "angelcare-marketplace/orders360/Workspace.tsx",
+    "app/api/angelcare-marketplace/admin/orders/commercial-studio/route.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next"
+  ]
+}
