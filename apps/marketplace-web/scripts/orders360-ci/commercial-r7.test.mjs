@@ -58,6 +58,8 @@ test("Backend preserves canonical order and payment authority",()=>{
 test("Migration is paired, additive, service-role only and transactional",()=>{
  assert.match(sql,/^begin;/m);assert.match(sql,/^commit;/m);
  assert.equal((sql.match(/\$\$/g)||[]).length,8);
+ assert.equal((sql.match(/^commit;/gm)||[]).length,1,"Duplicate migration body");
+ assert.equal((sql.match(/R7_RECURRENCE_REQUIRED/g)||[]).length,1);
  assert.match(sql,/enable row level security/);
  assert.match(sql,/revoke all on function/);
  assert.match(sql,/grant execute on function/);

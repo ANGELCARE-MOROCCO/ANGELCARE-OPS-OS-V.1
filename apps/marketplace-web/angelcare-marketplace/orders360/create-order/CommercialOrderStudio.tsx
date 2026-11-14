@@ -173,6 +173,7 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
    const result=await request<SavedDraft>("save",{id:idRef.current,expectedVersion:revisionRef.current,payload:current},usedKey);
    revisionRef.current=Number(result.version||0);setRevision(revisionRef.current);
    lastSaved.current=signature;startSaveKey.current="";startSavePayload.current="";
+   setDrafts(before=>[result,...before.filter(d=>d.id!==result.id)].slice(0,60));
    setSaveState("saved");setApproval(result.approval_state||"none");setError("");
   }catch(e){setSaveState("error");setError(e instanceof Error?e.message:"Enregistrement indisponible.")}
   finally{saveBusy.current=false}
@@ -300,7 +301,7 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
      <aside className={s.customerCol}>
       <Section title="CLIENT 360 — PROFIL COMMERCIAL" icon={Users}>
        <label className={s.search}><Search size={15}/><input aria-label="Rechercher un client" placeholder="Rechercher nom, téléphone, email, ID…" value={customerQuery} onChange={e=>setCustomerQuery(e.target.value)}/></label>
-       {customerQuery?<div className={s.results}>{customers.map(c=><button key={c.id} onClick={()=>{update({customerAccountId:c.id,guestName:"",guestEmail:"",guestPhone:""});setCustomerQuery("")}}><b>{c.display_name}</b><small>{c.public_reference} · {c.email||c.phone||"Contact à compléter"}</small></button>)}</div>:null}
+       {customerQuery?<div className={s.results}>{customers.map(c=><button key={c.id} onClick={()=>{update({customerAccountId:c.id,guestName:"",guestEmail:"",guestPhone:"",sourceOrderId:null});setCustomerQuery("")}}><b>{c.display_name}</b><small>{c.public_reference} · {c.email||c.phone||"Contact à compléter"}</small></button>)}</div>:null}
        {customer?<div className={s.clientProfile}><div className={s.clientTop}><span className={s.avatar}><Users size={24}/></span><div><h3>{customer.display_name}</h3><small>{customer.public_reference}</small><span className={s.greenChip}><BadgeCheck size={12}/> Client sélectionné</span></div><button className={s.iconOnly} onClick={()=>update({customerAccountId:""})} title="Changer le client"><X size={14}/></button></div>
         <div className={s.contacts}>{customer.email?<span><Mail size={14}/>{customer.email}</span>:null}{customer.phone?<span><UserRound size={14}/>{customer.phone}</span>:null}</div>
         <div className={s.creamBox}><b>Profil client</b><small>Référence canonique · Gestion par le dossier CRM</small></div>

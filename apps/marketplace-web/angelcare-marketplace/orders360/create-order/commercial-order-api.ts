@@ -179,6 +179,8 @@ export async function commercialPost(request:Request){
   let data:unknown;
   if(action==="quote"){
    const payload=safePayload(input.payload);
+   if(ctx.territoryId&&payload.territoryId&&payload.territoryId!==ctx.territoryId)
+    throw new MarketplaceError("SCOPE_MISMATCH","Territoire hors de votre périmètre.");
    const customerId=payload.customerAccountId;
    if(customerId){
     const customer=await scoped(db.from("angelcare_marketplace_customer_accounts")
@@ -189,6 +191,8 @@ export async function commercialPost(request:Request){
    data=status(q.error,"Calcul commercial",q.data);
   }else if(action==="save"){
    const payload=safePayload(input.payload);
+   if(ctx.territoryId&&payload.territoryId&&payload.territoryId!==ctx.territoryId)
+    throw new MarketplaceError("SCOPE_MISMATCH","Territoire hors de votre périmètre.");
    const id=uuid(input.id,"Brouillon"),expected=int(input.expectedVersion,0,10000000);
    if(payload.customerAccountId){
     const customer=await scoped(db.from("angelcare_marketplace_customer_accounts").select("id").eq("id",payload.customerAccountId),ctx).maybeSingle();
