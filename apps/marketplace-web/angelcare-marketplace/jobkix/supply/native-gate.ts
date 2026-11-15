@@ -48,7 +48,7 @@ export function sourceIdentityKey(sourceId:string,externalRef:unknown,url:unknow
  return `jobkix-r3\0${sourceId.toLowerCase()}\0${stable}`;
 }
 export const MANUAL_FIELDS=['settingId','occupationId','workSchedule','contractType','sponsorship','relocation'] as const;
-export function mergeEnrichment(sourceNormalized:unknown,previousNormalized:unknown,protectLegacy=false):FieldMap{
+export function mergeEnrichment(sourceNormalized:unknown,previousNormalized:unknown,protectLegacy=false,sourceCanonicalUrl=''):FieldMap{
  const source=object(sourceNormalized),previous=object(previousNormalized),stored=object(previous.manualOverrides);
  const overrides:FieldMap={};
  for(const name of MANUAL_FIELDS){
@@ -56,7 +56,7 @@ export function mergeEnrichment(sourceNormalized:unknown,previousNormalized:unkn
   else if(protectLegacy&&typeof previous[name]==='string'&&previous[name]!==''&&previous[name]!==null)overrides[name]=previous[name];
  }
  const editorial=object(previous.editorialOverrides);
- const verified=string(editorial.evidenceUrl)===string(previous.editorialEvidenceUrl)&&Boolean(publicHttpsUrl(editorial.evidenceUrl));
+ const verified=Boolean(sourceCanonicalUrl)&&string(editorial.evidenceUrl)===string(sourceCanonicalUrl)&&string(editorial.evidenceUrl)===string(previous.editorialEvidenceUrl)&&Boolean(publicHttpsUrl(editorial.evidenceUrl));
  return {...source,...overrides,...(verified?{duties:editorial.duties,requirements:editorial.requirements,editorialOverrides:editorial,editorialEvidenceUrl:editorial.evidenceUrl}:{}),manualOverrides:overrides};
 }
 export function withManualEnrichment(previousNormalized:unknown,patch:unknown):FieldMap{

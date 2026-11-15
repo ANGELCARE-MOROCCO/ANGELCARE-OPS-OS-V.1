@@ -16,11 +16,12 @@ const faultStatus=(code:string)=>code==='AUTHENTICATION_REQUIRED'?401:
  code==='DEPENDENCY_UNAVAILABLE'?503:422;
 export function supplyFailure(error:unknown):Response {
  const requestId=randomUUID();
+ const accessDenied=error instanceof Error&&['JOBKIX_ACCESS_REQUIRED','JOBKIX_EDITORIAL_ACCESS_REQUIRED'].includes(error.message);
  const dependency=error instanceof Error&&(/Suppl(y|ies) (storage|migration) error:|Missing Supabase server env values:|ECONNREFUSED|ETIMEDOUT|fetch failed|connect timeout/i.test(error.message));
  const code=error instanceof SupplyError?error.code:
-  error instanceof JobkixFault?error.code:dependency?'DEPENDENCY_UNAVAILABLE':'INTERNAL_ERROR';
+  error instanceof JobkixFault?error.code:accessDenied?'FORBIDDEN':dependency?'DEPENDENCY_UNAVAILABLE':'INTERNAL_ERROR';
  const status=error instanceof SupplyError?error.status:
-  error instanceof JobkixFault?faultStatus(error.code):dependency?503:500;
+  error instanceof JobkixFault?faultStatus(error.code):accessDenied?403:dependency?503:500;
  const blockers=error instanceof SupplyError?error.blockers:[];
  const retryable=error instanceof SupplyError?error.retryable:dependency;
  // Secrets and Supabase query strings are kept server-side, never sent to the client.

@@ -36,6 +36,7 @@ async function publishEligible(sourceId:string, actor:string, missionId?:string,
  let published=0,skipped=0;const outcomes:Row[]=[];
  for(const vacancy of rows.data||[]){
   const info=vacancy.normalized&&typeof vacancy.normalized==='object'&&!Array.isArray(vacancy.normalized)?vacancy.normalized as Row:{};
+  if(!automatic&&vacancy.state!=='approved'){skipped++;outcomes.push({id:vacancy.id,status:'blocked',reasons:['EDITORIAL_APPROVAL_REQUIRED']});continue;}
   const eligibility=publicationAssessment(vacancy,{...src.data,config:cfg});
   if(!eligibility.eligible){
    skipped++;outcomes.push({id:vacancy.id,status:'blocked',reasons:eligibility.reasons});continue;
@@ -43,7 +44,7 @@ async function publishEligible(sourceId:string, actor:string, missionId?:string,
   try {
    const {data,error}=await db.rpc('jobkix_supply_r4_decide',{p_id:vacancy.id,p_version:vacancy.version,p_action:'published',p_actor:actor,p_key:randomUUID(),p_automatic:automatic});
    await mandatory({error});const decision=assertDecisionResult(data);published++;outcomes.push({id:vacancy.id,status:'published',version:decision.version});
-  }catch(error){skipped++;outcomes.push({id:vacancy.id,status:'failed',reason:error instanceof Error?error.message:'DEPENDENCY_UNAVAILABLE'});}
+  }catch(error){skipped++;outcomes.push({id:vacancy.id,status:error instanceof SupplyError&&error.code==='PUBLICATION_NOT_ELIGIBLE'?'blocked':'failed',code:error instanceof SupplyError?error.code:'INTERNAL_ERROR',reasons:error instanceof SupplyError?error.blockers.map(x=>x.code):[]});}
 
  }
  return {published,eligible:(rows.data||[]).length,skipped,sourceId,automatic,outcomes};
@@ -279,7 +280,7 @@ export async function workerBatch(worker:string,body:Row){const id=uuid(body.mis
    if(distinct.size>1)throw Error('AMBIGUOUS_EXTERNAL_IDENTITY: manual source deduplication required');
    const existing=[...distinct.values()][0];
    if(existing){
-    const state=String(existing.state),normalized=mergeEnrichment(row.normalized,existing.normalized,Boolean(txt(existing.review_notes))||['approved','published'].includes(state));
+    const state=String(existing.state),normalized=mergeEnrichment(row.normalized,existing.normalized,Boolean(txt(existing.review_notes))||['approved','published'].includes(state),row.canonical_url);
     const sourceRich=(Array.isArray(row.normalized.duties)&&row.normalized.duties.length>0)||(Array.isArray(row.normalized.requirements)&&row.normalized.requirements.length>0);
     const mergedRich=(Array.isArray(normalized.duties)&&normalized.duties.length>0)||(Array.isArray(normalized.requirements)&&normalized.requirements.length>0);
     const editorial=normalized.editorialOverrides&&typeof normalized.editorialOverrides==='object'&&!Array.isArray(normalized.editorialOverrides)?normalized.editorialOverrides as Row:{};
