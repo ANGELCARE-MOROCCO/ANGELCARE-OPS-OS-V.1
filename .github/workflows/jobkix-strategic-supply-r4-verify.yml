@@ -1,0 +1,24 @@
+name: JOBKIX Strategic Supply R4 Regression
+on:
+  pull_request:
+    paths:
+      - 'apps/marketplace-web/angelcare-marketplace/jobkix/supply/**'
+      - 'apps/marketplace-web/angelcare-marketplace/jobkix/migrations/033_strategic_supply_r4_atomic_publication.sql'
+      - 'apps/marketplace-web/angelcare-marketplace/jobkix/admin/StrategicSupply.tsx'
+      - 'apps/marketplace-web/app/api/jobkix/supply/admin/route.ts'
+      - 'apps/marketplace-web/scripts/jobkix/strategic-supply-r4.test.mjs'
+      - '.github/workflows/jobkix-strategic-supply-r4-verify.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Source policy and publication regression
+        working-directory: apps/marketplace-web
+        run: node --experimental-strip-types --test scripts/jobkix/strategic-supply-r4.test.mjs

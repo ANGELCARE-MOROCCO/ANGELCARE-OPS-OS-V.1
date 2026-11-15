@@ -55,7 +55,9 @@ export function mergeEnrichment(sourceNormalized:unknown,previousNormalized:unkn
   if(Object.prototype.hasOwnProperty.call(stored,name)&&typeof stored[name]==='string')overrides[name]=stored[name];
   else if(protectLegacy&&typeof previous[name]==='string'&&previous[name]!==''&&previous[name]!==null)overrides[name]=previous[name];
  }
- return {...source,...overrides,manualOverrides:overrides};
+ const editorial=object(previous.editorialOverrides);
+ const verified=string(editorial.evidenceUrl)===string(previous.editorialEvidenceUrl)&&Boolean(publicHttpsUrl(editorial.evidenceUrl));
+ return {...source,...overrides,...(verified?{duties:editorial.duties,requirements:editorial.requirements,editorialOverrides:editorial,editorialEvidenceUrl:editorial.evidenceUrl}:{}),manualOverrides:overrides};
 }
 export function withManualEnrichment(previousNormalized:unknown,patch:unknown):FieldMap{
  const previous=object(previousNormalized),patchData=object(patch),overrides:FieldMap={...object(previous.manualOverrides)};
@@ -65,7 +67,13 @@ export function withManualEnrichment(previousNormalized:unknown,patch:unknown):F
    overrides[name]=proposed||(name==='sponsorship'||name==='relocation'?'unknown':'');
   }
  }
- return {...previous,...overrides,manualOverrides:overrides};
+ const verified=patchData.editorialVerified===true;
+ const content=(key:'duties'|'requirements')=>{
+  const value=patchData[key];if(typeof value!=='string')return Array.isArray(previous[key])?previous[key]:[];
+  return value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean).slice(0,30).map(x=>x.slice(0,400));
+ };
+ const editorial=verified?{duties:content('duties'),requirements:content('requirements'),evidenceUrl:string(patchData.evidenceUrl)}:null;
+ return {...previous,...overrides,...(editorial?{duties:editorial.duties,requirements:editorial.requirements,editorialOverrides:editorial,editorialEvidenceUrl:editorial.evidenceUrl}:{}),manualOverrides:overrides};
 }
 export type PublicationAssessment={eligible:boolean;reasons:string[]};
 export function publicationAssessment(candidate:ExternalCandidate,source:SourceAuthority,now=Date.now()):PublicationAssessment{

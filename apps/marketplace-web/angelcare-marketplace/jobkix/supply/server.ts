@@ -7,6 +7,8 @@ import {sourceInput,normalizeVacancy,type SourceInput} from './contracts';
 import {collectInlineApi} from './inline-api';
 import {collectFeed} from './r3/feed';
 import {sourceIdentityKey,publicationAssessment,withManualEnrichment,mergeEnrichment} from './native-gate';
+import {randomUUID} from 'node:crypto';
+import {SupplyError,assertDecisionResult} from './errors';
 
 type Row=Record<string,unknown>;
 const fail=(message:string):never=>{throw new Error(message)};
@@ -24,29 +26,27 @@ async function publishEligible(sourceId:string, actor:string, missionId?:string,
  const db=await createServiceClient();
  const src=await db.from('jobkix_supply_sources').select('id,enabled,approved,archived_at,publication_mode,config').eq('id',sourceId).maybeSingle();
  await mandatory(src);
- if(!src.data?.approved||!src.data.enabled||src.data.archived_at||!['metadata','full'].includes(src.data.publication_mode))
+ if(!src.data?.approved||!src.data.enabled||src.data.archived_at||src.data.publication_mode!=='full'
   throw Error('Publication requires an active, explicitly approved source with content permissions');
  const cfg=src.data.config&&typeof src.data.config==='object'?src.data.config as Row:{};
  if(automatic&&cfg.autoPublish!==true) return {published:0,eligible:0};
- const minimum=80;
- let q=db.from('jobkix_supply_vacancies').select('id,version,state,title,company,canonical_url,quality_score,description,city,country,normalized,last_seen').eq('source_id',sourceId).in('state',automatic?['ready']:['ready','approved']).gte('quality_score',minimum).order('last_seen',{ascending:false}).limit(Math.max(1,Math.min(100,limit)));
+ let q=db.from('jobkix_supply_vacancies').select('id,version,state,title,company,canonical_url,quality_score,description,city,country,normalized,last_seen').eq('source_id',sourceId).in('state',automatic?['ready']:['ready','approved']) .order('last_seen',{ascending:false}).limit(Math.max(1,Math.min(100,limit)));
  if(missionId)q=q.eq('mission_id',missionId);
  const rows=await q;await mandatory(rows);
- let published=0,skipped=0;
+ let published=0,skipped=0;const outcomes:Row[]=[];
  for(const vacancy of rows.data||[]){
   const info=vacancy.normalized&&typeof vacancy.normalized==='object'&&!Array.isArray(vacancy.normalized)?vacancy.normalized as Row:{};
   const eligibility=publicationAssessment(vacancy,{...src.data,config:cfg});
   if(!eligibility.eligible){
-   skipped++;await event('vacancy.publication_rejected',actor,{source_id:sourceId,vacancy_id:vacancy.id,data:{reasons:eligibility.reasons}});continue;
+   skipped++;outcomes.push({id:vacancy.id,status:'blocked',reasons:eligibility.reasons});continue;
   }
-  const at=new Date().toISOString();
-  const update=await db.from('jobkix_supply_vacancies').update({state:'published',approved_by:vacancy.state==='approved'?undefined:(automatic?null:actor),published_by:automatic?null:actor,published_at:at,version:vacancy.version+1,updated_at:at})
-   .eq('id',vacancy.id).eq('source_id',sourceId).eq('version',vacancy.version).eq('state',vacancy.state).select('id').maybeSingle();
-  await mandatory(update);if(!update.data){skipped++;continue;}
-  published++;
-  await event(automatic?'vacancy.auto_published':'vacancy.bulk_published',actor,{source_id:sourceId,vacancy_id:vacancy.id,data:{missionId:missionId||null,publicationMode:src.data.publication_mode,score:vacancy.quality_score}});
+  try {
+   const {data,error}=await db.rpc('jobkix_supply_r4_decide',{p_id:vacancy.id,p_version:vacancy.version,p_action:'published',p_actor:actor,p_key:randomUUID(),p_automatic:automatic});
+   await mandatory({error});const decision=assertDecisionResult(data);published++;outcomes.push({id:vacancy.id,status:'published',version:decision.version});
+  }catch(error){skipped++;outcomes.push({id:vacancy.id,status:'failed',reason:error instanceof Error?error.message:'DEPENDENCY_UNAVAILABLE'});}
+
  }
- return {published,eligible:(rows.data||[]).length,skipped,sourceId,automatic};
+ return {published,eligible:(rows.data||[]).length,skipped,sourceId,automatic,outcomes};
 }
 
 export async function supplyAdmin(){const c=await requireMarketplaceApiContext('marketplace.admin.access');if(!hasMarketplaceWorkspaceAccess(c,'jobkix.vacancies'))throw new JobkixFault('FORBIDDEN');return c;}
@@ -151,7 +151,13 @@ export async function adminCommand(body:Row):Promise<unknown>{const actor=await 
   const result=await db.from('jobkix_supply_sources').insert({...changes,credential_cipher:p.credential?seal(p.credential):null,created_by:user}).select('id,version').single();await mandatory(result);await event('source.created',user,{source_id:result.data!.id,data:{kind:p.kind,country:p.country}});return result.data;
  }
  if(a==='source.test'){const p=sourceInput(body.source);return {valid:true,engine:p.kind,details:p.kind==='api'?'JSON/RSS field mapping configured':p.kind==='scrapy'?'CSS selectors configured':'JobSpy board parameters configured',note:'Configuration validation only; remote collection is verified by a real mission.'};}
- if(a==='vacancy.batch'){const ids=Array.isArray(body.items)?body.items:[];if(ids.length<1||ids.length>20)fail('Choose 1–20 records');const results=[];for(const item of ids){if(!item||typeof item!=='object')fail('Invalid batch record');const record=item as Row;results.push(await adminCommand({action:'vacancy.decide',id:record.id,version:record.version,decision:body.decision}));}return {changed:results.length,rows:results};}
+ if(a==='vacancy.batch'){
+  const ids=Array.isArray(body.items)?body.items:[];if(ids.length<1||ids.length>20)fail('Choose 1–20 records');
+  const results:Row[]=[];for(const item of ids){if(!item||typeof item!=='object')fail('Invalid batch record');
+   const record=item as Row;try{const value=await adminCommand({action:'vacancy.decide',id:record.id,version:record.version,decision:body.decision,key:randomUUID()});results.push({id:record.id,status:'completed',value});}
+   catch(error){results.push({id:record.id,status:'failed',code:error instanceof SupplyError?error.code:'INTERNAL_ERROR',blockers:error instanceof SupplyError?error.blockers:[]});}
+  }return {changed:results.filter(x=>x.status==='completed').length,failed:results.filter(x=>x.status==='failed').length,rows:results};
+ }
  if(a==='mission.start'){
   const id=uuid(body.sourceId),source=await db.from('jobkix_supply_sources').select('id,name,kind,country,endpoint,config,version,enabled,approved,publication_mode,credential_cipher,credential_header').eq('id',id).maybeSingle();await mandatory(source);
   if(!source.data?.approved||!source.data.enabled)throw new Error('Source is not enabled and approved');
@@ -169,25 +175,46 @@ export async function adminCommand(body:Row):Promise<unknown>{const actor=await 
  if(a==='mission.cancel'){
   const id=uuid(body.id),result=await db.from('jobkix_supply_missions').update({state:'cancelled',ended_at:new Date().toISOString()}).eq('id',id).in('state',['queued','running']).select('id,state').maybeSingle();await mandatory(result);if(!result.data)throw new Error('Only queued/running missions can be cancelled');await event('mission.cancelled',user,{mission_id:id});return result.data;
  }
+ if(a==='vacancy.assess'){
+  if(!hasMarketplaceWorkspaceAccess(actor,'jobkix.editorial'))throw new JobkixFault('FORBIDDEN');
+  const id=uuid(body.id);const {data,error}=await db.rpc('jobkix_supply_r4_assess',{p_id:id});await mandatory({error});return data;
+ }
  if(a==='vacancy.publish_eligible'){
   if(!hasMarketplaceWorkspaceAccess(actor,'jobkix.editorial'))throw new JobkixFault('FORBIDDEN');
   const sourceId=uuid(body.sourceId);return publishEligible(sourceId,user,undefined,Math.max(1,Math.min(100,Number(body.limit)||50)),false);
  }
- if(a==='vacancy.enrich'){const id=uuid(body.id),version=number(body.version);const q=await db.from('jobkix_supply_vacancies').select('id,version,state,normalized').eq('id',id).maybeSingle();await mandatory(q);if(!q.data||q.data.version!==version)throw new JobkixFault('VERSION_CONFLICT');if(q.data.state==='published'||q.data.state==='withdrawn')throw new Error('Withdraw the public listing before editing');const patch=(body.fields&&typeof body.fields==='object'&&!Array.isArray(body.fields)?body.fields:{}) as Row;// Preserve already collected duties, requirements, source provenance and pay when an operator
-  // Persist operator edits separately so a future source refresh cannot erase them.
-  const normalized:Row=withManualEnrichment(q.data.normalized,patch);const notes=txt(body.notes).slice(0,2000);const r=await db.from('jobkix_supply_vacancies').update({normalized,review_notes:notes,version:version+1,updated_at:new Date().toISOString()}).eq('id',id).eq('version',version).select('id,version').maybeSingle();await mandatory(r);if(!r.data)throw new JobkixFault('VERSION_CONFLICT');await event('vacancy.enriched',user,{vacancy_id:id});return r.data;}
+ if(a==='vacancy.enrich'){
+  if(!hasMarketplaceWorkspaceAccess(actor,'jobkix.editorial'))throw new JobkixFault('FORBIDDEN');
+  const id=uuid(body.id),version=number(body.version);
+  const q=await db.from('jobkix_supply_vacancies').select('id,version,state,normalized,canonical_url,quality_score,review_notes').eq('id',id).maybeSingle();
+  await mandatory(q);if(!q.data||q.data.version!==version)throw new JobkixFault('VERSION_CONFLICT');
+  if(q.data.state==='published'||q.data.state==='withdrawn')throw new SupplyError('INVALID_TRANSITION',422);
+  const patch=(body.fields&&typeof body.fields==='object'&&!Array.isArray(body.fields)?body.fields:{}) as Row;
+  const wantsContent=patch.duties!==undefined||patch.requirements!==undefined;
+  if(wantsContent&&(patch.editorialVerified!==true||txt(patch.evidenceUrl)!==q.data.canonical_url))
+   throw new SupplyError('EDITORIAL_SOURCE_EVIDENCE_REQUIRED',422);
+  const normalized=withManualEnrichment(q.data.normalized,patch),notes=txt(body.notes).slice(0,2000);
+  const previous=q.data.normalized&&typeof q.data.normalized==='object'?q.data.normalized as Row:{};
+  const wasRich=(Array.isArray(previous.duties)&&previous.duties.length>0)||(Array.isArray(previous.requirements)&&previous.requirements.length>0);
+  const nowRich=(Array.isArray(normalized.duties)&&normalized.duties.length>0)||(Array.isArray(normalized.requirements)&&normalized.requirements.length>0);
+  const score=Math.min(100,Math.max(0,Number(q.data.quality_score||0)+(nowRich&&!wasRich?10:!nowRich&&wasRich?-10:0)));
+  const r=await db.from('jobkix_supply_vacancies').update({normalized,quality_score:score,review_notes:notes,version:version+1,updated_at:new Date().toISOString()}).eq('id',id).eq('version',version).select('id,version,quality_score').maybeSingle();
+  await mandatory(r);if(!r.data)throw new JobkixFault('VERSION_CONFLICT');
+  await event('vacancy.enriched',user,{vacancy_id:id,data:{oldScore:q.data.quality_score,newScore:score,evidenceUrl:wantsContent?q.data.canonical_url:null,editorialContent:wantsContent}});
+  return r.data;
+ }
  if(a==='mission.retry'){const id=uuid(body.id);const r=await db.from('jobkix_supply_missions').select('source_id').eq('id',id).in('state',['failed','cancelled']).maybeSingle();await mandatory(r);if(!r.data)throw new Error('Only failed/cancelled missions can be retried');return adminCommand({action:'mission.start',sourceId:r.data.source_id});}
  if(a==='vacancy.decide'){
-  const id=uuid(body.id),version=number(body.version),decision=txt(body.decision);if(!['approved','rejected','published','withdrawn','needs_review'].includes(decision))fail('Invalid decision');
-  const row=await db.from('jobkix_supply_vacancies').select('id,state,version,source_id,quality_score,title,company,country,canonical_url,description,normalized,last_seen').eq('id',id).maybeSingle();await mandatory(row);if(!row.data||row.data.version!==version)throw new JobkixFault('VERSION_CONFLICT');
-  const old=txt(row.data.state),legal=(decision==='approved'&&['ready','needs_review'].includes(old))||(decision==='rejected'&&['new','ready','needs_review','approved'].includes(old))||(decision==='needs_review'&&['ready','approved'].includes(old))||(decision==='published'&&old==='approved')||(decision==='withdrawn'&&old==='published');if(!legal)fail('Invalid status transition');
-  if(decision==='published'){
-   if(!hasMarketplaceWorkspaceAccess(actor,'jobkix.editorial'))throw new JobkixFault('FORBIDDEN');
-   const source=await db.from('jobkix_supply_sources').select('approved,enabled,archived_at,publication_mode,config').eq('id',row.data.source_id).single();await mandatory(source);
-   const eligibility=publicationAssessment(row.data,source.data||{});if(!eligibility.eligible)throw new Error('Publication not eligible: '+eligibility.reasons.join(', '));
-  }
-  const result=await db.from('jobkix_supply_vacancies').update({state:decision,version:version+1,updated_at:new Date().toISOString(),...(decision==='approved'?{approved_by:user}:{}),...(decision==='published'?{published_by:user,published_at:new Date().toISOString()}:{}),...(decision==='withdrawn'?{published_at:null}:{})}).eq('id',id).eq('version',version).select('id,state,version').maybeSingle();await mandatory(result);if(!result.data)throw new JobkixFault('VERSION_CONFLICT');await event('vacancy.'+decision,user,{vacancy_id:id,source_id:row.data.source_id,data:{from:old,to:decision}});return result.data;
+  if(!hasMarketplaceWorkspaceAccess(actor,'jobkix.editorial'))throw new JobkixFault('FORBIDDEN');
+  const id=uuid(body.id),version=number(body.version),decision=txt(body.decision);
+  if(!['approved','rejected','published','withdrawn','needs_review'].includes(decision))throw new JobkixFault('INVALID_INPUT');
+  const key=typeof body.key==='string'&&/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(body.key)?body.key:randomUUID();
+  // The database RPC serializes all decisions and their audit event under a row lock.
+  // No prior JS-side state/version read: a retry can replay its receipt after a commit.
+  const {data,error}=await db.rpc('jobkix_supply_r4_decide',{p_id:id,p_version:version,p_action:decision,p_actor:user,p_key:key,p_automatic:false});
+  await mandatory({error});return assertDecisionResult(data);
  }
+
  throw new JobkixFault('INVALID_INPUT');
 }
 
@@ -252,7 +279,12 @@ export async function workerBatch(worker:string,body:Row){const id=uuid(body.mis
    const existing=[...distinct.values()][0];
    if(existing){
     const state=String(existing.state),normalized=mergeEnrichment(row.normalized,existing.normalized,Boolean(txt(existing.review_notes))||['approved','published'].includes(state));
-    const eligible=publicationAssessment({...row,normalized},source.data);
+    const sourceRich=(Array.isArray(row.normalized.duties)&&row.normalized.duties.length>0)||(Array.isArray(row.normalized.requirements)&&row.normalized.requirements.length>0);
+    const mergedRich=(Array.isArray(normalized.duties)&&normalized.duties.length>0)||(Array.isArray(normalized.requirements)&&normalized.requirements.length>0);
+    const editorial=normalized.editorialOverrides&&typeof normalized.editorialOverrides==='object'&&!Array.isArray(normalized.editorialOverrides)?normalized.editorialOverrides as Row:{};
+    const verifiedEditor=txt(editorial.evidenceUrl)===row.canonical_url;
+    const recalculatedScore=Math.min(100,row.quality_score+(!sourceRich&&mergedRich&&verifiedEditor?10:0));
+    const eligible=publicationAssessment({...row,normalized,quality_score:recalculatedScore},source.data);
     const keepPublished=state==='published'&&eligible.eligible;
     const nextState=keepPublished?'published':['withdrawn','rejected'].includes(state)?state:
      ['published','approved'].includes(state)?(eligible.eligible?'approved':'needs_review'):row.state;
@@ -261,7 +293,7 @@ export async function workerBatch(worker:string,body:Row){const id=uuid(body.mis
      title:row.title,company:row.company,country:row.country,city:row.city,
      description:row.description,salary_text:row.salary_text,work_mode:row.work_mode,
      posted_at:row.posted_at,raw:row.raw,normalized,external_ref:row.external_ref,
-     quality_score:row.quality_score,last_seen:row.last_seen,state:nextState,
+     quality_score:recalculatedScore,last_seen:row.last_seen,state:nextState,
      ...(state==='published'&&!keepPublished?{published_at:null}:{}),
      updated_at:new Date().toISOString(),version:Number(existing.version)+1
     }).eq('id',existing.id).eq('source_id',mission.data.source_id)
@@ -277,8 +309,28 @@ export async function workerBatch(worker:string,body:Row){const id=uuid(body.mis
  const update=await db.from('jobkix_supply_missions').update({processed:mission.data.processed+items.length,accepted:mission.data.accepted+accepted,rejected:mission.data.rejected+rejected,lease_until:new Date(Date.now()+15*60*1000).toISOString(),updated_at:new Date().toISOString()}).eq('id',id).eq('worker_id',worker).eq('state','running').select('id');await mandatory(update);return {accepted,rejected,processed:items.length};
 }
 export async function workerFinish(worker:string,body:Row){const id=uuid(body.missionId),state=body.success===true?'completed':'failed',db=await createServiceClient();const result=await db.from('jobkix_supply_missions').update({state,ended_at:new Date().toISOString(),error_message:body.success===true?null:txt(body.error).slice(0,500)}).eq('id',id).eq('state','running').eq('worker_id',worker).select('id,source_id');await mandatory(result);if(!result.data?.length)throw new JobkixFault('VERSION_CONFLICT');await event('mission.'+state,worker,{mission_id:id,source_id:result.data[0].source_id});return {id,state};}
-export async function publicExternal(country:string|null=null,limit=24){const db=await createServiceClient();let query=db.from('jobkix_supply_vacancies').select('id,title,company,country,city,description,canonical_url,salary_text,work_mode,published_at,source_id').eq('state','published').order('published_at',{ascending:false}).limit(limit);if(country&&/^[A-Z]{2}$/.test(country))query=query.eq('country',country);
- const r=await query;if(r.error)return [];const ids=[...new Set((r.data||[]).map(x=>x.source_id))];if(!ids.length)return [];
- const sources=await db.from('jobkix_supply_sources').select('id,name,approved,publication_mode').in('id',ids).eq('approved',true).neq('publication_mode','none');if(sources.error)return [];const allowed=new Map((sources.data||[]).map(s=>[s.id,s]));return (r.data||[]).filter(v=>allowed.has(v.source_id)).map(v=>({...v,description:allowed.get(v.source_id)?.publication_mode==='full'?v.description:'',source_name:allowed.get(v.source_id)?.name||'External source'}));
+export async function publicExternal(country:string|null=null,limit=24){
+ const db=await createServiceClient();
+ let q=db.from('jobkix_supply_vacancies').select('id,title,company,country,city,description,canonical_url,salary_text,work_mode,published_at,source_id').eq('state','published').order('published_at',{ascending:false}).limit(Math.min(100,Math.max(1,limit*3)));
+ if(country&&/^[A-Z]{2}$/.test(country))q=q.eq('country',country);
+ const list=await q;if(list.error||!list.data?.length)return [];
+ const checks=await Promise.all(list.data.map(async row=>{
+  const r=await db.rpc('jobkix_r3_external_visible',{p_vacancy:row.id});
+  return !r.error&&r.data===true?row:null;
+ }));
+ const passed=checks.filter((v):v is NonNullable<typeof v>=>v!==null).slice(0,limit);
+ if(!passed.length)return [];
+ const sources=await db.from('jobkix_supply_sources').select('id,name,approved,publication_mode').in('id',[...new Set(passed.map(v=>v.source_id))]).eq('approved',true).eq('publication_mode','full');
+ if(sources.error)return [];const allowed=new Map((sources.data||[]).map(s=>[s.id,s]));
+ return passed.filter(v=>allowed.has(v.source_id)).map(v=>({...v,source_name:allowed.get(v.source_id)?.name||'External source'}));
 }
-export async function externalDetail(id:string){uuid(id);const db=await createServiceClient();const r=await db.from('jobkix_supply_vacancies').select('id,title,company,country,city,description,canonical_url,salary_text,work_mode,published_at,source_id').eq('id',id).eq('state','published').maybeSingle();if(r.error||!r.data)return null;const s=await db.from('jobkix_supply_sources').select('name,approved,publication_mode').eq('id',r.data.source_id).maybeSingle();if(s.error||!s.data?.approved||s.data.publication_mode==='none')return null;return {...r.data,description:s.data.publication_mode==='full'?r.data.description:'',source_name:s.data.name,publication_mode:s.data.publication_mode};}
+export async function externalDetail(id:string){
+ uuid(id);const db=await createServiceClient();
+ const visible=await db.rpc('jobkix_r3_external_visible',{p_vacancy:id});
+ if(visible.error||visible.data!==true)return null;
+ const r=await db.from('jobkix_supply_vacancies').select('id,title,company,country,city,description,canonical_url,salary_text,work_mode,published_at,source_id').eq('id',id).eq('state','published').maybeSingle();
+ if(r.error||!r.data)return null;
+ const s=await db.from('jobkix_supply_sources').select('name,approved,publication_mode').eq('id',r.data.source_id).maybeSingle();
+ if(s.error||!s.data?.approved||s.data.publication_mode!=='full')return null;
+ return {...r.data,source_name:s.data.name,publication_mode:s.data.publication_mode};
+}
