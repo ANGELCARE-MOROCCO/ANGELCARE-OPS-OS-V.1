@@ -162,4 +162,41 @@ begin
 end $$;
 revoke all on function public.jobkix_supply_r4_decide(uuid,integer,text,text,uuid,boolean) from public,anon,authenticated;
 grant execute on function public.jobkix_supply_r4_decide(uuid,integer,text,text,uuid,boolean) to service_role;
+
+-- Source-backed editorial enrichment has the same all-or-nothing audit guarantee
+-- as the publication decision. The server supplies a constrained, verified patch.
+create or replace function public.jobkix_supply_r4_enrich(
+ p_id uuid,p_version integer,p_actor text,p_normalized jsonb,p_notes text,
+ p_quality integer,p_evidence text default null
+) returns jsonb language plpgsql volatile security invoker set search_path=pg_catalog,public as $$
+declare v public.jobkix_supply_vacancies;
+begin
+ if p_id is null or p_version is null or nullif(btrim(p_actor),'') is null
+  or p_normalized is null or jsonb_typeof(p_normalized)<>'object'
+  or p_quality not between 0 and 100 then
+  return jsonb_build_object('ok',false,'code','INVALID_INPUT');
+ end if;
+ select * into v from public.jobkix_supply_vacancies where id=p_id for update;
+ if not found then return jsonb_build_object('ok',false,'code','NOT_FOUND'); end if;
+ if v.version<>p_version then return jsonb_build_object('ok',false,'code','VERSION_CONFLICT','actualVersion',v.version); end if;
+ if v.state in ('published','withdrawn') then return jsonb_build_object('ok',false,'code','INVALID_TRANSITION'); end if;
+ if (p_normalized->>'countryEvidence') is distinct from (v.normalized->>'countryEvidence')
+  or (p_normalized->>'applicationUrl') is distinct from (v.normalized->>'applicationUrl')
+  or (p_normalized->>'expiresAt') is distinct from (v.normalized->>'expiresAt') then
+  return jsonb_build_object('ok',false,'code','PROVENANCE_FIELD_IMMUTABLE');
+ end if;
+ if p_evidence is not null and p_evidence is distinct from v.canonical_url then
+  return jsonb_build_object('ok',false,'code','EDITORIAL_SOURCE_EVIDENCE_REQUIRED');
+ end if;
+ update public.jobkix_supply_vacancies set normalized=p_normalized,review_notes=left(coalesce(p_notes,''),2000),
+ quality_score=p_quality,version=p_version+1,updated_at=now() where id=p_id and version=p_version;
+ if not found then return jsonb_build_object('ok',false,'code','VERSION_CONFLICT'); end if;
+ insert into public.jobkix_supply_events(actor,action,source_id,vacancy_id,data)
+ values(p_actor,'vacancy.enriched',v.source_id,p_id,
+ jsonb_build_object('fromVersion',p_version,'toVersion',p_version+1,'oldScore',v.quality_score,
+ 'newScore',p_quality,'evidenceUrl',p_evidence));
+ return jsonb_build_object('ok',true,'id',p_id,'state',v.state,'version',p_version+1,'quality_score',p_quality);
+end $$;
+revoke all on function public.jobkix_supply_r4_enrich(uuid,integer,text,jsonb,text,integer,text) from public,anon,authenticated;
+grant execute on function public.jobkix_supply_r4_enrich(uuid,integer,text,jsonb,text,integer,text) to service_role;
 commit;

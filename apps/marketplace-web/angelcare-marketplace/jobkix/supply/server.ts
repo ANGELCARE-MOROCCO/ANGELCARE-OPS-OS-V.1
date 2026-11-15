@@ -198,10 +198,11 @@ export async function adminCommand(body:Row):Promise<unknown>{const actor=await 
   const wasRich=(Array.isArray(previous.duties)&&previous.duties.length>0)||(Array.isArray(previous.requirements)&&previous.requirements.length>0);
   const nowRich=(Array.isArray(normalized.duties)&&normalized.duties.length>0)||(Array.isArray(normalized.requirements)&&normalized.requirements.length>0);
   const score=Math.min(100,Math.max(0,Number(q.data.quality_score||0)+(nowRich&&!wasRich?10:!nowRich&&wasRich?-10:0)));
-  const r=await db.from('jobkix_supply_vacancies').update({normalized,quality_score:score,review_notes:notes,version:version+1,updated_at:new Date().toISOString()}).eq('id',id).eq('version',version).select('id,version,quality_score').maybeSingle();
-  await mandatory(r);if(!r.data)throw new JobkixFault('VERSION_CONFLICT');
-  await event('vacancy.enriched',user,{vacancy_id:id,data:{oldScore:q.data.quality_score,newScore:score,evidenceUrl:wantsContent?q.data.canonical_url:null,editorialContent:wantsContent}});
-  return r.data;
+  const {data,error}=await db.rpc('jobkix_supply_r4_enrich',{
+   p_id:id,p_version:version,p_actor:user,p_normalized:normalized,p_notes:notes,
+   p_quality:score,p_evidence:wantsContent?q.data.canonical_url:null
+  });
+  await mandatory({error});return assertDecisionResult(data);
  }
  if(a==='mission.retry'){const id=uuid(body.id);const r=await db.from('jobkix_supply_missions').select('source_id').eq('id',id).in('state',['failed','cancelled']).maybeSingle();await mandatory(r);if(!r.data)throw new Error('Only failed/cancelled missions can be retried');return adminCommand({action:'mission.start',sourceId:r.data.source_id});}
  if(a==='vacancy.decide'){

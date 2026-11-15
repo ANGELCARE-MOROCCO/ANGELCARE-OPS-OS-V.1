@@ -46,6 +46,6 @@ export function assertDecisionResult(value:unknown):Record<string,unknown> {
  }
  if(code==='VERSION_CONFLICT'||code==='IDEMPOTENCY_CONFLICT')throw new SupplyError(code,409,[],true);
  if(code==='NOT_FOUND')throw new SupplyError(code,404);
- if(code==='INVALID_TRANSITION'||code==='AUTO_PUBLICATION_NOT_AUTHORIZED'||code==='INVALID_INPUT')throw new SupplyError(code,422);
+ if(['INVALID_TRANSITION','AUTO_PUBLICATION_NOT_AUTHORIZED','INVALID_INPUT','PROVENANCE_FIELD_IMMUTABLE','EDITORIAL_SOURCE_EVIDENCE_REQUIRED'].includes(code))throw new SupplyError(code,422);
  throw new SupplyError('DEPENDENCY_UNAVAILABLE',503,[],true);
 }
