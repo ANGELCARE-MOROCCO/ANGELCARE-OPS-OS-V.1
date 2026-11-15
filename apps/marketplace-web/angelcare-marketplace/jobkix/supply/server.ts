@@ -26,7 +26,7 @@ async function publishEligible(sourceId:string, actor:string, missionId?:string,
  const db=await createServiceClient();
  const src=await db.from('jobkix_supply_sources').select('id,enabled,approved,archived_at,publication_mode,config').eq('id',sourceId).maybeSingle();
  await mandatory(src);
- if(!src.data?.approved||!src.data.enabled||src.data.archived_at||src.data.publication_mode!=='full'
+ if(!src.data?.approved||!src.data.enabled||src.data.archived_at||src.data.publication_mode!=='full')
   throw Error('Publication requires an active, explicitly approved source with content permissions');
  const cfg=src.data.config&&typeof src.data.config==='object'?src.data.config as Row:{};
  if(automatic&&cfg.autoPublish!==true) return {published:0,eligible:0};
