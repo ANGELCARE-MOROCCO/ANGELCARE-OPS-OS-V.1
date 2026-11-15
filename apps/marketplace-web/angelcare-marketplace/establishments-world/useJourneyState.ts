@@ -37,7 +37,11 @@ export function useSessionValue<T>(
   }, [value, key, loadedKey]);
   return [value, setValue];
 }
-export function useProject(offers: DiscoveryItem[], territory?: string | null) {
+export function useProject(
+  offers: DiscoveryItem[],
+  territory?: string | null,
+  locale: "fr" | "en" | "ar" = "fr",
+) {
   const [state, dispatch] = useReducer(projectReducer, {
     items: [],
     notice: "",
@@ -53,10 +57,10 @@ export function useProject(offers: DiscoveryItem[], territory?: string | null) {
     } catch {}
     dispatch({
       type: "restore",
-      items: restoreProject(raw, liveOffers.current),
+      items: restoreProject(raw, liveOffers.current, locale),
     });
     setLoadedKey(key);
-  }, [key, offers]);
+  }, [key, offers, locale]);
   useEffect(() => {
     if (loadedKey === key)
       try {

@@ -1,5 +1,6 @@
 "use client";
-import {belongsToEstablishmentView} from '../storefront-placement/model';
+import { usePartner, countText } from "./partner/Locale";
+import { belongsToEstablishmentView } from "../storefront-placement/model";
 import { JourneyLink } from "./JourneyLink";
 import Link from "next/link";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
@@ -42,6 +43,8 @@ import p from "./premium.module.css";
 import c from "./commercial.module.css";
 import { catalogueWindow } from "./catalogue-window";
 export function OfferImage({ item }: { item: DiscoveryItem }) {
+  const { t: tr, locale } = usePartner();
+
   const [failed, setFailed] = useState(false);
   useEffect(() => setFailed(false), [item.media_url]);
   return item.media_url && !failed ? (
@@ -56,10 +59,10 @@ export function OfferImage({ item }: { item: DiscoveryItem }) {
     <div
       className={s.noImage}
       role="img"
-      aria-label={`Visuel indisponible pour ${item.name}`}
+      aria-label={tr("Visuel indisponible pour {0}").replace("{0}", item.name)}
     >
       <ImageOff size={25} />
-      <span>Visuel à compléter</span>
+      <span>{tr("Visuel à compléter")}</span>
     </div>
   );
 }
@@ -85,6 +88,8 @@ export function NativeExplorer({
   selections: ReturnType<typeof useSelections>;
   onDetail: (item: DiscoveryItem) => void;
 }) {
+  const { t: tr, locale } = usePartner();
+
   const [filters, setFilters] = useSessionValue(
     `ac.establishments.filters.v3:${experience.territoryCode || "default"}:${view}`,
     DEFAULT_FILTERS,
@@ -95,7 +100,9 @@ export function NativeExplorer({
     () =>
       filters.scope === "all"
         ? experience.items
-        : experience.items.filter((item) => belongsToEstablishmentView(item, view)),
+        : experience.items.filter((item) =>
+            belongsToEstablishmentView(item, view),
+          ),
     [experience.items, view, filters.scope],
   );
   const categories = [
@@ -204,7 +211,7 @@ export function NativeExplorer({
             key: "availability",
             label: availabilityLabel(
               { availability_status: availability } as DiscoveryItem,
-              "fr",
+              locale,
             ),
             clear: () => change({ availability: "all" }),
           },
@@ -242,29 +249,31 @@ export function NativeExplorer({
     <section
       id="ew-native-explorer"
       className={`${s.nativeExplorer} ${c.catalogue}`}
-      aria-label="Offres publiées du catalogue"
+      aria-label={tr("Offres publiées du catalogue")}
     >
       <div className={s.nativeHeading} data-native-title>
         <div>
           <span className={s.eyebrow}>
-            Vos critères. Des solutions à étudier.
+            {tr("Vos critères. Des solutions à étudier.")}
           </span>
           <h3>
-            {view === "produits"
-              ? "Les produits pour votre établissement"
-              : "Nos offres pour votre établissement"}
+            {tr(
+              view === "produits"
+                ? "Les produits pour votre établissement"
+                : "Nos offres pour votre établissement",
+            )}
           </h3>
         </div>
         <span>
-          {channelItems.length} offre{channelItems.length > 1 ? "s" : ""}
-          {experience.territoryCode ? ` · ${experience.territoryCode}` : ""}
+          {countText(locale, channelItems.length)}
+          {tr(experience.territoryCode ? ` · ${experience.territoryCode}` : "")}
         </span>
       </div>
       <div className={s.catalogueScope} data-catalogue-scope>
         <label className={s.selectLabel}>
-          Affichage
+          {tr("Affichage")}
           <select
-            aria-label="Affichage"
+            aria-label={tr("Affichage")}
             value={filters.scope}
             onChange={(event) =>
               change({
@@ -276,85 +285,91 @@ export function NativeExplorer({
               })
             }
           >
-            <option value="speciality">Cette spécialité</option>
-            <option value="all">Toutes les offres Établissements</option>
+            <option value="speciality">{tr("Cette spécialité")}</option>
+            <option value="all">
+              {tr("Toutes les offres Établissements")}
+            </option>
           </select>
         </label>
         <p>
-          {filters.scope === "all"
-            ? "Retrouvez les différentes solutions Établissements et affinez votre sélection selon vos besoins."
-            : "Vous pouvez élargir la sélection aux autres solutions Établissements, puis affiner vos critères."}
+          {tr(
+            filters.scope === "all"
+              ? "Retrouvez les différentes solutions Établissements et affinez votre sélection selon vos besoins."
+              : "Vous pouvez élargir la sélection aux autres solutions Établissements, puis affiner vos critères.",
+          )}
         </p>
       </div>
       <div className={s.toolbar} data-native-toolbar>
         <label>
           <Search size={17} />
-          <span className={s.sr}>Rechercher une offre publiée</span>
+          <span className={s.sr}>{tr("Rechercher une offre publiée")}</span>
           <input
             value={filters.query}
             onChange={(event) => change({ query: event.target.value })}
-            placeholder="Produit, référence, usage…"
+            placeholder={tr("Produit, référence, usage…")}
           />
         </label>
         <label className={s.selectLabel}>
-          Catégorie
+          {tr("Catégorie")}
           <select
-            aria-label="Catégorie"
+            aria-label={tr("Catégorie")}
             value={category}
             onChange={(event) => change({ category: event.target.value })}
           >
-            <option value="all">Toutes les catégories</option>
+            <option value="all">{tr("Toutes les catégories")}</option>
             {categories.map(([key, label]) => (
               <option key={key} value={key}>
-                {label}
+                {tr(label)}
               </option>
             ))}
           </select>
         </label>
         <label className={s.selectLabel}>
-          Disponibilité
+          {tr("Disponibilité")}
           <select
-            aria-label="Disponibilité"
+            aria-label={tr("Disponibilité")}
             value={availability}
             onChange={(event) => change({ availability: event.target.value })}
           >
-            <option value="all">Tous les statuts</option>
+            <option value="all">{tr("Tous les statuts")}</option>
             {[
               ...new Set(channelItems.map((item) => item.availability_status)),
             ].map((status) => (
               <option key={status} value={status}>
-                {availabilityLabel(
-                  { availability_status: status } as DiscoveryItem,
-                  "fr",
+                {tr(
+                  availabilityLabel(
+                    { availability_status: status } as DiscoveryItem,
+                    locale,
+                  ),
                 )}
               </option>
             ))}
           </select>
         </label>
         <label className={s.selectLabel}>
-          Tarification
+          {tr("Tarification")}
           <select
-            aria-label="Tarification"
+            aria-label={tr("Tarification")}
             value={filters.priceMode}
             onChange={(event) => change({ priceMode: event.target.value })}
           >
             {Object.entries(PRICE_LABELS).map(([key, label]) => (
               <option key={key} value={key}>
-                {label}
+                {tr(label)}
               </option>
             ))}
           </select>
         </label>
         <label className={s.selectLabel}>
-          Trier
+          {tr("Trier")}
           <select
-            aria-label="Trier"
+            aria-label={tr("Trier")}
             value={filters.sort}
             onChange={(event) => change({ sort: event.target.value })}
           >
-            <option value="featured">Sélection éditoriale</option>
-            <option value="name">Nom</option>
-            <option value="price">Prix croissant</option>
+            <option value="featured">{tr("Sélection éditoriale")}</option>
+            <option value="name">{tr("Nom")}</option>
+            <option value="price">{tr("Prix croissant")}</option>
           </select>
         </label>
       </div>
@@ -363,13 +378,14 @@ export function NativeExplorer({
           className={s.categoryRail}
           data-native-categories
           role="group"
-          aria-label="Rayons du catalogue"
+          aria-label={tr("Rayons du catalogue")}
         >
           <button
             aria-pressed={category === "all"}
             onClick={() => change({ category: "all" })}
           >
-            Toutes les offres <small>{channelItems.length}</small>
+            {tr("Toutes les offres ")}
+            <small>{channelItems.length}</small>
           </button>
           {categories.map(([key, label]) => (
             <button
@@ -379,7 +395,7 @@ export function NativeExplorer({
                 change({ category: category === key ? "all" : key })
               }
             >
-              {label}
+              {tr(label)}
               <small>
                 {
                   channelItems.filter((item) => item.category_key === key)
@@ -397,24 +413,24 @@ export function NativeExplorer({
           onClick={() => change({ savedOnly: !filters.savedOnly })}
         >
           <Heart size={15} />
-          Mes favoris (
+          {tr("Mes favoris (")}
           {
             channelItems.filter((item) => selections.saved.includes(item.id))
               .length
           }
-          )
+          {tr(")")}
         </button>
         {facets.length > 0 && (
           <>
             <label className={s.selectLabel}>
-              Caractéristique publiée
+              {tr("Caractéristique publiée")}
               <select
                 value={activeFacet?.key || ""}
                 onChange={(event) =>
                   change({ factKey: event.target.value, factValue: "" })
                 }
               >
-                <option value="">Toutes les caractéristiques</option>
+                <option value="">{tr("Toutes les caractéristiques")}</option>
                 {facets.map((fact) => (
                   <option key={fact.key} value={fact.key}>
                     {fact.label}
@@ -424,16 +440,16 @@ export function NativeExplorer({
             </label>
             {activeFacet && (
               <label className={s.selectLabel}>
-                Valeur recherchée
+                {tr("Valeur recherchée")}
                 <select
                   value={factValue}
                   onChange={(event) =>
                     change({ factValue: event.target.value })
                   }
                 >
-                  <option value="">Toutes les valeurs</option>
+                  <option value="">{tr("Toutes les valeurs")}</option>
                   {activeFacet.values.map((value) => (
-                    <option key={value}>{value}</option>
+                    <option key={value}>{tr(value)}</option>
                   ))}
                 </select>
               </label>
@@ -441,9 +457,9 @@ export function NativeExplorer({
           </>
         )}
         <label className={s.selectLabel}>
-          Résultats par page
+          {tr("Résultats par page")}
           <select
-            aria-label="Résultats par page"
+            aria-label={tr("Résultats par page")}
             value={perPage}
             onChange={(event) => {
               setPerPage(Number(event.target.value));
@@ -451,7 +467,7 @@ export function NativeExplorer({
             }}
           >
             {[10, 20, 40].map((value) => (
-              <option key={value}>{value}</option>
+              <option key={value}>{tr(value)}</option>
             ))}
           </select>
         </label>
@@ -459,51 +475,67 @@ export function NativeExplorer({
           className={s.textButton}
           onClick={() => setFilters({ ...DEFAULT_FILTERS })}
         >
-          Réinitialiser
+          {tr("Réinitialiser")}
         </button>
       </div>
       {chips.length > 0 && (
-        <div className={s.filterChips} aria-label="Filtres appliqués">
+        <div className={s.filterChips} aria-label={tr("Filtres appliqués")}>
           {chips.map((chip) => (
             <button
               key={chip.key}
               onClick={chip.clear}
-              aria-label={`Retirer le filtre ${chip.label}`}
+              aria-label={tr(`Retirer le filtre ${chip.label}`)}
             >
-              {chip.label}
+              {tr(chip.label)}
               <X size={12} />
             </button>
           ))}
         </div>
       )}
       <p className={s.resultsStatus} role="status">
-        {visible.length} offre{visible.length > 1 ? "s" : ""} correspond
-        {visible.length > 1 ? "ent" : ""} à vos critères
+        {countText(locale, visible.length)}{" "}
+        {tr(
+          locale === "fr"
+            ? visible.length > 1
+              ? "correspondent à vos critères"
+              : "correspond à vos critères"
+            : "match your criteria",
+        )}
       </p>
       {allCompared.length > 0 && (
         <div className={s.compareTray}>
           <GitCompareArrows size={19} />
-          <strong>Comparaison {allCompared.length}/4</strong>
+          <strong>
+            {tr("Comparaison ")}
+            {allCompared.length}
+            {tr("/4")}
+          </strong>
           <div>
             {allCompared.map((item) => (
               <button
                 key={item.id}
                 disabled={selections.pending.includes(`compare:${item.id}`)}
                 onClick={() => void selections.select(item.id, "compare")}
-                aria-label={`Retirer ${item.name} de la comparaison`}
+                aria-label={tr("Retirer {0} de la comparaison").replace(
+                  "{0}",
+                  item.name,
+                )}
               >
                 {item.name}
                 <X size={12} />
               </button>
             ))}
           </div>
-          <small>{compared.length} dans cette spécialité</small>
+          <small>
+            {compared.length}
+            {tr(" dans cette spécialité")}
+          </small>
         </div>
       )}
       <div className={`${s.nativeGrid} ${p.nativeGrid}`} data-native-grid>
         {visible.slice(cataloguePage.start, cataloguePage.end).map((item) => {
           const info = projection(item),
-            action = nativeAction(item, "fr", experience.territoryCode),
+            action = nativeAction(item, locale, experience.territoryCode),
             inProject = selected.includes(`offer:${item.id}`);
           return (
             <article
@@ -514,30 +546,32 @@ export function NativeExplorer({
             >
               <button
                 className={`${s.offerPicture} ${p.offerPicture}`}
-                aria-label={`Aperçu de ${item.name}`}
+                aria-label={tr("Aperçu de {0}").replace("{0}", item.name)}
                 onClick={() => onDetail(item)}
               >
                 <OfferImage item={item} />
                 <span>
-                  Aperçu rapide
+                  {tr("Aperçu rapide")}
                   <ArrowRight size={13} />
                 </span>
               </button>
               <div>
                 <span className={p.publishedTag}>
                   <Check size={11} />
-                  Catalogue ·{" "}
-                  {PRICE_LABELS[item.price_mode] || "Conditions à consulter"}
+                  {tr("Catalogue ·")}{" "}
+                  {tr(
+                    PRICE_LABELS[item.price_mode] || "Conditions à consulter",
+                  )}
                 </span>
                 <br />
                 <span className={s.cardEyebrow}>
-                  {item.category_title || "Offre Établissements"}
+                  {item.category_title || tr("Offre Établissements")}
                 </span>
                 <h3>
                   <Link
                     href={businessItemHref(
                       item,
-                      "fr",
+                      locale,
                       experience.territoryCode,
                     )}
                     onClick={() => selections.remember(item.id)}
@@ -547,9 +581,11 @@ export function NativeExplorer({
                 </h3>
                 <small>{item.public_reference}</small>
                 {item.short_description && <p>{item.short_description}</p>}
-                <strong className={s.offerPrice}>{price(item)}</strong>
+                <strong className={s.offerPrice}>
+                  {tr(price(item, locale))}
+                </strong>
                 <span className={s.availability} data-blocked={blocked(item)}>
-                  {availabilityLabel(item, "fr")}
+                  {tr(availabilityLabel(item, locale))}
                 </span>
                 <dl>
                   {info?.fields.slice(0, 3).map((fact) => (
@@ -561,7 +597,7 @@ export function NativeExplorer({
                 </dl>
                 <div className={s.cardActions}>
                   <button
-                    aria-label={`Enregistrer ${item.name}`}
+                    aria-label={tr("Enregistrer {0}").replace("{0}", item.name)}
                     aria-pressed={selections.saved.includes(item.id)}
                     disabled={selections.pending.includes(`saved:${item.id}`)}
                     onClick={() => void selections.select(item.id, "saved")}
@@ -569,7 +605,7 @@ export function NativeExplorer({
                     <Heart size={15} />
                   </button>
                   <button
-                    aria-label={`Comparer ${item.name}`}
+                    aria-label={tr("Comparer {0}").replace("{0}", item.name)}
                     aria-pressed={selections.compared.includes(item.id)}
                     disabled={selections.pending.includes(`compare:${item.id}`)}
                     onClick={() => void selections.select(item.id, "compare")}
@@ -579,19 +615,19 @@ export function NativeExplorer({
                   <button
                     disabled={blocked(item) && !inProject}
                     aria-pressed={inProject}
-                    onClick={() => add(offerSelection(item))}
+                    onClick={() => add(offerSelection(item, locale))}
                   >
                     {inProject && <Check size={14} />}{" "}
-                    {inProject ? "Dans mon projet" : "Ajouter au projet"}
+                    {tr(inProject ? "Dans mon projet" : "Ajouter au projet")}
                   </button>
                 </div>
                 <button className={s.textButton} onClick={() => onDetail(item)}>
-                  Voir les caractéristiques
+                  {tr("Voir les caractéristiques")}
                   <ArrowRight size={13} />
                 </button>
                 {action && !blocked(item) && (
                   <Link className={s.nativeLink} href={action.href}>
-                    {action.label}
+                    {tr(action.label)}
                     <ArrowRight size={14} />
                   </Link>
                 )}
@@ -604,14 +640,18 @@ export function NativeExplorer({
         <div className={s.empty}>
           <Search size={28} />
           <h3>
-            {channelItems.length
-              ? "Aucune offre avec ces critères."
-              : "Votre projet mérite une réponse adaptée."}
+            {tr(
+              channelItems.length
+                ? "Aucune offre avec ces critères."
+                : "Votre projet mérite une réponse adaptée.",
+            )}
           </h3>
           <p>
-            {channelItems.length
-              ? "Ajustez les filtres ; votre projet et vos comparaisons restent conservés."
-              : "Aucune offre n’est actuellement publiée dans cette spécialité pour le territoire choisi. Décrivez votre besoin pour préparer un échange."}
+            {tr(
+              channelItems.length
+                ? "Ajustez les filtres ; votre projet et vos comparaisons restent conservés."
+                : "Aucune offre n’est actuellement publiée dans cette spécialité pour le territoire choisi. Décrivez votre besoin pour préparer un échange.",
+            )}
           </p>
           {!channelItems.length &&
             filters.scope === "speciality" &&
@@ -620,8 +660,9 @@ export function NativeExplorer({
                 className={s.secondary}
                 onClick={() => change({ scope: "all" })}
               >
-                Explorer toutes les offres Établissements (
-                {experience.items.length})
+                {tr("Explorer toutes les offres Établissements (")}
+                {experience.items.length}
+                {tr(")")}
               </button>
             )}
           {channelItems.length ? (
@@ -629,11 +670,11 @@ export function NativeExplorer({
               className={s.secondary}
               onClick={() => setFilters({ ...DEFAULT_FILTERS })}
             >
-              Voir toutes les offres
+              {tr("Voir toutes les offres")}
             </button>
           ) : (
             <JourneyLink className={s.primary} href="#world-enquiry">
-              Présenter mon besoin
+              {tr("Présenter mon besoin")}
               <ArrowRight size={15} />
             </JourneyLink>
           )}
@@ -649,17 +690,28 @@ export function NativeExplorer({
               }))
             }
           >
-            Afficher {cataloguePage.nextCount} offre
-            {cataloguePage.nextCount > 1 ? "s" : ""} de plus{" "}
-            <ArrowRight size={16} />
+            {tr("Afficher ")}
+            {countText(locale, cataloguePage.nextCount)}
+            {tr(" de plus")} <ArrowRight size={16} />
           </button>
         </div>
       )}
       {visible.length > 0 && (
         <p className={c.displayed} role="status">
-          Offres {cataloguePage.start + 1} à {cataloguePage.end} sur{" "}
-          {visible.length} · {cataloguePage.shown} affichée
-          {cataloguePage.shown > 1 ? "s" : ""}
+          {tr("Offres ")}
+          {cataloguePage.start + 1}
+          {tr(" à ")}
+          {cataloguePage.end}
+          {tr(" sur")} {visible.length}
+          {tr(" · ")}
+          {new Intl.NumberFormat(locale).format(cataloguePage.shown)}{" "}
+          {tr(
+            locale === "fr"
+              ? cataloguePage.shown > 1
+                ? "affichées"
+                : "affichée"
+              : "displayed",
+          )}
         </p>
       )}
       <Pagination
@@ -671,23 +723,27 @@ export function NativeExplorer({
       />
       {selections.error && (
         <p role="alert" className={s.error}>
-          {selections.error === "limit"
-            ? "La comparaison est limitée à quatre offres, toutes spécialités confondues. Retirez un élément de la sélection ci-dessus."
-            : "La sélection native n’a pas pu être confirmée. Vous pouvez réessayer."}
-          <button onClick={selections.dismiss}>Fermer</button>
+          {tr(
+            selections.error === "limit"
+              ? "La comparaison est limitée à quatre offres, toutes spécialités confondues. Retirez un élément de la sélection ci-dessus."
+              : "La sélection native n’a pas pu être confirmée. Vous pouvez réessayer.",
+          )}
+          <button onClick={selections.dismiss}>{tr("Fermer")}</button>
         </p>
       )}
       {compared.length > 0 && (
         <div className={s.comparison}>
-          <h3>Comparer les offres publiées</h3>
+          <h3>{tr("Comparer les offres publiées")}</h3>
           <div className={s.tableWrap}>
             <table>
               <caption>
-                Caractéristiques renseignées dans les offres de cette spécialité
+                {tr(
+                  "Caractéristiques renseignées dans les offres de cette spécialité",
+                )}
               </caption>
               <thead>
                 <tr>
-                  <th scope="col">Critère</th>
+                  <th scope="col">{tr("Critère")}</th>
                   {compared.map((item) => (
                     <th scope="col" key={item.id}>
                       {item.name}
@@ -697,15 +753,15 @@ export function NativeExplorer({
               </thead>
               <tbody>
                 <tr>
-                  <th scope="row">Prix publié</th>
+                  <th scope="row">{tr("Prix publié")}</th>
                   {compared.map((item) => (
-                    <td key={item.id}>{price(item)}</td>
+                    <td key={item.id}>{tr(price(item, locale))}</td>
                   ))}
                 </tr>
                 <tr>
-                  <th scope="row">Disponibilité</th>
+                  <th scope="row">{tr("Disponibilité")}</th>
                   {compared.map((item) => (
-                    <td key={item.id}>{availabilityLabel(item, "fr")}</td>
+                    <td key={item.id}>{tr(availabilityLabel(item, locale))}</td>
                   ))}
                 </tr>
                 {[
@@ -718,17 +774,19 @@ export function NativeExplorer({
                 ].map((key) => (
                   <tr key={key}>
                     <th scope="row">
-                      {
+                      {tr(
                         compared
                           .flatMap((item) => projection(item)?.fields || [])
-                          .find((fact) => fact.key === key)?.label
-                      }
+                          .find((fact) => fact.key === key)?.label,
+                      )}
                     </th>
                     {compared.map((item) => (
                       <td key={item.id}>
-                        {projection(item)?.fields.find(
-                          (fact) => fact.key === key,
-                        )?.value || "Non renseigné"}
+                        {tr(
+                          projection(item)?.fields.find(
+                            (fact) => fact.key === key,
+                          )?.value || "Non renseigné",
+                        )}
                       </td>
                     ))}
                   </tr>

@@ -939,5 +939,65 @@
     "section": "Établissements · Campagnes R4",
     "label": "Campagne haute définition Établissements",
     "sequence": true
+  },
+  {
+    "pages": [
+      "establishments"
+    ],
+    "key": "journey-partner.hero",
+    "dynamic": false,
+    "section": "Partner OS · parcours commercial",
+    "label": "Partner OS · scène d’ouverture",
+    "sequence": true
+  },
+  {
+    "pages": [
+      "establishments"
+    ],
+    "key": "journey-partner.direction",
+    "dynamic": false,
+    "section": "Partner OS · parcours commercial",
+    "label": "Partner OS · scène de pilotage",
+    "sequence": true
+  },
+  {
+    "pages": [
+      "establishments"
+    ],
+    "key": "journey-partner.parents",
+    "dynamic": false,
+    "section": "Partner OS · parcours commercial",
+    "label": "Partner OS · relation familles",
+    "sequence": true
+  },
+  {
+    "pages": [
+      "establishments"
+    ],
+    "key": "journey-partner.activities",
+    "dynamic": false,
+    "section": "Partner OS · parcours commercial",
+    "label": "Partner OS · activités et programmes",
+    "sequence": true
+  },
+  {
+    "pages": [
+      "establishments"
+    ],
+    "key": "journey-partner.team",
+    "dynamic": false,
+    "section": "Partner OS · parcours commercial",
+    "label": "Partner OS · équipe et pratiques",
+    "sequence": true
+  },
+  {
+    "pages": [
+      "establishments"
+    ],
+    "key": "journey-partner.finance",
+    "dynamic": false,
+    "section": "Partner OS · parcours commercial",
+    "label": "Partner OS · organisation commerciale",
+    "sequence": true
   }
 ]

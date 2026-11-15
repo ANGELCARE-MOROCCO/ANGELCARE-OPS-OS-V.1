@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "incremental": false, "types": ["react", "react-dom", "node"] },
+  "files": [
+    "node_modules/next/types/global.d.ts",
+    "angelcare-marketplace/establishments-world/Experience.tsx",
+    "app/angelcare-marketplace/[locale]/establishments/page.tsx",
+    "app/angelcare-marketplace/[locale]/establishments/partner-os/page.tsx"
+  ],
+  "include": [],
+  "exclude": []
+}

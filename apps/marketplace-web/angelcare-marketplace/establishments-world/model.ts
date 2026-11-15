@@ -132,22 +132,30 @@ export function requestBrief(
   view: View,
   selected: Selection[],
   territory?: string | null,
+  t: (text: string) => string = (text) => text,
 ): string {
   return [
-    `Établissements · ${view}`,
-    territory ? `Territoire choisi : ${territory}` : "",
+    `${t("Établissements")} · ${view}`,
+    territory ? `${t("Territoire choisi")} : ${territory}` : "",
     ...selected.map(
       (item) =>
-        `${item.kind === "offer" ? `Offre publiée [${item.id}]` : item.kind === "formula" ? "Formule de référence brochure" : item.kind === "module" ? "Capacité présentée" : "Demande commerciale"} : ${item.title} — ${item.detail}`,
+        `${item.kind === "offer" ? `${t("Offre publiée")} [${item.id}]` : item.kind === "formula" ? t("Formule de référence brochure") : item.kind === "module" ? t("Capacité présentée") : t("Demande commerciale")} : ${item.title} — ${item.detail}`,
     ),
   ]
     .filter(Boolean)
     .join("\n");
 }
-export function price(item: DiscoveryItem): string {
+export function price(
+  item: DiscoveryItem,
+  locale: "fr" | "en" | "ar" = "fr",
+): string {
   if (item.price_mode === "quote_only" || item.price_amount === null)
-    return "Sur devis";
-  return `${item.price_mode === "starting_from" ? "Dès " : ""}${new Intl.NumberFormat("fr-FR").format(item.price_amount)} ${item.currency_label}${item.price_mode === "subscription" ? " · abonnement" : ""}`;
+    return locale === "ar"
+      ? "حسب عرض السعر"
+      : locale === "en"
+        ? "On quotation"
+        : "Sur devis";
+  return `${item.price_mode === "starting_from" ? (locale === "ar" ? "ابتداءً من " : locale === "en" ? "From " : "Dès ") : ""}${new Intl.NumberFormat(locale).format(item.price_amount)} ${item.currency_label}${item.price_mode === "subscription" ? (locale === "ar" ? " · اشتراك" : locale === "en" ? " · subscription" : " · abonnement") : ""}`;
 }
 export function selectedReferences(keys: string[]): Formula[] {
   return FORMULAS.filter((value) => keys.includes(value.id));
@@ -159,12 +167,15 @@ export const formulaSelection = (formula: Formula): Selection => ({
   title: formula.name,
   detail: `${formula.frequency} · ${formula.reporting} · tarif brochure ${new Intl.NumberFormat("fr-FR").format(formula.amount)} MAD / ${formula.unit}, périmètre à confirmer`,
 });
-export const offerSelection = (item: DiscoveryItem): Selection => ({
+export const offerSelection = (
+  item: DiscoveryItem,
+  locale: "fr" | "en" | "ar" = "fr",
+): Selection => ({
   key: `offer:${item.id}`,
   kind: "offer",
   id: item.id,
   title: item.name,
-  detail: `${price(item)} · ${item.public_reference}`,
+  detail: `${price(item, locale)} · ${item.public_reference}`,
 });
 export const freeYearSelection = (): Selection => ({
   key: "intent:partner-free-year",
@@ -178,6 +189,7 @@ export const freeYearSelection = (): Selection => ({
 export function restoreProject(
   raw: string | null,
   offers: DiscoveryItem[],
+  locale: "fr" | "en" | "ar" = "fr",
 ): Selection[] {
   if (!raw || raw.length > 12000) return [];
   try {
@@ -191,7 +203,7 @@ export function restoreProject(
           const item = offers.find(
             (item) => `offer:${item.id}` === key && !blocked(item),
           );
-          return item ? [offerSelection(item)] : [];
+          return item ? [offerSelection(item, locale)] : [];
         }
         if (key.startsWith("formula:")) {
           const formula = FORMULAS.find((item) => `formula:${item.id}` === key);

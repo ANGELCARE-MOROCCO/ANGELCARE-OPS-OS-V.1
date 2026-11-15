@@ -1,0 +1,1546 @@
+{
+  "Direction": ["Direction", "الإدارة"],
+  "Votre vision mérite un vrai poste de pilotage.": [
+    "Your vision deserves a real command centre.",
+    "رؤيتكم تستحق مركز قيادة حقيقيًا."
+  ],
+  "Centralisez l’essentiel, gardez une lecture par site et préparez vos prochaines décisions.": [
+    "Bring the essentials together, keep a view of each site and prepare your next decisions.",
+    "اجمعوا المعلومات الأساسية، وحافظوا على رؤية لكل موقع، واستعدّوا لقراراتكم المقبلة."
+  ],
+  "Préparer mon pilotage": [
+    "Prepare my management overview",
+    "أجهّز نظام قيادتي"
+  ],
+  "Familles": ["Families", "العائلات"],
+  "Chaque relation commence avant l’inscription.": [
+    "Every relationship starts before enrolment.",
+    "كل علاقة تبدأ قبل التسجيل."
+  ],
+  "De la première demande à la vie de l’école, préparez un parcours simple, lisible et rassurant.": [
+    "From the first enquiry to school life, prepare a clear, smooth and reassuring journey.",
+    "من الاستفسار الأول إلى الحياة المدرسية، جهّزوا مسارًا بسيطًا وواضحًا ومطمئنًا."
+  ],
+  "Structurer mon parcours familles": [
+    "Structure my family journey",
+    "أنظّم مسار العائلات"
+  ],
+  "Vie de l’école": ["School life", "الحياة المدرسية"],
+  "Une journée préparée. Un quotidien qui avance.": [
+    "A prepared day. Daily operations that move forward.",
+    "يوم مُعدّ بعناية، وعمل يومي يتقدّم."
+  ],
+  "Planifiez les activités, reliez les responsabilités et rendez le suivi plus facile à partager.": [
+    "Plan activities, connect responsibilities and make follow-up easier to share.",
+    "خطّطوا للأنشطة، واربطوا المسؤوليات، وسهّلوا مشاركة المتابعة."
+  ],
+  "Coordonner mon quotidien": [
+    "Coordinate my daily operations",
+    "أنسّق عملي اليومي"
+  ],
+  "Équipes": ["Teams", "الفِرَق"],
+  "Une équipe alignée fait toute la différence.": [
+    "An aligned team makes all the difference.",
+    "الفريق المتناغم يصنع الفرق."
+  ],
+  "Recrutement, transmission, formation et qualité : donnez un cadre lisible aux pratiques de votre équipe.": [
+    "Recruitment, handover, training and quality: give your team's practices a clear framework.",
+    "التوظيف ونقل الخبرة والتكوين والجودة: امنحوا ممارسات فريقكم إطارًا واضحًا."
+  ],
+  "Préparer l’organisation de mon équipe": [
+    "Prepare my team organisation",
+    "أجهّز تنظيم فريقي"
+  ],
+  "Revenus": ["Revenue", "الإيرادات"],
+  "De votre proposition au suivi du règlement.": [
+    "From your proposal to payment follow-up.",
+    "من مقترحكم إلى متابعة السداد."
+  ],
+  "Reliez votre offre, les conditions convenues, la facturation et le suivi des paiements.": [
+    "Connect your offer, agreed terms, billing and payment follow-up.",
+    "اربطوا عرضكم والشروط المتفق عليها بالفوترة ومتابعة المدفوعات."
+  ],
+  "Préparer mon organisation commerciale": [
+    "Prepare my commercial organisation",
+    "أجهّز تنظيمي التجاري"
+  ],
+  "Écosystème": ["Ecosystem", "المنظومة"],
+  "Votre établissement évolue. Votre environnement aussi.": [
+    "Your school evolves. Your environment does too.",
+    "مؤسستكم تتطوّر، ومنظومتكم كذلك."
+  ],
+  "Un même environnement pour enrichir votre périmètre, centraliser les documents et préparer l’accompagnement adapté.": [
+    "One environment to enrich your scope, bring documents together and prepare suitable support.",
+    "بيئة واحدة لتوسيع نطاقكم وتجميع الوثائق وإعداد المواكبة المناسبة."
+  ],
+  "Composer mon périmètre": ["Build my scope", "أحدّد نطاق مشروعي"],
+  "Direction & vue d’ensemble": [
+    "Direction & overview",
+    "الإدارة والرؤية الشاملة"
+  ],
+  "Pilotage": ["Management", "القيادة"],
+  "Une lecture commune pour retrouver vos priorités et préparer vos décisions.": [
+    "A shared overview to identify priorities and prepare decisions.",
+    "رؤية مشتركة لتحديد الأولويات والاستعداد للقرارات."
+  ],
+  "Réunir les informations utiles à la direction": [
+    "Bring management information together",
+    "تجميع المعلومات المفيدة للإدارة"
+  ],
+  "Repérer les priorités et les points d’attention": [
+    "Identify priorities and points needing attention",
+    "تحديد الأولويات والنقاط التي تستدعي الانتباه"
+  ],
+  "Partager une lecture claire de l’activité": [
+    "Share a clear view of activity",
+    "مشاركة رؤية واضحة للنشاط"
+  ],
+  "Vue établissement": ["School overview", "نظرة على المؤسسة"],
+  "Priorités": ["Priorities", "الأولويات"],
+  "Suivi direction": ["Management follow-up", "متابعة الإدارة"],
+  "Le cockpit de direction présenté dans le catalogue réunit les dimensions commerciales, opérationnelles et organisationnelles. La démonstration part de vos questions concrètes : ce que vous devez voir, à quel moment et avec quelles responsabilités.": [
+    "The management cockpit in the catalogue brings together commercial, operational and organisational dimensions. Your demonstration starts with practical questions: what you need to see, when, and with which responsibilities.",
+    "تجمع لوحة القيادة المعروضة في الكتالوج الأبعاد التجارية والتشغيلية والتنظيمية. وينطلق العرض التوضيحي من أسئلتكم العملية: ما الذي تحتاجون إلى رؤيته، ومتى، وبأي مسؤوليات؟"
+  ],
+  "Identifiez les décisions récurrentes, les informations aujourd’hui dispersées et les personnes qui doivent pouvoir les consulter.": [
+    "Identify recurring decisions, currently scattered information and the people who need access to it.",
+    "حدّدوا القرارات المتكررة والمعلومات المشتّتة حاليًا والأشخاص الذين يحتاجون إلى الاطلاع عليها."
+  ],
+  "Multi-établissements": ["Multiple schools", "إدارة مؤسسات متعددة"],
+  "Réseau": ["Network", "الشبكة"],
+  "Pilotez plusieurs sites avec une vue consolidée et des repères propres à chacun.": [
+    "Manage several sites with a consolidated overview and cues specific to each one.",
+    "أديروا مواقع متعددة برؤية موحّدة وعلامات خاصة بكل موقع."
+  ],
+  "Garder une lecture par établissement": [
+    "Keep a view of each school",
+    "الحفاظ على رؤية لكل مؤسسة"
+  ],
+  "Comparer les besoins et les ressources": [
+    "Compare needs and resources",
+    "مقارنة الاحتياجات والموارد"
+  ],
+  "Coordonner les priorités du réseau": [
+    "Coordinate network priorities",
+    "تنسيق أولويات الشبكة"
+  ],
+  "Sites": ["Sites", "المواقع"],
+  "Comparaison": ["Comparison", "المقارنة"],
+  "Coordination": ["Coordination", "التنسيق"],
+  "Le catalogue distingue une vue groupe et une lecture par établissement. Nous préparons avec vous la hiérarchie du réseau, les informations communes et les besoins spécifiques à chaque site, sans effacer leur contexte.": [
+    "The catalogue distinguishes a group overview and a school-level view. We prepare the network hierarchy, shared information and site-specific needs with you, while retaining each site's context.",
+    "يميّز الكتالوج بين رؤية المجموعة ورؤية كل مؤسسة. نُعدّ معكم هيكلة الشبكة والمعلومات المشتركة واحتياجات كل موقع، مع الحفاظ على سياقه الخاص."
+  ],
+  "Précisez le nombre de sites, leur organisation et les responsabilités locales ou centrales.": [
+    "Specify the number of sites, their organisation and local or central responsibilities.",
+    "حدّدوا عدد المواقع وتنظيمها والمسؤوليات المحلية والمركزية."
+  ],
+  "Reporting, KPI & tableaux de bord": [
+    "Reporting, KPIs & dashboards",
+    "التقارير والمؤشرات ولوحات المتابعة"
+  ],
+  "Suivi": ["Follow-up", "المتابعة"],
+  "Organisez les suivis de l’activité pour rendre les échanges de direction plus concrets.": [
+    "Organise activity monitoring to make management discussions more concrete.",
+    "نظّموا متابعة النشاط لجعل نقاشات الإدارة أكثر وضوحًا وواقعية."
+  ],
+  "Organiser les indicateurs utiles à votre activité": [
+    "Organise the indicators relevant to your activity",
+    "تنظيم المؤشرات المناسبة لنشاطكم"
+  ],
+  "Préparer des points de suivi partagés": [
+    "Prepare shared follow-up reviews",
+    "إعداد نقاط متابعة مشتركة"
+  ],
+  "Relier les observations aux actions à examiner": [
+    "Connect observations to actions to consider",
+    "ربط الملاحظات بالإجراءات المطلوب دراستها"
+  ],
+  "Indicateurs": ["Indicators", "المؤشرات"],
+  "Rapports": ["Reports", "التقارير"],
+  "Actions": ["Actions", "الإجراءات"],
+  "Les tableaux de bord et rapports servent une lecture suivie de votre activité. Le périmètre des indicateurs, leurs sources et leur fréquence sont étudiés selon votre fonctionnement ; une projection visuelle ne constitue pas une mesure de vos résultats.": [
+    "Dashboards and reports support ongoing monitoring of your activity. Indicator scope, sources and frequency are considered around your operations; a visual projection is not a measurement of your results.",
+    "تدعم لوحات المتابعة والتقارير قراءة مستمرة لنشاطكم. يُدرس نطاق المؤشرات ومصادرها وتواترها حسب عملكم؛ ولا يمثّل التصوّر البصري قياسًا لنتائجكم."
+  ],
+  "Apportez les questions auxquelles vos suivis actuels ne répondent pas et les rapports que votre équipe utilise déjà.": [
+    "Bring the questions your current monitoring does not answer and the reports your team already uses.",
+    "جهّزوا الأسئلة التي لا تجيب عنها متابعتكم الحالية والتقارير التي يستخدمها فريقكم بالفعل."
+  ],
+  "Admissions & inscriptions": ["Admissions & enrolment", "القبول والتسجيل"],
+  "Admissions": ["Admissions", "القبول"],
+  "De la demande d’information à l’inscription, un parcours plus fluide et structuré.": [
+    "From the first enquiry to enrolment, a smoother and more structured journey.",
+    "من طلب المعلومات إلى التسجيل، مسار أكثر سلاسة وتنظيمًا."
+  ],
+  "Centraliser les demandes et les dossiers": [
+    "Centralise enquiries and records",
+    "تجميع الطلبات والملفات"
+  ],
+  "Structurer les étapes jusqu’à l’inscription": [
+    "Structure the stages through to enrolment",
+    "تنظيم المراحل وصولًا إلى التسجيل"
+  ],
+  "Suivre l’avancement et les pièces à préparer": [
+    "Track progress and documents to prepare",
+    "متابعة التقدّم والوثائق المطلوب إعدادها"
+  ],
+  "Demandes": ["Requests", "الطلبات"],
+  "Dossiers": ["Records", "الملفات"],
+  "Inscriptions": ["Enrolments", "التسجيلات"],
+  "Préinscription, visite, pièces, validation et contrat : le catalogue présente un parcours d’admission relié. La démonstration précise les étapes que vous souhaitez suivre et la façon dont les informations passent entre l’accueil, la direction et les familles.": [
+    "Pre-enrolment, visits, documents, approval and contracts: the catalogue presents a connected admissions journey. The demonstration clarifies the stages you want to follow and how information moves between reception, management and families.",
+    "التسجيل الأولي والزيارة والوثائق والمصادقة والعقد: يعرض الكتالوج مسار قبول مترابطًا. يوضّح العرض المراحل التي تريدون متابعتها وكيفية انتقال المعلومات بين الاستقبال والإدارة والعائلات."
+  ],
+  "Décrivez vos étapes d’admission, les pièces demandées et les intervenants qui valident le dossier.": [
+    "Describe your admission stages, required documents and the people who approve records.",
+    "صفوا مراحل القبول والوثائق المطلوبة والجهات التي تعتمد الملفات."
+  ],
+  "CRM parents & leads": [
+    "Parent CRM & leads",
+    "إدارة علاقات العائلات والعملاء المحتملين"
+  ],
+  "Relation": ["Relationship", "العلاقة"],
+  "Suivez vos contacts, vos échanges et les opportunités d’inscription.": [
+    "Track contacts, conversations and enrolment opportunities.",
+    "تابعوا جهات الاتصال والتواصل وفرص التسجيل."
+  ],
+  "Suivre les contacts et leurs demandes": [
+    "Follow contacts and their requests",
+    "متابعة جهات الاتصال وطلباتها"
+  ],
+  "Qualifier les besoins et les opportunités": [
+    "Qualify needs and opportunities",
+    "تحديد الاحتياجات والفرص"
+  ],
+  "Garder l’historique des échanges utiles": [
+    "Keep a history of useful exchanges",
+    "الاحتفاظ بسجل للتواصل المفيد"
+  ],
+  "Contacts": ["Contacts", "جهات الاتصال"],
+  "Relances": ["Reminders", "التذكيرات"],
+  "Opportunités": ["Opportunities", "الفرص"],
+  "Le CRM organise la relation avant et autour de l’inscription : contacts, besoins, relances et historique. Les étapes commerciales et les responsabilités sont définies avec votre équipe pour éviter un suivi dépendant d’un seul interlocuteur.": [
+    "CRM organises relationships before and around enrolment: contacts, needs, reminders and history. Commercial stages and responsibilities are defined with your team so follow-up does not depend on a single person.",
+    "تنظّم إدارة العلاقات التواصل قبل التسجيل وحوله: جهات الاتصال والاحتياجات والتذكيرات والسجل. تُحدّد المراحل التجارية والمسؤوليات مع فريقكم لتفادي ارتباط المتابعة بشخص واحد."
+  ],
+  "Indiquez vos canaux d’entrée, vos étapes de suivi et les moments où une relance est utile.": [
+    "Indicate your enquiry channels, follow-up stages and when reminders are useful.",
+    "حدّدوا قنوات استقبال الطلبات ومراحل المتابعة والمواقف التي تستدعي التذكير."
+  ],
+  "Expérience parent": ["Parent experience", "تجربة الوالدين"],
+  "Préparez une relation plus lisible entre les familles et votre établissement.": [
+    "Prepare a clearer relationship between families and your school.",
+    "جهّزوا علاقة أوضح بين العائلات ومؤسستكم."
+  ],
+  "Clarifier les informations et les étapes": [
+    "Clarify information and next steps",
+    "توضيح المعلومات والمراحل"
+  ],
+  "Faciliter l’accès aux échanges utiles": [
+    "Make useful exchanges easier to access",
+    "تسهيل الوصول إلى التواصل المفيد"
+  ],
+  "Préparer une expérience parent cohérente": [
+    "Prepare a consistent parent experience",
+    "إعداد تجربة متناسقة للوالدين"
+  ],
+  "Portail parent": ["Parent portal", "بوابة الوالدين"],
+  "Informations": ["Information", "المعلومات"],
+  "Le catalogue relie portail parent, communication, engagement et satisfaction. La préparation consiste à définir ce que les familles doivent comprendre, retrouver et recevoir, selon leur situation et les droits prévus.": [
+    "The catalogue connects the parent portal, communication, engagement and satisfaction. Preparation defines what families should understand, find and receive, according to their situation and agreed access rights.",
+    "يربط الكتالوج بوابة الوالدين بالتواصل والمشاركة والرضا. ويحدّد الإعداد ما ينبغي للعائلات فهمه والعثور عليه وتلقّيه، بحسب وضعها وحقوق الوصول المقرّرة."
+  ],
+  "Choisissez les informations récurrentes, les publics concernés et les moments importants du parcours famille.": [
+    "Choose recurring information, relevant audiences and important moments in the family journey.",
+    "اختاروا المعلومات المتكررة والفئات المعنية والمحطات المهمة في مسار العائلة."
+  ],
+  "Communication & messagerie": [
+    "Communication & messaging",
+    "التواصل والمراسلة"
+  ],
+  "Échanges": ["Exchanges", "التواصل"],
+  "Informez, échangez et gardez des repères communs avec les familles et les équipes.": [
+    "Inform, exchange and share common cues with families and teams.",
+    "أخبروا وتواصلوا وشاركوا علامات موحّدة مع العائلات والفِرَق."
+  ],
+  "Structurer les moments et les canaux d’information": [
+    "Structure information channels and timing",
+    "تنظيم قنوات المعلومات وتوقيتها"
+  ],
+  "Suivre les échanges entre familles et équipe": [
+    "Follow exchanges between families and the team",
+    "متابعة التواصل بين العائلات والفريق"
+  ],
+  "Préparer annonces, messages et documents": [
+    "Prepare announcements, messages and documents",
+    "إعداد الإعلانات والرسائل والوثائق"
+  ],
+  "Messages": ["Messages", "الرسائل"],
+  "Annonces": ["Announcements", "الإعلانات"],
+  "Documents": ["Documents", "الوثائق"],
+  "Messagerie, notifications, annonces et pièces jointes composent la communication présentée dans le catalogue. Les destinataires, validations et modalités d’accès sont précisés dans votre périmètre, avant toute mise en route.": [
+    "Messaging, notifications, announcements and attachments make up the catalogue's communication offer. Recipients, approvals and access arrangements are clarified within your scope before implementation.",
+    "تشكّل المراسلة والإشعارات والإعلانات والمرفقات مجال التواصل في الكتالوج. ويُحدّد المستلمون والموافقات وكيفيات الوصول ضمن نطاقكم قبل بدء التشغيل."
+  ],
+  "Repérez les messages répétitifs, les groupes de destinataires et les validations nécessaires.": [
+    "Identify repetitive messages, recipient groups and required approvals.",
+    "حدّدوا الرسائل المتكررة ومجموعات المستلمين والموافقات المطلوبة."
+  ],
+  "Calendrier & planification": ["Calendar & planning", "التقويم والتخطيط"],
+  "Reliez activités, programmes, événements et ressources dans un quotidien préparé.": [
+    "Connect activities, programmes, events and resources in a prepared daily routine.",
+    "اربطوا الأنشطة والبرامج والمناسبات والموارد ضمن يوم مُعدّ بعناية."
+  ],
+  "Organiser le planning des activités": [
+    "Organise the activity schedule",
+    "تنظيم جدول الأنشطة"
+  ],
+  "Gérer les échéances et les temps forts": [
+    "Manage deadlines and key moments",
+    "إدارة المواعيد والمناسبات المهمة"
+  ],
+  "Partager un calendrier clair avec l’équipe": [
+    "Share a clear calendar with the team",
+    "مشاركة تقويم واضح مع الفريق"
+  ],
+  "Activités & programmes": ["Activities & programmes", "الأنشطة والبرامج"],
+  "Ressources": ["Resources", "الموارد"],
+  "Échéances": ["Deadlines", "المواعيد"],
+  "L’axe activités et programmes du catalogue couvre la planification, les contenus et le suivi. Nous préparons les niveaux, groupes, ressources et rythmes de votre établissement afin que la démonstration explique un vrai usage quotidien.": [
+    "The catalogue's activities and programmes area covers planning, content and follow-up. We prepare your school's levels, groups, resources and rhythms so the demonstration explains a genuine everyday use.",
+    "يشمل مجال الأنشطة والبرامج في الكتالوج التخطيط والمحتوى والمتابعة. نُعدّ مستويات مؤسستكم ومجموعاتها ومواردها وإيقاعاتها ليشرح العرض استخدامًا يوميًا فعليًا."
+  ],
+  "Précisez les groupes, les programmes, les contraintes horaires et les ressources à coordonner.": [
+    "Specify groups, programmes, timetable constraints and resources to coordinate.",
+    "حدّدوا المجموعات والبرامج والقيود الزمنية والموارد المطلوب تنسيقها."
+  ],
+  "Opérations & missions": ["Operations & assignments", "العمليات والمهام"],
+  "Répartissez les responsabilités et donnez une continuité au suivi des actions.": [
+    "Allocate responsibilities and give action follow-up continuity.",
+    "وزّعوا المسؤوليات وامنحوا متابعة الإجراءات استمرارية."
+  ],
+  "Répartir les tâches et les responsabilités": [
+    "Allocate tasks and responsibilities",
+    "توزيع المهام والمسؤوليات"
+  ],
+  "Garder les échéances et les actions visibles": [
+    "Keep deadlines and actions visible",
+    "إبقاء المواعيد والإجراءات واضحة"
+  ],
+  "Conserver une trace des opérations du quotidien": [
+    "Keep a record of everyday operations",
+    "الاحتفاظ بسجل للعمليات اليومية"
+  ],
+  "Missions": ["Assignments", "التكليفات"],
+  "Tâches": ["Tasks", "المهام"],
+  "Tâches, missions, maintenance et fournisseurs apparaissent dans la carte fonctionnelle du catalogue. Votre projet précise les opérations réellement utiles, les rôles concernés et les étapes à suivre ; les automatismes sont étudiés selon les moteurs disponibles.": [
+    "Tasks, assignments, maintenance and suppliers appear in the catalogue's capability map. Your project specifies useful operations, relevant roles and steps to follow; automation is considered according to the available engines.",
+    "تظهر المهام والتكليفات والصيانة والمورّدون في خريطة وظائف الكتالوج. يحدّد مشروعكم العمليات المفيدة والأدوار المعنية والمراحل، وتُدرس الأتمتة حسب المحرّكات المتاحة."
+  ],
+  "Choisissez quelques opérations récurrentes, leurs responsables et les validations attendues.": [
+    "Choose recurring operations, their owners and expected approvals.",
+    "اختاروا عمليات متكررة وحدّدوا مسؤوليها والموافقات المنتظرة."
+  ],
+  "RH, recrutement & staffing": [
+    "HR, recruitment & staffing",
+    "الموارد البشرية والتوظيف وتوزيع الفرق"
+  ],
+  "De vos besoins de recrutement au suivi des équipes, construisez un cadre commun.": [
+    "From recruitment needs to team follow-up, build a common framework.",
+    "من احتياجات التوظيف إلى متابعة الفرق، ابنوا إطارًا مشتركًا."
+  ],
+  "Gérer les besoins de recrutement": [
+    "Manage recruitment needs",
+    "إدارة احتياجات التوظيف"
+  ],
+  "Organiser les plannings et les disponibilités": [
+    "Organise schedules and availability",
+    "تنظيم الجداول والتوفّر"
+  ],
+  "Suivre les présences et les responsabilités": [
+    "Track attendance and responsibilities",
+    "متابعة الحضور والمسؤوليات"
+  ],
+  "Recrutement": ["Recruitment", "التوظيف"],
+  "Personnel": ["Staff", "الموظفون"],
+  "Planning": ["Scheduling", "الجدولة"],
+  "Le catalogue présente recrutement, dossiers employés, planning, présence et performance. La démonstration est préparée à partir de votre organisation et des accès autorisés ; les règles RH et les conditions applicables restent à préciser avec vos responsables.": [
+    "The catalogue presents recruitment, employee records, scheduling, attendance and performance. Your demonstration is prepared around your organisation and authorised access; HR rules and applicable terms remain to be clarified with your managers.",
+    "يعرض الكتالوج التوظيف وملفات الموظفين والجداول والحضور والأداء. يُعدّ العرض وفق تنظيمكم والوصول المصرّح به، وتُوضّح قواعد الموارد البشرية والشروط المطبقة مع مسؤوليكم."
+  ],
+  "Indiquez les profils, les équipes, les horaires et les responsabilités d’accès à étudier.": [
+    "Indicate the profiles, teams, schedules and access responsibilities to consider.",
+    "حدّدوا الملفات المهنية والفرق والجداول ومسؤوليات الوصول المطلوب دراستها."
+  ],
+  "Formation & certification": [
+    "Training & certification",
+    "التكوين والشهادات"
+  ],
+  "Transmission": ["Knowledge transfer", "نقل الخبرة"],
+  "Donnez une continuité à l’intégration et au développement des compétences.": [
+    "Give continuity to onboarding and skills development.",
+    "امنحوا إدماج الموظفين وتنمية المهارات استمرارية."
+  ],
+  "Planifier les formations de l’équipe": [
+    "Plan team training",
+    "تخطيط تكوين الفريق"
+  ],
+  "Suivre les parcours et les validations prévus": [
+    "Track agreed learning paths and approvals",
+    "متابعة المسارات والمصادقات المقرّرة"
+  ],
+  "Valoriser les compétences internes": [
+    "Recognise internal skills",
+    "تثمين المهارات الداخلية"
+  ],
+  "Parcours": ["Learning paths", "المسارات"],
+  "Compétences": ["Skills", "المهارات"],
+  "Évaluations": ["Assessments", "التقييمات"],
+  "Parcours, formations, compétences, évaluations et plans de progrès font partie de la carte du catalogue. Les contenus, critères, évaluateurs et conditions de certification doivent être définis pour le parcours retenu ; aucun titre n’est délivré par une simple sélection sur cette page.": [
+    "Learning paths, training, skills, assessments and improvement plans are part of the catalogue. Content, criteria, assessors and certification conditions must be defined for the chosen path; selecting a topic here does not award a qualification.",
+    "يشمل الكتالوج المسارات والتكوين والمهارات والتقييمات وخطط التحسين. يجب تحديد المحتوى والمعايير والمقيّمين وشروط الشهادة للمسار المختار؛ ولا يمنح اختيار مجال هنا أي مؤهل."
+  ],
+  "Précisez les compétences prioritaires, les publics et les formations déjà utilisées.": [
+    "Specify priority skills, audiences and training already in use.",
+    "حدّدوا المهارات ذات الأولوية والفئات والتكوينات المستخدمة حاليًا."
+  ],
+  "Qualité, audits & SOP": [
+    "Quality, audits & SOPs",
+    "الجودة والتدقيق وإجراءات العمل"
+  ],
+  "Pratiques": ["Practices", "الممارسات"],
+  "Structurez vos pratiques et préparez les revues internes avec des repères partagés.": [
+    "Structure practices and prepare internal reviews with shared cues.",
+    "نظّموا الممارسات واستعدّوا للمراجعات الداخلية بعلامات مشتركة."
+  ],
+  "Structurer les procédures et les checklists": [
+    "Structure procedures and checklists",
+    "تنظيم الإجراءات وقوائم التحقّق"
+  ],
+  "Organiser les audits et les contrôles internes": [
+    "Organise audits and internal checks",
+    "تنظيم التدقيق والمراقبة الداخلية"
+  ],
+  "Suivre les actions et les preuves utiles": [
+    "Track actions and useful evidence",
+    "متابعة الإجراءات والأدلة المفيدة"
+  ],
+  "SOP": ["SOPs", "إجراءات العمل"],
+  "Checklists": ["Checklists", "قوائم التحقّق"],
+  "Plans d’action": ["Action plans", "خطط العمل"],
+  "Les supports qualité relient procédures, audits, observations et plans d’action. Ils accompagnent votre préparation interne. Les obligations, contrôles et validations relèvent des autorités et professionnels compétents ; aucun résultat d’inspection n’est garanti.": [
+    "Quality materials connect procedures, audits, observations and action plans. They support internal preparation. Obligations, checks and approvals belong to the relevant authorities and professionals; no inspection outcome is guaranteed.",
+    "تربط مواد الجودة الإجراءات والتدقيق والملاحظات بخطط العمل، وتدعم الاستعداد الداخلي. تبقى الالتزامات والرقابة والمصادقات من اختصاص الجهات والمختصين المعنيين، ولا تُضمن أي نتيجة تفتيش."
+  ],
+  "Identifiez vos référentiels, vos procédures existantes et les revues que vous souhaitez organiser.": [
+    "Identify your standards, existing procedures and the reviews you want to organise.",
+    "حدّدوا مرجعياتكم وإجراءاتكم القائمة والمراجعات التي ترغبون في تنظيمها."
+  ],
+  "Rôles, permissions & sécurité": [
+    "Roles, permissions & security",
+    "الأدوار والصلاحيات والأمان"
+  ],
+  "Responsabilités": ["Responsibilities", "المسؤوليات"],
+  "Définissez qui intervient, ce qui est partagé et les accès nécessaires.": [
+    "Define who acts, what is shared and which access is needed.",
+    "حدّدوا من يتدخّل وما يُشارك وما يحتاج إليه من وصول."
+  ],
+  "Définir les rôles et les accès par profil": [
+    "Define roles and access by profile",
+    "تحديد الأدوار والوصول حسب الفئة"
+  ],
+  "Préciser les responsabilités de validation": [
+    "Clarify approval responsibilities",
+    "توضيح مسؤوليات المصادقة"
+  ],
+  "Séparer les usages locaux et ceux du réseau": [
+    "Separate site-level and network-level uses",
+    "الفصل بين استخدامات الموقع والشبكة"
+  ],
+  "Accès": ["Access", "الوصول"],
+  "Profils": ["Profiles", "الفئات"],
+  "Validation": ["Approval", "المصادقة"],
+  "La carte fonctionnelle inclut les rôles, permissions et la sécurité. Le projet doit préciser les profils, les droits et la gouvernance des données. Une description commerciale ne remplace pas une revue technique des protections réellement déployées.": [
+    "The capability map includes roles, permissions and security. The project must specify profiles, rights and data governance. A commercial description does not replace a technical review of deployed protections.",
+    "تتضمن الخريطة الأدوار والصلاحيات والأمان. يجب أن يحدّد المشروع الفئات والحقوق وحوكمة البيانات. ولا يحلّ الوصف التجاري محلّ المراجعة التقنية للحماية المطبّقة."
+  ],
+  "Préparez les profils utilisateurs, les responsabilités et les informations à protéger.": [
+    "Prepare user profiles, responsibilities and the information to protect.",
+    "جهّزوا فئات المستخدمين والمسؤوليات والمعلومات الواجب حمايتها."
+  ],
+  "Plans, devis & contrats": [
+    "Plans, quotations & contracts",
+    "الخطط وعروض الأسعار والعقود"
+  ],
+  "Commercial": ["Commercial", "تجاري"],
+  "Formalisez vos propositions, vos périmètres et les accords avec les familles.": [
+    "Formalise proposals, scope and agreements with families.",
+    "وثّقوا مقترحاتكم ونطاقكم والاتفاقات مع العائلات."
+  ],
+  "Préparer des propositions lisibles": [
+    "Prepare clear proposals",
+    "إعداد مقترحات واضحة"
+  ],
+  "Étudier et suivre les accords retenus": [
+    "Review and track agreed arrangements",
+    "دراسة الاتفاقات المعتمدة ومتابعتها"
+  ],
+  "Garder un historique clair des conditions": [
+    "Keep a clear history of terms",
+    "الاحتفاظ بسجل واضح للشروط"
+  ],
+  "Devis": ["Quotations", "عروض الأسعار"],
+  "Forfaits": ["Packages", "الباقات"],
+  "Contrats": ["Contracts", "العقود"],
+  "Le catalogue présente devis, gestion commerciale et forfaits facturables. Les prestations, quantités, durées et conditions sont précisées avant engagement, puis reliées au parcours de facturation approprié.": [
+    "The catalogue presents quotations, commercial management and billable packages. Services, quantities, durations and terms are clarified before commitment, then connected to the appropriate billing journey.",
+    "يعرض الكتالوج عروض الأسعار والتدبير التجاري والباقات القابلة للفوترة. تُحدّد الخدمات والكميات والمدد والشروط قبل الالتزام، ثم تُربط بمسار الفوترة المناسب."
+  ],
+  "Décrivez votre offre, vos variantes, les validations et les conditions que vous souhaitez formaliser.": [
+    "Describe your offer, variants, approvals and terms to formalise.",
+    "صفوا عرضكم وتنويعاته والمصادقات والشروط التي تريدون توثيقها."
+  ],
+  "Services activables": ["Activable services", "الخدمات القابلة للتفعيل"],
+  "Offre": ["Offer", "العرض"],
+  "Préparez les services utiles à votre établissement et leur place dans votre offre.": [
+    "Prepare the services useful to your school and their place in your offer.",
+    "جهّزوا الخدمات المفيدة لمؤسستكم وموقعها ضمن عرضكم."
+  ],
+  "Proposer des services complémentaires": [
+    "Offer complementary services",
+    "اقتراح خدمات تكميلية"
+  ],
+  "Définir les besoins et les conditions retenues": [
+    "Define agreed needs and terms",
+    "تحديد الاحتياجات والشروط المعتمدة"
+  ],
+  "Suivre le périmètre et la facturation associés": [
+    "Track the associated scope and billing",
+    "متابعة النطاق والفوترة المرتبطين"
+  ],
+  "Services": ["Services", "الخدمات"],
+  "Options": ["Options", "الخيارات"],
+  "Périmètre": ["Scope", "النطاق"],
+  "L’axe services activables organise des prestations complémentaires telles que transport, repas ou activités, selon ce qui est réellement disponible et retenu. Cette page prépare le besoin ; elle n’active pas un service ni une facturation automatiquement.": [
+    "The activable services area organises complementary services such as transport, meals or activities, according to what is available and agreed. This page prepares your needs; it does not activate a service or billing automatically.",
+    "ينظّم مجال الخدمات القابلة للتفعيل خدمات تكميلية مثل النقل والوجبات والأنشطة، حسب المتاح والمعتمد. تُعدّ هذه الصفحة احتياجاتكم، ولا تُفعّل خدمة أو فوترة تلقائيًا."
+  ],
+  "Sélectionnez les services à étudier, leurs publics, les modalités et les contraintes de fonctionnement.": [
+    "Select services to consider, audiences, arrangements and operational constraints.",
+    "اختاروا الخدمات المطلوب دراستها والفئات والكيفيات وقيود التشغيل."
+  ],
+  "Facturation & abonnements": [
+    "Billing & subscriptions",
+    "الفوترة والاشتراكات"
+  ],
+  "Finance": ["Finance", "المالية"],
+  "Informez, échelonnez et suivez les factures et abonnements dans leur périmètre.": [
+    "Inform, schedule and track invoices and subscriptions within their scope.",
+    "أخبروا وجدولوا وتابعوا الفواتير والاشتراكات ضمن نطاقها."
+  ],
+  "Organiser les abonnements et les échéances": [
+    "Organise subscriptions and due dates",
+    "تنظيم الاشتراكات ومواعيد الاستحقاق"
+  ],
+  "Émettre et retrouver les documents de facturation": [
+    "Issue and retrieve billing documents",
+    "إصدار وثائق الفوترة واسترجاعها"
+  ],
+  "Suivre le statut des factures": [
+    "Track invoice status",
+    "متابعة حالة الفواتير"
+  ],
+  "Factures": ["Invoices", "الفواتير"],
+  "Abonnements": ["Subscriptions", "الاشتراكات"],
+  "Facturation et abonnements relient prestations, documents et périodicités. Les règles, taxes, échéances et moyens disponibles sont confirmés selon votre configuration. Les exemples de démonstration ne sont pas des écritures comptables réelles.": [
+    "Billing and subscriptions connect services, documents and billing cycles. Rules, taxes, due dates and available methods are confirmed for your configuration. Demonstration examples are not real accounting entries.",
+    "تربط الفوترة والاشتراكات الخدمات والوثائق والدورات. تُؤكّد القواعد والضرائب والمواعيد والوسائل حسب إعدادكم. أمثلة العرض ليست قيودًا محاسبية حقيقية."
+  ],
+  "Précisez vos périodicités, les prestations facturées et les règles que vous utilisez déjà.": [
+    "Specify billing cycles, billed services and the rules already in use.",
+    "حدّدوا دورات الفوترة والخدمات المفوترة والقواعد المستخدمة حاليًا."
+  ],
+  "Paiements & relances": ["Payments & reminders", "المدفوعات والتذكيرات"],
+  "Encaissement": ["Collection", "التحصيل"],
+  "Suivez les règlements et préparez les relances avec une information cohérente.": [
+    "Track payments and prepare reminders with consistent information.",
+    "تابعوا المدفوعات وجهّزوا التذكيرات بمعلومات متناسقة."
+  ],
+  "Suivre les règlements et les échéances": [
+    "Track payments and due dates",
+    "متابعة المدفوعات ومواعيد الاستحقاق"
+  ],
+  "Préparer des relances adaptées au contexte": [
+    "Prepare reminders suited to the context",
+    "إعداد تذكيرات مناسبة للسياق"
+  ],
+  "Conserver un historique de suivi": [
+    "Keep a follow-up history",
+    "الاحتفاظ بسجل المتابعة"
+  ],
+  "Règlements": ["Payments", "المدفوعات"],
+  "Historique": ["History", "السجل"],
+  "Le catalogue distingue paiements, relance et recouvrement. Le parcours doit relier les factures et les règlements disponibles, avec des modalités et des responsabilités convenues. Aucun paiement n’est effectué depuis cette présentation commerciale.": [
+    "The catalogue distinguishes payments, reminders and collection. The journey connects available invoices and payments with agreed arrangements and responsibilities. No payment is made from this commercial presentation.",
+    "يميّز الكتالوج بين المدفوعات والتذكير والتحصيل. يربط المسار الفواتير والمدفوعات المتاحة بكيفيات ومسؤوليات متفق عليها. ولا تُجرى أي دفعة من هذا العرض التجاري."
+  ],
+  "Indiquez vos moyens de règlement, vos étapes de relance et les personnes chargées du suivi.": [
+    "Indicate payment methods, reminder stages and the people responsible for follow-up.",
+    "حدّدوا وسائل السداد ومراحل التذكير والأشخاص المسؤولين عن المتابعة."
+  ],
+  "Marketplace & add-ons": ["Marketplace & add-ons", "السوق والإضافات"],
+  "Évolutivité": ["Scalability", "قابلية التطوّر"],
+  "Enrichissez votre environnement avec un périmètre complémentaire adapté.": [
+    "Enrich your environment with suitable complementary capabilities.",
+    "أثروا منظومتكم بقدرات تكميلية مناسبة."
+  ],
+  "Explorer les modules et services complémentaires": [
+    "Explore complementary modules and services",
+    "استكشاف الوحدات والخدمات التكميلية"
+  ],
+  "Choisir selon vos usages et votre configuration": [
+    "Choose according to your uses and configuration",
+    "الاختيار بحسب استخداماتكم وإعدادكم"
+  ],
+  "Préparer l’évolution de votre environnement": [
+    "Prepare your environment's evolution",
+    "الاستعداد لتطوّر منظومتكم"
+  ],
+  "Modules": ["Modules", "الوحدات"],
+  "Extensions": ["Extensions", "الإضافات"],
+  "Le catalogue présente un écosystème de modules et d’extensions. Disponibilité, compatibilité, droits d’utilisation et conditions doivent être confirmés pour votre projet. Une option montrée ici n’est pas présentée comme installée sur votre compte.": [
+    "The catalogue presents an ecosystem of modules and extensions. Availability, compatibility, usage rights and terms must be confirmed for your project. An option shown here is not presented as installed on your account.",
+    "يعرض الكتالوج منظومة من الوحدات والإضافات. يجب تأكيد الإتاحة والتوافق وحقوق الاستخدام والشروط لمشروعكم. ولا تُقدّم أي ميزة هنا على أنها مثبّتة في حسابكم."
+  ],
+  "Listez les besoins complémentaires et les outils existants dont il faut tenir compte.": [
+    "List complementary needs and existing tools to take into account.",
+    "دوّنوا الاحتياجات التكميلية والأدوات الحالية التي يجب أخذها في الاعتبار."
+  ],
+  "Documents & dossiers": ["Documents & records", "الوثائق والملفات"],
+  "Continuité": ["Continuity", "الاستمرارية"],
+  "Rapprochez les documents des étapes et des personnes qui en ont besoin.": [
+    "Bring documents closer to the stages and people that need them.",
+    "اربطوا الوثائق بالمراحل والأشخاص الذين يحتاجون إليها."
+  ],
+  "Organiser les pièces et les dossiers": [
+    "Organise documents and records",
+    "تنظيم الوثائق والملفات"
+  ],
+  "Retrouver les versions et les éléments utiles": [
+    "Retrieve versions and useful information",
+    "استرجاع النسخ والعناصر المفيدة"
+  ],
+  "Préciser les droits de consultation": [
+    "Clarify viewing rights",
+    "توضيح حقوق الاطلاع"
+  ],
+  "Pièces": ["Documents", "الوثائق"],
+  "Le suivi documentaire accompagne admissions, équipes, qualité et gestion commerciale. Votre périmètre précise les documents concernés, leur circulation, les validations et les règles de conservation applicables.": [
+    "Document follow-up supports admissions, teams, quality and commercial management. Your scope clarifies relevant documents, circulation, approvals and applicable retention rules.",
+    "تدعم المتابعة الوثائقية القبول والفرق والجودة والتدبير التجاري. يحدّد نطاقكم الوثائق المعنية وتداولها ومصادقاتها وقواعد حفظها المطبقة."
+  ],
+  "Repérez les dossiers récurrents, les pièces requises et les étapes de validation.": [
+    "Identify recurring records, required documents and approval stages.",
+    "حدّدوا الملفات المتكررة والوثائق المطلوبة ومراحل المصادقة."
+  ],
+  "Support & tickets": ["Support & tickets", "الدعم والتذاكر"],
+  "Accompagnement": ["Support arrangements", "المواكبة"],
+  "Préparez un point de suivi pour les demandes et les besoins d’assistance.": [
+    "Prepare a follow-up point for requests and assistance needs.",
+    "جهّزوا نقطة متابعة للطلبات واحتياجات المساعدة."
+  ],
+  "Organiser les demandes de support": [
+    "Organise support requests",
+    "تنظيم طلبات الدعم"
+  ],
+  "Garder un suivi des échanges et des actions": [
+    "Keep track of exchanges and actions",
+    "الاحتفاظ بمتابعة التواصل والإجراءات"
+  ],
+  "Définir les modalités de l’accompagnement": [
+    "Define support arrangements",
+    "تحديد كيفيات المواكبة"
+  ],
+  "Assistance": ["Assistance", "المساعدة"],
+  "Support, tickets et base de connaissances sont présentés dans le catalogue. Les canaux, disponibilités, responsabilités et niveaux d’accompagnement sont précisés dans votre proposition ; aucun délai de réponse garanti n’est inventé ici.": [
+    "Support, tickets and a knowledge base are presented in the catalogue. Channels, availability, responsibilities and support levels are clarified in your proposal; no guaranteed response time is invented here.",
+    "يعرض الكتالوج الدعم والتذاكر وقاعدة المعرفة. تُحدّد القنوات والتوفّر والمسؤوليات ومستويات المواكبة في مقترحكم، دون اختلاق أجل استجابة مضمون."
+  ],
+  "Identifiez les utilisateurs à accompagner, leurs besoins et les conditions d’assistance à étudier.": [
+    "Identify users to support, their needs and assistance arrangements to consider.",
+    "حدّدوا المستخدمين الذين يحتاجون إلى المواكبة واحتياجاتهم وشروط المساعدة المطلوب دراستها."
+  ],
+  "Une crèche": ["A nursery", "حضانة"],
+  "Une maternelle": ["A preschool", "روضة أطفال"],
+  "Plusieurs sites": ["Multiple sites", "مواقع متعددة"],
+  "Je prépare mon ouverture": ["I am preparing an opening", "أستعدّ للافتتاح"],
+  "À préciser": ["To clarify", "يُحدّد لاحقًا"],
+  "1 site": ["1 site", "موقع واحد"],
+  "2 à 5 sites": ["2 to 5 sites", "من موقعين إلى 5 مواقع"],
+  "6 sites ou plus": ["6 or more sites", "6 مواقع أو أكثر"],
+  "À préciser ensemble": ["To clarify together", "نحدّدها معًا"],
+  "Je me renseigne": ["I am exploring", "أستكشف الخيارات"],
+  "Projet sous trois mois": [
+    "Project within three months",
+    "مشروع خلال ثلاثة أشهر"
+  ],
+  "Besoin à étudier rapidement": [
+    "A need to review promptly",
+    "حاجة تتطلّب دراسة قريبة"
+  ],
+  "Projet Partner OS": ["Partner OS project", "مشروع Partner OS"],
+  "Votre situation": ["Your situation", "وضع مؤسستكم"],
+  "Votre priorité": ["Your priority", "أولويتكم"],
+  "Nombre de sites": ["Number of sites", "عدد المواقع"],
+  "Votre horizon": ["Your timeframe", "أفقكم الزمني"],
+  "Domaines retenus": ["Selected areas", "المجالات المختارة"],
+  "Dois-je sélectionner tous les modules ?": [
+    "Do I need to select every module?",
+    "هل يجب اختيار جميع الوحدات؟"
+  ],
+  "Non. Les domaines préparent votre échange. Vous pouvez ajouter, retirer et combiner librement les capacités à étudier. Le périmètre réellement retenu est précisé dans votre proposition.": [
+    "No. Areas prepare your discussion. Freely add, remove and combine capabilities to consider. The scope actually agreed is clarified in your proposal.",
+    "لا. المجالات تُعدّ تواصلكم. يمكنكم إضافة القدرات المطلوب دراستها وحذفها وجمعها بحرية، ويُوضّح النطاق المعتمد فعليًا في مقترحكم."
+  ],
+  "La plateforme convient-elle à plusieurs sites ?": [
+    "Does the platform suit multiple sites?",
+    "هل تناسب المنصّة مواقع متعددة؟"
+  ],
+  "Le catalogue prévoit une lecture par établissement et une vue groupe. Le nombre de sites, la gouvernance et les accès sont étudiés selon votre organisation.": [
+    "The catalogue provides a school-level view and a group overview. Site numbers, governance and access are studied around your organisation.",
+    "ينصّ الكتالوج على رؤية لكل مؤسسة ورؤية للمجموعة. يُدرس عدد المواقع والحوكمة والوصول حسب تنظيمكم."
+  ],
+  "Peut-on partir de notre organisation actuelle ?": [
+    "Can we start from our current organisation?",
+    "هل يمكن الانطلاق من تنظيمنا الحالي؟"
+  ],
+  "Oui. Présentez vos étapes, vos outils et vos contraintes. La démonstration doit expliquer comment préparer votre périmètre ; une migration ou une intégration nécessite une vérification spécifique.": [
+    "Yes. Present your stages, tools and constraints. The demonstration explains how to prepare your scope; migration or integration requires a specific check.",
+    "نعم. اعرضوا مراحل عملكم وأدواتكم وقيودكم. يشرح العرض كيفية إعداد نطاقكم؛ وتتطلّب الهجرة أو الربط فحصًا خاصًا."
+  ],
+  "Comment préparer la démonstration ?": [
+    "How do I prepare the demonstration?",
+    "كيف أستعدّ للعرض التوضيحي؟"
+  ],
+  "Choisissez votre situation et vos domaines prioritaires. Vos choix sont joints au formulaire. Une précision complémentaire reste facultative si le contexte préparé suffit.": [
+    "Choose your situation and priority areas. Your choices are attached to the form. Extra detail remains optional when the prepared context is sufficient.",
+    "اختاروا وضع مؤسستكم والمجالات ذات الأولوية. تُرفق اختياراتكم بالنموذج، وتبقى التفاصيل الإضافية اختيارية إن كان السياق المُعدّ كافيًا."
+  ],
+  "Quelles sont les étapes de mise en route ?": [
+    "What are the implementation stages?",
+    "ما مراحل بدء التشغيل؟"
+  ],
+  "Vos priorités, le périmètre, les accès et les besoins d’accompagnement sont précisés avant une proposition. Les modalités et le calendrier de mise en route sont ensuite convenus.": [
+    "Priorities, scope, access and support needs are clarified before a proposal. Implementation arrangements and timing are then agreed.",
+    "تُوضّح الأولويات والنطاق والوصول واحتياجات المواكبة قبل المقترح، ثم يُتفق على كيفيات بدء التشغيل وجدوله."
+  ],
+  "Quelles sont les conditions de la proposition ?": [
+    "What are the proposal conditions?",
+    "ما شروط المقترح؟"
+  ],
+  "Les fonctions retenues, les services, les éventuels abonnements, la disponibilité et les conditions d’accompagnement sont confirmés avant engagement. Cette demande ne déclenche aucun achat.": [
+    "Selected functions, services, any subscriptions, availability and support terms are confirmed before commitment. This request does not trigger a purchase.",
+    "تُؤكّد الوظائف والخدمات والاشتراكات المحتملة والإتاحة وشروط المواكبة قبل الالتزام. ولا يُطلق هذا الطلب أي شراء."
+  ],
+  "Scène illustrative : direction d’un établissement préparant son pilotage": [
+    "Illustrative scene: a school leadership team preparing its management overview",
+    "مشهد توضيحي: إدارة مؤسسة تُعدّ نظام قيادتها"
+  ],
+  "Scène illustrative : accueil et échange avec une famille": [
+    "Illustrative scene: welcoming and meeting a family",
+    "مشهد توضيحي: استقبال عائلة والتواصل معها"
+  ],
+  "Scène illustrative : activité accompagnée en classe préscolaire": [
+    "Illustrative scene: a guided preschool classroom activity",
+    "مشهد توضيحي: نشاط مؤطّر في صف للتعليم الأولي"
+  ],
+  "Scène illustrative : équipe pédagogique préparant ses pratiques": [
+    "Illustrative scene: a teaching team preparing its practices",
+    "مشهد توضيحي: فريق تربوي يُعدّ ممارساته"
+  ],
+  "Scène illustrative : supports administratifs organisés pour le quotidien": [
+    "Illustrative scene: organised administrative materials for daily operations",
+    "مشهد توضيحي: مواد إدارية منظّمة للعمل اليومي"
+  ],
+  "VOTRE ÉCOLE.": ["YOUR SCHOOL.", "مؤسستكم."],
+  "UNE SEULE": ["ONE CONNECTED", "منظومة"],
+  "DYNAMIQUE.": ["EXPERIENCE.", "واحدة."],
+  "Pilotez votre établissement. Reliez vos équipes. Faites avancer vos projets.": [
+    "Manage your school. Connect your teams. Move your projects forward.",
+    "قودوا مؤسستكم. اربطوا فرقكم. وادفعوا مشاريعكم إلى الأمام."
+  ],
+  "Préparer ma démonstration Partner OS": [
+    "Prepare my Partner OS demonstration",
+    "أجهّز عرض Partner OS التوضيحي"
+  ],
+  "Préparer ma démonstration": [
+    "Prepare my demonstration",
+    "أجهّز عرضي التوضيحي"
+  ],
+  "Explorer les solutions": ["Explore the solutions", "أستكشف الحلول"],
+  "Votre réseau": ["Your network", "شبكتكم"],
+  "Aperçu illustratif · périmètre à définir": [
+    "Illustrative preview · scope to define",
+    "عرض توضيحي · يُحدّد نطاقه"
+  ],
+  "Une sous-application par établissement": [
+    "A dedicated application for each school",
+    "تطبيق فرعي لكل مؤسسة"
+  ],
+  "Des modules selon vos besoins": [
+    "Modules around your needs",
+    "وحدات بحسب احتياجاتكم"
+  ],
+  "Un pilotage multi-sites": ["Multi-site management", "قيادة مواقع متعددة"],
+  "Un accompagnement à définir": [
+    "Support arrangements to define",
+    "مواكبة تُحدّد كيفياتها"
+  ],
+  "Dans votre brief": ["In your brief", "ضمن موجزكم"],
+  "Pour votre situation": ["For your situation", "مناسب لوضع مؤسستكم"],
+  "Retirer du brief": ["Remove from brief", "إزالة من الموجز"],
+  "Ajouter au brief": ["Add to brief", "إضافة إلى الموجز"],
+  "Usages": ["Uses", "الاستخدامات"],
+  "Préparer ce domaine": ["Prepare this area", "أجهّز هذا المجال"],
+  "Comprendre & préparer": ["Understand & prepare", "أفهم وأستعدّ"],
+  "Ce que nous préparons ensemble": [
+    "What we prepare together",
+    "ما نُعدّه معًا"
+  ],
+  "Périmètre et conditions à préciser avant engagement.": [
+    "Scope and terms to clarify before commitment.",
+    "يُوضّح النطاق والشروط قبل الالتزام."
+  ],
+  "À relier selon votre projet": [
+    "Connect according to your project",
+    "اربطوا المجالات حسب مشروعكم"
+  ],
+  "Solution associée": ["Related solution", "حل مرتبط"],
+  "Fermer cette explication": ["Close this explanation", "إغلاق هذا الشرح"],
+  "Associer au brief": ["Associate with my brief", "إضافة إلى موجزي"],
+  "Voir ce domaine": ["View this area", "عرض هذا المجال"],
+  "Premier contact": ["First contact", "التواصل الأول"],
+  "Chaque demande mérite un suivi préparé.": [
+    "Every enquiry deserves prepared follow-up.",
+    "كل طلب يستحق متابعة مُعدّة."
+  ],
+  "Retrouvez le contact, son besoin et la prochaine étape utile.": [
+    "Find the contact, their need and the next useful step.",
+    "استرجعوا جهة الاتصال واحتياجاتها والخطوة التالية المفيدة."
+  ],
+  "Visite": ["Visit", "الزيارة"],
+  "Votre accueil raconte déjà votre qualité.": [
+    "Your welcome already tells your quality story.",
+    "استقبالكم يعكس جودتكم منذ البداية."
+  ],
+  "Préparez la visite, les informations à partager et les échanges à poursuivre.": [
+    "Prepare the visit, information to share and exchanges to continue.",
+    "جهّزوا الزيارة والمعلومات المطلوب مشاركتها والتواصل الذي ينبغي متابعته."
+  ],
+  "Inscription": ["Enrolment", "التسجيل"],
+  "Des étapes lisibles. Un dossier suivi.": [
+    "Clear stages. A record that is followed.",
+    "مراحل واضحة وملف مُتابَع."
+  ],
+  "Reliez les pièces, les validations et les conditions de l’inscription.": [
+    "Connect documents, approvals and enrolment terms.",
+    "اربطوا الوثائق والمصادقات بشروط التسجيل."
+  ],
+  "Une relation qui continue après l’inscription.": [
+    "A relationship that continues after enrolment.",
+    "علاقة تستمرّ بعد التسجيل."
+  ],
+  "Organisez les informations, les échanges et la continuité avec les familles.": [
+    "Organise information, exchanges and continuity with families.",
+    "نظّموا المعلومات والتواصل والاستمرارية مع العائلات."
+  ],
+  "Parcourir la relation familles": [
+    "Browse the family journey",
+    "تصفّح مسار العائلات"
+  ],
+  "Un parcours relié": ["A connected journey", "مسار مترابط"],
+  "Relation famille · du premier échange au quotidien": [
+    "Family relationship · from the first exchange to daily life",
+    "العلاقة مع العائلات · من التواصل الأول إلى الحياة اليومية"
+  ],
+  "Lun": ["Mon", "الإثنين"],
+  "Mar": ["Tue", "الثلاثاء"],
+  "Mer": ["Wed", "الأربعاء"],
+  "Jeu": ["Thu", "الخميس"],
+  "Ven": ["Fri", "الجمعة"],
+  "Planifier": ["Plan", "أخطّط"],
+  "Le bon repère, avant le début de la journée.": [
+    "The right cues, before the day begins.",
+    "العلامات المناسبة قبل بدء اليوم."
+  ],
+  "Activités, groupes, espaces et ressources : préparez une lecture commune.": [
+    "Activities, groups, spaces and resources: prepare a shared overview.",
+    "الأنشطة والمجموعات والمساحات والموارد: جهّزوا رؤية مشتركة."
+  ],
+  "Éveil musical": ["Musical discovery", "الاكتشاف الموسيقي"],
+  "Motricité": ["Motor skills", "المهارات الحركية"],
+  "Ateliers créatifs": ["Creative workshops", "ورشات إبداعية"],
+  "Jardin et nature": ["Garden and nature", "الحديقة والطبيعة"],
+  "Temps collectif": ["Group time", "وقت جماعي"],
+  "Coordonner": ["Coordinate", "أنسّق"],
+  "Des responsabilités visibles. Des passages préparés.": [
+    "Visible responsibilities. Prepared handovers.",
+    "مسؤوليات واضحة وانتقالات مُعدّة."
+  ],
+  "Reliez les intervenants et les ressources à chaque moment du programme.": [
+    "Connect people and resources at each moment of the programme.",
+    "اربطوا المتدخلين والموارد بكل محطة من البرنامج."
+  ],
+  "Accueil équipe": ["Team welcome", "استقبال الفريق"],
+  "Préparation classe": ["Classroom preparation", "إعداد الصف"],
+  "Répartition des rôles": ["Role allocation", "توزيع الأدوار"],
+  "Point de coordination": ["Coordination meeting", "نقطة التنسيق"],
+  "Suivre": ["Follow up", "أتابع"],
+  "Un suivi partagé, pour préparer la suite.": [
+    "Shared follow-up, to prepare what comes next.",
+    "متابعة مشتركة استعدادًا للخطوة المقبلة."
+  ],
+  "Retrouvez les actions, les observations et les ajustements à examiner.": [
+    "Find actions, observations and adjustments to review.",
+    "استرجعوا الإجراءات والملاحظات والتعديلات المطلوب دراستها."
+  ],
+  "Retour équipe": ["Team feedback", "ملاحظات الفريق"],
+  "Points à suivre": ["Points to follow up", "نقاط للمتابعة"],
+  "Ressources à prévoir": ["Resources to prepare", "موارد للإعداد"],
+  "Échanges familles": ["Family exchanges", "التواصل مع العائلات"],
+  "Prochaines étapes": ["Next steps", "الخطوات المقبلة"],
+  "Exemple de semaine": ["Example week", "مثال لأسبوع"],
+  "Projection illustrative": ["Illustrative projection", "تصوّر توضيحي"],
+  "Comprendre le quotidien": [
+    "Understand daily operations",
+    "فهم العمل اليومي"
+  ],
+  "Préparer": ["Prepare", "أُعدّ"],
+  "Transmettre": ["Share", "أنقل المعلومات"],
+  "Choisir les activités et les ressources.": [
+    "Choose activities and resources.",
+    "اختيار الأنشطة والموارد."
+  ],
+  "Partager les informations utiles à l’équipe.": [
+    "Share useful information with the team.",
+    "مشاركة المعلومات المفيدة مع الفريق."
+  ],
+  "Examiner les observations et les ajustements.": [
+    "Review observations and adjustments.",
+    "دراسة الملاحظات والتعديلات."
+  ],
+  "Comprendre ce domaine": ["Understand this area", "فهم هذا المجال"],
+  "Une pratique commune, des responsabilités claires": [
+    "Common practices, clear responsibilities",
+    "ممارسات مشتركة ومسؤوليات واضحة"
+  ],
+  "Le collectif se prépare": [
+    "A team is prepared together",
+    "الفريق يُبنى بالاستعداد المشترك"
+  ],
+  "Recruter. Transmettre. Faire progresser.": [
+    "Recruit. Share. Develop.",
+    "وظّفوا، وانقلوا الخبرة، وطوّروا المهارات."
+  ],
+  "Parcourir les besoins de l’équipe": [
+    "Browse team needs",
+    "تصفّح احتياجات الفريق"
+  ],
+  "De l’offre à l’encaissement": [
+    "From your offer to collection",
+    "من عرضكم إلى التحصيل"
+  ],
+  "Un parcours commercial qui garde son contexte.": [
+    "A commercial journey that keeps its context.",
+    "مسار تجاري يحافظ على سياقه."
+  ],
+  "Parcourir le suivi commercial": [
+    "Browse commercial follow-up",
+    "تصفّح المتابعة التجارية"
+  ],
+  "Des suivis séparés": ["Separate follow-ups", "متابعات منفصلة"],
+  "Des informations à rapprocher entre l’offre, la facturation et les règlements.": [
+    "Information to bring together across offers, billing and payments.",
+    "معلومات تحتاج إلى الربط بين العرض والفوترة والمدفوعات."
+  ],
+  "Retiré du brief": ["Removed from brief", "تمّت الإزالة من الموجز"],
+  "Ajouté au brief": ["Added to brief", "تمّت الإضافة إلى الموجز"],
+  "Trop d’informations dispersées ?": [
+    "Too much scattered information?",
+    "معلومات مشتّتة بكثرة؟"
+  ],
+  "Relier les données. Retrouver vos priorités.": [
+    "Connect the data. Find your priorities.",
+    "اربطوا البيانات واسترجعوا أولوياتكم."
+  ],
+  "Un environnement unifié pour piloter, communiquer et préparer vos prochaines étapes.": [
+    "A unified environment to manage, communicate and prepare your next steps.",
+    "بيئة موحّدة للقيادة والتواصل وإعداد خطواتكم المقبلة."
+  ],
+  "Des échanges familles difficiles à suivre ?": [
+    "Family exchanges difficult to follow?",
+    "صعوبة في متابعة التواصل مع العائلات؟"
+  ],
+  "Un contact. Une histoire. Une prochaine étape.": [
+    "One contact. One history. One next step.",
+    "جهة اتصال، وسجل، وخطوة تالية."
+  ],
+  "Préparez une continuité entre demande, visite, inscription et communication.": [
+    "Prepare continuity between enquiries, visits, enrolment and communication.",
+    "جهّزوا استمرارية بين الطلب والزيارة والتسجيل والتواصل."
+  ],
+  "Des équipes à coordonner ?": [
+    "Teams to coordinate?",
+    "فرق تحتاج إلى التنسيق؟"
+  ],
+  "Des rôles lisibles. Un quotidien préparé.": [
+    "Clear roles. Prepared daily operations.",
+    "أدوار واضحة وعمل يومي مُعدّ."
+  ],
+  "Reliez plannings, responsabilités et transmission des pratiques.": [
+    "Connect schedules, responsibilities and knowledge transfer.",
+    "اربطوا الجداول والمسؤوليات بنقل الممارسات."
+  ],
+  "Parcourir Partner OS": ["Browse Partner OS", "تصفّح Partner OS"],
+  "Mon parcours Partner OS": ["My Partner OS journey", "مساري مع Partner OS"],
+  "Avancez selon votre situation et vos priorités.": [
+    "Move forward around your situation and priorities.",
+    "تقدّموا بحسب وضع مؤسستكم وأولوياتكم."
+  ],
+  "Comprend une priorité sélectionnée": [
+    "Includes a selected priority",
+    "يتضمّن أولوية مختارة"
+  ],
+  "Mon projet": ["My project", "مشروعي"],
+  "Mon brief": ["My brief", "موجزي"],
+  "Catalogue": ["Catalogue", "الكتالوج"],
+  "Votre périmètre à étudier": [
+    "Your scope to consider",
+    "نطاقكم المطلوب دراسته"
+  ],
+  "Votre sélection prépare un échange. Elle ne constitue pas une commande.": [
+    "Your selection prepares a discussion. It is not an order.",
+    "اختياراتكم تُعدّ التواصل، ولا تمثّل طلب شراء."
+  ],
+  "Choisissez vos domaines ou laissez-nous vous aider à préciser vos priorités.": [
+    "Choose areas or let us help you clarify your priorities.",
+    "اختاروا المجالات أو دعونا نساعدكم على توضيح الأولويات."
+  ],
+  "Retirer tous les domaines": ["Remove all areas", "إزالة جميع المجالات"],
+  "Revoir les offres sélectionnées": [
+    "Review selected offers",
+    "مراجعة العروض المختارة"
+  ],
+  "Préparer mon échange": ["Prepare my discussion", "أجهّز تواصلي"],
+  "Votre sélection reste libre.": [
+    "Your selection stays flexible.",
+    "اختياراتكم تبقى حرّة."
+  ],
+  "Choisir votre priorité": ["Choose your priority", "اختيار الأولوية"],
+  "Ce qui change dans votre quotidien": [
+    "What changes in your daily operations",
+    "ما يتغيّر في عملكم اليومي"
+  ],
+  "Une vision claire et partagée": [
+    "A clear, shared overview",
+    "رؤية واضحة ومشتركة"
+  ],
+  "Un quotidien mieux organisé": [
+    "Better organised daily operations",
+    "عمل يومي أكثر تنظيمًا"
+  ],
+  "Des actions préparées et connectées": [
+    "Prepared, connected actions",
+    "إجراءات مُعدّة ومترابطة"
+  ],
+  "Des objectifs à examiner selon votre projet.": [
+    "Objectives to consider around your project.",
+    "أهداف تُدرس حسب مشروعكم."
+  ],
+  "Points de départ pour votre situation": [
+    "Starting points for your situation",
+    "نقاط انطلاق لوضع مؤسستكم"
+  ],
+  "Ajouter ces priorités au brief": [
+    "Add these priorities to my brief",
+    "إضافة هذه الأولويات إلى موجزي"
+  ],
+  "Choisissez votre rythme de lecture": [
+    "Choose your reading depth",
+    "اختاروا عمق القراءة"
+  ],
+  "L’essentiel": ["The essentials", "الأساسيات"],
+  "Toutes les explications": ["All explanations", "جميع الشروح"],
+  "Périmètre à définir": ["Scope to define", "نطاق يُحدّد"],
+  "Vue d’ensemble de l’établissement": [
+    "School overview",
+    "نظرة شاملة على المؤسسة"
+  ],
+  "Lecture par site": ["Site-level view", "رؤية حسب الموقع"],
+  "Priorités partagées": ["Shared priorities", "أولويات مشتركة"],
+  "Votre lecture commune": ["Your shared overview", "رؤيتكم المشتركة"],
+  "La bonne information, au moment de décider.": [
+    "The right information when it is time to decide.",
+    "المعلومة المناسبة في وقت القرار."
+  ],
+  "Des repères pour la direction, les sites et les équipes.": [
+    "Cues for management, sites and teams.",
+    "علامات للإدارة والمواقع والفرق."
+  ],
+  "Aperçu illustratif": ["Illustrative preview", "عرض توضيحي"],
+  "Les 20 domaines de Partner OS": [
+    "The 20 Partner OS areas",
+    "مجالات Partner OS العشرون"
+  ],
+  "Un même environnement, un périmètre adapté à votre établissement.": [
+    "One environment, a scope suited to your school.",
+    "بيئة واحدة ونطاق يناسب مؤسستكم."
+  ],
+  "Activer selon le besoin": [
+    "Activate according to need",
+    "التفعيل حسب الحاجة"
+  ],
+  "Préciser les responsabilités": [
+    "Clarify responsibilities",
+    "توضيح المسؤوليات"
+  ],
+  "Relier les documents": ["Connect documents", "ربط الوثائق"],
+  "Préparer l’accompagnement": [
+    "Prepare support arrangements",
+    "إعداد المواكبة"
+  ],
+  "Adapter le périmètre à vos usages.": [
+    "Adapt the scope to your uses.",
+    "تكييف النطاق مع استخداماتكم."
+  ],
+  "Définir les rôles et les accès utiles.": [
+    "Define useful roles and access.",
+    "تحديد الأدوار والوصول المفيدين."
+  ],
+  "Retrouver le contexte et les pièces.": [
+    "Find the context and documents.",
+    "استرجاع السياق والوثائق."
+  ],
+  "Convenir des modalités de suivi.": [
+    "Agree follow-up arrangements.",
+    "الاتفاق على كيفيات المتابعة."
+  ],
+  "Votre projet se construit selon vos priorités.": [
+    "Your project follows your priorities.",
+    "مشروعكم يُبنى حسب أولوياتكم."
+  ],
+  "Revoir les offres publiées": [
+    "Review published offers",
+    "مراجعة العروض المنشورة"
+  ],
+  "Modulable · selon votre projet": [
+    "Modular · around your project",
+    "قابل للتخصيص · حسب مشروعكم"
+  ],
+  "Un même environnement.": ["One shared environment.", "بيئة مشتركة واحدة."],
+  "Votre propre périmètre.": ["Your own scope.", "نطاقكم الخاص."],
+  "Définissez vos priorités, sélectionnez vos domaines et préparez votre démonstration autour de vos cas d’usage.": [
+    "Define priorities, select areas and prepare a demonstration around your use cases.",
+    "حدّدوا الأولويات واختاروا المجالات وجهّزوا عرضًا توضيحيًا حول استخداماتكم."
+  ],
+  "Vos priorités": ["Your priorities", "أولوياتكم"],
+  "Votre périmètre": ["Your scope", "نطاقكم"],
+  "Votre démonstration": ["Your demonstration", "عرضكم التوضيحي"],
+  "Votre proposition": ["Your proposal", "مقترحكم"],
+  "Identifier vos besoins et votre situation.": [
+    "Identify needs and your situation.",
+    "تحديد الاحتياجات ووضع مؤسستكم."
+  ],
+  "Définir les domaines à explorer.": [
+    "Define the areas to explore.",
+    "تحديد المجالات المطلوب استكشافها."
+  ],
+  "Préparer les questions et les usages.": [
+    "Prepare questions and uses.",
+    "إعداد الأسئلة والاستخدامات."
+  ],
+  "Examiner les conditions avant engagement.": [
+    "Review terms before commitment.",
+    "مراجعة الشروط قبل الالتزام."
+  ],
+  "Mon brief préparé · facultatif": [
+    "My prepared brief · optional",
+    "موجزي المُعدّ · اختياري"
+  ],
+  "Avant de décider": ["Before deciding", "قبل القرار"],
+  "Vos questions font partie du projet.": [
+    "Your questions are part of the project.",
+    "أسئلتكم جزء من المشروع."
+  ],
+  "Un périmètre clair. Les bonnes informations au bon moment.": [
+    "A clear scope. The right information at the right time.",
+    "نطاق واضح، ومعلومات مناسبة في وقتها."
+  ],
+  "Vos priorités préparent le prochain échange": [
+    "Your priorities prepare the next discussion",
+    "أولوياتكم تُعدّ التواصل المقبل"
+  ],
+  "Votre établissement. Vos usages. Votre Partner OS.": [
+    "Your school. Your uses. Your Partner OS.",
+    "مؤسستكم، واستخداماتكم، وPartner OS الخاص بكم."
+  ],
+  "Passer à ma demande": ["Go to my request", "الانتقال إلى طلبي"],
+  "Revoir le catalogue": ["Review the catalogue", "مراجعة الكتالوج"],
+  "Vos priorités sont déjà dans le brief.": [
+    "Your priorities are already in the brief.",
+    "أولوياتكم موجودة بالفعل في الموجز."
+  ],
+  "Ajouter ou ajuster les domaines": [
+    "Add or adjust areas",
+    "إضافة المجالات أو تعديلها"
+  ],
+  "Les trois spécialités Établissements": [
+    "The three Establishments specialities",
+    "تخصّصات المؤسسات الثلاثة"
+  ],
+  "Concierge & programmes": ["Concierge & programmes", "المواكبة والبرامج"],
+  "Revenir aux offres": ["Return to offers", "العودة إلى العروض"],
+  "Les offres": ["Offers", "العروض"],
+  "Ma sélection (": ["My selection (", "اختياراتي ("],
+  "Parlons-en": ["Let's talk", "لنتواصل"],
+  "Réduire les animations": ["Reduce motion", "تقليل الحركة"],
+  "Activer les animations": ["Enable motion", "تفعيل الحركة"],
+  "Mouvement réduit selon votre préférence système": [
+    "Motion reduced according to your system preference",
+    "تمّ تقليل الحركة حسب تفضيل النظام"
+  ],
+  "Animations": ["Motion", "الحركة"],
+  "Votre contexte. Vos usages. Votre projet.": [
+    "Your context. Your uses. Your project.",
+    "سياقكم، واستخداماتكم، ومشروعكم."
+  ],
+  "Voir les offres": ["View offers", "عرض العروض"],
+  "Des solutions selon votre besoin": [
+    "Solutions around your needs",
+    "حلول بحسب احتياجاتكم"
+  ],
+  "Un échange avant de vous engager": [
+    "A discussion before you commit",
+    "تواصل قبل الالتزام"
+  ],
+  "Sujet préparé pour votre demande": [
+    "Prepared topic for your request",
+    "موضوع مُعدّ لطلبكم"
+  ],
+  "Effacer le sujet": ["Clear topic", "مسح الموضوع"],
+  "Votre sélection ·": ["Your selection ·", "اختياراتكم ·"],
+  "/8 éléments à étudier": ["/8 items to consider", "/8 عناصر للدراسة"],
+  "Fermer la sélection": ["Close selection", "إغلاق الاختيارات"],
+  "Votre projet, dans son ensemble.": [
+    "Your project, as a whole.",
+    "مشروعكم في صورته المتكاملة."
+  ],
+  "Les offres, formules et besoins réunis ici préparent votre demande. Cette sélection ne constitue pas une commande.": [
+    "Offers, reference programmes and needs gathered here prepare your request. This selection is not an order.",
+    "العروض والبرامج المرجعية والاحتياجات المجموعة هنا تُعدّ طلبكم. هذه الاختيارات ليست طلب شراء."
+  ],
+  "Vous pouvez nous présenter votre besoin sans sélectionner d’offre, ou ajouter des éléments depuis le catalogue et les formules.": [
+    "You can describe your needs without selecting an offer, or add items from the catalogue and reference programmes.",
+    "يمكنكم عرض احتياجاتكم دون اختيار عرض، أو إضافة عناصر من الكتالوج والبرامج المرجعية."
+  ],
+  "Voir le récapitulatif joint": [
+    "View attached summary",
+    "عرض الملخّص المرفق"
+  ],
+  "Votre récapitulatif a été copié.": [
+    "Your summary has been copied.",
+    "تمّ نسخ ملخّصكم."
+  ],
+  "La copie n’est pas disponible ici. Le récapitulatif reste sélectionnable ci-dessus.": [
+    "Copying is unavailable here. The summary above remains selectable.",
+    "النسخ غير متاح هنا. يبقى الملخّص أعلاه قابلًا للتحديد."
+  ],
+  "Copier": ["Copy", "نسخ"],
+  "Préparer ma demande": ["Prepare my request", "أجهّز طلبي"],
+  "Offre publiée ·": ["Published offer ·", "عرض منشور ·"],
+  "Fermer l’aperçu de l’offre": ["Close offer preview", "إغلاق معاينة العرض"],
+  "Consultez les caractéristiques et conditions de cette offre.": [
+    "View the features and terms of this offer.",
+    "اطّلعوا على خصائص هذا العرض وشروطه."
+  ],
+  "Retirer de mon projet": ["Remove from my project", "إزالة من مشروعي"],
+  "Ajouter à mon projet": ["Add to my project", "إضافة إلى مشروعي"],
+  "Ouvrir l’offre publiée": ["Open published offer", "فتح العرض المنشور"],
+  "Nom & fonction": ["Name & role", "الاسم والوظيفة"],
+  "Complétez les coordonnées, votre besoin et votre accord de contact. Votre sujet préparé peut servir de contexte.": [
+    "Complete your contact details, your needs and contact consent. Your prepared topic can provide the context.",
+    "أكملوا معلومات التواصل واحتياجاتكم والموافقة على الاتصال. يمكن لموضوعكم المُعدّ أن يوفّر السياق."
+  ],
+  "Le message et votre sélection dépassent la capacité de la demande. Raccourcissez le message ou retirez un élément : aucune référence ne sera supprimée automatiquement.": [
+    "Your message and selection exceed the request capacity. Shorten the message or remove an item: no reference will be removed automatically.",
+    "تتجاوز الرسالة والاختيارات سعة الطلب. اختصروا الرسالة أو احذفوا عنصرًا؛ لن يُحذف أي مرجع تلقائيًا."
+  ],
+  "L’enregistrement n’a pas pu être confirmé. Vos informations sont conservées dans cette page. Réessayez ; aucune réussite n’est affichée sans référence reçue.": [
+    "Registration could not be confirmed. Your information is retained on this page. Retry; success is never shown without a received reference.",
+    "تعذّر تأكيد تسجيل الطلب. معلوماتكم محفوظة في هذه الصفحة. أعيدوا المحاولة؛ لا يُعرض نجاح دون مرجع مستلَم."
+  ],
+  "Votre prochaine étape": ["Your next step", "خطوتكم المقبلة"],
+  "Parlons de votre établissement.": [
+    "Let's talk about your school.",
+    "لنتحدّث عن مؤسستكم."
+  ],
+  "Transformons votre sélection en projet.": [
+    "Let's turn your selection into a project.",
+    "لنحوّل اختياراتكم إلى مشروع."
+  ],
+  "Donnons une direction à votre différence.": [
+    "Let's give your difference a direction.",
+    "لنمنح تميّزكم اتجاهًا."
+  ],
+  "Vos priorités sont déjà dans le brief. Préparons une démonstration adaptée à vos usages.": [
+    "Your priorities are already in the brief. Let's prepare a demonstration suited to your uses.",
+    "أولوياتكم موجودة في الموجز. لنُعدّ عرضًا توضيحيًا يناسب استخداماتكم."
+  ],
+  "Vos besoins, votre contexte, vos priorités : une demande structurée pour préparer une proposition adaptée.": [
+    "Your needs, context and priorities: a structured request to prepare a suitable proposal.",
+    "احتياجاتكم وسياقكم وأولوياتكم: طلب منظّم لإعداد مقترح مناسب."
+  ],
+  "Votre sélection est jointe intégralement, avec les références des offres publiées.": [
+    "Your full selection is attached, including published offer references.",
+    "تُرفق اختياراتكم كاملة، بما فيها مراجع العروض المنشورة."
+  ],
+  "Le périmètre et les conditions sont précisés avant tout engagement.": [
+    "Scope and terms are clarified before any commitment.",
+    "يُوضّح النطاق والشروط قبل أي التزام."
+  ],
+  "Voir la préparation jointe": [
+    "View attached preparation",
+    "عرض التحضير المرفق"
+  ],
+  "Demande confirmée": ["Request confirmed", "تمّ تأكيد الطلب"],
+  "Votre projet a bien été enregistré.": [
+    "Your project has been registered.",
+    "تمّ تسجيل مشروعكم."
+  ],
+  "Référence": ["Reference", "المرجع"],
+  "Voir la sélection transmise": [
+    "View submitted selection",
+    "عرض الاختيارات المرسلة"
+  ],
+  "Préparer une nouvelle demande": ["Prepare a new request", "إعداد طلب جديد"],
+  "Parlons de votre établissement": [
+    "Let's talk about your school",
+    "لنتحدّث عن مؤسستكم"
+  ],
+  "Établissement": ["School", "المؤسسة"],
+  "Ville": ["City", "المدينة"],
+  "Email professionnel": ["Professional email", "البريد المهني"],
+  "Téléphone": ["Phone", "الهاتف"],
+  "Capacité concernée": ["Capacity concerned", "الطاقة الاستيعابية المعنية"],
+  "Précisions complémentaires (facultatif)": [
+    "Additional details (optional)",
+    "تفاصيل إضافية (اختياري)"
+  ],
+  "Votre contexte et vos besoins *": [
+    "Your context and needs *",
+    "سياقكم واحتياجاتكم *"
+  ],
+  "Présentez votre priorité, votre établissement et le résultat recherché…": [
+    "Describe your priority, your school and the outcome you are looking for…",
+    "صفوا أولويتكم ومؤسستكم والنتيجة التي تبحثون عنها…"
+  ],
+  "· message et sélection réunis": [
+    "· message and selection combined",
+    "· الرسالة والاختيارات مجتمعة"
+  ],
+  "Website": ["Website", "الموقع الإلكتروني"],
+  "J’accepte d’être contacté au sujet de cette demande et le traitement de mes informations pour y répondre.": [
+    "I agree to be contacted about this request and to the processing of my information to respond to it.",
+    "أوافق على التواصل معي بخصوص هذا الطلب ومعالجة معلوماتي للردّ عليه."
+  ],
+  "Enregistrement…": ["Registering…", "جارٍ التسجيل…"],
+  "Réessayer ma demande": ["Retry my request", "إعادة محاولة إرسال طلبي"],
+  "Transmettre mon projet": ["Submit my project", "إرسال مشروعي"],
+  "Cette demande prépare un échange. Elle ne vaut ni achat, ni activation automatique d’un abonnement.": [
+    "This request prepares a discussion. It is not a purchase or an automatic subscription activation.",
+    "يمهّد هذا الطلب للتواصل، ولا يمثّل شراءً أو تفعيلًا تلقائيًا لاشتراك."
+  ],
+  "Visuel à compléter": ["Image to complete", "صورة مطلوب استكمالها"],
+  "Tous les tarifs": ["All pricing", "جميع الأسعار"],
+  "Sur devis": ["On quotation", "حسب عرض السعر"],
+  "Prix fixe": ["Fixed price", "سعر ثابت"],
+  "À partir de": ["Starting from", "ابتداءً من"],
+  "Abonnement": ["Subscription", "اشتراك"],
+  "Mes favoris": ["My favourites", "مفضّلاتي"],
+  "Offres publiées du catalogue": [
+    "Published catalogue offers",
+    "عروض الكتالوج المنشورة"
+  ],
+  "Vos critères. Des solutions à étudier.": [
+    "Your criteria. Solutions to consider.",
+    "معاييركم، وحلول للدراسة."
+  ],
+  "Les produits pour votre établissement": [
+    "Products for your school",
+    "منتجات لمؤسستكم"
+  ],
+  "Nos offres pour votre établissement": [
+    "Offers for your school",
+    "عروض لمؤسستكم"
+  ],
+  "Affichage": ["Display", "العرض"],
+  "Cette spécialité": ["This speciality", "هذا التخصّص"],
+  "Toutes les offres Établissements": [
+    "All Establishments offers",
+    "جميع عروض المؤسسات"
+  ],
+  "Retrouvez les différentes solutions Établissements et affinez votre sélection selon vos besoins.": [
+    "Find the different Establishments solutions and refine your selection around your needs.",
+    "اعثروا على حلول المؤسسات المختلفة ودقّقوا اختياراتكم بحسب احتياجاتكم."
+  ],
+  "Vous pouvez élargir la sélection aux autres solutions Établissements, puis affiner vos critères.": [
+    "Broaden the selection to other Establishments solutions, then refine your criteria.",
+    "وسّعوا الاختيارات إلى حلول المؤسسات الأخرى، ثم دقّقوا معاييركم."
+  ],
+  "Rechercher une offre publiée": [
+    "Search published offers",
+    "البحث في العروض المنشورة"
+  ],
+  "Produit, référence, usage…": [
+    "Product, reference, use…",
+    "منتج، مرجع، استخدام…"
+  ],
+  "Catégorie": ["Category", "الفئة"],
+  "Toutes les catégories": ["All categories", "جميع الفئات"],
+  "Disponibilité": ["Availability", "الإتاحة"],
+  "Tous les statuts": ["All statuses", "جميع الحالات"],
+  "Tarification": ["Pricing", "التسعير"],
+  "Trier": ["Sort", "الترتيب"],
+  "Sélection éditoriale": ["Editorial selection", "الاختيار التحريري"],
+  "Nom": ["Name", "الاسم"],
+  "Prix croissant": ["Price: low to high", "السعر تصاعديًا"],
+  "Rayons du catalogue": ["Catalogue categories", "فئات الكتالوج"],
+  "Toutes les offres": ["All offers", "جميع العروض"],
+  "Mes favoris (": ["My favourites (", "مفضّلاتي ("],
+  "Caractéristique publiée": ["Published feature", "خاصية منشورة"],
+  "Toutes les caractéristiques": ["All features", "جميع الخصائص"],
+  "Valeur recherchée": ["Value to find", "القيمة المطلوبة"],
+  "Toutes les valeurs": ["All values", "جميع القيم"],
+  "Résultats par page": ["Results per page", "النتائج في الصفحة"],
+  "Réinitialiser": ["Reset", "إعادة الضبط"],
+  "Filtres appliqués": ["Applied filters", "الفلاتر المطبّقة"],
+  "à vos critères": ["match your criteria", "تطابق معاييركم"],
+  "dans cette spécialité": ["in this speciality", "في هذا التخصّص"],
+  "Aperçu rapide": ["Quick preview", "معاينة سريعة"],
+  "Catalogue ·": ["Catalogue ·", "الكتالوج ·"],
+  "Conditions à consulter": ["Terms to review", "شروط للاطلاع"],
+  "Offre Établissements": ["Establishments offer", "عرض للمؤسسات"],
+  "Dans mon projet": ["In my project", "ضمن مشروعي"],
+  "Ajouter au projet": ["Add to project", "إضافة إلى المشروع"],
+  "Voir les caractéristiques": ["View features", "عرض الخصائص"],
+  "Aucune offre avec ces critères.": [
+    "No offers match these criteria.",
+    "لا عروض تطابق هذه المعايير."
+  ],
+  "Votre projet mérite une réponse adaptée.": [
+    "Your project deserves a tailored response.",
+    "مشروعكم يستحق جوابًا مناسبًا."
+  ],
+  "Ajustez les filtres ; votre projet et vos comparaisons restent conservés.": [
+    "Adjust filters; your project and comparisons are preserved.",
+    "عدّلوا الفلاتر؛ يبقى مشروعكم ومقارناتكم محفوظين."
+  ],
+  "Aucune offre n’est actuellement publiée dans cette spécialité pour le territoire choisi. Décrivez votre besoin pour préparer un échange.": [
+    "No offer is currently published in this speciality for the selected territory. Describe your needs to prepare a discussion.",
+    "لا يوجد عرض منشور حاليًا في هذا التخصّص للمنطقة المختارة. صفوا احتياجاتكم للتحضير للتواصل."
+  ],
+  "Explorer toutes les offres Établissements (": [
+    "Explore all Establishments offers (",
+    "استكشاف جميع عروض المؤسسات ("
+  ],
+  "Voir toutes les offres": ["View all offers", "عرض جميع العروض"],
+  "Présenter mon besoin": ["Describe my needs", "عرض احتياجاتي"],
+  "Afficher": ["Show", "عرض"],
+  "de plus": ["more", "إضافية"],
+  "Offres": ["Offers", "العروض"],
+  "à": ["to", "إلى"],
+  "affichée": ["displayed", "معروضة"],
+  "La comparaison est limitée à quatre offres, toutes spécialités confondues. Retirez un élément de la sélection ci-dessus.": [
+    "Comparison is limited to four offers across all specialities. Remove an item from the selection above.",
+    "تقتصر المقارنة على أربعة عروض عبر جميع التخصّصات. أزيلوا عنصرًا من الاختيارات أعلاه."
+  ],
+  "La sélection native n’a pas pu être confirmée. Vous pouvez réessayer.": [
+    "The native selection could not be confirmed. You can retry.",
+    "تعذّر تأكيد الاختيار الأصلي. يمكنكم إعادة المحاولة."
+  ],
+  "Fermer": ["Close", "إغلاق"],
+  "Comparer les offres publiées": [
+    "Compare published offers",
+    "مقارنة العروض المنشورة"
+  ],
+  "Caractéristiques renseignées dans les offres de cette spécialité": [
+    "Features provided in this speciality's offers",
+    "الخصائص الواردة في عروض هذا التخصّص"
+  ],
+  "Critère": ["Criterion", "المعيار"],
+  "Prix publié": ["Published price", "السعر المنشور"],
+  "Non renseigné": ["Not provided", "غير محدّد"],
+  "résultat": ["result", "نتيجة"],
+  "· page": ["· page", "· الصفحة"],
+  "Pagination des résultats": ["Result pagination", "صفحات النتائج"],
+  "Page précédente": ["Previous page", "الصفحة السابقة"],
+  "Page suivante": ["Next page", "الصفحة التالية"],
+  "Produits & équipements": ["Products & equipment", "المنتجات والتجهيزات"],
+  "Conseil & programmes": ["Consulting & programmes", "الاستشارات والبرامج"],
+  "Établissements": ["Establishments", "المؤسسات"],
+  "Territoire choisi": ["Selected territory", "المنطقة المختارة"],
+  "Offre publiée": ["Published offer", "عرض منشور"],
+  "Sujet de la demande": ["Request topic", "موضوع الطلب"],
+  "Formule de référence brochure": [
+    "Catalogue reference programme",
+    "برنامج مرجعي من الكتالوج"
+  ],
+  "Capacité présentée": ["Presented capability", "القدرة المعروضة"],
+  "Demande commerciale": ["Commercial request", "طلب تجاري"],
+  "correspondent à vos critères": ["match your criteria", "تطابق معاييركم"],
+  "correspond à vos critères": ["matches your criteria", "يطابق معاييركم"],
+  "match your criteria": ["match your criteria", "تطابق معاييركم"],
+  "displayed": ["displayed", "معروضة"],
+  "affichées": ["displayed", "معروضة"],
+  "sur": ["of", "من"],
+  "Partner OS": ["Partner OS", "Partner OS"],
+  "Campagne illustrative · {0}": [
+    "Illustrative campaign · {0}",
+    "مشهد توضيحي · {0}"
+  ],
+  "Projet · {0}": ["Project · {0}", "مشروع · {0}"],
+  "Retirer {0}": ["Remove {0}", "إزالة {0}"],
+  "{0} caractères à retirer": ["{0} characters to remove", "يجب حذف {0} حرفًا"],
+  "{0} caractères disponibles": ["{0} characters available", "متاح {0} حرفًا"],
+  "Visuel indisponible pour {0}": [
+    "Image unavailable for {0}",
+    "الصورة غير متاحة لـ {0}"
+  ],
+  "Recherche : {0}": ["Search: {0}", "البحث: {0}"],
+  "Retirer le filtre {0}": ["Remove filter {0}", "إزالة الفلتر {0}"],
+  "Retirer {0} de la comparaison": [
+    "Remove {0} from comparison",
+    "إزالة {0} من المقارنة"
+  ],
+  "Aperçu de {0}": ["Preview {0}", "معاينة {0}"],
+  "Enregistrer {0}": ["Save {0}", "حفظ {0}"],
+  "Comparer {0}": ["Compare {0}", "مقارنة {0}"],
+  "Page {0}": ["Page {0}", "الصفحة {0}"],
+  "Élément retiré du projet.": [
+    "Item removed from the project.",
+    "تمّت إزالة العنصر من المشروع."
+  ],
+  "{0} ajouté à votre projet.": [
+    "{0} added to your project.",
+    "تمّت إضافة {0} إلى مشروعكم."
+  ],
+  "Votre projet contient huit éléments. Retirez un élément avant d’ajouter cette demande.": [
+    "Your project contains eight items. Remove one before adding another.",
+    "يتضمّن مشروعكم ثمانية عناصر. أزيلوا عنصرًا قبل إضافة طلب آخر."
+  ],
+  "Scène illustrative : préparation de la facturation et suivi administratif": [
+    "Illustrative scene: preparing invoices and administrative follow-up",
+    "مشهد توضيحي: إعداد الفواتير والمتابعة الإدارية"
+  ]
+}

@@ -6,6 +6,7 @@ import {
   type FormEvent,
   type Dispatch,
   type SetStateAction,
+  type ReactNode,
 } from "react";
 import {
   ArrowRight,
@@ -25,6 +26,7 @@ import {
 import { VIEWS, type View } from "./content";
 import { enquiryMessage } from "./model";
 import s from "./journey.module.css";
+import { usePartner, type PartnerLocale } from "./partner/Locale";
 
 /** Keeps contact fields in memory across all three journeys; never stores personal data in browser storage. */
 export function ProjectEnquiry({
@@ -35,6 +37,9 @@ export function ProjectEnquiry({
   onValuesChange,
   requestVersion = 0,
   hasContext = false,
+  locale = "fr",
+  preparation,
+  partner = false,
 }: {
   view: View;
   brief: string;
@@ -43,7 +48,12 @@ export function ProjectEnquiry({
   onValuesChange?: Dispatch<SetStateAction<EnquiryValues>>;
   requestVersion?: number;
   hasContext?: boolean;
+  locale?: PartnerLocale;
+  preparation?: ReactNode;
+  partner?: boolean;
 }) {
+  const { t } = usePartner();
+  const tr = t;
   const [localValues, setLocalValues] = useState<EnquiryValues>({
     ...EMPTY_ENQUIRY,
   });
@@ -63,7 +73,17 @@ export function ProjectEnquiry({
     controller = useRef<AbortController | null>(null),
     timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const max = 2980;
-  const combined = enquiryMessage(values.message, brief);
+  const combined = enquiryMessage(
+    [
+      values.message,
+      partner && values.fullName.trim()
+        ? `${t("Nom & fonction")} : ${values.fullName.trim()}`
+        : "",
+    ]
+      .filter(Boolean)
+      .join("\n"),
+    brief,
+  );
   const remaining = max - combined.length;
   useEffect(() => {
     // A new contextual request can reuse contact information without showing a prior success.
@@ -86,7 +106,7 @@ export function ProjectEnquiry({
     if (state === "error") setState("idle");
     if (!started.current) {
       started.current = true;
-      void publicEvent("establishments", "fr", "enquiry_started");
+      void publicEvent("establishments", locale, "enquiry_started");
     }
   }
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -94,6 +114,7 @@ export function ProjectEnquiry({
     if (lock.current || state === "success") return;
     if (values.website) return;
     if (
+      (partner && !values.fullName.trim()) ||
       !validEnquiry("establishments", {
         ...values,
         message: hasContext ? combined : values.message,
@@ -129,7 +150,7 @@ export function ProjectEnquiry({
         body: JSON.stringify(
           enquiryPayload(
             "establishments",
-            "fr",
+            locale,
             snapshot.values,
             snapshot.sourceRoute,
           ),
@@ -140,30 +161,35 @@ export function ProjectEnquiry({
       if (!response.ok || !reference) throw Error("Unconfirmed enquiry");
       setConfirmed({ reference, brief: snapshot.brief, view: snapshot.view });
       setState("success");
-      void publicEvent("establishments", "fr", "enquiry_success");
+      void publicEvent("establishments", locale, "enquiry_success");
     } catch {
       setState("error");
       setError(
         "L’enregistrement n’a pas pu être confirmé. Vos informations sont conservées dans cette page. Réessayez ; aucune réussite n’est affichée sans référence reçue.",
       );
-      void publicEvent("establishments", "fr", "enquiry_failure");
+      void publicEvent("establishments", locale, "enquiry_failure");
     } finally {
       if (timer.current) clearTimeout(timer.current);
       lock.current = false;
     }
   }
   const field = (
-    name: "organization" | "city" | "email" | "phone" | "capacity",
+    name: "organization" | "city" | "email" | "phone" | "capacity" | "fullName",
     label: string,
     required = true,
   ) => (
     <label key={name}>
       <span>
-        {label}
-        {required ? " *" : ""}
+        {tr(label)}
+        {tr(required ? " *" : "")}
       </span>
       <input
         name={name}
+        dir={
+          name === "email" || name === "phone" || name === "capacity"
+            ? "ltr"
+            : "auto"
+        }
         required={required}
         value={values[name]}
         type={
@@ -177,6 +203,7 @@ export function ProjectEnquiry({
         }
         autoComplete={
           {
+            fullName: "name",
             organization: "organization",
             city: "address-level2",
             email: "email",
@@ -185,9 +212,14 @@ export function ProjectEnquiry({
           }[name]
         }
         maxLength={
-          { organization: 180, city: 100, email: 180, phone: 40, capacity: 7 }[
-            name
-          ]
+          {
+            organization: 180,
+            fullName: 180,
+            city: 100,
+            email: 180,
+            phone: 40,
+            capacity: 7,
+          }[name]
         }
         min={name === "capacity" ? 0 : undefined}
         max={name === "capacity" ? 1000000 : undefined}
@@ -202,49 +234,59 @@ export function ProjectEnquiry({
       aria-labelledby="ew-enquiry-title"
     >
       <div className={s.enquiryIntro}>
-        <span className={s.eyebrow}>Votre prochaine étape</span>
+        <span className={s.eyebrow}>{tr("Votre prochaine étape")}</span>
         <h2 id="ew-enquiry-title">
-          {view === "partner-os"
-            ? "Préparons votre année gratuite."
-            : view === "produits"
-              ? "Transformons votre sélection en projet."
-              : "Donnons une direction à votre différence."}
+          {tr(
+            view === "partner-os"
+              ? "Parlons de votre établissement."
+              : view === "produits"
+                ? "Transformons votre sélection en projet."
+                : "Donnons une direction à votre différence.",
+          )}
         </h2>
         <p>
-          {view === "partner-os"
-            ? "Présentez votre établissement pour préciser le périmètre du plan gratuit pendant douze mois et les conditions de mise en route."
-            : "Vos besoins, votre contexte, vos priorités : une demande structurée pour préparer une proposition adaptée."}
+          {tr(
+            view === "partner-os"
+              ? "Vos priorités sont déjà dans le brief. Préparons une démonstration adaptée à vos usages."
+              : "Vos besoins, votre contexte, vos priorités : une demande structurée pour préparer une proposition adaptée.",
+          )}
         </p>
         <div>
           <FileCheck2 size={22} />
           <span>
-            Votre sélection est jointe intégralement, avec les références des
-            offres publiées.
+            {tr(
+              "Votre sélection est jointe intégralement, avec les références des offres publiées.",
+            )}
           </span>
         </div>
         <div>
           <ShieldCheck size={22} />
           <span>
-            Le périmètre et les conditions sont précisés avant tout engagement.
+            {tr(
+              "Le périmètre et les conditions sont précisés avant tout engagement.",
+            )}
           </span>
         </div>
         <details className={s.briefPanel}>
-          <summary>Voir la préparation jointe</summary>
-          <pre>{brief}</pre>
+          <summary>{tr("Voir la préparation jointe")}</summary>
+          <pre>{tr(brief)}</pre>
         </details>
       </div>
       {state === "success" && confirmed ? (
         <div className={s.confirmed} role="status">
           <CheckCircle2 size={42} />
-          <span className={s.eyebrow}>Demande confirmée</span>
-          <h3>Votre projet a bien été enregistré.</h3>
+          <span className={s.eyebrow}>{tr("Demande confirmée")}</span>
+          <h3>{tr("Votre projet a bien été enregistré.")}</h3>
           <p>
-            Référence <strong>{confirmed.reference}</strong>
+            {tr("Référence ")}
+            <strong>
+              <bdi>{confirmed.reference}</bdi>
+            </strong>
           </p>
-          <p>{VIEWS.find((item) => item.key === confirmed.view)?.label}</p>
+          <p>{tr(VIEWS.find((item) => item.key === confirmed.view)?.label)}</p>
           <details>
-            <summary>Voir la sélection transmise</summary>
-            <pre>{confirmed.brief}</pre>
+            <summary>{tr("Voir la sélection transmise")}</summary>
+            <pre>{tr(confirmed.brief)}</pre>
           </details>
           <button
             className={s.primary}
@@ -258,7 +300,7 @@ export function ProjectEnquiry({
               }));
             }}
           >
-            Préparer une nouvelle demande
+            {tr("Préparer une nouvelle demande")}
             <ArrowRight size={16} />
           </button>
         </div>
@@ -269,41 +311,54 @@ export function ProjectEnquiry({
           className={s.projectForm}
         >
           <fieldset disabled={state === "sending"}>
-            <legend>Parlons de votre établissement</legend>
-            <div className={s.formGrid}>
-              {field("organization", "Établissement")}
-              {field("city", "Ville")}
-              {field("email", "Email professionnel")}
-              {field("phone", "Téléphone")}
-              {field("capacity", "Capacité concernée", false)}
-              <label>
-                <span>Votre horizon</span>
-                <select
-                  value={values.urgency}
-                  onChange={(event) => change("urgency", event.target.value)}
-                >
-                  <option value="exploration">Je me renseigne</option>
-                  <option value="quarter">Projet sous trois mois</option>
-                  <option value="urgent">Besoin à étudier rapidement</option>
-                </select>
-              </label>
+            <legend>{tr("Parlons de votre établissement")}</legend>
+            {tr(preparation)}
+            <div className={s.formGrid} data-enquiry-contact>
+              {tr(field("organization", "Établissement"))}
+              {tr(field("city", "Ville"))}
+              {tr(partner && field("fullName", "Nom & fonction"))}
+              {tr(field("email", "Email professionnel"))}
+              {tr(field("phone", "Téléphone"))}
+              {tr(field("capacity", "Capacité concernée", false))}
+              {!partner && (
+                <label>
+                  <span>{tr("Votre horizon")}</span>
+                  <select
+                    value={values.urgency}
+                    onChange={(event) => change("urgency", event.target.value)}
+                  >
+                    <option value="exploration">{tr("Je me renseigne")}</option>
+                    <option value="quarter">
+                      {tr("Projet sous trois mois")}
+                    </option>
+                    <option value="urgent">
+                      {tr("Besoin à étudier rapidement")}
+                    </option>
+                  </select>
+                </label>
+              )}
             </div>
             <label>
               <span>
-                {hasContext
-                  ? "Précisions complémentaires (facultatif)"
-                  : "Votre contexte et vos besoins *"}
+                {tr(
+                  hasContext
+                    ? "Précisions complémentaires (facultatif)"
+                    : "Votre contexte et vos besoins *",
+                )}
               </span>
               <textarea
                 required={!hasContext}
                 minLength={hasContext ? undefined : 10}
                 maxLength={max}
+                dir="auto"
                 name="message"
                 rows={5}
                 value={values.message}
                 onChange={(event) => change("message", event.target.value)}
                 aria-describedby="ew-message-budget"
-                placeholder="Présentez votre priorité, votre établissement et le résultat recherché…"
+                placeholder={tr(
+                  "Présentez votre priorité, votre établissement et le résultat recherché…",
+                )}
               />
             </label>
             <p
@@ -311,13 +366,15 @@ export function ProjectEnquiry({
               className={remaining < 0 ? s.error : s.formHint}
               aria-live="polite"
             >
-              {remaining < 0
-                ? `${-remaining} caractères à retirer`
-                : `${remaining} caractères disponibles`}{" "}
-              · message et sélection réunis
+              {tr(
+                remaining < 0
+                  ? `${-remaining} caractères à retirer`
+                  : `${remaining} caractères disponibles`,
+              )}{" "}
+              {tr("· message et sélection réunis")}
             </p>
             <label className={s.honeypot} aria-hidden="true">
-              Website
+              {tr("Website")}
               <input
                 name="website"
                 value={values.website}
@@ -335,13 +392,14 @@ export function ProjectEnquiry({
                 onChange={(event) => change("consent", event.target.checked)}
               />
               <span>
-                J’accepte d’être contacté au sujet de cette demande et le
-                traitement de mes informations pour y répondre.
+                {tr(
+                  "J’accepte d’être contacté au sujet de cette demande et le traitement de mes informations pour y répondre.",
+                )}
               </span>
             </label>
             {error && (
               <p role="alert" className={s.error}>
-                {error}
+                {tr(error)}
               </p>
             )}
             <button
@@ -349,16 +407,21 @@ export function ProjectEnquiry({
               disabled={state === "sending" || remaining < 0}
               className={s.primary}
             >
-              {state === "sending"
-                ? "Enregistrement…"
-                : state === "error"
-                  ? "Réessayer ma demande"
-                  : "Transmettre mon projet"}
+              {tr(
+                state === "sending"
+                  ? "Enregistrement…"
+                  : state === "error"
+                    ? "Réessayer ma demande"
+                    : partner
+                      ? "Préparer ma démonstration Partner OS"
+                      : "Transmettre mon projet",
+              )}
               <ArrowRight size={17} />
             </button>
             <p className={s.formHint}>
-              Cette demande prépare un échange. Elle ne vaut ni achat, ni
-              activation automatique d’un abonnement.
+              {tr(
+                "Cette demande prépare un échange. Elle ne vaut ni achat, ni activation automatique d’un abonnement.",
+              )}
             </p>
           </fieldset>
         </form>
