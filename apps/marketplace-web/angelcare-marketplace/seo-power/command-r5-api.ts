@@ -59,6 +59,67 @@ export async function commandPost(request:Request){
     const action=nonBlank(body.action,2,50),payload=record(body.input);
     const requestKey=nonBlank(body.requestKey,8,160);
     const actor=uuid(ctx.actor.id);
+    // Privileged production handover: one explicit operation, four independent proofs.
+    // Never pretend to enable runtime flags: those must be deployed into Coolify first.
+    if(action==="activate-full"){
+      if(!access(ctx).publish)throw new SeoFault("PUBLISH_REQUIRED","Activation réservée à l'autorité de publication SEO.",403);
+      if(process.env.SEO_POWER_ENGINE_R4_ENABLED!=="1"||!commandEnabled())
+        throw new SeoFault("SEO_RUNTIME_FLAGS_MISSING",
+          "Configurer SEO_POWER_ENGINE_R4_ENABLED=1 et SEO_POWER_COMMAND360_R5_ENABLED=1 dans le service Coolify puis redémarrer l'image existante.",409);
+      const client=await db();
+      const r4Read=await client.from("ac_seo_power_r4_control")
+        .select("enabled,updated_at").eq("singleton",true).single();
+      if(r4Read.error||!r4Read.data)
+        throw new SeoFault("R4_CONTROL_UNAVAILABLE","Autorité R4 indisponible.",503);
+      const r5Read=await client.from("ac_seo_power_r5_control")
+        .select("enabled,revision").eq("singleton",true).single();
+      if(r5Read.error||!r5Read.data)
+        throw new SeoFault("R5_CONTROL_UNAVAILABLE","Autorité R5 indisponible.",503);
+      if(r4Read.data.enabled!==true){
+        const expected=nonBlank(payload.expectedR4UpdatedAt,10,100);
+        if(!Number.isFinite(Date.parse(expected))||
+          Date.parse(expected)!==Date.parse(r4Read.data.updated_at))
+          throw new SeoFault("R4_CONTROL_CHANGED","La configuration R4 a changé. Actualiser avant activation.",409);
+        // No transition while a legacy job still has the running state.
+        // This does NOT replace pausing the old scheduler at infrastructure level.
+        const leased=await client.from("ac_seo_power_jobs")
+          .select("id",{count:"exact",head:true}).eq("state","running");
+        if(leased.error)throw new SeoFault("R4_LEASE_CHECK_FAILED","Impossible de contrôler les jobs en cours.",503);
+        if((leased.count??0)>0)
+          throw new SeoFault("R4_LEASES_PRESENT",
+            String(leased.count)+" jobs encore en cours. Laissez finir les baux et suspendez le lancement legacy avant le basculement.",409);
+        const switched=await client.from("ac_seo_power_r4_control")
+          .update({enabled:true,updated_at:new Date().toISOString()})
+          .eq("singleton",true).eq("enabled",false).eq("updated_at",r4Read.data.updated_at)
+          .select("enabled").maybeSingle();
+        if(switched.error||switched.data?.enabled!==true)
+          throw new SeoFault("R4_SWITCH_CONFLICT","Activation R4 non confirmée. Actualiser et recontrôler.",409);
+        const logged=await client.from("ac_seo_power_r5_events")
+          .insert({category:"governance",event:"r4_activated",detail:{
+            actor,requestKey,source:"command360_handover",verifiedRunningJobs:0}});
+        if(logged.error)console.error("[seo-power] R4 activation audit insert failed",logged.error.code);
+      }
+      let activated:unknown={enabled:true,revision:r5Read.data.revision};
+      if(r5Read.data.enabled!==true){
+        const expectedRevision=integer(payload.expectedRevision,1,100000000);
+        if(expectedRevision!==r5Read.data.revision)
+          throw new SeoFault("R5_CONTROL_CHANGED","La révision R5 a changé. Actualiser avant activation.",409);
+        // R4 source and database are now both enabled. Existing R5 RPC is atomic and audited.
+        activated=await rpc("ac_seo_power_r5_activate",{
+          p_enabled:true,p_expected:expectedRevision,p_actor:actor
+        });
+      }
+      const proof=await client.rpc("ac_seo_power_r5_dashboard",{p_project:null});
+      if(proof.error)throw new SeoFault("ACTIVATION_READBACK_FAILED","État activé mais relecture non confirmée.",503);
+      const current=record(proof.data);
+      if(record(current.r4).enabled!==true||record(current.control).enabled!==true)
+        throw new SeoFault("ACTIVATION_INCOMPLETE","Activation partielle : vérifier les autorités en base.",503);
+      return NextResponse.json({data:{
+        enabled:true,r4Database:true,r5Database:true,
+        r4Server:true,r5Server:true,r5Control:activated,
+        observedAt:new Date().toISOString(),queue:record(current.performance).queued
+      },requestId:rid},{headers:{"Cache-Control":"no-store"}});
+    }
     if(!commandEnabled())throw new SeoFault("R5_ENV_DISABLED","Activer l'option de déploiement R5 avant d'autoriser des mutations.",409);
     if(action==="activate"){
       if(!access(ctx).publish)throw new SeoFault("PUBLISH_REQUIRED","Activation réservée à un administrateur habilité.",403);

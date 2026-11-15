@@ -227,3 +227,25 @@
 .fallbackActions{display:flex;align-items:center;gap:8px;padding-top:10px}
 @media(max-width:1200px){.activation{grid-template-columns:1fr}.activationChecks{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{flex-wrap:wrap}.heroActions{max-width:none;flex:1 1 100%;justify-content:flex-start}.twoColumns{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:650px){.activationChecks{grid-template-columns:1fr}.root .tabs button{min-width:auto}.root{padding:10px 10px 28px}.hero{padding:17px}.heroActions{flex-wrap:wrap}}
+
+/* R6: replace the intrusive amber R4/R5 blocker with quiet, truthful operational status.
+   The four checks remain visible and never imply activation without server proof. */
+.activationCompact{
+ display:flex;align-items:center;gap:13px;flex-wrap:wrap;
+ background:#f7faf8;color:#294d42;border:1px solid #e1eae6;border-radius:11px;
+ min-height:43px;padding:7px 12px;margin-bottom:14px;box-shadow:none
+}
+.activationIndicator{display:inline-flex;align-items:center;gap:7px;font-size:11px;color:#185846;white-space:nowrap}
+.activationIndicator b{font-weight:830;letter-spacing:.1px}
+.activationMiniChecks{display:flex;align-items:center;gap:9px;flex-wrap:wrap;flex:1}
+.activationMiniChecks>span{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:650;color:#697e75;white-space:nowrap}
+.activationMiniChecks>span svg{color:#8d9c96}
+.activationMiniChecks>span[data-ok=true]{color:#006b4c}
+.activationMiniChecks>span[data-ok=true] svg{color:#00845b}
+.activationCompactActions{display:inline-flex;align-items:center;gap:7px;margin-left:auto}
+.root .activationCompactActions button{border:1px solid #dce8e1;border-radius:8px;background:white;color:#35584b;font-size:10px;font-weight:740;padding:7px 10px;display:inline-flex;gap:6px;align-items:center;white-space:nowrap}
+.root .activationCompactActions button:hover:not(:disabled){background:#edf7f0}
+.root .activationCompactActions .activationPrimary{background:#066b4e;color:white;border-color:#066b4e}
+.root .activationCompactActions .activationPrimary:hover:not(:disabled){background:#005a40}
+@media(max-width:1050px){.activationCompact{align-items:flex-start}.activationMiniChecks{flex-basis:65%}.activationCompactActions{margin-left:0}}
+@media(max-width:650px){.activationMiniChecks{flex-basis:100%}.activationCompactActions{width:100%;justify-content:flex-end}}

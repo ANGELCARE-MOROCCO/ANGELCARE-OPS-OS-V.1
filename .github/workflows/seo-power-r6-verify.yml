@@ -1,0 +1,41 @@
+name: SEO POWER R6 Activation Handover Verification
+on:
+  push:
+    branches:
+      - feature/seo-power-r6-activation-handover-20261115
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: apps/marketplace-web/package-lock.json
+      - name: R6 visual and activation safety contracts
+        run: node --test apps/marketplace-web/scripts/seo-power-ci/r6-activation.test.mjs
+      - name: Marketplace exact dependencies
+        working-directory: apps/marketplace-web
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: R6 SEO Power TypeScript
+        working-directory: apps/marketplace-web
+        env:
+          NODE_OPTIONS: --max-old-space-size=8192
+        run: npx tsc -p tsconfig.seo-power-r5.json --pretty false
+      - name: Protected files
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=b4f2c96d832d58f23810e9089ac556c262571729
+          git diff --name-only "$BASE" HEAD | tee /tmp/r6-changes
+          if grep -Ev '^(apps/marketplace-web/angelcare-marketplace/seo-power/(Command360\.tsx|command360\.module\.css|command-r5-api\.ts)|apps/marketplace-web/scripts/seo-power-ci/r6-activation\.test\.mjs|\.github/workflows/seo-power-r6-verify\.yml)$' /tmp/r6-changes; then
+            echo "PROTECTED_FILES_CHANGED"; exit 1
+          fi
+          echo "SHELL_AND_PUBLIC_UI_PRESERVED=PASS"

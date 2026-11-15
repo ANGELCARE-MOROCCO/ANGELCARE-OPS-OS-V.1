@@ -175,15 +175,19 @@ export function Command360({initial}:{initial:Snapshot}){
   {error?<div role="alert" className={s.error}><AlertCircle size={16}/>{error}<button onClick={()=>setError("")} aria-label="Fermer"><X size={15}/></button></div>:null}
   {notice?<div role="status" className={s.success}><CheckCircle2 size={17}/>{notice}<button onClick={()=>setNotice("")} aria-label="Fermer"><X size={15}/></button></div>:null}
   {!ready?<div className={s.blocker}><ShieldAlert size={26}/><div><strong>Migration R5 ou lecture d'autorité non confirmée</strong><p>{String(data.reason||"Le centre garde les outils historiques disponibles. Installer la migration additive R5 puis actualiser.")}</p></div><button onClick={()=>selectTab("tools")}>Ouvrir les outils historiques</button></div>:null}
-  {ready&&!active?<section className={s.activation} aria-labelledby="seo-activation">
-    <div className={s.activationIntro}><span className={s.kicker}>GOUVERNANCE DE PRODUCTION · R4 / R5</span><h2 id="seo-activation">La console est disponible. Les nouvelles campagnes sont encore verrouillées.</h2><p>Les {number(perf.queued)} jobs en attente et {number(perf.unresolved)} incidents sont réels. Les commandes R5 nécessitent quatre autorisations indépendantes.</p></div>
-    <div className={s.activationChecks}>
-     {[[r4Deployment,"R4 · serveur","SEO_POWER_ENGINE_R4_ENABLED"],[r4Database,"R4 · base","Autorité des workers"],[r5Deployment,"R5 · serveur","SEO_POWER_COMMAND360_R5_ENABLED"],[r5Database,"R5 · base","Command 360 gouverné"]].map(([ok,name,description],i)=><div key={i} data-ok={ok===true}><span>{ok===true?<CheckCircle2 size={16}/>:<AlertCircle size={16}/>}</span><div><b>{String(name)}</b><small>{String(description)}</small></div><strong>{ok===true?"Confirmé":"Action requise"}</strong></div>)}
-    </div>
-    <div className={s.activationActions}><button onClick={()=>selectTab("capacity")}><Cpu size={15}/> Voir le diagnostic</button><button onClick={()=>void refresh(true)} disabled={loading}><RefreshCw size={15}/> Recontrôler</button>
-    {canGovern&&r4Deployment&&r4Database&&r5Deployment&&!r5Database?<button className={s.solid} disabled={busy} onClick={()=>void action("activate",{enabled:true,revision:ctrl.revision})}><LockKeyhole size={15}/> Activer Command 360</button>:null}
-    </div>
-   </section>:null}
+  {ready&&!active?<div className={s.activationCompact} role="status" aria-label="État de l'activation des moteurs SEO">
+   <span className={s.activationIndicator}><Cpu size={15}/><b>R4 / R5 : {number([r4Deployment,r4Database,r5Deployment,r5Database].filter(Boolean).length)}/4 actifs</b></span>
+   <span className={s.activationMiniChecks} title="Déploiement et autorité des moteurs">
+     {[[r4Deployment,"R4 serveur"],[r4Database,"R4 base"],[r5Deployment,"R5 serveur"],[r5Database,"R5 base"]].map(([ok,name],i)=><span key={i} data-ok={ok===true}>{ok===true?<CheckCircle2 size={12}/>:<AlertCircle size={12}/>} {String(name)}</span>)}
+   </span>
+   <div className={s.activationCompactActions}>
+     {canGovern&&r4Deployment&&r5Deployment&&(!r4Database||!r5Database)?<button className={s.activationPrimary} disabled={busy||loading} onClick={()=>{
+       if(window.confirm("Activer les moteurs R4 et R5 ? Les baux actifs, la révision et les autorisations seront vérifiés. Le planificateur legacy doit être suspendu avant cette opération."))void action("activate-full",{expectedR4UpdatedAt:r4.updatedAt,expectedRevision:ctrl.revision});
+     }}><CheckCircle2 size={14}/> Activer R4 + R5</button>:null}
+     <button onClick={()=>selectTab("capacity")}><Settings2 size={14}/> Détails</button>
+     <button onClick={()=>void refresh(true)} disabled={loading} aria-label="Recontrôler les moteurs"><RefreshCw size={14}/></button>
+   </div>
+  </div>:null}
 
   {tab==="command"?<div className={s.workspace}>
     <div className={s.metricGrid}>
