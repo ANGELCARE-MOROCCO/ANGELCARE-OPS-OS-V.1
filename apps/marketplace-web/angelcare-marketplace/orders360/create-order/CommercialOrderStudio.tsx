@@ -28,7 +28,7 @@ const modeGuidance:Record<Mode,[string,string]>={
 };
 const isPhysicalItem=(item?:AssistedOrderOptions["items"][number])=>/product|kit|physical|equipment|printable|flashcard|article|good|merch|materiel|matériel/i.test(item?.sellable_type||item?.kind||"");
 type Draft={mode:Mode;commercialContext:CommercialContext;customerAccountId:string;guestName:string;guestEmail:string;guestPhone:string;territoryId:string;city:string;address:string;scheduledStartAt:string;scheduledEndAt:string;paymentMode:string;paymentStatus:"pending"|"invoice_later";notes:string;familyRequestId:string|null;inquiryId:string|null;sourceOrderId:string|null;lines:Line[];contractNote:string;depositPercent:number};
-type QuoteLine={itemId:string;title:string;quantity:number;unitPrice:number;discount:number;subtotal:number;net:number;currency:string;requiresApproval:boolean};
+type QuoteLine={lineId?:string;itemId:string;title:string;quantity:number;unitPrice:number;discount:number;subtotal:number;net:number;currency:string;requiresApproval:boolean};
 type Quote={lines:QuoteLine[];subtotal:number;discount:number;net:number;total:number;currency:string;requiresApproval:boolean;taxStatus:string;warnings?:string[]};
 type Receipt={id?:string;public_reference?:string;orderId?:string;status?:string};
 type PriorOrder={id:string;public_reference:string;created_at:string;title:string;journey_type:string};
@@ -155,14 +155,14 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
  const payloadKey=JSON.stringify(draft);
  const isDirty=payloadKey!==lastSaved.current;
  const approvalRequired=Boolean(quote?.requiresApproval);
- const customerReady=Boolean(customer||draft.guestName.trim().length>=3&&(draft.guestEmail.trim()||draft.guestPhone.trim()));
+ const customerReady=Boolean(customer||(draft.guestName.trim().length>=3&&(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(draft.guestEmail.trim())||/^[+\d\s()\-.]{7,22}$/.test(draft.guestPhone.trim()))));
  const basketReady=draft.lines.length>0&&Boolean(quote);
  const pricingReady=Boolean(quote)&&!priceBusy;
  const paymentReady=draft.mode==="quote"||Boolean(draft.paymentMode&&draft.paymentMode!=="none");
  const contractReady=draft.mode!=="b2b"&&draft.mode!=="subscription"||Boolean(draft.contractNote.trim());
  const approvalReady=!approvalRequired||approval==="approved";
  const commercialContextReady=draft.mode==="b2b"?commercialContext.legalEntity.trim().length>=3:
-  draft.mode==="quote"?Boolean(commercialContext.quoteValidity):
+  draft.mode==="quote"?/^\d{4}-\d{2}-\d{2}$/.test(commercialContext.quoteValidity)&&commercialContext.quoteValidity>=new Date().toISOString().slice(0,10):
   draft.mode==="renewal"?commercialContext.renewalReason.trim().length>=5:true;
  const renewalReady=draft.mode!=="renewal"||Boolean(draft.sourceOrderId);
  const recurringReady=draft.mode!=="subscription"||Boolean(draft.scheduledStartAt&&draft.lines.some(l=>l.configuration.sessions>1&&l.configuration.frequency!=="unique"));
@@ -171,7 +171,7 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
  const amount=quote?.total??0;
  const currency=quote?.currency||"MAD";
  const selectedLineIndex=draft.lines.findIndex(x=>x.id===chosen?.id);
- const selectedPrice=selectedLineIndex>=0&&quote?.lines[selectedLineIndex]?.itemId===chosen?.itemId?quote.lines[selectedLineIndex]:undefined;
+ const selectedPrice=quote?.lines.find(x=>x.lineId===chosen?.id)||(selectedLineIndex>=0&&quote?.lines[selectedLineIndex]?.itemId===chosen?.itemId?quote.lines[selectedLineIndex]:undefined);
  const reviewChecks:Array<{label:string;ok:boolean;tab:Tab}>=[
   {label:"Client identifié et joignable",ok:customerReady,tab:"customer"},
   {label:"Panier et prix serveur",ok:basketReady&&pricingReady,tab:"basket"},
@@ -366,7 +366,7 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
       </div>:null}
       {tab==="basket"?<div className={s.basketView}>
        <div className={s.tableScroll}><table className={s.basket}><thead><tr><th>Prestation / Produit</th><th>Configuration</th><th>Qté</th><th>Prix unitaire</th><th>Remise</th><th>Total</th><th/></tr></thead><tbody>
-       {draft.lines.map((line,index)=>{const item=options.items.find(i=>i.id===line.itemId),candidate=quote?.lines[index],priced=candidate?.itemId===line.itemId?candidate:undefined;return <tr key={line.id} data-selected={chosen?.id===line.id} onClick={()=>setSelectedLine(line.id)}>
+       {draft.lines.map((line,index)=>{const item=options.items.find(i=>i.id===line.itemId),candidate=quote?.lines.find(q=>q.lineId===line.id)||quote?.lines[index],priced=candidate?.itemId===line.itemId?candidate:undefined;return <tr key={line.id} data-selected={chosen?.id===line.id} onClick={()=>setSelectedLine(line.id)}>
         <td><div className={s.productCell}><span className={s.productThumb}>{mediaById[line.itemId]?<img src={mediaById[line.itemId]} alt="" loading="lazy"/>:<Package size={23}/>}</span><div><strong>{item?.name_fr||"Article du catalogue"}</strong><small>{item?.public_reference}</small><span className={s.greenChip}>{item?.kind||"Article"}</span></div></div></td>
         <td><div className={s.configMini}>{isPhysicalItem(item)?<><span><Package size={12}/> Produit ou kit</span><span>{line.configuration.variant||"Variante standard"}</span><span>{line.configuration.deliveryMethod||"Livraison à qualifier"}</span></>:<><span><CalendarClock size={12}/>{line.configuration.sessions} séance(s)</span><span><Users size={12}/>{line.configuration.children} participant(s)</span><span><Clock3 size={12}/>{line.configuration.minutes} min</span></>}</div></td>
         <td><span className={s.qty}><button aria-label="Diminuer quantité" onClick={e=>{e.stopPropagation();linePatch(line.id,{quantity:Math.max(1,line.quantity-1)})}}><Minus size={12}/></button>{line.quantity}<button aria-label="Augmenter quantité" onClick={e=>{e.stopPropagation();linePatch(line.id,{quantity:Math.min(1000,line.quantity+1)})}}><Plus size={12}/></button></span></td>
