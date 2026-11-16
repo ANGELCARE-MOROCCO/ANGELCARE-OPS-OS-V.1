@@ -42,6 +42,9 @@ jobs:
       - name: Strict equipment storefront TypeScript
         working-directory: apps/marketplace-web
         run: npx tsc -p tsconfig.equipment-r8.json --pretty false --noEmit
-      - name: Verify approved R7.1 hero remains unchanged
+      - name: Prove original R7.1 hero is retained byte-for-byte for rollback
         working-directory: apps/marketplace-web
-        run: node --test scripts/verify-equipment-hero-r71.test.mjs
+        run: |
+          ACTUAL=$(git hash-object angelcare-marketplace/establishments-world/EquipmentHeroR71.tsx)
+          test "$ACTUAL" = "3532b9b0b639987ffcdff601360ac29c6efaa100"
+          echo "R71_HERO_ORIGINAL_UNCHANGED=$ACTUAL"
