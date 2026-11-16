@@ -43,6 +43,7 @@ import {
 } from "./CommercialJourney";
 import { COMMERCIAL } from "./commercial-content";
 import { VIEWS, type View } from "./content";
+import { EquipmentHeroR71 } from "./EquipmentHeroR71";
 import {
   blocked,
   offerSelection,
@@ -427,6 +428,12 @@ function EstablishmentsBody({
         {view === "partner-os" ? (
           <PartnerHero
             onContact={contact}
+            onExplore={() => scrollTo("ew-native-explorer")}
+          />
+        ) : view === "produits" ? (
+          <EquipmentHeroR71
+            locale={locale}
+            onBuildProject={() => contact({ subject: copy.contact })}
             onExplore={() => scrollTo("ew-native-explorer")}
           />
         ) : (

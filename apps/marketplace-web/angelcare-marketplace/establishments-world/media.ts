@@ -4,6 +4,7 @@ export const CAMPAIGN_MAP: Record<string, string> = {
   "consulting-hero": "consulting",
   "partner-hero": "partner",
   "products-hero": "products",
+  "products-hero-r71": "equipment-hero-r71",
   "child-experience": "eduplay",
   edupplay: "eduplay",
   academy: "academy",

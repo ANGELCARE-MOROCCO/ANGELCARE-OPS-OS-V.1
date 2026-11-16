@@ -1669,6 +1669,14 @@
     "source": "/angelcare-marketplace/establishments-r4/products-campaign.png"
   },
   {
+    "id": "establishments.journey-r4.products-hero-r71",
+    "section": "Établissements · Hero premium R7.1",
+    "label": "Hero R7.1 · Équipements uniquement",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r4/equipment-hero-r71-campaign.png"
+  },
+  {
     "id": "establishments.journey-r4.child-experience",
     "section": "Établissements · Campagnes R4",
     "label": "Expérience enfant",

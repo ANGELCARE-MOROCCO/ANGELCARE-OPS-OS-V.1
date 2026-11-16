@@ -1,0 +1,55 @@
+name: AngelCare Establishments Equipment Hero R7.1
+on:
+  push:
+    branches:
+      - feat/establishments-equipment-hero-r71-approved-20261116
+    paths:
+      - 'apps/marketplace-web/angelcare-marketplace/establishments-world/Experience.tsx'
+      - 'apps/marketplace-web/angelcare-marketplace/establishments-world/EquipmentHeroR71.tsx'
+      - 'apps/marketplace-web/angelcare-marketplace/establishments-world/EquipmentHeroR71.module.css'
+      - 'apps/marketplace-web/angelcare-marketplace/establishments-world/media.ts'
+      - 'apps/marketplace-web/angelcare-marketplace/marketplace-imagery/slot-seeds.json'
+      - 'apps/marketplace-web/public/angelcare-marketplace/establishments-r4/equipment-hero-r71-campaign*.png'
+      - 'apps/marketplace-web/scripts/verify-equipment-hero-r71.test.mjs'
+      - '.github/workflows/establishments-equipment-hero-r71.yml'
+  pull_request:
+    branches:
+      - upgrade/next-angelcare-upgrade
+    paths:
+      - 'apps/marketplace-web/angelcare-marketplace/establishments-world/**'
+      - 'apps/marketplace-web/angelcare-marketplace/marketplace-imagery/slot-seeds.json'
+      - 'apps/marketplace-web/public/angelcare-marketplace/establishments-r4/equipment-hero-r71-campaign*.png'
+      - 'apps/marketplace-web/scripts/verify-equipment-hero-r71.test.mjs'
+      - '.github/workflows/establishments-equipment-hero-r71.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  isolated-hero-regression:
+    name: Verify hero-only scope and native media assets
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify protected views, native actions, copy and image variants
+        working-directory: apps/marketplace-web
+        run: node --test scripts/verify-equipment-hero-r71.test.mjs
+      - name: Verify PNG headers and responsive dimensions
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import struct
+          folder=Path('apps/marketplace-web/public/angelcare-marketplace/establishments-r4')
+          files={'equipment-hero-r71-campaign.png':(1536,1024),
+                 'equipment-hero-r71-campaign-960.png':(960,640),
+                 'equipment-hero-r71-campaign-640.png':(640,427)}
+          for name,dims in files.items():
+              raw=(folder/name).read_bytes()
+              assert raw[:8]==b'\x89PNG\r\n\x1a\n', name
+              assert struct.unpack('>II',raw[16:24])==dims, (name,dims)
+              assert len(raw)>100000, name
+              print('PASS',name,dims,len(raw))
+          PY
