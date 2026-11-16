@@ -51,8 +51,6 @@ export function EquipmentExperienceR9({
  const [atlasFilter,setAtlasFilter]=useState<EquipmentFamilyId|"all">("all");
  const [atlasSearch,setAtlasSearch]=useState("");
  const [diagnosticOpen,setDiagnosticOpen]=useState(true);
- const [showRelated,setShowRelated]=useState(true);
- const routeRef=useRef<HTMLDivElement>(null);
  const selectedKeys=useMemo(()=>new Set(selected),[selected]);
  const selectedDomains=useMemo(()=>EQUIPMENT_DOMAINS.filter(d=>selectedKeys.has(`intent:equipment-domain:${d.id}`)),[selectedKeys]);
  const selectedBrief=useMemo(()=>equipmentR9Brief(selected,state),[selected,state]);
@@ -70,7 +68,7 @@ export function EquipmentExperienceR9({
  const request=(name?:string)=>onContact({subject:(name?`Équipements · ${name}`:"Équipements · Projet personnalisé").slice(0,220)});
  const allAtlas=useMemo(()=>EQUIPMENT_DOMAINS.filter(d=>(atlasFilter==="all"||atlasFilter===d.group)&&(`${d.name} ${d.short} ${d.pain}`.toLowerCase().includes(atlasSearch.toLowerCase()))),[atlasFilter,atlasSearch]);
  const filteredAtlas=fullAtlas?allAtlas:allAtlas.slice(0,12);
- const customDomainExperience=<div className={c.r9Section} ref={routeRef} data-equipment-experience="R9" id="r9-experience" lang={locale} dir={locale==="ar"?"rtl":"ltr"}>
+ const customDomainExperience=<div className={c.r9Section} data-equipment-experience="R9" id="r9-experience" lang={locale} dir={locale==="ar"?"rtl":"ltr"}>
   <section className={c.r9Masthead}>
    <div><span className={c.miniOverline}><Sparkles size={16}/>{words.badge}</span><h2>{words.title}</h2><p>{words.sub}</p>
     <div className={c.mastheadMetrics}><span><strong>06</strong> Univers métiers</span><span><strong>22</strong> Parcours uniques</span><span><strong>{selectedDomains.length}</strong> {words.selected}</span></div>
@@ -91,7 +89,7 @@ export function EquipmentExperienceR9({
    <div className={c.diagnosticBottom}><span><CheckCircle2 size={17}/> Votre sélection reste sous votre contrôle, sans réservation ni prix simulé.</span><button type="button" onClick={()=>document.getElementById("r9-family-learning")?.scrollIntoView({block:"start",behavior:"smooth"})}>Explorer les parcours <ArrowRight size={17}/></button></div>
   </section>
 
-  <section className={c.r9Navigation} aria-label="Navigation dans les univers professionnels">
+  <section id="r8-domains" className={c.r9Navigation} aria-label="Navigation dans les univers professionnels">
    <div><span className={c.eyebrow}>{words.expert}</span><h3>{words.journey}</h3><p>{words.journeySub}</p></div>
    <div className={c.familyJump}>{EQUIPMENT_FAMILIES.map(f=>{const Icon=familyLead[f.id].icon;return <button key={f.id} type="button" onClick={()=>document.getElementById(`r9-family-${f.id}`)?.scrollIntoView({block:"start",behavior:"smooth"})}><Icon size={19}/><span>{f.title}</span><small>{EQUIPMENT_DOMAINS.filter(d=>d.group===f.id).length} domaines</small></button>})}</div>
   </section>
