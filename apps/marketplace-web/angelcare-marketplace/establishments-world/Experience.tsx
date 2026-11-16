@@ -43,7 +43,7 @@ import {
 } from "./CommercialJourney";
 import { COMMERCIAL } from "./commercial-content";
 import { VIEWS, type View } from "./content";
-import { EquipmentHeroR71 } from "./EquipmentHeroR71";
+import { EquipmentHeroR8 } from "./EquipmentHeroR8";
 import { EquipmentExperienceR8 } from "./EquipmentExperienceR8";
 import {
   blocked,
@@ -432,10 +432,10 @@ function EstablishmentsBody({
             onExplore={() => scrollTo("ew-native-explorer")}
           />
         ) : view === "produits" ? (
-          <EquipmentHeroR71
+          <EquipmentHeroR8
             locale={locale}
-            onBuildProject={() => contact({ subject: copy.contact })}
-            onExplore={() => scrollTo("ew-native-explorer")}
+            onExploreDomains={() => scrollTo("r8-domains")}
+            onExploreOffers={() => scrollTo("ew-native-explorer")}
           />
         ) : (
           <section className={c.hero} data-establishments-hero>
