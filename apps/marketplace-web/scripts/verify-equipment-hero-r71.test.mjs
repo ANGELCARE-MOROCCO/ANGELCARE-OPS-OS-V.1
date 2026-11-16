@@ -10,31 +10,31 @@ const registry = JSON.parse(source('angelcare-marketplace/marketplace-imagery/sl
 
 const r8Host=host.includes('<EquipmentHeroR8');
 test('equipment hero rollover preserves Conseil, Partner OS and original R7.1 rollback',()=>{
- assert.match(host,/view === "partner-os" \\? \\(\\s*<PartnerHero/);
- assert.match(host,/<section className=\\{c.hero\\} data-establishments-hero>/);
- assert.match(host,/<NativeExplorer[\\s\\S]*?<CommercialJourney/);
+ assert.match(host,/view === "partner-os" \? \(\s*<PartnerHero/);
+ assert.match(host,/<section className=\{c.hero\} data-establishments-hero>/);
+ assert.match(host,/<NativeExplorer[\s\S]*?<CommercialJourney/);
  if(r8Host){
-  assert.match(host,/view === "produits" \\? \\(\\s*<EquipmentHeroR8/);
+  assert.match(host,/view === "produits" \? \(\s*<EquipmentHeroR8/);
   assert.match(host,/<EquipmentExperienceR8/);
  }else{
-  assert.match(host,/view === "produits" \\? \\(\\s*<EquipmentHeroR71/);
+  assert.match(host,/view === "produits" \? \(\s*<EquipmentHeroR71/);
  }
 });
 test('native hero actions preserve the canonical explorer and enquiry',()=>{
  if(r8Host){
-  assert.match(host,/onExploreDomains=\\{\\(\\) => scrollTo\\("r8-domains"\\)\\}/);
-  assert.match(host,/onExploreOffers=\\{\\(\\) => scrollTo\\("ew-native-explorer"\\)\\}/);
+  assert.ok(host.includes('onExploreDomains={() => scrollTo("r8-domains")}'));
+  assert.ok(host.includes('onExploreOffers={() => scrollTo("ew-native-explorer")}'));
   const r8=source('angelcare-marketplace/establishments-world/EquipmentHeroR8.tsx');
-  assert.match(r8,/onClick=\\{onExploreDomains\\}/);
-  assert.match(r8,/onClick=\\{onExploreOffers\\}/);
-  assert.doesNotMatch(r8,/fetch\\(|localStorage|supabase|window\\.open/);
+  assert.match(r8,/onClick=\{onExploreDomains\}/);
+  assert.match(r8,/onClick=\{onExploreOffers\}/);
+  assert.doesNotMatch(r8,/fetch\(|localStorage|supabase|window\.open/);
  }else{
-  assert.match(host,/onBuildProject=\\{\\(\\) => contact\\(\\{ subject: copy\\.contact \\}\\)\\}/);
-  assert.match(host,/onExplore=\\{\\(\\) => scrollTo\\("ew-native-explorer"\\)\\}/);
+  assert.match(host,/onBuildProject=\{\(\) => contact\(\{ subject: copy\.contact \}\)\}/);
+  assert.match(host,/onExplore=\{\(\) => scrollTo\("ew-native-explorer"\)\}/);
  }
- assert.match(component,/onClick=\\{onBuildProject\\}/);
- assert.match(component,/onClick=\\{onExplore\\}/);
- assert.doesNotMatch(component,/fetch\\(|localStorage|supabase|window\\.open/);
+ assert.match(component,/onClick=\{onBuildProject\}/);
+ assert.match(component,/onClick=\{onExplore\}/);
+ assert.doesNotMatch(component,/fetch\(|localStorage|supabase|window\.open/);
 });
 test('approved copy and FR, EN, AR are present',()=>{
   for(const x of ['Votre établissement parle avant même que vous preniez la', 'parole.', 'Construire mon projet', 'Explorer les solutions','Qualité professionnelle','Solutions complètes','Pensé pour la petite enfance', 'fr:', 'en:', 'ar:'])assert.ok(component.includes(x), x);
