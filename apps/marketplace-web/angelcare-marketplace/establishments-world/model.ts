@@ -6,6 +6,7 @@ import type { DiscoveryItem } from "../catalog-discovery/types";
 import { unavailable } from "../storefront-immersive/contract";
 import { projection } from "../business-worlds/merchandising";
 import { MODULES, FORMULAS, type Formula, type View } from "./content";
+import {EQUIPMENT_DOMAINS,equipmentDomainSelection} from "./equipment-r8-data";
 export function viewFromHash(hash: string): View {
   const key = hash.replace(/^#/, "").split("/")[0];
   return key === "partner-os" || key === "produits" ? key : "conseil";
@@ -120,7 +121,7 @@ export interface Selection {
 export function toggleSelection(
   previous: Selection[],
   item: Selection,
-  max = 8,
+  max = 30,
 ): Selection[] {
   return previous.some((value) => value.key === item.key)
     ? previous.filter((value) => value.key !== item.key)
@@ -222,9 +223,13 @@ export function restoreProject(
               ]
             : [];
         }
+        if(key.startsWith("intent:equipment-domain:")){
+          const domain=EQUIPMENT_DOMAINS.find(domain=>key===`intent:equipment-domain:${domain.id}`);
+          return domain?[equipmentDomainSelection(domain)]:[];
+        }
         return key === "intent:partner-free-year" ? [freeYearSelection()] : [];
       })
-      .slice(0, 8);
+      .slice(0, 30);
   } catch {
     return [];
   }
@@ -255,11 +260,15 @@ export function projectReducer(
       notice:
         "Votre demande pour les 12 mois gratuits figure déjà dans le projet.",
     };
-  if (!exists && state.items.length >= 8)
+  const isEquipment=item.key.startsWith("intent:equipment-domain:");
+  const otherCount=state.items.filter(value=>!value.key.startsWith("intent:equipment-domain:")).length;
+  const equipmentCount=state.items.length-otherCount;
+  if(!exists && (isEquipment?equipmentCount>=22:otherCount>=8))
     return {
       ...state,
-      notice:
-        "Votre projet contient huit éléments. Retirez un élément avant d’ajouter cette demande.",
+      notice:isEquipment
+        ?"Les 22 domaines d’équipements sont déjà dans le projet."
+        :"Votre projet contient huit offres ou autres demandes. Retirez un élément avant d’ajouter cette demande.",
     };
   return {
     items: toggleSelection(state.items, item),
