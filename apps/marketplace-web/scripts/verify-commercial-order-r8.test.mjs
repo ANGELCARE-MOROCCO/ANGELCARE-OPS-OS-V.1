@@ -54,6 +54,10 @@ test('canonical order submission retains independent approval and rollback seman
  assert.match(sql,/R8_QUOTE_VALIDITY_REQUIRED/);
  assert.match(sql,/R8_RENEWAL_REASON_REQUIRED/);
  assert.match(sql,/begin;[\s\S]*commit;/);
+ assert.equal((sql.match(/create or replace function/g)||[]).length,2,'one quote and one submit function');
+ assert.equal((sql.match(/end \$\$;/g)||[]).length,3,'guard, quote and submit blocks must each terminate exactly once');
+ assert.match(sql,/R8_QUOTE_VALIDITY_REQUIRED[\\s\\S]*R8_RENEWAL_REASON_REQUIRED[\\s\\S]*R7_CONTRACT_TERMS_REQUIRED/);
+ assert.match(sql,/\\'commercialContext\\',coalesce/);
  assert.match(studio,/navigateFirstBlocker/);
  assert.match(studio,/role="dialog" aria-modal="true"/);
 });
