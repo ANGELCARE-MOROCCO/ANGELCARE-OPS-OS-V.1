@@ -5,6 +5,7 @@ on:
     branches:
       - upgrade/next-angelcare-upgrade
       - feat/establishments-equipment-r8-approved-showroom-20261116
+      - feat/equipment-r9-immersive-commercial-22-journeys-20261116
     paths:
       - ".github/workflows/build-marketplace-ghcr-oneoff.yml"
       - "apps/marketplace-web/**"
