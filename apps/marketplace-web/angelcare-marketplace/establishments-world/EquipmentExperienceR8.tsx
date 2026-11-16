@@ -188,7 +188,7 @@ export function EquipmentExperienceR8({
     </div>
     <div className={c.quoteCta}>
      <FileTextIcon/><div><span className={c.miniEyebrow}>PROPOSITION PERSONNALISÉE</span><h2>Demande de devis rapide</h2><p>Décrivez votre besoin. Votre demande sera transmise aux équipes via le formulaire existant.</p><button onClick={()=>request()}>Demander un devis <ArrowRight size={16}/></button></div>
-     <div className={c.ctaSidePhoto}><CampaignImage name="products" alt="Supports scolaires et matériel pédagogique"/></div>
+     <div className={c.ctaSidePhoto}><CampaignImage name="products-hero" alt="Supports scolaires et matériel pédagogique"/></div>
     </div>
    </section>
 
