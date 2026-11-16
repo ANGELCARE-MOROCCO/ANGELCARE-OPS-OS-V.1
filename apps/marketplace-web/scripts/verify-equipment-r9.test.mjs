@@ -46,11 +46,12 @@ test('domain navigation keeps R8 structure and native project selection intact',
 });
 test('recoverable bounded preferences enrich brief, without inventing orders',()=>{
  for(const value of ['raw.length>18000','Number.isInteger(pref.choice)','slice(0,180)','slice(0,2200)','export function equipmentR9Brief'])assert.ok(programs.includes(value),value);
- for(const value of ['sessionStorage.getItem(storageKey(storageScope))','sessionStorage.setItem(storageKey(storageScope))','onBriefChange(selectedBrief)'])assert.ok(r9.includes(value),value);
+ for(const value of ['sessionStorage.getItem(storageKey(storageScope))','sessionStorage.setItem(storageKey(storageScope),','onBriefChange(selectedBrief)'])assert.ok(r9.includes(value),value);
  assert.ok(r9.includes('onSelect(equipmentDomainSelection(selectedDomain))'));
 });
 test('native PNG media, clear editorial caveats and responsive unique presentation',()=>{
- for(const value of ['establishments-r2/','aucune commande'])assert.ok(r9.includes(value),value);
+ assert.ok(r9.includes('establishments-r2/'));
+ assert.ok(programs.includes('aucune commande confirmée'));
  for(const value of ['Mise en situation indicative','Offres, tarifs et délais restent soumis','Aucune variante, disponibilité'])assert.ok(studio.includes(value),value);
  for(const cls of ['flashcardBoard','staffBoard','receptionRoom','printableDesk','technicalLibrary','moodGrid','storageShelves','awardsGallery','unboxingCase'])assert.ok(css.includes('.'+cls),cls);
  for(const cls of ['r9Masthead','familyChapter','atlasGrid','diagnosticFields','r9Project'])assert.ok(cssPage.includes('.'+cls),cls);
