@@ -8,7 +8,8 @@ const experience=read('angelcare-marketplace/establishments-world/Experience.tsx
 const journey=read('angelcare-marketplace/establishments-world/EquipmentExperienceR8.tsx');
 const css=read('angelcare-marketplace/establishments-world/EquipmentExperienceR8.module.css');
 const model=read('angelcare-marketplace/establishments-world/model.ts');
-const hero=read('angelcare-marketplace/establishments-world/EquipmentHeroR71.tsx');
+const hero=read('angelcare-marketplace/establishments-world/EquipmentHeroR8.tsx');
+const legacyHero=read('angelcare-marketplace/establishments-world/EquipmentHeroR71.tsx');
 const assets=read('angelcare-marketplace/establishments-world/media.ts');
 
 test('R8 uses exact 22 catalog domain names, one unique indexed key each',()=>{
@@ -25,13 +26,16 @@ test('editorial domains never masquerade as native published sellable offers',()
  assert.match(journey,/Les offres, prix, options/);
 });
 test('native hero, public explorer, enquiry, partner and shared header remain protected',()=>{
- assert.match(experience,/<EquipmentHeroR71/);
+ assert.match(experience,/<EquipmentHeroR8/);
  assert.match(experience,/<NativeExplorer/);
  assert.match(experience,/<ProjectEnquiry/);
  assert.match(experience,/<PartnerJourney/);
  assert.match(experience,/view === "produits" \? \(\s*<EquipmentExperienceR8/);
  assert.match(experience,/data-establishments-journey=\{view==="produits"\?"R8":"R5"\}/);
- assert.match(hero,/data-equipment-hero-version="r7.1"/);
+ assert.match(hero,/data-equipment-hero-version="r8"/);
+ assert.match(legacyHero,/data-equipment-hero-version="r7.1"/);
+ assert.match(hero,/onExploreDomains/);
+ assert.match(hero,/onExploreOffers/);
 });
 test('six different interactive visual families and immersive guided gallery',()=>{
  for(const cls of ['quickNav','families','familyGrid','domains','domainGrid','showroom','showroomGallery','hotspot','galleryPrev','galleryNext','galleryDots','project','domainDialog','ctaTwin'])assert.match(css,new RegExp('\\.'+cls+'\\{'),cls);
@@ -50,6 +54,10 @@ test('project selections remain available across session reload without undermin
 test('all imagery names used by new page correspond to managed native art',()=>{
  const art=new Set([...assets.matchAll(/^\s*"?([\w-]+)"?:\s*"[\w-]+",?$/gm)].map(m=>m[1]));
  for(const family of EQUIPMENT_FAMILIES)assert.ok(art.has(family.image),family.image);
- for(const domain of EQUIPMENT_DOMAINS)assert.ok(art.has(domain.image),domain.image);
+ for(const domain of EQUIPMENT_DOMAINS){
+  assert.ok(art.has(domain.image),domain.image);
+  const {existsSync}=await import('node:fs');
+  assert.ok(existsSync(new URL('../public/angelcare-marketplace/establishments-r2/'+domain.art+'.png',import.meta.url)),domain.art);
+ }
  for(const name of ['welcome','classroom','parents','administration','activities','uniforms','products-hero'])assert.ok(art.has(name),name);
 });
