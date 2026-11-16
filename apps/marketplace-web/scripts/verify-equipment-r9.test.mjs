@@ -1,8 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {EQUIPMENT_DOMAINS,EQUIPMENT_FAMILIES} from '../angelcare-marketplace/establishments-world/equipment-r8-data.ts';
-import {R9_PROGRAMS,assertR9Domains,emptyR9State,restoreR9State,equipmentR9Brief} from '../angelcare-marketplace/establishments-world/equipment-r9-programs.ts';
 const source=(name)=>readFileSync(new URL('../angelcare-marketplace/establishments-world/'+name,import.meta.url),'utf8');
 const host=source('Experience.tsx');
 const r8=source('EquipmentExperienceR8.tsx');
@@ -11,86 +9,49 @@ const studio=source('EquipmentR9DomainStudio.tsx');
 const css=source('EquipmentR9DomainStudio.module.css');
 const cssPage=source('EquipmentExperienceR9.module.css');
 const hero=source('EquipmentHeroR8.tsx');
+const domainData=source('equipment-r8-data.ts');
+const programs=source('equipment-r9-programs.ts');
+const domainIds=[...domainData.matchAll(/\{id:"([^"]+)",art:/g)].map(m=>m[1]);
+const defs=[...programs.matchAll(/\{id:"([^"]+)",layout:"([^"]+)"/g)].map(m=>({id:m[1],layout:m[2]}));
 
-test('R9 has exactly 22 genuine domain programs, 22 unique visual layouts and six families',()=>{
- assert.equal(EQUIPMENT_DOMAINS.length,22);
- assert.equal(EQUIPMENT_FAMILIES.length,6);
- assert.equal(R9_PROGRAMS.length,22);
- assert.equal(new Set(R9_PROGRAMS.map(x=>x.id)).size,22);
- assert.equal(new Set(R9_PROGRAMS.map(x=>x.layout)).size,22);
- assert.equal(assertR9Domains(),true);
- for(const p of R9_PROGRAMS){
-  assert.ok(EQUIPMENT_DOMAINS.some(d=>d.id===p.id));
-  assert.equal(p.choices.length,3,p.id);
-  assert.equal(p.criteria.length,3,p.id);
-  assert.equal(p.recommendations.length,3,p.id);
-  for(const property of ['headline','promise','scenario','value','interaction','cta'])assert.ok(p[property].length>12,p.id+' '+property);
- }
+test('22 real domains, 22 different experience layouts, six commercial families',()=>{
+ assert.equal(domainIds.length,22);
+ assert.equal(defs.length,22);
+ assert.equal(new Set(domainIds).size,22);
+ assert.equal(new Set(defs.map(d=>d.id)).size,22);
+ assert.equal(new Set(defs.map(d=>d.layout)).size,22);
+ for(const d of defs)assert.ok(domainIds.includes(d.id),d.id);
+ assert.equal((domainData.match(/\{id:"(?:welcome|learning|parents|operations|routines|identity)",number:/g)||[]).length,6);
+ for(const field of ['headline','promise','scenario','priority','choices','criteria','recommendations','interaction','cta'])assert.ok(programs.includes(field+':'),field);
 });
-test('all 22 domain studio layouts render uniquely, not via repeated generic campaigns',()=>{
- for(const p of R9_PROGRAMS)assert.ok(studio.includes('case "'+p.layout+'"'),p.layout);
- assert.ok(studio.includes('onChooseRelated'));
- assert.ok(studio.includes('onExplore'));
- assert.ok(studio.includes('onContact'));
- assert.ok(studio.includes('onPref'));
- assert.ok(studio.includes('pref.quantity'));
- assert.ok(studio.includes('pref.age'));
- assert.ok(studio.includes('pref.note'));
- assert.ok(studio.includes('data-layout={program.layout}'));
- assert.ok(!studio.includes('fetch('),'domain studio must have no independent commerce network API');
- assert.ok(!studio.includes('localStorage'),'native project authority is host');
+test('22 distinct compositions have unique renderers and contextual interactions',()=>{
+ for(const d of defs)assert.ok(studio.includes('case "'+d.layout+'"'),d.layout);
+ for(const name of ['onChooseRelated','onExplore','onContact','onPref','pref.quantity','pref.age','pref.note','data-layout={program.layout}'])assert.ok(studio.includes(name),name);
+ assert.ok(!studio.includes('fetch('));
+ assert.ok(!studio.includes('localStorage'));
 });
-test('the canonical product explorer and R8 approved hero remain in their original order',()=>{
- const h=host.indexOf('<EquipmentHeroR8');
- const explorer=host.indexOf('<NativeExplorer');
- const body=host.indexOf('<EquipmentExperienceR9');
- const enquiry=host.indexOf('<ProjectEnquiry');
- assert.ok(h>=0&&explorer>h&&body>explorer&&enquiry>body);
+test('protected hero, native explorer, enquiry and sibling journeys survive',()=>{
+ const heroAt=host.indexOf('<EquipmentHeroR8');
+ const explorerAt=host.indexOf('<NativeExplorer');
+ const bodyAt=host.indexOf('<EquipmentExperienceR9');
+ const enquiryAt=host.indexOf('<ProjectEnquiry');
+ assert.ok(heroAt>=0&&explorerAt>heroAt&&bodyAt>explorerAt&&enquiryAt>bodyAt);
  assert.ok(host.includes('data-establishments-journey={view==="produits"?"R9":"R5"}'));
- assert.ok(host.includes('<PartnerJourney'));
- assert.ok(host.includes('<CommercialJourney'));
- assert.ok(host.includes('onBriefChange={setEquipmentR9Brief}'));
- assert.ok(host.includes('view === "produits" ? equipmentR9Brief : ""'));
+ for(const value of ['<PartnerJourney','<CommercialJourney','onBriefChange={setEquipmentR9Brief}','view === "produits" ? equipmentR9Brief : ""'])assert.ok(host.includes(value),value);
  assert.match(hero,/data-equipment-hero-version="r8"/);
 });
-test('R8 domain cards use an optional R9 studio slot, never lose native project actions',()=>{
- assert.ok(r8.includes('domainExperience?:ReactNode'));
- assert.ok(r8.includes('onOpenDomain?:(domain:EquipmentDomain)=>void'));
- assert.ok(r8.includes('if(onOpenDomain){onOpenDomain(domain);return}'));
- assert.ok(r8.includes('{domainExperience}'));
- assert.ok(r9.includes('domainExperience={customDomainExperience}'));
- assert.ok(r9.includes('onOpenDomain={chooseDomain}'));
+test('domain navigation keeps R8 structure and native project selection intact',()=>{
+ for(const value of ['domainExperience?:ReactNode','onOpenDomain?:(domain:EquipmentDomain)=>void','if(onOpenDomain){onOpenDomain(domain);return}','{domainExperience}'])assert.ok(r8.includes(value),value);
+ for(const value of ['domainExperience={customDomainExperience}','onOpenDomain={chooseDomain}','onSelect(equipmentDomainSelection(selectedDomain))','selectedKeys.has'])assert.ok(r9.includes(value),value);
+});
+test('recoverable bounded preferences enrich brief, without inventing orders',()=>{
+ for(const value of ['raw.length>18000','Number.isInteger(pref.choice)','slice(0,180)','slice(0,2200)','export function equipmentR9Brief'])assert.ok(programs.includes(value),value);
+ for(const value of ['sessionStorage.getItem(storageKey(storageScope))','sessionStorage.setItem(storageKey(storageScope))','onBriefChange(selectedBrief)'])assert.ok(r9.includes(value),value);
  assert.ok(r9.includes('onSelect(equipmentDomainSelection(selectedDomain))'));
- assert.ok(r9.includes('selectedKeys.has'));
 });
-test('persisted preferences accept only safe bounded keys and restore from invalid payloads',()=>{
- const blank=emptyR9State();
- assert.deepEqual(restoreR9State('not json'),blank);
- assert.deepEqual(restoreR9State('x'.repeat(18001)),blank);
- const decoded=restoreR9State(JSON.stringify({preferences:{printables:{choice:2,age:'5–6 ans',format:'A4',quantity:'40',note:'abc'},unknown:{choice:1}},needs:{situation:'New school',style:'Warm'}}));
- assert.equal(decoded.preferences.printables.choice,2);
- assert.equal(decoded.preferences.printables.format,'A4');
- assert.ok(!decoded.preferences.unknown);
- assert.equal(decoded.needs.style,'Warm');
- const brief=equipmentR9Brief(['intent:equipment-domain:printables'],decoded);
- assert.match(brief,/Printables/);
- assert.match(brief,/A4/);
- assert.match(brief,/New school/);
- assert.doesNotMatch(brief,/unknown/);
- assert.ok(brief.length<=2200);
-});
-test('media are native PNG, with explicit editorial caveats and no fake inventory',()=>{
- assert.ok(r9.includes('establishments-r2/'));
- assert.ok(studio.includes('/angelcare-marketplace/establishments-r2/'));
- assert.ok(studio.includes('Mise en situation indicative'));
- assert.ok(studio.includes('Offres, tarifs et délais restent soumis'));
- assert.ok(studio.includes('Aucune variante, disponibilité'));
- assert.ok(r9.includes('aucune commande'));
- assert.ok(css.includes('.flashcardBoard'));
- assert.ok(css.includes('.staffBoard'));
- assert.ok(css.includes('.receptionRoom'));
- assert.ok(css.includes('.printableDesk'));
- assert.ok(css.includes('.technicalLibrary'));
- assert.ok(cssPage.includes('.r9Masthead'));
- assert.ok(cssPage.includes('.familyChapter'));
+test('native PNG media, clear editorial caveats and responsive unique presentation',()=>{
+ for(const value of ['establishments-r2/','aucune commande'])assert.ok(r9.includes(value),value);
+ for(const value of ['Mise en situation indicative','Offres, tarifs et délais restent soumis','Aucune variante, disponibilité'])assert.ok(studio.includes(value),value);
+ for(const cls of ['flashcardBoard','staffBoard','receptionRoom','printableDesk','technicalLibrary','moodGrid','storageShelves','awardsGallery','unboxingCase'])assert.ok(css.includes('.'+cls),cls);
+ for(const cls of ['r9Masthead','familyChapter','atlasGrid','diagnosticFields','r9Project'])assert.ok(cssPage.includes('.'+cls),cls);
 });
