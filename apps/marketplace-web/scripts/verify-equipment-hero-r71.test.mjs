@@ -36,6 +36,9 @@ test('R7.1 has an independent native managed-media placement and a verified PNG 
 test('styles are isolated and enforce compact spacing, visible controls and reduced motion',()=>{
   assert.match(component,/EquipmentHeroR71\.module\.css/);
   assert.match(style,/margin: 10px auto 0/);
+  assert.match(style,/\.hero \.headline \{/);
+  assert.match(style,/\.hero \.projectButton \{/);
+  assert.match(style,/\.hero \.exploreButton \{/);
   assert.match(style,/padding: 24px clamp\(22px, 2\.1vw, 35px\) 18px/);
   assert.match(style,/\.projectButton:focus-visible/);
   assert.match(style,/@media \(prefers-reduced-motion: reduce\)/);

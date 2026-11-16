@@ -77,7 +77,7 @@
   line-height: 1.2;
 }
 .eyebrowSparkle { color: #b9831b; font-size: 12px; }
-.headline {
+.hero .headline {
   margin: 10px 0 10px;
   max-width: 660px;
   color: var(--r71-navy);
@@ -112,8 +112,8 @@
   gap: 9px;
   flex-wrap: wrap;
 }
-.projectButton,
-.exploreButton {
+.hero .projectButton,
+.hero .exploreButton {
   min-height: 43px;
   padding: 9px 17px;
   border-radius: 9px;
@@ -126,26 +126,26 @@
   line-height: 1.2;
   transition: background-color .17s, border-color .17s, box-shadow .17s, transform .17s;
 }
-.projectButton {
+.hero .projectButton {
   color: #fff;
   background: var(--r71-pink);
   border: 1px solid var(--r71-pink);
   box-shadow: 0 5px 14px rgb(242 10 106 / 14%);
 }
-.projectButton:hover {
+.hero .projectButton:hover {
   background: #d0065e;
   border-color: #d0065e;
   box-shadow: 0 8px 17px rgb(242 10 106 / 19%);
   transform: translateY(-1px);
 }
-.exploreButton {
+.hero .exploreButton {
   color: var(--r71-navy);
   background: #fff;
   border: 1px solid #94a4bc;
 }
-.exploreButton:hover { background: #f2f5fc; border-color: #607495; }
-.projectButton:focus-visible,
-.exploreButton:focus-visible { outline: 3px solid #a67522; outline-offset: 3px; }
+.hero .exploreButton:hover { background: #f2f5fc; border-color: #607495; }
+.hero .projectButton:focus-visible,
+.hero .exploreButton:focus-visible { outline: 3px solid #a67522; outline-offset: 3px; }
 .benefits {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -177,11 +177,11 @@
 }
 @media (max-width: 1260px) {
   .hero { height: 365px; }
-  .headline { font-size: clamp(33px, 3vw, 40px); }
+  .hero .headline { font-size: clamp(33px, 3vw, 40px); }
   .copy { padding: 18px 18px 14px; }
   .benefits strong { font-size: 10px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .projectButton, .exploreButton { transition: none; }
-  .projectButton:hover { transform: none; }
+  .hero .projectButton, .hero .exploreButton { transition: none; }
+  .hero .projectButton:hover { transform: none; }
 }
