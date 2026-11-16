@@ -350,3 +350,37 @@
 @media(max-width:1060px){.workArea{grid-template-columns:minmax(200px,27%) minmax(0,1fr)}.rightCol{display:flex;grid-column:1/-1;flex-direction:row;overflow:auto}.rightCol>.section{flex:1;min-width:260px}.rightCol>.approvalBox{min-width:210px}.modal{height:calc(100dvh - 12px);max-height:calc(100dvh - 12px)}.tabs>button{font-size:11px}}
 @media(max-width:730px){.modal{height:100dvh;max-height:100dvh;width:100vw;border-radius:0}.overlay{padding:0}.headerActions .outline{display:none}.modeGuide{padding:8px 10px}.modeProgress{display:none}.workArea{display:flex;flex-direction:column;overflow:auto}.customerCol,.centerCol,.rightCol{overflow:visible}.rightCol{display:flex;flex-direction:column}.tabs{overflow-x:auto}.tabs>button{min-width:100px}.advancedTabs{min-width:135px}.advancedPopover{right:0}.footer{flex-direction:column;align-items:stretch}.saveIndicator{max-width:none}.footerActions{overflow-x:auto;justify-content:flex-start}}
 @media(prefers-reduced-motion:reduce){.modal *{scroll-behavior:auto!important;transition:none!important}}
+
+
+/* R8 polish: remove inherited R7 green interaction chrome from this dialog. */
+.outlineGreen{border-color:#edbfd0;color:#b40e54;background:#fff5f9}
+.outlineGreen:hover{background:#ffeaf3;border-color:#e71366}
+.centerActions button:hover{border-color:#e3a7bd;color:#ba1358;background:#fff4f8}
+.search:focus-within{border-color:#ea3980;box-shadow:0 0 0 3px #ea398015}
+.results button:hover,.itemResults>button:hover{background:#fff3f8}
+.results b,.itemResults b{color:#16345b}
+.productCell strong{color:#10244a}
+.productCell .greenChip{background:#eef1f9;color:#264670;border-color:#d7dfed}
+.basket tbody tr[data-selected=true]{background:#fff5f9}
+.basket tbody tr:hover{background:#f8f9fd}
+.basket thead{background:#f5f7fd}
+.basket th{color:#30476a;font-size:11px;letter-spacing:.15px}
+.basket td{color:#203753}
+.money{color:#10244a}
+.qty button{color:#173c69}
+.qty button:hover{background:#fff0f6;color:#c60e5b}
+.configHeading span{color:#4b6280}
+.optionsRow button[data-active=true]{background:#fff0f6;border-color:#f0a8c6;color:#c9165d}
+.lineTabs button[data-active=true]{background:#fff0f6;border-color:#e48cae;color:#bd1358}
+.splitAmounts svg{color:#c61660}
+.rightChecks button:hover{background:#fff4f9}
+.checkSymbol{color:#d31662}
+.successScreen,.successScreen a{color:#10244a}
+.successScreen h3{color:#10244a}
+.successScreen strong{background:#fff1f7;color:#ad124d}
+.successScreen a{background:#dd0e65;color:#fff}
+.reference svg{color:#b5175e}
+.creamBox b,.statusOk{font-weight:800}
+.field input:focus,.field select:focus,.wideField input:focus,.wideField textarea:focus{border-color:#e41b6a;box-shadow:0 0 0 3px #e41b6a12}
+.field input:disabled,.field select:disabled{background:#f7f8fc}
+::selection{background:#ffd3e4;color:#10244a}
