@@ -9,6 +9,7 @@ import {
  Award,Settings2,PlayCircle,Star,MapPin,Users,CalendarDays,Heart
 } from "lucide-react";
 import {CampaignImage} from "./CommercialJourney";
+import {ManagedImage} from "../marketplace-imagery/ManagedImage";
 import {usePartner} from "./partner/Locale";
 import {EQUIPMENT_DOMAINS,EQUIPMENT_FAMILIES,equipmentDomainSelection,type EquipmentDomain,type EquipmentFamilyId} from "./equipment-r8-data";
 import type {Selection} from "./model";
@@ -141,7 +142,7 @@ export function EquipmentExperienceR8({
     </div>
     <div className={c.domainGrid} aria-live="polite">
      {visible.map(domain=><button type="button" key={domain.id} className={c.domainCard} onClick={()=>openDomain(domain)}>
-       <span className={c.domainPhoto}><CampaignImage name={domain.image} alt={`Application illustrative : ${domain.name}`}/></span>
+       <span className={c.domainPhoto}><ManagedImage slot={`journey-r8.domain.${domain.id}`} src={`/angelcare-marketplace/establishments-r2/${domain.art}.png`} width={640} height={420} loading="lazy" decoding="async" alt={`Application illustrative : ${domain.name}`}/></span>
        <span className={c.domainBottom}><span className={c.domainMark}><BookOpen size={17}/></span><span><strong>{t(domain.name)}</strong><small>{t(domain.short)}</small></span>{selectedDomainIds.has(domain.id)?<CheckCircle2 className={c.selectedCheck} size={17}/>:<ChevronRight size={16}/>}</span>
       </button>)}
     </div>
