@@ -230,3 +230,123 @@
 .historicalOrder b{font-size:10px;color:#205e46}
 .historicalOrder>span{font-size:9px;color:#778d82;grid-column:1}
 .historicalOrder small{font-size:9px;color:#7e9185;grid-column:2;grid-row:1/3}
+
+
+/* ANGELCARE Orders 360 R8 — premium, near-fullscreen operator workspace.
+   Scoped exclusively to CommercialOrderStudio: no shared admin shell changes. */
+.overlay{padding:10px;background:rgba(8,24,51,.53);backdrop-filter:blur(7px)}
+.modal{width:calc(100vw - 20px);max-width:1900px;height:calc(100dvh - 20px);max-height:calc(100dvh - 20px);min-height:0;border-radius:16px;border:1px solid #dbe3ef;box-shadow:0 32px 110px rgba(5,21,54,.3);background:#fff}
+.modal[data-maximized=true]{width:100vw;max-width:none;height:100dvh;max-height:100dvh;border-radius:0}
+.header{padding:13px 21px 9px;gap:13px;border-bottom:1px solid #eef0f7}
+.brandIcon{width:47px;height:47px;border-radius:12px;background:#fff0f7;color:#da1160}
+.brandText{min-width:0}
+.brandText h2{font-size:clamp(25px,1.85vw,32px);letter-spacing:-.9px;line-height:1.12;color:#10244a}
+.brandText h2 span{color:#df0e65}
+.brandText p{font-size:13px;color:#52647c;line-height:1.45}
+.overline{color:#df0e65;font-size:11px;letter-spacing:.65px}
+.headerActions{gap:7px}
+.headerActions button{color:#10244a;font-size:13px;min-height:37px}
+.headerActions .outline{border-color:#d3dceb;color:#10244a}
+.headerActions .outline:hover{background:#f5f7fc}
+.headerActions .maximize{min-width:41px;padding:9px 10px;border-color:#d3dceb}
+.reference{border-color:#e4e8f0;color:#183760;font-size:12px;padding:7px 10px}
+.reference b{background:#fff2f6;color:#c8155f}
+.modes{padding:9px 20px;gap:7px;overflow-x:auto}
+.modes button{min-width:auto;padding:9px 14px;border-color:#dfe5f1;box-shadow:none;font-size:13px;color:#1b3359;gap:7px;border-radius:9px}
+.modes button[data-active=true]{background:#10244a;border-color:#10244a;color:#fff;box-shadow:0 3px 10px rgba(16,36,74,.16)}
+.modes button:hover:not([data-active=true]){background:#fff0f6;border-color:#f6a1be}
+.modeGuide{margin:0 20px 9px;padding:11px 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;border:1px solid #f5dce6;background:linear-gradient(110deg,#fff5f9,#fff 63%,#f5f7fc);border-radius:10px;flex:none}
+.modeGuideCopy{display:flex;flex-direction:column;gap:3px;min-width:0}
+.modeEyebrow{display:flex;align-items:center;gap:5px;font-size:10px;color:#d41962;font-weight:850;letter-spacing:.65px}
+.modeGuideCopy strong{font-size:17px;font-weight:850;letter-spacing:-.3px;color:#10244a}
+.modeGuideCopy p{font-size:12px;color:#526582;line-height:1.4;margin:0}
+.modeProgress{font-size:12px;font-weight:800;color:#10244a;display:flex;align-items:center;gap:7px;border:1px solid #e6dae4;background:white;padding:9px 12px;border-radius:9px;white-space:nowrap}
+.modeProgress svg{color:#d71964}
+.tabs{display:flex;gap:5px;overflow:visible;margin:0 20px 10px;padding:4px;background:#f6f7fb;border-color:#e4e8f1;border-radius:10px;flex:none}
+.tabs>button,.advancedTabs>button{flex:1;display:flex;justify-content:center;align-items:center;gap:8px;background:transparent;border:0;border-radius:8px;padding:9px 10px;color:#304764;font-size:13px;font-weight:760;white-space:nowrap}
+.tabs>button:not(:last-child):after{display:none}
+.tabs>button[data-active=true],.advancedTabs>button[data-active=true]{color:#d00e5b;background:white;box-shadow:0 2px 7px #0f284219}
+.tabs>button[data-active=true]:before{background:#e50f6c;left:10px;right:10px;bottom:1px}
+.stepNumber{display:flex;align-items:center;justify-content:center;flex:none;height:23px;width:23px;border:1px solid #ccd7e7;border-radius:50%;font-size:11px;font-weight:850}
+.tabs>button[data-active=true] .stepNumber{background:#e90d6b;border-color:#e90d6b;color:white}
+.advancedTabs{flex:1;position:relative;min-width:160px}
+.advancedTabs>button{width:100%;height:100%;cursor:pointer}
+.advancedPopover{z-index:20;position:absolute;right:0;top:calc(100% + 5px);min-width:220px;background:#fff;border:1px solid #d7e0ed;box-shadow:0 15px 34px #0a25552c;border-radius:11px;padding:6px;display:grid;gap:3px}
+.advancedPopover button{display:flex;gap:10px;align-items:center;border:0;background:white;border-radius:7px;padding:11px;color:#17365d;font-size:13px;text-align:left}
+.advancedPopover button:hover,.advancedPopover button[data-active=true]{background:#fff0f6;color:#d41862}
+.workArea{grid-template-columns:minmax(238px,270px) minmax(0,1fr) minmax(255px,294px);gap:10px;padding:0 15px 9px;background:#fafbfe;align-items:stretch}
+.customerCol,.centerCol,.rightCol{scrollbar-color:#c8d5e6 transparent}
+.section{border-color:#e2e7f0;box-shadow:0 1px 4px #10244a0b;border-radius:11px}
+.sectionHead{background:#f8f9fd;border-color:#e7eaf2;padding:10px 12px;min-height:40px}
+.sectionHead h3{font-size:12px;color:#122b53}
+.sectionHead h3 svg{color:#dd1460}
+.centerHead{min-height:47px;border-color:#e8ebf2;padding:9px 12px;background:white}
+.centerHead h3{font-size:13px;color:#142f58}
+.search{border-color:#d8e0ec;color:#516886}
+.search input{font-size:13px;color:#16355c;min-height:23px}
+.results button,.itemResults>button{font-size:13px}
+.results small,.itemResults small{font-size:11px}
+.field input,.field select,.wideField input,.wideField textarea{font-size:13px;min-height:40px;border-color:#d6dfea;color:#183552}
+.field>span,.wideField>span{font-size:12px;font-weight:750;color:#284365}
+.help{font-size:12px;line-height:1.5}
+.clientTop h3{font-size:16px}
+.clientProfile,.guestForm{font-size:13px}
+.clientProfile small,.contacts span,.infoRows>div,.clientProfile summary{font-size:12px}
+.creamBox,.greenChip{background:#fff1f6;color:#bd155b;border-color:#f7d4e3}
+.avatar{background:linear-gradient(145deg,#10244a,#ec1269)}
+.clientStats>div{padding:9px;background:#fafbff}
+.clientStats b{font-size:14px}
+.clientStats small{font-size:11px}
+.secondaryWide{color:#183557;font-size:13px}
+.centerActions button,.outlineGreen{font-size:12px;color:#18375c}
+.basket{min-width:690px;font-size:12px}
+.basket td,.basket th{padding:10px 8px;vertical-align:middle}
+.productCell strong,.productCell>div>strong{font-size:13px;line-height:1.4}
+.productCell small{font-size:11px}
+.productThumb{width:64px;height:62px;background:#f4f6fb;border-color:#d7e1ed}
+.configMini span{font-size:11px}
+.itemResults b{font-size:13px;color:#14355d}
+.itemResults small{font-size:11px}
+.itemResults strong{font-size:12px;color:#d91560}
+.resultsHead{font-size:11px;color:#173f68}
+.configHeading{background:linear-gradient(95deg,#fff3f8,#f8f9fd)}
+.configHeading h4{font-size:13px;color:#10244a}
+.configFields{gap:9px;padding:12px}
+.optionsRow button{font-size:11px}
+.contentPanel{padding:10px}
+.lineTabs button{font-size:12px}
+.warning{font-size:12px}
+.quoteTable>div{font-size:13px}
+.quoteTable b{font-size:13px}
+.quoteTable strong{color:#10244a}
+.validationList b{font-size:13px}
+.tally,.tallyMuted{font-size:12px;padding:8px 2px}
+.tally strong,.tallyMuted strong{font-size:12px}
+.grandTotal{background:linear-gradient(125deg,#10244a,#162f60);box-shadow:0 4px 14px #10244a26;padding:13px 12px}
+.grandTotal span{font-size:12px}
+.grandTotal strong{font-size:clamp(15px,1.3vw,19px)}
+.splitAmounts span,.splitAmounts b,.marginNotice{font-size:11px}
+.rightChecks button>span:nth-child(2),.statusOk,.statusPending{font-size:11px}
+.statusOk{background:#edf9f2;color:#146548}
+.statusPending{background:#fff2e7;color:#a15b20}
+.approvalBox strong,.approvalBox p{font-size:12px}
+.footer{padding:10px 16px;min-height:63px;border-color:#e5e9f3}
+.footerActions button{font-size:13px;padding:10px 15px;color:#163052}
+.footerActions .primary{background:#e70d68;color:white;border-color:#e70d68;box-shadow:0 4px 15px #e70d682b}
+.footerActions .primary:hover:not(:disabled){background:#c70c57}
+.saveIndicator{font-size:12px;color:#28547a}
+.customerJourney{display:flex;flex-direction:column;align-items:flex-start;gap:13px;padding:clamp(18px,2vw,30px);min-height:300px;background:linear-gradient(140deg,#fff,#fff5f9 60%,#f5f8ff);border:1px solid #e8e4ec;border-radius:13px;margin-bottom:10px}
+.chapterEyebrow{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:850;letter-spacing:1px;color:#cf125b}
+.customerJourney h3{max-width:550px;font-size:clamp(22px,2.2vw,33px);letter-spacing:-.8px;line-height:1.12;color:#10244a;margin:0}
+.customerJourney p{font-size:14px;color:#53647b;max-width:610px;line-height:1.5;margin:0}
+.customerReadiness{display:flex;flex-wrap:wrap;align-items:center;gap:12px;font-size:13px}
+.forwardButton{display:flex;align-items:center;gap:9px;border:0;border-radius:8px;padding:12px 16px;background:#e60e67;color:white;font-size:13px;font-weight:820}
+.contextHint{display:flex;align-items:center;gap:8px;font-size:12px;color:#51657f;background:#f5f7fd;border:1px solid #e3e9f1;border-radius:8px;padding:10px}
+.blockerActions{display:grid;gap:6px;padding:9px}
+.blockerActions button{display:flex;align-items:center;gap:9px;text-align:left;border:1px solid #f0d9e3;border-radius:8px;padding:9px 11px;background:#fff7fa;color:#b40f4e;font-size:12px}
+.blockerActions button span{flex:1;display:grid;gap:3px}
+.blockerActions button small{color:#586982;font-size:11px}
+@media(max-width:1250px){.modal{width:calc(100vw - 12px)}.overlay{padding:6px}.workArea{grid-template-columns:minmax(210px,242px) minmax(0,1fr) minmax(205px,242px);gap:7px;padding:0 8px 8px}.reference{display:none}.header{padding:9px 12px}.modes{padding:7px 12px}.modeGuide{margin:0 12px 7px}.tabs{margin:0 12px 8px}.tabs>button,.advancedTabs>button{font-size:11px;gap:5px}}
+@media(max-width:1060px){.workArea{grid-template-columns:minmax(200px,27%) minmax(0,1fr)}.rightCol{display:flex;grid-column:1/-1;flex-direction:row;overflow:auto}.rightCol>.section{flex:1;min-width:260px}.rightCol>.approvalBox{min-width:210px}.modal{height:calc(100dvh - 12px);max-height:calc(100dvh - 12px)}.tabs>button{font-size:11px}}
+@media(max-width:730px){.modal{height:100dvh;max-height:100dvh;width:100vw;border-radius:0}.overlay{padding:0}.headerActions .outline{display:none}.modeGuide{padding:8px 10px}.modeProgress{display:none}.workArea{display:flex;flex-direction:column;overflow:auto}.customerCol,.centerCol,.rightCol{overflow:visible}.rightCol{display:flex;flex-direction:column}.tabs{overflow-x:auto}.tabs>button{min-width:100px}.advancedTabs{min-width:135px}.advancedPopover{right:0}.footer{flex-direction:column;align-items:stretch}.saveIndicator{max-width:none}.footerActions{overflow-x:auto;justify-content:flex-start}}
+@media(prefers-reduced-motion:reduce){.modal *{scroll-behavior:auto!important;transition:none!important}}
