@@ -2,7 +2,7 @@
 import {useCallback,useEffect,useMemo,useRef,useState} from "react";
 import {ArrowRight,BookOpen,Check,CheckCircle2,ChevronRight,Compass,Layers3,Lightbulb,MapPinned,Package,School,Search,SlidersHorizontal,Sparkles,Users,BookmarkCheck,Send,RotateCcw,MousePointer2,CalendarClock,Palette,Building2,Eye,HeartHandshake} from "lucide-react";
 import {ManagedImage} from "../marketplace-imagery/ManagedImage";
-import {EquipmentExperienceR8} from "./EquipmentExperienceR8";
+// R8 remains in the repository for rollback; R9 owns the commercial body exclusively.
 import {EquipmentR9DomainStudio} from "./EquipmentR9DomainStudio";
 import {EQUIPMENT_DOMAINS,EQUIPMENT_FAMILIES,equipmentDomainSelection,type EquipmentDomain,type EquipmentFamilyId} from "./equipment-r8-data";
 import {R9_PROGRAMS,R9_SITUATIONS,R9_SPACES,R9_AGE_BANDS,emptyR9State,restoreR9State,equipmentR9Brief,type R9Preference,type R9State,type R9ProjectNeeds} from "./equipment-r9-programs";
@@ -137,9 +137,5 @@ export function EquipmentExperienceR9({
    <div className={c.r9ProjectActions}><button type="button" onClick={onReview}><Layers3 size={17}/> {words.review}</button><button type="button" onClick={onExplore}><Eye size={17}/> {words.reference}</button><button type="button" onClick={()=>request()}><Send size={17}/> {words.contact}</button></div><small>{words.privacy}</small>
   </section>
  </div>;
- return <EquipmentExperienceR8
-  locale={locale} selected={selected} onSelect={onSelect}
-  onReview={onReview} onContact={onContact} onExplore={onExplore}
-  onOpenDomain={chooseDomain} domainExperience={customDomainExperience}
- />;
+ return customDomainExperience;
 }
