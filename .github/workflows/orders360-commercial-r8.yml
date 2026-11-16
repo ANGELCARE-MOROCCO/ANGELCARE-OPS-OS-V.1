@@ -1,0 +1,44 @@
+name: AngelCare Orders 360 Commercial Studio R8
+
+on:
+  push:
+    branches:
+      - feat/orders360-commercial-r8-premium-workspace-20261116
+    paths:
+      - 'apps/marketplace-web/angelcare-marketplace/orders360/create-order/**'
+      - 'apps/marketplace-web/supabase/migrations/20261116080000_angelcare_commercial_order_studio_r8.sql'
+      - 'apps/marketplace-web/scripts/verify-commercial-order-r8.test.mjs'
+      - '.github/workflows/orders360-commercial-r8.yml'
+  pull_request:
+    branches:
+      - upgrade/next-angelcare-upgrade
+    paths:
+      - 'apps/marketplace-web/angelcare-marketplace/orders360/create-order/**'
+      - 'apps/marketplace-web/supabase/migrations/20261116080000_angelcare_commercial_order_studio_r8.sql'
+      - 'apps/marketplace-web/scripts/verify-commercial-order-r8.test.mjs'
+      - '.github/workflows/orders360-commercial-r8.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  isolated-commercial-r8:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: apps/marketplace-web/package-lock.json
+      - name: R8 source, line identity, interface and canonical safety regressions
+        working-directory: apps/marketplace-web
+        run: node --test scripts/verify-commercial-order-r8.test.mjs
+      - name: Install locked Marketplace dependencies
+        working-directory: apps/marketplace-web
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Orders 360 strict TypeScript
+        working-directory: apps/marketplace-web
+        run: npx tsc -p tsconfig.orders360.json --pretty false --noEmit
