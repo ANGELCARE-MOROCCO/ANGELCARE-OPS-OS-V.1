@@ -47,7 +47,7 @@ jobs:
           statements=parse_sql(sql)
           assert len(statements)==5, (len(statements),[type(s.stmt).__name__ for s in statements])
           assert sql.count('create or replace function')==2
-          assert sql.count('end $;')==3
+          assert sql.count('end ' + chr(36)*2 + ';')==3
           print('R8_POSTGRESQL_SYNTAX_PASS',len(statements))
           PY
       - name: Install locked Marketplace dependencies
