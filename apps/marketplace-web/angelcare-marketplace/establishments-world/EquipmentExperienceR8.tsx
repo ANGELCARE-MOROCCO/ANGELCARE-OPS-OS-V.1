@@ -94,6 +94,7 @@ export function EquipmentExperienceR8({
  const [faq,setFaq]=useState<number|null>(null);
  const closeRef=useRef<HTMLButtonElement|null>(null);
  const returnFocus=useRef<HTMLElement|null>(null);
+ const domainDialogRef=useRef<HTMLElement|null>(null);
  const selectedDomainIds=useMemo(()=>new Set(selected.filter(x=>x.startsWith("intent:equipment-domain:")).map(x=>x.replace("intent:equipment-domain:",""))),[selected]);
  const selectedDomains=useMemo(()=>EQUIPMENT_DOMAINS.filter(x=>selectedDomainIds.has(x.id)),[selectedDomainIds]);
  const filtered=useMemo(()=>EQUIPMENT_DOMAINS.filter(x=>(family==="all"||x.group===family)&&(!search.trim()||(`${x.name} ${x.short} ${x.pain} ${x.solution}`).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().includes(search.trim().normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase()))),[family,search]);
@@ -106,7 +107,23 @@ export function EquipmentExperienceR8({
  };
  const openDomain=(domain:EquipmentDomain)=>{returnFocus.current=document.activeElement instanceof HTMLElement?document.activeElement:null;setActiveDomain(domain)};
  const closeDomain=useCallback(()=>{setActiveDomain(null);requestAnimationFrame(()=>returnFocus.current?.focus())},[]);
- useEffect(()=>{if(!activeDomain)return;closeRef.current?.focus();const onKey=(e:KeyboardEvent)=>{if(e.key==="Escape")closeDomain()};window.addEventListener("keydown",onKey);return()=>window.removeEventListener("keydown",onKey)},[activeDomain,closeDomain]);
+ useEffect(()=>{
+  if(!activeDomain)return;
+  const priorOverflow=document.body.style.overflow;
+  document.body.style.overflow="hidden";
+  closeRef.current?.focus();
+  const onKey=(event:KeyboardEvent)=>{
+   if(event.key==="Escape"){event.preventDefault();closeDomain();return}
+   if(event.key!=="Tab")return;
+   const focusable=Array.from(domainDialogRef.current?.querySelectorAll<HTMLElement>('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')||[]);
+   if(!focusable.length){event.preventDefault();return}
+   const first=focusable[0],last=focusable[focusable.length-1];
+   if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}
+   else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}
+  };
+  window.addEventListener("keydown",onKey);
+  return()=>{window.removeEventListener("keydown",onKey);document.body.style.overflow=priorOverflow}
+ },[activeDomain,closeDomain]);
  const toggle=(domain:EquipmentDomain)=>onSelect(equipmentDomainSelection(domain));
  const request=(domain?:EquipmentDomain)=>onContact({subject:toOfferBrief(domain?[domain]:selectedDomains)});
  return <div className={c.root} lang={locale} dir={locale==="ar"?"rtl":"ltr"} data-equipment-experience="R8" data-visual-authority="approved-2026-11-16" id="r8-start">
@@ -215,7 +232,7 @@ export function EquipmentExperienceR8({
    </section>
 
    {activeDomain?<div className={c.dialogBackdrop} onMouseDown={e=>{if(e.target===e.currentTarget)closeDomain()}}>
-    <section className={c.domainDialog} role="dialog" aria-modal="true" aria-labelledby="r8-domain-title">
+    <section className={c.domainDialog} ref={domainDialogRef} role="dialog" aria-modal="true" aria-labelledby="r8-domain-title">
      <div className={c.dialogImage}><CampaignImage name={activeDomain.image} alt={`Présentation visuelle · ${activeDomain.name}`}/><span>DOMAINE {String(activeDomain.number).padStart(2,"0")} / 22</span></div>
      <div className={c.dialogContent}>
       <button type="button" className={c.dialogClose} ref={closeRef} onClick={closeDomain} aria-label="Fermer la fiche domaine"><X size={23}/></button>
