@@ -36,6 +36,20 @@ jobs:
       - name: R8 source, line identity, interface and canonical safety regressions
         working-directory: apps/marketplace-web
         run: node --test scripts/verify-commercial-order-r8.test.mjs
+      - name: Verify R8 migration PostgreSQL syntax
+        run: |
+          python3 -m pip install --quiet --user pglast==7.23
+          python3 - <<'PY'
+          from pathlib import Path
+          from pglast import parse_sql
+          path=Path('apps/marketplace-web/supabase/migrations/20261116080000_angelcare_commercial_order_studio_r8.sql')
+          sql=path.read_text()
+          statements=parse_sql(sql)
+          assert len(statements)==5, (len(statements),[type(s.stmt).__name__ for s in statements])
+          assert sql.count('create or replace function')==2
+          assert sql.count('end $;')==3
+          print('R8_POSTGRESQL_SYNTAX_PASS',len(statements))
+          PY
       - name: Install locked Marketplace dependencies
         working-directory: apps/marketplace-web
         run: npm ci --ignore-scripts --no-audit --no-fund
