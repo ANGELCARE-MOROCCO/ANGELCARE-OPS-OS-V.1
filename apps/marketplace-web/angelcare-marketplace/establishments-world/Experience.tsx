@@ -44,7 +44,7 @@ import {
 import { COMMERCIAL } from "./commercial-content";
 import { VIEWS, type View } from "./content";
 import { EquipmentHeroR8 } from "./EquipmentHeroR8";
-import { EquipmentExperienceR8 } from "./EquipmentExperienceR8";
+import { EquipmentExperienceR9 } from "./EquipmentExperienceR9";
 import {
   blocked,
   offerSelection,
@@ -163,9 +163,11 @@ function EstablishmentsBody({
   );
   const selections = useSelections(experience, experience.items);
   const copy = COMMERCIAL[view];
+  const [equipmentR9Brief,setEquipmentR9Brief] = useState("");
   const brief = [
     subject ? `${t("Sujet de la demande")} : ${subject}` : "",
     view === "partner-os" ? partnerBrief(partnerRequest, t) : "",
+    view === "produits" ? equipmentR9Brief : "",
     requestBrief(view, project, experience.territoryCode, t),
   ]
     .filter(Boolean)
@@ -322,7 +324,7 @@ function EstablishmentsBody({
           view === "partner-os" ? (locale === "ar" ? "rtl" : "ltr") : undefined
         }
         lang={view === "partner-os" ? locale : undefined}
-        data-establishments-journey={view==="produits"?"R8":"R5"}
+        data-establishments-journey={view==="produits"?"R9":"R5"}
         data-view={view}
         data-motion={motion ? "on" : "off"}
         onClick={(event) => {
@@ -505,7 +507,7 @@ function EstablishmentsBody({
             motion={motion}
           />
         ) : view === "produits" ? (
-          <EquipmentExperienceR8
+          <EquipmentExperienceR9
             key={view}
             locale={locale}
             selected={project.map(item=>item.key)}
@@ -513,6 +515,8 @@ function EstablishmentsBody({
             onReview={()=>setReview(true)}
             onContact={contact}
             onExplore={()=>scrollTo("ew-native-explorer")}
+            onBriefChange={setEquipmentR9Brief}
+            storageScope={experience.territoryCode||"default"}
           />
         ) : (
           <CommercialJourney
