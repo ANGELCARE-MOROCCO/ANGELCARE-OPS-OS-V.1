@@ -7,22 +7,34 @@ import {
   CheckCircle2,ChevronDown,ChevronRight,ClipboardCheck,Clock3,Copy,CreditCard,
   FileCheck2,FileText,FolderOpen,HeartHandshake,History,Info,Layers3,LockKeyhole,
   Mail,MapPin,Minus,MoreHorizontal,Package,Plus,RefreshCw,Save,Search,
-  Settings2,ShieldCheck,ShoppingCart,Trash2,UserRound,Users,Wallet,X
+  Settings2,ShieldCheck,ShoppingCart,Trash2,UserRound,Users,Wallet,X,
+  Maximize2,Minimize2,Sparkles,SlidersHorizontal
 } from "lucide-react";
 import type {AssistedOrderOptions} from "../../total-commerce-control/types";
 import s from "./commercial-order-studio.module.css";
 
 type Mode="quick"|"expert"|"quote"|"subscription"|"b2b"|"renewal";
 type Tab="customer"|"basket"|"configuration"|"planning"|"pricing"|"payment"|"contracts"|"validation";
-type Line={id:string;itemId:string;quantity:number;unitPrice:number|null;discountAmount:number;configuration:{sessions:number;children:number;minutes:number;frequency:string;options:string[];note:string}};
-type Draft={mode:Mode;customerAccountId:string;guestName:string;guestEmail:string;guestPhone:string;territoryId:string;city:string;address:string;scheduledStartAt:string;scheduledEndAt:string;paymentMode:string;paymentStatus:"pending"|"invoice_later";notes:string;familyRequestId:string|null;inquiryId:string|null;sourceOrderId:string|null;lines:Line[];contractNote:string;depositPercent:number};
+type Line={id:string;itemId:string;quantity:number;unitPrice:number|null;discountAmount:number;configuration:{sessions:number;children:number;minutes:number;frequency:string;options:string[];note:string;variant?:string;deliveryMethod?:string;personalization?:string;beneficiaryName?:string;ageBand?:string}};
+type CommercialContext={legalEntity:string;purchaseOrder:string;billingContact:string;quoteValidity:string;billingCycle:string;renewalReason:string;fulfillmentContact:string};
+const emptyCommercialContext=():CommercialContext=>({legalEntity:"",purchaseOrder:"",billingContact:"",quoteValidity:"",billingCycle:"monthly",renewalReason:"",fulfillmentContact:""});
+const modeGuidance:Record<Mode,[string,string]>={
+ quick:["Vente rapide","Identifiez un client, ajoutez des offres puis validez la commande canonique."],
+ expert:["Commande sur mesure","Combinez vos services et produits, configurez les lignes et préparez leur exécution."],
+ quote:["Devis professionnel","Préparez les conditions, la validité et les approbations avant émission."],
+ subscription:["Prestation récurrente","Planifiez la fréquence et le cycle de facturation sans confirmer de personnel fictif."],
+ b2b:["Commande B2B","Structurez l'établissement, son contact facturation et ses références d'achat."],
+ renewal:["Renouvellement lié","Reprenez une commande du client et tracez les ajustements du nouveau dossier."]
+};
+const isPhysicalItem=(item?:AssistedOrderOptions["items"][number])=>/product|kit|physical|equipment|printable|flashcard|article|good|merch|materiel|matériel/i.test(item?.sellable_type||item?.kind||"");
+type Draft={mode:Mode;commercialContext:CommercialContext;customerAccountId:string;guestName:string;guestEmail:string;guestPhone:string;territoryId:string;city:string;address:string;scheduledStartAt:string;scheduledEndAt:string;paymentMode:string;paymentStatus:"pending"|"invoice_later";notes:string;familyRequestId:string|null;inquiryId:string|null;sourceOrderId:string|null;lines:Line[];contractNote:string;depositPercent:number};
 type QuoteLine={itemId:string;title:string;quantity:number;unitPrice:number;discount:number;subtotal:number;net:number;currency:string;requiresApproval:boolean};
 type Quote={lines:QuoteLine[];subtotal:number;discount:number;net:number;total:number;currency:string;requiresApproval:boolean;taxStatus:string;warnings?:string[]};
 type Receipt={id?:string;public_reference?:string;orderId?:string;status?:string};
 type PriorOrder={id:string;public_reference:string;created_at:string;title:string;journey_type:string};
 type PriorLine={catalog_item_id:string;quantity:number;unit_price:number;discount_amount:number;configuration:unknown};
 type Envelope<T>={data?:T;error?:{message?:string;code?:string};requestId?:string};
-type CustomerDetails={orderCount:number;value:number;lastOrderAt:string|null;recentOrders:Array<{id:string;public_reference:string;title:string;created_at:string}>;addresses:Array<{id:string;city:string;address_line:string;label:string}>};
+type CustomerDetails={orderCount:number;value:number;valueByCurrency?:Array<{currency:string;value:number}>;lastOrderAt:string|null;recentOrders:Array<{id:string;public_reference:string;title:string;created_at:string}>;addresses:Array<{id:string;city:string;address_line:string;label:string}>};
 type SavedDraft={id:string;version:number;status:string;mode:Mode;payload:Draft;approval_state:string;created_at:string;updated_at:string;submitted_order_id?:string|null};
 
 const API="/api/angelcare-marketplace/admin/orders/commercial-studio";
@@ -41,7 +53,7 @@ const itemLabel=(v:AssistedOrderOptions["items"][number])=>v.name_fr||v.public_r
 const money=(v:number,currency="MAD")=>Number(v||0).toLocaleString("fr-FR",{minimumFractionDigits:2,maximumFractionDigits:2})+" "+(currency==="Dh"?"MAD":currency);
 const dt=(v:string|null|undefined)=>v?new Date(v).toLocaleString("fr-FR",{dateStyle:"short",timeStyle:"short"}):"—";
 const newLine=(itemId:string):Line=>({id:crypto.randomUUID(),itemId,quantity:1,unitPrice:null,discountAmount:0,configuration:{sessions:1,children:1,minutes:60,frequency:"unique",options:[],note:""}});
-const createDraft=(q?:Record<string,string|undefined>):Draft=>({mode:q?.mode==="quote"?"quote":"expert",customerAccountId:q?.customer||"",guestName:q?.guestName||"",guestEmail:q?.guestEmail||"",guestPhone:q?.guestPhone||"",territoryId:"",city:q?.city||"",address:"",scheduledStartAt:"",scheduledEndAt:"",paymentMode:"none",paymentStatus:"pending",notes:"",familyRequestId:q?.familyRequest||null,inquiryId:q?.inquiry||null,sourceOrderId:null,lines:[],contractNote:"",depositPercent:0});
+const createDraft=(q?:Record<string,string|undefined>):Draft=>({mode:q?.mode==="quote"?"quote":"expert",commercialContext:emptyCommercialContext(),customerAccountId:q?.customer||"",guestName:q?.guestName||"",guestEmail:q?.guestEmail||"",guestPhone:q?.guestPhone||"",territoryId:"",city:q?.city||"",address:"",scheduledStartAt:"",scheduledEndAt:"",paymentMode:"none",paymentStatus:"pending",notes:"",familyRequestId:q?.familyRequest||null,inquiryId:q?.inquiry||null,sourceOrderId:null,lines:[],contractNote:"",depositPercent:0});
 const asObj=(v:unknown):Record<string,unknown>=>v&&typeof v==="object"&&!Array.isArray(v)?v as Record<string,unknown>:{};
 const parseResponse=async<T,>(response:Response):Promise<T>=>{
  const body=await response.json() as Envelope<T>;
@@ -60,6 +72,8 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
  const [draftId,setDraftId]=useState("");
  const [revision,setRevision]=useState(0);
  const [tab,setTab]=useState<Tab>("customer");
+ const [maximized,setMaximized]=useState(false);
+ const [showAdvanced,setShowAdvanced]=useState(false);
  const [selectedLine,setSelectedLine]=useState("");
  const [customerQuery,setCustomerQuery]=useState("");
  const [itemQuery,setItemQuery]=useState("");
@@ -83,7 +97,7 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
  const [approvalInbox,setApprovalInbox]=useState<Array<SavedDraft&{actor_id:string}>>([]);
  const [showApprovals,setShowApprovals]=useState(false);
  const [created,setCreated]=useState<Receipt|null>(null);
- const [searchLimit,setSearchLimit]=useState(12);
+ const [searchLimit,setSearchLimit]=useState(24);
  const saveBusy=useRef(false);
  const lastSaved=useRef("");
  const latestDraft=useRef(draft);
@@ -117,7 +131,8 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
  },[]);
  useEffect(()=>{latestDraft.current=draft;setNotice("")},[draft]);
  const customers=useMemo(()=>options.customers.filter(x=>(x.display_name+" "+x.public_reference+" "+(x.email||"")+" "+(x.phone||"")).toLowerCase().includes(customerQuery.toLowerCase())).slice(0,18),[options.customers,customerQuery]);
- const items=useMemo(()=>options.items.filter(x=>(x.name_fr+" "+x.public_reference+" "+(x.category_key||"")).toLowerCase().includes(itemQuery.toLowerCase())).slice(0,Math.min(searchLimit,80)),[options.items,itemQuery,searchLimit]);
+ const matchingItems=useMemo(()=>options.items.filter(x=>(x.name_fr+" "+x.public_reference+" "+(x.category_key||"")+" "+(x.kind||"")).toLowerCase().includes(itemQuery.toLowerCase())),[options.items,itemQuery]);
+ const items=useMemo(()=>matchingItems.slice(0,searchLimit),[matchingItems,searchLimit]);
  const mediaCandidates=useMemo(()=>[...new Set([
   ...draft.lines.map(l=>l.itemId),...(itemSearchOpen?items.slice(0,40).map(i=>i.id):[])
  ])],[draft.lines,itemSearchOpen,items]);
@@ -135,6 +150,8 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
  const customer=options.customers.find(x=>x.id===draft.customerAccountId);
  const chosen= draft.lines.find(x=>x.id===selectedLine)||draft.lines[0];
  const chosenCatalog=options.items.find(x=>x.id===chosen?.itemId);
+ const chosenIsPhysical=isPhysicalItem(chosenCatalog);
+ const commercialContext=draft.commercialContext||emptyCommercialContext();
  const payloadKey=JSON.stringify(draft);
  const isDirty=payloadKey!==lastSaved.current;
  const approvalRequired=Boolean(quote?.requiresApproval);
@@ -144,13 +161,29 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
  const paymentReady=draft.mode==="quote"||Boolean(draft.paymentMode&&draft.paymentMode!=="none");
  const contractReady=draft.mode!=="b2b"&&draft.mode!=="subscription"||Boolean(draft.contractNote.trim());
  const approvalReady=!approvalRequired||approval==="approved";
+ const commercialContextReady=draft.mode==="b2b"?commercialContext.legalEntity.trim().length>=3:
+  draft.mode==="quote"?Boolean(commercialContext.quoteValidity):
+  draft.mode==="renewal"?commercialContext.renewalReason.trim().length>=5:true;
  const renewalReady=draft.mode!=="renewal"||Boolean(draft.sourceOrderId);
  const recurringReady=draft.mode!=="subscription"||Boolean(draft.scheduledStartAt&&draft.lines.some(l=>l.configuration.sessions>1&&l.configuration.frequency!=="unique"));
  const modeReady=renewalReady&&recurringReady;
- const valid=customerReady&&basketReady&&pricingReady&&paymentReady&&contractReady&&approvalReady&&modeReady&&!isDirty&&saveState==="saved";
+ const valid=customerReady&&basketReady&&pricingReady&&paymentReady&&contractReady&&approvalReady&&modeReady&&commercialContextReady&&!isDirty&&saveState==="saved";
  const amount=quote?.total??0;
  const currency=quote?.currency||"MAD";
- const selectedPrice=quote?.lines.find(x=>x.itemId===chosen?.itemId);
+ const selectedLineIndex=draft.lines.findIndex(x=>x.id===chosen?.id);
+ const selectedPrice=selectedLineIndex>=0&&quote?.lines[selectedLineIndex]?.itemId===chosen?.itemId?quote.lines[selectedLineIndex]:undefined;
+ const reviewChecks:Array<{label:string;ok:boolean;tab:Tab}>=[
+  {label:"Client identifié et joignable",ok:customerReady,tab:"customer"},
+  {label:"Panier et prix serveur",ok:basketReady&&pricingReady,tab:"basket"},
+  {label:"Conditions de paiement",ok:paymentReady,tab:"payment"},
+  {label:"Contrat et contexte du mode",ok:contractReady&&commercialContextReady,tab:"contracts"},
+  {label:"Approbation indépendante",ok:approvalReady,tab:"validation"},
+  {label:"Récurrence ou commande source",ok:modeReady,tab:draft.mode==="subscription"?"planning":"basket"},
+  {label:"Brouillon persisté",ok:!isDirty&&saveState==="saved",tab:"validation"}
+ ];
+ const unresolvedChecks=reviewChecks.filter(check=>!check.ok);
+ function setContext(patch:Partial<CommercialContext>){update({commercialContext:{...commercialContext,...patch}})}
+ function navigateFirstBlocker(){setTab(unresolvedChecks[0]?.tab||"validation")}
  function update(patch:Partial<Draft>){submissionKey.current="";setDraft(d=>({...d,...patch}))}
  function linePatch(id:string,patch:Partial<Line>){update({lines:draft.lines.map(x=>x.id===id?{...x,...patch}:x)})}
  function configPatch(patch:Partial<Line["configuration"]>){if(!chosen)return;linePatch(chosen.id,{configuration:{...chosen.configuration,...patch}})}
@@ -269,7 +302,7 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
  }
  async function submit(){
   if(busy||!draftId||created)return;
-  if(!valid){setTab("validation");setError("La commande n'est pas prête. Examinez les contrôles de validation et sauvegardez les modifications avant de soumettre.");return;}
+  if(!valid){navigateFirstBlocker();setError("Commande non prête : corrigez le contrôle indiqué, puis enregistrez le brouillon.");return;}
   setBusy(true);setError("");
   const key=submissionKey.current||(submissionKey.current=crypto.randomUUID());
   try{
