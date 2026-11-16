@@ -42,7 +42,8 @@ test('protected hero, native explorer, enquiry and sibling journeys survive',()=
 });
 test('domain navigation keeps R8 structure and native project selection intact',()=>{
  for(const value of ['domainExperience?:ReactNode','onOpenDomain?:(domain:EquipmentDomain)=>void','if(onOpenDomain){onOpenDomain(domain);return}','{domainExperience}'])assert.ok(r8.includes(value),value);
- for(const value of ['domainExperience={customDomainExperience}','onOpenDomain={chooseDomain}','onSelect(equipmentDomainSelection(selectedDomain))','selectedKeys.has'])assert.ok(r9.includes(value),value);
+ for(const value of ['return customDomainExperience;','onSelect(equipmentDomainSelection(selectedDomain))','selectedKeys.has','id="r8-domains"'])assert.ok(r9.includes(value),value);
+ assert.ok(!r9.includes('<EquipmentExperienceR8'),"R9 must not duplicate R8 legacy journey");
 });
 test('recoverable bounded preferences enrich brief, without inventing orders',()=>{
  for(const value of ['raw.length>18000','Number.isInteger(pref.choice)','slice(0,180)','slice(0,2200)','export function equipmentR9Brief'])assert.ok(programs.includes(value),value);
