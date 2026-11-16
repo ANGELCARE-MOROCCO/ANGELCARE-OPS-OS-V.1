@@ -170,8 +170,6 @@ export function EquipmentExperienceR8({
     {family!=="all"?<button className={c.allButton} onClick={()=>{setFamily("all");setAllDomains(true)}}>Revenir aux 22 domaines <ArrowRight size={17}/></button>:null}
    </section>
 
-   {domainExperience}
-
    <section id="r8-showroom" className={c.showroom} aria-label="Showroom immersif des équipements">
     <div className={c.showroomIntro}>
      <span className={c.pinkPill}>Showroom immersif</span>
@@ -203,6 +201,8 @@ export function EquipmentExperienceR8({
     <div className={c.trustGrid}>{TRUST.map(({icon:Icon,title,text})=><div key={title}><Icon size={28}/><h3>{t(title)}</h3><p>{t(text)}</p></div>)}</div>
    </section>
 
+   {domainExperience}
+   {!domainExperience?<>
    <section className={c.ctaTwin} aria-label="Démarrer un projet ou demander un devis">
     <div className={c.consultingCta}>
      <div className={c.ctaPhoto}><CampaignImage name="academy" alt="Professionnelle petite enfance et équipe de direction"/></div>
@@ -230,6 +230,7 @@ export function EquipmentExperienceR8({
     <div className={c.closingImage}><CampaignImage name="classroom" alt="Salle d'apprentissage lumineuse et équipée"/></div><div><span className={c.eyebrow}>VOTRE PROJET MÉRITE DES REPÈRES CLAIRS</span><h2>Construisons un établissement qui vous ressemble.</h2><p>22 domaines réels. Des applications complémentaires. Une demande reliée à votre sélection, avec des conditions à confirmer.</p><div className={c.closingActions}><button className={c.primary} onClick={()=>request()}>Parler de mon projet <ArrowRight size={16}/></button><button className={c.secondary} onClick={onExplore}>Voir les offres publiées <ArrowRight size={16}/></button></div></div>
    </section>
 
+   </>:null}
    <section className={c.faq}>
     <h2>Décidez avec des informations claires.</h2>
     {[["Les 22 domaines sont-ils tous des produits en stock ?","Non. Ce sont les univers du catalogue et des applications proposées. Seules les fiches réellement publiées dans l’explorateur indiquent une offre, un prix et une disponibilité."],["Puis-je faire personnaliser les supports ?","Les personnalisations, quantités, formats, BAT et délais sont à vérifier selon la référence et la demande."],["Est-ce que ma sélection engage une commande ?","Non. Elle prépare un brief de projet. Une commande, un devis ou une réservation exige une validation distincte."],["Puis-je combiner plusieurs domaines ?","Oui. Choisissez vos domaines d’intérêt, puis ouvrez le brief natif pour retrouver les éléments retenus."]].map(([q,a],i)=><div key={q} className={c.faqItem}><button aria-expanded={faq===i} onClick={()=>setFaq(faq===i?null:i)}>{q}<ChevronDown size={18}/></button>{faq===i?<p>{a}</p>:null}</div>)}
