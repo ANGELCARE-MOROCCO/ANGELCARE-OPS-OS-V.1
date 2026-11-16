@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
+import {readFileSync,existsSync} from 'node:fs';
 import {EQUIPMENT_DOMAINS,EQUIPMENT_FAMILIES,equipmentDomainSelection} from '../angelcare-marketplace/establishments-world/equipment-r8-data.ts';
 
 const read=(path)=>readFileSync(new URL('../'+path,import.meta.url),'utf8');
@@ -56,8 +56,7 @@ test('all imagery names used by new page correspond to managed native art',()=>{
  for(const family of EQUIPMENT_FAMILIES)assert.ok(art.has(family.image),family.image);
  for(const domain of EQUIPMENT_DOMAINS){
   assert.ok(art.has(domain.image),domain.image);
-  const {existsSync}=await import('node:fs');
-  assert.ok(existsSync(new URL('../public/angelcare-marketplace/establishments-r2/'+domain.art+'.png',import.meta.url)),domain.art);
+    assert.ok(existsSync(new URL('../public/angelcare-marketplace/establishments-r2/'+domain.art+'.png',import.meta.url)),domain.art);
  }
  for(const name of ['welcome','classroom','parents','administration','activities','uniforms','products-hero'])assert.ok(art.has(name),name);
 });
