@@ -85,9 +85,15 @@ export async function commercialGet(request:Request){
    if(journeys.error)fail(journeys.error,"Historique commandes");
    if(addresses.error)fail(addresses.error,"Adresses du client");
    const values=(journeys.data||[]).map(x=>asRow(x.financial_status));
-   const sum=values.reduce((a,x)=>a+(Number(x.expected_amount)||0),0);
+   const amountByCurrency=new Map<string,number>();
+   for(const financial of values){
+    const currency=String(financial.currency_label||"MAD")==="Dh"?"MAD":String(financial.currency_label||"MAD");
+    const amount=Number(financial.expected_amount);
+    if(Number.isFinite(amount))amountByCurrency.set(currency,(amountByCurrency.get(currency)||0)+amount);
+   }
+   const valueByCurrency=[...amountByCurrency].map(([currency,value])=>({currency,value:Math.round(value*100)/100}));
    return apiSuccess({
-    orderCount:journeys.data?.length||0,value:Math.round(sum*100)/100,
+    orderCount:journeys.data?.length||0,value:valueByCurrency.length===1?valueByCurrency[0].value:0,valueByCurrency,
     lastOrderAt:journeys.data?.[0]?.created_at||null,
     recentOrders:(journeys.data||[]).slice(0,8).map(x=>({
      id:x.id,public_reference:x.public_reference||"",title:x.title||"",
