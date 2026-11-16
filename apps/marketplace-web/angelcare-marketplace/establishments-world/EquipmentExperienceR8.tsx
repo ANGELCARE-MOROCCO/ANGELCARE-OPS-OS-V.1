@@ -1,6 +1,6 @@
 "use client";
 
-import {useCallback,useEffect,useMemo,useRef,useState} from "react";
+import {useCallback,useEffect,useMemo,useRef,useState,type ReactNode} from "react";
 import {
  ArrowRight,ArrowLeft,ChevronRight,ChevronDown,Check,CheckCircle2,
  Search,HeartHandshake,GraduationCap,School,Boxes,ShieldCheck,ClipboardCheck,
@@ -74,7 +74,7 @@ const toOfferBrief=(domains:EquipmentDomain[])=>domains.length?
  * No synthetic products, inventory or prices are ever created here.
  */
 export function EquipmentExperienceR8({
- selected,onSelect,onReview,onContact,onExplore,locale
+ selected,onSelect,onReview,onContact,onExplore,locale,onOpenDomain,domainExperience
 }:{
  selected:string[];
  onSelect:(item:Selection)=>void;
@@ -82,6 +82,8 @@ export function EquipmentExperienceR8({
  onContact:(intent:{subject:string;email?:string})=>void;
  onExplore:()=>void;
  locale:"fr"|"en"|"ar";
+ onOpenDomain?:(domain:EquipmentDomain)=>void;
+ domainExperience?:ReactNode;
 }){
  const {t}=usePartner();
  const [family,setFamily]=useState<EquipmentFamilyId|"all">("all");
@@ -105,7 +107,7 @@ export function EquipmentExperienceR8({
  const chooseFamily=(id:EquipmentFamilyId|"all")=>{
   setFamily(id);setAllDomains(id==="all");requestAnimationFrame(()=>scroll("r8-domains"));
  };
- const openDomain=(domain:EquipmentDomain)=>{returnFocus.current=document.activeElement instanceof HTMLElement?document.activeElement:null;setActiveDomain(domain)};
+ const openDomain=(domain:EquipmentDomain)=>{if(onOpenDomain){onOpenDomain(domain);return}returnFocus.current=document.activeElement instanceof HTMLElement?document.activeElement:null;setActiveDomain(domain)};
  const closeDomain=useCallback(()=>{setActiveDomain(null);requestAnimationFrame(()=>returnFocus.current?.focus())},[]);
  useEffect(()=>{
   if(!activeDomain)return;
@@ -167,6 +169,8 @@ export function EquipmentExperienceR8({
     {family==="all"&&!search&&!allDomains?<button className={c.allButton} onClick={()=>setAllDomains(true)}>Voir les 22 domaines complets <ArrowRight size={17}/></button>:null}
     {family!=="all"?<button className={c.allButton} onClick={()=>{setFamily("all");setAllDomains(true)}}>Revenir aux 22 domaines <ArrowRight size={17}/></button>:null}
    </section>
+
+   {domainExperience}
 
    <section id="r8-showroom" className={c.showroom} aria-label="Showroom immersif des équipements">
     <div className={c.showroomIntro}>
