@@ -1,0 +1,54 @@
+name: AngelCare Equipment R9 — 22 Immersive Journeys
+
+on:
+  push:
+    branches:
+      - feat/equipment-r9-immersive-commercial-22-journeys-20261116
+    paths:
+      - 'apps/marketplace-web/angelcare-marketplace/establishments-world/**'
+      - 'apps/marketplace-web/tsconfig.equipment-r9.json'
+      - 'apps/marketplace-web/scripts/verify-equipment-r9.test.mjs'
+      - 'apps/marketplace-web/scripts/verify-equipment-r8.test.mjs'
+      - '.github/workflows/establishments-equipment-r9.yml'
+  pull_request:
+    branches:
+      - feat/establishments-equipment-r8-approved-showroom-20261116
+      - upgrade/next-angelcare-upgrade
+    paths:
+      - 'apps/marketplace-web/angelcare-marketplace/establishments-world/**'
+      - 'apps/marketplace-web/tsconfig.equipment-r9.json'
+      - 'apps/marketplace-web/scripts/verify-equipment-r9.test.mjs'
+      - '.github/workflows/establishments-equipment-r9.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  equipment-r9-focused:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: apps/marketplace-web/package-lock.json
+      - name: Check 22 genuinely distinct journeys, native catalogue and enriched brief
+        working-directory: apps/marketplace-web
+        run: node --experimental-strip-types --test scripts/verify-equipment-r9.test.mjs
+      - name: Preserve R8 assets and product explorer contracts
+        working-directory: apps/marketplace-web
+        run: node --experimental-strip-types --test scripts/verify-equipment-r8.test.mjs
+      - name: Install locked Marketplace dependencies
+        working-directory: apps/marketplace-web
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Strict Equipment R9 TypeScript
+        working-directory: apps/marketplace-web
+        run: npx tsc -p tsconfig.equipment-r9.json --pretty false --noEmit
+      - name: Verify R7.1 hero rollback file retained
+        working-directory: apps/marketplace-web
+        run: |
+          test "$(git hash-object angelcare-marketplace/establishments-world/EquipmentHeroR71.tsx)" = "3532b9b0b639987ffcdff601360ac29c6efaa100"
+          echo "R71_HERO_ROLLBACK_PASS"
