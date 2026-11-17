@@ -90,3 +90,6 @@
 /* Explicit module class anchors guarantee native card/grid class composition. */
 .productGrid{min-width:0}
 .productCard{min-width:0}
+
+/* The native category rail stays in the DOM for legacy behaviour, but R11 displays its real-data visual equivalent. */
+.r11Explorer [data-native-categories]{display:none!important}
