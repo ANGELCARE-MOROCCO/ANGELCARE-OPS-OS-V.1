@@ -34,7 +34,7 @@ function SegmentPanels({program,pref,labels}:{program:R9Program;pref:R9Preferenc
 function ChapterScaffold({program,children,caption}:{program:R9Program;children:ReactNode;caption?:string}){
  return <div className={c.chapterScaffold}><span className={c.chapterEyebrow}>{caption||program.eyebrow}</span>{children}</div>;
 }
-function UniqueScene({program,domain,pref,choose,flip,setFlip,checks,toggleCheck}:{program:R9Program;domain:EquipmentDomain;pref:R9Preference;choose:(n:number)=>void;flip:boolean;setFlip:(v:boolean)=>void;checks:boolean[];toggleCheck:(n:number)=>void}){
+export function R9InteractiveScene({program,domain,pref,choose,flip,setFlip,checks,toggleCheck}:{program:R9Program;domain:EquipmentDomain;pref:R9Preference;choose:(n:number)=>void;flip:boolean;setFlip:(v:boolean)=>void;checks:boolean[];toggleCheck:(n:number)=>void}){
  const related=program.recommendations.map(id=>lookup(id)).filter((d):d is EquipmentDomain=>!!d);
  const chosen=program.choices[pref.choice];
  const option=(i:number)=>choose(i);
@@ -86,7 +86,7 @@ export function EquipmentR9DomainStudio({
    <div className={c.introAside}><b><Compass size={18}/> CE QUE NOUS RÉSOLVONS</b><p>{program.scenario}</p></div>
   </div>
   <div className={c.immersiveScene}>
-   <UniqueScene program={program} domain={domain} pref={pref} choose={choose} flip={flip} setFlip={setFlip} checks={checks} toggleCheck={toggleCheck}/>
+   <R9InteractiveScene program={program} domain={domain} pref={pref} choose={choose} flip={flip} setFlip={setFlip} checks={checks} toggleCheck={toggleCheck}/>
   </div>
   <div className={c.editorialColumns}>
    <section><span>LA DIFFICULTÉ QUOTIDIENNE</span><h3>Ce que l'équipe vit</h3><p>{domain.pain}</p></section>
