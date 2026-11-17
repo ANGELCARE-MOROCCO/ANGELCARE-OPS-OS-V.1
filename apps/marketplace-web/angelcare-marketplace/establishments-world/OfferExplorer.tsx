@@ -3,7 +3,7 @@ import { usePartner, countText } from "./partner/Locale";
 import { belongsToEstablishmentView } from "../storefront-placement/model";
 import { JourneyLink } from "./JourneyLink";
 import Link from "next/link";
-import { useDeferredValue, useEffect, useMemo, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowRight,
   Check,
@@ -103,6 +103,28 @@ export function NativeExplorer({
   const equipmentR11 = view === "produits";
   const r11text=EQUIPMENT_R11_COPY[locale];
   const [filtersOpen,setFiltersOpen] = useState(false);
+  const filterTriggerRef=useRef<HTMLButtonElement>(null);
+  const mobileDrawerRef=useRef<HTMLDivElement>(null);
+  useEffect(()=>{
+    if(!equipmentR11||!filtersOpen||!window.matchMedia("(max-width:760px)").matches)return;
+    const oldOverflow=document.body.style.overflow;
+    const previous=document.activeElement instanceof HTMLElement?document.activeElement:null;
+    document.body.style.overflow="hidden";
+    const panel=mobileDrawerRef.current;
+    panel?.querySelector<HTMLElement>("select,button,input")?.focus();
+    const handleKey=(event:KeyboardEvent)=>{
+      if(event.key==="Escape"){event.preventDefault();setFiltersOpen(false);return}
+      if(event.key!=="Tab"||!panel)return;
+      const focusables=Array.from(panel.querySelectorAll<HTMLElement>('button:not([disabled]),select:not([disabled]),input:not([disabled]),[tabindex]:not([tabindex="-1"])')).filter(x=>x.offsetParent!==null);
+      if(!focusables.length)return;
+      const first=focusables[0],last=focusables[focusables.length-1];
+      if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}
+      else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}
+    };
+    document.addEventListener("keydown",handleKey);
+    return()=>{document.removeEventListener("keydown",handleKey);document.body.style.overflow=oldOverflow;previous?.focus({preventScroll:true})}
+  },[equipmentR11,filtersOpen]);
+
   const [displayMode,setDisplayMode] = useState<"grid"|"list">("grid");
   const [compareExpanded,setCompareExpanded] = useState(false);
   const [suggestionsVisible,setSuggestionsVisible] = useState(false);
@@ -283,9 +305,26 @@ export function NativeExplorer({
       {equipmentR11&&<div className={r11.searchCommand}>
         <div className={r11.searchIntro}><span>{r11text.searchTitle}</span><strong>{r11text.searchHelp}</strong></div>
         <div className={r11.searchCommandRow}><label className={r11.searchMain}><Search size={22}/><input type="search" value={filters.query} onFocus={()=>setSuggestionsVisible(true)} onKeyDown={e=>{if(e.key==="Escape")setSuggestionsVisible(false)}} onChange={e=>{change({query:e.target.value});setSuggestionsVisible(true)}} placeholder={r11text.searchPlaceholder} aria-label={r11text.searchLabel} aria-controls="r11-search-suggestions" aria-expanded={suggestionsVisible&&suggestions.length>0}/>{filters.query&&<button type="button" aria-label={r11text.clearSearch} onClick={()=>change({query:""})}><X size={17}/></button>}</label>
-          <button type="button" className={r11.filterTrigger} aria-expanded={filtersOpen} onClick={()=>setFiltersOpen(v=>!v)}><SlidersHorizontal size={18}/>{(filtersOpen?r11text.hideFilters:r11text.showFilters)}{chips.length>0?<span>{chips.length}</span>:null}</button>
+          <button ref={filterTriggerRef} type="button" className={r11.filterTrigger} aria-expanded={filtersOpen} aria-controls="r111-mobile-filters" onClick={()=>setFiltersOpen(v=>!v)}><SlidersHorizontal size={18}/>{(filtersOpen?r11text.hideFilters:r11text.showFilters)}{chips.length>0?<span>{chips.length}</span>:null}</button>
         </div>
         {suggestionsVisible&&suggestions.length>0&&<div id="r11-search-suggestions" className={r11.suggestionPanel} role="group" aria-label={r11text.suggestions}>{suggestions.map(item=><button key={item.id} type="button" onClick={()=>{change({query:item.name});setSuggestionsVisible(false)}}><span>{item.media_url?<img src={item.media_url} alt="" loading="lazy" onError={e=>{e.currentTarget.style.display="none"}}/>:<Package size={17}/>}</span><strong>{item.name}</strong><small>{item.public_reference}</small><ArrowRight size={16}/></button>)}</div>}
+        {equipmentR11&&filtersOpen&&<div className={r11.mobileDrawerBackdrop} onMouseDown={event=>{if(event.target===event.currentTarget)setFiltersOpen(false)}}>
+          <div ref={mobileDrawerRef} id="r111-mobile-filters" className={r11.mobileFilterDrawer} role="dialog" aria-modal="true" aria-label={r11text.showFilters} dir={locale==="ar"?"rtl":"ltr"}>
+            <header><strong><SlidersHorizontal size={21}/>{r11text.showFilters}</strong><button type="button" onClick={()=>setFiltersOpen(false)} aria-label={r11text.hideFilters}><X size={22}/></button></header>
+            <div className={r11.mobileFilterFields}>
+              <label>{tr("Affichage")}<select value={filters.scope} onChange={e=>change({scope:e.target.value as "speciality"|"all",category:"all",availability:"all",factKey:"",factValue:""})}><option value="speciality">{tr("Cette spécialité")}</option><option value="all">{tr("Toutes les offres Établissements")}</option></select></label>
+              <label>{tr("Catégorie")}<select value={category} onChange={e=>change({category:e.target.value})}><option value="all">{tr("Toutes les catégories")}</option>{categories.map(([key,label])=><option key={key} value={key}>{tr(label)}</option>)}</select></label>
+              <label>{tr("Disponibilité")}<select value={availability} onChange={e=>change({availability:e.target.value})}><option value="all">{tr("Tous les statuts")}</option>{[...new Set(channelItems.map(item=>item.availability_status))].map(status=><option key={status} value={status}>{tr(availabilityLabel({availability_status:status} as DiscoveryItem,locale))}</option>)}</select></label>
+              <label>{tr("Tarification")}<select value={filters.priceMode} onChange={e=>change({priceMode:e.target.value})}>{Object.entries(PRICE_LABELS).map(([key,label])=><option key={key} value={key}>{tr(label)}</option>)}</select></label>
+              <label>{tr("Trier")}<select value={filters.sort} onChange={e=>change({sort:e.target.value})}><option value="featured">{tr("Sélection éditoriale")}</option><option value="name">{tr("Nom")}</option><option value="price">{tr("Prix croissant")}</option></select></label>
+              {facets.length>0&&<label>{tr("Caractéristique publiée")}<select value={activeFacet?.key||""} onChange={e=>change({factKey:e.target.value,factValue:""})}><option value="">{tr("Toutes les caractéristiques")}</option>{facets.map(f=><option key={f.key} value={f.key}>{f.label}</option>)}</select></label>}
+              {activeFacet&&<label>{tr("Valeur recherchée")}<select value={factValue} onChange={e=>change({factValue:e.target.value})}><option value="">{tr("Toutes les valeurs")}</option>{activeFacet.values.map(v=><option key={v}>{tr(v)}</option>)}</select></label>}
+              <label>{tr("Résultats par page")}<select value={perPage} onChange={e=>{setPerPage(Number(e.target.value));change({})}}>{[10,20,40].map(n=><option key={n}>{n}</option>)}</select></label>
+              <button type="button" className={r11.mobileSaved} aria-pressed={filters.savedOnly} onClick={()=>change({savedOnly:!filters.savedOnly})}><Heart size={17}/>{tr("Mes favoris (")}{selections.saved.length}{tr(")")}</button>
+            </div>
+            <footer><button type="button" onClick={()=>setFilters({...DEFAULT_FILTERS})}>{tr("Réinitialiser")}</button><button type="button" onClick={()=>setFiltersOpen(false)}>{countText(locale,visible.length)} · {r11text.results}<Check size={17}/></button></footer>
+          </div>
+        </div>}
         <div className={r11.resultSummary}><span><strong>{countText(locale,visible.length)}</strong> {r11text.results}</span><div><button aria-label={r11text.grid} aria-pressed={displayMode==="grid"} onClick={()=>setDisplayMode("grid")}><Grid2X2 size={18}/></button><button aria-label={r11text.list} aria-pressed={displayMode==="list"} onClick={()=>setDisplayMode("list")}><List size={19}/></button></div></div>
       </div>}
       <div className={s.nativeHeading} data-native-title>
