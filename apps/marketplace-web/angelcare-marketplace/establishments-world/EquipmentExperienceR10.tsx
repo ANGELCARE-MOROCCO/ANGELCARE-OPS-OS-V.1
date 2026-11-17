@@ -82,6 +82,14 @@ export function EquipmentExperienceR10({
   window.history.replaceState(window.history.state,"",(()=>{const url=new URL(window.location.href);url.searchParams.set("equipmentDomain",id);return url.pathname+url.search+url.hash})());
   requestAnimationFrame(()=>document.getElementById("r10-domain-experience")?.scrollIntoView({block:"start",behavior:"smooth"}));
  },[]);
+ useEffect(()=>{
+  const onOpen=(event:Event)=>{
+   const id=(event as CustomEvent<{id?:string}>).detail?.id;
+   if(id&&EQUIPMENT_DOMAINS.some(d=>d.id===id))showDomain(id);
+  };
+  window.addEventListener("angelcare:equipment-open-domain",onOpen);
+  return()=>window.removeEventListener("angelcare:equipment-open-domain",onOpen);
+ },[showDomain]);
  const closeDomain=()=>{setActiveDomainId(null);window.history.replaceState(window.history.state,"",(()=>{const url=new URL(window.location.href);url.searchParams.delete("equipmentDomain");return url.pathname+url.search+url.hash})());scroll("r10-universes")};
  const toggleIdea=(id:string)=>setSavedIdeas(old=>old.includes(id)?old.filter(x=>x!==id):[...old,id].slice(0,22));
  const saveRelated=()=>{if(activeDomain)toggleIdea(activeDomain.id)};
