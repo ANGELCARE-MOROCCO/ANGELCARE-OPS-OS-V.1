@@ -93,3 +93,29 @@
  .universeCard[data-theme="welcome"] .universeImage,.universeCard[data-theme="parents"] .universeImage,.universeCard[data-theme="routines"] .universeImage{order:0;border-radius:0;min-height:170px!important}
  .universeCard[data-theme="welcome"] .universeBody,.universeCard[data-theme="parents"] .universeBody,.universeCard[data-theme="routines"] .universeBody{order:0}
 }
+
+/* R11.1: full RTL visual equivalence, not just right-aligned Arabic strings. */
+.root[dir=rtl]{font-family:Tahoma,"Noto Sans Arabic",Arial,sans-serif;letter-spacing:0}
+.root[dir=rtl] .introCopy,.root[dir=rtl] .storyCopy,.root[dir=rtl] .mapDetails,.root[dir=rtl] .universeBody,.root[dir=rtl] .domainFeatureHero>div:first-child,.root[dir=rtl] .closing>div:last-child{text-align:right;align-items:flex-start}
+.root[dir=rtl] .spaceCopy,.root[dir=rtl] .atlasCardMain{text-align:right}
+.root[dir=rtl] .spaceNumber{left:auto;right:12px}
+.root[dir=rtl] .spaceCopy svg{transform:scaleX(-1)}
+.root[dir=rtl] .introMediaInset{right:auto;left:13px}
+.root[dir=rtl] .introSticker{left:auto;right:15px}
+.root[dir=rtl] .storyBadge{left:auto;right:17px}
+.root[dir=rtl] .mapPhotoLabel{left:auto;right:11px}
+.root[dir=rtl] .mapZone span{left:10px;right:12px}
+.root[dir=rtl] .mapZone span svg{margin-left:0;margin-right:auto;transform:scaleX(-1)}
+.root[dir=rtl] .atlasCard .saveSmall{right:auto;left:9px}
+.root[dir=rtl] :is(.storyLinks,.universeTags,.domainFoot,.collectionActions) button>svg:last-child{transform:scaleX(-1)}
+.root[dir=rtl] .sectionHeading h2,.root[dir=rtl] .intro h2,.root[dir=rtl] .storyHero h3,.root[dir=rtl] .domainFeature h2{letter-spacing:0;line-height:1.24}
+.root[dir=rtl] .jump>div{direction:rtl}
+@media(max-width:760px){
+ .root .jump{display:none}
+ .root{padding-bottom:calc(72px + env(safe-area-inset-bottom))}
+ .root .storyHero,.root .mapComposition,.root .domainFeature,.root .universeCard{scroll-margin-top:70px}
+ .root[dir=rtl] .mapZone span{left:4px;right:7px}
+ .root[dir=rtl] .atlasCardText{text-align:right}
+ .root .storyLinks button,.root .domainFollow button{min-height:45px}
+ .root .atlasControls select,.root .atlasControls input{min-height:43px}
+}
