@@ -82,7 +82,7 @@ export function localProgram(program:R9Program,locale:PartnerLocale):R9Program{
 }
 export function localStory<T extends {id:string;eyebrow:string;title:string;sub:string;badge:string;benefit:string;caption:string}>(story:T,locale:PartnerLocale):T{
  if(locale==="fr")return story;
- const t=STORY[story.id]?.[locale];return t?{...story,eyebrow:t[0],title:t[1],sub:t[2],badge:t[3],benefit:t[4],caption:t[5]}:story;
+ const t=STORY[story.id]?.[locale];return t?({...story,eyebrow:t[0],title:t[1],sub:t[2],badge:t[3],benefit:t[4],caption:t[5]} as T):story;
 }
 const STORY:Record<string,{en:[string,string,string,string,string,string];ar:[string,string,string,string,string,string]}>={
  "school-opening":{en:["REAL USE CASE · OPENING","Opening a new school?","Build trust before the first school day.","A STRONG FIRST IMPRESSION","Clear arrival, organized spaces and professional communication.","From the entrance to meeting families"],ar:["حالة استخدام · افتتاح","هل تفتحون مدرسة جديدة؟","ابنوا الثقة قبل أول يوم دراسي.","انطباع أول قوي","استقبال واضح وفضاءات منظمة وتواصل مهني.","من المدخل حتى لقاء الأسر"]},
@@ -91,7 +91,7 @@ const STORY:Record<string,{en:[string,string,string,string,string,string];ar:[st
  "school-moments":{en:["IDEAS · SCHOOL EVENTS","Memorable school occasions that reflect your identity.","Coordinate stage design, certificates and keepsakes.","CREATE MEMORIES","One coherent identity from invitations to keepsakes.","Experiences worth celebrating"],ar:["أفكار · مناسبات مدرسية","مناسبات لا تنسى تعكس هوية مؤسستكم.","نسقوا الديكورات والشهادات والتذكارات.","صناعة الذكريات","هوية واحدة من الدعوات إلى التذكارات.","تجارب تستحق الاحتفال"]}
 };
 export function localGoal<T extends {id:string;title:string;subtitle:string}>(goal:T,locale:PartnerLocale):T{
- if(locale==="fr")return goal;const item=GOAL[goal.id]?.[locale];return item?{...goal,title:item[0],subtitle:item[1]}:goal;
+ if(locale==="fr")return goal;const item=GOAL[goal.id]?.[locale];return item?({...goal,title:item[0],subtitle:item[1]} as T):goal;
 }
 const GOAL:Record<string,{en:[string,string];ar:[string,string]}>={
  opening:{en:["I'm opening a school","Welcome, first classrooms and essential tools"],ar:["أفتح مؤسسة جديدة","الاستقبال والقاعات الأولى والأدوات الأساسية"]},
@@ -103,7 +103,7 @@ const GOAL:Record<string,{en:[string,string];ar:[string,string]}>={
 export function localTheme<T extends {id:EquipmentFamilyId;label:string;tagline:string;story:string;outcome:string;badge:string}>(theme:T,locale:PartnerLocale):T{
  if(locale==="fr")return theme;
  const d=THEME[theme.id][locale];
- return {...theme,label:d[0],tagline:d[1],story:d[2],outcome:d[3],badge:d[4]};
+ return {...theme,label:d[0],tagline:d[1],story:d[2],outcome:d[3],badge:d[4]} as T;
 }
 const THEME:Record<EquipmentFamilyId,{en:[string,string,string,string,string];ar:[string,string,string,string,string]}>={
  welcome:{en:["Welcome","Your school tells its story at first sight.","From the gate to the classroom: a welcoming and recognizable journey.","A first impression worth exploring.","VISITS & ADMISSIONS"],ar:["الاستقبال","تروي مؤسستكم قصتها منذ اللقاء الأول.","من البوابة إلى القاعة: تجربة ترحيب واضحة ومميزة.","انطباع أول يدعو للاكتشاف.","الزيارات والتسجيل"]},
@@ -114,7 +114,7 @@ const THEME:Record<EquipmentFamilyId,{en:[string,string,string,string,string];ar
  identity:{en:["Identity","A school families will remember.","Celebrate achievements, events and the school's distinctive style.","A living identity for important moments.","BRANDING & EVENTS"],ar:["الهوية","مؤسسة تتذكرها الأسر.","احتفوا بالإنجازات والمناسبات والهوية المميزة.","هوية حية للمناسبات المهمة.","الهوية والفعاليات"]}
 };
 export function localHotspot<T extends {id:string;label:string;summary:string}>(hotspot:T,locale:PartnerLocale):T{
- if(locale==="fr")return hotspot;const d=HOTSPOT[hotspot.id]?.[locale];return d?{...hotspot,label:d[0],summary:d[1]}:hotspot;
+ if(locale==="fr")return hotspot;const d=HOTSPOT[hotspot.id]?.[locale];return d?({...hotspot,label:d[0],summary:d[1]} as T):hotspot;
 }
 const HOTSPOT:Record<string,{en:[string,string];ar:[string,string]}>={
  reception:{en:["Entrance","Set the tone from the first step."],ar:["المدخل","حددوا الانطباع منذ الوصول."]},
