@@ -38,7 +38,7 @@ const WORLDS:Record<ChapterKey,World>={
   headline:["La bonne information. Au bon moment. Pour toute l'école.","The right information, at the right moment, for the whole school.","المعلومة المناسبة في الوقت المناسب لكل المؤسسة."],
   lead:["Passez d’informations dispersées à une lecture claire des sites, des priorités et de l’activité.","Turn scattered information into a clear view of sites, priorities and school activity.","حوّلوا المعلومات المتفرقة إلى رؤية واضحة للمواقع والأولويات والنشاط."],
   result:["Une direction mieux préparée à décider.","A management team better prepared to decide.","إدارة أكثر استعداداً لاتخاذ القرار."],
-  visual:"command",photo:"partner-hero",second:"consulting-hero",third:"administration",accent:"blue",
+  visual:"command",photo:"os-people-direction",second:"os-overview",third:"consulting-hero",accent:"blue",
   tags:[["Vue d'ensemble","Overview","نظرة شاملة"],["Réseau multi-sites","Multi-site network","شبكة متعددة المواقع"],["Indicateurs utiles","Useful indicators","مؤشرات مفيدة"]],
   cases:[
    {name:["Un seul établissement","One school","مؤسسة واحدة"],problem:["Les informations sont réparties entre plusieurs supports.","Information is scattered across different places.","المعلومات موزعة على أدوات متعددة."],change:["Un point de lecture pour préparer les réunions et décisions.","One shared overview to prepare meetings and decisions.","نظرة موحدة لتحضير الاجتماعات والقرارات."],module:"direction"},
@@ -51,7 +51,7 @@ const WORLDS:Record<ChapterKey,World>={
   headline:["De la première question à une relation qui dure.","From the first question to a relationship that lasts.","من السؤال الأول إلى علاقة تدوم."],
   lead:["Une expérience lisible pour les familles, de la demande de renseignements aux nouvelles du quotidien.","Make the family journey clearer, from initial questions to everyday school updates.","اجعلوا تجربة الأسر أوضح، من الاستفسارات الأولى إلى أخبار الحياة اليومية."],
   result:["Des échanges mieux reliés, des familles mieux informées.","More connected conversations, better informed families.","تواصل أكثر ترابطاً وأسر أكثر اطلاعاً."],
-  visual:"families",photo:"os-admissions",second:"welcome",third:"parents",accent:"rose",
+  visual:"families",photo:"os-admissions",second:"os-crm",third:"os-communication",accent:"rose",
   tags:[["Demande","Enquiry","استفسار"],["Visite","Visit","زيارة"],["Suivi","Follow-up","متابعة"]],
   cases:[
    {name:["Premier contact","First contact","التواصل الأول"],problem:["Une demande peut arriver sans contexte de suivi.","An enquiry can arrive without a clear follow-up.","قد يصل الاستفسار دون متابعة واضحة."],change:["Préparer la prochaine étape et retrouver l'historique utile.","Keep the useful context and prepare what comes next.","الاحتفاظ بالسياق وتحضير الخطوة التالية."],module:"crm"},
@@ -77,7 +77,7 @@ const WORLDS:Record<ChapterKey,World>={
   headline:["L'excellence se construit en équipe, chaque jour.","Excellence is a team practice, built every day.","تُبنى الجودة داخل الفريق كل يوم."],
   lead:["Recrutement, intégration, formation, SOP et responsabilités : un cadre plus lisible pour les professionnels.","Connect hiring, onboarding, training, SOPs and responsibilities into a clearer team practice.","اربطوا التوظيف والإدماج والتكوين والإجراءات والمسؤوليات ضمن إطار واضح."],
   result:["Des pratiques partagées et des responsabilités plus claires.","Shared practices and clearer responsibilities.","ممارسات مشتركة ومسؤوليات أوضح."],
-  visual:"people",photo:"os-team",second:"uniforms",third:"os-people-followup",accent:"violet",
+  visual:"people",photo:"os-team",second:"programme-team",third:"audit",accent:"violet",
   tags:[["Recrutement","Hiring","التوظيف"],["Formation","Training","التكوين"],["Qualité","Quality","الجودة"]],
   cases:[
    {name:["Intégrer un collaborateur","Onboard a colleague","إدماج موظف"],problem:["Les consignes et documents sont difficiles à retrouver.","Instructions and documents are hard to locate.","تصعب مراجعة التعليمات والوثائق."],change:["Préparer un parcours d'intégration et ses ressources.","Prepare a structured onboarding path.","تحضير مسار إدماج وموارده."],module:"rh"},
@@ -90,7 +90,7 @@ const WORLDS:Record<ChapterKey,World>={
   headline:["De votre proposition au règlement, gardez le fil.","From your offer to payment, keep the whole story connected.","من العرض إلى الأداء، حافظوا على ترابط المعاملات."],
   lead:["Aidez la direction à relier offres, services, accords, facturation et suivi des paiements.","Help school management connect offers, services, agreements, invoicing and payment follow-up.","ساعدوا الإدارة على ربط العروض والخدمات والاتفاقات والفوترة ومتابعة الأداءات."],
   result:["Un parcours commercial compréhensible, sans chiffres fictifs.","A clear commercial flow, without fictional figures.","مسار تجاري واضح دون أرقام افتراضية."],
-  visual:"revenue",photo:"os-quotes",second:"os-services",third:"administration",accent:"amber",
+  visual:"revenue",photo:"os-quotes",second:"os-finance",third:"os-payments",accent:"amber",
   tags:[["Offres","Offers","العروض"],["Factures","Invoices","الفواتير"],["Suivi","Follow-up","المتابعة"]],
   cases:[
    {name:["Préparer une offre","Prepare an offer","تحضير عرض"],problem:["Le périmètre commercial n'est pas toujours explicite.","The commercial scope is not always explicit.","لا يكون نطاق العرض واضحاً دائماً."],change:["Structurer plans, services et conditions à examiner.","Clarify plans, services and conditions before agreement.","توضيح الخطط والخدمات والشروط قبل الاتفاق."],module:"plans"},
@@ -103,7 +103,7 @@ const WORLDS:Record<ChapterKey,World>={
   headline:["Votre établissement évolue. Votre environnement aussi.","Your school evolves. Your environment should too.","تتطور مؤسستكم، وتتطور معها منظومتكم."],
   lead:["Connectez les besoins complémentaires, les documents et l'accompagnement au reste de vos pratiques.","Relate complementary services, documents and support to the way your school operates.","اربطوا الخدمات المكملة والوثائق والمساعدة بباقي أنشطة مؤسستكم."],
   result:["Un écosystème à votre rythme, selon votre périmètre.","An ecosystem shaped around your needs.","منظومة تتكيف مع احتياجاتكم."],
-  visual:"network",photo:"os-overview",second:"os-people-commerce",third:"os-people-team",accent:"green",
+  visual:"network",photo:"os-people-intro",second:"os-services",third:"os-people-commerce",accent:"green",
   tags:[["Documents","Documents","الوثائق"],["Assistance","Support","الدعم"],["Extensions","Add-ons","الإضافات"]],
   cases:[
    {name:["Relier mes dossiers","Connect documents","ربط الوثائق"],problem:["Les pièces utiles sont dispersées entre plusieurs étapes.","Important files are spread across different steps.","الملفات المهمة موزعة بين خطوات مختلفة."],change:["Rapprocher les documents de leurs usages et responsables.","Connect files to the people and processes that need them.","ربط الملفات بالأشخاص والعمليات المعنية."],module:"documents"},
@@ -113,10 +113,19 @@ const WORLDS:Record<ChapterKey,World>={
  }
 };
 const chapterOrder:ChapterKey[]=["direction","familles","quotidien","equipes","revenus","ecosysteme"];
+const R2_NATIVE_PHOTOS=new Set([
+ "os-people-direction","os-overview","consulting-hero","os-admissions","os-crm","os-communication",
+ "os-activities","classroom","os-people-followup","os-team","programme-team","audit",
+ "os-quotes","os-finance","os-payments","os-people-intro","os-services","os-people-commerce",
+ "os-people-admissions","os-people-team"
+]);
 function Photo({name,slot,alt,priority=false}:{name:string;slot:string;alt:string;priority?:boolean}){
- return <ManagedImage slot={"journey-partner.r2."+slot} src={campaignAsset(name)} srcSet={campaignSet(name)}
+ const native=R2_NATIVE_PHOTOS.has(name);
+ const src=native?"/angelcare-marketplace/establishments-r2/"+name+".png":campaignAsset(name);
+ const srcSet=native?undefined:campaignSet(name);
+ return <ManagedImage slot={"journey-partner.r2."+slot} src={src} srcSet={srcSet}
   sizes={priority?"(min-width:1400px) 790px, (min-width:760px) 56vw, 100vw":"(min-width:1400px) 480px, (min-width:760px) 38vw, 85vw"}
-  width={1536} height={1024} alt={alt} loading={priority?"eager":"lazy"}
+  width={native?1000:1536} height={native?640:1024} alt={alt} loading={priority?"eager":"lazy"}
   fetchPriority={priority?"high":undefined} decoding="async"/>;
 }
 export function PartnerR2Hero({onContact,onExplore}:{onContact:()=>void;onExplore:()=>void}){
@@ -149,8 +158,8 @@ export function PartnerR2Hero({onContact,onExplore}:{onContact:()=>void;onExplor
    </div>
    <div className={s.heroComposition}>
     <div className={s.heroImage}><Photo name="partner-hero" slot="hero.main" alt={txt(locale,"Équipe de direction dans un établissement","School leadership team","فريق إدارة المؤسسة")} priority/></div>
-    <div className={s.heroPhotoSecondary}><Photo name="os-admissions" slot="hero.family" alt={txt(locale,"Rencontre avec une famille","Conversation with a family","لقاء مع أسرة")}/></div>
-    <div className={s.heroPhotoTertiary}><Photo name="os-team" slot="hero.team" alt={txt(locale,"Équipe éducative en préparation","Teaching staff preparing together","فريق تربوي أثناء التحضير")}/></div>
+    <div className={s.heroPhotoSecondary}><Photo name="os-people-admissions" slot="hero.family" alt={txt(locale,"Rencontre avec une famille","Conversation with a family","لقاء مع أسرة")}/></div>
+    <div className={s.heroPhotoTertiary}><Photo name="os-people-team" slot="hero.team" alt={txt(locale,"Équipe éducative en préparation","Teaching staff preparing together","فريق تربوي أثناء التحضير")}/></div>
     <div className={s.heroFloatingSystem}>
      <div className={s.floatingHead}><span className={s.liveDot}/><strong>PARTNER OS</strong><span>{txt(locale,"Vue conceptuelle","Illustrative view","عرض توضيحي")}</span></div>
      <div className={s.floatingLines}>
