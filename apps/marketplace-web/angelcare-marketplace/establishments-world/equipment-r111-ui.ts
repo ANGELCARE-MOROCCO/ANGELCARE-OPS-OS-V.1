@@ -444,6 +444,38 @@ const translations:Record<string,readonly [string,string]> = {
  "Journées portes ouvertes": [
   "Open days",
   "الأبواب المفتوحة"
+ ],
+ "Navigation équipements": [
+  "Equipment navigation",
+  "تنقل التجهيزات"
+ ],
+ "Choisissez votre manière de découvrir": [
+  "Choose how to explore",
+  "اختاروا طريقة الاستكشاف"
+ ],
+ "Modes de découverte": [
+  "Discovery modes",
+  "طرق الاستكشاف"
+ ],
+ "Multi-âges": [
+  "Mixed ages",
+  "أعمار مختلطة"
+ ],
+ "Équipements · Projet d'établissement": [
+  "Equipment · School project",
+  "التجهيزات · مشروع المؤسسة"
+ ],
+ "Inspirations sauvegardées (non commandées)": [
+  "Saved inspirations (not ordered)",
+  "أفكار محفوظة (لم يتم طلبها)"
+ ],
+ "Retourner la carte pour explorer": [
+  "Flip to explore",
+  "اقلبوا البطاقة للاستكشاف"
+ ],
+ "Offres, tarifs et délais restent soumis au catalogue et à validation.": [
+  "Offers, prices and lead times remain subject to the published catalogue and confirmation.",
+  "العروض والأسعار والمواعيد رهن الكتالوج المنشور والتأكيد."
  ]
 };
 export function equipmentUi(locale:PartnerLocale,fr:string):string{
