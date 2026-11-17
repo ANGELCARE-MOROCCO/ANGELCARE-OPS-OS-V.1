@@ -1,4 +1,4 @@
-import {partnerText,type PartnerLocale} from "./partner/Locale";
+import type {PartnerLocale} from "./partner/Locale";
 import type {EquipmentDomain,EquipmentFamilyId} from "./equipment-r8-data";
 import type {R9Program} from "./equipment-r9-programs";
 /** Source-authoritative 22 domains. Translation changes copy only, never identifiers,
