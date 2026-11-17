@@ -57,6 +57,7 @@ test("all R10 visual text is localizable without replacing native commerce",()=>
  assert.ok(body.includes("equipmentUi(locale,"));
  assert.ok(body.includes("localDomainLabel("));
  assert.ok(body.includes("locale===\"ar\"?\"rtl\":\"ltr\""));
+ assert.ok(!/aria-label="[^"]*[À-ÿ][^"]*"/.test(body),"R10 should have no untranslated French accessibility labels");
  for(const k of ["r10-explore","r10-stories","r10-map","r10-universes","r10-atlas","r10-collection","r10-domain-experience"])assert.ok(body.includes(k),k);
  for(const k of ["sessionStorage.setItem","localStorage.setItem(ideas(storageScope)","onExplore","onReview","onContact","onBriefChange(brief)"])assert.ok(body.includes(k),k);
 });
