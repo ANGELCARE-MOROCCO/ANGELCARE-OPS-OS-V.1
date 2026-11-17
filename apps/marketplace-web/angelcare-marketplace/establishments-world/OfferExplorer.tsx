@@ -290,6 +290,8 @@ export function NativeExplorer({
       id="ew-native-explorer"
       className={`${s.nativeExplorer} ${c.catalogue} ${equipmentR11?r11.r11Explorer:""}`}
       data-equipment-r11={equipmentR11?"true":"false"}
+      dir={locale==="ar"?"rtl":"ltr"}
+      lang={locale}
       data-r11-mode={displayMode}
       data-r11-filters={filtersOpen?"open":"closed"}
       aria-label={tr("Offres publiées du catalogue")}
