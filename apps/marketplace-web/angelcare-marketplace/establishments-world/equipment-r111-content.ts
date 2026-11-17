@@ -130,3 +130,32 @@ export function localDomainLabel<T extends {headline:string;reassurance:string;a
  if(!d)return fr;
  return {headline:d.name,reassurance:d.short,application:d.examples[0]} as T;
 }
+
+import {equipmentR9Brief,type R9State} from "./equipment-r9-programs";
+import {EQUIPMENT_DOMAINS} from "./equipment-r8-data";
+const NEEDS:Record<string,readonly [string,string]>={
+ "Ouverture d’établissement":["New school opening","افتتاح مؤسسة"],"Rénovation & modernisation":["Renovation & modernization","التجديد والتحديث"],
+ "Nouvelle classe":["New classroom","قاعة جديدة"],"Organisation de l’équipe":["Team organization","تنظيم الفريق"],
+ "Communication familles":["Family communication","التواصل مع الأسر"],"Événement scolaire":["School event","مناسبة مدرسية"],
+ "Entrée & accueil":["Entrance & reception","المدخل والاستقبال"],"Salles d’apprentissage":["Learning classrooms","قاعات التعلم"],
+ "Vie quotidienne":["Everyday school life","الحياة اليومية"],"Bureaux & équipe":["Offices & team","المكاتب والفريق"],
+ "Espaces événements":["Event spaces","فضاءات الفعاليات"],"Établissement complet":["Whole school","المؤسسة كاملة"],
+ "1–2 ans":["1–2 years","سنة إلى سنتين"],"3–4 ans":["3–4 years","٣ إلى ٤ سنوات"],"5–6 ans":["5–6 years","٥ إلى ٦ سنوات"],
+ "Mixte / multi-âges":["Mixed ages","أعمار مختلطة"],"Clair & chaleureux":["Bright & welcoming","مضيء ومرحب"]
+};
+const needsValue=(value:string,locale:PartnerLocale)=>locale==="fr"?value:NEEDS[value]?.[locale==="en"?0:1]||value;
+export function equipmentR111Brief(selectedKeys:readonly string[],state:R9State,locale:PartnerLocale):string{
+ if(locale==="fr")return equipmentR9Brief(selectedKeys,state);
+ const intro=locale==="en"?"Equipment project":"مشروع التجهيزات";
+ const n=state.needs;
+ const needs=[n.situation,n.space,n.age,n.style].filter(Boolean).map(v=>needsValue(v,locale)).join(" · ");
+ const selected=selectedKeys.filter(k=>k.startsWith("intent:equipment-domain:")).map(k=>EQUIPMENT_DOMAINS.find(d=>k.endsWith(":"+d.id))).filter((d):d is EquipmentDomain=>!!d).map(d=>localDomain(d,locale).name);
+ const preferences=Object.entries(state.preferences).filter(([id,p])=>!!p&&(p.note||p.format||p.quantity||p.age)).map(([id,p])=>{
+  const d=EQUIPMENT_DOMAINS.find(d=>d.id===id);
+  const name=d?localDomain(d,locale).name:id;
+  return name+": "+[p.age,p.format,p.quantity,p.note].filter(Boolean).join(", ");
+ });
+ const note=locale==="en"?"Notes / preferences":"ملاحظات وتفضيلات";
+ const selectedLabel=locale==="en"?"Areas of interest":"مجالات الاهتمام";
+ return [intro,needs,selected.length?selectedLabel+": "+selected.join(" · "):"",preferences.length?note+": "+preferences.join("; "):""].filter(Boolean).join("\n").slice(0,1900);
+}
