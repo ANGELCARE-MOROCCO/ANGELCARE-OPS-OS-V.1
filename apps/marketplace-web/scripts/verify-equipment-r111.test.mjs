@@ -50,8 +50,8 @@ test("source-authoritative 22 brochure domain IDs and program options cover EN/A
  for(const k of ["localDomain(","localProgram(","localTheme(","localStory(","localGoal(","localHotspot(","localDomainLabel("])assert.ok(content.includes(k)||content.includes(k.replace("(","<")),k);
  for(const k of ["localizedDomains=useMemo","localizedStories=useMemo","localizedThemes=useMemo","localizedGoals=useMemo","localizedHotspots=useMemo"])assert.ok(body.includes(k),k);
  assert.ok(body.includes("localProgram(R9_PROGRAMS.find"));
- assert.ok(body.includes("onSelect(equipmentDomainSelection(activeDomain))"));
- assert.ok(model.includes("equipmentDomainSelection(localDomain(domain,locale))"),"restored domain titles must follow locale while keeping stable keys");
+ assert.ok(body.includes("onSelect(equipmentDomainSelection(activeDomain,locale))"));
+ assert.ok(model.includes("equipmentDomainSelection(localDomain(domain,locale),locale)"),"restored domain titles must follow locale while keeping stable keys");
 });
 test("all R10 visual text is localizable without replacing native commerce",()=>{
  assert.ok(ui.includes("equipmentUi("));
