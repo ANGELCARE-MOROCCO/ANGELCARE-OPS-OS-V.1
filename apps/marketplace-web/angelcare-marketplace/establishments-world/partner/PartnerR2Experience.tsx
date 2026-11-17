@@ -225,9 +225,9 @@ export function PartnerR2WorldLead({chapter,onOpen,onAdd,selected,storageScope}:
   </div>
  </div>;
 }
-export function PartnerR2ModuleSwitcher({chapter,items,render}:{chapter:ChapterKey;items:readonly ModuleKey[];render:(key:ModuleKey)=>ReactNode}){
- const {locale,t}=usePartner();const [key,setKey]=useState<ModuleKey>(items[0]);
- const chosen=items.includes(key)?key:items[0];const world=WORLDS[chapter];
+export function PartnerR2ModuleSwitcher({chapter,items,render,activeKey,onSelect}:{chapter:ChapterKey;items:readonly ModuleKey[];render:(key:ModuleKey)=>ReactNode;activeKey?:ModuleKey;onSelect:(key:ModuleKey)=>void}){
+ const {locale,t}=usePartner();
+ const chosen=activeKey&&items.includes(activeKey)?activeKey:items[0];const world=WORLDS[chapter];
  return <div className={s.moduleWorkbench} data-chapter={chapter}>
   <div className={s.moduleWorkbenchHeader}>
    <div><span><Layers3 size={16}/>{txt(locale,"MODULES DE CET UNIVERS","CAPABILITIES IN THIS WORLD","مجالات هذا القسم")}</span><h3>{txt(locale,"Explorez les domaines, un par un.","Explore each capability in context.","استكشفوا كل مجال في سياقه.")}</h3></div>
@@ -235,7 +235,7 @@ export function PartnerR2ModuleSwitcher({chapter,items,render}:{chapter:ChapterK
   </div>
   <div className={s.moduleWorkbenchBody}>
    <nav className={s.moduleRail} aria-label={txt(locale,"Choisir un domaine","Choose a capability","اختيار مجال")}>
-    {items.map((id,i)=>{const I=MODULE_ICONS[id];return <button type="button" key={id} aria-current={chosen===id?"true":undefined} onClick={()=>setKey(id)}><span>{String(i+1).padStart(2,"0")}</span><I size={19}/><strong>{t(moduleByKey(id).label)}</strong><ChevronRight size={15}/></button>})}
+    {items.map((id,i)=>{const I=MODULE_ICONS[id];return <button type="button" key={id} aria-current={chosen===id?"true":undefined} onClick={()=>onSelect(id)}><span>{String(i+1).padStart(2,"0")}</span><I size={19}/><strong>{t(moduleByKey(id).label)}</strong><ChevronRight size={15}/></button>})}
     <small>{txt(locale,"Données métier issues des 20 domaines de Partner OS.","Business content from the 20 Partner OS capabilities.","محتوى مهني مستند إلى مجالات بارتنر أو إس العشرين.")}</small>
    </nav>
    <div className={s.moduleFeature} key={chosen}>
