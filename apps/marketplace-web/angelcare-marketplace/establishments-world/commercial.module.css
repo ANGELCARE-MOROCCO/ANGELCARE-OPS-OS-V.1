@@ -1660,3 +1660,26 @@
     grid-template-columns: 350px minmax(0, 1fr) 240px;
   }
 }
+
+/* Equipment R11 premium product inspector — scoped; no effect on other specialties. */
+.equipmentInspectorR11[open]{display:grid;grid-template-columns:minmax(280px,1.1fr) minmax(270px,.9fr);gap:12px 24px;width:min(1080px,94vw);max-height:92vh;overflow:auto;background:linear-gradient(115deg,#fff,#fff7fa 95%);border:1px solid #dfdce4;border-radius:20px;padding:23px 25px;color:#102b58;box-shadow:0 30px 105px #081d4a60}
+.equipmentInspectorR11>header{grid-column:1/-1;display:flex;border-bottom:1px solid #e8eaf0;margin-bottom:6px;padding-bottom:13px;color:#d00d59;font-size:12px;font-weight:900}
+.equipmentInspectorR11 .detailMedia{grid-column:1;grid-row:2/9;aspect-ratio:auto;min-height:365px;max-height:610px;height:auto;position:relative;background:radial-gradient(circle at center,#fff,#f1f5fb);border:1px solid #dfe7ef;border-radius:15px;margin:0;display:grid;place-items:center;overflow:hidden}
+.equipmentInspectorR11 .detailMedia img{width:100%;height:100%;max-height:530px;object-fit:contain;padding:18px;transition:transform .2s}
+.equipmentInspectorR11 .detailMedia[data-zoomed=true] img{transform:scale(1.52)}
+.inspectorZoomR11{position:absolute;right:12px;bottom:12px;z-index:2;background:#fff;border:1px solid #e0d4df;color:#d4095d;border-radius:30px;padding:10px 13px;font-weight:900;font-size:11px;box-shadow:0 4px 15px #0a244a23}
+.equipmentInspectorR11 h2{grid-column:2;font-size:clamp(24px,2.5vw,35px);line-height:1.13;letter-spacing:-.7px;font-weight:950;color:#112d58;margin:4px 0}
+.equipmentInspectorR11>p:not(:last-child){grid-column:2;color:#526784;font-size:13px;line-height:1.55;margin:3px 0}
+.equipmentInspectorR11 .detailFacts{grid-column:2;display:grid;gap:6px;list-style:none;margin:5px 0;padding:0}
+.equipmentInspectorR11 .detailFacts li{font-size:12px;padding:10px 12px;border:1px solid #e2e9f0;background:#fff;border-radius:9px;color:#47607e}
+.equipmentInspectorR11 .detailFacts li:first-child{background:#fff0f6;border-color:#f2c5d9;color:#0d2955;font-weight:950;font-size:21px}
+.equipmentInspectorR11 .detailFacts li:nth-child(2){background:#eef9f4;color:#146c53;border-color:#c8eadd;font-weight:800}
+.equipmentInspectorR11 .detailFacts li>strong{color:#10305e}
+.equipmentInspectorR11 .selectionActions{grid-column:2;display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.equipmentInspectorR11 .selectionActions :is(button,a){border-radius:30px;padding:10px 15px;font-size:11px;font-weight:950;display:flex;align-items:center;gap:8px}
+.equipmentInspectorR11 .selectionActions button{background:#ec0b68;color:white;border:1px solid #ec0b68}
+.equipmentInspectorR11 .selectionActions a{background:white;color:#0d2c59;border:1px solid #b9c9dc}
+.equipmentInspectorR11>p:last-child{grid-column:2}
+.equipmentInspectorR11>p:last-child a{display:flex;align-items:center;gap:7px;width:fit-content;background:#102b59;color:white;border-radius:30px;padding:10px 14px;font-weight:900;font-size:11px;text-decoration:none}
+@media(max-width:750px){.equipmentInspectorR11[open]{grid-template-columns:1fr;width:min(94vw,610px);padding:13px;gap:10px}.equipmentInspectorR11>header,.equipmentInspectorR11 .detailMedia,.equipmentInspectorR11 h2,.equipmentInspectorR11>p:not(:last-child),.equipmentInspectorR11 .detailFacts,.equipmentInspectorR11 .selectionActions,.equipmentInspectorR11>p:last-child{grid-column:1;grid-row:auto}.equipmentInspectorR11 .detailMedia{min-height:235px;max-height:350px}.equipmentInspectorR11 h2{font-size:25px}.equipmentInspectorR11 .detailFacts li{padding:8px 10px}}
+@media(prefers-reduced-motion:reduce){.equipmentInspectorR11 .detailMedia img{transition:none}}
