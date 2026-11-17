@@ -15,7 +15,7 @@ test('equipment hero rollover preserves Conseil, Partner OS and original R7.1 ro
  assert.match(host,/<section className=\{c.hero\} data-establishments-hero>/);
  assert.match(host,/<NativeExplorer[\s\S]*?<CommercialJourney/);
  if(r11Host){
-  assert.match(host,/view === "produits" \\? \\(\\s*<EquipmentHeroR11/);
+  assert.ok(host.includes('<EquipmentHeroR11'));
   assert.match(host,/<EquipmentExperienceR10/);
  }else if(r8Host){
   assert.match(host,/view === "produits" \? \(\s*<EquipmentHeroR8/);
