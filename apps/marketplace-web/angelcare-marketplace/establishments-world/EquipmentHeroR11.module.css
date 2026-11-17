@@ -3,3 +3,8 @@
 @media(max-width:1150px){.hero{min-height:450px}.visual{min-height:450px}.copy{padding:25px}.copy h1{font-size:clamp(32px,3.3vw,44px)}.benefits span{font-size:10px;padding:7px}.sceneHotspot{bottom:130px}}
 @media(max-width:760px){.outer{width:calc(100% - 20px)}.hero{grid-template-columns:1fr}.copy{padding:26px 20px}.copy h1{font-size:clamp(31px,8vw,42px);letter-spacing:-1.1px}.visual{min-height:360px}.sceneCaption{bottom:111px}.sceneHotspot{bottom:120px}.universeRail{grid-template-columns:repeat(2,1fr)}.universeRail>div{grid-column:span 2}.thumbnails button strong{font-size:10px}}
 @media(prefers-reduced-motion:reduce){.outer *{transition:none!important;animation:none!important}}
+/* Real photographic picker, not anonymous numbered tabs. */
+.thumbnails button{padding:5px 7px;gap:6px;min-height:49px}
+.thumbnails button img{width:40px;height:36px;flex:none;border-radius:6px;object-fit:cover;box-shadow:0 1px 6px #132d4a22}
+.thumbnails button>span{font-size:9px}
+@media(max-width:560px){.thumbnails button img{width:29px;height:30px}.thumbnails button{padding:4px;gap:4px}.thumbnails button strong{font-size:9px}}
