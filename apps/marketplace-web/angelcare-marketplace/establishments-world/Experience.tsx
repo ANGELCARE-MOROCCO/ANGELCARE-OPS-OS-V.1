@@ -44,6 +44,7 @@ import {
 import { COMMERCIAL } from "./commercial-content";
 import { VIEWS, type View } from "./content";
 import { EquipmentHeroR11 } from "./EquipmentHeroR11";
+import {EquipmentMobileR111} from "./EquipmentMobileR111";
 import { EquipmentExperienceR10 } from "./EquipmentExperienceR10";
 import {
   blocked,
@@ -320,10 +321,8 @@ function EstablishmentsBody({
       <div
         ref={root}
         className={`${c.world} ${partner.host}`}
-        dir={
-          view === "partner-os" ? (locale === "ar" ? "rtl" : "ltr") : undefined
-        }
-        lang={view === "partner-os" ? locale : undefined}
+        dir={locale === "ar" ? "rtl" : "ltr"}
+        lang={locale}
         data-establishments-journey={view==="produits"?"R11":"R5"}
         data-view={view}
         data-motion={motion ? "on" : "off"}
@@ -352,6 +351,14 @@ function EstablishmentsBody({
           scrollTo(id);
         }}
       >
+        {view==="produits"&&<EquipmentMobileR111
+          locale={locale} count={project.length}
+          onExplore={()=>scrollTo("r10-explore")}
+          onProducts={()=>scrollTo("ew-native-explorer")}
+          onWorlds={()=>scrollTo("r10-universes")}
+          onIdeas={()=>scrollTo("r10-collection")}
+          onProject={()=>setReview(true)}
+        />}
         <nav
           className={c.localNav}
           data-establishments-nav
