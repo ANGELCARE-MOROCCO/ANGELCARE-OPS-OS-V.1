@@ -46,7 +46,8 @@ test('six different interactive visual families and immersive guided gallery',()
 });
 test('project selections remain available across session reload without undermining native offer quota',()=>{
  assert.match(model,/intent:equipment-domain:/);
- assert.match(model,/equipmentDomainSelection\(domain\)/);
+ assert.match(model,/equipmentDomainSelection\((?:domain|localDomain\(domain,locale\))\)/);
+ assert.match(model,/localDomain\(domain,locale\)/);
  assert.match(model,/otherCount>=8/);
  assert.match(model,/equipmentCount>=22/);
  assert.match(model,/\.slice\(0, 30\)/);
