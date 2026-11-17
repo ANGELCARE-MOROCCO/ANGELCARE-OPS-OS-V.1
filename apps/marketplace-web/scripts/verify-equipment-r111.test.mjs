@@ -14,6 +14,7 @@ const scene=read(root+"EquipmentR9DomainStudio.tsx");
 const sceneCopy=read(root+"equipment-r111-scene.ts");
 const ui=read(root+"equipment-r111-ui.ts");
 const mobile=read(root+"EquipmentMobileR111.tsx");
+const model=read(root+"model.ts");
 const mobileCss=read(root+"EquipmentMobileR111.module.css");
 const css=read(root+"commercial.module.css");
 const r10Css=read(root+"EquipmentExperienceR10.module.css");
@@ -50,6 +51,7 @@ test("source-authoritative 22 brochure domain IDs and program options cover EN/A
  for(const k of ["localizedDomains=useMemo","localizedStories=useMemo","localizedThemes=useMemo","localizedGoals=useMemo","localizedHotspots=useMemo"])assert.ok(body.includes(k),k);
  assert.ok(body.includes("localProgram(R9_PROGRAMS.find"));
  assert.ok(body.includes("onSelect(equipmentDomainSelection(activeDomain))"));
+ assert.ok(model.includes("equipmentDomainSelection(localDomain(domain,locale))"),"restored domain titles must follow locale while keeping stable keys");
 });
 test("all R10 visual text is localizable without replacing native commerce",()=>{
  assert.ok(ui.includes("equipmentUi("));
