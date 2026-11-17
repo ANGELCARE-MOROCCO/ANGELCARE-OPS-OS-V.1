@@ -311,6 +311,9 @@ function EstablishmentsBody({
       "",
       `${location.pathname}${location.search}#${next}`,
     );
+    // pushState is silent; notify the EN/AR route switcher so Conseil retains
+    // its protected legacy authority and Partner OS retains its dedicated renderer.
+    if(locale!=="fr")window.dispatchEvent(new Event("hashchange"));
     requestAnimationFrame(() => {
       root.current?.scrollIntoView({ block: "start", behavior: "instant" });
       root.current?.querySelector("h1")?.focus({ preventScroll: true });
