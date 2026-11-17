@@ -1,5 +1,5 @@
 "use client";
-import {useCallback,useEffect,useMemo,useRef,useState} from "react";
+import {useCallback,useEffect,useMemo,useState} from "react";
 import {
  ArrowRight,ArrowLeft,Bookmark,BookmarkCheck,Check,ChevronDown,ChevronLeft,ChevronRight,
  Compass,Grid2X2,GraduationCap,Heart,HeartHandshake,Layers3,MapPinned,MousePointer2,
@@ -58,14 +58,13 @@ export function EquipmentExperienceR10({
  const brief=useMemo(()=>{
   const base=equipmentR9Brief(selected,pref);
   const inspiration=EQUIPMENT_DOMAINS.filter(d=>savedSet.has(d.id)).map(d=>d.name).join(" · ");
-  return [base,inspiration?`Inspirations sauvegardées (non commandées): ${inspiration}`:""].filter(Boolean).join("\n").slice(0,2850);
+  return [base,inspiration?`Inspirations sauvegardées (non commandées): ${inspiration}`:""].filter(Boolean).join("\n").slice(0,1900);
  },[pref,selected,savedSet]);
- const bottomRef=useRef<HTMLElement|null>(null);
  useEffect(()=>{
   try{
    const old=sessionStorage.getItem(`ac.establishments.equipment-r9.preferences.v1:${storageScope}`);
    setPref(restoreR9State(old));
-   const saved=sessionStorage.getItem(ideas(storageScope));
+   const saved=localStorage.getItem(ideas(storageScope));
    const array=saved?JSON.parse(saved):[];
    setSavedIdeas(Array.isArray(array)?array.filter((v):v is string=>typeof v==="string"&&EQUIPMENT_DOMAINS.some(d=>d.id===v)).slice(0,22):[]);
   }catch{setPref(restoreR9State(null));setSavedIdeas([])}
@@ -73,7 +72,7 @@ export function EquipmentExperienceR10({
   if(chosen&&EQUIPMENT_DOMAINS.some(d=>d.id===chosen))setActiveDomainId(chosen);
   setHydrated(true);
  },[storageScope]);
- useEffect(()=>{if(!hydrated)return;try{sessionStorage.setItem(`ac.establishments.equipment-r9.preferences.v1:${storageScope}`,JSON.stringify(pref));sessionStorage.setItem(ideas(storageScope),JSON.stringify(savedIdeas))}catch{}},[hydrated,pref,savedIdeas,storageScope]);
+ useEffect(()=>{if(!hydrated)return;try{sessionStorage.setItem(`ac.establishments.equipment-r9.preferences.v1:${storageScope}`,JSON.stringify(pref));localStorage.setItem(ideas(storageScope),JSON.stringify(savedIdeas))}catch{}},[hydrated,pref,savedIdeas,storageScope]);
  useEffect(()=>onBriefChange(brief),[brief,onBriefChange]);
  const scroll=(id:string)=>document.getElementById(id)?.scrollIntoView({behavior:"smooth",block:"start"});
  const showDomain=useCallback((id:string)=>{
