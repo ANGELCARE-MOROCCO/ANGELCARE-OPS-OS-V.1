@@ -107,7 +107,7 @@ export function EquipmentExperienceR10({
  const hotspot=localizedHotspots[activeMap];
  const domainForHotspot=localizedDomains.find(d=>d.id===hotspot.id);
  return <div className={c.root} lang={locale} dir={locale==="ar"?"rtl":"ltr"} data-equipment-experience="R10">
-  <nav className={c.jump} aria-label="Navigation équipements"><span><Compass size={17}/> ANGELCARE SCHOOL UNIVERSE</span><div>
+  <nav className={c.jump} aria-label={equipmentUi(locale,"Navigation équipements")}><span><Compass size={17}/> ANGELCARE SCHOOL UNIVERSE</span><div>
    <button onClick={()=>scroll("r10-explore")}>{equipmentUi(locale,"Explorer")}</button><button onClick={()=>scroll("r10-stories")}>{equipmentUi(locale,"Inspirations")}</button><button onClick={()=>scroll("r10-map")}>{equipmentUi(locale,"Visiter l'école")}</button><button onClick={()=>scroll("r10-universes")}>{equipmentUi(locale,"Les univers")}</button>
    <button onClick={()=>scroll("r10-collection")}><Bookmark size={15}/> Mes idées {savedIdeas.length+selectedDomainIds.size>0?(`(${savedIdeas.length+selectedDomainIds.size})`):""}</button>
   </div></nav>
@@ -122,9 +122,9 @@ export function EquipmentExperienceR10({
    <div className={c.introMedia}><Photo src="classroom" slot="equipment-r10.intro.classroom" alt={equipmentUi(locale,"Salle de classe lumineuse et espaces pédagogiques")} priority/><div className={c.introMediaInset}><Photo src="os-team" slot="equipment-r10.intro.team" alt={equipmentUi(locale,"Organisation et préparation de l’équipe pédagogique")}/></div><span className={c.introSticker}><Star size={16}/> {equipmentUi(locale,"Imaginez la différence")}</span></div>
   </section>
 
-  <section className={c.discovery} aria-label="Choisissez votre manière de découvrir">
+  <section className={c.discovery} aria-label={equipmentUi(locale,"Choisissez votre manière de découvrir")}>
    <div className={c.sectionHeading}><span>{equipmentUi(locale,"01 / DÉCOUVERTE SUR MESURE")}</span><h2>{equipmentUi(locale,"Comment souhaitez-vous explorer ?")}</h2><p>{equipmentUi(locale,"Trois chemins clairs, une seule destination : des solutions adaptées à votre établissement.")}</p></div>
-   <div className={c.discoveryTabs} role="tablist" aria-label="Modes de découverte">
+   <div className={c.discoveryTabs} role="tablist" aria-label={equipmentUi(locale,"Modes de découverte")}>
     <button role="tab" aria-selected={entry==="spaces"} onClick={()=>setEntry("spaces")}><MapPinned size={19}/> {equipmentUi(locale,"Par espace")} <small>{equipmentUi(locale,"J'explore mon école")}</small></button>
     <button role="tab" aria-selected={entry==="goals"} onClick={()=>setEntry("goals")}><Lightbulb size={19}/> {equipmentUi(locale,"Par objectif")} <small>{equipmentUi(locale,"Je pars d'un besoin")}</small></button>
     <button role="tab" aria-selected={entry==="domains"} onClick={()=>setEntry("domains")}><Grid2X2 size={19}/> {equipmentUi(locale,"Par domaine")} <small>{equipmentUi(locale,"Je connais le sujet")}</small></button>
