@@ -427,7 +427,7 @@ function EstablishmentsBody({
         </nav>
         {view === "partner-os" ? (
           <PartnerR2Hero
-            onContact={() => contact({subject:t("Préparer ma démonstration Partner OS")})}
+            onContact={() => scrollTo("pos-project")}
             onExplore={() => scrollTo("pos-atlas")}
           />
         ) : view === "produits" ? (
