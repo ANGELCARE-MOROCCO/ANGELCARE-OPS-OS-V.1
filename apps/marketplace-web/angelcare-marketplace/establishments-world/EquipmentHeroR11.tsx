@@ -38,7 +38,7 @@ export function EquipmentHeroR11({locale,onExploreDomains,onExploreOffers,onExpl
     </div>
     <div className={c.sceneControls}><button onClick={()=>choose(index-1)} aria-label={t.previous}><ChevronLeft size={19}/></button><span>{String(index+1).padStart(2,"0")} / 04</span><button onClick={()=>choose(index+1)} aria-label={t.next}><ChevronRight size={19}/></button></div>
     <button className={c.sceneHotspot} onClick={()=>onExploreDomain(current.domain)}><MousePointer2 size={17}/>{t.discover}<ArrowRight size={15}/></button>
-    <div className={c.thumbnails} aria-label={t.thumbs}>{SCENES.map((scene,i)=><button key={scene.id} aria-label={t.scene[i]} aria-pressed={index===i} onClick={()=>setIndex(i)}><span>{String(i+1).padStart(2,"0")}</span><strong>{t.contexts[i]}</strong></button>)}</div>
+    <div className={c.thumbnails} aria-label={t.thumbs}>{SCENES.map((scene,i)=><button key={scene.id} aria-label={t.scene[i]} aria-pressed={index===i} onClick={()=>setIndex(i)}><img src={i===0?"/angelcare-marketplace/establishments-r4/equipment-hero-r71-campaign.png":`/angelcare-marketplace/establishments-r2/${scene.src}`} alt="" loading="lazy" decoding="async"/><span>{String(i+1).padStart(2,"0")}</span><strong>{t.contexts[i]}</strong></button>)}</div>
    </div>
   </div>
   <div className={c.universeRail}><div><span>{t.world}</span><strong>04 <small>/ 06</small></strong></div>{WORLDS.map((world,i)=>{const Icon=world.icon;return <button key={world.id} onClick={()=>onExploreDomain(world.domain)} style={{backgroundColor:world.bg,color:world.ink}}><Icon size={21}/><span>{t.contexts[i]}</span><ArrowRight size={15}/></button>})}</div>
