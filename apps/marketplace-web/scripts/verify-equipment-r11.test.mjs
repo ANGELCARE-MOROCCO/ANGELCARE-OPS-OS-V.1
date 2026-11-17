@@ -67,3 +67,14 @@ test("premium equipment inspector uses real published image and native project a
  assert.ok(route.includes("businessItemHref(item, locale, territory)"));
  assert.ok(route.includes("blocked(item) && !selected"));
 });
+
+
+test("R11 catalogue editorial copy has explicit French English Arabic parity",()=>{
+ const dictionary=src("equipment-r11-copy.ts");
+ for(const lang of ["fr:","en:","ar:"])assert.ok(dictionary.includes(lang),lang);
+ for(const key of ["masthead:","headline:","intro:","searchTitle:","searchPlaceholder:","categoryLabel:","showCompare:"])assert.equal(dictionary.split(key).length-1,3,key);
+ assert.ok(explorer.includes("EQUIPMENT_R11_COPY[locale]"));
+ assert.ok(explorer.includes("r11text.headline"));
+ assert.ok(explorer.includes("r11text.searchPlaceholder"));
+ assert.ok(explorer.includes("r11text.categoryTitle"));
+});
