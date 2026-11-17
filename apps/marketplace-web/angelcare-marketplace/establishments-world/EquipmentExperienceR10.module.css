@@ -62,3 +62,34 @@
 .mapPhoto:after{display:none}
 @media(max-width:880px){.goalDetail{grid-template-columns:1fr}.goalDetail>div:last-child{grid-template-columns:repeat(4,1fr)}}
 @media(max-width:540px){.goalDetail>div:last-child{grid-template-columns:repeat(2,1fr)}.mapTiles{grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(3,1fr)}.mapPhoto{min-height:480px}.mapZone span{font-size:11px;bottom:6px;left:6px;right:5px}.mapZone span b{width:22px;height:22px}.mapPhotoLabel{font-size:10px;bottom:7px;left:7px}}
+
+/* A real six-family composition grammar: no replicated card layout between worlds. */
+.universeCard[data-theme="welcome"]{grid-template-columns:43% 57%;border-radius:19px 12px 19px 12px}
+.universeCard[data-theme="welcome"] .universeImage{border-radius:0 45px 45px 0}
+.universeCard[data-theme="learning"]{grid-template-columns:1fr;grid-template-rows:215px 1fr;border-radius:19px}
+.universeCard[data-theme="learning"] .universeImage{min-height:215px}
+.universeCard[data-theme="learning"] .universeBody{display:grid;grid-template-columns:1fr 1fr;align-items:start;gap:9px}
+.universeCard[data-theme="learning"] .universeLead{grid-column:1/-1}
+.universeCard[data-theme="learning"] .universeBenefits{align-self:start}
+.universeCard[data-theme="learning"] .universeTags{align-content:start}
+.universeCard[data-theme="parents"]{grid-template-columns:59% 41%;border-radius:20px 20px 11px 11px}
+.universeCard[data-theme="parents"] .universeImage{order:2}
+.universeCard[data-theme="parents"] .universeBody{order:1}
+.universeCard[data-theme="operations"]{grid-template-columns:40% 60%;grid-template-rows:1fr}
+.universeCard[data-theme="operations"] .universeImage{min-height:300px}
+.universeCard[data-theme="operations"] .universeBody{background:linear-gradient(140deg,#d9ebff,#eef7ff)}
+.universeCard[data-theme="routines"]{grid-template-columns:57% 43%;border-radius:27px}
+.universeCard[data-theme="routines"] .universeBody{order:1}
+.universeCard[data-theme="routines"] .universeImage{order:2;border-radius:50% 0 0 50%}
+.universeCard[data-theme="identity"]{grid-template-columns:1fr;grid-template-rows:230px 1fr;border:2px solid #f6a8c9}
+.universeCard[data-theme="identity"] .universeImage{min-height:230px}
+.universeCard[data-theme="identity"] .universeImage>span{background:#e90b68;color:#fff}
+.universeCard[data-theme="identity"] .universeBody{padding:18px 24px}
+@media(max-width:780px){
+ .universeCard[data-theme="learning"] .universeBody{display:flex;flex-direction:column}
+ .universeCard[data-theme="operations"]{grid-template-columns:1fr;grid-template-rows:180px 1fr}
+ .universeCard[data-theme="operations"] .universeImage{min-height:180px}
+ .universeCard[data-theme="welcome"],.universeCard[data-theme="parents"],.universeCard[data-theme="routines"]{grid-template-columns:1fr;grid-template-rows:170px 1fr}
+ .universeCard[data-theme="welcome"] .universeImage,.universeCard[data-theme="parents"] .universeImage,.universeCard[data-theme="routines"] .universeImage{order:0;border-radius:0;min-height:170px!important}
+ .universeCard[data-theme="welcome"] .universeBody,.universeCard[data-theme="parents"] .universeBody,.universeCard[data-theme="routines"] .universeBody{order:0}
+}
