@@ -51,6 +51,7 @@ import s from "./journey.module.css";
 import p from "./premium.module.css";
 import c from "./commercial.module.css";
 import r11 from "./EquipmentExplorerR11.module.css";
+import {EQUIPMENT_R11_COPY} from "./equipment-r11-copy";
 import { catalogueWindow } from "./catalogue-window";
 export function OfferImage({ item }: { item: DiscoveryItem }) {
   const { t: tr, locale } = usePartner();
@@ -100,6 +101,7 @@ export function NativeExplorer({
 }) {
   const { t: tr, locale } = usePartner();
   const equipmentR11 = view === "produits";
+  const r11text=EQUIPMENT_R11_COPY[locale];
   const [filtersOpen,setFiltersOpen] = useState(false);
   const [displayMode,setDisplayMode] = useState<"grid"|"list">("grid");
   const [compareExpanded,setCompareExpanded] = useState(false);
@@ -271,20 +273,20 @@ export function NativeExplorer({
       aria-label={tr("Offres publiées du catalogue")}
     >
       {equipmentR11&&<div className={r11.commerceMasthead}>
-        <div className={r11.commerceLead}><span><Sparkles size={17}/>{tr("ANGELCARE · CATALOGUE PROFESSIONNEL")}</span>
-          <h2>{tr("Des produits qui donnent vie à vos projets.")}</h2>
-          <p>{tr("Découvrez les offres réellement publiées pour les établissements. Comparez les caractéristiques, gardez vos favoris et préparez votre projet à votre rythme.")}</p>
-          <div className={r11.commerceFacts}><span><Check size={16}/>{tr("Références publiées")}</span><span><BookOpen size={16}/>{tr("Des usages à découvrir")}</span><span><Heart size={16}/>{tr("Une sélection à votre rythme")}</span></div>
+        <div className={r11.commerceLead}><span><Sparkles size={17}/>{r11text.masthead}</span>
+          <h2>{r11text.headline}</h2>
+          <p>{r11text.intro}</p>
+          <div className={r11.commerceFacts}><span><Check size={16}/>{r11text.published}</span><span><BookOpen size={16}/>{r11text.useCases}</span><span><Heart size={16}/>{r11text.choosePace}</span></div>
         </div>
-        <div className={r11.commerceArt} aria-hidden="true"><div><Package size={35}/><span>{tr("ÉQUIPEMENTS")}</span></div><div><BookOpen size={30}/><span>{tr("PÉDAGOGIE")}</span></div><div><Sparkles size={30}/><span>{tr("IDENTITÉ")}</span></div></div>
+        <div className={r11.commerceArt} aria-hidden="true"><div><Package size={35}/><span>{r11text.equipment}</span></div><div><BookOpen size={30}/><span>{r11text.learning}</span></div><div><Sparkles size={30}/><span>{r11text.identity}</span></div></div>
       </div>}
       {equipmentR11&&<div className={r11.searchCommand}>
-        <div className={r11.searchIntro}><span>{tr("RECHERCHE PROFESSIONNELLE")}</span><strong>{tr("Que recherchez-vous pour votre établissement ?")}</strong></div>
-        <div className={r11.searchCommandRow}><label className={r11.searchMain}><Search size={22}/><input type="search" value={filters.query} onFocus={()=>setSuggestionsVisible(true)} onKeyDown={e=>{if(e.key==="Escape")setSuggestionsVisible(false)}} onChange={e=>{change({query:e.target.value});setSuggestionsVisible(true)}} placeholder={tr("Rechercher un produit, une référence ou un usage…")} aria-label={tr("Rechercher une offre publiée")} aria-controls="r11-search-suggestions" aria-expanded={suggestionsVisible&&suggestions.length>0}/>{filters.query&&<button type="button" aria-label={tr("Effacer la recherche")} onClick={()=>change({query:""})}><X size={17}/></button>}</label>
-          <button type="button" className={r11.filterTrigger} aria-expanded={filtersOpen} onClick={()=>setFiltersOpen(v=>!v)}><SlidersHorizontal size={18}/>{tr(filtersOpen?"Masquer les filtres":"Filtres avancés")}{chips.length>0?<span>{chips.length}</span>:null}</button>
+        <div className={r11.searchIntro}><span>{r11text.searchTitle}</span><strong>{r11text.searchHelp}</strong></div>
+        <div className={r11.searchCommandRow}><label className={r11.searchMain}><Search size={22}/><input type="search" value={filters.query} onFocus={()=>setSuggestionsVisible(true)} onKeyDown={e=>{if(e.key==="Escape")setSuggestionsVisible(false)}} onChange={e=>{change({query:e.target.value});setSuggestionsVisible(true)}} placeholder={r11text.searchPlaceholder} aria-label={r11text.searchLabel} aria-controls="r11-search-suggestions" aria-expanded={suggestionsVisible&&suggestions.length>0}/>{filters.query&&<button type="button" aria-label={r11text.clearSearch} onClick={()=>change({query:""})}><X size={17}/></button>}</label>
+          <button type="button" className={r11.filterTrigger} aria-expanded={filtersOpen} onClick={()=>setFiltersOpen(v=>!v)}><SlidersHorizontal size={18}/>{(filtersOpen?r11text.hideFilters:r11text.showFilters)}{chips.length>0?<span>{chips.length}</span>:null}</button>
         </div>
-        {suggestionsVisible&&suggestions.length>0&&<div id="r11-search-suggestions" className={r11.suggestionPanel} role="group" aria-label={tr("Suggestions du catalogue publié")}>{suggestions.map(item=><button key={item.id} type="button" onClick={()=>{change({query:item.name});setSuggestionsVisible(false)}}><span>{item.media_url?<img src={item.media_url} alt="" loading="lazy" onError={e=>{e.currentTarget.style.display="none"}}/>:<Package size={17}/>}</span><strong>{item.name}</strong><small>{item.public_reference}</small><ArrowRight size={16}/></button>)}</div>}
-        <div className={r11.resultSummary}><span><strong>{countText(locale,visible.length)}</strong> {tr("offres correspondant à vos critères")}</span><div><button aria-label={tr("Affichage en grille")} aria-pressed={displayMode==="grid"} onClick={()=>setDisplayMode("grid")}><Grid2X2 size={18}/></button><button aria-label={tr("Affichage en liste")} aria-pressed={displayMode==="list"} onClick={()=>setDisplayMode("list")}><List size={19}/></button></div></div>
+        {suggestionsVisible&&suggestions.length>0&&<div id="r11-search-suggestions" className={r11.suggestionPanel} role="group" aria-label={r11text.suggestions}>{suggestions.map(item=><button key={item.id} type="button" onClick={()=>{change({query:item.name});setSuggestionsVisible(false)}}><span>{item.media_url?<img src={item.media_url} alt="" loading="lazy" onError={e=>{e.currentTarget.style.display="none"}}/>:<Package size={17}/>}</span><strong>{item.name}</strong><small>{item.public_reference}</small><ArrowRight size={16}/></button>)}</div>}
+        <div className={r11.resultSummary}><span><strong>{countText(locale,visible.length)}</strong> {r11text.results}</span><div><button aria-label={r11text.grid} aria-pressed={displayMode==="grid"} onClick={()=>setDisplayMode("grid")}><Grid2X2 size={18}/></button><button aria-label={r11text.list} aria-pressed={displayMode==="list"} onClick={()=>setDisplayMode("list")}><List size={19}/></button></div></div>
       </div>}
       <div className={s.nativeHeading} data-native-title>
         <div>
@@ -337,7 +339,7 @@ export function NativeExplorer({
       <div className={`${s.toolbar} ${equipmentR11?r11.advancedPanel:""}`} data-native-toolbar>
         <label>
           <Search size={17} />
-          <span className={s.sr}>{tr("Rechercher une offre publiée")}</span>
+          <span className={s.sr}>{r11text.searchLabel}</span>
           <input
             value={filters.query}
             onChange={(event) => change({ query: event.target.value })}
@@ -408,7 +410,7 @@ export function NativeExplorer({
           </select>
         </label>
       </div>
-      {equipmentR11&&categories.length>0&&<section className={r11.categoryDiscovery}><div><span>{tr("DÉCOUVERTE PAR RAYON")}</span><h3>{tr("Trouvez les solutions qui vous ressemblent.")}</h3></div><div className={r11.categoryVisuals}>{categories.slice(0,8).map(([key,label],i)=><button key={key} type="button" aria-pressed={category===key} onClick={()=>change({category:category===key?"all":key})} data-tone={i%6}><span>{channelItems.find(item=>item.category_key===key&&!!item.media_url)?.media_url?<img src={channelItems.find(item=>item.category_key===key&&!!item.media_url)!.media_url!} alt="" loading="lazy" onError={(e)=>{e.currentTarget.style.display="none"}}/>:<Package size={21}/>}</span><strong>{tr(label)}</strong><small>{countText(locale,channelItems.filter(item=>item.category_key===key).length)} {tr("références")}</small><ChevronRight size={18}/></button>)}</div></section>}
+      {equipmentR11&&categories.length>0&&<section className={r11.categoryDiscovery}><div><span>{r11text.categoryLabel}</span><h3>{r11text.categoryTitle}</h3></div><div className={r11.categoryVisuals}>{categories.slice(0,8).map(([key,label],i)=><button key={key} type="button" aria-pressed={category===key} onClick={()=>change({category:category===key?"all":key})} data-tone={i%6}><span>{channelItems.find(item=>item.category_key===key&&!!item.media_url)?.media_url?<img src={channelItems.find(item=>item.category_key===key&&!!item.media_url)!.media_url!} alt="" loading="lazy" onError={(e)=>{e.currentTarget.style.display="none"}}/>:<Package size={21}/>}</span><strong>{tr(label)}</strong><small>{countText(locale,channelItems.filter(item=>item.category_key===key).length)} {r11text.references}</small><ChevronRight size={18}/></button>)}</div></section>}
       {categories.length > 1 && (
         <div
           className={s.categoryRail}
@@ -538,7 +540,7 @@ export function NativeExplorer({
             : "match your criteria",
         )}
       </p>
-      {equipmentR11&&allCompared.length>0&&<div className={r11.compareEntry}><GitCompareArrows size={20}/><div><strong>{tr("Votre sélection comparative")}</strong><small>{countText(locale,allCompared.length)} {tr("références · maximum 4")}</small></div><button onClick={()=>setCompareExpanded(v=>!v)} aria-expanded={compareExpanded}>{tr(compareExpanded?"Masquer le comparatif":"Comparer les produits")}<ArrowRight size={17}/></button></div>}
+      {equipmentR11&&allCompared.length>0&&<div className={r11.compareEntry}><GitCompareArrows size={20}/><div><strong>{r11text.compareTitle}</strong><small>{countText(locale,allCompared.length)} {r11text.compareCount}</small></div><button onClick={()=>setCompareExpanded(v=>!v)} aria-expanded={compareExpanded}>{(compareExpanded?r11text.hideCompare:r11text.showCompare)}<ArrowRight size={17}/></button></div>}
       {allCompared.length > 0 && (!equipmentR11||compareExpanded) && (
         <div className={s.compareTray}>
           <GitCompareArrows size={19} />
