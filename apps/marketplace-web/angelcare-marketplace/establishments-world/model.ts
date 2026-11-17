@@ -226,7 +226,7 @@ export function restoreProject(
         }
         if(key.startsWith("intent:equipment-domain:")){
           const domain=EQUIPMENT_DOMAINS.find(domain=>key===`intent:equipment-domain:${domain.id}`);
-          return domain?[equipmentDomainSelection(localDomain(domain,locale))]:[];
+          return domain?[equipmentDomainSelection(localDomain(domain,locale),locale)]:[];
         }
         return key === "intent:partner-free-year" ? [freeYearSelection()] : [];
       })
