@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "angelcare-marketplace/establishments-world/Experience.tsx",
+    "angelcare-marketplace/establishments-world/partner/PartnerOS.tsx",
+    "angelcare-marketplace/establishments-world/partner/PartnerR2Experience.tsx",
+    "angelcare-marketplace/establishments-world/partner/content.ts",
+    "angelcare-marketplace/establishments-world/partner/Locale.tsx",
+    "app/angelcare-marketplace/[locale]/establishments/partner-os/page.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next"
+  ]
+}
