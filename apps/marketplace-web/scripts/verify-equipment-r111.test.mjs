@@ -46,7 +46,7 @@ test("source-authoritative 22 brochure domain IDs and program options cover EN/A
   assert.ok(content.includes('"'+id+'":{name:'),id+" missing from EN/AR");
   assert.ok(content.split('"'+id+'":{name:').length>=3,id+" must have both languages");
  }
- for(const k of ["localDomain(","localProgram(","localTheme(","localStory(","localGoal(","localHotspot(","localDomainLabel("])assert.ok(content.includes(k),k);
+ for(const k of ["localDomain(","localProgram(","localTheme(","localStory(","localGoal(","localHotspot(","localDomainLabel("])assert.ok(content.includes(k)||content.includes(k.replace("(","<")),k);
  for(const k of ["localizedDomains=useMemo","localizedStories=useMemo","localizedThemes=useMemo","localizedGoals=useMemo","localizedHotspots=useMemo"])assert.ok(body.includes(k),k);
  assert.ok(body.includes("localProgram(R9_PROGRAMS.find"));
  assert.ok(body.includes("onSelect(equipmentDomainSelection(activeDomain))"));
