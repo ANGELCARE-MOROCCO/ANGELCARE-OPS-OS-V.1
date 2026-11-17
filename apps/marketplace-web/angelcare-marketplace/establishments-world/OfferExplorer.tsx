@@ -103,6 +103,7 @@ export function NativeExplorer({
   const [filtersOpen,setFiltersOpen] = useState(false);
   const [displayMode,setDisplayMode] = useState<"grid"|"list">("grid");
   const [compareExpanded,setCompareExpanded] = useState(false);
+  const [suggestionsVisible,setSuggestionsVisible] = useState(false);
 
   const [filters, setFilters] = useSessionValue(
     `ac.establishments.filters.v3:${experience.territoryCode || "default"}:${view}`,
@@ -166,6 +167,7 @@ export function NativeExplorer({
       selections.saved,
     ],
   );
+  const suggestions = filters.query.trim().length>1?channelItems.filter(item=>(item.name+" "+item.public_reference+" "+(item.short_description||"")).toLocaleLowerCase(locale).includes(filters.query.trim().toLocaleLowerCase(locale))).slice(0,6):[];
   const [perPage, setPerPage] = useSessionValue(
     `ac.establishments.results.v3:${view}`,
     10,
@@ -278,9 +280,10 @@ export function NativeExplorer({
       </div>}
       {equipmentR11&&<div className={r11.searchCommand}>
         <div className={r11.searchIntro}><span>{tr("RECHERCHE PROFESSIONNELLE")}</span><strong>{tr("Que recherchez-vous pour votre établissement ?")}</strong></div>
-        <div className={r11.searchCommandRow}><label className={r11.searchMain}><Search size={22}/><input type="search" value={filters.query} onChange={e=>change({query:e.target.value})} placeholder={tr("Rechercher un produit, une référence ou un usage…")} aria-label={tr("Rechercher une offre publiée")}/>{filters.query&&<button type="button" aria-label={tr("Effacer la recherche")} onClick={()=>change({query:""})}><X size={17}/></button>}</label>
+        <div className={r11.searchCommandRow}><label className={r11.searchMain}><Search size={22}/><input type="search" value={filters.query} onFocus={()=>setSuggestionsVisible(true)} onKeyDown={e=>{if(e.key==="Escape")setSuggestionsVisible(false)}} onChange={e=>{change({query:e.target.value});setSuggestionsVisible(true)}} placeholder={tr("Rechercher un produit, une référence ou un usage…")} aria-label={tr("Rechercher une offre publiée")} aria-controls="r11-search-suggestions" aria-expanded={suggestionsVisible&&suggestions.length>0}/>{filters.query&&<button type="button" aria-label={tr("Effacer la recherche")} onClick={()=>change({query:""})}><X size={17}/></button>}</label>
           <button type="button" className={r11.filterTrigger} aria-expanded={filtersOpen} onClick={()=>setFiltersOpen(v=>!v)}><SlidersHorizontal size={18}/>{tr(filtersOpen?"Masquer les filtres":"Filtres avancés")}{chips.length>0?<span>{chips.length}</span>:null}</button>
         </div>
+        {suggestionsVisible&&suggestions.length>0&&<div id="r11-search-suggestions" className={r11.suggestionPanel} role="group" aria-label={tr("Suggestions du catalogue publié")}>{suggestions.map(item=><button key={item.id} type="button" onClick={()=>{change({query:item.name});setSuggestionsVisible(false)}}><span>{item.media_url?<img src={item.media_url} alt="" loading="lazy" onError={e=>{e.currentTarget.style.display="none"}}/>:<Package size={17}/>}</span><strong>{item.name}</strong><small>{item.public_reference}</small><ArrowRight size={16}/></button>)}</div>}
         <div className={r11.resultSummary}><span><strong>{countText(locale,visible.length)}</strong> {tr("offres correspondant à vos critères")}</span><div><button aria-label={tr("Affichage en grille")} aria-pressed={displayMode==="grid"} onClick={()=>setDisplayMode("grid")}><Grid2X2 size={18}/></button><button aria-label={tr("Affichage en liste")} aria-pressed={displayMode==="list"} onClick={()=>setDisplayMode("list")}><List size={19}/></button></div></div>
       </div>}
       <div className={s.nativeHeading} data-native-title>
@@ -405,7 +408,7 @@ export function NativeExplorer({
           </select>
         </label>
       </div>
-      {equipmentR11&&categories.length>0&&<section className={r11.categoryDiscovery}><div><span>{tr("DÉCOUVERTE PAR RAYON")}</span><h3>{tr("Trouvez les solutions qui vous ressemblent.")}</h3></div><div className={r11.categoryVisuals}>{categories.slice(0,8).map(([key,label],i)=><button key={key} type="button" aria-pressed={category===key} onClick={()=>change({category:category===key?"all":key})} data-tone={i%6}><span><Package size={21}/></span><strong>{tr(label)}</strong><small>{countText(locale,channelItems.filter(item=>item.category_key===key).length)} {tr("références")}</small><ChevronRight size={18}/></button>)}</div></section>}
+      {equipmentR11&&categories.length>0&&<section className={r11.categoryDiscovery}><div><span>{tr("DÉCOUVERTE PAR RAYON")}</span><h3>{tr("Trouvez les solutions qui vous ressemblent.")}</h3></div><div className={r11.categoryVisuals}>{categories.slice(0,8).map(([key,label],i)=><button key={key} type="button" aria-pressed={category===key} onClick={()=>change({category:category===key?"all":key})} data-tone={i%6}><span>{channelItems.find(item=>item.category_key===key&&!!item.media_url)?.media_url?<img src={channelItems.find(item=>item.category_key===key&&!!item.media_url)!.media_url!} alt="" loading="lazy" onError={(e)=>{e.currentTarget.style.display="none"}}/>:<Package size={21}/>}</span><strong>{tr(label)}</strong><small>{countText(locale,channelItems.filter(item=>item.category_key===key).length)} {tr("références")}</small><ChevronRight size={18}/></button>)}</div></section>}
       {categories.length > 1 && (
         <div
           className={s.categoryRail}
