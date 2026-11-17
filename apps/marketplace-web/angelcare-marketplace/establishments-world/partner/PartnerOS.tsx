@@ -117,30 +117,25 @@ export function PartnerPhoto({
       "Scène illustrative : préparation de la facturation et suivi administratif",
   }[kind];
   const names = {
+    direction: "os-overview",
     parents: "os-admissions",
     activities: "os-activities",
     team: "os-team",
-  };
-  const source =
-    kind === "direction" || kind === "finance"
-      ? `/angelcare-marketplace/partner-os-r1/${kind}-scene.png`
-      : campaignAsset(names[kind]);
+    finance: "os-finance",
+  } as const;
+  const source = campaignAsset(names[kind]);
   return (
     <ManagedImage
       slot={hero ? "journey-partner.hero" : `journey-partner.${kind}`}
       src={source}
-      srcSet={
-        kind === "direction" || kind === "finance"
-          ? undefined
-          : campaignSet(names[kind])
-      }
+      srcSet={campaignSet(names[kind])}
       sizes={
         hero
           ? "(min-width:1600px) 920px, 57vw"
           : "(min-width:1600px) 1476px, 90vw"
       }
-      width={kind === "finance" ? 1774 : 1536}
-      height={kind === "finance" ? 887 : 1024}
+      width={1536}
+      height={1024}
       alt={t(alt)}
       loading={hero ? "eager" : "lazy"}
       fetchPriority={hero ? "high" : undefined}
