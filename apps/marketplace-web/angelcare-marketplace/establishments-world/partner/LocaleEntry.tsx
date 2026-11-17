@@ -1,24 +1,24 @@
 "use client";
-import { useEffect, useState, type ReactNode } from "react";
-/** Retains the existing EN/AR storefront for other journeys; Partner OS uses the same new renderer. */
+import {useEffect,useState,type ReactNode} from "react";
+
+/** R11.1: English/Arabic Équipements use the canonical commercial renderer.
+ * Existing Conseil legacy and protected Partner OS stay separately selectable.
+ * The route follows hash changes without duplicating any commerce implementation.
+ */
 export function PartnerLocaleEntry({
-  children,
-  partner,
-}: {
-  children: ReactNode;
-  partner: ReactNode;
-}) {
-  const [selected, setSelected] = useState(false);
-  useEffect(() => {
-    const read = () =>
-      setSelected(location.hash.split("/")[0] === "#partner-os");
-    read();
-    window.addEventListener("hashchange", read);
-    window.addEventListener("popstate", read);
-    return () => {
-      window.removeEventListener("hashchange", read);
-      window.removeEventListener("popstate", read);
-    };
-  }, []);
-  return selected ? partner : children;
+ modern,legacy,partner
+}:{modern:ReactNode;legacy:ReactNode;partner:ReactNode}){
+ const [chapter,setChapter]=useState<"modern"|"legacy"|"partner">("modern");
+ useEffect(()=>{
+  const read=()=>{
+   const hash=decodeURIComponent(window.location.hash).toLowerCase();
+   const chosen=hash.startsWith("#partner-os")?"partner":hash.startsWith("#conseil")?"legacy":"modern";
+   setChapter(chosen);
+  };
+  read();
+  window.addEventListener("hashchange",read);
+  window.addEventListener("popstate",read);
+  return()=>{window.removeEventListener("hashchange",read);window.removeEventListener("popstate",read)};
+ },[]);
+ return chapter==="partner"?partner:chapter==="legacy"?legacy:modern;
 }
