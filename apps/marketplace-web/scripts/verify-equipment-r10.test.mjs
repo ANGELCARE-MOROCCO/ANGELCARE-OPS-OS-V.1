@@ -53,7 +53,9 @@ test("discovery, save, native selection, catalogue and enquiry remain independen
  assert.ok(page.includes("onBriefChange(brief)"));
  assert.ok(!page.includes("fetch("));
  assert.ok(!page.includes("supabase"));
- assert.ok(!page.includes("localStorage"));
+ assert.ok(page.includes("localStorage.getItem(ideas(storageScope))"));
+ assert.ok(page.includes("localStorage.setItem(ideas(storageScope)"));
+ assert.ok(!page.includes("localStorage.setItem(key("),"No personal notes or contact information may be persisted to localStorage");
 });
 test("full journey is visually saturated, responsive and honors reduced motion",()=>{
  for(const x of ["#ff765e","#e9b33e","#ea0b68","#0b2854","@media(max-width:780px)","@media(prefers-reduced-motion:reduce)"])assert.ok(styles.includes(x),x);
