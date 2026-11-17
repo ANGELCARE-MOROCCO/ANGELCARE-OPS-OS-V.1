@@ -42,6 +42,7 @@ export function EquipmentExperienceR10({
  const [activeDomainId,setActiveDomainId]=useState<string|null>(null);
  const [activeMap,setActiveMap]=useState(0);
  const [activeStory,setActiveStory]=useState(0);
+ const [goalFocus,setGoalFocus]=useState<string>("opening");
  const [showAllDomains,setShowAllDomains]=useState(false);
  const [pref,setPref]=useState<R9State>(()=>restoreR9State(null));
  const [savedIdeas,setSavedIdeas]=useState<string[]>([]);
@@ -83,10 +84,11 @@ export function EquipmentExperienceR10({
  },[]);
  const closeDomain=()=>{setActiveDomainId(null);window.history.replaceState(window.history.state,"",(()=>{const url=new URL(window.location.href);url.searchParams.delete("equipmentDomain");return url.pathname+url.search+url.hash})());scroll("r10-universes")};
  const toggleIdea=(id:string)=>setSavedIdeas(old=>old.includes(id)?old.filter(x=>x!==id):[...old,id].slice(0,22));
- const saveRelated=()=>{if(activeDomain&&!savedSet.has(activeDomain.id))toggleIdea(activeDomain.id)};
+ const saveRelated=()=>{if(activeDomain)toggleIdea(activeDomain.id)};
  const updatePref=(patch:Partial<R9Preference>)=>{if(!activeDomain)return;setPref(old=>({...old,preferences:{...old.preferences,[activeDomain.id]:{...defaultPref(),...old.preferences[activeDomain.id],...patch}}}))};
  const domainSearch=useMemo(()=>EQUIPMENT_DOMAINS.filter(d=>(atlasFamily==="all"||d.group===atlasFamily)&&(!search.trim()||normalize(d.name+" "+d.short+" "+d.pain+" "+d.examples.join(" ")).includes(normalize(search.trim())))),[search,atlasFamily]);
  const story=R10_STORIES[activeStory];
+ const focusedGoal=R10_GOALS.find(g=>g.id===goalFocus)||R10_GOALS[0];
  const hotspot=R10_SCHOOL_HOTSPOTS[activeMap];
  const domainForHotspot=EQUIPMENT_DOMAINS.find(d=>d.id===hotspot.id);
  return <div className={c.root} lang={locale} dir={locale==="ar"?"rtl":"ltr"} data-equipment-experience="R10">
@@ -116,8 +118,8 @@ export function EquipmentExperienceR10({
     {entry==="spaces"?<div className={c.spacesGrid}>{THEMES.slice(0,6).map((f,i)=><button key={f.id} onClick={()=>scroll("r10-universes-"+f.id)} className={c.spaceCard} data-space={f.id}>
      <span className={c.spacePhoto}><Photo src={f.art} slot={`equipment-r10.space.${f.id}`} alt={f.label}/></span><span className={c.spaceNumber}>0{i+1}</span>
      <span className={c.spaceCopy}><strong>{f.label}</strong><small>{f.outcome}</small><ChevronRight size={19}/></span></button>)}</div>:
-     entry==="goals"?<div className={c.goalsGrid}>{R10_GOALS.map(g=>{const Icon=GOAL_ICONS[g.id];return <button key={g.id} onClick={()=>showDomain(g.domains[0])}>
-      <span className={c.goalIcon}><Icon size={24}/></span><span><strong>{g.title}</strong><small>{g.subtitle}</small><em>{g.domains.length} pistes à découvrir</em></span><ArrowRight size={20}/></button>})}</div>:
+     entry==="goals"?<div className={c.goalsGrid}>{R10_GOALS.map(g=>{const Icon=GOAL_ICONS[g.id];return <button key={g.id} onClick={()=>setGoalFocus(g.id)} aria-pressed={goalFocus===g.id}>
+      <span className={c.goalIcon}><Icon size={24}/></span><span><strong>{g.title}</strong><small>{g.subtitle}</small><em>{g.domains.length} pistes à découvrir</em></span><ArrowRight size={20}/></button>})}<div className={c.goalDetail}><div><span>VOTRE PARCOURS RECOMMANDÉ</span><h3>{focusedGoal.title}</h3><p>{focusedGoal.subtitle}. Voici quatre thèmes utiles pour explorer la situation, sans engagement.</p></div><div>{focusedGoal.domains.map(id=>{const d=EQUIPMENT_DOMAINS.find(x=>x.id===id);return d?<button key={id} onClick={()=>showDomain(id)}><Photo src={d.art} slot={`equipment-r10.goal.${focusedGoal.id}.${id}`} alt={d.name}/><strong>{d.name}</strong><ChevronRight size={17}/></button>:null})}</div></div></div>:
     <div className={c.domainDiscovery}><div className={c.searchBar}><Search size={20}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Un besoin, un espace, une activité…" aria-label="Rechercher dans les 22 domaines"/></div>
      <div className={c.miniDomains}>{domainSearch.slice(0,9).map(d=><button onClick={()=>showDomain(d.id)} key={d.id}><span>{String(d.number).padStart(2,"0")}</span>{d.name}<ArrowRight size={16}/></button>)}</div>
      {domainSearch.length>9?<button className={c.moreDomains} onClick={()=>scroll("r10-atlas")}>Voir la bibliothèque complète <ArrowRight size={17}/></button>:null}
@@ -142,10 +144,7 @@ export function EquipmentExperienceR10({
   </section>
 
   <section className={c.mapSection} id="r10-map"><div className={c.sectionHeading}><span>03 / VISITE VISUELLE</span><h2>Promenez-vous dans <em>l'école idéale.</em></h2><p>Choisissez un espace : découvrez pourquoi il compte et quelles idées peuvent l'améliorer.</p></div>
-   <div className={c.mapComposition}><div className={c.mapPhoto}><Photo src="classroom" slot="equipment-r10.interactive-school-map" alt="Environnement pédagogique illustrant une école à explorer"/>
-    {R10_SCHOOL_HOTSPOTS.map((h,i)=><button key={h.id} style={{left:h.left+"%",top:h.top+"%"}} className={c.mapPin} data-active={activeMap===i} aria-pressed={activeMap===i} aria-label={`Explorer : ${h.label}`} onClick={()=>setActiveMap(i)}><span>{i+1}</span><strong>{h.label}</strong></button>)}
-    <span className={c.mapPhotoLabel}><MousePointer2 size={15}/> 6 espaces à explorer</span>
-   </div><div className={c.mapDetails} data-theme={hotspot.family}><span>ESPACE 0{activeMap+1} / 06</span><h3>{hotspot.label}</h3><p>{hotspot.summary}</p><div className={c.mapFeature}><Photo src={R10_THEMES[hotspot.family].art} slot={`equipment-r10.map.detail.${hotspot.family}`} alt={hotspot.label}/></div>
+   <div className={c.mapComposition}><div className={c.mapPhoto}><div className={c.mapTiles}>{R10_SCHOOL_HOTSPOTS.map((h,i)=><button key={h.id} type="button" className={c.mapZone} data-active={activeMap===i} aria-pressed={activeMap===i} onClick={()=>setActiveMap(i)}><Photo src={R10_THEMES[h.family].art} slot={`equipment-r10.school.zone.${h.id}`} alt={h.label}/><span><b>0{i+1}</b>{h.label}<ChevronRight size={17}/></span></button>)}</div><span className={c.mapPhotoLabel}><MousePointer2 size={15}/> 6 espaces à explorer</span></div><div className={c.mapDetails} data-theme={hotspot.family}><span>ESPACE 0{activeMap+1} / 06</span><h3>{hotspot.label}</h3><p>{hotspot.summary}</p><div className={c.mapFeature}><Photo src={R10_THEMES[hotspot.family].art} slot={`equipment-r10.map.detail.${hotspot.family}`} alt={hotspot.label}/></div>
     <strong>{domainForHotspot?.name}</strong><small>{domainForHotspot?.short}</small><button onClick={()=>showDomain(hotspot.id)}>Découvrir les idées de cet espace <ArrowRight size={17}/></button>
    </div></div>
   </section>
@@ -174,7 +173,7 @@ export function EquipmentExperienceR10({
 
   {activeDomain&&activeProgram?<section className={c.domainFeature} id="r10-domain-experience" data-domain={activeDomain.id}>
    <div className={c.domainFeatureTop}><button className={c.backButton} onClick={closeDomain}><ArrowLeft size={18}/> Retour aux univers</button><span>EXPÉRIENCE  {String(activeDomain.number).padStart(2,"0")} / 22 · {R10_THEMES[activeDomain.group].label}</span>
-    <button className={c.saveFeature} onClick={saveRelated}>{savedSet.has(activeDomain.id)?<BookmarkCheck size={17}/>:<Bookmark size={17}/>} {savedSet.has(activeDomain.id)?"Idée enregistrée":"Enregistrer l'idée"}</button></div>
+    <button className={c.saveFeature} onClick={saveRelated}>{savedSet.has(activeDomain.id)?<BookmarkCheck size={17}/>:<Bookmark size={17}/>} {savedSet.has(activeDomain.id)?"Retirer des idées":"Enregistrer l'idée"}</button></div>
    <div className={c.domainFeatureHero} data-theme={activeDomain.group}><div><span>{activeProgram.eyebrow}</span><h2>{R10_DOMAIN_LABELS[activeDomain.id]?.headline||activeProgram.headline}</h2><p>{R10_DOMAIN_LABELS[activeDomain.id]?.reassurance||activeProgram.promise}</p><div className={c.featureChips}>{activeDomain.examples.map(example=><span key={example}><CheckCircle2 size={14}/>{example}</span>)}</div></div><div><Photo src={activeDomain.art} slot={`equipment-r10.feature.${activeDomain.id}`} alt={activeDomain.name}/></div></div>
    <div className={c.domainSceneHeader}><div><span className={c.eyebrow}>EXPLOREZ LE CONCEPT</span><h3>Découvrez-le en situation.</h3><p>{activeProgram.scenario}</p></div><div className={c.domainSceneNote}><Info size={17}/> Concept illustratif : disponibilité, variantes et tarifs restent dans les offres publiées.</div></div>
    <div className={demos.root}><R9InteractiveScene program={activeProgram} domain={activeDomain} pref={activePref}
