@@ -54,10 +54,10 @@ import {
 } from "./model";
 import { useProject, useSessionValue } from "./useJourneyState";
 import {
-  PartnerHero,
   PartnerJourney,
   PartnerBriefFields,
 } from "./partner/PartnerOS";
+import {PartnerR2Hero} from "./partner/PartnerR2Experience";
 import {
   EMPTY_PARTNER,
   HORIZONS,
@@ -426,9 +426,9 @@ function EstablishmentsBody({
           />
         </nav>
         {view === "partner-os" ? (
-          <PartnerHero
-            onContact={contact}
-            onExplore={() => scrollTo("ew-native-explorer")}
+          <PartnerR2Hero
+            onContact={() => contact({subject:t("Préparer ma démonstration Partner OS")})}
+            onExplore={() => scrollTo("pos-atlas")}
           />
         ) : view === "produits" ? (
           <EquipmentHeroR71
