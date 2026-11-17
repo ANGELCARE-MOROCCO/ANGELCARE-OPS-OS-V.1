@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {readFileSync} from "node:fs";
+import {readFileSync,existsSync} from "node:fs";
 const source=(p)=>readFileSync(new URL("../"+p,import.meta.url),"utf8");
 const root="angelcare-marketplace/establishments-world/";
 const r2=source(root+"partner/PartnerR2Experience.tsx");
@@ -60,6 +60,11 @@ test("Managed PNG images from actual repo; stale missing R1 asset paths removed"
  for(const img of ["partner-hero","os-admissions","os-team","os-quotes","os-services","os-overview","os-finance","os-people-followup"])assert.ok(media.includes('"'+img+'"'),img);
  assert.ok(os.includes("campaignAsset(names[kind])"));assert.ok(os.includes("campaignSet(names[kind])"));
  assert.ok(!os.includes("/partner-os-r1/"));assert.ok(!r2.includes(".webp"));
+ const nativeBlock=r2.split("const R2_NATIVE_PHOTOS=new Set([")[1]?.split("]);")[0]||"";
+ const photoNames=[...nativeBlock.matchAll(/"([^"]+)"/g)].map(x=>x[1]);
+ assert.ok(photoNames.length>=18,"fewer than 18 distinct native images");
+ assert.equal(photoNames.length,new Set(photoNames).size,"native image duplication");
+ for(const photo of photoNames)assert.ok(existsSync(new URL("../public/angelcare-marketplace/establishments-r2/"+photo+".png",import.meta.url)),photo+" missing in repository");
 });
 test("FR EN AR source parity and RTL for hero, worlds, atlas, project and mobile",()=>{
  assert.ok(r2.includes('locale==="fr"?0:locale==="en"?1:2'));
@@ -76,5 +81,7 @@ test("Mobile removes mandatory 1120px, adds responsive worlds and native safe-ar
 });
 test("Deep-link recovery and preserved module keyboard interaction",()=>{
  for(const p of ['#partner-os/pos-',"history.pushState","setExpanded","aria-pressed={selected}","prefers-reduced-motion"])assert.ok((os+css+host).includes(p),p);
+ for(const p of ["activeKey={moduleTab[chapter.key]}","setModuleTab(previous=>","onSelect={key=>","getElementById(\"pos-module-\"+key)"])assert.ok(os.includes(p),p);
+ assert.ok(r2.includes("onSelect:(key:ModuleKey)=>void"));
  for(const p of ['window.addEventListener("hashchange"','window.addEventListener("popstate"'])assert.ok(os.includes(p),p);
 });
