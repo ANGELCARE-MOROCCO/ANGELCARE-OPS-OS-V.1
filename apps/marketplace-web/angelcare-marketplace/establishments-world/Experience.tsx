@@ -742,6 +742,7 @@ function OfferDetail({
   const { t: tr, locale } = usePartner();
 
   const ref = useRef<HTMLDialogElement>(null);
+  const [zoomed,setZoomed] = useState(false);
   const action = blocked(item) ? null : nativeAction(item, locale, territory);
   useEffect(() => {
     const previous = document.activeElement as HTMLElement | null;
@@ -771,8 +772,9 @@ function OfferDetail({
           <X size={20} />
         </button>
       </header>
-      <div className={c.detailMedia}>
+      <div className={c.detailMedia} data-zoomed={zoomed}>
         <OfferImage item={item} />
+        {equipmentR11 && item.media_url && <button type="button" className={c.inspectorZoomR11} onClick={()=>setZoomed(v=>!v)} aria-pressed={zoomed}>{tr(zoomed?"Réduire le visuel":"Agrandir le visuel")}</button>}
       </div>
       <h2 id="ac-offer-title">
         <bdi>{item.name}</bdi>
