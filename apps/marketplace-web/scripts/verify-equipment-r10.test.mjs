@@ -54,7 +54,7 @@ test("twenty-two real brochure domains remain discoverable with 22 distinct opti
  assert.ok(page.includes("activeDomain&&activeProgram"));
 });
 test("discovery, save, native selection, catalogue and enquiry remain independently meaningful",()=>{
- for(const x of ["toggleIdea(d.id)","showDomain(d.id)","onSelect(equipmentDomainSelection(activeDomain))","onExplore","onReview","onContact","sessionStorage.setItem","equipmentR9Brief","history.replaceState"])assert.ok(page.includes(x),x);
+ for(const x of ["toggleIdea(d.id)","showDomain(d.id)","onSelect(equipmentDomainSelection(activeDomain,locale))","onExplore","onReview","onContact","sessionStorage.setItem","equipmentR9Brief","history.replaceState"])assert.ok(page.includes(x),x);
  assert.ok(page.includes("savedIdeas"));
  assert.ok(page.includes("selectedDomainIds"));
  assert.ok(page.includes("onBriefChange(brief)"));
