@@ -1128,6 +1128,7 @@ export function PartnerJourney({
             onOpen={open}
             onAdd={toggle}
             selected={request.modules}
+            storageScope={storageScope}
           />
           {chapter.key === "direction" && (
             <div className={s.directionScene}>
