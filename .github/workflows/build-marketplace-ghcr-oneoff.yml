@@ -8,6 +8,7 @@ on:
       - feat/equipment-r9-immersive-commercial-22-journeys-20261116
       - feat/equipment-r10-school-universe-editorial-20261117
       - feat/equipment-r11-signature-hero-native-discovery-20261117
+      - feat/equipment-r111-universal-language-mobile-parity-20261117
     paths:
       - ".github/workflows/build-marketplace-ghcr-oneoff.yml"
       - "apps/marketplace-web/**"
