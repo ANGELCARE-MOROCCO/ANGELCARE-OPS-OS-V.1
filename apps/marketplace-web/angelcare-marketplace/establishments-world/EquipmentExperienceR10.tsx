@@ -12,7 +12,7 @@ import {EQUIPMENT_DOMAINS,EQUIPMENT_FAMILIES,equipmentDomainSelection,type Equip
 import {R9InteractiveScene} from "./EquipmentR9DomainStudio";
 import {R9_PROGRAMS,restoreR9State,equipmentR9Brief,type R9Preference,type R9State} from "./equipment-r9-programs";
 import {R10_THEMES,R10_STORIES,R10_GOALS,R10_SCHOOL_HOTSPOTS,R10_DOMAIN_LABELS,type ExperienceEntry} from "./equipment-r10-editorial";
-import {localDomain,localTheme,localStory,localGoal,localHotspot,localDomainLabel,localProgram} from "./equipment-r111-content";
+import {localDomain,localTheme,localStory,localGoal,localHotspot,localDomainLabel,localProgram,equipmentR111Brief} from "./equipment-r111-content";
 import {equipmentUi} from "./equipment-r111-ui";
 import type {Selection} from "./model";
 import c from "./EquipmentExperienceR10.module.css";
@@ -64,10 +64,10 @@ export function EquipmentExperienceR10({
  const activePref=activeDomain?pref.preferences[activeDomain.id]||defaultPref():defaultPref();
  const savedSet=useMemo(()=>new Set(savedIdeas),[savedIdeas]);
  const brief=useMemo(()=>{
-  const base=equipmentR9Brief(selected,pref);
+  const base=equipmentR111Brief(selected,pref,locale);
   const inspiration=localizedDomains.filter(d=>savedSet.has(d.id)).map(d=>d.name).join(" · ");
-  return [base,inspiration?`Inspirations sauvegardées (non commandées): ${inspiration}`:""].filter(Boolean).join("\n").slice(0,1900);
- },[pref,selected,savedSet]);
+  return [base,inspiration?`${locale==="en"?"Saved inspirations (not ordered)":locale==="ar"?"الأفكار المحفوظة (غير مطلوبة)":"Inspirations sauvegardées (non commandées)"}: ${inspiration}`:""].filter(Boolean).join("\n").slice(0,1900);
+ },[pref,selected,savedSet,localizedDomains,locale]);
  useEffect(()=>{
   try{
    const old=sessionStorage.getItem(`ac.establishments.equipment-r9.preferences.v1:${storageScope}`);
