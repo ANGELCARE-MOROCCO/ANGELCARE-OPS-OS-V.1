@@ -12,6 +12,15 @@ import {
   ImageOff,
   Search,
   X,
+  Grid2X2,
+  List,
+  SlidersHorizontal,
+  Sparkles,
+  Package,
+  ArrowDown,
+  BookOpen,
+  Image as ImageIcon,
+  ChevronRight,
 } from "lucide-react";
 import type {
   DiscoveryItem,
@@ -41,6 +50,7 @@ import { Pagination } from "./ExplorerControls";
 import s from "./journey.module.css";
 import p from "./premium.module.css";
 import c from "./commercial.module.css";
+import r11 from "./EquipmentExplorerR11.module.css";
 import { catalogueWindow } from "./catalogue-window";
 export function OfferImage({ item }: { item: DiscoveryItem }) {
   const { t: tr, locale } = usePartner();
@@ -89,6 +99,10 @@ export function NativeExplorer({
   onDetail: (item: DiscoveryItem) => void;
 }) {
   const { t: tr, locale } = usePartner();
+  const equipmentR11 = view === "produits";
+  const [filtersOpen,setFiltersOpen] = useState(false);
+  const [displayMode,setDisplayMode] = useState<"grid"|"list">("grid");
+  const [compareExpanded,setCompareExpanded] = useState(false);
 
   const [filters, setFilters] = useSessionValue(
     `ac.establishments.filters.v3:${experience.territoryCode || "default"}:${view}`,
@@ -248,9 +262,27 @@ export function NativeExplorer({
   return (
     <section
       id="ew-native-explorer"
-      className={`${s.nativeExplorer} ${c.catalogue}`}
+      className={`${s.nativeExplorer} ${c.catalogue} ${equipmentR11?r11.r11Explorer:""}`}
+      data-equipment-r11={equipmentR11?"true":"false"}
+      data-r11-mode={displayMode}
+      data-r11-filters={filtersOpen?"open":"closed"}
       aria-label={tr("Offres publiées du catalogue")}
     >
+      {equipmentR11&&<div className={r11.commerceMasthead}>
+        <div className={r11.commerceLead}><span><Sparkles size={17}/>{tr("ANGELCARE · CATALOGUE PROFESSIONNEL")}</span>
+          <h2>{tr("Des produits qui donnent vie à vos projets.")}</h2>
+          <p>{tr("Découvrez les offres réellement publiées pour les établissements. Comparez les caractéristiques, gardez vos favoris et préparez votre projet à votre rythme.")}</p>
+          <div className={r11.commerceFacts}><span><Check size={16}/>{tr("Références publiées")}</span><span><BookOpen size={16}/>{tr("Des usages à découvrir")}</span><span><Heart size={16}/>{tr("Une sélection à votre rythme")}</span></div>
+        </div>
+        <div className={r11.commerceArt} aria-hidden="true"><div><Package size={35}/><span>{tr("ÉQUIPEMENTS")}</span></div><div><BookOpen size={30}/><span>{tr("PÉDAGOGIE")}</span></div><div><Sparkles size={30}/><span>{tr("IDENTITÉ")}</span></div></div>
+      </div>}
+      {equipmentR11&&<div className={r11.searchCommand}>
+        <div className={r11.searchIntro}><span>{tr("RECHERCHE PROFESSIONNELLE")}</span><strong>{tr("Que recherchez-vous pour votre établissement ?")}</strong></div>
+        <div className={r11.searchCommandRow}><label className={r11.searchMain}><Search size={22}/><input type="search" value={filters.query} onChange={e=>change({query:e.target.value})} placeholder={tr("Rechercher un produit, une référence ou un usage…")} aria-label={tr("Rechercher une offre publiée")}/>{filters.query&&<button type="button" aria-label={tr("Effacer la recherche")} onClick={()=>change({query:""})}><X size={17}/></button>}</label>
+          <button type="button" className={r11.filterTrigger} aria-expanded={filtersOpen} onClick={()=>setFiltersOpen(v=>!v)}><SlidersHorizontal size={18}/>{tr(filtersOpen?"Masquer les filtres":"Filtres avancés")}{chips.length>0?<span>{chips.length}</span>:null}</button>
+        </div>
+        <div className={r11.resultSummary}><span><strong>{countText(locale,visible.length)}</strong> {tr("offres correspondant à vos critères")}</span><div><button aria-label={tr("Affichage en grille")} aria-pressed={displayMode==="grid"} onClick={()=>setDisplayMode("grid")}><Grid2X2 size={18}/></button><button aria-label={tr("Affichage en liste")} aria-pressed={displayMode==="list"} onClick={()=>setDisplayMode("list")}><List size={19}/></button></div></div>
+      </div>}
       <div className={s.nativeHeading} data-native-title>
         <div>
           <span className={s.eyebrow}>
@@ -269,7 +301,7 @@ export function NativeExplorer({
           {tr(experience.territoryCode ? ` · ${experience.territoryCode}` : "")}
         </span>
       </div>
-      <div className={s.catalogueScope} data-catalogue-scope>
+      <div className={`${s.catalogueScope} ${equipmentR11?r11.advancedPanel:""}`} data-catalogue-scope>
         <label className={s.selectLabel}>
           {tr("Affichage")}
           <select
@@ -299,7 +331,7 @@ export function NativeExplorer({
           )}
         </p>
       </div>
-      <div className={s.toolbar} data-native-toolbar>
+      <div className={`${s.toolbar} ${equipmentR11?r11.advancedPanel:""}`} data-native-toolbar>
         <label>
           <Search size={17} />
           <span className={s.sr}>{tr("Rechercher une offre publiée")}</span>
@@ -373,6 +405,7 @@ export function NativeExplorer({
           </select>
         </label>
       </div>
+      {equipmentR11&&categories.length>0&&<section className={r11.categoryDiscovery}><div><span>{tr("DÉCOUVERTE PAR RAYON")}</span><h3>{tr("Trouvez les solutions qui vous ressemblent.")}</h3></div><div className={r11.categoryVisuals}>{categories.slice(0,8).map(([key,label],i)=><button key={key} type="button" aria-pressed={category===key} onClick={()=>change({category:category===key?"all":key})} data-tone={i%6}><span><Package size={21}/></span><strong>{tr(label)}</strong><small>{countText(locale,channelItems.filter(item=>item.category_key===key).length)} {tr("références")}</small><ChevronRight size={18}/></button>)}</div></section>}
       {categories.length > 1 && (
         <div
           className={s.categoryRail}
@@ -406,7 +439,7 @@ export function NativeExplorer({
           ))}
         </div>
       )}
-      <div className={s.explorerUtilities} data-native-utilities>
+      <div className={`${s.explorerUtilities} ${equipmentR11?r11.advancedPanel:""}`} data-native-utilities>
         <button
           className={s.savedFilter}
           aria-pressed={filters.savedOnly}
@@ -502,7 +535,8 @@ export function NativeExplorer({
             : "match your criteria",
         )}
       </p>
-      {allCompared.length > 0 && (
+      {equipmentR11&&allCompared.length>0&&<div className={r11.compareEntry}><GitCompareArrows size={20}/><div><strong>{tr("Votre sélection comparative")}</strong><small>{countText(locale,allCompared.length)} {tr("références · maximum 4")}</small></div><button onClick={()=>setCompareExpanded(v=>!v)} aria-expanded={compareExpanded}>{tr(compareExpanded?"Masquer le comparatif":"Comparer les produits")}<ArrowRight size={17}/></button></div>}
+      {allCompared.length > 0 && (!equipmentR11||compareExpanded) && (
         <div className={s.compareTray}>
           <GitCompareArrows size={19} />
           <strong>
@@ -532,7 +566,7 @@ export function NativeExplorer({
           </small>
         </div>
       )}
-      <div className={`${s.nativeGrid} ${p.nativeGrid}`} data-native-grid>
+      <div className={`${s.nativeGrid} ${p.nativeGrid} ${equipmentR11?r11.productGrid:""}`} data-native-grid>
         {visible.slice(cataloguePage.start, cataloguePage.end).map((item) => {
           const info = projection(item),
             action = nativeAction(item, locale, experience.territoryCode),
@@ -540,7 +574,7 @@ export function NativeExplorer({
           return (
             <article
               key={item.id}
-              className={`${s.nativeCard} ${p.nativeCard}`}
+              className={`${s.nativeCard} ${p.nativeCard} ${equipmentR11?r11.productCard:""}`}
               data-offer-id={item.id}
               data-selected={inProject}
             >
@@ -731,8 +765,8 @@ export function NativeExplorer({
           <button onClick={selections.dismiss}>{tr("Fermer")}</button>
         </p>
       )}
-      {compared.length > 0 && (
-        <div className={s.comparison}>
+      {compared.length > 0 && (!equipmentR11||compareExpanded) && (
+        <div className={`${s.comparison} ${equipmentR11?r11.comparisonStudio:""}`}>
           <h3>{tr("Comparer les offres publiées")}</h3>
           <div className={s.tableWrap}>
             <table>
