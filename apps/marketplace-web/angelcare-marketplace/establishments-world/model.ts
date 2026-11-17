@@ -7,6 +7,7 @@ import { unavailable } from "../storefront-immersive/contract";
 import { projection } from "../business-worlds/merchandising";
 import { MODULES, FORMULAS, type Formula, type View } from "./content";
 import {EQUIPMENT_DOMAINS,equipmentDomainSelection} from "./equipment-r8-data";
+import {localDomain} from "./equipment-r111-content";
 export function viewFromHash(hash: string): View {
   const key = hash.replace(/^#/, "").split("/")[0];
   return key === "partner-os" || key === "produits" ? key : "conseil";
@@ -225,7 +226,7 @@ export function restoreProject(
         }
         if(key.startsWith("intent:equipment-domain:")){
           const domain=EQUIPMENT_DOMAINS.find(domain=>key===`intent:equipment-domain:${domain.id}`);
-          return domain?[equipmentDomainSelection(domain)]:[];
+          return domain?[equipmentDomainSelection(localDomain(domain,locale))]:[];
         }
         return key === "intent:partner-free-year" ? [freeYearSelection()] : [];
       })
