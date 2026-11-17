@@ -238,7 +238,7 @@ export function PartnerR2ModuleSwitcher({chapter,items,render}:{chapter:ChapterK
 export function PartnerR2Atlas({onOpen,onAdd,selected}:{onOpen:(key:ModuleKey)=>void;onAdd:(key:ModuleKey)=>void;selected:readonly ModuleKey[]}){
  const {locale,t}=usePartner();const [query,setQuery]=useState("");const [family,setFamily]=useState<ChapterKey|"all">("all");
  const items=useMemo(()=>MODULES.filter(m=>{
-  const belongs=family==="all"||CHAPTERS.find(ch=>ch.key===family)?.modules.includes(m.key);
+  const belongs=family==="all"||CHAPTERS.find(ch=>ch.key===family)?.modules.some(key=>key===m.key);
   const q=query.trim().toLocaleLowerCase();
   return belongs&&(!q||[m.key,t(m.label),t(m.tag),t(m.summary),...m.uses.map(t),...m.benefits.map(t)].join(" ").toLocaleLowerCase().includes(q));
  }),[query,family,t]);
@@ -252,7 +252,7 @@ export function PartnerR2Atlas({onOpen,onAdd,selected}:{onOpen:(key:ModuleKey)=>
    </div>
   </div>
   <div className={s.atlasGrid}>
-   {items.map((m,i)=>{const I=MODULE_ICONS[m.key];const active=selected.includes(m.key);const world=CHAPTERS.find(c=>c.modules.includes(m.key))!.key;
+   {items.map((m,i)=>{const I=MODULE_ICONS[m.key];const active=selected.includes(m.key);const world=CHAPTERS.find(c=>c.modules.some(key=>key===m.key))!.key;
     return <article key={m.key} className={s.atlasItem} data-world={world} data-selected={active}>
      <div className={s.atlasItemTop}><span className={s.atlasIcon}><I size={23}/></span><span className={s.atlasTag}>{t(m.tag)}</span><button type="button" onClick={()=>onAdd(m.key)} aria-pressed={active} aria-label={t(active?"Retirer du brief":"Ajouter au brief")+" · "+t(m.label)}>{active?<Check size={16}/>:<Plus size={16}/>}</button></div>
      <h3>{t(m.label)}</h3><p>{t(m.summary)}</p>
