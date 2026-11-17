@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - upgrade/next-angelcare-upgrade
+      - feat/partner-os-r2-immersive-commercial-20261117
     paths:
       - ".github/workflows/build-marketplace-ghcr-oneoff.yml"
       - "apps/marketplace-web/**"
