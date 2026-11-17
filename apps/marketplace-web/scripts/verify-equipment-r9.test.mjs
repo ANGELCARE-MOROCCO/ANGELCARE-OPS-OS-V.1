@@ -33,10 +33,10 @@ test('22 distinct compositions have unique renderers and contextual interactions
 test('protected hero, native explorer, enquiry and sibling journeys survive',()=>{
  const heroAt=host.indexOf('<EquipmentHeroR8');
  const explorerAt=host.indexOf('<NativeExplorer');
- const bodyAt=host.indexOf('<EquipmentExperienceR9');
+ const bodyAt=host.indexOf('<EquipmentExperienceR10');
  const enquiryAt=host.indexOf('<ProjectEnquiry');
  assert.ok(heroAt>=0&&explorerAt>heroAt&&bodyAt>explorerAt&&enquiryAt>bodyAt);
- assert.ok(host.includes('data-establishments-journey={view==="produits"?"R9":"R5"}'));
+ assert.ok(host.includes('data-establishments-journey={view==="produits"?"R10":"R5"}'));
  for(const value of ['<PartnerJourney','<CommercialJourney','onBriefChange={setEquipmentR9Brief}','view === "produits" ? equipmentR9Brief : ""'])assert.ok(host.includes(value),value);
  assert.match(hero,/data-equipment-hero-version="r8"/);
 });
