@@ -70,6 +70,7 @@ import {
 import {
   PartnerLocaleProvider,
   usePartner,
+  partnerText,
   type PartnerLocale,
 } from "./partner/Locale";
 import partner from "./partner/partner.module.css";
@@ -77,6 +78,19 @@ import c from "./commercial.module.css";
 import s from "./journey.module.css";
 
 const ICONS = { conseil: Building2, "partner-os": Monitor, produits: Package };
+function localizedProjectNotice(value:string,locale:PartnerLocale){
+ if(locale==="fr"||!value)return value;
+ const english=locale==="en";
+ if(value==="Élément retiré du projet.")return english?"Removed from your project.":"تمت الإزالة من مشروعكم.";
+ if(value.endsWith(" ajouté à votre projet.")){
+  const name=value.slice(0,-" ajouté à votre projet.".length);
+  return english?`${name} added to your project.`:`تمت إضافة ${name} إلى مشروعكم.`;
+ }
+ if(value.startsWith("Les 22 domaines d’équipements"))return english?"All 22 equipment domains are already selected.":"تم اختيار جميع مجالات التجهيزات الـ٢٢.";
+ if(value.startsWith("Votre projet contient huit offres"))return english?"Your project already contains eight offers or other requests. Remove one to add another.":"يحتوي مشروعكم على ثمانية عروض أو طلبات. احذفوا عنصراً لإضافة آخر.";
+ return partnerText(locale,value);
+}
+
 
 /** One Partner OS renderer in FR/EN/AR; the parent route owns the shared shell. */
 export function EstablishmentsExperience({
@@ -587,7 +601,7 @@ function EstablishmentsBody({
           aria-live="polite"
           key={notice}
         >
-          {tr(notice)}
+          {view==="produits"?localizedProjectNotice(notice,locale):tr(notice)}
         </p>
         {review && (
           <ProjectReview
@@ -599,7 +613,7 @@ function EstablishmentsBody({
               contact({
                 subject:
                   subject ||
-                  `Projet · ${VIEWS.find((item) => item.key === view)!.label}`,
+                  (view==="produits"?locale==="en"?"School equipment project":locale==="ar"?"مشروع تجهيز المؤسسة":"Projet · Équipements":`Projet · ${VIEWS.find((item) => item.key === view)!.label}`),
               })
             }
           />
