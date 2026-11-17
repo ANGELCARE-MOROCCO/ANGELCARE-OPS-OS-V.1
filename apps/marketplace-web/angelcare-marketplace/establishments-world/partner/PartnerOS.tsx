@@ -833,6 +833,11 @@ export function PartnerJourney({
         );
         setActive(chapterFor(key as ModuleKey).key);
         setModuleTab(previous=>({...previous,[chapterFor(key as ModuleKey).key]:key as ModuleKey}));
+        // The selected module is mounted conditionally in R2. Restore hash targets
+        // after the controlled workbench has committed, including direct reloads.
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          document.getElementById("pos-module-"+key)?.scrollIntoView({block:"start",behavior:"instant"});
+        }));
       }
     };
     read();
