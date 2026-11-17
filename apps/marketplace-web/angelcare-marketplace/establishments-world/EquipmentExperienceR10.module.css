@@ -35,3 +35,30 @@
 @media(max-width:780px){.root{padding-inline:10px}.jump{top:0;overflow-x:auto}.jump>span{display:none}.intro,.storyHero,.mapComposition,.domainFeatureHero,.collection,.closing{grid-template-columns:1fr}.introMedia{height:235px}.introCopy h2{font-size:34px}.introCopy{padding:23px}.discoveryTabs button{flex-direction:column;gap:4px;padding:9px;font-size:12px}.discoveryTabs button small{display:none}.spacesGrid{grid-template-columns:repeat(2,1fr)}.spaceCard{height:180px}.goalsGrid{grid-template-columns:1fr}.storyNavigator{grid-template-columns:repeat(2,1fr)}.storyVisual{min-height:255px}.storyVisual>img{position:relative;height:255px}.mapPhoto{min-height:350px}.mapPhoto>img{position:absolute}.mapDetails{padding:17px}.universeGrid{grid-template-columns:1fr}.universeCard{grid-template-columns:40% 60%;grid-template-rows:1fr}.universeCard[data-theme="learning"],.universeCard[data-theme="operations"],.universeCard[data-theme="identity"]{grid-template-columns:1fr;grid-template-rows:180px 1fr}.universeCard:not([data-theme="learning"]):not([data-theme="operations"]):not([data-theme="identity"]) .universeImage{min-height:300px}.atlasGrid{grid-template-columns:repeat(2,1fr)}.atlasCardMain>div:first-child{height:125px}.atlasHead{flex-wrap:wrap}.atlasControls{flex-wrap:wrap}.atlasControls select{max-width:none;width:100%}.mapPin strong{display:none}.mapPin{padding:4px}.mapPin span{width:30px;height:30px}.domainSceneHeader{flex-wrap:wrap}.domainFollow button{min-width:130px}.domainApplications{grid-template-columns:1fr}.technicalFields{grid-template-columns:1fr}.collectionActions{justify-content:flex-start}.closing>div:first-child{height:210px;min-height:0}}
 @media(max-width:480px){.universeCard{grid-template-columns:1fr;grid-template-rows:165px 1fr}.universeImage{min-height:165px!important}.spacesGrid{gap:7px}.spaceCopy strong{font-size:13px}.atlasGrid{gap:7px}.atlasCardText{padding:8px}.atlasCardText strong{font-size:12px}.introMediaInset{width:32%}.storyLinks{grid-template-columns:1fr}.miniDomains{grid-template-columns:1fr}.domainFeatureTop>span{display:none}.domainFeatureHero h2{font-size:28px}}
 @media(prefers-reduced-motion:reduce){.root *, .root *:before,.root *:after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+
+/* R10 navigation refinement: scenario pathways visibly explain their recommendations. */
+.goalsGrid button[aria-pressed=true]{border-color:#e90b67;background:#fff0f7;box-shadow:inset 3px 0 0 #e90b67}
+.goalDetail{grid-column:1/-1;display:grid;grid-template-columns:minmax(230px,.62fr) minmax(0,1.38fr);gap:17px;align-items:center;background:linear-gradient(110deg,#0e2b59,#173d77);color:white;border-radius:13px;padding:16px;margin-top:2px}
+.goalDetail>div:first-child{display:flex;flex-direction:column;gap:6px}
+.goalDetail>div:first-child>span{font-size:9px;letter-spacing:1.15px;color:#ffb5d4;font-weight:900}
+.goalDetail h3{font-size:22px;line-height:1.14;letter-spacing:-.4px}
+.goalDetail p{font-size:11px;color:#d3deee}
+.goalDetail>div:last-child{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.goalDetail>div:last-child button{border:1px solid #ffffff5c;background:#ffffff16;color:#fff;display:flex;flex-direction:column;align-items:flex-start;text-align:left;padding:0;overflow:hidden;border-radius:9px}
+.goalDetail>div:last-child button img{height:78px;object-fit:cover;width:100%}
+.goalDetail>div:last-child button strong{font-size:10px;line-height:1.22;padding:8px 7px 0}
+.goalDetail>div:last-child button svg{margin:1px 8px 6px auto;color:#ffb9d5}
+.goalDetail>div:last-child button:hover{background:#ffffff2f;border-color:#ffb9d5}
+/* Six authentic, geographically distinct school-zone images, not arbitrary pins on one photo. */
+.mapTiles{position:absolute;inset:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:1fr 1fr;gap:5px;padding:6px;background:#e8d9d7}
+.mapZone{position:relative;border:0;padding:0;overflow:hidden;background:#e9eaf0;color:#fff;min-width:0;text-align:left}
+.mapZone img{width:100%;height:100%;object-fit:cover;filter:brightness(.79) saturate(1.18);transition:transform .24s,filter .24s}
+.mapZone:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(0deg,#061a39c5,transparent 67%)}
+.mapZone span{position:absolute;bottom:12px;left:12px;right:10px;z-index:1;display:flex;align-items:center;gap:7px;font-size:13px;font-weight:900;text-shadow:0 2px 5px #06213b}
+.mapZone span b{background:#ec0b68;border-radius:50%;height:26px;width:26px;flex:none;display:grid;place-items:center;font-size:10px}
+.mapZone span svg{margin-left:auto}
+.mapZone[data-active=true]{outline:4px solid #f75b9d;outline-offset:-4px;z-index:1}
+.mapZone[data-active=true] img,.mapZone:hover img{filter:brightness(.99) saturate(1.15);transform:scale(1.055)}
+.mapPhoto:after{display:none}
+@media(max-width:880px){.goalDetail{grid-template-columns:1fr}.goalDetail>div:last-child{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:540px){.goalDetail>div:last-child{grid-template-columns:repeat(2,1fr)}.mapTiles{grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(3,1fr)}.mapPhoto{min-height:480px}.mapZone span{font-size:11px;bottom:6px;left:6px;right:5px}.mapZone span b{width:22px;height:22px}.mapPhotoLabel{font-size:10px;bottom:7px;left:7px}}
