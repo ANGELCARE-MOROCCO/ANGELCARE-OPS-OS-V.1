@@ -86,3 +86,7 @@
 .suggestionPanel button small{font-size:9px;color:#6d8096;overflow:hidden;text-overflow:ellipsis}
 .suggestionPanel button>svg{grid-column:3;grid-row:1/3;color:#db1766}
 @media(max-width:600px){.suggestionPanel{grid-template-columns:1fr}}
+
+/* Explicit module class anchors guarantee native card/grid class composition. */
+.productGrid{min-width:0}
+.productCard{min-width:0}
