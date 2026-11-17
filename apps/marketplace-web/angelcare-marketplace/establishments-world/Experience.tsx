@@ -43,7 +43,7 @@ import {
 } from "./CommercialJourney";
 import { COMMERCIAL } from "./commercial-content";
 import { VIEWS, type View } from "./content";
-import { EquipmentHeroR8 } from "./EquipmentHeroR8";
+import { EquipmentHeroR11 } from "./EquipmentHeroR11";
 import { EquipmentExperienceR10 } from "./EquipmentExperienceR10";
 import {
   blocked,
@@ -324,7 +324,7 @@ function EstablishmentsBody({
           view === "partner-os" ? (locale === "ar" ? "rtl" : "ltr") : undefined
         }
         lang={view === "partner-os" ? locale : undefined}
-        data-establishments-journey={view==="produits"?"R10":"R5"}
+        data-establishments-journey={view==="produits"?"R11":"R5"}
         data-view={view}
         data-motion={motion ? "on" : "off"}
         onClick={(event) => {
@@ -434,10 +434,14 @@ function EstablishmentsBody({
             onExplore={() => scrollTo("ew-native-explorer")}
           />
         ) : view === "produits" ? (
-          <EquipmentHeroR8
+          <EquipmentHeroR11
             locale={locale}
-            onExploreDomains={() => scrollTo("r8-domains")}
+            onExploreDomains={() => scrollTo("r10-explore")}
             onExploreOffers={() => scrollTo("ew-native-explorer")}
+            onExploreDomain={(domainId) => {
+              window.dispatchEvent(new CustomEvent("angelcare:equipment-open-domain", {detail:{id:domainId}}));
+              scrollTo("r10-universes");
+            }}
           />
         ) : (
           <section className={c.hero} data-establishments-hero>
@@ -592,6 +596,7 @@ function EstablishmentsBody({
         )}
         {detail && (
           <OfferDetail
+            equipmentR11={view==="produits"}
             item={detail}
             territory={experience.territoryCode}
             selected={project.some((item) => item.key === `offer:${detail.id}`)}
@@ -720,12 +725,14 @@ function ProjectReview({
 }
 
 function OfferDetail({
+  equipmentR11,
   item,
   territory,
   selected,
   onSelect,
   onClose,
 }: {
+  equipmentR11?: boolean;
   item: DiscoveryItem;
   territory?: string | null;
   selected: boolean;
@@ -744,7 +751,8 @@ function OfferDetail({
   return (
     <dialog
       ref={ref}
-      className={c.previewDialog}
+      className={`${c.previewDialog} ${equipmentR11?c.equipmentInspectorR11:""}`}
+      data-equipment-inspector={equipmentR11?"r11":undefined}
       aria-labelledby="ac-offer-title"
       onCancel={(event) => {
         event.preventDefault();
