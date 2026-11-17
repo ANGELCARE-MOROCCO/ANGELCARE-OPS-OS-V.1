@@ -27,6 +27,13 @@ test("clear discover by space, by goal and by domain, with no mandatory form",()
  assert.ok(page.includes('role="tablist"'));
  assert.ok(page.includes('role="tabpanel"'));
  assert.ok(page.includes('aria-selected={entry==="spaces"}'));
+ assert.ok(page.includes('goalFocus'));
+ assert.ok(page.includes('className={c.goalDetail}'));
+ assert.ok(page.includes('className={c.mapTiles}'));
+ assert.ok(page.includes('aria-pressed={activeMap===i}'));
+ assert.ok(styles.includes('.goalDetail'));
+ assert.ok(styles.includes('.mapZone'));
+ assert.ok(page.includes('const saveRelated=()=>{if(activeDomain)toggleIdea(activeDomain.id)}'));
  assert.ok(!page.includes("<EquipmentExperienceR9"),"must not stack 22 old journeys");
 });
 test("six visually differentiated universes, four transformation stories and map hotspots",()=>{
