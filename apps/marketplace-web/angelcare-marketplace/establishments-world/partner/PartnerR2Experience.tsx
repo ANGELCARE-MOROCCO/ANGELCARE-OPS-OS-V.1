@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import {ManagedImage} from "../../marketplace-imagery/ManagedImage";
 import {campaignAsset,campaignSet} from "../media";
+import {useSessionValue} from "../useJourneyState";
 import {CHAPTERS,MODULES,moduleByKey,recommended,type ChapterKey,type ModuleKey,type PartnerRequest} from "./content";
 import {usePartner,type PartnerLocale} from "./Locale";
 import s from "./PartnerR2Experience.module.css";
@@ -168,8 +169,8 @@ export function PartnerR2Hero({onContact,onExplore}:{onContact:()=>void;onExplor
   </div>
  </section>;
 }
-export function PartnerR2WorldLead({chapter,onOpen,onAdd,selected}:{chapter:ChapterKey;onOpen:(key:ModuleKey)=>void;onAdd:(key:ModuleKey)=>void;selected:readonly ModuleKey[]}){
- const {locale,t}=usePartner();const world=WORLDS[chapter];const [active,setActive]=useState(0);const choice=world.cases[active];const ChapterIcon=WORLD_ICONS[chapter];const ChoiceIcon=MODULE_ICONS[choice.module];
+export function PartnerR2WorldLead({chapter,onOpen,onAdd,selected,storageScope}:{chapter:ChapterKey;onOpen:(key:ModuleKey)=>void;onAdd:(key:ModuleKey)=>void;selected:readonly ModuleKey[];storageScope:string}){
+ const {locale,t}=usePartner();const world=WORLDS[chapter];const [active,setActive]=useSessionValue<number>("ac.partner.r2.case.v1:"+storageScope+":"+chapter,0,v=>typeof v==="number"&&Number.isInteger(v)&&v>=0&&v<3?v:0);const choice=world.cases[active];const ChapterIcon=WORLD_ICONS[chapter];const ChoiceIcon=MODULE_ICONS[choice.module];
  const processes:Record<VisualKind,P[]>={
   command:[["Sites","Sites","المواقع"],["Pilotage","Overview","القيادة"],["Décisions","Decisions","القرارات"]],
   families:[["Premier contact","First contact","التواصل الأول"],["Visite","Visit","الزيارة"],["Inscription","Enrolment","التسجيل"],["Relation","Relationship","العلاقة"]],
