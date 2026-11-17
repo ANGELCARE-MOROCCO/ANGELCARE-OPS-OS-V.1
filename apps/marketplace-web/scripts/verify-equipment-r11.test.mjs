@@ -54,7 +54,7 @@ test("equipment-only native explorer keeps published authority and the original 
 });
 test("published-only search suggestions and category tiles, advanced filters, 4 column and list mode",()=>{
  for(const v of ["suggestionsVisible","item.public_reference","item.media_url","categoryVisuals","compareExpanded","data-r11-mode={displayMode}","data-r11-filters={filtersOpen?\"open\":\"closed\"}","setDisplayMode(\"list\")","aria-expanded={filtersOpen}","displayMode===\"grid\"","displayMode===\"list\""])assert.ok(explorer.includes(v),v);
- for(const v of [".commerceMasthead",".searchCommand",".categoryVisuals",".suggestionPanel",".productCard",".productGrid",".compareEntry",".comparisonStudio","[data-r11-mode=list]","[data-r11-filters=open]","repeat(4,minmax(0,1fr))"])assert.ok(ecss.includes(v),v);
+ for(const v of [".commerceMasthead",".searchCommand",".categoryVisuals",".suggestionPanel","[data-offer-id]","[data-native-grid]",".compareEntry",".comparisonStudio","[data-r11-mode=list]","[data-r11-filters=open]","repeat(4,minmax(0,1fr))"])assert.ok(ecss.includes(v),v);
  assert.ok(ecss.includes("@media(max-width:540px)"));
  assert.ok(ecss.includes("prefers-reduced-motion"));
 });
