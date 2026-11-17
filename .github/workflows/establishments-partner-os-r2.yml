@@ -26,6 +26,8 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 80
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
@@ -44,6 +46,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          git fetch --no-tags --depth=80 origin upgrade/next-angelcare-upgrade:refs/remotes/origin/upgrade/next-angelcare-upgrade
           git diff --name-only origin/upgrade/next-angelcare-upgrade...HEAD > /tmp/partner-r2-changed.txt
           if grep -E '(^apps/marketplace-web/supabase/|^supabase/|^apps/marketplace-web/angelcare-marketplace/establishments-world/(Equipment|OfferExplorer|ProjectEnquiry)|^apps/marketplace-web/angelcare-marketplace/public-universe/|^apps/marketplace-web/angelcare-marketplace/catalog-discovery/)' /tmp/partner-r2-changed.txt; then
             echo "PARTNER_R2_PROTECTED_PATH_CHANGE=FAIL"; exit 1
