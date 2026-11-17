@@ -702,6 +702,7 @@ export function PartnerJourney({
   const { locale, t } = usePartner();
   const root = useRef<HTMLDivElement>(null),
     briefTrigger = useRef<HTMLButtonElement>(null);
+  const [moduleTab,setModuleTab] = useState<Partial<Record<ChapterKey,ModuleKey>>>({});
   const [active, setActive] = useState<ChapterKey>("direction"),
     [briefOpen, setBriefOpen] = useState(false),
     [top, setTop] = useState(214),
@@ -748,6 +749,7 @@ export function PartnerJourney({
         before.includes(key) ? before : [...before, key],
       );
       setActive(chapterFor(key).key);
+      setModuleTab(previous=>({...previous,[chapterFor(key).key]:key}));
       const id = `pos-module-${key}`;
       history.pushState(
         null,
@@ -830,6 +832,7 @@ export function PartnerJourney({
             : [...before, key as ModuleKey],
         );
         setActive(chapterFor(key as ModuleKey).key);
+        setModuleTab(previous=>({...previous,[chapterFor(key as ModuleKey).key]:key as ModuleKey}));
       }
     };
     read();
@@ -1229,6 +1232,11 @@ export function PartnerJourney({
           <PartnerR2ModuleSwitcher
             chapter={chapter.key}
             items={chapter.modules}
+            activeKey={moduleTab[chapter.key]}
+            onSelect={key=>{
+              setModuleTab(previous=>({...previous,[chapter.key]:key}));
+              history.replaceState(null,"",location.pathname+location.search+"#partner-os/pos-module-"+key);
+            }}
             render={(key)=>(
               <Capability
                 key={key}
