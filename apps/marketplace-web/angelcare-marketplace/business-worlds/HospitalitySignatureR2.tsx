@@ -32,11 +32,11 @@ export function HospitalitySignatureR2({mode="native"}:{mode?:"native"|"publishe
   const params=new URLSearchParams(window.location.search);
   if(params.get("imageryPreview")!=="1")return;
   const slot=params.get("imageryPlacement")||"";
-  let match=slot.match(/^hospitality\\.hospitality-r2\\.property\\.(city|resort|season)$/);
+  let match=slot.match(/^hospitality\.hospitality-r2\.property\.(city|resort|season)$/);
   if(match){const index=H.properties.findIndex(v=>v.id===match![1]);if(index>=0)setProperty(index);}
-  match=slot.match(/^hospitality\\.hospitality-r2\\.age\\.(3-6|7-12|13-16)$/);
+  match=slot.match(/^hospitality\.hospitality-r2\.age\.(3-6|7-12|13-16)$/);
   if(match){const index=H.ages.findIndex(v=>v.id===match![1]);if(index>=0)setAge(index);}
-  match=slot.match(/^hospitality\\.hospitality-r2\\.day\\.(arrival|discover|create|parents|departure)$/);
+  match=slot.match(/^hospitality\.hospitality-r2\.day\.(arrival|discover|create|parents|departure)$/);
   if(match){const index=H.moments.findIndex(v=>v.id===match![1]);if(index>=0)setMoment(index);}
  },[]);
 
