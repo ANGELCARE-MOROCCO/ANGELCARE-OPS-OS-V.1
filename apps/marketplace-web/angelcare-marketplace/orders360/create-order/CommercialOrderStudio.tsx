@@ -7,22 +7,34 @@ import {
   CheckCircle2,ChevronDown,ChevronRight,ClipboardCheck,Clock3,Copy,CreditCard,
   FileCheck2,FileText,FolderOpen,HeartHandshake,History,Info,Layers3,LockKeyhole,
   Mail,MapPin,Minus,MoreHorizontal,Package,Plus,RefreshCw,Save,Search,
-  Settings2,ShieldCheck,ShoppingCart,Trash2,UserRound,Users,Wallet,X
+  Settings2,ShieldCheck,ShoppingCart,Trash2,UserRound,Users,Wallet,X,
+  Maximize2,Minimize2,Sparkles,SlidersHorizontal
 } from "lucide-react";
 import type {AssistedOrderOptions} from "../../total-commerce-control/types";
 import s from "./commercial-order-studio.module.css";
 
 type Mode="quick"|"expert"|"quote"|"subscription"|"b2b"|"renewal";
 type Tab="customer"|"basket"|"configuration"|"planning"|"pricing"|"payment"|"contracts"|"validation";
-type Line={id:string;itemId:string;quantity:number;unitPrice:number|null;discountAmount:number;configuration:{sessions:number;children:number;minutes:number;frequency:string;options:string[];note:string}};
-type Draft={mode:Mode;customerAccountId:string;guestName:string;guestEmail:string;guestPhone:string;territoryId:string;city:string;address:string;scheduledStartAt:string;scheduledEndAt:string;paymentMode:string;paymentStatus:"pending"|"invoice_later";notes:string;familyRequestId:string|null;inquiryId:string|null;sourceOrderId:string|null;lines:Line[];contractNote:string;depositPercent:number};
-type QuoteLine={itemId:string;title:string;quantity:number;unitPrice:number;discount:number;subtotal:number;net:number;currency:string;requiresApproval:boolean};
+type Line={id:string;itemId:string;quantity:number;unitPrice:number|null;discountAmount:number;configuration:{sessions:number;children:number;minutes:number;frequency:string;options:string[];note:string;variant?:string;deliveryMethod?:string;personalization?:string;beneficiaryName?:string;ageBand?:string}};
+type CommercialContext={legalEntity:string;purchaseOrder:string;billingContact:string;quoteValidity:string;billingCycle:string;renewalReason:string;fulfillmentContact:string};
+const emptyCommercialContext=():CommercialContext=>({legalEntity:"",purchaseOrder:"",billingContact:"",quoteValidity:"",billingCycle:"monthly",renewalReason:"",fulfillmentContact:""});
+const modeGuidance:Record<Mode,[string,string]>={
+ quick:["Vente rapide","Identifiez un client, ajoutez des offres puis validez la commande canonique."],
+ expert:["Commande sur mesure","Combinez vos services et produits, configurez les lignes et préparez leur exécution."],
+ quote:["Devis professionnel","Préparez les conditions, la validité et les approbations avant émission."],
+ subscription:["Prestation récurrente","Planifiez la fréquence et le cycle de facturation sans confirmer de personnel fictif."],
+ b2b:["Commande B2B","Structurez l'établissement, son contact facturation et ses références d'achat."],
+ renewal:["Renouvellement lié","Reprenez une commande du client et tracez les ajustements du nouveau dossier."]
+};
+const isPhysicalItem=(item?:AssistedOrderOptions["items"][number])=>/product|kit|physical|equipment|printable|flashcard|article|good|merch|materiel|matériel/i.test(item?.sellable_type||item?.kind||"");
+type Draft={mode:Mode;commercialContext:CommercialContext;customerAccountId:string;guestName:string;guestEmail:string;guestPhone:string;territoryId:string;city:string;address:string;scheduledStartAt:string;scheduledEndAt:string;paymentMode:string;paymentStatus:"pending"|"invoice_later";notes:string;familyRequestId:string|null;inquiryId:string|null;sourceOrderId:string|null;lines:Line[];contractNote:string;depositPercent:number};
+type QuoteLine={lineId?:string;itemId:string;title:string;quantity:number;unitPrice:number;discount:number;subtotal:number;net:number;currency:string;requiresApproval:boolean};
 type Quote={lines:QuoteLine[];subtotal:number;discount:number;net:number;total:number;currency:string;requiresApproval:boolean;taxStatus:string;warnings?:string[]};
 type Receipt={id?:string;public_reference?:string;orderId?:string;status?:string};
 type PriorOrder={id:string;public_reference:string;created_at:string;title:string;journey_type:string};
 type PriorLine={catalog_item_id:string;quantity:number;unit_price:number;discount_amount:number;configuration:unknown};
 type Envelope<T>={data?:T;error?:{message?:string;code?:string};requestId?:string};
-type CustomerDetails={orderCount:number;value:number;lastOrderAt:string|null;recentOrders:Array<{id:string;public_reference:string;title:string;created_at:string}>;addresses:Array<{id:string;city:string;address_line:string;label:string}>};
+type CustomerDetails={orderCount:number;value:number;valueByCurrency?:Array<{currency:string;value:number}>;lastOrderAt:string|null;recentOrders:Array<{id:string;public_reference:string;title:string;created_at:string}>;addresses:Array<{id:string;city:string;address_line:string;label:string}>};
 type SavedDraft={id:string;version:number;status:string;mode:Mode;payload:Draft;approval_state:string;created_at:string;updated_at:string;submitted_order_id?:string|null};
 
 const API="/api/angelcare-marketplace/admin/orders/commercial-studio";
@@ -41,7 +53,7 @@ const itemLabel=(v:AssistedOrderOptions["items"][number])=>v.name_fr||v.public_r
 const money=(v:number,currency="MAD")=>Number(v||0).toLocaleString("fr-FR",{minimumFractionDigits:2,maximumFractionDigits:2})+" "+(currency==="Dh"?"MAD":currency);
 const dt=(v:string|null|undefined)=>v?new Date(v).toLocaleString("fr-FR",{dateStyle:"short",timeStyle:"short"}):"—";
 const newLine=(itemId:string):Line=>({id:crypto.randomUUID(),itemId,quantity:1,unitPrice:null,discountAmount:0,configuration:{sessions:1,children:1,minutes:60,frequency:"unique",options:[],note:""}});
-const createDraft=(q?:Record<string,string|undefined>):Draft=>({mode:q?.mode==="quote"?"quote":"expert",customerAccountId:q?.customer||"",guestName:q?.guestName||"",guestEmail:q?.guestEmail||"",guestPhone:q?.guestPhone||"",territoryId:"",city:q?.city||"",address:"",scheduledStartAt:"",scheduledEndAt:"",paymentMode:"none",paymentStatus:"pending",notes:"",familyRequestId:q?.familyRequest||null,inquiryId:q?.inquiry||null,sourceOrderId:null,lines:[],contractNote:"",depositPercent:0});
+const createDraft=(q?:Record<string,string|undefined>):Draft=>({mode:q?.mode==="quote"?"quote":"expert",commercialContext:emptyCommercialContext(),customerAccountId:q?.customer||"",guestName:q?.guestName||"",guestEmail:q?.guestEmail||"",guestPhone:q?.guestPhone||"",territoryId:"",city:q?.city||"",address:"",scheduledStartAt:"",scheduledEndAt:"",paymentMode:"none",paymentStatus:"pending",notes:"",familyRequestId:q?.familyRequest||null,inquiryId:q?.inquiry||null,sourceOrderId:null,lines:[],contractNote:"",depositPercent:0});
 const asObj=(v:unknown):Record<string,unknown>=>v&&typeof v==="object"&&!Array.isArray(v)?v as Record<string,unknown>:{};
 const parseResponse=async<T,>(response:Response):Promise<T>=>{
  const body=await response.json() as Envelope<T>;
@@ -60,6 +72,8 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
  const [draftId,setDraftId]=useState("");
  const [revision,setRevision]=useState(0);
  const [tab,setTab]=useState<Tab>("customer");
+ const [maximized,setMaximized]=useState(false);
+ const [showAdvanced,setShowAdvanced]=useState(false);
  const [selectedLine,setSelectedLine]=useState("");
  const [customerQuery,setCustomerQuery]=useState("");
  const [itemQuery,setItemQuery]=useState("");
@@ -83,7 +97,7 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
  const [approvalInbox,setApprovalInbox]=useState<Array<SavedDraft&{actor_id:string}>>([]);
  const [showApprovals,setShowApprovals]=useState(false);
  const [created,setCreated]=useState<Receipt|null>(null);
- const [searchLimit,setSearchLimit]=useState(12);
+ const [searchLimit,setSearchLimit]=useState(24);
  const saveBusy=useRef(false);
  const lastSaved=useRef("");
  const latestDraft=useRef(draft);
@@ -117,7 +131,8 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
  },[]);
  useEffect(()=>{latestDraft.current=draft;setNotice("")},[draft]);
  const customers=useMemo(()=>options.customers.filter(x=>(x.display_name+" "+x.public_reference+" "+(x.email||"")+" "+(x.phone||"")).toLowerCase().includes(customerQuery.toLowerCase())).slice(0,18),[options.customers,customerQuery]);
- const items=useMemo(()=>options.items.filter(x=>(x.name_fr+" "+x.public_reference+" "+(x.category_key||"")).toLowerCase().includes(itemQuery.toLowerCase())).slice(0,Math.min(searchLimit,80)),[options.items,itemQuery,searchLimit]);
+ const matchingItems=useMemo(()=>options.items.filter(x=>(x.name_fr+" "+x.public_reference+" "+(x.category_key||"")+" "+(x.kind||"")).toLowerCase().includes(itemQuery.toLowerCase())),[options.items,itemQuery]);
+ const items=useMemo(()=>matchingItems.slice(0,searchLimit),[matchingItems,searchLimit]);
  const mediaCandidates=useMemo(()=>[...new Set([
   ...draft.lines.map(l=>l.itemId),...(itemSearchOpen?items.slice(0,40).map(i=>i.id):[])
  ])],[draft.lines,itemSearchOpen,items]);
@@ -135,22 +150,40 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
  const customer=options.customers.find(x=>x.id===draft.customerAccountId);
  const chosen= draft.lines.find(x=>x.id===selectedLine)||draft.lines[0];
  const chosenCatalog=options.items.find(x=>x.id===chosen?.itemId);
+ const chosenIsPhysical=isPhysicalItem(chosenCatalog);
+ const commercialContext=draft.commercialContext||emptyCommercialContext();
  const payloadKey=JSON.stringify(draft);
  const isDirty=payloadKey!==lastSaved.current;
  const approvalRequired=Boolean(quote?.requiresApproval);
- const customerReady=Boolean(customer||draft.guestName.trim().length>=3&&(draft.guestEmail.trim()||draft.guestPhone.trim()));
+ const customerReady=Boolean(customer||(draft.guestName.trim().length>=3&&(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(draft.guestEmail.trim())||/^[+\d\s()\-.]{7,22}$/.test(draft.guestPhone.trim()))));
  const basketReady=draft.lines.length>0&&Boolean(quote);
  const pricingReady=Boolean(quote)&&!priceBusy;
  const paymentReady=draft.mode==="quote"||Boolean(draft.paymentMode&&draft.paymentMode!=="none");
  const contractReady=draft.mode!=="b2b"&&draft.mode!=="subscription"||Boolean(draft.contractNote.trim());
  const approvalReady=!approvalRequired||approval==="approved";
+ const commercialContextReady=draft.mode==="b2b"?commercialContext.legalEntity.trim().length>=3:
+  draft.mode==="quote"?/^\d{4}-\d{2}-\d{2}$/.test(commercialContext.quoteValidity)&&commercialContext.quoteValidity>=new Date().toISOString().slice(0,10):
+  draft.mode==="renewal"?commercialContext.renewalReason.trim().length>=5:true;
  const renewalReady=draft.mode!=="renewal"||Boolean(draft.sourceOrderId);
  const recurringReady=draft.mode!=="subscription"||Boolean(draft.scheduledStartAt&&draft.lines.some(l=>l.configuration.sessions>1&&l.configuration.frequency!=="unique"));
  const modeReady=renewalReady&&recurringReady;
- const valid=customerReady&&basketReady&&pricingReady&&paymentReady&&contractReady&&approvalReady&&modeReady&&!isDirty&&saveState==="saved";
+ const valid=customerReady&&basketReady&&pricingReady&&paymentReady&&contractReady&&approvalReady&&modeReady&&commercialContextReady&&!isDirty&&saveState==="saved";
  const amount=quote?.total??0;
  const currency=quote?.currency||"MAD";
- const selectedPrice=quote?.lines.find(x=>x.itemId===chosen?.itemId);
+ const selectedLineIndex=draft.lines.findIndex(x=>x.id===chosen?.id);
+ const selectedPrice=quote?.lines.find(x=>x.lineId===chosen?.id)||(selectedLineIndex>=0&&quote?.lines[selectedLineIndex]?.itemId===chosen?.itemId?quote.lines[selectedLineIndex]:undefined);
+ const reviewChecks:Array<{label:string;ok:boolean;tab:Tab}>=[
+  {label:"Client identifié et joignable",ok:customerReady,tab:"customer"},
+  {label:"Panier et prix serveur",ok:basketReady&&pricingReady,tab:"basket"},
+  {label:"Conditions de paiement",ok:paymentReady,tab:"payment"},
+  {label:"Contrat et contexte du mode",ok:contractReady&&commercialContextReady,tab:"contracts"},
+  {label:"Approbation indépendante",ok:approvalReady,tab:"validation"},
+  {label:"Récurrence ou commande source",ok:modeReady,tab:draft.mode==="subscription"?"planning":"basket"},
+  {label:"Brouillon persisté",ok:!isDirty&&saveState==="saved",tab:"validation"}
+ ];
+ const unresolvedChecks=reviewChecks.filter(check=>!check.ok);
+ function setContext(patch:Partial<CommercialContext>){update({commercialContext:{...commercialContext,...patch}})}
+ function navigateFirstBlocker(){setTab(unresolvedChecks[0]?.tab||"validation")}
  function update(patch:Partial<Draft>){submissionKey.current="";setDraft(d=>({...d,...patch}))}
  function linePatch(id:string,patch:Partial<Line>){update({lines:draft.lines.map(x=>x.id===id?{...x,...patch}:x)})}
  function configPatch(patch:Partial<Line["configuration"]>){if(!chosen)return;linePatch(chosen.id,{configuration:{...chosen.configuration,...patch}})}
@@ -269,7 +302,7 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
  }
  async function submit(){
   if(busy||!draftId||created)return;
-  if(!valid){setTab("validation");setError("La commande n'est pas prête. Examinez les contrôles de validation et sauvegardez les modifications avant de soumettre.");return;}
+  if(!valid){navigateFirstBlocker();setError("Commande non prête : corrigez le contrôle indiqué, puis enregistrez le brouillon.");return;}
   setBusy(true);setError("");
   const key=submissionKey.current||(submissionKey.current=crypto.randomUUID());
   try{
@@ -281,19 +314,22 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
  }
  const readonlyPayment=["none","card","bank_transfer","invoice","ac_wallet","cash_on_delivery","manual_verified"];
  return <div className={s.overlay} role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)close()}}>
-  <div className={s.modal} ref={dialog} role="dialog" aria-modal="true" aria-labelledby="commercial-studio-title">
+  <div className={s.modal} data-maximized={maximized} ref={dialog} role="dialog" aria-modal="true" aria-labelledby="commercial-studio-title">
    <div className={s.header}>
     <span className={s.brandIcon}><ShoppingCart size={24}/></span>
     <div className={s.brandText}><div className={s.overline}>ANGELCARE MARKETPLACE <em>/ ORDERS 360 / COMMERCIAL AUTHORITY</em></div>
-      <h2 id="commercial-studio-title">Commercial Order Studio <span>360</span></h2>
-      <p>Vente assistée · Devis · Réservation · Contrats B2B</p>
+      <h2 id="commercial-studio-title">Nouvelle commande <span>PRO MAX</span></h2>
+      <p>Orders 360 · Vente assistée, devis et engagements professionnels</p>
     </div>
     <div className={s.headerActions}><span className={s.reference}><FileText size={16}/> Réf. brouillon : {draftId?draftId.slice(0,8).toUpperCase():"—"} <b>{created?"CRÉÉE":"BROUILLON"}</b></span>
     <button onClick={()=>void save()} disabled={busy||saveBusy.current||created!==null} className={s.outline}><Save size={17}/> Enregistrer brouillon</button>
+    <button className={s.maximize} type="button" onClick={()=>setMaximized(v=>!v)} aria-label={maximized?"Réduire le studio":"Agrandir le studio"} title={maximized?"Réduire":"Agrandir"}>{maximized?<Minimize2 size={19}/>:<Maximize2 size={19}/>}</button>
     <button ref={focused} className={s.close} onClick={close} title="Fermer" aria-label="Fermer le studio"><X size={21}/></button></div>
    </div>
    <nav className={s.modes} aria-label="Modes commerciaux">{modes.map(m=><button key={m.id} disabled={created!==null} data-active={draft.mode===m.id} onClick={()=>{update({mode:m.id,paymentStatus:m.id==="quote"?"invoice_later":"pending"});setTab("customer")}}><m.icon size={18}/>{m.label}</button>)}</nav>
-   <nav className={s.tabs} aria-label="Sections de la commande">{tabs.map(t=><button key={t.id} data-active={tab===t.id} onClick={()=>setTab(t.id)}><t.icon size={16}/>{t.label}</button>)}</nav>
+   <div className={s.modeGuide} role="status"><div className={s.modeGuideCopy}><span className={s.modeEyebrow}><Sparkles size={14}/> PARCOURS COMMERCIAL GUIDÉ</span><strong>{modeGuidance[draft.mode][0]}</strong><p>{modeGuidance[draft.mode][1]}</p></div><span className={s.modeProgress}><CheckCircle2 size={16}/>{reviewChecks.length-unresolvedChecks.length}/{reviewChecks.length} contrôles</span></div>
+    <nav className={s.tabs} aria-label="Étapes principales de création">{tabs.filter(t=>["customer","basket","planning","payment","validation"].includes(t.id)).map((t,i)=><button key={t.id} data-active={tab===t.id} onClick={()=>setTab(t.id)}><span className={s.stepNumber}>{i+1}</span><t.icon size={16}/>{t.label}</button>)}
+    <div className={s.advancedTabs}><button aria-expanded={showAdvanced} type="button" onClick={()=>setShowAdvanced(v=>!v)} data-active={["configuration","pricing","contracts"].includes(tab)}><SlidersHorizontal size={16}/> Outils avancés <ChevronDown size={14}/></button>{showAdvanced?<div className={s.advancedPopover}>{tabs.filter(t=>["configuration","pricing","contracts"].includes(t.id)).map(t=><button type="button" key={t.id} data-active={tab===t.id} onClick={()=>{setTab(t.id);setShowAdvanced(false)}}><t.icon size={16}/>{t.label}</button>)}</div>:null}</div></nav>
    {error?<div className={s.error} role="alert"><AlertCircle size={17}/><span>{error}</span><button onClick={()=>setError("")} aria-label="Fermer erreur"><X size={14}/></button></div>:null}
    {notice?<div className={s.notice} role="status"><CheckCircle2 size={17}/>{notice}<button onClick={()=>setNotice("")} aria-label="Fermer notification"><X size={14}/></button></div>:null}
    {created?<div className={s.successScreen}><CheckCircle2 size={50}/><h3>Commande canonique créée</h3><p>Le dossier reste dans le portefeuille Orders 360 et conserve son identité native.</p><strong>{created.public_reference||created.id||created.orderId}</strong><div><button onClick={onClose}>Retour au portefeuille</button><a href={"/angelcare-marketplace/admin/orders?area=commandes&order="+encodeURIComponent(String(created.id||created.orderId))}>Ouvrir le dossier <ArrowRight size={16}/></a></div></div>:
@@ -305,7 +341,7 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
        {customer?<div className={s.clientProfile}><div className={s.clientTop}><span className={s.avatar}><Users size={24}/></span><div><h3>{customer.display_name}</h3><small>{customer.public_reference}</small><span className={s.greenChip}><BadgeCheck size={12}/> Client sélectionné</span></div><button className={s.iconOnly} onClick={()=>update({customerAccountId:""})} title="Changer le client"><X size={14}/></button></div>
         <div className={s.contacts}>{customer.email?<span><Mail size={14}/>{customer.email}</span>:null}{customer.phone?<span><UserRound size={14}/>{customer.phone}</span>:null}</div>
         <div className={s.creamBox}><b>Profil client</b><small>Référence canonique · Gestion par le dossier CRM</small></div>
-        <div className={s.clientStats}><div><ShoppingCart size={15}/><b>{customerDetails?.orderCount??"—"}</b><small>Commandes</small></div><div><Layers3 size={15}/><b>{customerDetails?money(customerDetails.value):"—"}</b><small>Valeur historique</small></div></div>
+        <div className={s.clientStats}><div><ShoppingCart size={15}/><b>{customerDetails?.orderCount??"—"}</b><small>Commandes</small></div><div><Layers3 size={15}/><b>{customerDetails?(customerDetails.valueByCurrency?.length===1?money(customerDetails.valueByCurrency[0].value,customerDetails.valueByCurrency[0].currency):customerDetails.valueByCurrency?.length?"Devises multiples":"—"):"—"}</b><small>Valeur historique</small></div></div>
         <div className={s.infoRows}><div><span>Dernière commande</span><b>{dt(customerDetails?.lastOrderAt)}</b></div><div><span>Référence</span><b>{customer.public_reference}</b></div><div><span>Statut financier</span><b>Voir Finance 360</b></div></div>
         <details><summary><MapPin size={14}/> Adresses enregistrées ({customerDetails?.addresses.length??0})</summary>{customerDetails?.addresses.map(a=><button key={a.id} className={s.addressButton} onClick={()=>update({address:a.address_line,city:a.city})}>{a.label||a.city}: {a.address_line}</button>)}</details>
         <details><summary><History size={14}/> Notes et historique ({customerDetails?.recentOrders.length??0})</summary>
@@ -318,6 +354,7 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
       {showDrafts?<div className={s.savedList}>{drafts.map(d=><button key={d.id} disabled={d.status!=="draft"} onClick={()=>void restore(d)}><b>{d.mode} · {d.id.slice(0,8)}</b><small>{dt(d.updated_at)} · v{d.version}</small><ChevronRight size={13}/></button>)}</div>:null}
      </aside>
      <main className={s.centerCol}>
+      {tab==="customer"?<div className={s.customerJourney}><span className={s.chapterEyebrow}><UserRound size={16}/> ÉTAPE 01 / IDENTIFICATION</span><h3>Une commande réussie commence par le bon client.</h3><p>Sélectionnez un compte existant à gauche ou saisissez les coordonnées de l'invité. Tous les choix restent associés au même dossier commercial.</p><div className={s.customerReadiness}><Status ok={customerReady} label={customerReady?"Identification complète":"Identification requise"}/><span>{customer?.display_name||draft.guestName||"Sélectionnez un client"}</span></div><button className={s.forwardButton} type="button" disabled={!customerReady} onClick={()=>setTab("basket")}>Composer le panier <ArrowRight size={17}/></button></div>:null}
       <div className={s.centerHead}><div><h3><ShoppingCart size={18}/> {tab==="basket"||tab==="customer"?"PANIER DE LA COMMANDE":tabs.find(t=>t.id===tab)?.label.toUpperCase()} <small>{draft.lines.length} prestation(s)</small></h3></div><div className={s.centerActions}><button onClick={()=>{setShowTemplates(v=>!v);setShowOrderImport(false);setTab("basket")}}><Layers3 size={14}/> Modèles</button><button onClick={()=>{setShowOrderImport(v=>!v);setShowTemplates(false);setTab("basket")}} disabled={!draft.customerAccountId}><FolderOpen size={14}/> Importer panier</button><button className={s.danger} onClick={()=>{if(window.confirm("Vider les lignes de ce brouillon ?"))update({lines:[]})}} disabled={!draft.lines.length}><Trash2 size={14}/> Vider</button></div></div>
       {showTemplates?<div className={s.importPanel}><div><b>COMPOSITIONS ENREGISTRÉES</b><button onClick={()=>setShowTemplates(false)} aria-label="Fermer"><X size={14}/></button></div>
        <p>Reprendre les lignes d'un brouillon existant sans écraser le client ou le contexte de la commande actuelle.</p>
@@ -327,11 +364,11 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
        <p>Récupérer uniquement les lignes catalogue encore disponibles d'une commande réellement enregistrée.</p>
        {priorOrders.length?priorOrders.map(o=><button className={s.savedChoice} disabled={importBusy} key={o.id} onClick={()=>void importPriorOrder(o)}><History size={16}/><span>{o.public_reference} · {o.title} · {dt(o.created_at)}</span><Copy size={14}/></button>):<p>Pas de commande historique réutilisable pour ce client.</p>}
       </div>:null}
-      {(tab==="customer"||tab==="basket")?<div className={s.basketView}>
+      {tab==="basket"?<div className={s.basketView}>
        <div className={s.tableScroll}><table className={s.basket}><thead><tr><th>Prestation / Produit</th><th>Configuration</th><th>Qté</th><th>Prix unitaire</th><th>Remise</th><th>Total</th><th/></tr></thead><tbody>
-       {draft.lines.map(line=>{const item=options.items.find(i=>i.id===line.itemId),priced=quote?.lines.find(q=>q.itemId===line.itemId);return <tr key={line.id} data-selected={chosen?.id===line.id} onClick={()=>setSelectedLine(line.id)}>
+       {draft.lines.map((line,index)=>{const item=options.items.find(i=>i.id===line.itemId),candidate=quote?.lines.find(q=>q.lineId===line.id)||quote?.lines[index],priced=candidate?.itemId===line.itemId?candidate:undefined;return <tr key={line.id} data-selected={chosen?.id===line.id} onClick={()=>setSelectedLine(line.id)}>
         <td><div className={s.productCell}><span className={s.productThumb}>{mediaById[line.itemId]?<img src={mediaById[line.itemId]} alt="" loading="lazy"/>:<Package size={23}/>}</span><div><strong>{item?.name_fr||"Article du catalogue"}</strong><small>{item?.public_reference}</small><span className={s.greenChip}>{item?.kind||"Article"}</span></div></div></td>
-        <td><div className={s.configMini}><span><CalendarClock size={12}/>{line.configuration.sessions} séance(s)</span><span><Users size={12}/>{line.configuration.children} participant(s)</span><span><Clock3 size={12}/>{line.configuration.minutes} min</span></div></td>
+        <td><div className={s.configMini}>{isPhysicalItem(item)?<><span><Package size={12}/> Produit ou kit</span><span>{line.configuration.variant||"Variante standard"}</span><span>{line.configuration.deliveryMethod||"Livraison à qualifier"}</span></>:<><span><CalendarClock size={12}/>{line.configuration.sessions} séance(s)</span><span><Users size={12}/>{line.configuration.children} participant(s)</span><span><Clock3 size={12}/>{line.configuration.minutes} min</span></>}</div></td>
         <td><span className={s.qty}><button aria-label="Diminuer quantité" onClick={e=>{e.stopPropagation();linePatch(line.id,{quantity:Math.max(1,line.quantity-1)})}}><Minus size={12}/></button>{line.quantity}<button aria-label="Augmenter quantité" onClick={e=>{e.stopPropagation();linePatch(line.id,{quantity:Math.min(1000,line.quantity+1)})}}><Plus size={12}/></button></span></td>
         <td><b>{priced?money(priced.unitPrice,priced.currency):item?.price_mode==="quote_only"?"Sur devis":"À calculer"}</b></td>
         <td><span className={s.discountBadge}>{line.discountAmount?money(line.discountAmount):"—"}</span></td>
@@ -340,36 +377,42 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
        </tr>})}
        {!draft.lines.length?<tr><td colSpan={7}><div className={s.emptyBasket}><ShoppingCart size={26}/><strong>Composez votre panier commercial</strong><p>Ajoutez des prestations et produits réels depuis le catalogue AngelCare.</p></div></td></tr>:null}
        </tbody></table></div>
-       <div className={s.addBar}><label className={s.search}><Search size={16}/><input aria-label="Rechercher une prestation" placeholder="Ajouter une prestation / produit (nom, catégorie, référence…)" value={itemQuery} onFocus={()=>setItemSearchOpen(true)} onChange={e=>{setItemQuery(e.target.value);setSearchLimit(12);setItemSearchOpen(true)}}/></label><button className={s.outlineGreen} onClick={()=>setItemSearchOpen(v=>!v)}><Plus size={15}/> Ajouter une prestation / produit</button></div>
-       {itemSearchOpen?<div className={s.itemResults}><div className={s.resultsHead}>CATALOGUE AUTORISÉ · {items.length} résultats visibles <button onClick={()=>setItemSearchOpen(false)}><X size={14}/></button></div>{items.map(i=><button key={i.id} onClick={()=>addItem(i.id)}><span className={s.productThumb}>{mediaById[i.id]?<img src={mediaById[i.id]} alt="" loading="lazy"/>:<Package size={19}/>}</span><span><b>{itemLabel(i)}</b><small>{i.public_reference} · {i.kind} · {i.availability_status}</small></span><strong>{i.price_mode==="quote_only"?"Sur devis":money(Number(i.price_amount||0),i.currency_label)}</strong><Plus size={16}/></button>)}{items.length>=searchLimit&&searchLimit<80?<button onClick={()=>setSearchLimit(v=>Math.min(80,v+20))}>Afficher plus de résultats</button>:null}</div>:null}
+       <div className={s.addBar}><label className={s.search}><Search size={16}/><input aria-label="Rechercher une prestation" placeholder="Ajouter une prestation / produit (nom, catégorie, référence…)" value={itemQuery} onFocus={()=>setItemSearchOpen(true)} onChange={e=>{setItemQuery(e.target.value);setSearchLimit(24);setItemSearchOpen(true)}}/></label><button className={s.outlineGreen} onClick={()=>setItemSearchOpen(v=>!v)}><Plus size={15}/> Ajouter une prestation / produit</button></div>
+       {itemSearchOpen?<div className={s.itemResults}><div className={s.resultsHead}>CATALOGUE AUTORISÉ · {items.length} sur {matchingItems.length} résultats <button onClick={()=>setItemSearchOpen(false)}><X size={14}/></button></div>{items.map(i=><button key={i.id} onClick={()=>addItem(i.id)}><span className={s.productThumb}>{mediaById[i.id]?<img src={mediaById[i.id]} alt="" loading="lazy"/>:<Package size={19}/>}</span><span><b>{itemLabel(i)}</b><small>{i.public_reference} · {i.kind} · {i.availability_status}</small></span><strong>{i.price_mode==="quote_only"?"Sur devis":money(Number(i.price_amount||0),i.currency_label)}</strong><Plus size={16}/></button>)}{items.length<matchingItems.length?<button type="button" onClick={()=>setSearchLimit(v=>v+24)}>Afficher 24 résultats de plus · {matchingItems.length-items.length} restants</button>:null}</div>:null}
        {chosen?<div className={s.lineConfig}><div className={s.configHeading}><h4><Settings2 size={16}/> Configuration de la ligne sélectionnée</h4><span>{chosenCatalog?.name_fr||"Offre sélectionnée"}</span></div>
+       {chosenIsPhysical?<div className={s.configFields}><Field title="Variante / format"><input value={chosen.configuration.variant||""} onChange={e=>configPatch({variant:e.target.value})} placeholder="Taille, couleur ou finition"/></Field><Field title="Mode de livraison souhaité"><select value={chosen.configuration.deliveryMethod||""} onChange={e=>configPatch({deliveryMethod:e.target.value})}><option value="">À qualifier</option><option value="delivery">Livraison</option><option value="pickup">Retrait</option><option value="on_site">Installation sur site</option></select></Field><Field title="Personnalisation"><input value={chosen.configuration.personalization||""} onChange={e=>configPatch({personalization:e.target.value})}/></Field></div>:
        <div className={s.configFields}><Field title="Nombre de séances"><input type="number" min={1} max={365} value={chosen.configuration.sessions} onChange={e=>configPatch({sessions:Math.max(1,Number(e.target.value))})}/></Field>
        <Field title="Nombre d'enfants / participants"><input type="number" min={1} max={100} value={chosen.configuration.children} onChange={e=>configPatch({children:Math.max(1,Number(e.target.value))})}/></Field>
        <Field title="Durée par séance (minutes)"><input type="number" min={15} max={1440} value={chosen.configuration.minutes} onChange={e=>configPatch({minutes:Math.max(15,Number(e.target.value))})}/></Field>
-       <Field title="Fréquence"><select value={chosen.configuration.frequency} onChange={e=>configPatch({frequency:e.target.value})}><option value="unique">Unique</option><option value="daily">Quotidienne</option><option value="weekly">Hebdomadaire</option><option value="twice_weekly">2 séances / semaine</option><option value="monthly">Mensuelle</option></select></Field></div>
-       <div className={s.optionsRow}><span>Options & compléments</span>{["Matériel inclus","Suivi parental","Rapport de progression","Évaluation pédagogique"].map(x=><button key={x} data-active={chosen.configuration.options.includes(x)} onClick={()=>configPatch({options:chosen.configuration.options.includes(x)?chosen.configuration.options.filter(y=>y!==x):[...chosen.configuration.options,x]})}><Plus size={12}/>{x}</button>)}</div>
+       <Field title="Fréquence"><select value={chosen.configuration.frequency} onChange={e=>configPatch({frequency:e.target.value})}><option value="unique">Unique</option><option value="daily">Quotidienne</option><option value="weekly">Hebdomadaire</option><option value="twice_weekly">2 séances / semaine</option><option value="monthly">Mensuelle</option></select></Field><Field title="Bénéficiaire / groupe"><input value={chosen.configuration.beneficiaryName||""} onChange={e=>configPatch({beneficiaryName:e.target.value})}/></Field><Field title="Tranche d’âge concernée"><input value={chosen.configuration.ageBand||""} onChange={e=>configPatch({ageBand:e.target.value})}/></Field></div>}
+       <div className={s.optionsRow}><span>Options & compléments</span>{(chosenIsPhysical?["BAT à valider","Emballage adapté","Livraison coordonnée","Installation"]:["Matériel inclus","Suivi parental","Rapport de progression","Évaluation pédagogique"]).map(x=><button key={x} data-active={chosen.configuration.options.includes(x)} onClick={()=>configPatch({options:chosen.configuration.options.includes(x)?chosen.configuration.options.filter(y=>y!==x):[...chosen.configuration.options,x]})}><Plus size={12}/>{x}</button>)}</div>
        </div>:null}
       </div>:null}
       {tab==="configuration"?<div className={s.contentPanel}><Section title="CONFIGURATION AVANCÉE DES PRESTATIONS" icon={Settings2}>{draft.lines.length?<><div className={s.lineTabs}>{draft.lines.map(l=><button key={l.id} data-active={chosen?.id===l.id} onClick={()=>setSelectedLine(l.id)}>{options.items.find(i=>i.id===l.itemId)?.name_fr||"Prestation"} <ChevronRight size={12}/></button>)}</div>
-       {chosen?<div className={s.formGrid}><Field title="Sessions"><input type="number" min={1} value={chosen.configuration.sessions} onChange={e=>configPatch({sessions:Number(e.target.value)})}/></Field><Field title="Participants"><input type="number" min={1} value={chosen.configuration.children} onChange={e=>configPatch({children:Number(e.target.value)})}/></Field><Field title="Durée / séance (min)"><input type="number" min={15} value={chosen.configuration.minutes} onChange={e=>configPatch({minutes:Number(e.target.value)})}/></Field><Field title="Fréquence"><select value={chosen.configuration.frequency} onChange={e=>configPatch({frequency:e.target.value})}><option value="unique">Unique</option><option value="weekly">Hebdomadaire</option><option value="twice_weekly">2× semaine</option><option value="monthly">Mensuelle</option></select></Field><Field title="Tarif unitaire proposé"><input type="number" min={0} step=".01" placeholder="Prix catalogue" value={chosen.unitPrice??""} onChange={e=>linePatch(chosen.id,{unitPrice:e.target.value===""?null:Number(e.target.value)})}/></Field><Field title="Remise par ligne (montant)"><input type="number" min={0} step=".01" value={chosen.discountAmount} onChange={e=>linePatch(chosen.id,{discountAmount:Number(e.target.value)})}/></Field><label className={s.wideField}><span>Instructions spécifiques</span><textarea value={chosen.configuration.note} onChange={e=>configPatch({note:e.target.value})}/></label></div>:null}
+       {chosen?<div className={s.formGrid}>{chosenIsPhysical?<><Field title="Variante / finition"><input value={chosen.configuration.variant||""} onChange={e=>configPatch({variant:e.target.value})}/></Field><Field title="Livraison / retrait"><select value={chosen.configuration.deliveryMethod||""} onChange={e=>configPatch({deliveryMethod:e.target.value})}><option value="">À confirmer</option><option value="delivery">Livraison</option><option value="pickup">Retrait</option><option value="on_site">Installation sur site</option></select></Field><Field title="Personnalisation"><input value={chosen.configuration.personalization||""} onChange={e=>configPatch({personalization:e.target.value})}/></Field></>:<><Field title="Sessions"><input type="number" min={1} value={chosen.configuration.sessions} onChange={e=>configPatch({sessions:Math.max(1,Number(e.target.value))})}/></Field><Field title="Participants"><input type="number" min={1} value={chosen.configuration.children} onChange={e=>configPatch({children:Math.max(1,Number(e.target.value))})}/></Field><Field title="Durée / séance (min)"><input type="number" min={15} value={chosen.configuration.minutes} onChange={e=>configPatch({minutes:Math.max(15,Number(e.target.value))})}/></Field><Field title="Fréquence"><select value={chosen.configuration.frequency} onChange={e=>configPatch({frequency:e.target.value})}><option value="unique">Unique</option><option value="weekly">Hebdomadaire</option><option value="twice_weekly">2× semaine</option><option value="monthly">Mensuelle</option></select></Field><Field title="Bénéficiaire / groupe"><input value={chosen.configuration.beneficiaryName||""} onChange={e=>configPatch({beneficiaryName:e.target.value})}/></Field><Field title="Tranche d'âge"><input value={chosen.configuration.ageBand||""} onChange={e=>configPatch({ageBand:e.target.value})}/></Field></>}<Field title="Tarif unitaire proposé"><input type="number" min={0} step=".01" placeholder="Prix catalogue" value={chosen.unitPrice??""} onChange={e=>linePatch(chosen.id,{unitPrice:e.target.value===""?null:Number(e.target.value)})}/></Field><Field title="Remise par ligne (montant)"><input type="number" min={0} step=".01" value={chosen.discountAmount} onChange={e=>linePatch(chosen.id,{discountAmount:Number(e.target.value)})}/></Field><label className={s.wideField}><span>Instructions spécifiques</span><textarea value={chosen.configuration.note} onChange={e=>configPatch({note:e.target.value})}/></label></div>:null}
       </>:<p className={s.help}>Sélectionnez au moins une offre depuis le panier pour configurer ses options.</p>}</Section></div>:null}
       {tab==="planning"?<div className={s.contentPanel}><Section title="PLANIFICATION & COUVERTURE OPÉRATIONNELLE" icon={CalendarClock}><div className={s.formGrid}><Field title="Territoire"><select value={draft.territoryId} onChange={e=>update({territoryId:e.target.value})}><option value="">Territoire à confirmer</option>{options.territories.map(t=><option value={t.id} key={t.id}>{t.name}</option>)}</select></Field><Field title="Ville"><input value={draft.city} onChange={e=>update({city:e.target.value})}/></Field><Field title="Début souhaité"><input type="datetime-local" value={draft.scheduledStartAt} onChange={e=>update({scheduledStartAt:e.target.value})}/></Field><Field title="Fin souhaitée"><input type="datetime-local" value={draft.scheduledEndAt} onChange={e=>update({scheduledEndAt:e.target.value})}/></Field><label className={s.wideField}><span>Adresse / lieu de service</span><input value={draft.address} onChange={e=>update({address:e.target.value})}/></label><label className={s.wideField}><span>Instructions opérationnelles</span><textarea value={draft.notes} onChange={e=>update({notes:e.target.value})}/></label></div><div className={s.warning}><AlertCircle size={17}/> Les créneaux constituent des demandes. Aucune disponibilité ni affectation de personnel n'est déclarée confirmée.</div></Section></div>:null}
       {tab==="pricing"?<div className={s.contentPanel}><Section title="PRIX, REMISES & AUTORITÉ FINANCIÈRE" icon={Layers3}>{quote?<><div className={s.quoteTable}>{quote.lines.map((l,i)=><div key={i}><b>{l.title}</b><span>{l.quantity} × {money(l.unitPrice,l.currency)}</span><strong>{money(l.net,l.currency)}</strong></div>)}</div><div className={s.reviewBreakdown}><Tally label="Sous-total" value={money(quote.subtotal,currency)}/><Tally label="Remises" value={"− "+money(quote.discount,currency)}/><Tally label="Net (hors taxes vérifiées)" value={money(quote.total,currency)}/></div>{quote.requiresApproval?<div className={s.warning}><AlertCircle size={16}/> Prix négocié ou remise détecté : approbation indépendante requise avant création.</div>:null}</>:<p className={s.help}>Ajoutez une offre pour obtenir un chiffrage serveur.</p>}<p className={s.help}>Les taxes, coûts réels et marges non confirmés ne sont pas inventés. Le reçu final reflète les montants validés.</p></Section></div>:null}
       {tab==="payment"?<div className={s.contentPanel}><Section title="PAIEMENT & PRÉPARATION FINANCE" icon={CreditCard}><div className={s.formGrid}><Field title="Méthode de paiement proposée"><select value={draft.paymentMode} onChange={e=>update({paymentMode:e.target.value})}>{readonlyPayment.map(x=><option value={x} key={x}>{({none:"À qualifier",card:"Carte / lien de paiement",bank_transfer:"Virement",invoice:"Facture",ac_wallet:"AC Wallet",cash_on_delivery:"Sur place",manual_verified:"Paiement manuel à rapprocher"} as Record<string,string>)[x]}</option>)}</select></Field><Field title="Échéance"><select value={draft.paymentStatus} onChange={e=>update({paymentStatus:e.target.value as Draft["paymentStatus"]})}><option value="pending">En attente</option><option value="invoice_later">Facturer plus tard</option></select></Field><Field title="Acompte proposé (%)"><input type="number" min={0} max={100} value={draft.depositPercent} onChange={e=>update({depositPercent:Math.min(100,Math.max(0,Number(e.target.value)))})}/></Field></div><div className={s.warning}><ShieldCheck size={16}/> Cette étape prépare les conditions de règlement. Elle ne capture, n'autorise ni ne confirme aucun paiement.</div></Section></div>:null}
-      {tab==="contracts"?<div className={s.contentPanel}><Section title="CONTRATS, CONDITIONS & PREUVES" icon={FileCheck2}><label className={s.wideField}><span>Conditions et références contractuelles</span><textarea rows={5} value={draft.contractNote} onChange={e=>update({contractNote:e.target.value})} placeholder="Identifiant de contrat, conditions B2B, référence de devis, document à produire…"/></label><p className={s.help}>Le document officiel sera produit par l'autorité Documents après confirmation. Aucun contrat n'est réputé signé par cette saisie.</p></Section></div>:null}
+      {tab==="contracts"?<div className={s.contentPanel}><Section title="CONTRATS, CONDITIONS & PREUVES" icon={FileCheck2}>
+       {draft.mode==="b2b"?<div className={s.formGrid}><Field title="Raison sociale *"><input value={commercialContext.legalEntity} onChange={e=>setContext({legalEntity:e.target.value})} placeholder="Établissement ou entreprise"/></Field><Field title="Bon de commande / référence achat"><input value={commercialContext.purchaseOrder} onChange={e=>setContext({purchaseOrder:e.target.value})}/></Field><Field title="Contact facturation"><input value={commercialContext.billingContact} onChange={e=>setContext({billingContact:e.target.value})}/></Field></div>:null}
+       {draft.mode==="quote"?<div className={s.formGrid}><Field title="Validité du devis *"><input type="date" value={commercialContext.quoteValidity} onChange={e=>setContext({quoteValidity:e.target.value})}/></Field><div className={s.contextHint}><Info size={16}/> L'émission et l'acceptation du devis restent gérées par Documents et les autorités commerciales.</div></div>:null}
+       {draft.mode==="subscription"?<div className={s.formGrid}><Field title="Cycle de facturation souhaité"><select value={commercialContext.billingCycle} onChange={e=>setContext({billingCycle:e.target.value})}><option value="monthly">Mensuel</option><option value="weekly">Hebdomadaire</option><option value="quarterly">Trimestriel</option></select></Field><div className={s.contextHint}><CalendarClock size={16}/> Facturation et affectation restent à confirmer dans leurs systèmes respectifs.</div></div>:null}
+       {draft.mode==="renewal"?<div className={s.formGrid}><Field title="Motif du renouvellement *"><input value={commercialContext.renewalReason} onChange={e=>setContext({renewalReason:e.target.value})}/></Field></div>:null}
+       <label className={s.wideField}><span>Conditions et références contractuelles</span><textarea rows={5} value={draft.contractNote} onChange={e=>update({contractNote:e.target.value})} placeholder="Identifiant de contrat, conditions B2B, référence de devis, document à produire…"/></label><p className={s.help}>Le document officiel sera produit par l'autorité Documents après confirmation. Aucun contrat n'est réputé signé par cette saisie.</p></Section></div>:null}
       {tab==="validation"?<div className={s.contentPanel}><Section title="DOSSIER DE VALIDATION" icon={ClipboardCheck}><div className={s.validationList}>{[
         ["Client identifié et joignable",customerReady],["Panier canonique et prix serveur",basketReady&&pricingReady],
-        ["Mode de règlement choisi",paymentReady],["Conditions contractuelles applicables",contractReady],
+        ["Mode de règlement choisi",paymentReady],["Conditions contractuelles applicables",contractReady&&commercialContextReady],
         ["Approbation requise",approvalReady],["Renouvellement / récurrence",modeReady],["Brouillon persisté",!isDirty&&saveState==="saved"]
-       ].map(([label,ok],i)=><div key={i}><span>{ok?<CheckCircle2 size={18}/>:<AlertCircle size={18}/>}</span><b>{label}</b><Status ok={Boolean(ok)} label={ok?"Vérifié":"À finaliser"}/></div>)}</div><p className={s.help}>Toutes les étapes sont vérifiées une dernière fois côté serveur. Les prestations nécessitant une capacité réelle restent à confirmer par les équipes Planning.</p></Section></div>:null}
+       ].map(([label,ok],i)=><div key={i}><span>{ok?<CheckCircle2 size={18}/>:<AlertCircle size={18}/>}</span><b>{label}</b><Status ok={Boolean(ok)} label={ok?"Vérifié":"À finaliser"}/></div>)}</div><p className={s.help}>Les contrôles restent soumis à la vérification serveur ; les créneaux ne confirment aucune disponibilité.</p><div className={s.blockerActions}>{unresolvedChecks.map(check=><button type="button" key={check.label} onClick={()=>setTab(check.tab)}><AlertCircle size={15}/><span><b>{check.label}</b><small>Ouvrir la section pour résoudre ce contrôle.</small></span><ArrowRight size={16}/></button>)}</div></Section></div>:null}
      </main>
-     <aside className={s.rightCol}>
+     <aside className={s.rightCol} aria-label="Résumé permanent et contrôles de la commande">
        <Section title="RÉCAPITULATIF COMMERCIAL" icon={Layers3}>
         <div className={s.summaryBody}><Tally label={"Sous-total ("+draft.lines.length+" ligne(s))"} value={quote?money(quote.subtotal,currency):"À calculer"}/>
         <Tally label="Remise commerciale" value={quote?"− "+money(quote.discount,currency):"—"}/>
         <Tally label="Sous-total net" value={quote?money(quote.net,currency):"—"}/>
         <Tally label="TVA" value="Non calculée" muted/><Tally label="Frais de service" value="Selon politique" muted/>
-        <div className={s.grandTotal}><span>Total à confirmer</span><strong>{quote?money(amount,currency):"—"}</strong></div>
+        <div className={s.grandTotal}><span>Net avant taxes vérifiées</span><strong>{quote?money(amount,currency):"—"}</strong></div>
         <div className={s.splitAmounts}><div><CreditCard size={17}/><span>Acompte proposé</span><b>{quote?money(amount*draft.depositPercent/100,currency):"—"}</b></div><div><Layers3 size={17}/><span>Solde prévisionnel</span><b>{quote?money(amount*(100-draft.depositPercent)/100,currency):"—"}</b></div></div>
         <div className={s.marginNotice}><Info size={16}/><span>Marge estimée</span><strong>Non disponible</strong></div>
         </div>
@@ -379,7 +422,7 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
          ["Informations client complètes",customerReady,"customer"],
          ["Panier et prix recalculés",basketReady&&pricingReady,"basket"],
          ["Conditions de paiement définies",paymentReady,"payment"],
-         ["Contrat / conditions vérifiés",contractReady,"contracts"],
+         ["Contrat / conditions vérifiés",contractReady&&commercialContextReady,"contracts"],
          ["Approbation commerciale",approvalReady,"validation"],
          ["Mode commercial configuré",modeReady,draft.mode==="subscription"?"planning":"basket"],
          ["Brouillon sauvegardé",!isDirty&&saveState==="saved","validation"]
@@ -389,11 +432,11 @@ export function CommercialOrderStudio({options,onClose,onCreated,initialQuery}:{
      </aside>
    </div>}
    <footer className={s.footer}>
-    <div className={s.saveIndicator}>{saveState==="saving"?<RefreshCw size={14}/>:saveState==="error"?<AlertCircle size={14}/>:<CheckCircle2 size={14}/>}
+    <div className={s.saveIndicator} role="status">{saveState==="saving"?<RefreshCw size={14}/>:saveState==="error"?<AlertCircle size={14}/>:<CheckCircle2 size={14}/>}
     {created?"Commande créée":saveState==="saving"?"Enregistrement…":saveState==="saved"?"Brouillon enregistré · version "+revision:saveState==="error"?"Échec de sauvegarde":"Modifications non enregistrées"}</div>
     <div className={s.footerActions}><button onClick={close}>Annuler</button><button onClick={()=>void save()} disabled={busy||created!==null}><Save size={16}/> Enregistrer</button>
      {approvalRequired&&approval!=="approved"?<button className={s.approvalBtn} onClick={()=>void requestApproval()} disabled={busy||isDirty||!draft.lines.length||approval==="requested"}><Users size={16}/>{approval==="requested"?"En attente d'approbation":"Demander validation"}</button>:null}
-     <button className={s.primary} disabled={busy||created!==null||!draft.lines.length} onClick={()=>tab==="validation"?void submit():setTab("validation")}>{busy?"Traitement…":tab==="validation"?"Créer la commande":"Continuer vers validation"} <ArrowRight size={16}/></button>
+     <button className={s.primary} disabled={busy||created!==null||!draft.lines.length} onClick={()=>tab==="validation"?void submit():navigateFirstBlocker()}>{busy?"Traitement…":tab==="validation"?"Créer la commande":"Continuer vers validation"} <ArrowRight size={16}/></button>
     </div>
    </footer>
   </div>

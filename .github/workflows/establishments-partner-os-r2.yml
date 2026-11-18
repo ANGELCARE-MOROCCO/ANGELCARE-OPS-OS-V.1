@@ -1,0 +1,54 @@
+name: AngelCare Partner OS R2 — Immersive Commercial
+on:
+  push:
+    branches:
+      - feat/partner-os-r2-immersive-commercial-20261117
+    paths:
+      - 'apps/marketplace-web/angelcare-marketplace/establishments-world/partner/**'
+      - 'apps/marketplace-web/angelcare-marketplace/establishments-world/Experience.tsx'
+      - 'apps/marketplace-web/tsconfig.partner-os-r2.json'
+      - 'apps/marketplace-web/scripts/verify-partner-os-r2.test.mjs'
+      - '.github/workflows/establishments-partner-os-r2.yml'
+  pull_request:
+    branches:
+      - upgrade/next-angelcare-upgrade
+    paths:
+      - 'apps/marketplace-web/angelcare-marketplace/establishments-world/partner/**'
+      - 'apps/marketplace-web/angelcare-marketplace/establishments-world/Experience.tsx'
+      - 'apps/marketplace-web/tsconfig.partner-os-r2.json'
+      - '.github/workflows/establishments-partner-os-r2.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  partner-os-r2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 80
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: apps/marketplace-web/package-lock.json
+      - name: Verify R2 20-module coverage, six worlds, FR EN AR and native integrations
+        working-directory: apps/marketplace-web
+        run: node --test scripts/verify-partner-os-r2.test.mjs
+      - name: Install pinned dependencies
+        working-directory: apps/marketplace-web
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Strict TypeScript — original Partner OS and new R2 components
+        working-directory: apps/marketplace-web
+        run: npx tsc -p tsconfig.partner-os-r2.json --noEmit --pretty false
+      - name: Verify no SQL or protected shared storefront changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=80 origin upgrade/next-angelcare-upgrade:refs/remotes/origin/upgrade/next-angelcare-upgrade
+          git diff --name-only origin/upgrade/next-angelcare-upgrade...HEAD > /tmp/partner-r2-changed.txt
+          if grep -E '(^apps/marketplace-web/supabase/|^supabase/|^apps/marketplace-web/angelcare-marketplace/establishments-world/(Equipment|OfferExplorer|ProjectEnquiry)|^apps/marketplace-web/angelcare-marketplace/public-universe/|^apps/marketplace-web/angelcare-marketplace/catalog-discovery/)' /tmp/partner-r2-changed.txt; then
+            echo "PARTNER_R2_PROTECTED_PATH_CHANGE=FAIL"; exit 1
+          fi
+          echo "PARTNER_R2_PROTECTED_PATH_CHANGE=PASS"

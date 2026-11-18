@@ -67,6 +67,7 @@ import {
 } from "./content";
 import { usePartner } from "./Locale";
 import s from "./partner.module.css";
+import {PartnerR2WorldLead,PartnerR2ModuleSwitcher,PartnerR2Atlas,PartnerR2ProjectMap,PartnerR2MobileNav} from "./PartnerR2Experience";
 const ICONS: Record<ModuleKey, LucideIcon> = {
   direction: LayoutDashboard,
   sites: Network,
@@ -116,30 +117,25 @@ export function PartnerPhoto({
       "Scène illustrative : préparation de la facturation et suivi administratif",
   }[kind];
   const names = {
+    direction: "os-overview",
     parents: "os-admissions",
     activities: "os-activities",
     team: "os-team",
-  };
-  const source =
-    kind === "direction" || kind === "finance"
-      ? `/angelcare-marketplace/partner-os-r1/${kind}-scene.png`
-      : campaignAsset(names[kind]);
+    finance: "os-finance",
+  } as const;
+  const source = campaignAsset(names[kind]);
   return (
     <ManagedImage
       slot={hero ? "journey-partner.hero" : `journey-partner.${kind}`}
       src={source}
-      srcSet={
-        kind === "direction" || kind === "finance"
-          ? undefined
-          : campaignSet(names[kind])
-      }
+      srcSet={campaignSet(names[kind])}
       sizes={
         hero
           ? "(min-width:1600px) 920px, 57vw"
           : "(min-width:1600px) 1476px, 90vw"
       }
-      width={kind === "finance" ? 1774 : 1536}
-      height={kind === "finance" ? 887 : 1024}
+      width={1536}
+      height={1024}
       alt={t(alt)}
       loading={hero ? "eager" : "lazy"}
       fetchPriority={hero ? "high" : undefined}
@@ -706,6 +702,7 @@ export function PartnerJourney({
   const { locale, t } = usePartner();
   const root = useRef<HTMLDivElement>(null),
     briefTrigger = useRef<HTMLButtonElement>(null);
+  const [moduleTab,setModuleTab] = useState<Partial<Record<ChapterKey,ModuleKey>>>({});
   const [active, setActive] = useState<ChapterKey>("direction"),
     [briefOpen, setBriefOpen] = useState(false),
     [top, setTop] = useState(214),
@@ -752,6 +749,7 @@ export function PartnerJourney({
         before.includes(key) ? before : [...before, key],
       );
       setActive(chapterFor(key).key);
+      setModuleTab(previous=>({...previous,[chapterFor(key).key]:key}));
       const id = `pos-module-${key}`;
       history.pushState(
         null,
@@ -834,6 +832,12 @@ export function PartnerJourney({
             : [...before, key as ModuleKey],
         );
         setActive(chapterFor(key as ModuleKey).key);
+        setModuleTab(previous=>({...previous,[chapterFor(key as ModuleKey).key]:key as ModuleKey}));
+        // The selected module is mounted conditionally in R2. Restore hash targets
+        // after the controlled workbench has committed, including direct reloads.
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          document.getElementById("pos-module-"+key)?.scrollIntoView({block:"start",behavior:"instant"});
+        }));
       }
     };
     read();
@@ -873,7 +877,7 @@ export function PartnerJourney({
     <div
       ref={root}
       className={s.journey}
-      data-partner-journey="R1"
+      data-partner-journey="R2"
       style={{ "--pos-top": `${top}px` } as CSSProperties}
       dir={locale === "ar" ? "rtl" : "ltr"}
       onKeyDown={(e) => {
@@ -1127,6 +1131,13 @@ export function PartnerJourney({
               <span className={s.badge}>{t("Périmètre à définir")}</span>
             </div>
           </header>
+          <PartnerR2WorldLead
+            chapter={chapter.key}
+            onOpen={open}
+            onAdd={toggle}
+            selected={request.modules}
+            storageScope={storageScope}
+          />
           {chapter.key === "direction" && (
             <div className={s.directionScene}>
               <PartnerPhoto />
@@ -1223,11 +1234,15 @@ export function PartnerJourney({
               </div>
             </div>
           )}
-          <div
-            className={s.capabilityGrid}
-            data-columns={chapter.modules.length}
-          >
-            {chapter.modules.map((key) => (
+          <PartnerR2ModuleSwitcher
+            chapter={chapter.key}
+            items={chapter.modules}
+            activeKey={moduleTab[chapter.key]}
+            onSelect={key=>{
+              setModuleTab(previous=>({...previous,[chapter.key]:key}));
+              history.replaceState(null,"",location.pathname+location.search+"#partner-os/pos-module-"+key);
+            }}
+            render={(key)=>(
               <Capability
                 key={key}
                 id={key}
@@ -1236,23 +1251,18 @@ export function PartnerJourney({
                 open={open}
                 expanded={all || expanded.includes(key)}
                 onExpand={() => {
-                  if (all) {
+                  if(all){
                     setAll(false);
-                    setExpanded(
-                      MODULES.filter((m) => m.key !== key).map((m) => m.key),
-                    );
-                  } else
-                    setExpanded((before) =>
-                      before.includes(key)
-                        ? before.filter((k) => k !== key)
-                        : [...before, key],
-                    );
+                    setExpanded(MODULES.filter(m=>m.key!==key).map(m=>m.key));
+                  }else{
+                    setExpanded(before=>before.includes(key)?before.filter(k=>k!==key):[...before,key]);
+                  }
                 }}
                 onContact={contactModule}
                 recommended={suggestions.includes(key)}
               />
-            ))}
-          </div>
+            )}
+          />
           {chapter.key === "ecosysteme" && (
             <div className={s.ecosystemBenefits}>
               {[
@@ -1299,6 +1309,11 @@ export function PartnerJourney({
           </footer>
         </section>
       ))}
+      <PartnerR2Atlas
+        selected={request.modules}
+        onOpen={open}
+        onAdd={toggle}
+      />
       <section
         className={s.projectComposer}
         id="pos-project"
@@ -1319,6 +1334,12 @@ export function PartnerJourney({
             )}
           </p>
         </div>
+        <PartnerR2ProjectMap
+          request={request}
+          onAdd={toggle}
+          onOpen={open}
+          onContact={() => onContact({subject:t("Préparer ma démonstration Partner OS")})}
+        />
         <div className={s.projectSteps}>
           {[
             "Vos priorités",
@@ -1422,6 +1443,13 @@ export function PartnerJourney({
           <ArrowUp size={14} />
         </button>
       </div>
+      <PartnerR2MobileNav
+        selected={request.modules.length}
+        onExplore={onExplore}
+        onWorlds={() => document.getElementById("pos-direction")?.scrollIntoView({block:"start",behavior:motion?"smooth":"instant"})}
+        onAtlas={() => document.getElementById("pos-atlas")?.scrollIntoView({block:"start",behavior:motion?"smooth":"instant"})}
+        onProject={() => document.getElementById("pos-project")?.scrollIntoView({block:"start",behavior:motion?"smooth":"instant"})}
+      />
       <p className={s.notice} role="status" aria-live="polite">
         {notice}
       </p>

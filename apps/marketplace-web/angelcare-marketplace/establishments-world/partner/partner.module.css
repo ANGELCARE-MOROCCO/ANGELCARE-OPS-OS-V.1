@@ -2175,3 +2175,136 @@
 .host[dir="rtl"] .chapterHeader h2 {
   line-height: 1.35 !important;
 }
+
+
+/* R2 scoped enrichment: preserve original scenes and commerce, provide real responsive layouts */
+.host[data-view="partner-os"]{min-width:0!important;overflow-x:clip;background:#f9fbff}
+.host[data-view="partner-os"] .journey{width:100%;max-width:1600px;min-width:0;overflow:visible;padding-bottom:88px}
+.host[data-view="partner-os"] :global(#ew-native-explorer){max-width:1600px;margin-inline:auto!important;scroll-margin-top:90px}
+.host[data-view="partner-os"] :global(#world-enquiry){scroll-margin-top:95px}
+.host[data-view="partner-os"] .chapter{position:relative;margin-top:12px;border-radius:15px;box-shadow:0 10px 34px #091d4020;overflow:hidden;background:#fff;padding:20px}
+.host[data-view="partner-os"] .chapterHeader{padding:10px 6px 18px}
+.host[data-view="partner-os"] .chapterHeader h2{font-size:clamp(24px,2.3vw,41px);line-height:1.16}
+.host[data-view="partner-os"] .chapter[data-chapter="direction"]{background:linear-gradient(180deg,#f6faff,#fff 58%)}
+.host[data-view="partner-os"] .chapter[data-chapter="familles"]{background:linear-gradient(180deg,#fff1f8,#fff 60%)}
+.host[data-view="partner-os"] .chapter[data-chapter="quotidien"]{background:linear-gradient(180deg,#eafbfa,#fff 62%)}
+.host[data-view="partner-os"] .chapter[data-chapter="equipes"]{background:linear-gradient(180deg,#f5f1ff,#fff 60%)}
+.host[data-view="partner-os"] .chapter[data-chapter="revenus"]{background:linear-gradient(180deg,#fff9ea,#fff 60%)}
+.host[data-view="partner-os"] .chapter[data-chapter="ecosysteme"]{background:linear-gradient(180deg,#effbef,#fff 62%)}
+.host[data-view="partner-os"] .chapterFooter{margin-top:13px}
+.host[data-view="partner-os"] .capability{border:1px solid #e0e6f0;border-radius:10px;padding:14px;background:#fff}
+.host[data-view="partner-os"] .capability h3{font-size:17px}
+.host[data-view="partner-os"] .capability>p{font-size:12px;line-height:1.55}
+.host[data-view="partner-os"] .chapterHeader .badge{display:inline-flex;align-items:center}
+.host[data-view="partner-os"] .stickyJourney{border-radius:11px;box-shadow:0 8px 30px #10254922;z-index:70}
+.host[data-view="partner-os"] .chapterLinks>a{font-size:11px;min-height:42px}
+.host[data-view="partner-os"] .readingControls{margin-block:12px}
+.host[data-view="partner-os"] .orientation{border-radius:15px;padding:18px;background:linear-gradient(128deg,#f8e6f2,#e8f0ff 55%,#f4fbfb);border:1px solid #e3d6e4;box-shadow:0 8px 24px #183a6510}
+.host[data-view="partner-os"] .orientationGrid{border-radius:10px}
+.host[data-view="partner-os"] .projectComposer{border-radius:16px;margin-top:16px;overflow:hidden;background:linear-gradient(110deg,#ecf3ff,#fff3fa);box-shadow:0 12px 35px #09214b19}
+.host[data-view="partner-os"] .projectComposer .projectIntro{max-width:none}
+.host[data-view="partner-os"] .projectSteps{margin-top:18px}
+.host[data-view="partner-os"] .faq{margin-block:18px;border-radius:12px}
+.host[data-view="partner-os"] :global(#world-enquiry)>form{max-width:100%;border-radius:13px}
+.host[data-view="partner-os"] .directionScene,.host[data-view="partner-os"] .admissionsStudio,.host[data-view="partner-os"] .planningStudio,.host[data-view="partner-os"] .teamStudio,.host[data-view="partner-os"] .financeStudio,.host[data-view="partner-os"] .ecosystemStudio{margin-top:12px;border-radius:12px;overflow:hidden}
+@media(max-width:1180px){
+ .host[data-view="partner-os"] .journey{padding-inline:16px}
+ .host[data-view="partner-os"] .stickyJourney{overflow:hidden}
+ .host[data-view="partner-os"] .stickyJourney>nav{display:flex;flex-wrap:wrap;gap:7px;padding:9px}
+ .host[data-view="partner-os"] .chapterLinks{display:flex;flex:1;gap:3px;overflow-x:auto;scrollbar-width:thin;min-width:0}
+ .host[data-view="partner-os"] .chapterLinks>a{white-space:nowrap;min-width:max-content;font-size:10px}
+ .host[data-view="partner-os"] .contextLinks{display:flex;overflow-x:auto;scrollbar-width:thin;gap:5px}
+ .host[data-view="partner-os"] .contextLinks>button{white-space:nowrap}
+ .host[data-view="partner-os"] .orientationGrid{grid-template-columns:1fr 1.4fr}
+ .host[data-view="partner-os"] .orientationPromise{grid-column:1/-1}
+ .host[data-view="partner-os"] .directionScene{min-height:285px}
+ .host[data-view="partner-os"] .ecosystemStudio{grid-template-columns:1fr}
+ .host[data-view="partner-os"] .directory>div{grid-template-columns:repeat(4,minmax(0,1fr))}
+ .host[data-view="partner-os"] .briefSelects{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .host[data-view="partner-os"] :global([data-enquiry-contact]){grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:900px){
+ .host[data-view="partner-os"] .stickyJourney>nav{gap:5px}
+ .host[data-view="partner-os"] .journeyBrand small{display:none}
+ .host[data-view="partner-os"] .chapterHeader{display:flex;flex-direction:column;gap:9px}
+ .host[data-view="partner-os"] .chapterHeader>div:last-child{display:flex;flex-wrap:wrap;gap:10px}
+ .host[data-view="partner-os"] .orientationGrid{grid-template-columns:1fr}
+ .host[data-view="partner-os"] .orientationPromise{grid-column:auto}
+ .host[data-view="partner-os"] .admissionsStudio,.host[data-view="partner-os"] .planningStudio,.host[data-view="partner-os"] .teamStudio,.host[data-view="partner-os"] .financeStudio{grid-template-columns:1fr}
+ .host[data-view="partner-os"] .scenePhoto{min-height:250px}
+ .host[data-view="partner-os"] .teamWorkbench{padding:15px}
+ .host[data-view="partner-os"] .financeFlow{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .host[data-view="partner-os"] .financeAnswer{grid-template-columns:1fr}
+ .host[data-view="partner-os"] .financeAnswer>svg{transform:rotate(90deg);margin:auto}
+ .host[data-view="partner-os"] .projectComposer{display:block;padding:18px}
+ .host[data-view="partner-os"] .projectSteps{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .host[data-view="partner-os"] .directory>div{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .host[data-view="partner-os"] .situationRow{display:flex;flex-wrap:wrap;gap:8px}
+ .host[data-view="partner-os"] .situationRow>button{min-height:38px}
+ .host[data-view="partner-os"] .painChoices{display:flex;gap:5px;overflow-x:auto;scrollbar-width:thin}
+ .host[data-view="partner-os"] .painChoices>button{flex:1;min-width:175px}
+ .host[data-view="partner-os"] :global([data-enquiry-contact]){grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:670px){
+ .host[data-view="partner-os"] .journey{padding-inline:9px;padding-bottom:calc(95px + env(safe-area-inset-bottom))}
+ .host[data-view="partner-os"] .stickyJourney{position:relative;top:auto!important;margin-top:9px}
+ .host[data-view="partner-os"] .stickyJourney>nav{padding:9px;flex-wrap:wrap}
+ .host[data-view="partner-os"] .journeyBrand{display:none}
+ .host[data-view="partner-os"] .chapterLinks{order:1;width:100%;flex-basis:100%;gap:4px}
+ .host[data-view="partner-os"] .chapterLinks>a{font-size:10px;padding:9px}
+ .host[data-view="partner-os"] .briefButton{order:0;margin-inline-start:auto;min-height:38px}
+ .host[data-view="partner-os"] .contextLinks{display:none}
+ .host[data-view="partner-os"] .briefTray{position:static;width:100%;max-height:60vh;overflow:auto}
+ .host[data-view="partner-os"] .chapter{padding:11px;border-radius:11px}
+ .host[data-view="partner-os"] .chapterHeader{padding:8px 4px 13px}
+ .host[data-view="partner-os"] .chapterHeader h2{font-size:25px}
+ .host[data-view="partner-os"] .chapterHeader>div:last-child>p{font-size:12px}
+ .host[data-view="partner-os"] .chapterFooter{display:flex;flex-wrap:wrap;gap:7px;padding:12px 0}
+ .host[data-view="partner-os"] .chapterFooter>button{flex:1;min-width:125px;min-height:42px}
+ .host[data-view="partner-os"] .chapterFooter>span{flex-basis:100%}
+ .host[data-view="partner-os"] .orientation{padding:12px}
+ .host[data-view="partner-os"] .orientationGrid{gap:9px}
+ .host[data-view="partner-os"] .painChoices>button{min-width:150px;padding:10px}
+ .host[data-view="partner-os"] .painAnswer{padding:14px}
+ .host[data-view="partner-os"] .suggested{display:flex;flex-wrap:wrap;gap:6px}
+ .host[data-view="partner-os"] .suggested>button{min-height:39px}
+ .host[data-view="partner-os"] .readingControls{flex-wrap:wrap;gap:8px}
+ .host[data-view="partner-os"] .directionScene{min-height:280px}
+ .host[data-view="partner-os"] .directionSpots{display:flex;gap:5px;flex-wrap:wrap}
+ .host[data-view="partner-os"] .directionSpots>button{font-size:9px;padding:7px}
+ .host[data-view="partner-os"] .admissionsCopy,.host[data-view="partner-os"] .planningCopy,.host[data-view="partner-os"] .teamWorkbench{padding:11px}
+ .host[data-view="partner-os"] .stageTabs{display:flex;overflow-x:auto;scrollbar-width:thin}
+ .host[data-view="partner-os"] .stageTabs button{flex-shrink:0;min-height:43px;min-width:110px}
+ .host[data-view="partner-os"] .segmented{display:flex;flex-wrap:wrap}
+ .host[data-view="partner-os"] .teamTabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+ .host[data-view="partner-os"] .financeFlow{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+ .host[data-view="partner-os"] .financeFlow button{padding:10px}
+ .host[data-view="partner-os"] .financeVisual{min-height:210px}
+ .host[data-view="partner-os"] .ecosystemWheel{min-height:250px}
+ .host[data-view="partner-os"] .directory>div{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .host[data-view="partner-os"] .ecosystemBenefits{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .host[data-view="partner-os"] .projectComposer{padding:13px}
+ .host[data-view="partner-os"] .projectSteps{grid-template-columns:1fr 1fr;gap:7px}
+ .host[data-view="partner-os"] .projectSteps>div{padding:8px}
+ .host[data-view="partner-os"] .composerSelected{padding:10px}
+ .host[data-view="partner-os"] .faq{display:block;padding:13px}
+ .host[data-view="partner-os"] .finalBar{display:flex;flex-wrap:wrap;padding:14px;gap:10px}
+ .host[data-view="partner-os"] .finalBar>button{min-height:43px}
+ .host[data-view="partner-os"] .formModules{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .host[data-view="partner-os"] .briefSelects{grid-template-columns:1fr 1fr;gap:9px}
+ .host[data-view="partner-os"] .briefFields{padding:11px}
+ .host[data-view="partner-os"] :global(#world-enquiry)>form{padding:14px 11px}
+ .host[data-view="partner-os"] :global([data-enquiry-contact]){grid-template-columns:1fr}
+ .host[data-view="partner-os"] :global([data-enquiry-contact])>label:last-child{grid-column:auto;max-width:none}
+ .host[data-view="partner-os"] :global(#world-enquiry){scroll-margin-bottom:calc(92px + env(safe-area-inset-bottom))}
+ .host[data-view="partner-os"] :global(#world-enquiry) input,.host[data-view="partner-os"] :global(#world-enquiry) textarea,.host[data-view="partner-os"] :global(#world-enquiry) select{font-size:16px}
+ .host[data-view="partner-os"] .selectedChips{flex-wrap:wrap}
+ .host[data-view="partner-os"] :global(#ew-native-explorer){min-width:0}
+ .host[data-view="partner-os"] :global([data-establishments-nav]){min-width:0;overflow-x:auto}
+ .host[data-view="partner-os"] :global([data-establishments-nav])>div:first-child{min-width:max-content}
+}
+@media(max-width:385px){
+ .host[data-view="partner-os"] .briefSelects,.host[data-view="partner-os"] .projectSteps{grid-template-columns:1fr}
+ .host[data-view="partner-os"] .financeFlow{grid-template-columns:1fr}
+ .host[data-view="partner-os"] .ecosystemBenefits{grid-template-columns:1fr}
+}

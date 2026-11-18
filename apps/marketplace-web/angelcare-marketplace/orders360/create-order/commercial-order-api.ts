@@ -85,9 +85,15 @@ export async function commercialGet(request:Request){
    if(journeys.error)fail(journeys.error,"Historique commandes");
    if(addresses.error)fail(addresses.error,"Adresses du client");
    const values=(journeys.data||[]).map(x=>asRow(x.financial_status));
-   const sum=values.reduce((a,x)=>a+(Number(x.expected_amount)||0),0);
+   const amountByCurrency=new Map<string,number>();
+   for(const financial of values){
+    const currency=String(financial.currency_label||"MAD")==="Dh"?"MAD":String(financial.currency_label||"MAD");
+    const amount=Number(financial.expected_amount);
+    if(Number.isFinite(amount))amountByCurrency.set(currency,(amountByCurrency.get(currency)||0)+amount);
+   }
+   const valueByCurrency=[...amountByCurrency].map(([currency,value])=>({currency,value:Math.round(value*100)/100}));
    return apiSuccess({
-    orderCount:journeys.data?.length||0,value:Math.round(sum*100)/100,
+    orderCount:journeys.data?.length||0,value:valueByCurrency.length===1?valueByCurrency[0].value:0,valueByCurrency,
     lastOrderAt:journeys.data?.[0]?.created_at||null,
     recentOrders:(journeys.data||[]).slice(0,8).map(x=>({
      id:x.id,public_reference:x.public_reference||"",title:x.title||"",
@@ -218,9 +224,21 @@ export async function commercialPost(request:Request){
   }else if(action==="submit"){
    const id=uuid(input.id,"Brouillon"),expected=int(input.expectedVersion,1);
    const draft=await scoped(db.from("angelcare_marketplace_commercial_drafts_r7")
-    .select("id,actor_id,status").eq("id",id),ctx).maybeSingle();
+    .select("id,actor_id,status,payload").eq("id",id),ctx).maybeSingle();
    if(draft.error||!draft.data||draft.data.actor_id!==actor)
     throw new MarketplaceError("NOT_FOUND","Brouillon non disponible.");
+   const draftPayload=asRow(draft.data.payload);
+   const mode=String(draftPayload.mode||"expert");
+   const commercialContext=asRow(draftPayload.commercialContext);
+   if(mode==="b2b"&&String(commercialContext.legalEntity||"").trim().length<3)
+    throw new MarketplaceError("VALIDATION_ERROR","Raison sociale B2B requise pour valider cette commande.");
+   if(mode==="quote"){
+    const expires=String(commercialContext.quoteValidity||"");
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(expires)||expires<new Date().toISOString().slice(0,10))
+     throw new MarketplaceError("VALIDATION_ERROR","La date de validité du devis doit être actuelle ou future.");
+   }
+   if(mode==="renewal"&&String(commercialContext.renewalReason||"").trim().length<5)
+    throw new MarketplaceError("VALIDATION_ERROR","Renseignez le motif du renouvellement.");
    const q=await db.rpc("angelcare_marketplace_commercial_r7_submit",{
     p_id:id,p_actor:actor,p_tenant:ctx.tenantId||null,p_territory:ctx.territoryId||null,
     p_expected:expected,p_request:reqKey
