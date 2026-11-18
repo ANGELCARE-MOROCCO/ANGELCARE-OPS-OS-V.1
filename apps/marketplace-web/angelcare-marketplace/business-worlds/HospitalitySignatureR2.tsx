@@ -52,8 +52,8 @@ export function HospitalitySignatureR2({mode="native"}:{mode?:"native"|"publishe
   "Published native catalogue offer IDs: "+(project.map(x=>x.id).join(", ")||"None selected"),
   "Existing world brief: "+brief
  ].join("\n"),[currentProperty,age,concepts,selectedConcepts,selectedProgrammes,days,families,project,brief,locale]);
- const changeProgram=(key:string)=>setSelectedProgrammes(prev=>prev.includes(key)?prev.filter(x=>x!==key):[...prev,key]);
- const changeConcept=(key:string)=>setConcepts(prev=>prev.includes(key)?prev.filter(x=>x!==key):[...prev,key]);
+ const changeProgram=(key:string)=>setSelectedProgrammes(prev=>{const next=prev.includes(key)?prev.filter(x=>x!==key):[...prev,key];setContext("hospitality-programmes",H.worldCollection.filter(x=>next.includes(x.key)).map(x=>tr(x.title)).join(", ")||"None selected");return next;});
+ const changeConcept=(key:string)=>setConcepts(prev=>{const next=prev.includes(key)?prev.filter(x=>x!==key):[...prev,key];setContext("hospitality-experiences",H.concepts.filter(x=>next.includes(x.id)).map(x=>tr(x.title)).join(", ")||"None selected");return next;});
  const nav=H.nav;
  return <div className={s.world} data-hospitality-signature="R2" data-hospitality-mode={mode} dir={locale==="ar"?"rtl":"ltr"}>
    <section className={s.hero} id="hospitality-opening" data-hospitality-chapter="01">
@@ -107,7 +107,7 @@ export function HospitalitySignatureR2({mode="native"}:{mode?:"native"|"publishe
    </section>
    <section className={s.day} data-hospitality-chapter="09">
     <Head title={H.dayTitle}/>
-    <div className={s.dayControls}>{H.moments.map((v,i)=><button type="button" key={v.id} aria-pressed={moment===i} onClick={()=>setMoment(i)}><span>{String(i+1).padStart(2,"0")}</span>{tr(v.title)}</button>)}</div>
+    <div className={s.dayControls}>{H.moments.map((v,i)=><button type="button" key={v.id} aria-pressed={moment===i} onClick={()=>{setMoment(i);setContext("hospitality-guest-journey",tr(v.title));}}><span>{String(i+1).padStart(2,"0")}</span>{tr(v.title)}</button>)}</div>
     <div className={s.dayStage}><Art name={currentMoment.image} slot={`day.${currentMoment.id}`}/><div><span>FAMILY EXPERIENCE / 0{moment+1}</span><h3>{tr(currentMoment.title)}</h3><p>{tr(currentMoment.body)}</p><button type="button" onClick={()=>changeConcept(H.concepts[moment].id)}>{tr(H.dailyCTA)} <ArrowRight size={16}/></button></div></div>
    </section>
    <section className={s.operations} id="hotel-operations" data-hospitality-chapter="10">
@@ -116,7 +116,7 @@ export function HospitalitySignatureR2({mode="native"}:{mode?:"native"|"publishe
    </section>
    <section className={s.economics} data-hospitality-chapter="11">
     <Head title={H.economicsTitle} lead={H.economicsLead}/>
-    <div className={s.economicsGrid}><div className={s.economicsControl}><label>{tr(H.days)}<input type="range" min={1} max={90} step={1} value={days} onChange={e=>setDays(Number(e.target.value))}/><strong>{days}</strong></label><label>{tr(H.volume)}<input type="range" min={1} max={60} step={1} value={families} onChange={e=>setFamilies(Number(e.target.value))}/><strong>{families}</strong></label><p>{tr(H.estimateWarning)}</p></div><div className={s.economicsResult}><span>{tr(H.exposure)}</span><strong>{new Intl.NumberFormat(locale==="fr"?"fr-FR":locale==="ar"?"ar-MA":"en-GB").format(days*families)}</strong><p>{tr(H.noClaim)}</p></div></div>
+    <div className={s.economicsGrid}><div className={s.economicsControl}><label>{tr(H.days)}<input type="range" min={1} max={90} step={1} value={days} onChange={e=>{const value=Number(e.target.value);setDays(value);setContext("hospitality-planning",`${value} days × ${families} families/day, illustrative only`);}}/><strong>{days}</strong></label><label>{tr(H.volume)}<input type="range" min={1} max={60} step={1} value={families} onChange={e=>{const value=Number(e.target.value);setFamilies(value);setContext("hospitality-planning",`${days} days × ${value} families/day, illustrative only`);}}/><strong>{families}</strong></label><p>{tr(H.estimateWarning)}</p></div><div className={s.economicsResult}><span>{tr(H.exposure)}</span><strong>{new Intl.NumberFormat(locale==="fr"?"fr-FR":locale==="ar"?"ar-MA":"en-GB").format(days*families)}</strong><p>{tr(H.noClaim)}</p></div></div>
    </section>
    <section className={s.trust} data-hospitality-chapter="12">
     <Head title={H.trustTitle} lead={H.trustLead}/>
