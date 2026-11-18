@@ -1,3 +1,4 @@
+import {HospitalitySignatureR2} from "./HospitalitySignatureR2";
 "use client";
 import { imageryToken } from "../marketplace-imagery/pages";
 import { Sun, ArrowDown } from "lucide-react";
@@ -17,7 +18,10 @@ import {
 } from "./Shared";
 import { Explorer } from "./Tools";
 import s from "./business.module.css";
-export function Hospitality() {
+export function Hospitality(){return <HospitalitySignatureR2 mode="native"/>;}
+/* The former authored journey remains as a source reference for future copy audits.
+ * It is intentionally not mounted or published. */
+function HospitalityLegacy() {
   const { locale, native } = useWorld(),
     p = WORLDS.hospitality;
   return (
