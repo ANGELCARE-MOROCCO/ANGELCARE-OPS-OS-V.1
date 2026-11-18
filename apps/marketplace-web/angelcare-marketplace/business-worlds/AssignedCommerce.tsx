@@ -12,6 +12,7 @@ import {
   ProjectSummary,
 } from "./Commerce";
 import { Enquiry } from "./Enquiry";
+import {HospitalitySignatureR2} from "./HospitalitySignatureR2";
 import { businessKey, M, localized } from "./merchandising";
 import c from "./commerce.module.css";
 
@@ -31,6 +32,7 @@ export function AssignedBusinessCommerce({
       experience={experience}
       native={native}
     >
+      {experience.key === "hospitality" ? <HospitalitySignatureR2 mode="published"/> : null}
       <CommercialOpening />
       <CommerceCollections />
       <CommerceCatalogue />
