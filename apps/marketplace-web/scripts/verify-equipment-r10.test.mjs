@@ -18,7 +18,7 @@ test("R10 only changes equipment body; hero/explorer/enquiry remain in identical
  const body=host.indexOf("<EquipmentExperienceR10");
  const enquiry=host.indexOf("<ProjectEnquiry");
  assert.ok(head>=0&&catalog>head&&body>catalog&&enquiry>body);
- assert.ok(host.includes('data-establishments-journey={view==="produits"?"R11":"R5"}')||host.includes('data-establishments-journey={view==="produits"?"R10":"R5"}'));
+ assert.ok(host.includes('data-establishments-journey={view==="produits"?"R11"')||host.includes('data-establishments-journey={view==="produits"?"R10":"R5"}'));
  for(const protectedFeature of ["<PartnerJourney","<CommercialJourney","<ProjectEnquiry","onBriefChange={setEquipmentR9Brief}","storageScope={experience.territoryCode||"])assert.ok(host.includes(protectedFeature),protectedFeature);
 });
 test("clear discover by space, by goal and by domain, with no mandatory form",()=>{

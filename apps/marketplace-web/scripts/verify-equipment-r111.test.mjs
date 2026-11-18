@@ -27,7 +27,7 @@ test("canonical FR EN AR equipment route with preserved Partner OS and legacy Co
  assert.match(route,/modern=\{modern\}/);
  assert.match(route,/legacy=\{legacy\}/);
  assert.match(route,/initialView=\{locale==="fr"\?undefined:"produits"\}/);
- assert.match(entry,/hash.startsWith\("#conseil"\)\?"legacy":"modern"/);
+ assert.match(entry,/hash.startsWith\("#conseil-archive"\)\?"legacy":"modern"/);
  assert.match(entry,/hash.startsWith\("#partner-os"\)\?"partner"/);
  assert.match(entry,/chapter==="partner"\?partner:chapter==="legacy"\?legacy:modern/);
  for(const k of ["territoryCode","getPublishedSurface","publicVerticalSnapshot","EstablishmentsExperience"])assert.ok(route.includes(k));

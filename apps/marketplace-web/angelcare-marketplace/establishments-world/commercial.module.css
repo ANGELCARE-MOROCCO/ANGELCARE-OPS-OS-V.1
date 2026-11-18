@@ -1709,3 +1709,24 @@
 /* Preserve logical focus/order in RTL without modifying shared shell. */
 .world[data-view="produits"][dir=rtl] .localNav,.world[data-view="produits"][dir=rtl] .navUtilities,.world[data-view="produits"][dir=rtl] .specialities{direction:rtl}
 .world[data-view="produits"][dir=rtl] .enquiry{text-align:right}
+
+
+/* Conseil R6 standalone responsive contract; no impact on Equipment R11.1, Partner OS R2 or shared shell. */
+.world[data-view="conseil"]{min-width:0!important;width:100%;max-width:100%;overflow-x:clip}
+.world[data-view="conseil"] .localNav{min-width:0;max-width:100%;gap:8px;padding:9px max(14px,calc((100% - 1480px)/2))}
+.world[data-view="conseil"] .navUtilities button{font-weight:850}
+.world[data-view="conseil"] .enquiry{max-width:1480px;width:calc(100% - 20px);margin:15px auto 28px}
+.world[data-view="conseil"] [id^="c6-"]{scroll-margin-top:calc(var(--ac-header-height,86px) + 100px)}
+@media(max-width:1050px){
+ .world[data-view="conseil"] .localNav{flex-wrap:wrap;gap:7px;padding:9px 12px}
+ .world[data-view="conseil"] .specialities{flex-basis:100%;min-width:0;display:flex;overflow-x:auto}
+ .world[data-view="conseil"] .specialities>a{flex:1;min-width:max-content}
+ .world[data-view="conseil"] .navUtilities{width:100%;overflow-x:auto;scrollbar-width:thin}
+}
+@media(max-width:760px){
+ .world[data-view="conseil"] .localNav{position:relative;top:auto;padding:7px}
+ .world[data-view="conseil"] .specialities>a{font-size:11px;min-height:42px}
+ .world[data-view="conseil"] .navUtilities button{font-size:10px;min-height:40px}
+ .world[data-view="conseil"] .enquiry{margin:12px auto 22px;width:calc(100% - 14px)}
+}
+.world[data-view="conseil"][dir=rtl] .specialities,.world[data-view="conseil"][dir=rtl] .navUtilities{direction:rtl}
