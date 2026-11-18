@@ -68,7 +68,13 @@ export function HospitalitySignatureR2({mode="native"}:{mode?:"native"|"publishe
     <div className={s.heroScenes}><div><Art name="games" slot="hero.inset.kids"/><strong>Kids Club</strong></div><div><Art name="family" slot="hero.inset.family"/><strong>Family Stay</strong></div></div>
     <div className={s.heroBand}>ANGELCARE <span>HOTELS & RESORTS</span> <span>{tr(H.presentation)}</span></div>
    </section>
-   <nav className={s.nav} aria-label="Hospitality journey">{nav.map((v,i)=><a href={`#${navIds[i]}`} key={navIds[i]}>{tr(v)}</a>)}</nav>
+   <nav className={s.nav} aria-label={locale==="fr"?"Navigation de l'expérience hôtelière":locale==="ar"?"التنقل في تجربة الفندق":"Hospitality experience navigation"}>{nav.map((v,i)=><a href={`#${navIds[i]}`} key={navIds[i]}>{tr(v)}</a>)}</nav>
+   <aside className={s.projectPulse} aria-live="polite" aria-label={locale==="fr"?"Votre projet hôtelier":locale==="ar"?"مشروع الفندق":"Your hotel project"}>
+    <span className={s.projectPulseIcon}><Sparkles size={17}/></span>
+    <div><strong>{tr(H.propertyTitle)}</strong><span>{tr(currentProperty.name)} · {tr(H.ages[age].title)}</span></div>
+    <span className={s.pulseCount}>{selectedProgrammes.length+concepts.length+project.length}</span>
+    <a href="#hotel-partnership-brief">{tr(H.briefAction)} <ArrowUpRight size={15}/></a>
+   </aside>
 
    <section className={s.compare} id="hotel-value" data-hospitality-chapter="02">
     <Head title={H.comparisonTitle} lead={H.comparisonLead}/>
