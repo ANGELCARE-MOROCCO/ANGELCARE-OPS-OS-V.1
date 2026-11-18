@@ -73,7 +73,7 @@ export function HospitalitySignatureR2({mode="native"}:{mode?:"native"|"publishe
     <span className={s.projectPulseIcon}><Sparkles size={17}/></span>
     <div><strong>{tr(H.propertyTitle)}</strong><span>{tr(currentProperty.name)} · {tr(H.ages[age].title)}</span></div>
     <span className={s.pulseCount}>{selectedProgrammes.length+concepts.length+project.length}</span>
-    <a href="#hotel-partnership-brief">{tr(H.briefAction)} <ArrowUpRight size={15}/></a>
+    <a href={mode==="native"?"#hotel-partnership-brief":"#world-enquiry"}>{tr(H.briefAction)} <ArrowUpRight size={15}/></a>
    </aside>
 
    <section className={s.compare} id="hotel-value" data-hospitality-chapter="02">
