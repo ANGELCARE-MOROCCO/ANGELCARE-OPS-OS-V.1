@@ -2,7 +2,7 @@
 import {useEffect,useState,type ReactNode} from "react";
 
 /** R11.1: English/Arabic Équipements use the canonical commercial renderer.
- * Existing Conseil legacy and protected Partner OS stay separately selectable.
+ * Conseil R6 now uses the modern canonical renderer in every locale; the previous EN/AR archive remains accessible via an explicit archive hash. Partner OS is unchanged.
  * The route follows hash changes without duplicating any commerce implementation.
  */
 export function PartnerLocaleEntry({
@@ -12,7 +12,7 @@ export function PartnerLocaleEntry({
  useEffect(()=>{
   const read=()=>{
    const hash=decodeURIComponent(window.location.hash).toLowerCase();
-   const chosen=hash.startsWith("#partner-os")?"partner":hash.startsWith("#conseil")?"legacy":"modern";
+   const chosen=hash.startsWith("#partner-os")?"partner":hash.startsWith("#conseil-archive")?"legacy":"modern";
    setChapter(chosen);
   };
   read();
