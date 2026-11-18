@@ -894,3 +894,47 @@
     transform: none;
   }
 }
+
+
+/* Hotel-only executive offer treatment. Canonical pricing, imagery, facts,
+ * availability, saved/compare/project and native actions remain component-owned. */
+.hospitalityOffer{border:1px solid #cddff0;border-radius:15px;box-shadow:0 8px 24px #063d800d;background:#fff}
+.hospitalityOffer:hover{border-color:#0fa4c6;box-shadow:0 14px 30px #07559e20}
+.hospitalityOffer .cardHeading{padding:9px 12px;min-height:34px;color:#0b5e96;border-color:#dae9f2;background:linear-gradient(90deg,#e9f9ff,#f5fbff);font-size:10px}
+.hospitalityOffer .media{padding:10px 11px;background:radial-gradient(ellipse at 50% 28%,#fff 25%,#e4f6ff 100%);border-bottom:1px solid #e0eefa}
+.hospitalityOffer .media>div{height:210px;background:transparent;padding:4px;display:grid;place-items:center}
+.hospitalityOffer .media img{max-height:100%;max-width:100%;height:auto;width:auto;object-fit:contain;filter:drop-shadow(0 9px 13px #183f6022)}
+.hospitalityOffer .cardBody{gap:9px;padding:13px}
+.hospitalityOffer .cardBody h3{font-size:15px;font-weight:900;line-height:1.25;letter-spacing:-.02em;color:#0a3568}
+.hospitalityOffer .cardBody>p{font-size:11px;line-height:1.45;color:#51718c}
+.hospitalityOffer .badges span{font-size:9px;padding:4px 6px;border-radius:7px}
+.hospitalityOffer .facts{gap:6px}
+.hospitalityOffer .facts>div{padding:7px 8px;border-color:#deebf5;background:#f7fbff}
+.hospitalityOffer .facts dt{font-size:9px;color:#5a7b91;margin-bottom:3px}
+.hospitalityOffer .facts dd{font-size:10px;font-weight:750;color:#1a486f;line-height:1.38}
+.hospitalityOffer .price{border-top:1px solid #e2edf6;padding-top:10px;align-items:center}
+.hospitalityOffer .price strong{font-size:15px;color:#064481;font-weight:950}
+.hospitalityOffer .price a{color:#075ab4;font-size:10px}
+.hospitalityOffer .cardActions{gap:6px}
+.hospitalityOffer .cardActions button{min-height:36px;min-width:38px;border-color:#bcd9eb;color:#075a99;border-radius:8px}
+.hospitalityOffer .cardActions .prepare{background:#0765b6;color:#fff;border-color:#0765b6;min-height:39px;font-size:10px}
+.hospitalityOffer .cardActions button[aria-pressed=true]{background:#e5f8f1;color:#097d63;border-color:#86dac7}
+.hospitalityOffer .nativeAction{background:#e9f7ff;border-color:#b6dbf4;color:#075692;border-radius:8px;padding:10px;min-height:40px;font-size:11px}
+.hospitalityExplorer{--commerce-line:#dbe9f4;--commerce-muted:#52718b;background:#fff;color:#092f63;scroll-margin-top:85px}
+.hospitalityExplorer>.openingHead{margin-bottom:14px;gap:14px}
+.hospitalityExplorer .openingHead h2{font-size:clamp(24px,2.4vw,32px);margin:5px 0}
+.hospitalityExplorer .openingHead p{font-size:12px;line-height:1.45}
+.hospitalityExplorer .eyebrow{color:#0879ae}
+.hospitalityExplorer .filterPanel{padding:12px 14px;border-color:#d4e7f5;border-radius:12px;background:#f7fbff}
+.hospitalityExplorer .filterTitle{margin-bottom:9px;color:#164b78}
+.hospitalityExplorer .filters{gap:8px}
+.hospitalityExplorer .filters>label{gap:4px;flex-basis:155px}
+.hospitalityExplorer .filters .query{flex-basis:225px}
+.hospitalityExplorer .filters select,.hospitalityExplorer .query>div{min-height:39px;border-color:#cbddeb;background:#fff;font-size:11px}
+.hospitalityExplorer .resultBar{margin:12px 0;gap:8px}
+.hospitalityExplorer .viewTabs button{min-height:34px;font-size:11px;padding:7px 10px}
+.hospitalityExplorer .viewTabs button[aria-pressed=true]{background:#e8f7ff;border-color:#83c6e8;color:#095b9b}
+.hospitalityExplorer .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}
+.hospitalityExplorer .count{background:#e6f8fe;color:#0468a9;border-color:#bde1f0;font-size:11px}
+@media(max-width:850px){.hospitalityExplorer .grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:540px){.hospitalityExplorer .grid{grid-template-columns:1fr}.hospitalityOffer .media>div{height:245px}.hospitalityExplorer .filterPanel{padding:10px}.hospitalityExplorer .filters>label{flex:1 1 130px}}

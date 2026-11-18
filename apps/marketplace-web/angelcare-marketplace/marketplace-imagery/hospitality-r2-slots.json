@@ -249,5 +249,29 @@
     "sequence": true,
     "owner": "editable",
     "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/family.webp"
+  },
+  {
+    "id": "hospitality.hospitality-r2.model.city",
+    "section": "Hospitality Executive · deployment models",
+    "label": "09 · Modèle hôtel urbain",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/hospitality.webp"
+  },
+  {
+    "id": "hospitality.hospitality-r2.model.resort",
+    "section": "Hospitality Executive · deployment models",
+    "label": "09 · Modèle resort",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/games.webp"
+  },
+  {
+    "id": "hospitality.hospitality-r2.model.season",
+    "section": "Hospitality Executive · deployment models",
+    "label": "09 · Modèle saisonnier",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/holidays.webp"
   }
 ]
