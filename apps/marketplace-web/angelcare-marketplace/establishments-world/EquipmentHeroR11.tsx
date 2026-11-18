@@ -1,5 +1,5 @@
 "use client";
-import {useState} from "react";
+import {useEffect,useState} from "react";
 import {ArrowDown,ArrowRight,BookOpen,Building2,CheckCircle2,ChevronLeft,ChevronRight,HeartHandshake,Layers3,MousePointer2,Pause,Play,ShieldCheck,Sparkles,Star} from "lucide-react";
 import {CampaignImage} from "./CommercialJourney";
 import {ManagedImage} from "../marketplace-imagery/ManagedImage";
@@ -19,6 +19,14 @@ const WORLDS=[{id:"learning",icon:BookOpen,bg:"#ddf7eb",ink:"#12694c",domain:"cl
 export function EquipmentHeroR11({locale,onExploreDomains,onExploreOffers,onExploreDomain}:{locale:"fr"|"en"|"ar";onExploreDomains:()=>void;onExploreOffers:()=>void;onExploreDomain:(domainId:string)=>void}){
  const t=WORDS[locale];
  const [index,setIndex]=useState(0);
+ // In the existing Imagery Studio preview, reveal precisely the selected scene/thumbnail.
+ useEffect(()=>{
+  const params=new URLSearchParams(window.location.search);
+  if(params.get("imageryPreview")!=="1")return;
+  const placement=params.get("imageryPlacement")||"";
+  const match=placement.match(/^establishments\\.equipment-r11\\.(?:hero|thumb)\\.(class|welcome|team|identity)$/);
+  if(match){const n=SCENES.findIndex(scene=>scene.id===match[1]);if(n>=0)setIndex(n);}
+ },[]);
  const current=SCENES[index];
  const choose=(n:number)=>setIndex((n+SCENES.length)%SCENES.length);
  return <section className={c.outer} data-establishments-hero data-equipment-hero-version="r11" lang={locale} dir={locale==="ar"?"rtl":"ltr"} aria-label={t.first+" "+t.emph}>
