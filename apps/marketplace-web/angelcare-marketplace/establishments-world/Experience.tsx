@@ -10,7 +10,7 @@ import Link from "next/link";
 import {
   ArrowDown,
   ArrowRight,
-  Building2,
+  GraduationCap,
   CheckCircle2,
   Copy,
   Layers3,
@@ -77,9 +77,10 @@ import {
 } from "./partner/Locale";
 import partner from "./partner/partner.module.css";
 import c from "./commercial.module.css";
+import tabs from "./EstablishmentsSpecialitiesR7.module.css";
 import s from "./journey.module.css";
 
-const ICONS = { conseil: Building2, "partner-os": Monitor, produits: Package };
+const ICONS = { conseil: GraduationCap, "partner-os": Monitor, produits: Package };
 function localizedProjectNotice(value:string,locale:PartnerLocale){
  if(locale==="fr"||!value)return value;
  const english=locale==="en";
@@ -388,18 +389,12 @@ function EstablishmentsBody({
           data-establishments-nav
           aria-label={tr("Les trois spécialités Établissements")}
         >
-          <div className={c.specialities}>
-            {(view === "partner-os"
-              ? [
-                  VIEWS[2],
-                  VIEWS[1],
-                  { ...VIEWS[0], label: "Concierge & programmes" },
-                ]
-              : VIEWS
-            ).map((item) => {
+          <div className={tabs.rail} data-establishments-specialities="R7" dir={locale === "ar" ? "rtl" : "ltr"}>
+            {VIEWS.map((item) => {
               const Icon = ICONS[item.key];
               return (
                 <a
+                  className={tabs.tab}
                   key={item.key}
                   href={
                     partnerOnly && item.key !== "partner-os"
@@ -409,8 +404,8 @@ function EstablishmentsBody({
                   aria-current={view === item.key ? "page" : undefined}
                   onClick={(event) => navigate(event, item.key)}
                 >
-                  <Icon size={18} />
-                  {tr(item.label)}
+                  <Icon className={tabs.icon} aria-hidden="true" />
+                  <span className={tabs.label}>{tr(item.label)}</span>
                 </a>
               );
             })}

@@ -1,0 +1,42 @@
+name: AngelCare Établissements R7 — Compact Shared Three-Tab Navigation
+on:
+  push:
+    branches:
+      - feat/establishments-shared-three-tab-compact-nav-r7-20261118
+      - upgrade/next-angelcare-upgrade
+    paths:
+      - 'apps/marketplace-web/angelcare-marketplace/establishments-world/**'
+      - 'apps/marketplace-web/scripts/verify-establishments-shared-nav-r7.test.mjs'
+      - '.github/workflows/establishments-shared-nav-r7.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  protected-shared-navigation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: apps/marketplace-web/package-lock.json
+      - name: Compact approved three-tab menu, mobile and multilingual contract
+        working-directory: apps/marketplace-web
+        run: node --test scripts/verify-establishments-shared-nav-r7.test.mjs
+      - name: Conseil R6 and sibling protection
+        working-directory: apps/marketplace-web
+        run: |
+          node --test scripts/verify-conseil-r6.test.mjs scripts/verify-partner-os-r2.test.mjs
+          node --experimental-strip-types --test scripts/verify-equipment-r8.test.mjs
+          node --test scripts/verify-equipment-r9.test.mjs scripts/verify-equipment-r10.test.mjs scripts/verify-equipment-r11.test.mjs scripts/verify-equipment-r111.test.mjs
+      - name: Locked Marketplace dependencies
+        working-directory: apps/marketplace-web
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Equipment and shared route strict TypeScript
+        working-directory: apps/marketplace-web
+        run: npx tsc -p tsconfig.equipment-r111.json --noEmit --pretty false
+      - name: Partner OS strict TypeScript
+        working-directory: apps/marketplace-web
+        run: npx tsc -p tsconfig.partner-os-r2.json --noEmit --pretty false

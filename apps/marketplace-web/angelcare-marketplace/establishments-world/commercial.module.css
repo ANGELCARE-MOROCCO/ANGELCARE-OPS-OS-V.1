@@ -1730,3 +1730,57 @@
  .world[data-view="conseil"] .enquiry{margin:12px auto 22px;width:calc(100% - 14px)}
 }
 .world[data-view="conseil"][dir=rtl] .specialities,.world[data-view="conseil"][dir=rtl] .navUtilities{direction:rtl}
+
+
+/* R7 compact Établissements specialities: one nav layout across Conseil R6,
+   Partner OS R2, Equipment R11.1. Utility buttons and global shell untouched. */
+.world .localNav:has([data-establishments-specialities="R7"]){
+  gap:10px;
+  padding:7px max(15px,calc((100% - 1480px)/2));
+  min-width:0;
+  background:#ffffffed;
+  border-block:1px solid #e9edf4;
+  box-shadow:0 4px 15px #081d4110;
+}
+.world .localNav:has([data-establishments-specialities="R7"]) .navUtilities{
+  flex:0 0 auto;
+  gap:5px;
+}
+.world .localNav:has([data-establishments-specialities="R7"]) .navUtilities button{
+  min-height:38px;
+  font-size:11px;
+  padding:7px 9px;
+}
+@media(max-width:1180px){
+  .world .localNav:has([data-establishments-specialities="R7"]){
+    flex-wrap:wrap;
+    gap:5px;
+    padding:6px 10px;
+  }
+  .world .localNav:has([data-establishments-specialities="R7"]) .navUtilities{
+    flex:0 0 100%;
+    width:100%;
+    justify-content:flex-end;
+    overflow-x:auto;
+    scrollbar-width:thin;
+  }
+}
+@media(max-width:760px){
+  .world .localNav:has([data-establishments-specialities="R7"]){
+    position:relative;
+    top:auto;
+    gap:4px;
+    padding:6px;
+    width:100%;
+    max-width:100%;
+  }
+  .world .localNav:has([data-establishments-specialities="R7"]) .navUtilities{
+    justify-content:flex-start;
+    gap:4px;
+  }
+  .world .localNav:has([data-establishments-specialities="R7"]) .navUtilities button{
+    min-height:38px;
+    font-size:10px;
+    padding:7px 8px;
+  }
+}
