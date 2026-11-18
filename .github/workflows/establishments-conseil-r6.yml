@@ -8,6 +8,7 @@ on:
       - 'apps/marketplace-web/angelcare-marketplace/establishments-world/**'
       - 'apps/marketplace-web/app/angelcare-marketplace/**'
       - 'apps/marketplace-web/scripts/verify-conseil-r6.test.mjs'
+      - 'apps/marketplace-web/scripts/verify-equipment-*.test.mjs'
       - '.github/workflows/establishments-conseil-r6.yml'
   workflow_dispatch:
 permissions:
