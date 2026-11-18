@@ -6,6 +6,10 @@ import { resolveSlot } from "./registry";
 export function imageryPlacementPreviewUrl(page:string,locale:"fr"|"en"|"ar",selected:string):string {
  const pathname=pagePath(page,locale);
  const params=new URLSearchParams({imageryPreview:"1"});
+ if(page==="hospitality"&&resolveSlot(page,selected)){
+  params.set("imageryPlacement",selected);
+  return pathname+"?"+params.toString();
+ }
  if(page!=="establishments"||!resolveSlot(page,selected))return pathname+"?"+params.toString();
  params.set("imageryPlacement",selected);
  const slot=selected.slice("establishments.".length);
