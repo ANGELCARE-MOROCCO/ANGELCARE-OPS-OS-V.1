@@ -52,8 +52,8 @@ export function HospitalitySignatureR2({mode="native"}:{mode?:"native"|"publishe
   "Published native catalogue offer IDs: "+(project.map(x=>x.id).join(", ")||"None selected"),
   "Existing world brief: "+brief
  ].join("\n"),[currentProperty,age,concepts,selectedConcepts,selectedProgrammes,days,families,project,brief,locale]);
- const changeProgram=(key:string)=>setSelectedProgrammes(prev=>{const next=prev.includes(key)?prev.filter(x=>x!==key):[...prev,key];setContext("hospitality-programmes",H.worldCollection.filter(x=>next.includes(x.key)).map(x=>tr(x.title)).join(", ")||"None selected");return next;});
- const changeConcept=(key:string)=>setConcepts(prev=>{const next=prev.includes(key)?prev.filter(x=>x!==key):[...prev,key];setContext("hospitality-experiences",H.concepts.filter(x=>next.includes(x.id)).map(x=>tr(x.title)).join(", ")||"None selected");return next;});
+ const changeProgram=(key:string)=>{const next=selectedProgrammes.includes(key)?selectedProgrammes.filter(x=>x!==key):[...selectedProgrammes,key];setSelectedProgrammes(next);setContext("hospitality-programmes",H.worldCollection.filter(x=>next.includes(x.key)).map(x=>tr(x.title)).join(", ")||"None selected");};
+ const changeConcept=(key:string)=>{const next=concepts.includes(key)?concepts.filter(x=>x!==key):[...concepts,key];setConcepts(next);setContext("hospitality-experiences",H.concepts.filter(x=>next.includes(x.id)).map(x=>tr(x.title)).join(", ")||"None selected");};
  const nav=H.nav;
  return <div className={s.world} data-hospitality-signature="R2" data-hospitality-mode={mode} dir={locale==="ar"?"rtl":"ltr"}>
    <section className={s.hero} id="hospitality-opening" data-hospitality-chapter="01">
