@@ -17,7 +17,8 @@ function decodeDiagnostic(v:unknown):Diagnostic{
  if(!v||typeof v!=="object")return EMPTY;
  const d=v as {answers?:unknown;step?:unknown},values=Array.isArray(d.answers)?d.answers:[];
  const answers=[0,1,2,3].map(i=>[0,1,2].includes(values[i])?values[i] as Answer:null) as Diagnostic["answers"];
- return {answers,step:typeof d.step==="number"&&Number.isInteger(d.step)?Math.min(4,Math.max(0,d.step)):0};
+ const step=typeof d.step==="number"&&Number.isInteger(d.step)?Math.min(4,Math.max(0,d.step)):0;
+ return {answers,step:step===4&&answers.some(answer=>answer===null)?0:step};
 }
 const families:Family[]=["edup","academy","parents"];
 const images:Record<Family,string>={edup:"edupplay",academy:"academy",parents:"parents"};
