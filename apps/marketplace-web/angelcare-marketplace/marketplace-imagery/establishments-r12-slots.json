@@ -2003,5 +2003,13 @@
     "owner": "editable",
     "source": "/angelcare-marketplace/establishments-r2/audit.png",
     "condition": "Domain technical opened"
+  },
+  {
+    "id": "establishments.equipment-r10.closing",
+    "section": "Équipements · Conclusion",
+    "label": "Conclusion · établissement accueillant",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/welcome.png"
   }
 ]
