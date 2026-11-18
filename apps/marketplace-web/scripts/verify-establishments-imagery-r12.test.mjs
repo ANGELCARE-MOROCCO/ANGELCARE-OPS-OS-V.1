@@ -34,10 +34,10 @@ const stories=[...editorial.matchAll(/\{id:"([\w-]+)",eyebrow:[\s\S]*?art:"([\w-
 const hotspots=[...editorial.matchAll(/\{id:"([\w-]+)",label:"[^"]*",family:"([\w-]+)" as EquipmentFamilyId,top:/g)].map(x=>({id:x[1],family:x[2]}));
 const worlds=[...partner.matchAll(/id:"([\w-]+)",label:[\s\S]*?visual:"([\w-]+)",photo:"([\w-]+)",second:"([\w-]+)",third:"([\w-]+)",accent:/g)].map(x=>x[1]);
 test("exact manifest is deterministic, safe, source-derived and within existing admin capacity",()=>{
- assert.equal(data.length,229);
+ assert.equal(data.length,230);
  assert.equal(existing.length,51);
- assert.equal(new Set(ids).size,229);
- assert.equal([...new Set([...ids,...existing.map(x=>x.id)])].length,279);
+ assert.equal(new Set(ids).size,230);
+ assert.equal([...new Set([...ids,...existing.map(x=>x.id)])].length,280);
  assert.ok([...new Set([...ids,...existing.map(x=>x.id)])].length<600);
  for(const x of data){
   assert.ok(valid(x.id),x.id);
@@ -100,7 +100,7 @@ test("equipment discovery, school map, stories and all 22 atlas domains are cove
  for(const h of hotspots){has("equipment-r10.school.zone."+h.id);has("equipment-r10.map.detail."+h.family);}
  for(const d of defined){has("equipment-r10.atlas."+d.id);has("equipment-r10.feature."+d.id);}
  has("equipment-r10.intro.classroom");has("equipment-r10.intro.team");has("equipment-r10.closing");
- assert.equal(data.filter(x=>x.id.startsWith("establishments.equipment-r10.")).length,160);
+ assert.equal(data.filter(x=>x.id.startsWith("establishments.equipment-r10.")).length,161);
  assert.ok(eqBody.includes('slot={\`equipment-r10.related.\${activeDomain.id}.\${related.id}\`}'));
 });
 test("all 22 actual R9 interactive layouts have matching registered live scene photos",()=>{
@@ -131,7 +131,7 @@ test("preview URL routes into R6, R2 and Equipment instead of the old generic ho
  assert.ok(studio.includes("imageryPlacementPreviewUrl(page, previewLocale, selected)"));
  for(const value of ['#conseil','#partner-os','#produits','equipmentDomain','imageryPlacement','resolveSlot(page,selected)'])assert.ok(preview.includes(value),value);
  assert.ok(preview.includes('page!=="establishments"'));
- assert.ok(eqBody.includes('query.get("imageryPreview")=="1"'));
+ assert.ok(eqBody.includes('query.get("imageryPreview")==="1"'));
  assert.ok(eqBody.includes('setEntry("goals")'));
  assert.ok(eqBody.includes('setActiveStory(index)'));
  assert.ok(eqBody.includes('setShowAllDomains(true)'));
@@ -158,7 +158,7 @@ test("original admin workspace controls, live publication, media validation and 
  assert.ok(!preview.includes("window.location.assign"));
 });
 test("strict source domains, no new SQL or alternate admin pages",()=>{
- assert.equal(data.length,229);
+ assert.equal(data.length,230);
  assert.ok(data.every(x=>x.id.startsWith("establishments.")));
  assert.ok(data.every(x=>!x.id.includes("undefined")&&!x.id.includes("\${")));
  assert.ok(!preview.includes("api/angelcare-marketplace"));
