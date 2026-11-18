@@ -1,0 +1,47 @@
+name: AngelCare Établissements R12 — Native Imagery Deep Coverage
+on:
+  push:
+    branches:
+      - feat/establishments-imagery-studio-deep-coverage-r12-20261118
+      - upgrade/next-angelcare-upgrade
+    paths:
+      - 'apps/marketplace-web/angelcare-marketplace/marketplace-imagery/**'
+      - 'apps/marketplace-web/angelcare-marketplace/establishments-world/**'
+      - 'apps/marketplace-web/scripts/verify-establishments-imagery-r12.test.mjs'
+      - 'apps/marketplace-web/tsconfig.establishments-imagery-r12.json'
+      - '.github/workflows/establishments-imagery-r12.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  imagery-coverage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: apps/marketplace-web/package-lock.json
+      - name: Exact editorial source-to-registry audit and preview safety
+        working-directory: apps/marketplace-web
+        run: node --test scripts/verify-establishments-imagery-r12.test.mjs
+      - name: All three storefronts and shared navigation regression contracts
+        working-directory: apps/marketplace-web
+        run: |
+          node --test scripts/verify-conseil-r6.test.mjs scripts/verify-partner-os-r2.test.mjs scripts/verify-establishments-shared-nav-r7.test.mjs
+          node --experimental-strip-types --test scripts/verify-equipment-r8.test.mjs
+          node --test scripts/verify-equipment-r9.test.mjs scripts/verify-equipment-r10.test.mjs scripts/verify-equipment-r11.test.mjs scripts/verify-equipment-r111.test.mjs
+      - name: Install locked Marketplace dependencies
+        working-directory: apps/marketplace-web
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Strict Imagery Studio and all 3 storefront TypeScript
+        working-directory: apps/marketplace-web
+        run: npx tsc -p tsconfig.establishments-imagery-r12.json --noEmit --pretty false
+      - name: Strict Equipment R11.1 TypeScript
+        working-directory: apps/marketplace-web
+        run: npx tsc -p tsconfig.equipment-r111.json --noEmit --pretty false
+      - name: Strict Partner OS R2 TypeScript
+        working-directory: apps/marketplace-web
+        run: npx tsc -p tsconfig.partner-os-r2.json --noEmit --pretty false
