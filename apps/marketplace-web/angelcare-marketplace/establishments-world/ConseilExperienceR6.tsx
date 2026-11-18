@@ -45,7 +45,7 @@ export function ConseilExperienceR6({
   const params=new URLSearchParams(window.location.search);
   if(params.get("imageryPreview")!=="1")return;
   const slot=params.get("imageryPlacement")||"";
-  const match=slot.match(/^establishments\\.conseil-r6\\.studio\\.(edup|academy|parents)$/);
+  const match=slot.match(/^establishments\.conseil-r6\.studio\.(edup|academy|parents)$/);
   if(match)setActiveFamily(match[1] as Family);
  },[]);
  const [activeDay,setActiveDay]=useState(0),[activeSkill,setActiveSkill]=useState(0),[activeMoment,setActiveMoment]=useState(0);
