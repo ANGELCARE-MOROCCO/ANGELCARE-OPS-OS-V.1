@@ -74,7 +74,7 @@ export function BusinessOfferCard({
     ["hidden", "territory_restricted"].includes(item.availability_status);
   return (
     <article
-      className={c.card}
+      className={world === "hospitality" ? c.card + " " + c.hospitalityOffer : c.card}
       data-business-offer={item.id}
       data-compact={compact}
       data-available={!blocked}
@@ -557,16 +557,16 @@ export function CommerceCatalogue() {
   return (
     <section
       id="world-offers"
-      className={c.catalogue}
+      className={world==="hospitality" ? c.catalogue + " " + c.hospitalityExplorer : c.catalogue}
       data-business-commerce="complete-catalogue"
     >
       <header className={c.openingHead}>
         <div>
           <span className={c.eyebrow}>
             <ListFilter size={15} />
-            {t("catalogue")}
+            {world==="hospitality" ? locale==="fr"?"Vos solutions":locale==="ar"?"حلولكم":"Your solutions" : t("catalogue")}
           </span>
-          <h2>{localized(profile.title, locale)}</h2>
+          <h2>{world==="hospitality" ? locale==="fr"?"Explorez et comparez les solutions":locale==="ar"?"استكشفوا الحلول وقارنوها":"Explore and compare your options" : localized(profile.title, locale)}</h2>
           <p>{localized(profile.lead, locale)}</p>
         </div>
         <span className={c.count}>
