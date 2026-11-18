@@ -9,11 +9,15 @@ const media = source('angelcare-marketplace/establishments-world/media.ts');
 const registry = JSON.parse(source('angelcare-marketplace/marketplace-imagery/slot-seeds.json'));
 
 const r8Host=host.includes('<EquipmentHeroR8');
+const r11Host=host.includes('<EquipmentHeroR11');
 test('equipment hero rollover preserves Conseil, Partner OS and original R7.1 rollback',()=>{
  assert.match(host,/view === "partner-os" \? \(\s*<PartnerHero/);
  assert.match(host,/<section className=\{c.hero\} data-establishments-hero>/);
  assert.match(host,/<NativeExplorer[\s\S]*?<CommercialJourney/);
- if(r8Host){
+ if(r11Host){
+  assert.ok(host.includes('<EquipmentHeroR11'));
+  assert.match(host,/<EquipmentExperienceR10/);
+ }else if(r8Host){
   assert.match(host,/view === "produits" \? \(\s*<EquipmentHeroR8/);
   assert.match(host,/<EquipmentExperienceR8/);
  }else{
@@ -21,7 +25,14 @@ test('equipment hero rollover preserves Conseil, Partner OS and original R7.1 ro
  }
 });
 test('native hero actions preserve the canonical explorer and enquiry',()=>{
- if(r8Host){
+ if(r11Host){
+  assert.ok(host.includes('onExploreDomains={() => scrollTo("r10-explore")}'));
+  assert.ok(host.includes('onExploreOffers={() => scrollTo("ew-native-explorer")}'));
+  const r11=source('angelcare-marketplace/establishments-world/EquipmentHeroR11.tsx');
+  assert.match(r11,/onClick=\{onExploreDomains\}/);
+  assert.match(r11,/onClick=\{onExploreOffers\}/);
+  assert.doesNotMatch(r11,/fetch\(|localStorage|supabase|window\.open/);
+ }else if(r8Host){
   assert.ok(host.includes('onExploreDomains={() => scrollTo("r8-domains")}'));
   assert.ok(host.includes('onExploreOffers={() => scrollTo("ew-native-explorer")}'));
   const r8=source('angelcare-marketplace/establishments-world/EquipmentHeroR8.tsx');

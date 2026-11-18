@@ -1,0 +1,62 @@
+name: AngelCare Equipment R11 — Signature Commerce Discovery
+on:
+  push:
+    branches:
+      - feat/equipment-r11-signature-hero-native-discovery-20261117
+    paths:
+      - 'apps/marketplace-web/angelcare-marketplace/establishments-world/**'
+      - 'apps/marketplace-web/tsconfig.equipment-r11.json'
+      - 'apps/marketplace-web/scripts/verify-equipment-r11.test.mjs'
+      - 'apps/marketplace-web/scripts/verify-equipment-r10.test.mjs'
+      - 'apps/marketplace-web/scripts/verify-equipment-r9.test.mjs'
+      - 'apps/marketplace-web/scripts/verify-equipment-r8.test.mjs'
+      - 'apps/marketplace-web/scripts/verify-equipment-hero-r71.test.mjs'
+      - '.github/workflows/establishments-equipment-r11.yml'
+  pull_request:
+    branches:
+      - feat/equipment-r10-school-universe-editorial-20261117
+    paths:
+      - 'apps/marketplace-web/angelcare-marketplace/establishments-world/**'
+      - 'apps/marketplace-web/tsconfig.equipment-r11.json'
+      - 'apps/marketplace-web/scripts/verify-equipment-r11.test.mjs'
+      - '.github/workflows/establishments-equipment-r11.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  equipment-r11:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: apps/marketplace-web/package-lock.json
+      - name: R11 Native hero and commerce preservation
+        working-directory: apps/marketplace-web
+        run: node --test scripts/verify-equipment-r11.test.mjs
+      - name: Preserve R10 School Universe
+        working-directory: apps/marketplace-web
+        run: node --test scripts/verify-equipment-r10.test.mjs
+      - name: Preserve R9 domain programs
+        working-directory: apps/marketplace-web
+        run: node --test scripts/verify-equipment-r9.test.mjs
+      - name: Preserve R8 legacy studio
+        working-directory: apps/marketplace-web
+        run: node --experimental-strip-types --test scripts/verify-equipment-r8.test.mjs
+      - name: Preserve R7.1 approved hero rollback
+        working-directory: apps/marketplace-web
+        run: node --test scripts/verify-equipment-hero-r71.test.mjs
+      - name: Install exact pinned dependencies
+        working-directory: apps/marketplace-web
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: TypeScript strict R11 UI and commerce scope
+        working-directory: apps/marketplace-web
+        run: npx tsc --noEmit --pretty false -p tsconfig.equipment-r11.json
+      - name: Original approved R7.1 file exact hash
+        working-directory: apps/marketplace-web
+        run: |
+          test "$(git hash-object angelcare-marketplace/establishments-world/EquipmentHeroR71.tsx)" = "3532b9b0b639987ffcdff601360ac29c6efaa100"
+          echo R71_HERO_ROLLBACK_PASS
