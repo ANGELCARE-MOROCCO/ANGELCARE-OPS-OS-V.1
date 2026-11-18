@@ -44,7 +44,11 @@ try {
         return;
       }
       const search=(url.searchParams.get("q") || "").toLowerCase();
-      const rows=assets.filter(a => (a.fileName+" "+a.title).toLowerCase().includes(search));
+      // Simulate actual server-side recency filtering, including the empty state.
+      // Previously every request returned the full list, hiding a real
+      // zero-results -> restored-results transition from this browser test.
+      const rows=url.searchParams.get("recentMinutes") ? []
+        : assets.filter(a => (a.fileName+" "+a.title).toLowerCase().includes(search));
       const pageSize=Number(url.searchParams.get("pageSize") || 100);
       void request.respond({status:200,contentType:"application/json",
         body:JSON.stringify({data:{rows,total:rows.length,inventoryTotal:assets.length,
@@ -79,7 +83,39 @@ try {
   const folderLabel=await page.$eval('select[aria-label="Native folder"]', el =>
     [...el.options].find(o=>o.value==="folder-ci")?.textContent);
   assert.match(folderLabel,/Educational assets/,"Real native folder names must appear instead of IDs");
-  async function selectWithServerResponse(selector,value,key,expected) {
+  // An HTTP response is NOT a completed React render. useQuery is keyed by
+  // filter parameters, resets stale rows while fetching, and commits them
+  // asynchronously after the response has arrived. Verify the user-visible
+  // inventory before the next interaction rather than racing its hydration.
+  async function waitForRenderedInventory(count) {
+    try {
+      await page.waitForFunction(expected => {
+        const root=document.querySelector('[data-native-media-vault="pro-max"]');
+        if(!root) return false;
+        const main=root.querySelector("main");
+        if(!main) return false;
+        const cards=[...main.querySelectorAll('article button[aria-label^="Select "]')];
+        const pending=[...main.querySelectorAll('[class*="state"]')]
+          .some(el=>el.textContent?.includes("Loading native media"));
+        if(pending) return false;
+        if(expected===0) return cards.length===0 &&
+          main.textContent?.includes("No eligible images match the selected filters");
+        return cards.length===expected &&
+          !!main.querySelector('article button[aria-label="Select Care Montessori"]');
+      }, {timeout:14000}, count);
+    } catch(error) {
+      const details=await page.$eval('[data-native-media-vault="pro-max"]',root=>({
+        visibleCards:[...root.querySelectorAll('main article button[aria-label]')].map(el=>el.getAttribute("aria-label")),
+        mainState:root.querySelector("main")?.textContent?.slice(0,500),
+        selectedFolder:root.querySelector('select[aria-label="Native folder"]')?.value,
+        recentMinutes:root.querySelector('select[aria-label="Time window"]')?.value,
+        pageSize:root.querySelector('select[aria-label="Results per page"]')?.value,
+      }));
+      console.error("NATIVE_MEDIA_VAULT_RENDER_STATE="+JSON.stringify(details));
+      throw error;
+    }
+  }
+  async function selectWithServerResponse(selector,value,key,expected,expectedCount=5) {
     const next=page.waitForResponse(response => {
       if(!response.url().includes("/admin/digital-customer-experience")) return false;
       const url=new URL(response.url());
@@ -88,6 +124,7 @@ try {
     },{timeout:12000});
     await page.select(selector,value);
     await next;
+    await waitForRenderedInventory(expectedCount);
   }
   for(const size of ["500","100","20","100"])
     await selectWithServerResponse('select[aria-label="Results per page"]',size,"pageSize",size);
@@ -99,11 +136,12 @@ try {
   assert.ok(observedQueries.some(x=>x.folderId==="folder-ci"),
     "Folder must be filtered by canonical native folder ID on server");
   await selectWithServerResponse('select[aria-label="Native folder"]',"","folderId",null);
-  await selectWithServerResponse('select[aria-label="Time window"]',"2","recentMinutes","2");
+  await selectWithServerResponse('select[aria-label="Time window"]',"2","recentMinutes","2",0);
   assert.ok(observedQueries.some(x=>x.recentMinutes==="2"),
     "2-minute relative filter must reach the server");
   await selectWithServerResponse('select[aria-label="Time window"]',"","recentMinutes",null);
   console.log("NATIVE_MEDIA_VAULT_DIRECTORY_PAGES_RECENCY=PASS");
+  console.log("NATIVE_MEDIA_VAULT_RENDER_SYNC=PASS");
     const selectAndVerify = async (title, expectedCount) => {
     const selector = 'article button[aria-label="Select ' + title + '"]';
     const before = await page.$eval(selector, el => ({
