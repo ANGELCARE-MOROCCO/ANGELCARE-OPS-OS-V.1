@@ -1,0 +1,50 @@
+name: AngelCare Equipment R8 — Approved Storefront
+
+on:
+  push:
+    branches:
+      - feat/establishments-equipment-r8-approved-showroom-20261116
+    paths:
+      - 'apps/marketplace-web/angelcare-marketplace/establishments-world/**'
+      - 'apps/marketplace-web/tsconfig.equipment-r8.json'
+      - 'apps/marketplace-web/scripts/verify-equipment-r8.test.mjs'
+      - '.github/workflows/establishments-equipment-r8.yml'
+  pull_request:
+    branches:
+      - upgrade/next-angelcare-upgrade
+    paths:
+      - 'apps/marketplace-web/angelcare-marketplace/establishments-world/**'
+      - 'apps/marketplace-web/tsconfig.equipment-r8.json'
+      - 'apps/marketplace-web/scripts/verify-equipment-r8.test.mjs'
+      - '.github/workflows/establishments-equipment-r8.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  approved-storefront-r8:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: apps/marketplace-web/package-lock.json
+      - name: Verify all 22 domains, 6 families, protected routes and native continuity
+        working-directory: apps/marketplace-web
+        run: node --experimental-strip-types --test scripts/verify-equipment-r8.test.mjs
+      - name: Install locked dependencies
+        working-directory: apps/marketplace-web
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Strict equipment storefront TypeScript
+        working-directory: apps/marketplace-web
+        run: npx tsc -p tsconfig.equipment-r8.json --pretty false --noEmit
+      - name: Prove original R7.1 hero is retained byte-for-byte for rollback
+        working-directory: apps/marketplace-web
+        run: |
+          ACTUAL=$(git hash-object angelcare-marketplace/establishments-world/EquipmentHeroR71.tsx)
+          test "$ACTUAL" = "3532b9b0b639987ffcdff601360ac29c6efaa100"
+          echo "R71_HERO_ORIGINAL_UNCHANGED=$ACTUAL"

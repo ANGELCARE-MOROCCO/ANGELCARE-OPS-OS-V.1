@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - upgrade/next-angelcare-upgrade
+      - feat/establishments-equipment-r8-approved-showroom-20261116
     paths:
       - ".github/workflows/build-marketplace-ghcr-oneoff.yml"
       - "apps/marketplace-web/**"

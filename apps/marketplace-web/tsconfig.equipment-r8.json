@@ -1,0 +1,15 @@
+{
+ "extends":"./tsconfig.json",
+ "compilerOptions":{"incremental":false},
+ "include":[
+   "next-env.d.ts",
+   "angelcare-marketplace/establishments-world/Experience.tsx",
+   "angelcare-marketplace/establishments-world/EquipmentExperienceR8.tsx",
+   "angelcare-marketplace/establishments-world/equipment-r8-data.ts",
+   "angelcare-marketplace/establishments-world/EquipmentHeroR71.tsx",
+   "angelcare-marketplace/establishments-world/OfferExplorer.tsx",
+   "angelcare-marketplace/establishments-world/model.ts",
+   "angelcare-marketplace/establishments-world/useJourneyState.ts"
+ ],
+ "exclude":["node_modules",".next"]
+}

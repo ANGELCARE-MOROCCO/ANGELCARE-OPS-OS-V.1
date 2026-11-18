@@ -43,7 +43,8 @@ import {
 } from "./CommercialJourney";
 import { COMMERCIAL } from "./commercial-content";
 import { VIEWS, type View } from "./content";
-import { EquipmentHeroR71 } from "./EquipmentHeroR71";
+import { EquipmentHeroR8 } from "./EquipmentHeroR8";
+import { EquipmentExperienceR8 } from "./EquipmentExperienceR8";
 import {
   blocked,
   offerSelection,
@@ -321,7 +322,7 @@ function EstablishmentsBody({
           view === "partner-os" ? (locale === "ar" ? "rtl" : "ltr") : undefined
         }
         lang={view === "partner-os" ? locale : undefined}
-        data-establishments-journey="R5"
+        data-establishments-journey={view==="produits"?"R8":"R5"}
         data-view={view}
         data-motion={motion ? "on" : "off"}
         onClick={(event) => {
@@ -431,10 +432,10 @@ function EstablishmentsBody({
             onExplore={() => scrollTo("ew-native-explorer")}
           />
         ) : view === "produits" ? (
-          <EquipmentHeroR71
+          <EquipmentHeroR8
             locale={locale}
-            onBuildProject={() => contact({ subject: copy.contact })}
-            onExplore={() => scrollTo("ew-native-explorer")}
+            onExploreDomains={() => scrollTo("r8-domains")}
+            onExploreOffers={() => scrollTo("ew-native-explorer")}
           />
         ) : (
           <section className={c.hero} data-establishments-hero>
@@ -502,6 +503,16 @@ function EstablishmentsBody({
             onReview={() => setReview(true)}
             storageScope={experience.territoryCode || "default"}
             motion={motion}
+          />
+        ) : view === "produits" ? (
+          <EquipmentExperienceR8
+            key={view}
+            locale={locale}
+            selected={project.map(item=>item.key)}
+            onSelect={(item)=>dispatch({type:"toggle",item})}
+            onReview={()=>setReview(true)}
+            onContact={contact}
+            onExplore={()=>scrollTo("ew-native-explorer")}
           />
         ) : (
           <CommercialJourney
