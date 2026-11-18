@@ -55,7 +55,7 @@ test("All six original commercial worlds are interactive, not duplicated campaig
 test("FR EN AR copy fully defines all referenced editorial keys",()=>{
  const parts={};
  for(const key of ["fr","en","ar"]){const start=copy.indexOf("const "+key+":Record<string,string>=");assert.ok(start>=0,key);const end=copy.indexOf("\n};",start);parts[key]=copy.slice(start,end);}
- const keys=[...body.matchAll(/t\("([A-Za-z0-9]+)"\)/g)].map(x=>x[1]);
+ const keys=[...body.matchAll(/\bt\("([A-Za-z0-9]+)"\)/g)].map(x=>x[1]);
  const dynamic=["familyEduTitle","familyEduSubtitle","familyEduLead","familyEduBenefit","familyAcademyTitle","familyAcademySubtitle","familyAcademyLead","familyAcademyBenefit","familyParentTitle","familyParentSubtitle","familyParentLead","familyParentBenefit","parentMoment1","parentMoment2","parentMoment3","parentMoment4","parentMomentText1","parentMomentText2","parentMomentText3","parentMomentText4","skill1","skill2","skill3","skill4","skill5","skill6","labMonday","labTuesday","labWednesday","labThursday","labActivity1","labActivity2","labActivity3","labActivity4","q1","q2","q3","q4","q1a","q1b","q1c","q2a","q2b","q2c","q3a","q3b","q3c","q4a","q4b","q4c","classic1","classic2","classic3","classic4","premium1","premium2","premium3","premium4"];
  for(const language of ["fr","en","ar"])for(const key of new Set([...keys,...dynamic]))assert.ok(parts[language].includes(key+':')||parts[language].includes(key+':"'),language+" missing "+key);
 });
