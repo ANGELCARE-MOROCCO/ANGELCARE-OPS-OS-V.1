@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - feat/hospitality-signature-r2-native-b2b-20261118
+      - fix/hospitality-r2-published-brief-continuity-20261118
       - upgrade/next-angelcare-upgrade
     paths:
       - 'apps/marketplace-web/angelcare-marketplace/business-worlds/**'
