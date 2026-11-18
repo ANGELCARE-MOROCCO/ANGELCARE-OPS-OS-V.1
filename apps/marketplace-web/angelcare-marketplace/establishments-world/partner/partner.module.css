@@ -17,59 +17,14 @@
   outline: 3px solid #e90b76;
   outline-offset: 3px;
 }
-.host[data-view="partner-os"] :global([data-establishments-nav]) {
-  border-block: 1px solid #e6e6ee;
-  background: #ffffffed;
-  padding-block: 11px;
-  gap: 18px;
-  box-shadow: 0 8px 30px #10244a05;
-  backdrop-filter: blur(18px);
+/* Shared R7 three-tab specialist navigation owns the identical controls in all three views.
+   Retain only Partner OS-specific utility and progress colors, not legacy tab overrides. */
+.host[data-view="partner-os"] :global([data-establishments-nav]) > div:nth-child(2) > button:nth-child(3) {
+  background:#eb0875;
+  border-color:#eb0875;
+  color:white;
 }
-.host[data-view="partner-os"]
-  :global([data-establishments-nav])
-  > div:first-child {
-  gap: 18px;
-}
-.host[data-view="partner-os"]
-  :global([data-establishments-nav])
-  > div:first-child
-  a {
-  background: transparent;
-  border: 0;
-  border-radius: 0;
-  border-bottom: 3px solid transparent;
-  color: #10244a;
-  box-shadow: none;
-  padding: 14px 8px;
-  gap: 10px;
-  font-size: 14px;
-}
-.host[data-view="partner-os"]
-  :global([data-establishments-nav])
-  > div:first-child
-  a[aria-current="page"] {
-  color: #e90b76;
-  border-bottom-color: #e90b76;
-  background: linear-gradient(0deg, #fff0f7, transparent 80%);
-}
-.host[data-view="partner-os"]
-  :global([data-establishments-nav])
-  > div:first-child
-  a:hover {
-  color: #e90b76;
-  background: #fff6fa;
-}
-.host[data-view="partner-os"]
-  :global([data-establishments-nav])
-  > div:nth-child(2)
-  > button:nth-child(3) {
-  background: #eb0875;
-  border-color: #eb0875;
-  color: white;
-}
-.host[data-view="partner-os"] :global([data-establishments-nav]) > span {
-  background: #eb0875;
-}
+.host[data-view="partner-os"] :global([data-establishments-nav]) > span {background:#eb0875}
 .hero,
 .journey {
   --pink: #eb0875;
@@ -2301,7 +2256,7 @@
  .host[data-view="partner-os"] .selectedChips{flex-wrap:wrap}
  .host[data-view="partner-os"] :global(#ew-native-explorer){min-width:0}
  .host[data-view="partner-os"] :global([data-establishments-nav]){min-width:0;overflow-x:auto}
- .host[data-view="partner-os"] :global([data-establishments-nav])>div:first-child{min-width:max-content}
+ .host[data-view="partner-os"] :global([data-establishments-specialities="R7"]){min-width:0;width:100%}
 }
 @media(max-width:385px){
  .host[data-view="partner-os"] .briefSelects,.host[data-view="partner-os"] .projectSteps{grid-template-columns:1fr}
