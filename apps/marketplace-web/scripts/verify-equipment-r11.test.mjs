@@ -18,7 +18,8 @@ test("R11 exact hero -> native explorer -> R10 body -> project enquiry without c
  const q=route.indexOf("<ProjectEnquiry");
  assert.ok(h>=0 && x>h && r>x && q>r);
  assert.ok(route.includes('view==="produits"?"R11":"R5"'));
- for(const p of ["<PartnerJourney","<CommercialJourney","<PartnerHero","<ProjectEnquiry"])assert.ok(route.includes(p),p);
+ for(const p of ["<PartnerJourney","<CommercialJourney","<ProjectEnquiry"])assert.ok(route.includes(p),p);
+ assert.ok(route.includes("<PartnerR2Hero") || route.includes("<PartnerHero"),"approved Partner OS hero must remain active");
  assert.ok(!route.includes('<EquipmentHeroR8'),"R8 hero should be rollback only; R11 is active");
  assert.ok(route.includes('onExploreOffers={() => scrollTo("ew-native-explorer")}'));
  assert.ok(route.includes('onExploreDomains={() => scrollTo("r10-explore")}'));
