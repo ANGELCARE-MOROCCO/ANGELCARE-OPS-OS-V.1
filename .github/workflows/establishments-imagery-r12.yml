@@ -8,6 +8,7 @@ on:
       - 'apps/marketplace-web/angelcare-marketplace/marketplace-imagery/**'
       - 'apps/marketplace-web/angelcare-marketplace/establishments-world/**'
       - 'apps/marketplace-web/scripts/verify-establishments-imagery-r12.test.mjs'
+      - 'apps/marketplace-web/scripts/verify-conseil-r6.test.mjs'
       - 'apps/marketplace-web/tsconfig.establishments-imagery-r12.json'
       - '.github/workflows/establishments-imagery-r12.yml'
   workflow_dispatch:
