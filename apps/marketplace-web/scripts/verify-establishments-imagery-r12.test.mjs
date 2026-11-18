@@ -157,6 +157,23 @@ test("original admin workspace controls, live publication, media validation and 
  assert.ok(service.includes("reconcilePublishedImagery"));
  assert.ok(!preview.includes("window.location.assign"));
 });
+test("published editorial wrappers retain existing full-bleed image geometry across three storefronts",()=>{
+ const css=[
+  read(publicRoot+"ConseilExperienceR6.module.css"),
+  read(publicRoot+"EquipmentExperienceR10.module.css"),
+  read(publicRoot+"partner/PartnerR2Experience.module.css"),
+ ];
+ for(const sheet of css){
+  assert.ok(sheet.includes(":global([data-imagery-art])"),"missing managed imagery wrapper geometry");
+  assert.ok(sheet.includes("width:100%!important"));
+  assert.ok(sheet.includes("height:100%!important"));
+  assert.ok(sheet.includes("object-fit:cover"));
+ }
+ assert.ok(css[0].includes(".heroMedia > :global([data-imagery-art])"));
+ assert.ok(css[1].includes(".storyVisual > :global([data-imagery-art])"));
+ assert.ok(css[2].includes(".worldExperience :global([data-imagery-art])"));
+ assert.ok(read(publicRoot+"EquipmentHeroR11.module.css").includes(".thumbnails button > :global([data-imagery-art])"));
+});
 test("strict source domains, no new SQL or alternate admin pages",()=>{
  assert.equal(data.length,230);
  assert.ok(data.every(x=>x.id.startsWith("establishments.")));
