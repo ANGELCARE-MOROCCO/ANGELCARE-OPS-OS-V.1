@@ -347,7 +347,7 @@ function EstablishmentsBody({
         className={`${c.world} ${partner.host}`}
         dir={locale === "ar" ? "rtl" : "ltr"}
         lang={locale}
-        data-establishments-journey={view==="produits"?"R11":"R5"}
+        data-establishments-journey={view==="produits"?"R11":view==="conseil"&&!legacyConseil?"R6":"R5"}
         data-view={view}
         data-motion={motion ? "on" : "off"}
         onClick={(event) => {
