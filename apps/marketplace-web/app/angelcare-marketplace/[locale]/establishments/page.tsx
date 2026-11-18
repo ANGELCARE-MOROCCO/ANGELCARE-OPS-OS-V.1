@@ -28,69 +28,52 @@ export default async function Page({
 
   const { locale: raw } = await params;
   const locale = raw === "ar" ? "ar" : raw === "en" ? "en" : "fr";
-  // The approved reference pages concern the French Établissements body only.
-  // Other journeys keep their authority; the Partner OS hash uses the same new renderer in EN/AR.
-  if (locale === "fr") {
-    const catalogue = await prepareBusinessStorefront(
-      await storefrontExperience({
-        locale,
-        key: "establishments",
-        territoryCode,
-      }),
-      "establishments",
-    );
-    return (
-      <GlobalPublicShell
-        locale={locale}
-        navigation={[]}
-        variant="marketplace"
-        localeSwitcher={<PartnerLocaleLinks locale={locale} />}
-      >
-        <EstablishmentsExperience experience={catalogue} />
-      </GlobalPublicShell>
-    );
-  }
-  const [snapshot, experience, storefront] = await Promise.all([
-    publicVerticalSnapshot("establishment"),
-    getPublishedSurface("establishments", { locale }).catch(() => null),
-    storefrontExperience({ locale, key: "establishments", territoryCode }),
-  ]);
-  const partnerCatalogue = await prepareBusinessStorefront(
-    storefront,
+  // R11.1: one approved equipment authority in FR/EN/AR.
+  // Preserve the unrelated EN/AR legacy Conseil journey via the hash-aware router,
+  // and keep Partner OS using its already-approved shared renderer.
+  const modernCatalogue = await prepareBusinessStorefront(
+    await storefrontExperience({locale,key:"establishments",territoryCode}),
     "establishments",
   );
-  return (
-    <PartnerLocaleEntry
-      partner={
-        <GlobalPublicShell
-          locale={locale}
-          navigation={[]}
-          variant="marketplace"
-          localeSwitcher={<PartnerLocaleLinks locale={locale} />}
-        >
-          <EstablishmentsExperience
-            experience={partnerCatalogue}
-            initialView="partner-os"
-            partnerOnly
-          />
-        </GlobalPublicShell>
-      }
+  const modern = (
+    <GlobalPublicShell
+      locale={locale}
+      navigation={[]}
+      variant="marketplace"
+      localeSwitcher={<PartnerLocaleLinks locale={locale} />}
     >
-      <Storefront
-        experience={storefront}
-        nativeContext={surfaceContext(experience)}
-        nativeFallback={
-          <PublicEstablishmentsExperience
-            locale={locale}
-            mode="establishments"
-            activePrograms={snapshot.activePrograms}
-            organizations={snapshot.organizations}
-            experience={experience}
-          />
-        }
+      <EstablishmentsExperience
+        experience={modernCatalogue}
+        initialView={locale==="fr"?undefined:"produits"}
       />
-    </PartnerLocaleEntry>
+    </GlobalPublicShell>
   );
+  if(locale==="fr")return modern;
+  const [snapshot, surface] = await Promise.all([
+    publicVerticalSnapshot("establishment"),
+    getPublishedSurface("establishments",{locale}).catch(()=>null),
+  ]);
+  const legacy = <Storefront
+    experience={await storefrontExperience({locale,key:"establishments",territoryCode})}
+    nativeContext={surfaceContext(surface)}
+    nativeFallback={<PublicEstablishmentsExperience
+      locale={locale} mode="establishments"
+      activePrograms={snapshot.activePrograms}
+      organizations={snapshot.organizations}
+      experience={surface}
+    />}
+  />;
+  return <PartnerLocaleEntry
+    modern={modern}
+    legacy={legacy}
+    partner={<GlobalPublicShell
+      locale={locale} navigation={[]} variant="marketplace"
+      localeSwitcher={<PartnerLocaleLinks locale={locale}/>}
+    ><EstablishmentsExperience
+      experience={modernCatalogue}
+      initialView="partner-os" partnerOnly
+    /></GlobalPublicShell>}
+  />;
 }
 
 export async function generateMetadata({

@@ -40,7 +40,11 @@ export const EQUIPMENT_DOMAINS:EquipmentDomain[]=[
  {id:"personalization",art:"products-hero",number:21,name:"Personnalisation, commandes & délais",group:"operations",image:"uniforms",short:"Questions sur mesure, options, disponibilité et fulfillment.",pain:"Les échanges de fournisseurs multiples ralentissent les décisions et créent des erreurs.",solution:"Centraliser le brief, préciser les variantes et confirmer les délais par offre.",examples:["Formats et couleurs","BAT et validation","Conditions et échéances"]},
  {id:"technical",art:"audit",number:22,name:"Référentiel technique & glossaire",group:"operations",image:"administration",short:"Structures techniques, variables, papiers, options et notes.",pain:"La terminologie technique empêche de comparer correctement les supports.",solution:"Un glossaire partagé avant demande et production, pour mieux qualifier le besoin.",examples:["Papier et finition","Formats techniques","Données de préparation"]}
 ];
-export const equipmentDomainSelection=(domain:EquipmentDomain)=>({
+export const equipmentDomainSelection=(domain:EquipmentDomain,locale:"fr"|"en"|"ar"="fr")=>({
  key:`intent:equipment-domain:${domain.id}`,kind:"intent" as const,title:domain.name,
- detail:`Domaine catalogue n°${domain.number} · ${domain.short} · options et disponibilité à confirmer`
+ detail:locale==="en"
+  ?`Catalogue domain #${domain.number} · ${domain.short} · variants and availability subject to confirmation`
+  :locale==="ar"
+   ?`مجال الكتالوج رقم ${domain.number} · ${domain.short} · الخيارات والتوافر رهن التأكيد`
+   :`Domaine catalogue n°${domain.number} · ${domain.short} · options et disponibilité à confirmer`
 });

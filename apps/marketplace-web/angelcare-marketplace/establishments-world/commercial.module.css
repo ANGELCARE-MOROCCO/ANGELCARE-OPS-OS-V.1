@@ -1699,3 +1699,13 @@
  .world[data-view="produits"] .navUtilities>button{white-space:nowrap}
  .world[data-view="produits"] .enquiry{margin:8px auto 20px}
 }
+
+/* R11.1: keep native enquiry and footer controls reachable above mobile navigation. */
+@media(max-width:760px){
+ .world[data-view="produits"]{padding-bottom:calc(86px + env(safe-area-inset-bottom))!important}
+ .world[data-view="produits"] :is(button,a,input,select,textarea):focus-visible{scroll-margin-bottom:calc(92px + env(safe-area-inset-bottom))}
+ .world[data-view="produits"] [id="world-enquiry"]{scroll-margin-bottom:calc(92px + env(safe-area-inset-bottom))}
+}
+/* Preserve logical focus/order in RTL without modifying shared shell. */
+.world[data-view="produits"][dir=rtl] .localNav,.world[data-view="produits"][dir=rtl] .navUtilities,.world[data-view="produits"][dir=rtl] .specialities{direction:rtl}
+.world[data-view="produits"][dir=rtl] .enquiry{text-align:right}

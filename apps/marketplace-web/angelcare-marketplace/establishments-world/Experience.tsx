@@ -44,6 +44,7 @@ import {
 import { COMMERCIAL } from "./commercial-content";
 import { VIEWS, type View } from "./content";
 import { EquipmentHeroR11 } from "./EquipmentHeroR11";
+import {EquipmentMobileR111} from "./EquipmentMobileR111";
 import { EquipmentExperienceR10 } from "./EquipmentExperienceR10";
 import {
   blocked,
@@ -69,6 +70,7 @@ import {
 import {
   PartnerLocaleProvider,
   usePartner,
+  partnerText,
   type PartnerLocale,
 } from "./partner/Locale";
 import partner from "./partner/partner.module.css";
@@ -76,6 +78,19 @@ import c from "./commercial.module.css";
 import s from "./journey.module.css";
 
 const ICONS = { conseil: Building2, "partner-os": Monitor, produits: Package };
+function localizedProjectNotice(value:string,locale:PartnerLocale){
+ if(locale==="fr"||!value)return value;
+ const english=locale==="en";
+ if(value==="Élément retiré du projet.")return english?"Removed from your project.":"تمت الإزالة من مشروعكم.";
+ if(value.endsWith(" ajouté à votre projet.")){
+  const name=value.slice(0,-" ajouté à votre projet.".length);
+  return english?`${name} added to your project.`:`تمت إضافة ${name} إلى مشروعكم.`;
+ }
+ if(value.startsWith("Les 22 domaines d’équipements"))return english?"All 22 equipment domains are already selected.":"تم اختيار جميع مجالات التجهيزات الـ٢٢.";
+ if(value.startsWith("Votre projet contient huit offres"))return english?"Your project already contains eight offers or other requests. Remove one to add another.":"يحتوي مشروعكم على ثمانية عروض أو طلبات. احذفوا عنصراً لإضافة آخر.";
+ return partnerText(locale,value);
+}
+
 
 /** One Partner OS renderer in FR/EN/AR; the parent route owns the shared shell. */
 export function EstablishmentsExperience({
@@ -310,6 +325,9 @@ function EstablishmentsBody({
       "",
       `${location.pathname}${location.search}#${next}`,
     );
+    // pushState is silent; notify the EN/AR route switcher so Conseil retains
+    // its protected legacy authority and Partner OS retains its dedicated renderer.
+    if(locale!=="fr")window.dispatchEvent(new Event("hashchange"));
     requestAnimationFrame(() => {
       root.current?.scrollIntoView({ block: "start", behavior: "instant" });
       root.current?.querySelector("h1")?.focus({ preventScroll: true });
@@ -320,10 +338,8 @@ function EstablishmentsBody({
       <div
         ref={root}
         className={`${c.world} ${partner.host}`}
-        dir={
-          view === "partner-os" ? (locale === "ar" ? "rtl" : "ltr") : undefined
-        }
-        lang={view === "partner-os" ? locale : undefined}
+        dir={locale === "ar" ? "rtl" : "ltr"}
+        lang={locale}
         data-establishments-journey={view==="produits"?"R11":"R5"}
         data-view={view}
         data-motion={motion ? "on" : "off"}
@@ -352,6 +368,14 @@ function EstablishmentsBody({
           scrollTo(id);
         }}
       >
+        {view==="produits"&&<EquipmentMobileR111
+          locale={locale} count={project.length}
+          onExplore={()=>scrollTo("r10-explore")}
+          onProducts={()=>scrollTo("ew-native-explorer")}
+          onWorlds={()=>scrollTo("r10-universes")}
+          onIdeas={()=>scrollTo("r10-collection")}
+          onProject={()=>setReview(true)}
+        />}
         <nav
           className={c.localNav}
           data-establishments-nav
@@ -577,7 +601,7 @@ function EstablishmentsBody({
           aria-live="polite"
           key={notice}
         >
-          {tr(notice)}
+          {view==="produits"?localizedProjectNotice(notice,locale):tr(notice)}
         </p>
         {review && (
           <ProjectReview
@@ -589,7 +613,7 @@ function EstablishmentsBody({
               contact({
                 subject:
                   subject ||
-                  `Projet · ${VIEWS.find((item) => item.key === view)!.label}`,
+                  (view==="produits"?locale==="en"?"School equipment project":locale==="ar"?"مشروع تجهيز المؤسسة":"Projet · Équipements":`Projet · ${VIEWS.find((item) => item.key === view)!.label}`),
               })
             }
           />
