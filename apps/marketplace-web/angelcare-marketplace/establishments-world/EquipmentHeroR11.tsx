@@ -24,7 +24,7 @@ export function EquipmentHeroR11({locale,onExploreDomains,onExploreOffers,onExpl
   const params=new URLSearchParams(window.location.search);
   if(params.get("imageryPreview")!=="1")return;
   const placement=params.get("imageryPlacement")||"";
-  const match=placement.match(/^establishments\\.equipment-r11\\.(?:hero|thumb)\\.(class|welcome|team|identity)$/);
+  const match=placement.match(/^establishments\.equipment-r11\.(?:hero|thumb)\.(class|welcome|team|identity)$/);
   if(match){const n=SCENES.findIndex(scene=>scene.id===match[1]);if(n>=0)setIndex(n);}
  },[]);
  const current=SCENES[index];
