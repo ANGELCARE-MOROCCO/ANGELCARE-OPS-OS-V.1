@@ -1,0 +1,2015 @@
+[
+  {
+    "id": "establishments.conseil-r6.hero",
+    "section": "Conseil R6 · Ouverture",
+    "label": "Hero principal",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r4/consulting-campaign.png"
+  },
+  {
+    "id": "establishments.conseil-r6.hero.inset",
+    "section": "Conseil R6 · Ouverture",
+    "label": "Hero · vignette EduPlay",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r4/eduplay-campaign.png"
+  },
+  {
+    "id": "establishments.conseil-r6.compare.before",
+    "section": "Conseil R6 · compare",
+    "label": "Comparateur · avant",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r4/classroom-campaign.png"
+  },
+  {
+    "id": "establishments.conseil-r6.compare.after",
+    "section": "Conseil R6 · compare",
+    "label": "Comparateur · après",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r4/welcome-campaign.png"
+  },
+  {
+    "id": "establishments.conseil-r6.diagnostic",
+    "section": "Conseil R6 · diagnostic",
+    "label": "Diagnostic · environnement scolaire",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r4/consulting-campaign.png"
+  },
+  {
+    "id": "establishments.conseil-r6.family.edup",
+    "section": "Conseil R6 · family",
+    "label": "Programme · EduPlay",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r4/eduplay-campaign.png"
+  },
+  {
+    "id": "establishments.conseil-r6.family.academy",
+    "section": "Conseil R6 · family",
+    "label": "Programme · Academy Pro",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r4/academy-campaign.png"
+  },
+  {
+    "id": "establishments.conseil-r6.family.parents",
+    "section": "Conseil R6 · family",
+    "label": "Programme · ParentTrust",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r4/parents-campaign.png"
+  },
+  {
+    "id": "establishments.conseil-r6.studio.edup",
+    "section": "Conseil R6 · studio",
+    "label": "Studio · EduPlay",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r4/eduplay-campaign.png"
+  },
+  {
+    "id": "establishments.conseil-r6.studio.academy",
+    "section": "Conseil R6 · studio",
+    "label": "Studio · Academy Pro",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r4/academy-campaign.png"
+  },
+  {
+    "id": "establishments.conseil-r6.studio.parents",
+    "section": "Conseil R6 · studio",
+    "label": "Studio · ParentTrust",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r4/parents-campaign.png"
+  },
+  {
+    "id": "establishments.conseil-r6.value",
+    "section": "Conseil R6 · value",
+    "label": "Explorateur de valeur",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r4/consulting-campaign.png"
+  },
+  {
+    "id": "establishments.conseil-r6.final",
+    "section": "Conseil R6 · final",
+    "label": "Conversion · projet partenaire",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r4/consulting-campaign.png"
+  },
+  {
+    "id": "establishments.journey-partner.r2.hero.main",
+    "section": "Partner OS R2 · Hero",
+    "label": "Hero · direction",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r4/partner-campaign.png"
+  },
+  {
+    "id": "establishments.journey-partner.r2.hero.family",
+    "section": "Partner OS R2 · Hero",
+    "label": "Hero · familles",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-admissions.png"
+  },
+  {
+    "id": "establishments.journey-partner.r2.hero.team",
+    "section": "Partner OS R2 · Hero",
+    "label": "Hero · équipes",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-team.png"
+  },
+  {
+    "id": "establishments.journey-partner.r2.direction.main",
+    "section": "Partner OS R2 · direction",
+    "label": "direction · main",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-direction.png"
+  },
+  {
+    "id": "establishments.journey-partner.r2.direction.secondary",
+    "section": "Partner OS R2 · direction",
+    "label": "direction · secondary",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-overview.png"
+  },
+  {
+    "id": "establishments.journey-partner.r2.direction.tertiary",
+    "section": "Partner OS R2 · direction",
+    "label": "direction · tertiary",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/consulting-hero.png"
+  },
+  {
+    "id": "establishments.journey-partner.r2.familles.main",
+    "section": "Partner OS R2 · familles",
+    "label": "familles · main",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-admissions.png"
+  },
+  {
+    "id": "establishments.journey-partner.r2.familles.secondary",
+    "section": "Partner OS R2 · familles",
+    "label": "familles · secondary",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-crm.png"
+  },
+  {
+    "id": "establishments.journey-partner.r2.familles.tertiary",
+    "section": "Partner OS R2 · familles",
+    "label": "familles · tertiary",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-communication.png"
+  },
+  {
+    "id": "establishments.journey-partner.r2.quotidien.main",
+    "section": "Partner OS R2 · quotidien",
+    "label": "quotidien · main",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-activities.png"
+  },
+  {
+    "id": "establishments.journey-partner.r2.quotidien.secondary",
+    "section": "Partner OS R2 · quotidien",
+    "label": "quotidien · secondary",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/classroom.png"
+  },
+  {
+    "id": "establishments.journey-partner.r2.quotidien.tertiary",
+    "section": "Partner OS R2 · quotidien",
+    "label": "quotidien · tertiary",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-followup.png"
+  },
+  {
+    "id": "establishments.journey-partner.r2.equipes.main",
+    "section": "Partner OS R2 · equipes",
+    "label": "equipes · main",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-team.png"
+  },
+  {
+    "id": "establishments.journey-partner.r2.equipes.secondary",
+    "section": "Partner OS R2 · equipes",
+    "label": "equipes · secondary",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/programme-team.png"
+  },
+  {
+    "id": "establishments.journey-partner.r2.equipes.tertiary",
+    "section": "Partner OS R2 · equipes",
+    "label": "equipes · tertiary",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/audit.png"
+  },
+  {
+    "id": "establishments.journey-partner.r2.revenus.main",
+    "section": "Partner OS R2 · revenus",
+    "label": "revenus · main",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-quotes.png"
+  },
+  {
+    "id": "establishments.journey-partner.r2.revenus.secondary",
+    "section": "Partner OS R2 · revenus",
+    "label": "revenus · secondary",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-finance.png"
+  },
+  {
+    "id": "establishments.journey-partner.r2.revenus.tertiary",
+    "section": "Partner OS R2 · revenus",
+    "label": "revenus · tertiary",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-payments.png"
+  },
+  {
+    "id": "establishments.journey-partner.r2.ecosysteme.main",
+    "section": "Partner OS R2 · ecosysteme",
+    "label": "ecosysteme · main",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-intro.png"
+  },
+  {
+    "id": "establishments.journey-partner.r2.ecosysteme.secondary",
+    "section": "Partner OS R2 · ecosysteme",
+    "label": "ecosysteme · secondary",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-services.png"
+  },
+  {
+    "id": "establishments.journey-partner.r2.ecosysteme.tertiary",
+    "section": "Partner OS R2 · ecosysteme",
+    "label": "ecosysteme · tertiary",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-commerce.png"
+  },
+  {
+    "id": "establishments.journey-r4.products-hero-r71",
+    "section": "Équipements R11.1 · Hero",
+    "label": "Hero principal · scène classe",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r4/equipment-hero-r71-campaign.png"
+  },
+  {
+    "id": "establishments.equipment-r11.thumb.class",
+    "section": "Équipements R11.1 · Galerie",
+    "label": "Vignette · class",
+    "sequence": false,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r4/equipment-hero-r71-campaign.png"
+  },
+  {
+    "id": "establishments.equipment-r11.hero.welcome",
+    "section": "Équipements R11.1 · Hero",
+    "label": "Galerie · welcome",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/welcome.png"
+  },
+  {
+    "id": "establishments.equipment-r11.thumb.welcome",
+    "section": "Équipements R11.1 · Galerie",
+    "label": "Vignette · welcome",
+    "sequence": false,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/welcome.png"
+  },
+  {
+    "id": "establishments.equipment-r11.hero.team",
+    "section": "Équipements R11.1 · Hero",
+    "label": "Galerie · team",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-team.png"
+  },
+  {
+    "id": "establishments.equipment-r11.thumb.team",
+    "section": "Équipements R11.1 · Galerie",
+    "label": "Vignette · team",
+    "sequence": false,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-team.png"
+  },
+  {
+    "id": "establishments.equipment-r11.hero.identity",
+    "section": "Équipements R11.1 · Hero",
+    "label": "Galerie · identity",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/uniforms.png"
+  },
+  {
+    "id": "establishments.equipment-r11.thumb.identity",
+    "section": "Équipements R11.1 · Galerie",
+    "label": "Vignette · identity",
+    "sequence": false,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/uniforms.png"
+  },
+  {
+    "id": "establishments.equipment-r10.intro.classroom",
+    "section": "Équipements · Ouverture",
+    "label": "Intro · salle de classe",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/classroom.png"
+  },
+  {
+    "id": "establishments.equipment-r10.intro.team",
+    "section": "Équipements · Ouverture",
+    "label": "Intro · équipe",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-team.png"
+  },
+  {
+    "id": "establishments.equipment-r10.space.welcome",
+    "section": "Équipements · Découverte par espaces",
+    "label": "Espace · welcome",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/welcome.png",
+    "condition": "Shown when discovery mode: spaces"
+  },
+  {
+    "id": "establishments.equipment-r10.space.learning",
+    "section": "Équipements · Découverte par espaces",
+    "label": "Espace · learning",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/classroom.png",
+    "condition": "Shown when discovery mode: spaces"
+  },
+  {
+    "id": "establishments.equipment-r10.space.parents",
+    "section": "Équipements · Découverte par espaces",
+    "label": "Espace · parents",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/parents.png",
+    "condition": "Shown when discovery mode: spaces"
+  },
+  {
+    "id": "establishments.equipment-r10.space.operations",
+    "section": "Équipements · Découverte par espaces",
+    "label": "Espace · operations",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-team.png",
+    "condition": "Shown when discovery mode: spaces"
+  },
+  {
+    "id": "establishments.equipment-r10.space.routines",
+    "section": "Équipements · Découverte par espaces",
+    "label": "Espace · routines",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/activities.png",
+    "condition": "Shown when discovery mode: spaces"
+  },
+  {
+    "id": "establishments.equipment-r10.space.identity",
+    "section": "Équipements · Découverte par espaces",
+    "label": "Espace · identity",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/uniforms.png",
+    "condition": "Shown when discovery mode: spaces"
+  },
+  {
+    "id": "establishments.equipment-r10.goal.opening.reception",
+    "section": "Équipements · Objectifs",
+    "label": "Objectif opening · reception",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-admissions.png",
+    "condition": "Shown when discovery mode: goals, priority opening"
+  },
+  {
+    "id": "establishments.equipment-r10.goal.opening.open-day",
+    "section": "Équipements · Objectifs",
+    "label": "Objectif opening · open-day",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-admissions.png",
+    "condition": "Shown when discovery mode: goals, priority opening"
+  },
+  {
+    "id": "establishments.equipment-r10.goal.opening.class-visuals",
+    "section": "Équipements · Objectifs",
+    "label": "Objectif opening · class-visuals",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/classroom.png",
+    "condition": "Shown when discovery mode: goals, priority opening"
+  },
+  {
+    "id": "establishments.equipment-r10.goal.opening.parent-communication",
+    "section": "Équipements · Objectifs",
+    "label": "Objectif opening · parent-communication",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-communication.png",
+    "condition": "Shown when discovery mode: goals, priority opening"
+  },
+  {
+    "id": "establishments.equipment-r10.goal.modernize.class-visuals",
+    "section": "Équipements · Objectifs",
+    "label": "Objectif modernize · class-visuals",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/classroom.png",
+    "condition": "Shown when discovery mode: goals, priority modernize"
+  },
+  {
+    "id": "establishments.equipment-r10.goal.modernize.montessori",
+    "section": "Équipements · Objectifs",
+    "label": "Objectif modernize · montessori",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/furniture.png",
+    "condition": "Shown when discovery mode: goals, priority modernize"
+  },
+  {
+    "id": "establishments.equipment-r10.goal.modernize.labelling",
+    "section": "Équipements · Objectifs",
+    "label": "Objectif modernize · labelling",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-overview.png",
+    "condition": "Shown when discovery mode: goals, priority modernize"
+  },
+  {
+    "id": "establishments.equipment-r10.goal.modernize.large-format",
+    "section": "Équipements · Objectifs",
+    "label": "Objectif modernize · large-format",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/signage.png",
+    "condition": "Shown when discovery mode: goals, priority modernize"
+  },
+  {
+    "id": "establishments.equipment-r10.goal.team.staff-tools",
+    "section": "Équipements · Objectifs",
+    "label": "Objectif team · staff-tools",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-team.png",
+    "condition": "Shown when discovery mode: goals, priority team"
+  },
+  {
+    "id": "establishments.equipment-r10.goal.team.labelling",
+    "section": "Équipements · Objectifs",
+    "label": "Objectif team · labelling",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-overview.png",
+    "condition": "Shown when discovery mode: goals, priority team"
+  },
+  {
+    "id": "establishments.equipment-r10.goal.team.technical",
+    "section": "Équipements · Objectifs",
+    "label": "Objectif team · technical",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/audit.png",
+    "condition": "Shown when discovery mode: goals, priority team"
+  },
+  {
+    "id": "establishments.equipment-r10.goal.team.safety",
+    "section": "Équipements · Objectifs",
+    "label": "Objectif team · safety",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/safety.png",
+    "condition": "Shown when discovery mode: goals, priority team"
+  },
+  {
+    "id": "establishments.equipment-r10.goal.enrolment.open-day",
+    "section": "Équipements · Objectifs",
+    "label": "Objectif enrolment · open-day",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-admissions.png",
+    "condition": "Shown when discovery mode: goals, priority enrolment"
+  },
+  {
+    "id": "establishments.equipment-r10.goal.enrolment.reception",
+    "section": "Équipements · Objectifs",
+    "label": "Objectif enrolment · reception",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-admissions.png",
+    "condition": "Shown when discovery mode: goals, priority enrolment"
+  },
+  {
+    "id": "establishments.equipment-r10.goal.enrolment.parent-communication",
+    "section": "Équipements · Objectifs",
+    "label": "Objectif enrolment · parent-communication",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-communication.png",
+    "condition": "Shown when discovery mode: goals, priority enrolment"
+  },
+  {
+    "id": "establishments.equipment-r10.goal.enrolment.large-format",
+    "section": "Équipements · Objectifs",
+    "label": "Objectif enrolment · large-format",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/signage.png",
+    "condition": "Shown when discovery mode: goals, priority enrolment"
+  },
+  {
+    "id": "establishments.equipment-r10.goal.event.graduation",
+    "section": "Équipements · Objectifs",
+    "label": "Objectif event · graduation",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/programme-team.png",
+    "condition": "Shown when discovery mode: goals, priority event"
+  },
+  {
+    "id": "establishments.equipment-r10.goal.event.photo-booth",
+    "section": "Équipements · Objectifs",
+    "label": "Objectif event · photo-booth",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/child-experience.png",
+    "condition": "Shown when discovery mode: goals, priority event"
+  },
+  {
+    "id": "establishments.equipment-r10.goal.event.event-branding",
+    "section": "Équipements · Objectifs",
+    "label": "Objectif event · event-branding",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-year.png",
+    "condition": "Shown when discovery mode: goals, priority event"
+  },
+  {
+    "id": "establishments.equipment-r10.goal.event.seasonal",
+    "section": "Équipements · Objectifs",
+    "label": "Objectif event · seasonal",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-year.png",
+    "condition": "Shown when discovery mode: goals, priority event"
+  },
+  {
+    "id": "establishments.equipment-r10.story.school-opening",
+    "section": "Équipements · Inspirations",
+    "label": "Histoire · school-opening",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/welcome.png",
+    "condition": "Story school-opening selected"
+  },
+  {
+    "id": "establishments.equipment-r10.story.new-class",
+    "section": "Équipements · Inspirations",
+    "label": "Histoire · new-class",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/classroom.png",
+    "condition": "Story new-class selected"
+  },
+  {
+    "id": "establishments.equipment-r10.story.team-rhythm",
+    "section": "Équipements · Inspirations",
+    "label": "Histoire · team-rhythm",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-team.png",
+    "condition": "Story team-rhythm selected"
+  },
+  {
+    "id": "establishments.equipment-r10.story.school-moments",
+    "section": "Équipements · Inspirations",
+    "label": "Histoire · school-moments",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/uniforms.png",
+    "condition": "Story school-moments selected"
+  },
+  {
+    "id": "establishments.equipment-r10.school.zone.reception",
+    "section": "Équipements · Plan d'école",
+    "label": "Zone · reception",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/welcome.png"
+  },
+  {
+    "id": "establishments.equipment-r10.map.detail.welcome",
+    "section": "Équipements · Plan d'école",
+    "label": "Détail zone · welcome",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/welcome.png",
+    "condition": "Map hotspot reception selected"
+  },
+  {
+    "id": "establishments.equipment-r10.school.zone.class-visuals",
+    "section": "Équipements · Plan d'école",
+    "label": "Zone · class-visuals",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/classroom.png"
+  },
+  {
+    "id": "establishments.equipment-r10.map.detail.learning",
+    "section": "Équipements · Plan d'école",
+    "label": "Détail zone · learning",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/classroom.png",
+    "condition": "Map hotspot class-visuals selected"
+  },
+  {
+    "id": "establishments.equipment-r10.school.zone.parent-communication",
+    "section": "Équipements · Plan d'école",
+    "label": "Zone · parent-communication",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/parents.png"
+  },
+  {
+    "id": "establishments.equipment-r10.map.detail.parents",
+    "section": "Équipements · Plan d'école",
+    "label": "Détail zone · parents",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/parents.png",
+    "condition": "Map hotspot parent-communication selected"
+  },
+  {
+    "id": "establishments.equipment-r10.school.zone.staff-tools",
+    "section": "Équipements · Plan d'école",
+    "label": "Zone · staff-tools",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-team.png"
+  },
+  {
+    "id": "establishments.equipment-r10.map.detail.operations",
+    "section": "Équipements · Plan d'école",
+    "label": "Détail zone · operations",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-team.png",
+    "condition": "Map hotspot staff-tools selected"
+  },
+  {
+    "id": "establishments.equipment-r10.school.zone.activity-boxes",
+    "section": "Équipements · Plan d'école",
+    "label": "Zone · activity-boxes",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/activities.png"
+  },
+  {
+    "id": "establishments.equipment-r10.map.detail.routines",
+    "section": "Équipements · Plan d'école",
+    "label": "Détail zone · routines",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/activities.png",
+    "condition": "Map hotspot activity-boxes selected"
+  },
+  {
+    "id": "establishments.equipment-r10.school.zone.graduation",
+    "section": "Équipements · Plan d'école",
+    "label": "Zone · graduation",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/uniforms.png"
+  },
+  {
+    "id": "establishments.equipment-r10.map.detail.identity",
+    "section": "Équipements · Plan d'école",
+    "label": "Détail zone · identity",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/uniforms.png",
+    "condition": "Map hotspot graduation selected"
+  },
+  {
+    "id": "establishments.equipment-r10.universe.welcome",
+    "section": "Équipements · Univers professionnels",
+    "label": "Univers · welcome",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/welcome.png"
+  },
+  {
+    "id": "establishments.equipment-r10.universe.learning",
+    "section": "Équipements · Univers professionnels",
+    "label": "Univers · learning",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/classroom.png"
+  },
+  {
+    "id": "establishments.equipment-r10.universe.parents",
+    "section": "Équipements · Univers professionnels",
+    "label": "Univers · parents",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/parents.png"
+  },
+  {
+    "id": "establishments.equipment-r10.universe.operations",
+    "section": "Équipements · Univers professionnels",
+    "label": "Univers · operations",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-team.png"
+  },
+  {
+    "id": "establishments.equipment-r10.universe.routines",
+    "section": "Équipements · Univers professionnels",
+    "label": "Univers · routines",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/activities.png"
+  },
+  {
+    "id": "establishments.equipment-r10.universe.identity",
+    "section": "Équipements · Univers professionnels",
+    "label": "Univers · identity",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/uniforms.png"
+  },
+  {
+    "id": "establishments.equipment-r10.atlas.welcome-guide",
+    "section": "Équipements · Atlas 22 domaines",
+    "label": "Atlas · welcome-guide",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/welcome.png",
+    "condition": "Available when Atlas is expanded"
+  },
+  {
+    "id": "establishments.equipment-r10.feature.welcome-guide",
+    "section": "Équipements · Domaines détaillés",
+    "label": "Domaine · welcome-guide",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/welcome.png",
+    "condition": "Domain welcome-guide opened"
+  },
+  {
+    "id": "establishments.equipment-r10.atlas.photo-booth",
+    "section": "Équipements · Atlas 22 domaines",
+    "label": "Atlas · photo-booth",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/child-experience.png",
+    "condition": "Available when Atlas is expanded"
+  },
+  {
+    "id": "establishments.equipment-r10.feature.photo-booth",
+    "section": "Équipements · Domaines détaillés",
+    "label": "Domaine · photo-booth",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/child-experience.png",
+    "condition": "Domain photo-booth opened"
+  },
+  {
+    "id": "establishments.equipment-r10.atlas.large-format",
+    "section": "Équipements · Atlas 22 domaines",
+    "label": "Atlas · large-format",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/signage.png",
+    "condition": "Available when Atlas is expanded"
+  },
+  {
+    "id": "establishments.equipment-r10.feature.large-format",
+    "section": "Équipements · Domaines détaillés",
+    "label": "Domaine · large-format",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/signage.png",
+    "condition": "Domain large-format opened"
+  },
+  {
+    "id": "establishments.equipment-r10.atlas.event-branding",
+    "section": "Équipements · Atlas 22 domaines",
+    "label": "Atlas · event-branding",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-year.png",
+    "condition": "Available when Atlas is expanded"
+  },
+  {
+    "id": "establishments.equipment-r10.feature.event-branding",
+    "section": "Équipements · Domaines détaillés",
+    "label": "Domaine · event-branding",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-year.png",
+    "condition": "Domain event-branding opened"
+  },
+  {
+    "id": "establishments.equipment-r10.atlas.class-visuals",
+    "section": "Équipements · Atlas 22 domaines",
+    "label": "Atlas · class-visuals",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/classroom.png",
+    "condition": "Available when Atlas is expanded"
+  },
+  {
+    "id": "establishments.equipment-r10.feature.class-visuals",
+    "section": "Équipements · Domaines détaillés",
+    "label": "Domaine · class-visuals",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/classroom.png",
+    "condition": "Domain class-visuals opened"
+  },
+  {
+    "id": "establishments.equipment-r10.atlas.printables",
+    "section": "Équipements · Atlas 22 domaines",
+    "label": "Atlas · printables",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/activities.png",
+    "condition": "Available when Atlas is expanded"
+  },
+  {
+    "id": "establishments.equipment-r10.feature.printables",
+    "section": "Équipements · Domaines détaillés",
+    "label": "Domaine · printables",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/activities.png",
+    "condition": "Domain printables opened"
+  },
+  {
+    "id": "establishments.equipment-r10.atlas.flashcards",
+    "section": "Équipements · Atlas 22 domaines",
+    "label": "Atlas · flashcards",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/edupplay.png",
+    "condition": "Available when Atlas is expanded"
+  },
+  {
+    "id": "establishments.equipment-r10.feature.flashcards",
+    "section": "Équipements · Domaines détaillés",
+    "label": "Domaine · flashcards",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/edupplay.png",
+    "condition": "Domain flashcards opened"
+  },
+  {
+    "id": "establishments.equipment-r10.atlas.parent-communication",
+    "section": "Équipements · Atlas 22 domaines",
+    "label": "Atlas · parent-communication",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-communication.png",
+    "condition": "Available when Atlas is expanded"
+  },
+  {
+    "id": "establishments.equipment-r10.feature.parent-communication",
+    "section": "Équipements · Domaines détaillés",
+    "label": "Domaine · parent-communication",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-communication.png",
+    "condition": "Domain parent-communication opened"
+  },
+  {
+    "id": "establishments.equipment-r10.atlas.reception",
+    "section": "Équipements · Atlas 22 domaines",
+    "label": "Atlas · reception",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-admissions.png",
+    "condition": "Available when Atlas is expanded"
+  },
+  {
+    "id": "establishments.equipment-r10.feature.reception",
+    "section": "Équipements · Domaines détaillés",
+    "label": "Domaine · reception",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-admissions.png",
+    "condition": "Domain reception opened"
+  },
+  {
+    "id": "establishments.equipment-r10.atlas.staff-tools",
+    "section": "Équipements · Atlas 22 domaines",
+    "label": "Atlas · staff-tools",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-team.png",
+    "condition": "Available when Atlas is expanded"
+  },
+  {
+    "id": "establishments.equipment-r10.feature.staff-tools",
+    "section": "Équipements · Domaines détaillés",
+    "label": "Domaine · staff-tools",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-team.png",
+    "condition": "Domain staff-tools opened"
+  },
+  {
+    "id": "establishments.equipment-r10.atlas.child-identity",
+    "section": "Équipements · Atlas 22 domaines",
+    "label": "Atlas · child-identity",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/parent-tools.png",
+    "condition": "Available when Atlas is expanded"
+  },
+  {
+    "id": "establishments.equipment-r10.feature.child-identity",
+    "section": "Équipements · Domaines détaillés",
+    "label": "Domaine · child-identity",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/parent-tools.png",
+    "condition": "Domain child-identity opened"
+  },
+  {
+    "id": "establishments.equipment-r10.atlas.graduation",
+    "section": "Équipements · Atlas 22 domaines",
+    "label": "Atlas · graduation",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/programme-team.png",
+    "condition": "Available when Atlas is expanded"
+  },
+  {
+    "id": "establishments.equipment-r10.feature.graduation",
+    "section": "Équipements · Domaines détaillés",
+    "label": "Domaine · graduation",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/programme-team.png",
+    "condition": "Domain graduation opened"
+  },
+  {
+    "id": "establishments.equipment-r10.atlas.seasonal",
+    "section": "Équipements · Atlas 22 domaines",
+    "label": "Atlas · seasonal",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-year.png",
+    "condition": "Available when Atlas is expanded"
+  },
+  {
+    "id": "establishments.equipment-r10.feature.seasonal",
+    "section": "Équipements · Domaines détaillés",
+    "label": "Domaine · seasonal",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-year.png",
+    "condition": "Domain seasonal opened"
+  },
+  {
+    "id": "establishments.equipment-r10.atlas.safety",
+    "section": "Équipements · Atlas 22 domaines",
+    "label": "Atlas · safety",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/safety.png",
+    "condition": "Available when Atlas is expanded"
+  },
+  {
+    "id": "establishments.equipment-r10.feature.safety",
+    "section": "Équipements · Domaines détaillés",
+    "label": "Domaine · safety",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/safety.png",
+    "condition": "Domain safety opened"
+  },
+  {
+    "id": "establishments.equipment-r10.atlas.montessori",
+    "section": "Équipements · Atlas 22 domaines",
+    "label": "Atlas · montessori",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/furniture.png",
+    "condition": "Available when Atlas is expanded"
+  },
+  {
+    "id": "establishments.equipment-r10.feature.montessori",
+    "section": "Équipements · Domaines détaillés",
+    "label": "Domaine · montessori",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/furniture.png",
+    "condition": "Domain montessori opened"
+  },
+  {
+    "id": "establishments.equipment-r10.atlas.labelling",
+    "section": "Équipements · Atlas 22 domaines",
+    "label": "Atlas · labelling",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-overview.png",
+    "condition": "Available when Atlas is expanded"
+  },
+  {
+    "id": "establishments.equipment-r10.feature.labelling",
+    "section": "Équipements · Domaines détaillés",
+    "label": "Domaine · labelling",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-overview.png",
+    "condition": "Domain labelling opened"
+  },
+  {
+    "id": "establishments.equipment-r10.atlas.open-day",
+    "section": "Équipements · Atlas 22 domaines",
+    "label": "Atlas · open-day",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-admissions.png",
+    "condition": "Available when Atlas is expanded"
+  },
+  {
+    "id": "establishments.equipment-r10.feature.open-day",
+    "section": "Équipements · Domaines détaillés",
+    "label": "Domaine · open-day",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-admissions.png",
+    "condition": "Domain open-day opened"
+  },
+  {
+    "id": "establishments.equipment-r10.atlas.certificates",
+    "section": "Équipements · Atlas 22 domaines",
+    "label": "Atlas · certificates",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/academy.png",
+    "condition": "Available when Atlas is expanded"
+  },
+  {
+    "id": "establishments.equipment-r10.feature.certificates",
+    "section": "Équipements · Domaines détaillés",
+    "label": "Domaine · certificates",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/academy.png",
+    "condition": "Domain certificates opened"
+  },
+  {
+    "id": "establishments.equipment-r10.atlas.activity-boxes",
+    "section": "Équipements · Atlas 22 domaines",
+    "label": "Atlas · activity-boxes",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-activities.png",
+    "condition": "Available when Atlas is expanded"
+  },
+  {
+    "id": "establishments.equipment-r10.feature.activity-boxes",
+    "section": "Équipements · Domaines détaillés",
+    "label": "Domaine · activity-boxes",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-activities.png",
+    "condition": "Domain activity-boxes opened"
+  },
+  {
+    "id": "establishments.equipment-r10.atlas.partner-branding",
+    "section": "Équipements · Atlas 22 domaines",
+    "label": "Atlas · partner-branding",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/uniforms.png",
+    "condition": "Available when Atlas is expanded"
+  },
+  {
+    "id": "establishments.equipment-r10.feature.partner-branding",
+    "section": "Équipements · Domaines détaillés",
+    "label": "Domaine · partner-branding",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/uniforms.png",
+    "condition": "Domain partner-branding opened"
+  },
+  {
+    "id": "establishments.equipment-r10.atlas.personalization",
+    "section": "Équipements · Atlas 22 domaines",
+    "label": "Atlas · personalization",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/products-hero.png",
+    "condition": "Available when Atlas is expanded"
+  },
+  {
+    "id": "establishments.equipment-r10.feature.personalization",
+    "section": "Équipements · Domaines détaillés",
+    "label": "Domaine · personalization",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/products-hero.png",
+    "condition": "Domain personalization opened"
+  },
+  {
+    "id": "establishments.equipment-r10.atlas.technical",
+    "section": "Équipements · Atlas 22 domaines",
+    "label": "Atlas · technical",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/audit.png",
+    "condition": "Available when Atlas is expanded"
+  },
+  {
+    "id": "establishments.equipment-r10.feature.technical",
+    "section": "Équipements · Domaines détaillés",
+    "label": "Domaine · technical",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/audit.png",
+    "condition": "Domain technical opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.welcome-guide.reception",
+    "section": "Équipements · Suggestions associées",
+    "label": "welcome-guide → reception",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-admissions.png",
+    "condition": "Domain welcome-guide opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.welcome-guide.technical",
+    "section": "Équipements · Suggestions associées",
+    "label": "welcome-guide → technical",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/audit.png",
+    "condition": "Domain welcome-guide opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.welcome-guide.personalization",
+    "section": "Équipements · Suggestions associées",
+    "label": "welcome-guide → personalization",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/products-hero.png",
+    "condition": "Domain welcome-guide opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.photo-booth.open-day",
+    "section": "Équipements · Suggestions associées",
+    "label": "photo-booth → open-day",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-admissions.png",
+    "condition": "Domain photo-booth opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.photo-booth.event-branding",
+    "section": "Équipements · Suggestions associées",
+    "label": "photo-booth → event-branding",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-year.png",
+    "condition": "Domain photo-booth opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.photo-booth.partner-branding",
+    "section": "Équipements · Suggestions associées",
+    "label": "photo-booth → partner-branding",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/uniforms.png",
+    "condition": "Domain photo-booth opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.large-format.reception",
+    "section": "Équipements · Suggestions associées",
+    "label": "large-format → reception",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-admissions.png",
+    "condition": "Domain large-format opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.large-format.open-day",
+    "section": "Équipements · Suggestions associées",
+    "label": "large-format → open-day",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-admissions.png",
+    "condition": "Domain large-format opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.large-format.technical",
+    "section": "Équipements · Suggestions associées",
+    "label": "large-format → technical",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/audit.png",
+    "condition": "Domain large-format opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.event-branding.graduation",
+    "section": "Équipements · Suggestions associées",
+    "label": "event-branding → graduation",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/programme-team.png",
+    "condition": "Domain event-branding opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.event-branding.photo-booth",
+    "section": "Équipements · Suggestions associées",
+    "label": "event-branding → photo-booth",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/child-experience.png",
+    "condition": "Domain event-branding opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.event-branding.seasonal",
+    "section": "Équipements · Suggestions associées",
+    "label": "event-branding → seasonal",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-year.png",
+    "condition": "Domain event-branding opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.class-visuals.flashcards",
+    "section": "Équipements · Suggestions associées",
+    "label": "class-visuals → flashcards",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/edupplay.png",
+    "condition": "Domain class-visuals opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.class-visuals.printables",
+    "section": "Équipements · Suggestions associées",
+    "label": "class-visuals → printables",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/activities.png",
+    "condition": "Domain class-visuals opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.class-visuals.labelling",
+    "section": "Équipements · Suggestions associées",
+    "label": "class-visuals → labelling",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-overview.png",
+    "condition": "Domain class-visuals opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.printables.flashcards",
+    "section": "Équipements · Suggestions associées",
+    "label": "printables → flashcards",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/edupplay.png",
+    "condition": "Domain printables opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.printables.montessori",
+    "section": "Équipements · Suggestions associées",
+    "label": "printables → montessori",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/furniture.png",
+    "condition": "Domain printables opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.printables.activity-boxes",
+    "section": "Équipements · Suggestions associées",
+    "label": "printables → activity-boxes",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-activities.png",
+    "condition": "Domain printables opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.flashcards.printables",
+    "section": "Équipements · Suggestions associées",
+    "label": "flashcards → printables",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/activities.png",
+    "condition": "Domain flashcards opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.flashcards.montessori",
+    "section": "Équipements · Suggestions associées",
+    "label": "flashcards → montessori",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/furniture.png",
+    "condition": "Domain flashcards opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.flashcards.class-visuals",
+    "section": "Équipements · Suggestions associées",
+    "label": "flashcards → class-visuals",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/classroom.png",
+    "condition": "Domain flashcards opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.parent-communication.open-day",
+    "section": "Équipements · Suggestions associées",
+    "label": "parent-communication → open-day",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-admissions.png",
+    "condition": "Domain parent-communication opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.parent-communication.child-identity",
+    "section": "Équipements · Suggestions associées",
+    "label": "parent-communication → child-identity",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/parent-tools.png",
+    "condition": "Domain parent-communication opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.parent-communication.certificates",
+    "section": "Équipements · Suggestions associées",
+    "label": "parent-communication → certificates",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/academy.png",
+    "condition": "Domain parent-communication opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.reception.large-format",
+    "section": "Équipements · Suggestions associées",
+    "label": "reception → large-format",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/signage.png",
+    "condition": "Domain reception opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.reception.open-day",
+    "section": "Équipements · Suggestions associées",
+    "label": "reception → open-day",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-admissions.png",
+    "condition": "Domain reception opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.reception.parent-communication",
+    "section": "Équipements · Suggestions associées",
+    "label": "reception → parent-communication",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-communication.png",
+    "condition": "Domain reception opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.staff-tools.labelling",
+    "section": "Équipements · Suggestions associées",
+    "label": "staff-tools → labelling",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-overview.png",
+    "condition": "Domain staff-tools opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.staff-tools.technical",
+    "section": "Équipements · Suggestions associées",
+    "label": "staff-tools → technical",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/audit.png",
+    "condition": "Domain staff-tools opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.staff-tools.safety",
+    "section": "Équipements · Suggestions associées",
+    "label": "staff-tools → safety",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/safety.png",
+    "condition": "Domain staff-tools opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.child-identity.labelling",
+    "section": "Équipements · Suggestions associées",
+    "label": "child-identity → labelling",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-overview.png",
+    "condition": "Domain child-identity opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.child-identity.certificates",
+    "section": "Équipements · Suggestions associées",
+    "label": "child-identity → certificates",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/academy.png",
+    "condition": "Domain child-identity opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.child-identity.parent-communication",
+    "section": "Équipements · Suggestions associées",
+    "label": "child-identity → parent-communication",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-communication.png",
+    "condition": "Domain child-identity opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.graduation.event-branding",
+    "section": "Équipements · Suggestions associées",
+    "label": "graduation → event-branding",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-year.png",
+    "condition": "Domain graduation opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.graduation.photo-booth",
+    "section": "Équipements · Suggestions associées",
+    "label": "graduation → photo-booth",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/child-experience.png",
+    "condition": "Domain graduation opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.graduation.certificates",
+    "section": "Équipements · Suggestions associées",
+    "label": "graduation → certificates",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/academy.png",
+    "condition": "Domain graduation opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.seasonal.event-branding",
+    "section": "Équipements · Suggestions associées",
+    "label": "seasonal → event-branding",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-year.png",
+    "condition": "Domain seasonal opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.seasonal.activity-boxes",
+    "section": "Équipements · Suggestions associées",
+    "label": "seasonal → activity-boxes",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-activities.png",
+    "condition": "Domain seasonal opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.seasonal.class-visuals",
+    "section": "Équipements · Suggestions associées",
+    "label": "seasonal → class-visuals",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/classroom.png",
+    "condition": "Domain seasonal opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.safety.labelling",
+    "section": "Équipements · Suggestions associées",
+    "label": "safety → labelling",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-overview.png",
+    "condition": "Domain safety opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.safety.staff-tools",
+    "section": "Équipements · Suggestions associées",
+    "label": "safety → staff-tools",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-team.png",
+    "condition": "Domain safety opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.safety.reception",
+    "section": "Équipements · Suggestions associées",
+    "label": "safety → reception",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-admissions.png",
+    "condition": "Domain safety opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.montessori.printables",
+    "section": "Équipements · Suggestions associées",
+    "label": "montessori → printables",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/activities.png",
+    "condition": "Domain montessori opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.montessori.flashcards",
+    "section": "Équipements · Suggestions associées",
+    "label": "montessori → flashcards",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/edupplay.png",
+    "condition": "Domain montessori opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.montessori.class-visuals",
+    "section": "Équipements · Suggestions associées",
+    "label": "montessori → class-visuals",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/classroom.png",
+    "condition": "Domain montessori opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.labelling.staff-tools",
+    "section": "Équipements · Suggestions associées",
+    "label": "labelling → staff-tools",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-team.png",
+    "condition": "Domain labelling opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.labelling.child-identity",
+    "section": "Équipements · Suggestions associées",
+    "label": "labelling → child-identity",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/parent-tools.png",
+    "condition": "Domain labelling opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.labelling.class-visuals",
+    "section": "Équipements · Suggestions associées",
+    "label": "labelling → class-visuals",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/classroom.png",
+    "condition": "Domain labelling opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.open-day.reception",
+    "section": "Équipements · Suggestions associées",
+    "label": "open-day → reception",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-admissions.png",
+    "condition": "Domain open-day opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.open-day.large-format",
+    "section": "Équipements · Suggestions associées",
+    "label": "open-day → large-format",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/signage.png",
+    "condition": "Domain open-day opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.open-day.parent-communication",
+    "section": "Équipements · Suggestions associées",
+    "label": "open-day → parent-communication",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-communication.png",
+    "condition": "Domain open-day opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.certificates.graduation",
+    "section": "Équipements · Suggestions associées",
+    "label": "certificates → graduation",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/programme-team.png",
+    "condition": "Domain certificates opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.certificates.child-identity",
+    "section": "Équipements · Suggestions associées",
+    "label": "certificates → child-identity",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/parent-tools.png",
+    "condition": "Domain certificates opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.certificates.partner-branding",
+    "section": "Équipements · Suggestions associées",
+    "label": "certificates → partner-branding",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/uniforms.png",
+    "condition": "Domain certificates opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.activity-boxes.printables",
+    "section": "Équipements · Suggestions associées",
+    "label": "activity-boxes → printables",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/activities.png",
+    "condition": "Domain activity-boxes opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.activity-boxes.seasonal",
+    "section": "Équipements · Suggestions associées",
+    "label": "activity-boxes → seasonal",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-year.png",
+    "condition": "Domain activity-boxes opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.activity-boxes.montessori",
+    "section": "Équipements · Suggestions associées",
+    "label": "activity-boxes → montessori",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/furniture.png",
+    "condition": "Domain activity-boxes opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.partner-branding.personalization",
+    "section": "Équipements · Suggestions associées",
+    "label": "partner-branding → personalization",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/products-hero.png",
+    "condition": "Domain partner-branding opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.partner-branding.event-branding",
+    "section": "Équipements · Suggestions associées",
+    "label": "partner-branding → event-branding",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-year.png",
+    "condition": "Domain partner-branding opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.partner-branding.graduation",
+    "section": "Équipements · Suggestions associées",
+    "label": "partner-branding → graduation",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/programme-team.png",
+    "condition": "Domain partner-branding opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.personalization.technical",
+    "section": "Équipements · Suggestions associées",
+    "label": "personalization → technical",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/audit.png",
+    "condition": "Domain personalization opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.personalization.partner-branding",
+    "section": "Équipements · Suggestions associées",
+    "label": "personalization → partner-branding",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/uniforms.png",
+    "condition": "Domain personalization opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.personalization.large-format",
+    "section": "Équipements · Suggestions associées",
+    "label": "personalization → large-format",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/signage.png",
+    "condition": "Domain personalization opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.technical.personalization",
+    "section": "Équipements · Suggestions associées",
+    "label": "technical → personalization",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/products-hero.png",
+    "condition": "Domain technical opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.technical.large-format",
+    "section": "Équipements · Suggestions associées",
+    "label": "technical → large-format",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/signage.png",
+    "condition": "Domain technical opened"
+  },
+  {
+    "id": "establishments.equipment-r10.related.technical.partner-branding",
+    "section": "Équipements · Suggestions associées",
+    "label": "technical → partner-branding",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/uniforms.png",
+    "condition": "Domain technical opened"
+  },
+  {
+    "id": "establishments.equipment-r9.welcome-guide.guide-cover",
+    "section": "Équipements · Simulations 22 domaines",
+    "label": "Mise en situation welcome-guide · guide-cover",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/welcome.png",
+    "condition": "Domain welcome-guide opened"
+  },
+  {
+    "id": "establishments.equipment-r9.photo-booth.booth",
+    "section": "Équipements · Simulations 22 domaines",
+    "label": "Mise en situation photo-booth · booth",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/child-experience.png",
+    "condition": "Domain photo-booth opened"
+  },
+  {
+    "id": "establishments.equipment-r9.open-day.booth-0",
+    "section": "Équipements · Simulations complémentaires",
+    "label": "Mise en situation photo-booth · booth-0",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-admissions.png",
+    "condition": "Opened within domain photo-booth"
+  },
+  {
+    "id": "establishments.equipment-r9.event-branding.booth-1",
+    "section": "Équipements · Simulations complémentaires",
+    "label": "Mise en situation photo-booth · booth-1",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-year.png",
+    "condition": "Opened within domain photo-booth"
+  },
+  {
+    "id": "establishments.equipment-r9.large-format.facade",
+    "section": "Équipements · Simulations 22 domaines",
+    "label": "Mise en situation large-format · facade",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/signage.png",
+    "condition": "Domain large-format opened"
+  },
+  {
+    "id": "establishments.equipment-r9.event-branding.mood-main",
+    "section": "Équipements · Simulations 22 domaines",
+    "label": "Mise en situation event-branding · mood-main",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-year.png",
+    "condition": "Domain event-branding opened"
+  },
+  {
+    "id": "establishments.equipment-r9.graduation.mood-0",
+    "section": "Équipements · Simulations complémentaires",
+    "label": "Mise en situation event-branding · mood-0",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/programme-team.png",
+    "condition": "Opened within domain event-branding"
+  },
+  {
+    "id": "establishments.equipment-r9.photo-booth.mood-1",
+    "section": "Équipements · Simulations complémentaires",
+    "label": "Mise en situation event-branding · mood-1",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/child-experience.png",
+    "condition": "Opened within domain event-branding"
+  },
+  {
+    "id": "establishments.equipment-r9.class-visuals.wall",
+    "section": "Équipements · Simulations 22 domaines",
+    "label": "Mise en situation class-visuals · wall",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/classroom.png",
+    "condition": "Domain class-visuals opened"
+  },
+  {
+    "id": "establishments.equipment-r9.printables.printable-table",
+    "section": "Équipements · Simulations 22 domaines",
+    "label": "Mise en situation printables · printable-table",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/activities.png",
+    "condition": "Domain printables opened"
+  },
+  {
+    "id": "establishments.equipment-r9.flashcards.flash-edu",
+    "section": "Équipements · Simulations complémentaires",
+    "label": "Mise en situation flashcards · flash-edu",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/edupplay.png",
+    "condition": "Domain flashcards opened"
+  },
+  {
+    "id": "establishments.equipment-r9.parent-communication.parent-scene",
+    "section": "Équipements · Simulations 22 domaines",
+    "label": "Mise en situation parent-communication · parent-scene",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-communication.png",
+    "condition": "Domain parent-communication opened"
+  },
+  {
+    "id": "establishments.equipment-r9.reception.reception-room",
+    "section": "Équipements · Simulations 22 domaines",
+    "label": "Mise en situation reception · reception-room",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-admissions.png",
+    "condition": "Domain reception opened"
+  },
+  {
+    "id": "establishments.equipment-r9.child-identity.identity-samples",
+    "section": "Équipements · Simulations complémentaires",
+    "label": "Mise en situation child-identity · identity-samples",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/parent-tools.png",
+    "condition": "Domain child-identity opened"
+  },
+  {
+    "id": "establishments.equipment-r9.graduation.graduation-scene",
+    "section": "Équipements · Simulations 22 domaines",
+    "label": "Mise en situation graduation · graduation-scene",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/programme-team.png",
+    "condition": "Domain graduation opened"
+  },
+  {
+    "id": "establishments.equipment-r9.event-branding.season-0",
+    "section": "Équipements · Simulations complémentaires",
+    "label": "Mise en situation seasonal · season-0",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-year.png",
+    "condition": "Opened within domain seasonal"
+  },
+  {
+    "id": "establishments.equipment-r9.activity-boxes.season-1",
+    "section": "Équipements · Simulations complémentaires",
+    "label": "Mise en situation seasonal · season-1",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-activities.png",
+    "condition": "Opened within domain seasonal"
+  },
+  {
+    "id": "establishments.equipment-r9.class-visuals.season-2",
+    "section": "Équipements · Simulations complémentaires",
+    "label": "Mise en situation seasonal · season-2",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/classroom.png",
+    "condition": "Opened within domain seasonal"
+  },
+  {
+    "id": "establishments.equipment-r9.safety.safety-walk",
+    "section": "Équipements · Simulations 22 domaines",
+    "label": "Mise en situation safety · safety-walk",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/safety.png",
+    "condition": "Domain safety opened"
+  },
+  {
+    "id": "establishments.equipment-r9.montessori.sensory",
+    "section": "Équipements · Simulations 22 domaines",
+    "label": "Mise en situation montessori · sensory",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/furniture.png",
+    "condition": "Domain montessori opened"
+  },
+  {
+    "id": "establishments.equipment-r9.labelling.storage",
+    "section": "Équipements · Simulations 22 domaines",
+    "label": "Mise en situation labelling · storage",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-overview.png",
+    "condition": "Domain labelling opened"
+  },
+  {
+    "id": "establishments.equipment-r9.open-day.admissions",
+    "section": "Équipements · Simulations complémentaires",
+    "label": "Mise en situation open-day · admissions",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-people-admissions.png",
+    "condition": "Domain open-day opened"
+  },
+  {
+    "id": "establishments.equipment-r9.certificates.awards",
+    "section": "Équipements · Simulations complémentaires",
+    "label": "Mise en situation certificates · awards",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/academy.png",
+    "condition": "Domain certificates opened"
+  },
+  {
+    "id": "establishments.equipment-r9.activity-boxes.kit-scene",
+    "section": "Équipements · Simulations 22 domaines",
+    "label": "Mise en situation activity-boxes · kit-scene",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/os-activities.png",
+    "condition": "Domain activity-boxes opened"
+  },
+  {
+    "id": "establishments.equipment-r9.partner-branding.brand-main",
+    "section": "Équipements · Simulations 22 domaines",
+    "label": "Mise en situation partner-branding · brand-main",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/uniforms.png",
+    "condition": "Domain partner-branding opened"
+  },
+  {
+    "id": "establishments.equipment-r9.personalization.production",
+    "section": "Équipements · Simulations 22 domaines",
+    "label": "Mise en situation personalization · production",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/products-hero.png",
+    "condition": "Domain personalization opened"
+  },
+  {
+    "id": "establishments.equipment-r9.technical.technical",
+    "section": "Équipements · Simulations 22 domaines",
+    "label": "Mise en situation technical · technical",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/audit.png",
+    "condition": "Domain technical opened"
+  },
+  {
+    "id": "establishments.equipment-r10.closing",
+    "section": "Équipements · Conclusion",
+    "label": "Conclusion · établissement accueillant",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/establishments-r2/welcome.png"
+  }
+]

@@ -1,5 +1,5 @@
 "use client";
-import {useState} from "react";
+import {useEffect,useState} from "react";
 import {ArrowDown,ArrowRight,BookOpen,Building2,CheckCircle2,ChevronLeft,ChevronRight,HeartHandshake,Layers3,MousePointer2,Pause,Play,ShieldCheck,Sparkles,Star} from "lucide-react";
 import {CampaignImage} from "./CommercialJourney";
 import {ManagedImage} from "../marketplace-imagery/ManagedImage";
@@ -19,6 +19,14 @@ const WORLDS=[{id:"learning",icon:BookOpen,bg:"#ddf7eb",ink:"#12694c",domain:"cl
 export function EquipmentHeroR11({locale,onExploreDomains,onExploreOffers,onExploreDomain}:{locale:"fr"|"en"|"ar";onExploreDomains:()=>void;onExploreOffers:()=>void;onExploreDomain:(domainId:string)=>void}){
  const t=WORDS[locale];
  const [index,setIndex]=useState(0);
+ // In the existing Imagery Studio preview, reveal precisely the selected scene/thumbnail.
+ useEffect(()=>{
+  const params=new URLSearchParams(window.location.search);
+  if(params.get("imageryPreview")!=="1")return;
+  const placement=params.get("imageryPlacement")||"";
+  const match=placement.match(/^establishments\.equipment-r11\.(?:hero|thumb)\.(class|welcome|team|identity)$/);
+  if(match){const n=SCENES.findIndex(scene=>scene.id===match[1]);if(n>=0)setIndex(n);}
+ },[]);
  const current=SCENES[index];
  const choose=(n:number)=>setIndex((n+SCENES.length)%SCENES.length);
  return <section className={c.outer} data-establishments-hero data-equipment-hero-version="r11" lang={locale} dir={locale==="ar"?"rtl":"ltr"} aria-label={t.first+" "+t.emph}>
@@ -38,7 +46,7 @@ export function EquipmentHeroR11({locale,onExploreDomains,onExploreOffers,onExpl
     </div>
     <div className={c.sceneControls}><button onClick={()=>choose(index-1)} aria-label={t.previous}><ChevronLeft size={19}/></button><span>{String(index+1).padStart(2,"0")} / 04</span><button onClick={()=>choose(index+1)} aria-label={t.next}><ChevronRight size={19}/></button></div>
     <button className={c.sceneHotspot} onClick={()=>onExploreDomain(current.domain)}><MousePointer2 size={17}/>{t.discover}<ArrowRight size={15}/></button>
-    <div className={c.thumbnails} aria-label={t.thumbs}>{SCENES.map((scene,i)=><button key={scene.id} aria-label={t.scene[i]} aria-pressed={index===i} onClick={()=>setIndex(i)}><img src={i===0?"/angelcare-marketplace/establishments-r4/equipment-hero-r71-campaign.png":`/angelcare-marketplace/establishments-r2/${scene.src}`} alt="" loading="lazy" decoding="async"/><span>{String(i+1).padStart(2,"0")}</span><strong>{t.contexts[i]}</strong></button>)}</div>
+    <div className={c.thumbnails} aria-label={t.thumbs}>{SCENES.map((scene,i)=><button key={scene.id} aria-label={t.scene[i]} aria-pressed={index===i} onClick={()=>setIndex(i)}><ManagedImage slot={`equipment-r11.thumb.${scene.id}`} src={i===0?"/angelcare-marketplace/establishments-r4/equipment-hero-r71-campaign.png":`/angelcare-marketplace/establishments-r2/${scene.src}`} alt="" aria-hidden="true" width={40} height={36} loading="lazy" decoding="async"/><span>{String(i+1).padStart(2,"0")}</span><strong>{t.contexts[i]}</strong></button>)}</div>
    </div>
   </div>
   <div className={c.universeRail}><div><span>{t.world}</span><strong>04 <small>/ 06</small></strong></div>{WORLDS.map((world,i)=>{const Icon=world.icon;return <button key={world.id} onClick={()=>onExploreDomain(world.domain)} style={{backgroundColor:world.bg,color:world.ink}}><Icon size={21}/><span>{t.contexts[i]}</span><ArrowRight size={15}/></button>})}</div>

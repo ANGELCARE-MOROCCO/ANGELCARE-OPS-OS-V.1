@@ -192,6 +192,25 @@ export function ImageryProvider({ children }: { children: ReactNode }) {
     );
     return () => removeEventListener("message", receive);
   }, [page, preview]);
+  // Preview-only: a registered image may mount after hash selection or a
+  // conditional scene hydration. Follow that exact slot without changing UI.
+  useEffect(() => {
+    if (!preview || !selected) return;
+    let observer: MutationObserver | null = null;
+    const reveal = () => {
+      const target = [...document.querySelectorAll<HTMLElement>("[data-imagery-slot]")]
+        .find(node => node.dataset.imagerySlot === selected);
+      if (!target) return;
+      observer?.disconnect();
+      observer = null;
+      target.scrollIntoView({ block: "center", behavior: "auto" });
+    };
+    observer = new MutationObserver(reveal);
+    observer.observe(document.body, { subtree: true, childList: true });
+    const raf = requestAnimationFrame(reveal);
+    return () => { cancelAnimationFrame(raf); observer?.disconnect(); };
+  }, [preview, selected, page]);
+
   const click = (e: React.MouseEvent) => {
     if (!editing) return;
     const owned = (e.target as HTMLElement).closest<HTMLElement>(

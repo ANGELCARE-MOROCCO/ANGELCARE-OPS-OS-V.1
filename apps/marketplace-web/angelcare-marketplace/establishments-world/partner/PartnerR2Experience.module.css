@@ -362,3 +362,9 @@
  .worldExperience[data-world="ecosysteme"] .visualProcess{background:#135d4d}
  .worldExperience[data-world="ecosysteme"] .worldCases{background:#f4fbf4}
 }
+
+
+/* R12: the same image frame and crop apply when Partner OS R2 receives a
+ * published Imagery Studio slide, including its large hero overlays. */
+.signatureHero :global([data-imagery-art]),.worldExperience :global([data-imagery-art]){display:block!important;width:100%!important;max-width:100%!important;height:100%!important;min-width:0;aspect-ratio:auto!important}
+.signatureHero :global([data-imagery-art]) > img,.worldExperience :global([data-imagery-art]) > img{display:block;width:100%!important;height:100%!important;object-fit:cover}

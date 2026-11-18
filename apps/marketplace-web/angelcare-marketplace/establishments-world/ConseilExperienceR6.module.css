@@ -75,3 +75,12 @@
 @media(max-width:425px){.heroWords h1{font-size:36px}.heroFacts{gap:4px}.heroFacts span{padding:7px;gap:5px}.heroFacts span b{font-size:20px}.comparison ul{grid-template-columns:1fr}.familyCard{grid-template-columns:1fr}.familyPhoto{min-height:185px;height:185px}.familyCopy{min-height:0}.formulaFacts ul{grid-template-columns:1fr}.price strong{font-size:36px}}
 .root[dir=rtl]{text-align:right}.root[dir=rtl] .compareCenter{transform:scaleX(-1)}.root[dir=rtl] .heroWords h1{letter-spacing:0}.root[dir=rtl] .sectionTitle h2,.root[dir=rtl] .diagIntro h2,.root[dir=rtl] .valueCopy h2,.root[dir=rtl] .finalText h2{letter-spacing:0}.root[dir=rtl] .heroMediaTag{letter-spacing:0}.root[dir=rtl] .comparison li,.root[dir=rtl] .choices button,.root[dir=rtl] .formulaActions button{direction:rtl}
 @media(prefers-reduced-motion:reduce){.root *,.root *::before,.root *::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}.root button:hover{transform:none!important}.familyCard:hover .familyPhoto img{transform:none!important}}
+
+
+/* R12: published native imagery has a wrapper; retain the current pixel-identical
+ * fill and cover semantics of every Conseil editorial photo. No unconfigured
+ * image, layout, or interactive surface is altered. */
+.root :global([data-imagery-art]){display:block!important;min-width:0;max-width:100%!important;width:100%!important;height:100%!important;aspect-ratio:auto!important}
+.root :global([data-imagery-art]) > img{display:block;width:100%!important;height:100%!important;object-fit:cover}
+.heroMedia > :global([data-imagery-art]),.studioPhoto > :global([data-imagery-art]),.finalPhoto > :global([data-imagery-art]){position:absolute!important;inset:0}
+.heroInset :global([data-imagery-art]){height:135px!important}

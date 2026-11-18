@@ -78,6 +78,28 @@ export function EquipmentExperienceR10({
   }catch{setPref(restoreR9State(null));setSavedIdeas([])}
   const chosen=new URLSearchParams(window.location.search).get("equipmentDomain");
   if(chosen&&localizedDomains.some(d=>d.id===chosen))setActiveDomainId(chosen);
+  // The current admin preview opens otherwise conditional scenes from an exact registered slot.
+  // No customer state, saved selections, or public interaction is altered.
+  const query=new URLSearchParams(window.location.search);
+  if(query.get("imageryPreview")==="1"){
+   const slot=query.get("imageryPlacement")||"";
+   const prefix="establishments.equipment-r10.";
+   if(slot.startsWith(prefix)){
+    const key=slot.slice(prefix.length);
+    if(key.startsWith("goal.")){
+     const id=key.slice(5).split(".")[0];
+     if(localizedGoals.some(g=>g.id===id)){setEntry("goals");setGoalFocus(id);}
+    }else if(key.startsWith("story.")){
+     const id=key.slice(6),index=localizedStories.findIndex(x=>x.id===id);
+     if(index>=0)setActiveStory(index);
+    }else if(key.startsWith("map.detail.")){
+     const family=key.slice("map.detail.".length),index=localizedHotspots.findIndex(h=>h.family===family);
+     if(index>=0)setActiveMap(index);
+    }else if(key.startsWith("atlas.")){
+     setShowAllDomains(true);
+    }
+   }
+  }
   setHydrated(true);
  },[storageScope]);
  useEffect(()=>{if(!hydrated)return;try{sessionStorage.setItem(`ac.establishments.equipment-r9.preferences.v1:${storageScope}`,JSON.stringify(pref));localStorage.setItem(ideas(storageScope),JSON.stringify(savedIdeas))}catch{}},[hydrated,pref,savedIdeas,storageScope]);

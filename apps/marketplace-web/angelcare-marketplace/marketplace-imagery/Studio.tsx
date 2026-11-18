@@ -44,6 +44,7 @@ import {
   mutate,
 } from "./client";
 import { pageTitle, pagePath } from "./pages";
+import { imageryPlacementPreviewUrl } from "./establishments-r12-preview";
 import { imageReferenceIssue } from "./asset-url";
 import { NativeImagePicker } from "../kidflix/StudioPickers";
 
@@ -679,7 +680,7 @@ export function ImageryStudio() {
   const source = image?.src || descriptor?.source,
     scale = Math.min(1, (stageWidth - 24) / device),
     url =
-      pagePath(page, previewLocale) + "?imageryPreview=1",
+      imageryPlacementPreviewUrl(page, previewLocale, selected),
     visibleSlots = slots.filter(
       (d) =>
         (!queryText ||
@@ -690,7 +691,7 @@ export function ImageryStudio() {
           (filter === "changed" && changed.includes(d.id)) ||
           (filter === "defaults" && !config.slots[d.id]) ||
           (filter === "attention" &&
-            (!rendered.includes(d.id) ||
+            ((!d.condition && !rendered.includes(d.id)) ||
               config.slots[d.id]?.images.some((i) => !i.enabled)))),
     );
   return (
@@ -868,7 +869,7 @@ export function ImageryStudio() {
                   ["all", slots.length],
                   ["changed", slots.filter((d) => changed.includes(d.id)).length],
                   ["defaults", slots.filter((d) => !config.slots[d.id]).length],
-                  ["attention", slots.filter((d) => (frameReady && rendered.length > 0 && !rendered.includes(d.id)) || !!config.slots[d.id]?.images.some((i) => !i.enabled)).length],
+                  ["attention", slots.filter((d) => (!d.condition && frameReady && rendered.length > 0 && !rendered.includes(d.id)) || !!config.slots[d.id]?.images.some((i) => !i.enabled)).length],
                 ] as const).map(([key, count]) => (
                   <button key={key} type="button" aria-pressed={filter === key} onClick={() => setFilter(key)}>
                     {key === "all" ? "All" : key === "changed" ? "Changed" : key === "defaults" ? "Defaults" : "Attention"} <b>{count}</b>
@@ -981,7 +982,7 @@ export function ImageryStudio() {
                 <div style={{ width: device * scale, height: 1050 * scale }}>
                   <iframe
                     title="Actual AngelCare page imagery preview"
-                    key={page}
+                    key={page + ":" + url}
                     ref={frame}
                     src={url}
                     onLoad={() => {

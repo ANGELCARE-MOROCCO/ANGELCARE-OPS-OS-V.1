@@ -1,0 +1,24 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "angelcare-marketplace/marketplace-imagery/Studio.tsx",
+    "angelcare-marketplace/marketplace-imagery/Runtime.tsx",
+    "angelcare-marketplace/marketplace-imagery/ManagedImage.tsx",
+    "angelcare-marketplace/marketplace-imagery/registry.ts",
+    "angelcare-marketplace/marketplace-imagery/establishments-r12-preview.ts",
+    "angelcare-marketplace/establishments-world/Experience.tsx",
+    "angelcare-marketplace/establishments-world/ConseilExperienceR6.tsx",
+    "angelcare-marketplace/establishments-world/partner/PartnerR2Experience.tsx",
+    "angelcare-marketplace/establishments-world/EquipmentHeroR11.tsx",
+    "angelcare-marketplace/establishments-world/EquipmentExperienceR10.tsx",
+    "angelcare-marketplace/establishments-world/EquipmentR9DomainStudio.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next"
+  ]
+}

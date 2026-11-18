@@ -40,6 +40,14 @@ export function ConseilExperienceR6({
  const t=useCallback((key:string)=>conseilText(locale,key),[locale]);
  const [diagnostic,setDiagnostic]=useSessionValue<Diagnostic>("ac.establishments.conseil-r6.diagnostic.v1:"+storageScope,EMPTY,decodeDiagnostic);
  const [activeFamily,setActiveFamily]=useState<Family>("edup");
+ // Source-owned image preview opens the conditional programme without a public-route change.
+ useEffect(()=>{
+  const params=new URLSearchParams(window.location.search);
+  if(params.get("imageryPreview")!=="1")return;
+  const slot=params.get("imageryPlacement")||"";
+  const match=slot.match(/^establishments\.conseil-r6\.studio\.(edup|academy|parents)$/);
+  if(match)setActiveFamily(match[1] as Family);
+ },[]);
  const [activeDay,setActiveDay]=useState(0),[activeSkill,setActiveSkill]=useState(0),[activeMoment,setActiveMoment]=useState(0);
  const [comparison,setComparison]=useState(false);
  const [valueEnroll,setValueEnroll]=useState(3),[valueTuition,setValueTuition]=useState(3000);

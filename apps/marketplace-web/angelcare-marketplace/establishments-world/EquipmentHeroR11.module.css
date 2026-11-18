@@ -8,3 +8,10 @@
 .thumbnails button img{width:40px;height:36px;flex:none;border-radius:6px;object-fit:cover;box-shadow:0 1px 6px #132d4a22}
 .thumbnails button>span{font-size:9px}
 @media(max-width:560px){.thumbnails button img{width:29px;height:30px}.thumbnails button{padding:4px;gap:4px}.thumbnails button strong{font-size:9px}}
+
+
+/* R12 native imagery wrappers preserve the original thumbnail footprint,
+   positioning, and parent-button authority; no nested slideshow controls. */
+.thumbnails button > :global([data-imagery-art]){display:block;flex:none;width:40px;height:36px;overflow:hidden;opacity:1!important;border-radius:6px;box-shadow:0 1px 6px #132d4a22}
+.thumbnails button > :global([data-imagery-art]) img{display:block;width:100%!important;height:100%!important;object-fit:cover;border-radius:6px}
+@media(max-width:560px){.thumbnails button > :global([data-imagery-art]){width:29px;height:30px}}

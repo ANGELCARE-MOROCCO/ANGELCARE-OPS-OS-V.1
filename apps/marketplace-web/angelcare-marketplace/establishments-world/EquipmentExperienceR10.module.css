@@ -119,3 +119,10 @@
  .root .storyLinks button,.root .domainFollow button{min-height:45px}
  .root .atlasControls select,.root .atlasControls input{min-height:43px}
 }
+
+
+/* R12: preserve all R11.1 cover-photo geometries after a native Image Studio
+ * publication. Source <img> fallbacks remain exactly as before. */
+.root :global([data-imagery-art]){display:block!important;width:100%!important;max-width:100%!important;height:100%!important;min-width:0;aspect-ratio:auto!important}
+.root :global([data-imagery-art]) > img{display:block;width:100%!important;height:100%!important;object-fit:cover}
+.storyVisual > :global([data-imagery-art]),.universeImage > :global([data-imagery-art]){position:absolute!important;inset:0}
