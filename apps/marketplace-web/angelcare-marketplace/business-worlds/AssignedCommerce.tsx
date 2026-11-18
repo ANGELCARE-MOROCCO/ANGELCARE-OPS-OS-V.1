@@ -32,12 +32,7 @@ export function AssignedBusinessCommerce({
       experience={experience}
       native={native}
     >
-      {experience.key === "hospitality" ? <HospitalitySignatureR2 mode="published"/> : null}
-      <CommercialOpening />
-      <CommerceCollections />
-      <CommerceCatalogue />
-      <ProjectSummary />
-      <AssignedEnquiry />
+      {experience.key === "hospitality" ? <><HospitalitySignatureR2 mode="published"/><AssignedEnquiry /></> : <><CommercialOpening /><CommerceCollections /><CommerceCatalogue /><ProjectSummary /><AssignedEnquiry /></>}
     </WorldFrame>
   );
 }
