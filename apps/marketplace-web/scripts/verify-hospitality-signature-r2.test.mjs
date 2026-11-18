@@ -102,7 +102,7 @@ test("source brochure's age bands, eight creative concepts, six steps and multil
  assert.ok(copy.includes('id:"7-12"'));
  assert.ok(copy.includes('id:"13-16"'));
  assert.equal([...copy.matchAll(/id:"(discovery|nature|animation|workshops|play|environment|celebration|kidsclub)"/g)].length,8);
- assert.equal([...copy.matchAll(/title:h\("0[1-6] · /g)].length,6);
+ assert.equal([...copy.split(" steps:[")[1].matchAll(/title:h\("0[1-6] · /g)].length,6);
  assert.ok(copy.includes('export const h=(fr:string,en:string,ar:string)'));
  assert.ok(component.includes('dir={locale==="ar"?"rtl":"ltr"}'));
  assert.ok(css.includes(".world[dir=rtl]"));
