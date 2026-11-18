@@ -44,7 +44,7 @@ import {
 import { COMMERCIAL } from "./commercial-content";
 import { VIEWS, type View } from "./content";
 import { EquipmentHeroR8 } from "./EquipmentHeroR8";
-import { EquipmentExperienceR9 } from "./EquipmentExperienceR9";
+import { EquipmentExperienceR10 } from "./EquipmentExperienceR10";
 import {
   blocked,
   offerSelection,
@@ -324,7 +324,7 @@ function EstablishmentsBody({
           view === "partner-os" ? (locale === "ar" ? "rtl" : "ltr") : undefined
         }
         lang={view === "partner-os" ? locale : undefined}
-        data-establishments-journey={view==="produits"?"R9":"R5"}
+        data-establishments-journey={view==="produits"?"R10":"R5"}
         data-view={view}
         data-motion={motion ? "on" : "off"}
         onClick={(event) => {
@@ -507,7 +507,7 @@ function EstablishmentsBody({
             motion={motion}
           />
         ) : view === "produits" ? (
-          <EquipmentExperienceR9
+          <EquipmentExperienceR10
             key={view}
             locale={locale}
             selected={project.map(item=>item.key)}

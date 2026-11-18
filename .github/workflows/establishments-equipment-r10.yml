@@ -1,0 +1,55 @@
+name: AngelCare Equipment R10 — School Universe
+on:
+  push:
+    branches:
+      - feat/equipment-r10-school-universe-editorial-20261117
+    paths:
+      - 'apps/marketplace-web/angelcare-marketplace/establishments-world/**'
+      - 'apps/marketplace-web/tsconfig.equipment-r10.json'
+      - 'apps/marketplace-web/scripts/verify-equipment-r10.test.mjs'
+      - 'apps/marketplace-web/scripts/verify-equipment-r9.test.mjs'
+      - 'apps/marketplace-web/scripts/verify-equipment-r8.test.mjs'
+      - '.github/workflows/establishments-equipment-r10.yml'
+  pull_request:
+    branches:
+      - feat/equipment-r9-immersive-commercial-22-journeys-20261116
+    paths:
+      - 'apps/marketplace-web/angelcare-marketplace/establishments-world/**'
+      - 'apps/marketplace-web/tsconfig.equipment-r10.json'
+      - 'apps/marketplace-web/scripts/verify-equipment-r10.test.mjs'
+      - '.github/workflows/establishments-equipment-r10.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+jobs:
+  school-universe-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: apps/marketplace-web/package-lock.json
+      - name: R10 visual-information architecture, imagery and native commerce boundaries
+        working-directory: apps/marketplace-web
+        run: node --test scripts/verify-equipment-r10.test.mjs
+      - name: Preserve the 22 R9 unique studio experience definitions
+        working-directory: apps/marketplace-web
+        run: node --test scripts/verify-equipment-r9.test.mjs
+      - name: Preserve the six R8 families and original catalogue contract
+        working-directory: apps/marketplace-web
+        run: node --experimental-strip-types --test scripts/verify-equipment-r8.test.mjs
+      - name: Install locked dependencies
+        working-directory: apps/marketplace-web
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Strict R10 TypeScript
+        working-directory: apps/marketplace-web
+        run: npx tsc -p tsconfig.equipment-r10.json --pretty false --noEmit
+      - name: Protect original R7.1 hero rollback source
+        working-directory: apps/marketplace-web
+        run: |
+          test "$(git hash-object angelcare-marketplace/establishments-world/EquipmentHeroR71.tsx)" = "3532b9b0b639987ffcdff601360ac29c6efaa100"
+          echo "R71_HERO_ROLLBACK_PASS"
