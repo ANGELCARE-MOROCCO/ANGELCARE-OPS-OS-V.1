@@ -1,6 +1,6 @@
 "use client";
 
-import {useCallback,useEffect,useMemo,useRef,useState} from "react";
+import {useCallback,useEffect,useMemo,useRef,useState,type ReactNode} from "react";
 import {
  ArrowRight,ArrowLeft,ChevronRight,ChevronDown,Check,CheckCircle2,
  Search,HeartHandshake,GraduationCap,School,Boxes,ShieldCheck,ClipboardCheck,
@@ -74,7 +74,7 @@ const toOfferBrief=(domains:EquipmentDomain[])=>domains.length?
  * No synthetic products, inventory or prices are ever created here.
  */
 export function EquipmentExperienceR8({
- selected,onSelect,onReview,onContact,onExplore,locale
+ selected,onSelect,onReview,onContact,onExplore,locale,onOpenDomain,domainExperience
 }:{
  selected:string[];
  onSelect:(item:Selection)=>void;
@@ -82,6 +82,8 @@ export function EquipmentExperienceR8({
  onContact:(intent:{subject:string;email?:string})=>void;
  onExplore:()=>void;
  locale:"fr"|"en"|"ar";
+ onOpenDomain?:(domain:EquipmentDomain)=>void;
+ domainExperience?:ReactNode;
 }){
  const {t}=usePartner();
  const [family,setFamily]=useState<EquipmentFamilyId|"all">("all");
@@ -105,7 +107,7 @@ export function EquipmentExperienceR8({
  const chooseFamily=(id:EquipmentFamilyId|"all")=>{
   setFamily(id);setAllDomains(id==="all");requestAnimationFrame(()=>scroll("r8-domains"));
  };
- const openDomain=(domain:EquipmentDomain)=>{returnFocus.current=document.activeElement instanceof HTMLElement?document.activeElement:null;setActiveDomain(domain)};
+ const openDomain=(domain:EquipmentDomain)=>{if(onOpenDomain){onOpenDomain(domain);return}returnFocus.current=document.activeElement instanceof HTMLElement?document.activeElement:null;setActiveDomain(domain)};
  const closeDomain=useCallback(()=>{setActiveDomain(null);requestAnimationFrame(()=>returnFocus.current?.focus())},[]);
  useEffect(()=>{
   if(!activeDomain)return;
@@ -199,6 +201,8 @@ export function EquipmentExperienceR8({
     <div className={c.trustGrid}>{TRUST.map(({icon:Icon,title,text})=><div key={title}><Icon size={28}/><h3>{t(title)}</h3><p>{t(text)}</p></div>)}</div>
    </section>
 
+   {domainExperience}
+   {!domainExperience?<>
    <section className={c.ctaTwin} aria-label="Démarrer un projet ou demander un devis">
     <div className={c.consultingCta}>
      <div className={c.ctaPhoto}><CampaignImage name="academy" alt="Professionnelle petite enfance et équipe de direction"/></div>
@@ -226,6 +230,7 @@ export function EquipmentExperienceR8({
     <div className={c.closingImage}><CampaignImage name="classroom" alt="Salle d'apprentissage lumineuse et équipée"/></div><div><span className={c.eyebrow}>VOTRE PROJET MÉRITE DES REPÈRES CLAIRS</span><h2>Construisons un établissement qui vous ressemble.</h2><p>22 domaines réels. Des applications complémentaires. Une demande reliée à votre sélection, avec des conditions à confirmer.</p><div className={c.closingActions}><button className={c.primary} onClick={()=>request()}>Parler de mon projet <ArrowRight size={16}/></button><button className={c.secondary} onClick={onExplore}>Voir les offres publiées <ArrowRight size={16}/></button></div></div>
    </section>
 
+   </>:null}
    <section className={c.faq}>
     <h2>Décidez avec des informations claires.</h2>
     {[["Les 22 domaines sont-ils tous des produits en stock ?","Non. Ce sont les univers du catalogue et des applications proposées. Seules les fiches réellement publiées dans l’explorateur indiquent une offre, un prix et une disponibilité."],["Puis-je faire personnaliser les supports ?","Les personnalisations, quantités, formats, BAT et délais sont à vérifier selon la référence et la demande."],["Est-ce que ma sélection engage une commande ?","Non. Elle prépare un brief de projet. Une commande, un devis ou une réservation exige une validation distincte."],["Puis-je combiner plusieurs domaines ?","Oui. Choisissez vos domaines d’intérêt, puis ouvrez le brief natif pour retrouver les éléments retenus."]].map(([q,a],i)=><div key={q} className={c.faqItem}><button aria-expanded={faq===i} onClick={()=>setFaq(faq===i?null:i)}>{q}<ChevronDown size={18}/></button>{faq===i?<p>{a}</p>:null}</div>)}

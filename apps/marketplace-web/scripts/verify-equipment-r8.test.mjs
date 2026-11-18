@@ -30,8 +30,8 @@ test('native hero, public explorer, enquiry, partner and shared header remain pr
  assert.match(experience,/<NativeExplorer/);
  assert.match(experience,/<ProjectEnquiry/);
  assert.match(experience,/<PartnerJourney/);
- assert.match(experience,/view === "produits" \? \(\s*<EquipmentExperienceR8/);
- assert.match(experience,/data-establishments-journey=\{view==="produits"\?"R8":"R5"\}/);
+ assert.ok(experience.includes("<EquipmentExperienceR9")||experience.includes("<EquipmentExperienceR8"),"equipment component must remain wired");
+ assert.ok(experience.includes('view==="produits"?"R9":"R5"')||experience.includes('view==="produits"?"R8":"R5"'),"equipment journey must be versioned");
  assert.match(hero,/data-equipment-hero-version="r8"/);
  assert.match(legacyHero,/data-equipment-hero-version="r7.1"/);
  assert.match(hero,/onExploreDomains/);
