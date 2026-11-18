@@ -44,8 +44,21 @@ const PLAN_PERIODS = {
   custom: { fr: "période définie", en: "defined period", ar: "فترة محددة" },
 };
 function useCopy() {
-  const { locale } = useWorld();
-  return (key: keyof typeof M) => localized(M[key], locale);
+  const { locale,world } = useWorld();
+  return (key: keyof typeof M) => {
+    if(world==="hospitality"){
+      const overrides:Partial<Record<keyof typeof M,readonly [string,string,string]>>={
+        catalogue:["Toutes les solutions","All solutions","جميع الحلول"],
+        full:["Découvrir toutes les solutions","Explore all solutions","استكشفوا جميع الحلول"],
+        live:["Solutions disponibles","Available solutions","الحلول المتاحة"],
+        collections:["Solutions pour votre établissement","Solutions for your property","حلول لمنشأتكم"],
+        preview:["À découvrir pour votre hôtel","Explore for your property","اكتشفوا ما يناسب منشأتكم"]
+      };
+      const value=overrides[key];
+      if(value)return value[locale==="fr"?0:locale==="en"?1:2];
+    }
+    return localized(M[key], locale);
+  };
 }
 export function BusinessOfferCard({
   item,
@@ -117,7 +130,7 @@ export function BusinessOfferCard({
         {item.short_description ? <p>{item.short_description}</p> : null}
         {ordered.length ? (
           <dl className={c.facts}>
-            {ordered.slice(0, compact ? 2 : 4).map((fact) => (
+            {ordered.slice(0, compact ? (world === "hospitality" ? 4 : 2) : (world === "hospitality" ? 6 : 4)).map((fact) => (
               <div key={fact.key}>
                 <dt>{fact.label}</dt>
                 <dd>{fact.value}</dd>
@@ -125,14 +138,14 @@ export function BusinessOfferCard({
             ))}
           </dl>
         ) : null}
-        {!compact && ordered.length > 4 ? (
+        {!compact && ordered.length > (world === "hospitality" ? 6 : 4) ? (
           <details className={c.specifications}>
             <summary>
               {t("moreFacts")}
               <ChevronDown size={14} />
             </summary>
             <dl className={c.facts}>
-              {ordered.slice(4).map((fact) => (
+              {ordered.slice(world === "hospitality" ? 6 : 4).map((fact) => (
                 <div key={fact.key}>
                   <dt>{fact.label}</dt>
                   <dd>{fact.value}</dd>
