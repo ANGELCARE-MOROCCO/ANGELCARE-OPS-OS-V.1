@@ -3,11 +3,13 @@ on:
   push:
     branches:
       - feat/hospitality-executive-r3-20261119
+      - fix/hospitality-r3-legacy-gate-parity-20261119
       - upgrade/next-angelcare-upgrade
     paths:
       - 'apps/marketplace-web/angelcare-marketplace/business-worlds/**'
       - 'apps/marketplace-web/angelcare-marketplace/marketplace-imagery/**'
       - 'apps/marketplace-web/scripts/verify-hospitality-executive-r3.test.mjs'
+      - 'apps/marketplace-web/scripts/verify-hospitality-signature-r2.test.mjs'
       - 'apps/marketplace-web/tsconfig.hospitality-r3.json'
       - '.github/workflows/hospitality-executive-r3.yml'
   workflow_dispatch:
@@ -26,7 +28,7 @@ jobs:
           cache-dependency-path: apps/marketplace-web/package-lock.json
       - name: Protected hero, visual experience, B2B commercial and native data regression
         working-directory: apps/marketplace-web
-        run: node --test scripts/verify-hospitality-executive-r3.test.mjs
+        run: node --test scripts/verify-hospitality-executive-r3.test.mjs scripts/verify-hospitality-signature-r2.test.mjs
       - name: Preserve 3 Établissements storefronts and Imagery Studio contract
         working-directory: apps/marketplace-web
         run: |

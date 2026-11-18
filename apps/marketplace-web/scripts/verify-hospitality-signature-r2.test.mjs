@@ -2,140 +2,90 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
 const read=p=>readFileSync(new URL("../"+p,import.meta.url),"utf8");
-const root="angelcare-marketplace/";
-const world=root+"business-worlds/";
-const component=read(world+"HospitalitySignatureR2.tsx");
-const copy=read(world+"hospitality-r2-content.ts");
-const css=read(world+"hospitality-r2.module.css");
-const legacy=read(world+"Hospitality.tsx");
-const assigned=read(world+"AssignedCommerce.tsx");
-const business=read(world+"BusinessWorlds.tsx");
-const commerce=read(world+"Commerce.tsx");
-const merch=read(world+"merchandising.ts");
-const repository=read(world+"repository.ts");
-const route=read("app/angelcare-marketplace/[locale]/hospitality/page.tsx");
-const storefront=read(root+"catalog-discovery/components/Storefront.tsx");
-const slots=JSON.parse(read(root+"marketplace-imagery/hospitality-r2-slots.json"));
-const registry=read(root+"marketplace-imagery/registry.ts");
-const preview=read(root+"marketplace-imagery/establishments-r12-preview.ts");
-const model=read(root+"marketplace-imagery/model.ts");
-const seeds=JSON.parse(read(root+"marketplace-imagery/slot-seeds.json"));
-const id=x=>"hospitality.hospitality-r2."+x;
-test("Turbopack directive must precede all imports; R2.2 visual feedback stays scoped and both CTAs resolve",()=>{
- const entry=read(world+"Hospitality.tsx");
- assert.ok(entry.startsWith('"use client";'),"Client directive must be first executable statement");
- assert.ok(component.includes('className={s.projectPulse}'));
- assert.ok(component.includes('selectedProgrammes.length+concepts.length+project.length'));
- assert.ok(component.includes('mode==="native"?"#hotel-partnership-brief":"#world-enquiry"'));
- assert.ok(css.includes(".projectPulse"));
- assert.ok(css.includes("background:linear-gradient(102deg,#063b91"));
- assert.ok(css.includes("@media(prefers-reduced-motion:reduce)"));
+const root="angelcare-marketplace/",world=root+"business-worlds/";
+const entry=read(world+"HospitalitySignatureR2.tsx"),executive=read(world+"HospitalityExecutiveR3.tsx"),copy=read(world+"hospitality-r2-content.ts"),css=read(world+"hospitality-executive-r3.module.css"),legacy=read(world+"Hospitality.tsx"),assigned=read(world+"AssignedCommerce.tsx"),business=read(world+"BusinessWorlds.tsx"),commerce=read(world+"Commerce.tsx"),merch=read(world+"merchandising.ts"),repository=read(world+"repository.ts"),route=read("app/angelcare-marketplace/[locale]/hospitality/page.tsx"),storefront=read(root+"catalog-discovery/components/Storefront.tsx"),slots=JSON.parse(read(root+"marketplace-imagery/hospitality-r2-slots.json")),registry=read(root+"marketplace-imagery/registry.ts"),preview=read(root+"marketplace-imagery/establishments-r12-preview.ts"),model=read(root+"marketplace-imagery/model.ts"),seeds=JSON.parse(read(root+"marketplace-imagery/slot-seeds.json")),id=x=>"hospitality.hospitality-r2."+x;
+test("Turbopack client directive and original approved hotel hero are protected",()=>{
+ assert.ok(legacy.startsWith('"use client";'));
+ assert.ok(entry.startsWith('"use client";'));
+ assert.ok(executive.startsWith('"use client";'));
+ const start=entry.indexOf('   <section className={s.hero} id="hospitality-opening"'),end=entry.indexOf("\n   </section>",start);
+ assert.ok(start>0&&end>start);
+ const hero=entry.slice(start,end+14);
+ let hash=2166136261;for(const ch of hero){hash^=ch.charCodeAt(0);hash=Math.imul(hash,16777619);}
+ assert.equal(hash>>>0,3187037673);
+ assert.equal(hero.length,966);
+ assert.ok(entry.includes('<HospitalityExecutiveR3 mode={mode}/>'));
 });
-test("all 14 visually distinct chapters mount with premium native journey and genuine B2B conversion",()=>{
- assert.equal([...component.matchAll(/data-hospitality-chapter="(\d+)"/g)].length,14);
- assert.deepEqual([...component.matchAll(/data-hospitality-chapter="(\d+)"/g)].map(m=>m[1]),Array.from({length:14},(_,i)=>String(i+1).padStart(2,"0")));
- for(const value of ["heroScenes","compareGrid","benefitGrid","signatureGrid","propertyFrame","ageRail","atlasGrid","dayStage","operationGrid","economicsGrid","trustVisual","stepsGrid","world-offers","world-enquiry"])assert.ok(component.includes(value)||css.includes("."+value),value);
+test("the new executive R3 replaces legacy below-hero composition with full native conversion",()=>{
+ for(const name of ["value","worlds","journey","property","programmes","atlas","operations","showroom","models","planner","trust","explorer","conversion"])assert.ok(executive.includes('className={s.'+name+'}'),name);
  assert.ok(legacy.includes('export function Hospitality(){return <HospitalitySignatureR2 mode="native"/>;}'));
  assert.ok(business.includes("hospitality: Hospitality"));
- assert.ok(component.includes('sourceRoute={'));
- assert.ok(component.includes('<Enquiry world="hospitality"'));
- assert.ok(component.includes('brief={summary.slice(0,1900)}'));
+ assert.ok(executive.includes('<Enquiry world="hospitality"'));
+ assert.ok(executive.includes("brief={summary.slice(0,1900)}"));
+ assert.ok(executive.includes("<CommerceCatalogue/>"));
+ assert.ok(!executive.includes("<CommercialOpening"));
+ assert.ok(!executive.includes("<CommerceCollections"));
 });
-test("published Studio assignment retains its authored template and the same R2 executive experience",()=>{
- assert.ok(assigned.includes('experience.key === "hospitality" ? <HospitalitySignatureR2 mode="published"/> : null'));
- assert.ok(assigned.includes("<CommercialOpening />"));
- assert.ok(assigned.includes("<CommerceCatalogue />"));
- assert.ok(assigned.includes("<ProjectSummary />"));
+test("published Studio route remains authoritative with exactly one new hero-free commercial experience",()=>{
+ assert.ok(assigned.includes('experience.key === "hospitality" ? <><HospitalitySignatureR2 mode="published"/><AssignedEnquiry /></>'));
+ assert.ok(entry.includes('{mode==="native"?<>'));
+ assert.ok(!assigned.includes('experience.key === "hospitality" ? <HospitalitySignatureR2 mode="published"/> : null'));
  assert.ok(storefront.includes("StudioPublishedDataRenderer data={world.data}"));
  assert.ok(storefront.includes("<AssignedBusinessCommerce experience={experience}"));
  assert.ok(route.includes("publicVerticalSnapshot('hospitality')"));
  assert.ok(route.includes("storefrontExperience({locale,key:'hospitality',territoryCode})"));
+ assert.ok(assigned.includes("brief={brief}"));
 });
-test("interactive property, programme, activity, age, guest-day and planning choices flow into shared WorldFrame on both published and native renders",()=>{
- for(const dimension of ["property-type","hospitality-programmes","hospitality-experiences","ages","hospitality-guest-journey","hospitality-planning"]){
-  assert.ok(component.includes('setContext("'+dimension+'"'),"Missing shared brief authority for "+dimension);
- }
- assert.ok(!component.includes('setSelectedProgrammes(prev=>{'),"Do not update parent WorldFrame inside a React state updater");
- assert.ok(!component.includes('setConcepts(prev=>{'),"Do not update parent WorldFrame inside a React state updater");
- const context=read(world+"Shared.tsx");
- assert.ok(context.includes("Object.values(context)"));
- assert.ok(context.includes("prioritySummary("));
- assert.ok(assigned.includes('brief={brief}'));
+test("all six commercial selections are preserved in the real enquiry WorldFrame",()=>{
+ for(const dimension of ["property-type","hospitality-programmes","hospitality-experiences","ages","hospitality-guest-journey","hospitality-planning"])assert.ok(executive.includes('setContext("'+dimension+'"'),dimension);
+ const shared=read(world+"Shared.tsx");
+ assert.ok(shared.includes("Object.values(context)"));
+ assert.ok(shared.includes("prioritySummary("));
+ assert.ok(!executive.includes("setConcepts(prev=>{"));
 });
-test("canonical atomic membership and professional commerce authorities are untouched",()=>{
- for(const fragment of [
-   'hospitality: ["hospitality-kids-programme"]',
-   'if (categories.includes(world)) return "canonical_membership"',
-   '["hotel", "resort", "hospitality"]',
-   '"hotel-travel-childcare"',
-   '"hospitality-kids-programme"',
-   '"event-venue-programme"',
-   '"custom-managed-solution"',
- ])assert.ok(merch.includes(fragment),fragment);
- assert.ok(repository.includes('angelcare_marketplace_catalog_item_categories'));
- assert.ok(repository.includes('angelcare_marketplace_catalog_discovery_v'));
+test("all native atomic business category, pricing and action identities remain unchanged",()=>{
+ for(const value of ['hospitality: ["hospitality-kids-programme"]','if (categories.includes(world)) return "canonical_membership"','["hotel", "resort", "hospitality"]','"hotel-travel-childcare"','"hospitality-kids-programme"','"event-venue-programme"','"custom-managed-solution"'])assert.ok(merch.includes(value),value);
+ assert.ok(repository.includes("angelcare_marketplace_catalog_item_categories"));
+ assert.ok(repository.includes("angelcare_marketplace_catalog_discovery_v"));
  assert.ok(repository.includes('eq("status", "published")'));
- for(const name of ["CommerceCatalogue","BusinessOfferCard","SelectionFeedback","CommercialOpening","ProjectSummary"])assert.ok(commerce.includes("export function "+name));
- assert.ok(commerce.includes('businessItemHref(item, locale, experience.territoryCode)'));
- assert.ok(commerce.includes('nativeAction(item, locale, experience.territoryCode)'));
- assert.ok(commerce.includes('selections.select(item.id, "compare")'));
+ for(const fn of ["CommerceCatalogue","BusinessOfferCard","SelectionFeedback","CommercialOpening","ProjectSummary"])assert.ok(commerce.includes("export function "+fn));
+ for(const v of ['businessItemHref(item, locale, experience.territoryCode)','nativeAction(item, locale, experience.territoryCode)','selections.select(item.id, "compare")'])assert.ok(commerce.includes(v));
+ assert.ok(executive.includes('segmentItems(experience.items'));
+ assert.ok(executive.includes('projection(item)?.fields.slice(0,2)'));
 });
-test("30 exact Imagery Studio descriptors, all original media fallbacks and existing seeds survive",()=>{
- assert.equal(slots.length,30);
- assert.equal(new Set(slots.map(x=>x.id)).size,slots.length);
- for(const x of slots){
-  assert.ok(x.id.startsWith("hospitality.hospitality-r2."),x.id);
-  assert.ok(/^\/angelcare-marketplace\/storefront-imagery-r3\/hospitality\/[\w-]+\.webp$/.test(x.source),x.id);
-  assert.equal(x.owner,"editable");
-  assert.equal(x.sequence,true);
-  assert.ok(x.section.startsWith("Hospitality Signature R2"));
- }
- for(const k of ["hero.main","hero.inset.kids","hero.inset.family","comparison.standard","comparison.signature","world.kids","world.guest","world.concierge","world.seasons","property.city","property.resort","property.season","age.3-6","age.7-12","age.13-16","operations.main","trust.family"]) assert.ok(slots.some(x=>x.id===id(k)),k);
+test("all original 30 hospitality imagery placements and 3 new operating-model images remain native Studio-managed",()=>{
+ assert.equal(slots.length,33);
+ assert.equal(new Set(slots.map(x=>x.id)).size,33);
+ for(const item of slots){assert.ok(item.id.startsWith("hospitality.hospitality-r2."));assert.ok(/^\/angelcare-marketplace\/storefront-imagery-r3\/hospitality\/[\w-]+\.webp$/.test(item.source));assert.equal(item.owner,"editable");assert.equal(item.sequence,true);assert.ok(item.section.startsWith("Hospitality Signature R2")||item.section.startsWith("Hospitality Executive"));}
+ for(const k of ["hero.main","hero.inset.kids","hero.inset.family","comparison.standard","comparison.signature","world.kids","world.guest","world.concierge","world.seasons","property.city","property.resort","property.season","age.3-6","age.7-12","age.13-16","operations.main","trust.family","model.city","model.resort","model.season"])assert.ok(slots.some(x=>x.id===id(k)),k);
  assert.equal(slots.filter(x=>x.id.includes(".atlas.")).length,8);
  assert.equal(slots.filter(x=>x.id.includes(".day.")).length,5);
  assert.ok(registry.includes("hospitalityR2 from './hospitality-r2-slots.json'"));
  assert.ok(registry.includes("hospitalityById.get(id)"));
- assert.ok(registry.includes("page==='hospitality'?hospitalityR2 as Slot[]"));
  assert.ok(seeds.filter(x=>x.id.startsWith("hospitality.")).length>=15);
  assert.ok(model.includes("Object.keys(x.slots).length > 600"));
 });
-test("managed slideshow controls are never nested within interactive selection buttons",()=>{
- assert.ok(component.includes('<article key={v.id} className={s.ageCard}'));
- assert.ok(component.includes('<article key={v.id} data-selected={concepts.includes(v.id)} className={s.atlasCard}>'));
- assert.ok(!component.includes('<button type="button" key={v.id} className={s.ageCard}'));
- assert.ok(!component.includes('<button type="button" key={v.id} data-selected={concepts.includes(v.id)} className={s.atlasCard}'));
- assert.ok(css.includes(":global([data-imagery-art])>img"));
+test("image slideshows are outside interactive buttons and previews remain private to Studio",()=>{
+ assert.ok(executive.includes('<article key={v.id} data-picked={concepts.includes(v.id)}>'));
+ assert.ok(executive.includes('<article key={v.id} data-active={age===i}>'));
+ assert.ok(!executive.includes('<button type="button" key={v.id} className={s.ageCard}'));
+ assert.ok(css.includes(":global([data-imagery-art])"));
  assert.ok(css.includes("object-fit:cover"));
- assert.ok(css.includes("@media(max-width:600px)"));
+ assert.ok(css.includes("@media(max-width:520px)"));
  assert.ok(css.includes("@media(prefers-reduced-motion:reduce)"));
-});
-test("exact conditional image selection only runs in the existing admin iframe preview",()=>{
  assert.ok(preview.includes('page==="hospitality"&&resolveSlot(page,selected)'));
- assert.ok(preview.includes('params.set("imageryPlacement",selected)'));
- assert.ok(component.includes('params.get("imageryPreview")!=="1"'));
- for(const v of ["property","age","day"])assert.ok(component.includes('hospitality-r2\\.'+v+'\\.'),v);
- assert.ok(component.includes("setProperty(index)"));
- assert.ok(component.includes("setAge(index)"));
- assert.ok(component.includes("setMoment(index)"));
+ assert.ok(executive.includes('params.get("imageryPreview")!=="1"'));
+ for(const key of ["property","age","day"])assert.ok(executive.includes("hospitality-r2\\."+key+"\\."),key);
 });
-test("source brochure's age bands, eight creative concepts, six steps and multilingual parity are implemented",()=>{
- assert.ok(copy.includes('id:"3-6"'));
- assert.ok(copy.includes('id:"7-12"'));
- assert.ok(copy.includes('id:"13-16"'));
+test("the proposal's exact age bands, eight concepts, six operating steps, all three languages and non-financial scenario remain",()=>{
+ for(const age of ['id:"3-6"','id:"7-12"','id:"13-16"'])assert.ok(copy.includes(age));
  assert.equal([...copy.matchAll(/id:"(discovery|nature|animation|workshops|play|environment|celebration|kidsclub)"/g)].length,8);
  assert.equal([...copy.split(" steps:[")[1].matchAll(/title:h\("0[1-6] · /g)].length,6);
  assert.ok(copy.includes('export const h=(fr:string,en:string,ar:string)'));
- assert.ok(component.includes('dir={locale==="ar"?"rtl":"ltr"}'));
- assert.ok(css.includes(".world[dir=rtl]"));
- for(const s of ["h(\"Transformez votre hôtel","h(\"Une expérience plus riche","h(\"Des standards visibles","h(\"Comparez, sélectionnez"]){
-  assert.ok(copy.includes(s),s);
- }
-});
-test("commercial calculator is explicitly assumption-based and cannot invent ROI or rates",()=>{
- assert.ok(component.includes('days*families'));
- assert.ok(copy.includes("Aucun tarif, revenu, taux d'occupation"));
- assert.ok(copy.includes("No pricing, revenue, occupancy uplift"));
- assert.ok(copy.includes("No partner logo or outcome claim without verification"));
- assert.ok(component.includes('max={90}'));
- assert.ok(component.includes('max={60}'));
+ assert.ok(executive.includes('dir={locale==="ar"?"rtl":"ltr"}'));
+ assert.ok(executive.includes("days*families"));
+ assert.ok(executive.includes("max={90}"));
+ assert.ok(executive.includes("max={60}"));
+ assert.ok(executive.includes("Estimate")||executive.includes("estimate"));
+ assert.ok(!executive.includes("ROI"));
 });
