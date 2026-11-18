@@ -174,6 +174,17 @@ test("published editorial wrappers retain existing full-bleed image geometry acr
  assert.ok(css[2].includes(".worldExperience :global([data-imagery-art])"));
  assert.ok(read(publicRoot+"EquipmentHeroR11.module.css").includes(".thumbnails button > :global([data-imagery-art])"));
 });
+test("all three FR EN AR dedicated Partner OS routes share the exact Établissements imagery snapshot",async()=>{
+ const {pageFromPath}=await import("../angelcare-marketplace/marketplace-imagery/pages.ts");
+ for(const locale of ["fr","en","ar"]){
+  assert.equal(pageFromPath("/angelcare-marketplace/"+locale+"/establishments/partner-os"),"establishments");
+  assert.equal(pageFromPath("/angelcare-marketplace/"+locale+"/establishments/partner-os/"),"establishments");
+  assert.equal(pageFromPath("/angelcare-marketplace/"+locale+"/establishments"),"establishments");
+  assert.equal(pageFromPath("/angelcare-marketplace/"+locale+"/partner-os"),"partner-os");
+  assert.equal(pageFromPath("/angelcare-marketplace/"+locale),"home");
+ }
+ assert.equal(pageFromPath("/angelcare-marketplace/fr/establishments/other"),"other");
+});
 test("strict source domains, no new SQL or alternate admin pages",()=>{
  assert.equal(data.length,230);
  assert.ok(data.every(x=>x.id.startsWith("establishments.")));
