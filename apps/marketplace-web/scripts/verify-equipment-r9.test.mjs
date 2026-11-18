@@ -36,7 +36,7 @@ test('protected hero, native explorer, enquiry and sibling journeys survive',()=
  const bodyAt=host.indexOf('<EquipmentExperienceR10');
  const enquiryAt=host.indexOf('<ProjectEnquiry');
  assert.ok(heroAt>=0&&explorerAt>heroAt&&bodyAt>explorerAt&&enquiryAt>bodyAt);
- assert.ok(host.includes('data-establishments-journey={view==="produits"?"R11":"R5"}')||host.includes('data-establishments-journey={view==="produits"?"R10":"R5"}'));
+ assert.ok(host.includes('data-establishments-journey={view==="produits"?"R11"')||host.includes('data-establishments-journey={view==="produits"?"R10":"R5"}'));
  for(const value of ['<PartnerJourney','<CommercialJourney','onBriefChange={setEquipmentR9Brief}','view === "produits" ? equipmentR9Brief : ""'])assert.ok(host.includes(value),value);
  assert.match(hero,/data-equipment-hero-version="r8"/);
 });
