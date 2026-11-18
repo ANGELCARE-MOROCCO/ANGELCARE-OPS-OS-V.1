@@ -1,5 +1,5 @@
-import {HospitalitySignatureR2} from "./HospitalitySignatureR2";
 "use client";
+import {HospitalitySignatureR2} from "./HospitalitySignatureR2";
 import { imageryToken } from "../marketplace-imagery/pages";
 import { Sun, ArrowDown } from "lucide-react";
 import { B, WORLDS, tr, w } from "./content";

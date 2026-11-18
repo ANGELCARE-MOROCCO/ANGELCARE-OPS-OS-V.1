@@ -21,6 +21,16 @@ const preview=read(root+"marketplace-imagery/establishments-r12-preview.ts");
 const model=read(root+"marketplace-imagery/model.ts");
 const seeds=JSON.parse(read(root+"marketplace-imagery/slot-seeds.json"));
 const id=x=>"hospitality.hospitality-r2."+x;
+test("Turbopack directive must precede all imports; R2.2 visual feedback stays scoped and both CTAs resolve",()=>{
+ const entry=read(world+"Hospitality.tsx");
+ assert.ok(entry.startsWith('"use client";'),"Client directive must be first executable statement");
+ assert.ok(component.includes('className={s.projectPulse}'));
+ assert.ok(component.includes('selectedProgrammes.length+concepts.length+project.length'));
+ assert.ok(component.includes('mode==="native"?"#hotel-partnership-brief":"#world-enquiry"'));
+ assert.ok(css.includes(".projectPulse"));
+ assert.ok(css.includes("background:linear-gradient(102deg,#063b91"));
+ assert.ok(css.includes("@media(prefers-reduced-motion:reduce)"));
+});
 test("all 14 visually distinct chapters mount with premium native journey and genuine B2B conversion",()=>{
  assert.equal([...component.matchAll(/data-hospitality-chapter="(\d+)"/g)].length,14);
  assert.deepEqual([...component.matchAll(/data-hospitality-chapter="(\d+)"/g)].map(m=>m[1]),Array.from({length:14},(_,i)=>String(i+1).padStart(2,"0")));

@@ -174,3 +174,29 @@
 @media(max-width:600px){.compare,.benefits,.signatures,.liveGateway,.properties,.ages,.atlas,.day,.operations,.economics,.trust,.steps,.catalogue,.conversion{padding:35px 14px}.sectionHead{margin-bottom:18px}.sectionHead h2{font-size:clamp(27px,7.3vw,38px)}.hero{min-height:640px;padding:45px 16px 65px}.hero h1{font-size:clamp(37px,9.3vw,57px)}.heroEyebrow{font-size:9px}.heroActions{flex-direction:column;width:100%}.heroActions>a{width:100%}.heroTrust{gap:5px}.heroTrust span{font-size:9px;padding:7px 9px}.heroBand{padding:10px 16px}.nav{position:relative;justify-content:flex-start;overflow-x:auto;flex-wrap:nowrap;gap:4px;padding:7px;scrollbar-width:thin}.nav a{flex:0 0 auto;font-size:10px;padding:8px 9px}.compareGrid article{min-height:250px}.benefitGrid{grid-template-columns:1fr 1fr;gap:7px}.benefitGrid article{padding:12px;min-height:240px}.benefitGrid h3{font-size:16px}.benefitGrid p{font-size:11px}.signatureGrid article{grid-template-columns:1fr}.signatureVisual{min-height:205px}.signatureCopy{padding:20px}.signatureCopy h3{font-size:23px}.propertyPhoto{min-height:240px}.propertyCopy{padding:22px}.propertyCopy h3{font-size:29px}.ageRail{grid-template-columns:1fr;gap:9px}.ageCard{min-height:275px;grid-template-columns:43% 57%;grid-template-rows:1fr}.ageCard strong{font-size:18px}.atlasGrid{grid-auto-rows:150px;gap:7px}.atlasCard>strong{font-size:14px;bottom:11px}.atlasCard>span{font-size:9px}.dayStage>.art{min-height:245px}.dayStage>div:last-child{padding:20px}.operationGrid ol{padding:14px}.operationGrid li{grid-template-columns:28px 1fr 19px;gap:7px}.operationGrid h3{font-size:14px}.economicsGrid{grid-template-columns:1fr}.economicsControl,.economicsResult{padding:20px}.trustVisual>.art{min-height:255px}.trustVisual>div:last-child{padding:14px}.stepsGrid{grid-template-columns:1fr 1fr;gap:7px}.stepsGrid article{padding:13px;min-height:182px}.stepsGrid h3{font-size:16px}.brief{flex-direction:column;align-items:stretch}.publishedGateway{flex-direction:column;align-items:stretch}}
 @media(max-width:360px){.benefitGrid,.stepsGrid{grid-template-columns:1fr}.hero h1{font-size:37px}}
 @media(prefers-reduced-motion:reduce){.action,.actionLight{transition:none}.action:hover,.actionLight:hover{transform:none}}
+
+
+/* R2.2 executive polish: live project feedback and stronger tactile visual depth,
+   scoped to Hospitality only. No header, footer, Studio or catalog CSS edits. */
+.projectPulse{display:flex;align-items:center;gap:13px;padding:13px max(22px,calc((100vw - 1420px)/2));background:linear-gradient(102deg,#063b91 0%,#0757bd 45%,#05a5b8 100%);color:#fff;border-block:1px solid #8adff66a;box-shadow:0 8px 22px #0a4c9430;position:relative;isolation:isolate}
+.projectPulse:before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 75% 40%,#fdd36824,transparent 45%);z-index:-1;pointer-events:none}
+.projectPulseIcon{display:grid;place-items:center;flex:none;width:35px;height:35px;border-radius:11px;background:#fff2;border:1px solid #ffffff4a;color:#ffdc6b}
+.projectPulse>div{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}
+.projectPulse>div strong{font-size:12px;font-weight:950;line-height:1.2}
+.projectPulse>div span{font-size:11px;opacity:.88;line-height:1.2}
+.pulseCount{display:grid;place-items:center;flex:none;width:32px;height:32px;background:#ffe472;border-radius:50%;color:#084581;font-size:13px;font-weight:950;box-shadow:0 3px 14px #ffc44f54}
+.projectPulse>a{display:inline-flex;align-items:center;gap:7px;background:#fff;border:1px solid #ffffffad;color:#064b93;text-decoration:none!important;font-size:11px;font-weight:900;padding:10px 14px;border-radius:9px;min-height:38px;white-space:nowrap}
+.sectionHead:after{content:"";width:65px;height:5px;background:linear-gradient(90deg,#15bed2 0%,#ffca54 52%,#ff6b67 100%);border-radius:20px;margin-top:3px}
+.signatureGrid article,.benefitGrid article,.ageCard,.atlasCard,.stepsGrid article{transition:transform .26s ease,box-shadow .26s ease,border-color .26s ease}
+.signatureGrid article:hover,.benefitGrid article:hover,.stepsGrid article:hover{transform:translateY(-4px);box-shadow:0 22px 45px #063e8b20}
+.atlasCard:hover,.ageCard:hover{transform:translateY(-2px)}
+.signatureVisual:after,.propertyPhoto:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#00255c1d,transparent 65%);pointer-events:none}
+.propertyPhoto{position:relative}
+.propertyControls button:hover:not([aria-pressed=true]),.dayControls button:hover:not([aria-pressed=true]){border-color:#0587cf;background:#e8faff}
+.atlasCard[data-selected=true] button>i{box-shadow:0 0 0 4px #ffffff55}
+.hero h1{max-width:970px}
+.heroEyebrow{box-shadow:inset 0 1px #ffffff5c,0 5px 24px #002b6020}
+.economicsResult strong{text-shadow:0 5px 30px #0037763d}
+@media(max-width:760px){.projectPulse{gap:9px;padding:10px 13px}.projectPulse>div strong{font-size:11px}.projectPulse>div span{font-size:10px}.projectPulse>a{font-size:10px;padding:9px 10px;white-space:normal;text-align:center;max-width:135px}.projectPulseIcon{width:31px;height:31px}.pulseCount{width:27px;height:27px;font-size:12px}}
+@media(max-width:420px){.projectPulse{flex-wrap:wrap}.projectPulse>a{flex:0 0 100%;max-width:none;justify-content:center}}
+@media(prefers-reduced-motion:reduce){.signatureGrid article,.benefitGrid article,.ageCard,.atlasCard,.stepsGrid article{transition:none}.signatureGrid article:hover,.benefitGrid article:hover,.stepsGrid article:hover,.ageCard:hover,.atlasCard:hover{transform:none}}
