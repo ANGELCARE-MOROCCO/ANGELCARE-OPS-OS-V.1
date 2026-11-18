@@ -9,7 +9,6 @@ on:
       - feat/equipment-r10-school-universe-editorial-20261117
       - feat/equipment-r11-signature-hero-native-discovery-20261117
       - feat/equipment-r111-universal-language-mobile-parity-20261117
-      - fix/native-media-vault-ci-query-render-sync-20261118
     paths:
       - ".github/workflows/build-marketplace-ghcr-oneoff.yml"
       - "apps/marketplace-web/**"
