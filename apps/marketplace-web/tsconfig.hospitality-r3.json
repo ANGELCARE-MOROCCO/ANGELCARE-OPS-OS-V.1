@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "angelcare-marketplace/business-worlds/HospitalitySignatureR2.tsx",
+    "angelcare-marketplace/business-worlds/HospitalityExecutiveR3.tsx",
+    "angelcare-marketplace/business-worlds/hospitality-r2-content.ts",
+    "angelcare-marketplace/business-worlds/Commerce.tsx",
+    "angelcare-marketplace/business-worlds/AssignedCommerce.tsx",
+    "angelcare-marketplace/marketplace-imagery/registry.ts",
+    "app/angelcare-marketplace/[locale]/hospitality/page.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next"
+  ]
+}
