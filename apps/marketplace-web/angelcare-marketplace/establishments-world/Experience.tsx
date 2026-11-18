@@ -42,6 +42,8 @@ import {
   type ContactIntent,
 } from "./CommercialJourney";
 import { COMMERCIAL } from "./commercial-content";
+import { ConseilExperienceR6 } from "./ConseilExperienceR6";
+import { belongsToEstablishmentView } from "../storefront-placement/model";
 import { VIEWS, type View } from "./content";
 import { EquipmentHeroR11 } from "./EquipmentHeroR11";
 import {EquipmentMobileR111} from "./EquipmentMobileR111";
@@ -179,10 +181,15 @@ function EstablishmentsBody({
   const selections = useSelections(experience, experience.items);
   const copy = COMMERCIAL[view];
   const [equipmentR9Brief,setEquipmentR9Brief] = useState("");
+  const [conseilR6Brief,setConseilR6Brief] = useState("");
+  const [legacyConseil,setLegacyConseil] = useState(false);
+  useEffect(()=>{setLegacyConseil(new URLSearchParams(location.search).get("conseilLegacy")==="1")},[]);
+  const conseilHasNativeOffers=experience.items.some(item=>belongsToEstablishmentView(item,"conseil"));
   const brief = [
     subject ? `${t("Sujet de la demande")} : ${subject}` : "",
     view === "partner-os" ? partnerBrief(partnerRequest, t) : "",
     view === "produits" ? equipmentR9Brief : "",
+    view === "conseil" ? conseilR6Brief : "",
     requestBrief(view, project, experience.territoryCode, t),
   ]
     .filter(Boolean)
@@ -467,6 +474,18 @@ function EstablishmentsBody({
               scrollTo("r10-universes");
             }}
           />
+        ) : view==="conseil" && !legacyConseil ? (
+          <ConseilExperienceR6
+            locale={locale}
+            selected={project.map(item=>item.key)}
+            onSelect={(item)=>dispatch({type:"toggle",item})}
+            onContact={contact}
+            onReview={()=>setReview(true)}
+            onBriefChange={setConseilR6Brief}
+            storageScope={experience.territoryCode||"default"}
+            showNative={conseilHasNativeOffers}
+            onExploreNative={()=>scrollTo("ew-native-explorer")}
+          />
         ) : (
           <section className={c.hero} data-establishments-hero>
             <div className={c.heroImage}>
@@ -515,7 +534,7 @@ function EstablishmentsBody({
             </div>
           </section>
         )}
-        <NativeExplorer
+        {(view!=="conseil" || conseilHasNativeOffers || legacyConseil) && <NativeExplorer
           key={`${experience.territoryCode || "default"}:${view}`}
           experience={experience}
           view={view}
@@ -523,7 +542,7 @@ function EstablishmentsBody({
           add={(item) => dispatch({ type: "toggle", item })}
           selections={selections}
           onDetail={setDetail}
-        />
+        />}
         {view === "partner-os" ? (
           <PartnerJourney
             request={partnerRequest}
@@ -546,7 +565,7 @@ function EstablishmentsBody({
             onBriefChange={setEquipmentR9Brief}
             storageScope={experience.territoryCode||"default"}
           />
-        ) : (
+        ) : view==="conseil" && !legacyConseil ? null : (
           <CommercialJourney
             key={view}
             view={view}
