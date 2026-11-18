@@ -41,6 +41,17 @@ test("published Studio assignment retains its authored template and the same R2 
  assert.ok(route.includes("publicVerticalSnapshot('hospitality')"));
  assert.ok(route.includes("storefrontExperience({locale,key:'hospitality',territoryCode})"));
 });
+test("interactive property, programme, activity, age, guest-day and planning choices flow into shared WorldFrame on both published and native renders",()=>{
+ for(const dimension of ["property-type","hospitality-programmes","hospitality-experiences","ages","hospitality-guest-journey","hospitality-planning"]){
+  assert.ok(component.includes('setContext("'+dimension+'"'),"Missing shared brief authority for "+dimension);
+ }
+ assert.ok(!component.includes('setSelectedProgrammes(prev=>{'),"Do not update parent WorldFrame inside a React state updater");
+ assert.ok(!component.includes('setConcepts(prev=>{'),"Do not update parent WorldFrame inside a React state updater");
+ const context=read(world+"Shared.tsx");
+ assert.ok(context.includes("Object.values(context)"));
+ assert.ok(context.includes("prioritySummary("));
+ assert.ok(assigned.includes('brief={brief}'));
+});
 test("canonical atomic membership and professional commerce authorities are untouched",()=>{
  for(const fragment of [
    'hospitality: ["hospitality-kids-programme"]',
