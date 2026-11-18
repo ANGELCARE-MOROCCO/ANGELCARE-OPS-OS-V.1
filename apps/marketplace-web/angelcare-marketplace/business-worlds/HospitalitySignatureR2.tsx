@@ -1,5 +1,5 @@
 "use client";
-import {useMemo,useState} from "react";
+import {useEffect,useMemo,useState,type ReactNode} from "react";
 import Link from "next/link";
 import {ArrowRight,ArrowUpRight,Check,CheckCircle2,ChevronRight,Compass,HeartHandshake,ShieldCheck,Sparkles,UsersRound,BriefcaseBusiness,CalendarDays,Lightbulb,SlidersHorizontal,Star,Layers3} from "lucide-react";
 import {ManagedImage} from "../marketplace-imagery/ManagedImage";
@@ -16,7 +16,7 @@ function Art({name,slot,priority=false}:{name:string;slot:string;priority?:boole
    <ManagedImage slot={`hospitality-r2.${slot}`} src={image(name)} alt="" loading={priority?"eager":"lazy"} decoding="async"/>
  </div>;
 }
-function Action({href,children,light=false}:{href:string;children:React.ReactNode;light?:boolean}){return <a className={light?s.actionLight:s.action} href={href}>{children}<ArrowUpRight size={16}/></a>;}
+function Action({href,children,light=false}:{href:string;children:ReactNode;light?:boolean}){return <a className={light?s.actionLight:s.action} href={href}>{children}<ArrowUpRight size={16}/></a>;}
 function Head({eyebrow,title,lead}:{eyebrow?:HWord;title:HWord;lead?:HWord}){const {locale}=useWorld();return <header className={s.sectionHead}>{eyebrow?<span className={s.eyebrow}><Sparkles size={14}/>{ht(eyebrow,locale)}</span>:null}<h2>{ht(title,locale)}</h2>{lead?<p>{ht(lead,locale)}</p>:null}</header>;}
 function NumberMark({value}:{value:number}){return <span className={s.count}>{String(value).padStart(2,"0")}</span>;}
 const navIds=["hotel-value","hotel-signatures","hotel-operations","world-offers","world-enquiry"];
@@ -27,6 +27,19 @@ export function HospitalitySignatureR2({mode="native"}:{mode?:"native"|"publishe
  const tr=(v:HWord)=>ht(v,locale);
  const currentProperty=H.properties[property],currentMoment=H.moments[moment];
  const selectedConcepts=H.concepts.filter(x=>concepts.includes(x.id));
+ useEffect(()=>{
+  // Only the existing Imagery Studio iframe may deep-link an otherwise conditional shot.
+  const params=new URLSearchParams(window.location.search);
+  if(params.get("imageryPreview")!=="1")return;
+  const slot=params.get("imageryPlacement")||"";
+  let match=slot.match(/^hospitality\\.hospitality-r2\\.property\\.(city|resort|season)$/);
+  if(match){const index=H.properties.findIndex(v=>v.id===match![1]);if(index>=0)setProperty(index);}
+  match=slot.match(/^hospitality\\.hospitality-r2\\.age\\.(3-6|7-12|13-16)$/);
+  if(match){const index=H.ages.findIndex(v=>v.id===match![1]);if(index>=0)setAge(index);}
+  match=slot.match(/^hospitality\\.hospitality-r2\\.day\\.(arrival|discover|create|parents|departure)$/);
+  if(match){const index=H.moments.findIndex(v=>v.id===match![1]);if(index>=0)setMoment(index);}
+ },[]);
+
  const summary=useMemo(()=>[
   "ANGELCARE HOSPITALITY SIGNATURE R2",
   "Property: "+tr(currentProperty.name),
@@ -85,11 +98,11 @@ export function HospitalitySignatureR2({mode="native"}:{mode?:"native"|"publishe
    </section>
    <section className={s.ages} data-hospitality-chapter="07">
     <Head title={H.ageTitle} lead={H.ageLead}/>
-    <div className={s.ageRail}>{H.ages.map((v,i)=><button type="button" key={v.id} className={s.ageCard} data-active={age===i} aria-pressed={age===i} onClick={()=>{setAge(i);setContext("ages",v.id);}}><Art name={v.image} slot={`age.${v.id}`}/><span><strong>{tr(v.title)}</strong><small>{tr(v.body)}</small></span></button>)}</div>
+    <div className={s.ageRail}>{H.ages.map((v,i)=><article key={v.id} className={s.ageCard} data-active={age===i}><Art name={v.image} slot={`age.${v.id}`}/><button type="button" aria-pressed={age===i} onClick={()=>{setAge(i);setContext("ages",v.id);}}><strong>{tr(v.title)}</strong><small>{tr(v.body)}</small></button></article>)}</div>
    </section>
    <section className={s.atlas} data-hospitality-chapter="08">
     <Head title={H.atlasTitle} lead={H.atlasLead}/>
-    <div className={s.atlasGrid}>{H.concepts.map((v,i)=><button type="button" key={v.id} data-selected={concepts.includes(v.id)} className={s.atlasCard} onClick={()=>changeConcept(v.id)} aria-pressed={concepts.includes(v.id)}><Art name={v.image} slot={`atlas.${v.id}`}/><span>{String(i+1).padStart(2,"0")}</span><strong>{tr(v.title)}</strong><i>{concepts.includes(v.id)?"✓":"+"}</i></button>)}</div>
+    <div className={s.atlasGrid}>{H.concepts.map((v,i)=><article key={v.id} data-selected={concepts.includes(v.id)} className={s.atlasCard}><Art name={v.image} slot={`atlas.${v.id}`}/><button type="button" onClick={()=>changeConcept(v.id)} aria-label={tr(v.title)} aria-pressed={concepts.includes(v.id)}><span>{String(i+1).padStart(2,"0")}</span><strong>{tr(v.title)}</strong><i>{concepts.includes(v.id)?"✓":"+"}</i></button></article>)}</div>
     <p className={s.caption}>{tr(H.noClaim)}</p>
    </section>
    <section className={s.day} data-hospitality-chapter="09">
