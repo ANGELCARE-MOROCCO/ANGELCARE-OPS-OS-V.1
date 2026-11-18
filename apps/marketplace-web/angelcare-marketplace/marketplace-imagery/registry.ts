@@ -1,14 +1,17 @@
 import rules from './slot-rules.json';
 import seeds from './slot-seeds.json';
 import establishmentR12 from './establishments-r12-slots.json';
+import hospitalityR2 from './hospitality-r2-slots.json';
 import type { Descriptor } from './model';
 export type Slot = Descriptor;
 /** Exact, source-audited registered placements, never guessed by a wildcard. */
 const modernById = new Map((establishmentR12 as Slot[]).map(slot => [slot.id,slot]));
+const hospitalityById=new Map((hospitalityR2 as Slot[]).map(slot=>[slot.id,slot]));
 /** Both the historical approved rules and exact R12 placements remain under the
  * same establishments publication key, permissions, draft and live snapshots. */
 export function resolveSlot(page:string,id:string):Slot|undefined {
  if(typeof id!=='string'||!id.startsWith(page+'.'))return;
+ if(page==="hospitality"){const modern=hospitalityById.get(id);if(modern)return modern;}
  if(page==='establishments'){
   const modern=modernById.get(id);
   if(modern)return modern;
@@ -22,6 +25,6 @@ export function resolveSlot(page:string,id:string):Slot|undefined {
 export function pageSlots(page:string):Slot[]{
  const seeded=(seeds as Slot[]).filter(s=>s.id.startsWith(page+'.'));
  const statics=rules.filter(r=>r.pages.includes(page)&&!r.dynamic).map(r=>resolveSlot(page,page+'.'+r.key)!);
- const modern=page==='establishments'?establishmentR12 as Slot[]:[];
+ const modern=page==='establishments'?establishmentR12 as Slot[]:page==='hospitality'?hospitalityR2 as Slot[]:[];
  return [...new Map([...seeded,...statics,...modern].map(s=>[s.id,s])).values()];
 }
