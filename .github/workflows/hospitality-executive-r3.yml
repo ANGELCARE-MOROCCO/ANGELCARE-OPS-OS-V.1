@@ -1,0 +1,45 @@
+name: AngelCare Hospitality Executive R3 — Complete Design and Production Gate
+on:
+  push:
+    branches:
+      - feat/hospitality-executive-r3-20261119
+      - upgrade/next-angelcare-upgrade
+    paths:
+      - 'apps/marketplace-web/angelcare-marketplace/business-worlds/**'
+      - 'apps/marketplace-web/angelcare-marketplace/marketplace-imagery/**'
+      - 'apps/marketplace-web/scripts/verify-hospitality-executive-r3.test.mjs'
+      - 'apps/marketplace-web/tsconfig.hospitality-r3.json'
+      - '.github/workflows/hospitality-executive-r3.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-and-types:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: apps/marketplace-web/package-lock.json
+      - name: Protected hero, visual experience, B2B commercial and native data regression
+        working-directory: apps/marketplace-web
+        run: node --test scripts/verify-hospitality-executive-r3.test.mjs
+      - name: Preserve 3 Établissements storefronts and Imagery Studio contract
+        working-directory: apps/marketplace-web
+        run: |
+          node --experimental-strip-types --test scripts/verify-establishments-imagery-r12.test.mjs
+          node --test scripts/verify-conseil-r6.test.mjs scripts/verify-partner-os-r2.test.mjs scripts/verify-establishments-shared-nav-r7.test.mjs
+          node --experimental-strip-types --test scripts/verify-equipment-r8.test.mjs
+          node --test scripts/verify-equipment-r9.test.mjs scripts/verify-equipment-r10.test.mjs scripts/verify-equipment-r11.test.mjs scripts/verify-equipment-r111.test.mjs
+      - name: Install locked Marketplace dependencies
+        working-directory: apps/marketplace-web
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Strict TypeScript for full R3 Hospitality route
+        working-directory: apps/marketplace-web
+        run: npx tsc -p tsconfig.hospitality-r3.json --noEmit --pretty false
+      - name: Strict TypeScript for sibling Imagery R12
+        working-directory: apps/marketplace-web
+        run: npx tsc -p tsconfig.establishments-imagery-r12.json --noEmit --pretty false
