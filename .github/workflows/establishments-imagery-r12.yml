@@ -27,7 +27,7 @@ jobs:
           cache-dependency-path: apps/marketplace-web/package-lock.json
       - name: Exact editorial source-to-registry audit and preview safety
         working-directory: apps/marketplace-web
-        run: node --test scripts/verify-establishments-imagery-r12.test.mjs
+        run: node --experimental-strip-types --test scripts/verify-establishments-imagery-r12.test.mjs
       - name: All three storefronts and shared navigation regression contracts
         working-directory: apps/marketplace-web
         run: |
