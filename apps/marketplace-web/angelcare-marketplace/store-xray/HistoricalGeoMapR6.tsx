@@ -17,13 +17,13 @@ type Location = XrayHistoricalLocation
 type Group = { key: string; lat: number; lng: number; sessions: number; errors: number; commerce: number; locations: Location[] }
 const clamp=(v:number,a:number,b:number)=>Math.max(a,Math.min(b,v))
 
-function MapView({ groups }: { groups: Group[] }) {
+function MapView({ locations }: { locations: Location[] }) {
   const map = useMap()
-  const key = groups.map(x => x.key).join('|')
+  const key = locations.map(x => x.code+':'+x.city+':'+x.lat+':'+x.lng).join('|')
   useEffect(() => {
-    if (!groups.length) { map.setView([24,5],2); return }
-    if (groups.length === 1) { map.setView([groups[0].lat, groups[0].lng],5); return }
-    map.fitBounds(groups.map(x=>[x.lat,x.lng] as [number,number]), {padding:[60,60],maxZoom:7})
+    if (!locations.length) { map.setView([24,5],2); return }
+    if (locations.length === 1) { map.setView([locations[0].lat, locations[0].lng],5); return }
+    map.fitBounds(locations.map(x=>[x.lat,x.lng] as [number,number]), {padding:[60,60],maxZoom:7})
   },[key,map])
   return null
 }
@@ -100,7 +100,7 @@ export function HistoricalGeoMapR6({ locations, mode, selected, onSelect }: {
     <Container center={[22,5]} zoom={2} minZoom={2} maxZoom={14} scrollWheelZoom={false} className={css.geoMap}>
       <Tiles attribution="&copy; OpenStreetMap contributors" url={process.env.NEXT_PUBLIC_OSM_TILE_URL || 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'}/>
       <Zoom onZoom={setZoom}/>
-      <MapView groups={groups}/>
+      <MapView locations={locations}/>
       {mode==='density'?<DensityCanvas groups={visible} weight={weighted}/>:visible.map(g=><Circle key={g.key}
         center={[g.lat,g.lng]}
         radius={clamp(6+Math.sqrt(g[weighted])*2.8,7,30)}
