@@ -329,6 +329,7 @@ export interface XrayHistoricalSummary {
   /** Coverage is only known after the production retention audit. */
   retentionVerified: false
   geoSessions: number
+  geoCellsTotal: number
   countries: XrayHistoricalCountry[]
   timeline: XrayHistoricalBucket[]
   locations: XrayHistoricalLocation[]
