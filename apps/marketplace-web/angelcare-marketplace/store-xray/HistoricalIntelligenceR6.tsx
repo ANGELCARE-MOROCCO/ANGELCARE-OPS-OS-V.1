@@ -53,7 +53,7 @@ function readUrl(f:XrayHistoricalFilters):XrayHistoricalFilters{
   const next={...f}
   for(const key of ['from','to','timezone','country','device','route','source','intent','campaign','locale','event','search'] as const){
     const v=u.get('r6_'+key)
-    if(v && v.length<260)Object.assign(next,{[key]:v})
+    if(v && v.length<260 && (key!=='timezone'||zones.includes(v)))Object.assign(next,{[key]:v})
   }
   const g=u.get('r6_granularity')
   if(g&&validGranularity.includes(g))next.granularity=g as XrayHistoricalGranularity
@@ -227,6 +227,7 @@ export function HistoricalIntelligenceR6(){
         <select value={metric} onChange={e=>setMetric(e.target.value as typeof metric)}><option value="sessions">Sessions</option><option value="events">Événements</option><option value="commerce">Commerce</option><option value="errors">Incidents</option></select>
       </div>
       <BarTimeline history={history} kind={metric}/>
+      {history.geoCellsTotal>history.locations.length?<div className={css.notice}><AlertTriangle size={16}/> La carte présente {formatInt(history.locations.length)} zones sur {formatInt(history.geoCellsTotal)}. Les totaux restent calculés sur l’ensemble des événements retenus.</div>:null}
       <div className={css.geoTitle}>
         <div><small>GÉOGRAPHIE QUALIFIÉE</small><h3>Explorez les zones réellement identifiables</h3><p>Les regroupements par pays ne sont pas des positions individuelles. Aucun point n’est inventé.</p></div>
         <div className={css.layerRow}>{(['presence','commerce','risk','density'] as const).map(k=><button key={k} className={layer===k?css.active:''} onClick={()=>setLayer(k)}>{({presence:'Présence',commerce:'Commerce',risk:'Risques',density:'Densité'})[k]}</button>)}</div>
@@ -239,14 +240,14 @@ export function HistoricalIntelligenceR6(){
       <div className={css.mapGrid}>
         <HistoryMap locations={history.locations} mode={layer} selected={selected?.city||null} onSelect={setSelected}/>
         <aside className={css.countries}><div className={css.countryHeading}><h4>Pays & territoires</h4><span>{formatInt(countries.length)} zones</span></div>
-          {countries.map((c,i)=><button key={c.code+String(i)} onClick={()=>{const next={...draft,country:c.code==='??'?undefined:c.code};setDraft(next);apply(next)}} className={css.countryRow}>
+          {countries.map((c,i)=><button key={c.code+String(i)} onClick={()=>{const next={...draft,country:c.code};setDraft(next);apply(next)}} className={css.countryRow}>
             <span>{flag(c.code)}</span><div><strong>{c.code==='??'?'Non résolu':c.code}</strong><small>{formatInt(c.events)} événements · {formatInt(c.commerce)} commerce</small></div><b>{formatInt(c.sessions)}</b>
           </button>)}
           {!countries.length?<p className={css.empty}>Aucun pays observé pour les filtres sélectionnés.</p>:null}
         </aside>
       </div>}
       {selected?<div className={css.locationDetail}><MapPin size={16}/><strong>{selected.city||selected.region||selected.code}</strong><span>{formatInt(selected.sessions)} sessions · {formatInt(selected.commerce)} commerce · {formatInt(selected.errors)} risques</span><small>Position approximative par IP, cellule de 0,1 degré, jamais adresse ou GPS</small><button onClick={()=>setSelected(null)}><X size={14}/></button></div>:null}
-      <div className={css.foot}><CheckCircle2 size={16}/> {formatInt(mapped)} sessions associées à des cellules de ville (possibles doublons de sessions entre cellules) · {formatInt(unmapped)} autres sessions estimées par différence. Ces dernières ne sont pas positionnées sur la carte.</div>
+      <div className={css.foot}><CheckCircle2 size={16}/> {formatInt(mapped)} sessions distinctes associées à des villes approximatives · {formatInt(unmapped)} sans zone de ville fiable. Les cellules de carte peuvent se recouper entre sessions. Ces dernières ne sont pas positionnées sur la carte.</div>
     </>:!loading&&!error?<div className={css.empty}>Choisissez une période et appliquez les filtres.</div>:null}
   </section>
 }
