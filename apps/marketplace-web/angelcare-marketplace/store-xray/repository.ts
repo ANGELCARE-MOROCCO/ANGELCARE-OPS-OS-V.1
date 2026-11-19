@@ -17,8 +17,8 @@ import type {
   XrayTrafficContext,
   XrayTransition,
   XrayVisitorProfile,
-  type XrayHistoricalFilters,
-  type XrayHistoricalSummary,
+  XrayHistoricalFilters,
+  XrayHistoricalSummary,
 } from './types'
 
 type Row = Record<string, unknown>
