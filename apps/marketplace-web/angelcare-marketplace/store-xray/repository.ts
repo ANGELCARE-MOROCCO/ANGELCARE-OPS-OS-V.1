@@ -777,6 +777,7 @@ export async function getXrayHistoricalR6(
     lastObserved: typeof raw.lastObserved === 'string' ? raw.lastObserved : null,
     exact: true,
     retentionVerified: false,
+    geoSessions: num(raw.geoSessions),
     countries: array(raw.countries).map((value) => {
       const v = object(value)
       return { code: text(v.code) || '??', sessions: num(v.sessions), events: num(v.events),
