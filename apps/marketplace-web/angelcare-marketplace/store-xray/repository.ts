@@ -63,9 +63,12 @@ function requestIp(request: Request) {
   return forwarded.split(',')[0]?.trim() || ''
 }
 
-function parseCoordinate(value: string) {
-  const parsed = Number(value)
-  return Number.isFinite(parsed) ? parsed : null
+function parseCoordinate(value: string, axis: 'latitude' | 'longitude') {
+  const input = value.trim()
+  if (!input || !/^[+-]?(?:\d{1,3})(?:\.\d{1,12})?$/.test(input)) return null
+  const parsed = Number(input)
+  if (!Number.isFinite(parsed) || Math.abs(parsed) > (axis === 'latitude' ? 90 : 180)) return null
+  return parsed
 }
 
 function requestNetwork(request: Request): XrayNetworkContext {
@@ -73,8 +76,11 @@ function requestNetwork(request: Request): XrayNetworkContext {
   const countryCode = header(request, ['cf-ipcountry', 'x-vercel-ip-country', 'x-country-code', 'x-geo-country']).toUpperCase() || null
   const cityRaw = header(request, ['x-vercel-ip-city', 'x-city', 'x-geo-city', 'cf-ipcity'])
   const regionRaw = header(request, ['x-vercel-ip-country-region', 'x-region', 'x-geo-region', 'cf-region'])
-  const latitude = parseCoordinate(header(request, ['x-vercel-ip-latitude', 'x-geo-latitude', 'cf-iplatitude']))
-  const longitude = parseCoordinate(header(request, ['x-vercel-ip-longitude', 'x-geo-longitude', 'cf-iplongitude']))
+  const rawLatitude = parseCoordinate(header(request, ['x-vercel-ip-latitude', 'x-geo-latitude', 'cf-iplatitude']), 'latitude')
+  const rawLongitude = parseCoordinate(header(request, ['x-vercel-ip-longitude', 'x-geo-longitude', 'cf-iplongitude']), 'longitude')
+  const validPair = rawLatitude !== null && rawLongitude !== null && !(rawLatitude === 0 && rawLongitude === 0)
+  const latitude = validPair ? rawLatitude : null
+  const longitude = validPair ? rawLongitude : null
   const timezone = header(request, ['x-vercel-ip-timezone', 'x-geo-timezone', 'cf-timezone']) || null
   const asn = header(request, ['x-asn', 'x-geo-asn', 'cf-asn']) || null
   const networkOrganization = header(request, ['x-network-organization', 'x-geo-organization', 'cf-organization']) || null
