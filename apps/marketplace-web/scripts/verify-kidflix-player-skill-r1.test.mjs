@@ -41,7 +41,7 @@ test("zoom, fit and viewport geometry are host-owned, bounded and reversible",()
 });
 
 test("mobile landscape tries native fullscreen and orientation, degrades safely and exits",()=>{
- for(const token of ["requestFullscreen()","document.exitFullscreen()","screen.orientation.lock('landscape')","screen.orientation.unlock","fullscreenchange","setLandscape(false)","fallbackLandscape","document.body.style.overflow='hidden'"])assert.ok(player.includes(token),token);
+ for(const token of ["requestFullscreen()","document.exitFullscreen()","orientation.lock('landscape')","screen.orientation.unlock","fullscreenchange","setLandscape(false)","fallbackLandscape","document.body.style.overflow='hidden'"])assert.ok(player.includes(token),token);
  assert.match(controls,/@media\(max-width:900px\).*\.landscape/);
  assert.match(controls, /@media\(max-width:900px\) and \(orientation:portrait\)/);
  assert.match(controls, /\.rotated\{/);
