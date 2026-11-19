@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import ts from "typescript";
 
-const read = (p) => readFileSync(new URL("../../angelcare-marketplace/" + p, import.meta.url), "utf8");
+const read = (p) => readFileSync(new URL("../angelcare-marketplace/" + p, import.meta.url), "utf8");
 const kid = read("kidflix/imagery/Studio.tsx");
 const modern = read("marketplace-imagery/Studio.tsx");
 const kidCss = read("kidflix/imagery/studio.module.css");
