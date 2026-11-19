@@ -87,7 +87,7 @@ test("All dynamic experiences are independently addressable in existing Imagery 
 });
 
 test("Studio retains native vault pickers, all 12 slides, mobile framing, badges, draft and publish rights",()=>{
- for(const token of ['NativeImagePicker','angelcare_imagery_save','angelcare_imagery_publish','mobileFocal','badgesEnabled','max: Math.max','previewLocale','imageryPlacementPreviewUrl','pageSlots(page)'])assert.ok(studio.includes(token),token);
+ for(const token of ['NativeImagePicker','angelcare_imagery_save','angelcare_imagery_publish','mobileFocal','badgesEnabled','Math.max(1, 12 - images.length)','previewLocale','imageryPlacementPreviewUrl','pageSlots(page)'])assert.ok(studio.includes(token),token);
  assert.match(studio,/12 - images\.length/);
  assert.match(studio,/descriptor\?\.sequence \? 12 : 1/);
  assert.match(runtime,/setting\?\.mode === "slideshow"/);
