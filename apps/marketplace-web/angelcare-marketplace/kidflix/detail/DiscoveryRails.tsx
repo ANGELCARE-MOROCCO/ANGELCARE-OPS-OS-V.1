@@ -1,6 +1,7 @@
 "use client";
 import { CardShare } from "./Social";
 import Link from "next/link";
+import { Eye } from "lucide-react";
 import {
   useCallback,
   useEffect,
@@ -121,7 +122,7 @@ function SkillCardMetrics({item,locale}:{item:Resource;locale:Locale}){
   const likes=typeof item.loveCount==="number"&&Number.isSafeInteger(item.loveCount)&&item.loveCount>=0?item.loveCount:null;
   return <div ref={target} className={s.skillMetrics} aria-label={tr(["Community activity","Activité de la communauté","نشاط المجتمع"],locale)}>
     {likes!==null?<span title={tr(["Hearts","Cœurs","إعجابات"],locale)}><I name="Heart" size={12}/><strong>{new Intl.NumberFormat(locale).format(likes)}</strong><small>{tr(["likes","j’aime","إعجاب"],locale)}</small></span>:null}
-    {views!==undefined?<span title={tr(["Consented resource views","Vues de la ressource avec consentement","مشاهدات المورد بموافقة"],locale)}><I name="Eye" size={12}/><strong>{views===null?"<5":new Intl.NumberFormat(locale).format(views)}</strong><small>{tr(["views","vues","مشاهدات"],locale)}</small></span>:null}
+    {views!==undefined?<span title={tr(["Consented resource views","Vues de la ressource avec consentement","مشاهدات المورد بموافقة"],locale)}><Eye size={12}/><strong>{views===null?"<5":new Intl.NumberFormat(locale).format(views)}</strong><small>{tr(["views","vues","مشاهدات"],locale)}</small></span>:null}
   </div>;
 }
 export function ResourceCard({
