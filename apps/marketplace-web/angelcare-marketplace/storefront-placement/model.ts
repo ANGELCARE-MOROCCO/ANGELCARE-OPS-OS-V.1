@@ -166,14 +166,14 @@ export function validatePlacement(value: unknown): string[] {
 export function itemPlacement(item: DiscoveryItem): StorefrontPlacement {
   return normalizePlacement(item.metadata.storefront_placement);
 }
-/** undefined means use the existing native decision, including all its original safeguards. */
+/** Manual selections are optional additions. An unselected destination always falls back to native eligibility. */
 export function manualMembership(
   item: DiscoveryItem,
   key: StorefrontKey,
 ): boolean | undefined {
   const config = itemPlacement(item);
-  return config.mode === "manual"
-    ? config.storefronts.includes(key)
+  return config.mode === "manual" && config.storefronts.includes(key)
+    ? true
     : undefined;
 }
 export function automaticEstablishmentView(
@@ -193,10 +193,10 @@ export function belongsToEstablishmentView(
   view: EstablishmentView,
 ): boolean {
   const config = itemPlacement(item);
-  return config.mode === "manual"
-    ? config.storefronts.includes("establishments") &&
-        config.establishmentViews.includes(view)
-    : automaticEstablishmentView(item) === view;
+  return (config.mode === "manual" &&
+    config.storefronts.includes("establishments") &&
+    config.establishmentViews.includes(view)) ||
+    automaticEstablishmentView(item) === view;
 }
 export function placementFacets(
   items: readonly DiscoveryItem[],
@@ -222,16 +222,21 @@ export function mergePlacedItems(
   placements: ReadonlyMap<string, StorefrontPlacement>,
   key: StorefrontKey,
 ): DiscoveryItem[] {
-  const result = new Map<string, DiscoveryItem>(),
-    validated = new Set(selected.map((item) => item.id));
-  for (const item of [...automatic, ...selected]) {
-    const config = placements.get(item.id) || itemPlacement(item);
-    if (
-      config.mode === "manual" &&
-      (!config.storefronts.includes(key) || !validated.has(item.id))
-    )
-      continue;
+  const result = new Map<string, DiscoveryItem>();
+  // Native catalogue membership always wins. Manual placement may add new
+  // products but can never remove or replace a native entry.
+  for (const item of automatic) {
     if (!item.id || !item.slug) continue;
+    const config = placements.get(item.id) || itemPlacement(item);
+    result.set(item.id, {
+      ...item,
+      metadata: { ...item.metadata, storefront_placement: config },
+    });
+  }
+  for (const item of selected) {
+    if (!item.id || !item.slug || result.has(item.id)) continue;
+    const config = placements.get(item.id) || itemPlacement(item);
+    if (config.mode !== "manual" || !config.storefronts.includes(key)) continue;
     result.set(item.id, {
       ...item,
       metadata: { ...item.metadata, storefront_placement: config },
