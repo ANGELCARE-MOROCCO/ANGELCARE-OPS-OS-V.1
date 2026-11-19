@@ -200,18 +200,12 @@ export async function applyStorefrontPlacements(
     items,
     featured: items.filter((item) => item.featured).slice(0, 8),
     facets: placementFacets(items),
+    // Native/editorial collection membership is independent from optional
+    // storefront additions. Manual selection cannot remove an existing rail.
     collections: complete.collections.map((collection) => ({
       ...collection,
-      items: [...new Set(collection.items.map((item) => item.id))].flatMap(
-        (id) =>
-          placements.get(id)?.mode === "manual"
-            ? canonical.has(id)
-              ? [canonical.get(id)!]
-              : []
-            : [
-                canonical.get(id) ||
-                  collection.items.find((item) => item.id === id)!,
-              ],
+      items: [...new Set(collection.items.map((item) => item.id))].map(
+        (id) => canonical.get(id) || collection.items.find((item) => item.id === id)!,
       ),
     })),
     experienceConfig: {
