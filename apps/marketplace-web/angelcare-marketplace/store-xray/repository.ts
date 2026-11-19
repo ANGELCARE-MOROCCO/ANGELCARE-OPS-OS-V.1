@@ -754,7 +754,7 @@ export async function getXrayHistoricalR6(
   })
   if (error) {
     if (/function .*angelcare_xray_historical_r6.*does not exist|PGRST202/i.test(error.message || '')) {
-      throw new MarketplaceError('SERVICE_UNAVAILABLE', 'Historical intelligence migration has not been applied.')
+      throw new MarketplaceError('CONFIGURATION_ERROR', 'Historical intelligence migration has not been applied.')
     }
     fail('charger Store X-Ray historique', error)
   }
