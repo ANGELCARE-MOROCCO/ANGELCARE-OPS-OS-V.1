@@ -157,8 +157,8 @@ export function HistoricalIntelligenceR6(){
     link.href=url;link.download='angelcare-xray-geographie-r6.csv';link.click();URL.revokeObjectURL(url)
   }
   const countries=history?.countries||[]
-  const unmapped=history?Math.max(0,history.sessions-history.locations.reduce((a,x)=>a+x.sessions,0)):0
-  const mapped=history?.locations.reduce((a,x)=>a+x.sessions,0)||0
+  const mapped=history?.geoSessions||0
+  const unmapped=history?Math.max(0,history.sessions-mapped):0
   const previousChange=previous?.sessions?((history?.sessions||0)-previous.sessions)/previous.sessions*100:null
   const filterChips=(applied?Object.entries(applied).filter(([k,v])=>!['from','to','timezone','granularity'].includes(k)&&Boolean(v)):[])
 
