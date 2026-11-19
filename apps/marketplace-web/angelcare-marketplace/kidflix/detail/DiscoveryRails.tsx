@@ -88,14 +88,52 @@ const copy = {
     "مغامرتك الصغيرة التالية",
   ],
 } as const;
+/** Only skill recommendations fetch their own published, privacy-thresholded view totals. */
+function SkillCardMetrics({item,locale}:{item:Resource;locale:Locale}){
+  const target=useRef<HTMLDivElement>(null);
+  const [visible,setVisible]=useState(false);
+  const [views,setViews]=useState<number|null|undefined>(undefined);
+  useEffect(()=>{
+    const el=target.current;
+    if(!el)return;
+    const observer=new IntersectionObserver(entries=>{
+      if(entries.some(e=>e.isIntersecting)){setVisible(true);observer.disconnect()}
+    },{rootMargin:"160px"});
+    observer.observe(el);
+    return()=>observer.disconnect();
+  },[item.key]);
+  useEffect(()=>{
+    if(!visible||!item.releaseId)return;
+    const controller=new AbortController();
+    setViews(undefined);
+    void fetch("/api/kidflix/experience/"+encodeURIComponent(item.key)+"/engagement?locale="+encodeURIComponent(locale),{
+      credentials:"same-origin",signal:controller.signal
+    }).then(async response=>{
+      if(!response.ok)throw Error("METRICS_UNAVAILABLE");
+      const data:unknown=await response.json();
+      if(!data||typeof data!=="object"||Array.isArray(data))throw Error("INVALID_METRICS");
+      const v=data as Record<string,unknown>;
+      if(v.available!==true||v.threshold!==5||!(v.views===null||(typeof v.views==="number"&&Number.isSafeInteger(v.views)&&v.views>=5)))throw Error("INVALID_METRICS");
+      if(!controller.signal.aborted)setViews(v.views as number|null);
+    }).catch(()=>{if(!controller.signal.aborted)setViews(undefined)});
+    return()=>controller.abort();
+  },[visible,item.key,item.releaseId,locale]);
+  const likes=typeof item.loveCount==="number"&&Number.isSafeInteger(item.loveCount)&&item.loveCount>=0?item.loveCount:null;
+  return <div ref={target} className={s.skillMetrics} aria-label={tr(["Community activity","Activité de la communauté","نشاط المجتمع"],locale)}>
+    {likes!==null?<span title={tr(["Hearts","Cœurs","إعجابات"],locale)}><I name="Heart" size={12}/><strong>{new Intl.NumberFormat(locale).format(likes)}</strong><small>{tr(["likes","j’aime","إعجاب"],locale)}</small></span>:null}
+    {views!==undefined?<span title={tr(["Consented resource views","Vues de la ressource avec consentement","مشاهدات المورد بموافقة"],locale)}><I name="Eye" size={12}/><strong>{views===null?"<5":new Intl.NumberFormat(locale).format(views)}</strong><small>{tr(["views","vues","مشاهدات"],locale)}</small></span>:null}
+  </div>;
+}
 export function ResourceCard({
   item,
   locale,
   reason,
+  skillVariant=false,
 }: {
   item: Resource & { facts?: Row };
   reason?: string;
   locale: Locale;
+  skillVariant?: boolean;
 }) {
   const w = world(item.family)!,
     guest = useGuest(),
@@ -109,7 +147,7 @@ export function ResourceCard({
           : t("open", locale),
     facts = obj(item.facts);
   return (
-    <article className={s.resourceCard} data-family={item.family}>
+    <article className={`${s.resourceCard} ${skillVariant?s.skillCard:""}`} data-family={item.family}>
       <div className={s.resourceImage}>
         <Link
           href={path(locale, "/experience/" + item.key)}
@@ -163,6 +201,7 @@ export function ResourceCard({
             <span key={format}>{format}</span>
           ))}
         </div>
+        {skillVariant?<SkillCardMetrics item={item} locale={locale}/>:null}
         <Link
           href={path(locale, "/experience/" + item.key)}
           className={s.cardCTA}
@@ -425,6 +464,7 @@ function Shelf({
             item={item}
             key={item.key}
             locale={locale}
+            skillVariant={shelf==="skill"}
             reason={tr(
               shelf === "family"
                 ? ["Same resource family", "Même univers", "من نفس العالم"]
