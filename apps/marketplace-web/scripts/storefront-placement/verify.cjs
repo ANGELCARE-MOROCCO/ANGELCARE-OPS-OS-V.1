@@ -64,12 +64,12 @@ for (const views of [
   ["partner-os", "produits"],
   ["conseil", "partner-os", "produits"],
 ])
-  test("exact establishment membership: " + views.join(", "), () => {
+  test("selected establishment views augment automatic membership: " + views.join(", "), () => {
     const offer = item(seed(1, manual(["establishments"], views)));
     for (const view of model.ESTABLISHMENT_VIEWS)
       assert.equal(
         model.belongsToEstablishmentView(offer, view.key),
-        views.includes(view.key),
+        views.includes(view.key) || view.key === "produits",
       );
     for (const view of model.ESTABLISHMENT_VIEWS)
       assert.equal(
@@ -80,7 +80,7 @@ for (const views of [
           availability: "all",
           sort: "recommended",
         }).length,
-        views.includes(view.key) ? 1 : 0,
+        (views.includes(view.key) || view.key === "produits") ? 1 : 0,
       );
   });
 test("standalone Partner OS and establishment Partner OS are independent", () => {
@@ -257,18 +257,20 @@ for (const key of model.STOREFRONTS.map((row) => row.key))
       assert.ok(!JSON.stringify(result.items).includes("PRIVATE_SENTINEL"));
     },
   );
-test("manual exclusions remove automatic items, featured entries and collection copies", async () => {
+test("manual additions cannot remove automatic items, featured entries or collection copies", async () => {
   const row = seed(1, manual(["academy"])),
     offer = item(row),
     original = experience("kits", [offer]);
+  offer.featured = true;
   original.featured = [offer];
   original.collections = [{ id: "c", items: [offer] }];
   const result = await applyStorefrontPlacements(original, async () => {
     throw Error("unexpected page");
   });
-  assert.equal(result.items.length, 0);
-  assert.equal(result.featured.length, 0);
-  assert.equal(result.collections[0].items.length, 0);
+  assert.equal(result.items.length, 1);
+  assert.equal(result.items[0].id, offer.id);
+  assert.equal(result.featured.length, 1);
+  assert.equal(result.collections[0].items.length, 1);
 });
 test("manual offers in hidden categories, drafts, restricted availability, wrong territory or without slug stay private", async () => {
   seed(1, manual(["families"]), { status: "draft" });
@@ -339,7 +341,7 @@ test("family and home-service component selectors preserve explicitly placed for
   assert.equal(isFamilyOffer(offer), false);
   assert.equal(isHomeServiceOffer(offer), false);
 });
-test("native pagination completes before removals and additions; a resolved catalogue cannot be repopulated", async () => {
+test("native pagination completes before manual additions; a resolved catalogue cannot be repopulated", async () => {
   const original = Array.from({ length: 120 }, (_, n) =>
       item({ ...seed(n + 1), name_fr: "Auto " + n }),
     ),
@@ -357,8 +359,8 @@ test("native pagination completes before removals and additions; a resolved cata
     },
   );
   assert.deepEqual(calls, [120]);
-  assert.equal(result.items.length, 121);
-  assert.ok(!result.items.some((item) => item.id === removed.id));
+  assert.equal(result.items.length, 122);
+  assert.ok(result.items.some((item) => item.id === removed.id));
   assert.ok(result.items.some((item) => item.id === extra.id));
   const { completeStorefront } = require(
     path.join(area, "storefront-immersive/pagination.ts"),
@@ -473,4 +475,42 @@ test("commercial metadata cannot impersonate the authoritative placement setting
     mapDiscoveryItem(row, "fr").metadata.storefront_placement.mode,
     "automatic",
   );
+});
+
+test("unselected manual destinations always retain native selectors",()=>{
+  const product=item(seed(1,manual(["academy"])));
+  assert.equal(model.manualMembership(product,"families"),undefined);
+  assert.equal(isFamilyOffer(product),true);
+  assert.equal(model.manualMembership(product,"home-services"),undefined);
+  assert.equal(model.belongsToEstablishmentView(product,"produits"),true);
+  assert.equal(model.belongsToEstablishmentView(product,"conseil"),false);
+});
+
+test("business native category eligibility survives an unrelated optional manual target",async()=>{
+  const row=seed(1,manual(["families"]),{experience_schema_key:"",kind:"product"});
+  fixture.tables.angelcare_marketplace_catalog_categories.push({
+    id:"cat-hospitality",category_key:"hospitality",locale:"fr",
+    status:"published",visible:true,territory_id:null,
+  });
+  fixture.tables.angelcare_marketplace_catalog_item_categories.push({
+    id:"membership-hospitality",catalog_item_id:row.id,
+    category_id:"cat-hospitality",
+  });
+  const exposure=await businessExposure("hospitality","fr","MA-MASTER");
+  assert.equal(exposure.items.length,1);
+  assert.equal(exposure.items[0].id,row.id);
+  assert.equal(exposure.items[0].metadata.business_storefront.reason,"canonical_membership");
+});
+
+test("optional added products coexist with native products without duplicates",async()=>{
+  const native=item(seed(1,manual([])));
+  const added=seed(2,manual(["kits"]));
+  const original=experience("kits",[native]);
+  original.collections=[{id:"native",items:[native]}];
+  const result=await applyStorefrontPlacements(original,async()=>{
+    throw Error("unexpected page");
+  });
+  assert.deepEqual(new Set(result.items.map(x=>x.id)),new Set([native.id,added.id]));
+  assert.equal(result.collections[0].items.length,1);
+  assert.equal(result.collections[0].items[0].id,native.id);
 });

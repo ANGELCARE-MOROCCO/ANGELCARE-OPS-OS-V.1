@@ -1,0 +1,39 @@
+name: AngelCare Product 360 R6 — Automatic Plus Optional Storefront Placement
+on:
+  push:
+    branches:
+      - feat/product360-additive-placement-r6-20261119
+      - upgrade/next-angelcare-upgrade
+    paths:
+      - 'apps/marketplace-web/angelcare-marketplace/storefront-placement/**'
+      - 'apps/marketplace-web/angelcare-marketplace/business-worlds/repository.ts'
+      - 'apps/marketplace-web/angelcare-marketplace/families-storefront/experience.ts'
+      - 'apps/marketplace-web/angelcare-marketplace/home-services-storefront/experience.ts'
+      - 'apps/marketplace-web/scripts/storefront-placement/**'
+      - '.github/workflows/product360-additive-placement-r6.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  storefront-placement-r6:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: apps/marketplace-web/package-lock.json
+      - name: Install locked Marketplace dependencies
+        working-directory: apps/marketplace-web
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Verify actual Product 360 API and all twelve public storefront readers
+        working-directory: apps/marketplace-web
+        run: node scripts/storefront-placement/verify.cjs
+      - name: Strict TypeScript for storefront placement and existing integrations
+        working-directory: apps/marketplace-web
+        run: npx tsc -p tsconfig.storefront-placement.json --noEmit --pretty false
+      - name: Verify existing Home Services storefront runtime
+        working-directory: apps/marketplace-web
+        run: node scripts/home-services-storefront/verify-runtime.mjs
