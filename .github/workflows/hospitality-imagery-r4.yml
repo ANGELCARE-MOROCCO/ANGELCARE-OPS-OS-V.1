@@ -9,6 +9,8 @@ on:
       - 'apps/marketplace-web/angelcare-marketplace/business-worlds/HospitalitySignatureR2.tsx'
       - 'apps/marketplace-web/angelcare-marketplace/marketplace-imagery/**'
       - 'apps/marketplace-web/scripts/verify-hospitality-imagery-r4.test.mjs'
+      - 'apps/marketplace-web/scripts/verify-hospitality-signature-r2.test.mjs'
+      - 'apps/marketplace-web/scripts/verify-hospitality-executive-r3.test.mjs'
       - '.github/workflows/hospitality-imagery-r4.yml'
   workflow_dispatch:
 permissions:
