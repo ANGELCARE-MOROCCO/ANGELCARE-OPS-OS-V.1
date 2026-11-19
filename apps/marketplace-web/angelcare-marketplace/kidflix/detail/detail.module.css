@@ -3243,3 +3243,29 @@
   object-fit: contain !important;
   object-position: center;
 }
+
+
+/* KidFlix skill practice R1: limited to the exact skill shelf; no change to other related rails. */
+.reference .shelf_skill{background:linear-gradient(125deg,#fbf7ff 0%,#f1f8ff 48%,#fffaf2 100%);border:1px solid #dddffb}
+.reference .shelf_skill .rail{gap:12px;padding:7px 2px 15px;scroll-snap-type:x proximity}
+.reference .shelf_skill .rail .skillCard{flex:0 0 clamp(222px,22vw,278px);display:flex;flex-direction:column;min-width:222px;min-height:0;overflow:hidden;border:1px solid #d8dff9;border-radius:15px;background:#fff;box-shadow:0 5px 14px #304b8c14,0 1px 2px #6b50ae12;scroll-snap-align:start;transition:transform .18s ease,box-shadow .18s ease}
+.reference .shelf_skill .rail .skillCard:hover{transform:translateY(-3px);box-shadow:0 14px 26px #233d8c25}
+.reference .shelf_skill .skillCard .resourceImage{height:158px;min-height:158px;padding:8px;background:linear-gradient(135deg,#e1f4ff,#ffeafa 67%,#fff8dc);border-bottom:1px solid #e9dff7;border-radius:14px 14px 0 0}
+.reference .shelf_skill .skillCard .resourceImage>a{height:100%;width:100%;display:grid;place-items:center}
+.reference .shelf_skill .skillCard .resourceImage img{height:100%;width:100%;max-height:100%;object-fit:contain;border-radius:8px}
+.reference .shelf_skill .skillCard .resourceCopy{display:flex;flex:1;flex-direction:column;gap:6px;padding:12px 12px 13px;min-height:0}
+.reference .shelf_skill .skillCard .resourceTitle{font-size:13px;font-weight:900;line-height:1.3;color:#112c65;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.reference .shelf_skill .skillCard .resourceCopy>small{font-size:10px;color:#765ec0;font-weight:800}
+.reference .shelf_skill .skillCard .resourceCopy p{font-size:10px;line-height:1.45;color:#556886;-webkit-line-clamp:2}
+.reference .shelf_skill .skillCard .cardFacts{gap:4px;font-size:9px}
+.reference .shelf_skill .skillCard .cardFacts span{border-radius:7px;padding:3px 6px;background:#f5f7ff;border-color:#e7eaff}
+.reference .shelf_skill .skillMetrics{display:flex;align-items:center;gap:9px;min-height:21px;flex-wrap:wrap;margin-top:auto}
+.reference .shelf_skill .skillMetrics>span{display:inline-flex;align-items:center;gap:3px;font-size:10px;color:#4e5e8e}
+.reference .shelf_skill .skillMetrics>span:first-child svg{color:#e43a79}
+.reference .shelf_skill .skillMetrics>span:nth-child(2) svg{color:#3280d6}
+.reference .shelf_skill .skillMetrics strong{font-size:10px;font-weight:900;font-variant-numeric:tabular-nums}
+.reference .shelf_skill .skillMetrics small{font-size:9px;color:#7785a8}
+.reference .shelf_skill .skillCard .cardCTA{display:flex;align-items:center;justify-content:space-between;min-height:34px;padding:8px 10px;margin-top:4px;border-radius:8px;background:linear-gradient(110deg,#165fdf,#7650dd);color:#fff;font-size:11px;font-weight:850}
+@media(max-width:850px){.reference .shelf_skill .rail .skillCard{flex-basis:min(69vw,256px);min-width:195px}.reference .shelf_skill .skillCard .resourceImage{height:146px;min-height:146px}}
+@media(max-width:540px){.reference .shelf_skill .rail .skillCard{flex-basis:min(73vw,236px);min-width:190px}.reference .shelf_skill .skillCard .resourceImage{height:135px;min-height:135px}}
+@media(prefers-reduced-motion:reduce){.reference .shelf_skill .skillCard{transition:none}.reference .shelf_skill .skillCard:hover{transform:none}}
