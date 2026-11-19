@@ -1,0 +1,40 @@
+name: KidFlix Detail — Player Zoom / Mobile Landscape / Skill Card Metrics R1
+on:
+  push:
+    branches:
+      - feat/kidflix-detail-player-skill-cards-r1-20261119
+      - upgrade/next-angelcare-upgrade
+    paths:
+      - 'apps/marketplace-web/angelcare-marketplace/kidflix/detail/UniversalInteractivePlayer.tsx'
+      - 'apps/marketplace-web/angelcare-marketplace/kidflix/detail/interactive-player-controls.module.css'
+      - 'apps/marketplace-web/angelcare-marketplace/kidflix/detail/DiscoveryRails.tsx'
+      - 'apps/marketplace-web/angelcare-marketplace/kidflix/detail/detail.module.css'
+      - 'apps/marketplace-web/scripts/verify-kidflix-player-skill-r1.test.mjs'
+      - 'apps/marketplace-web/tsconfig.kidflix-player-skill-r1.json'
+      - '.github/workflows/kidflix-player-skill-r1.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  exact-target:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: apps/marketplace-web/package-lock.json
+      - name: Exact KidFlix interactive resource security and skill card contract
+        working-directory: apps/marketplace-web
+        run: node --test scripts/verify-kidflix-player-skill-r1.test.mjs
+      - name: Install locked dependencies
+        working-directory: apps/marketplace-web
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Strict KidFlix player and related cards TypeScript
+        working-directory: apps/marketplace-web
+        run: npx tsc -p tsconfig.kidflix-player-skill-r1.json --noEmit --pretty false
+      - name: KidFlix Imagery parity retained
+        working-directory: apps/marketplace-web
+        run: node --test scripts/verify-kidflix-imagery-studio-r5.test.mjs
