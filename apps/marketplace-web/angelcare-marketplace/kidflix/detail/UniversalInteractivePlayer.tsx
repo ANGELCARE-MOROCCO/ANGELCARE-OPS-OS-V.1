@@ -84,7 +84,11 @@ export function UniversalInteractivePlayer({p,packageId,checksum,entry='index.ht
       setFullscreen(true);
       setLandscape(requestLandscape);
       if(requestLandscape){
-        try{await screen.orientation.lock('landscape')}catch{
+        try{
+          const orientation=screen.orientation as ScreenOrientation & {lock?:(value:'landscape')=>Promise<void>};
+          if(!orientation.lock)throw Error('ORIENTATION_LOCK_UNAVAILABLE');
+          await orientation.lock('landscape');
+        }catch{
           setOrientationError(t('Rotate your device for landscape viewing.','Tournez votre appareil pour le mode paysage.','أدر جهازك للعرض الأفقي.'));
         }
       }
