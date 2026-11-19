@@ -52,12 +52,12 @@ const equal = (a: StorefrontPlacement, b: StorefrontPlacement) =>
   JSON.stringify(a) === JSON.stringify(b);
 const describe = (config: StorefrontPlacement) =>
   config.mode === "automatic"
-    ? "Règles automatiques"
+    ? "Règles automatiques actives"
     : config.storefronts.length
-      ? STOREFRONTS.filter((row) => config.storefronts.includes(row.key))
+      ? "Automatique + " + STOREFRONTS.filter((row) => config.storefronts.includes(row.key))
           .map((row) => row.label)
           .join(" · ")
-      : "Aucune des 12 vitrines";
+      : "Règles automatiques actives · aucun ajout facultatif";
 
 export function PlacementStudio({
   itemId,
@@ -232,7 +232,7 @@ export function PlacementStudio({
       setDraft(next.config);
       setConflict(false);
       setMessage(
-        "Placements enregistrés et relus. Les vitrines publiques ont été actualisées.",
+        "Ajouts facultatifs enregistrés et relus. La diffusion automatique reste active.",
       );
       try {
         sessionStorage.removeItem(storageKey);
@@ -299,22 +299,22 @@ export function PlacementStudio({
           <b>12</b>
         </div>
         <div>
-          <span>PRODUCT 360 · PLACEMENTS FACULTATIFS</span>
+          <span>PRODUCT 360 · DIFFUSION AUTOMATIQUE + AJOUTS FACULTATIFS</span>
           <h2>Une offre. Toutes vos vitrines.</h2>
           <p>
-            {snapshot.name} · Choisissez sa présence commerciale, sans changer
-            sa nature.
+            {snapshot.name} · Ajoutez des vitrines, sans changer
+            sa nature. Le placement automatique reste toujours actif.
           </p>
         </div>
         <div className={s.heroCount}>
           <strong>{manual ? draft.storefronts.length : "Auto"}</strong>
           <span>
             {manual
-              ? "vitrine" +
+              ? "ajout" +
                 (draft.storefronts.length > 1 ? "s" : "") +
-                " choisie" +
+                " facultatif" +
                 (draft.storefronts.length > 1 ? "s" : "")
-              : "Règles natives préservées"}
+              : "Placement natif toujours actif"}
           </span>
         </div>
       </header>
@@ -333,9 +333,9 @@ export function PlacementStudio({
           />
           <ShieldCheck size={21} />
           <span>
-            <strong>Automatique</strong>
+            <strong>Automatique uniquement</strong>
             <small>
-              Aucun réglage obligatoire. Les règles existantes s’appliquent.
+              Les règles existantes restent actives. Aucun ajout facultatif.
             </small>
           </span>
         </label>
@@ -349,9 +349,9 @@ export function PlacementStudio({
           />
           <SlidersHorizontal size={21} />
           <span>
-            <strong>Choisir librement</strong>
+            <strong>Automatique + ajouts libres</strong>
             <small>
-              Votre sélection exacte remplace le placement automatique.
+              Les destinations choisies s’ajoutent au placement automatique.
             </small>
           </span>
         </label>
@@ -403,8 +403,8 @@ export function PlacementStudio({
           <span className={s.eyebrow}>DESTINATIONS COMMERCIALES</span>
           <h3>
             {manual
-              ? "À vous de choisir."
-              : "Vos 12 vitrines, disponibles à tout moment."}
+              ? "Ajoutez vos vitrines facultatives."
+              : "Vos 12 vitrines automatiques restent actives."}
           </h3>
         </div>
         <input
@@ -533,8 +533,8 @@ export function PlacementStudio({
           </span>
           <h3>
             {manual
-              ? draft.storefronts.length + " / 12 vitrines sélectionnées"
-              : "Placement automatique"}
+              ? draft.storefronts.length + " / 12 ajouts possibles"
+              : "Placement automatique actif"}
           </h3>
           <p>{describe(draft)}</p>
           {manual && draft.storefronts.includes("establishments") ? (
@@ -549,15 +549,15 @@ export function PlacementStudio({
           ) : null}
           {manual && !draft.storefronts.length ? (
             <p className={s.warning}>
-              Enregistrer cette sélection retirera l’offre des 12 explorateurs.
-              Son statut et sa page publique restent inchangés.
+              Aucun ajout facultatif. Les destinations automatiques restent actives.
+              Le statut et la page publique restent inchangés.
             </p>
           ) : null}
         </div>
         <ShieldCheck size={30} />
       </section>
       <p className={s.localeNote}>
-        Les destinations sont communes aux versions FR, EN et AR. Les trois
+        Les ajouts sont communs aux versions FR, EN et AR. Les trois
         explorateurs concernent la vitrine Établissements en français.
       </p>
       <section className={s.visibility}>
@@ -609,7 +609,7 @@ export function PlacementStudio({
       {snapshot.config.mode === "manual" &&
       snapshot.config.storefronts.length ? (
         <div className={s.previews}>
-          <span>Vitrines enregistrées</span>
+          <span>Ajouts facultatifs enregistrés · automatique actif</span>
           {STOREFRONTS.filter(
             (row) =>
               row.key !== "establishments" &&
@@ -658,7 +658,7 @@ export function PlacementStudio({
       ) : null}
       <footer className={s.footer}>
         <p>
-          <strong>Facultatif · Une seule offre canonique.</strong> Vos prix,
+          <strong>Automatique actif · Ajouts facultatifs · Une seule offre canonique.</strong> Vos prix,
           médias, stocks et parcours de commande restent ceux de l’offre.
         </p>
         <div>
@@ -679,7 +679,7 @@ export function PlacementStudio({
             onClick={() => void save()}
           >
             {saving ? <LoaderCircle size={17} /> : <Save size={17} />}{" "}
-            {saving ? "Enregistrement…" : "Enregistrer les vitrines"}
+            {saving ? "Enregistrement…" : "Enregistrer les ajouts"}
           </button>
         </div>
       </footer>
