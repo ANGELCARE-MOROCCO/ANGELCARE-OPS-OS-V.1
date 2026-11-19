@@ -45,7 +45,7 @@ begin
  if (country_data->>'sessions')::int <> 2 then raise exception 'R6 country filtering incorrect: %',country_data; end if;
  if (country_data->>'geoSessions')::int <> 1 then raise exception 'R6 country mapping incorrect'; end if;
  select not has_function_privilege('anon','public.angelcare_xray_historical_r6(timestamptz,timestamptz,text,text,text,text,text,text,text,text,text,text,text)','EXECUTE'),
-        not has_function_privilege('authenticated','public.angelcare_xray_historical_r6(timestamptz,timestamptz,text,text,text,text,text,text,text,text,text,text,text,text,text)','EXECUTE')
+        not has_function_privilege('authenticated','public.angelcare_xray_historical_r6(timestamptz,timestamptz,text,text,text,text,text,text,text,text,text,text,text)','EXECUTE')
  into deny_anon,deny_auth;
  if not deny_anon or not deny_auth then raise exception 'R6 historical RPC leaked to unauthenticated roles'; end if;
 end $$;
