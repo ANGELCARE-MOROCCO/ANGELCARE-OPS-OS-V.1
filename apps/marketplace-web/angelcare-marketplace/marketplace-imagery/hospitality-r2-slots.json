@@ -1,275 +1,277 @@
 [
   {
     "id": "hospitality.hospitality-r2.hero.main",
-    "section": "Hospitality Signature R2 · hero",
-    "label": "01 · Hero",
+    "section": "Opening · approved native hero",
+    "label": "Hero · Main hotel atmosphere",
     "sequence": true,
     "owner": "editable",
     "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/hospitality.webp"
   },
   {
     "id": "hospitality.hospitality-r2.hero.inset.kids",
-    "section": "Hospitality Signature R2 · hero",
-    "label": "01 · Hero · Kids Club",
+    "section": "Opening · approved native hero",
+    "label": "Hero · Kids Club inset",
     "sequence": true,
     "owner": "editable",
     "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/games.webp"
   },
   {
     "id": "hospitality.hospitality-r2.hero.inset.family",
-    "section": "Hospitality Signature R2 · hero",
-    "label": "01 · Hero · Familles",
+    "section": "Opening · approved native hero",
+    "label": "Hero · Family stay inset",
     "sequence": true,
     "owner": "editable",
     "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/family.webp"
   },
   {
     "id": "hospitality.hospitality-r2.comparison.standard",
-    "section": "Hospitality Signature R2 · comparison",
-    "label": "02 · Séjour ordinaire",
+    "section": "Archived · compatibility only",
+    "label": "Historical comparison · original stay",
     "sequence": true,
     "owner": "editable",
-    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/hospitality.webp"
+    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/hospitality.webp",
+    "condition": "Legacy image from the previous presentation; not currently mounted in the executive journey"
   },
   {
     "id": "hospitality.hospitality-r2.comparison.signature",
-    "section": "Hospitality Signature R2 · comparison",
-    "label": "02 · Séjour signature",
+    "section": "01 · Executive value",
+    "label": "Executive value · family experience",
     "sequence": true,
     "owner": "editable",
     "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/games.webp"
   },
   {
     "id": "hospitality.hospitality-r2.world.kids",
-    "section": "Hospitality Signature R2 · world",
-    "label": "04 · Kids Club",
+    "section": "02 · Four hospitality experiences",
+    "label": "Kids Club · selected experience",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/games.webp",
+    "condition": "Visible when Kids Club is selected in the four-experience selector"
+  },
+  {
+    "id": "hospitality.hospitality-r2.world.guest",
+    "section": "02 · Four hospitality experiences",
+    "label": "Guest childcare · selected experience",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/care.webp",
+    "condition": "Visible when Guest Childcare is selected in the four-experience selector"
+  },
+  {
+    "id": "hospitality.hospitality-r2.world.concierge",
+    "section": "02 · Four hospitality experiences",
+    "label": "Family concierge · selected experience",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/family.webp",
+    "condition": "Visible when Family Concierge is selected in the four-experience selector"
+  },
+  {
+    "id": "hospitality.hospitality-r2.world.seasons",
+    "section": "02 · Four hospitality experiences",
+    "label": "Events and seasons · selected experience",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/holidays.webp",
+    "condition": "Visible when Events & Seasons is selected in the four-experience selector"
+  },
+  {
+    "id": "hospitality.hospitality-r2.property.city",
+    "section": "04 · Hotel property designer",
+    "label": "City hotel · selected property",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/hospitality.webp",
+    "condition": "Visible when City Hotel is selected in the property designer"
+  },
+  {
+    "id": "hospitality.hospitality-r2.property.resort",
+    "section": "04 · Hotel property designer",
+    "label": "Destination resort · selected property",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/games.webp",
+    "condition": "Visible when Destination Resort is selected in the property designer"
+  },
+  {
+    "id": "hospitality.hospitality-r2.property.season",
+    "section": "04 · Hotel property designer",
+    "label": "Seasonal destination · selected property",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/holidays.webp",
+    "condition": "Visible when Seasonal Destination is selected in the property designer"
+  },
+  {
+    "id": "hospitality.hospitality-r2.age.3-6",
+    "section": "05 · Age-appropriate programmes",
+    "label": "Ages 3–6 · programme photo",
+    "sequence": true,
+    "owner": "editable",
+    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/montessori.webp"
+  },
+  {
+    "id": "hospitality.hospitality-r2.age.7-12",
+    "section": "05 · Age-appropriate programmes",
+    "label": "Ages 7–12 · programme photo",
     "sequence": true,
     "owner": "editable",
     "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/games.webp"
   },
   {
-    "id": "hospitality.hospitality-r2.world.guest",
-    "section": "Hospitality Signature R2 · world",
-    "label": "04 · Guest Childcare",
-    "sequence": true,
-    "owner": "editable",
-    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/care.webp"
-  },
-  {
-    "id": "hospitality.hospitality-r2.world.concierge",
-    "section": "Hospitality Signature R2 · world",
-    "label": "04 · Family Concierge",
-    "sequence": true,
-    "owner": "editable",
-    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/family.webp"
-  },
-  {
-    "id": "hospitality.hospitality-r2.world.seasons",
-    "section": "Hospitality Signature R2 · world",
-    "label": "04 · Programmes saisonniers",
+    "id": "hospitality.hospitality-r2.age.13-16",
+    "section": "05 · Age-appropriate programmes",
+    "label": "Ages 13–16 · programme photo",
     "sequence": true,
     "owner": "editable",
     "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/holidays.webp"
   },
   {
-    "id": "hospitality.hospitality-r2.property.city",
-    "section": "Hospitality Signature R2 · property",
-    "label": "06 · Hôtel urbain",
-    "sequence": true,
-    "owner": "editable",
-    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/hospitality.webp",
-    "condition": "Visible when property.city is selected in the interactive hospitality chapter"
-  },
-  {
-    "id": "hospitality.hospitality-r2.property.resort",
-    "section": "Hospitality Signature R2 · property",
-    "label": "06 · Resort",
-    "sequence": true,
-    "owner": "editable",
-    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/games.webp",
-    "condition": "Visible when property.resort is selected in the interactive hospitality chapter"
-  },
-  {
-    "id": "hospitality.hospitality-r2.property.season",
-    "section": "Hospitality Signature R2 · property",
-    "label": "06 · Destination saisonnière",
-    "sequence": true,
-    "owner": "editable",
-    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/holidays.webp",
-    "condition": "Visible when property.season is selected in the interactive hospitality chapter"
-  },
-  {
-    "id": "hospitality.hospitality-r2.age.3-6",
-    "section": "Hospitality Signature R2 · age",
-    "label": "07 · Âge 3 à 6 ans",
-    "sequence": true,
-    "owner": "editable",
-    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/montessori.webp",
-    "condition": "Visible when age.3-6 is selected in the interactive hospitality chapter"
-  },
-  {
-    "id": "hospitality.hospitality-r2.age.7-12",
-    "section": "Hospitality Signature R2 · age",
-    "label": "07 · Âge 7 à 12 ans",
-    "sequence": true,
-    "owner": "editable",
-    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/games.webp",
-    "condition": "Visible when age.7-12 is selected in the interactive hospitality chapter"
-  },
-  {
-    "id": "hospitality.hospitality-r2.age.13-16",
-    "section": "Hospitality Signature R2 · age",
-    "label": "07 · Âge 13 à 16 ans",
-    "sequence": true,
-    "owner": "editable",
-    "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/holidays.webp",
-    "condition": "Visible when age.13-16 is selected in the interactive hospitality chapter"
-  },
-  {
     "id": "hospitality.hospitality-r2.atlas.discovery",
-    "section": "Hospitality Signature R2 · atlas",
-    "label": "08 · Expérience discovery",
+    "section": "06 · Activities and experiences",
+    "label": "Discovery · activity photo",
     "sequence": true,
     "owner": "editable",
     "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/holidays.webp"
   },
   {
     "id": "hospitality.hospitality-r2.atlas.nature",
-    "section": "Hospitality Signature R2 · atlas",
-    "label": "08 · Expérience nature",
+    "section": "06 · Activities and experiences",
+    "label": "Nature · activity photo",
     "sequence": true,
     "owner": "editable",
     "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/family.webp"
   },
   {
     "id": "hospitality.hospitality-r2.atlas.animation",
-    "section": "Hospitality Signature R2 · atlas",
-    "label": "08 · Expérience animation",
+    "section": "06 · Activities and experiences",
+    "label": "Animation · activity photo",
     "sequence": true,
     "owner": "editable",
     "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/games.webp"
   },
   {
     "id": "hospitality.hospitality-r2.atlas.workshops",
-    "section": "Hospitality Signature R2 · atlas",
-    "label": "08 · Expérience workshops",
+    "section": "06 · Activities and experiences",
+    "label": "Workshops · activity photo",
     "sequence": true,
     "owner": "editable",
     "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/montessori.webp"
   },
   {
     "id": "hospitality.hospitality-r2.atlas.play",
-    "section": "Hospitality Signature R2 · atlas",
-    "label": "08 · Expérience play",
+    "section": "06 · Activities and experiences",
+    "label": "Play · activity photo",
     "sequence": true,
     "owner": "editable",
     "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/games.webp"
   },
   {
     "id": "hospitality.hospitality-r2.atlas.environment",
-    "section": "Hospitality Signature R2 · atlas",
-    "label": "08 · Expérience environment",
+    "section": "06 · Activities and experiences",
+    "label": "Environmental discovery · activity photo",
     "sequence": true,
     "owner": "editable",
     "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/holidays.webp"
   },
   {
     "id": "hospitality.hospitality-r2.atlas.celebration",
-    "section": "Hospitality Signature R2 · atlas",
-    "label": "08 · Expérience celebration",
+    "section": "06 · Activities and experiences",
+    "label": "Celebrations · activity photo",
     "sequence": true,
     "owner": "editable",
     "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/family.webp"
   },
   {
     "id": "hospitality.hospitality-r2.atlas.kidsclub",
-    "section": "Hospitality Signature R2 · atlas",
-    "label": "08 · Expérience kidsclub",
+    "section": "06 · Activities and experiences",
+    "label": "Kids Club · activity photo",
     "sequence": true,
     "owner": "editable",
     "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/care.webp"
   },
   {
     "id": "hospitality.hospitality-r2.day.arrival",
-    "section": "Hospitality Signature R2 · day",
-    "label": "09 · Étape arrival",
+    "section": "03 · Guest journey",
+    "label": "Guest arrival · selected moment",
     "sequence": true,
     "owner": "editable",
     "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/hospitality.webp",
-    "condition": "Visible when day.arrival is selected in the interactive hospitality chapter"
+    "condition": "Visible when Arrival is selected in the guest journey"
   },
   {
     "id": "hospitality.hospitality-r2.day.discover",
-    "section": "Hospitality Signature R2 · day",
-    "label": "09 · Étape discover",
+    "section": "03 · Guest journey",
+    "label": "Guest discovery · selected moment",
     "sequence": true,
     "owner": "editable",
     "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/games.webp",
-    "condition": "Visible when day.discover is selected in the interactive hospitality chapter"
+    "condition": "Visible when Discovery is selected in the guest journey"
   },
   {
     "id": "hospitality.hospitality-r2.day.create",
-    "section": "Hospitality Signature R2 · day",
-    "label": "09 · Étape create",
+    "section": "03 · Guest journey",
+    "label": "Guest creativity · selected moment",
     "sequence": true,
     "owner": "editable",
     "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/montessori.webp",
-    "condition": "Visible when day.create is selected in the interactive hospitality chapter"
+    "condition": "Visible when Creative Workshops is selected in the guest journey"
   },
   {
     "id": "hospitality.hospitality-r2.day.parents",
-    "section": "Hospitality Signature R2 · day",
-    "label": "09 · Étape parents",
+    "section": "03 · Guest journey",
+    "label": "Parents' time · selected moment",
     "sequence": true,
     "owner": "editable",
     "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/care.webp",
-    "condition": "Visible when day.parents is selected in the interactive hospitality chapter"
+    "condition": "Visible when Parents' Time is selected in the guest journey"
   },
   {
     "id": "hospitality.hospitality-r2.day.departure",
-    "section": "Hospitality Signature R2 · day",
-    "label": "09 · Étape departure",
+    "section": "03 · Guest journey",
+    "label": "Guest departure · selected moment",
     "sequence": true,
     "owner": "editable",
     "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/family.webp",
-    "condition": "Visible when day.departure is selected in the interactive hospitality chapter"
+    "condition": "Visible when Departure is selected in the guest journey"
   },
   {
     "id": "hospitality.hospitality-r2.operations.main",
-    "section": "Hospitality Signature R2 · operations",
-    "label": "10 · Opérations · photo",
+    "section": "07 · Hotel operating partnership",
+    "label": "Operational partnership · main photo",
     "sequence": true,
     "owner": "editable",
     "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/care.webp"
   },
   {
     "id": "hospitality.hospitality-r2.trust.family",
-    "section": "Hospitality Signature R2 · trust",
-    "label": "12 · Confiance · familles",
+    "section": "11 · Trust and reassurance",
+    "label": "Guest and family confidence · main photo",
     "sequence": true,
     "owner": "editable",
     "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/family.webp"
   },
   {
     "id": "hospitality.hospitality-r2.model.city",
-    "section": "Hospitality Executive · deployment models",
-    "label": "09 · Modèle hôtel urbain",
+    "section": "09 · Partnership models",
+    "label": "City hotel · partnership model",
     "sequence": true,
     "owner": "editable",
     "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/hospitality.webp"
   },
   {
     "id": "hospitality.hospitality-r2.model.resort",
-    "section": "Hospitality Executive · deployment models",
-    "label": "09 · Modèle resort",
+    "section": "09 · Partnership models",
+    "label": "Resort · partnership model",
     "sequence": true,
     "owner": "editable",
     "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/games.webp"
   },
   {
     "id": "hospitality.hospitality-r2.model.season",
-    "section": "Hospitality Executive · deployment models",
-    "label": "09 · Modèle saisonnier",
+    "section": "09 · Partnership models",
+    "label": "Seasonal destination · partnership model",
     "sequence": true,
     "owner": "editable",
     "source": "/angelcare-marketplace/storefront-imagery-r3/hospitality/holidays.webp"
