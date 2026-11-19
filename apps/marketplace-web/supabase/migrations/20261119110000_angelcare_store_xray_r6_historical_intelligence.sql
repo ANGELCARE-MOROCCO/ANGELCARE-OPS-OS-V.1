@@ -63,7 +63,9 @@ begin
       from public.angelcare_marketplace_live_experience_interactions e
      where e.event_type like 'xray_%'
        and e.created_at >= p_start and e.created_at < p_end
-       and (nullif(p_country,'') is null or upper(e.metadata #>> '{network,countryCode}') = upper(p_country))
+       and (nullif(p_country,'') is null or
+         (p_country = '??' and coalesce(nullif(upper(e.metadata #>> '{network,countryCode}'),''),'??')='??') or
+         (p_country <> '??' and upper(e.metadata #>> '{network,countryCode}') = upper(p_country)))
        and (nullif(p_device,'') is null or e.device_class = p_device)
        and (nullif(p_route,'') is null or e.pathname like '%' || p_route || '%')
        and (nullif(p_source,'') is null or e.metadata #>> '{traffic,source}' = p_source)
