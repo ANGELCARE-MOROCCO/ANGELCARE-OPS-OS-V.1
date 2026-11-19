@@ -69,6 +69,27 @@ function BarTimeline({history,kind}:{history:XrayHistoricalSummary;kind:'session
     {points.length?points.map((x,i)=><div key={i} className={css.timelineColumn} title={x.bucket+' · '+formatInt(x[kind])} style={{height:Math.max(1,(x[kind]/max)*100)+'%'}}/>):<p>Pas d’événements pour construire la chronologie.</p>}
   </div>
 }
+function CountryEvolution({history}:{history:XrayHistoricalSummary}){
+  const series=history.countryTimeline
+  const top=history.countries.filter(c=>c.code!=='??').slice(0,8).map(c=>c.code)
+  const times=[...new Set(series.map(x=>x.bucket))].sort()
+  const maximum=Math.max(1,...series.map(x=>x.sessions))
+  const colors=['#1583d5','#12b9b3','#ed7665','#9c70de','#d6a12a','#2c6e9e','#25ad73','#df6996']
+  return <div className={css.evolution}>
+    <div className={css.evolutionHeading}><h3>Évolution géographique quotidienne</h3><small>Huit pays principaux · sessions observées par jour selon la même sélection</small></div>
+    {series.length>0?<><svg className={css.geoTrendChart} viewBox="0 0 900 240" preserveAspectRatio="none" role="img" aria-label="Tendances quotidiennes des sessions par pays">
+      {[0,1,2,3,4].map(i=><line key={i} x1="36" y1={20+i*47} x2="880" y2={20+i*47} stroke="#e1ebf1" strokeWidth="1"/>)}
+      {top.map((code,j)=>{
+        const data=new Map(series.filter(x=>x.code===code).map(x=>[x.bucket,x.sessions]))
+        const pts=times.map((bucket,i)=>(36+(times.length<=1?0:i/(times.length-1)*844))+','+(208-(data.get(bucket)||0)/maximum*188)).join(' ')
+        return <polyline key={code} fill="none" stroke={colors[j%colors.length]} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" points={pts}/>
+      })}
+    </svg><div className={css.countryLegend}>{top.map((code,i)=><span key={code}><i style={{background:colors[i%colors.length]}}/>{flag(code)} {code}</span>)}</div>
+    <div className={css.trendRange}>{times[0]?.slice(0,10)} — {times[times.length-1]?.slice(0,10)}</div>
+    </>:<p>Aucune série géographique disponible pour la sélection. Aucune trajectoire n’est simulée.</p>}
+  </div>
+}
+
 function Metric({label,value,sub,accent}:{label:string;value:string|number;sub?:string;accent?:string}) {
   return <div className={css.metric} data-accent={accent||'blue'}><small>{label}</small><strong>{typeof value==='number'?formatInt(value):value}</strong>{sub?<span>{sub}</span>:null}</div>
 }
@@ -235,7 +256,7 @@ export function HistoricalIntelligenceR6(){
       <div className={css.views}>{([
         ['world','🌍 Vue mondiale'],['region','📍 Régions'],['density','🔥 Densité'],['live','📡 Période récente'],['evolution','📈 Évolution']
       ] as Array<[ViewMode,string]>).map(([k,label])=><button key={k} className={view===k?css.selected:''} onClick={()=>{setView(k);if(k==='density')setLayer('density')}}>{label}</button>)}</div>
-      {view==='evolution'?<div className={css.evolution}><h3>Historique géographique</h3><BarTimeline history={history} kind="sessions"/></div>:
+      {view==='evolution'?<CountryEvolution history={history}/>:
        view==='live'?<div className={css.notice}><Activity size={18}/> Pour l’activité réellement instantanée, utilisez le premier onglet « Live Store ». Cette vue présente uniquement la période historique sélectionnée et ne simule pas de présences en direct.</div>:
       <div className={css.mapGrid}>
         <HistoryMap locations={history.locations} mode={layer} selected={selected?.city||null} onSelect={setSelected}/>
@@ -247,7 +268,7 @@ export function HistoricalIntelligenceR6(){
         </aside>
       </div>}
       {selected?<div className={css.locationDetail}><MapPin size={16}/><strong>{selected.city||selected.region||selected.code}</strong><span>{formatInt(selected.sessions)} sessions · {formatInt(selected.commerce)} commerce · {formatInt(selected.errors)} risques</span><small>Position approximative par IP, cellule de 0,1 degré, jamais adresse ou GPS</small><button onClick={()=>setSelected(null)}><X size={14}/></button></div>:null}
-      <div className={css.foot}><CheckCircle2 size={16}/> {formatInt(mapped)} sessions distinctes associées à des villes approximatives · {formatInt(unmapped)} sans zone de ville fiable. Les cellules de carte peuvent se recouper entre sessions. Ces dernières ne sont pas positionnées sur la carte.</div>
+      <div className={css.foot}><CheckCircle2 size={16}/> {formatInt(mapped)} sessions distinctes associées à des villes approximatives · {formatInt(unmapped)} sans zone de ville fiable. Les cellules de carte peuvent représenter plusieurs visites ; les sessions sans ville valide ne reçoivent aucun marqueur.</div>
     </>:!loading&&!error?<div className={css.empty}>Choisissez une période et appliquez les filtres.</div>:null}
   </section>
 }
