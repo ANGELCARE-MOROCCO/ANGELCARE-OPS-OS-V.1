@@ -17,6 +17,8 @@ import type {
   XrayTrafficContext,
   XrayTransition,
   XrayVisitorProfile,
+  XrayHistoricalFilters,
+  XrayHistoricalSummary,
 } from './types'
 
 type Row = Record<string, unknown>
@@ -61,9 +63,12 @@ function requestIp(request: Request) {
   return forwarded.split(',')[0]?.trim() || ''
 }
 
-function parseCoordinate(value: string) {
-  const parsed = Number(value)
-  return Number.isFinite(parsed) ? parsed : null
+function parseCoordinate(value: string, axis: 'latitude' | 'longitude') {
+  const input = value.trim()
+  if (!input || !/^[+-]?(?:\d{1,3})(?:\.\d{1,12})?$/.test(input)) return null
+  const parsed = Number(input)
+  if (!Number.isFinite(parsed) || Math.abs(parsed) > (axis === 'latitude' ? 90 : 180)) return null
+  return parsed
 }
 
 function requestNetwork(request: Request): XrayNetworkContext {
@@ -71,8 +76,11 @@ function requestNetwork(request: Request): XrayNetworkContext {
   const countryCode = header(request, ['cf-ipcountry', 'x-vercel-ip-country', 'x-country-code', 'x-geo-country']).toUpperCase() || null
   const cityRaw = header(request, ['x-vercel-ip-city', 'x-city', 'x-geo-city', 'cf-ipcity'])
   const regionRaw = header(request, ['x-vercel-ip-country-region', 'x-region', 'x-geo-region', 'cf-region'])
-  const latitude = parseCoordinate(header(request, ['x-vercel-ip-latitude', 'x-geo-latitude', 'cf-iplatitude']))
-  const longitude = parseCoordinate(header(request, ['x-vercel-ip-longitude', 'x-geo-longitude', 'cf-iplongitude']))
+  const rawLatitude = parseCoordinate(header(request, ['x-vercel-ip-latitude', 'x-geo-latitude', 'cf-iplatitude']), 'latitude')
+  const rawLongitude = parseCoordinate(header(request, ['x-vercel-ip-longitude', 'x-geo-longitude', 'cf-iplongitude']), 'longitude')
+  const validPair = rawLatitude !== null && rawLongitude !== null && !(rawLatitude === 0 && rawLongitude === 0)
+  const latitude = validPair ? rawLatitude : null
+  const longitude = validPair ? rawLongitude : null
   const timezone = header(request, ['x-vercel-ip-timezone', 'x-geo-timezone', 'cf-timezone']) || null
   const asn = header(request, ['x-asn', 'x-geo-asn', 'cf-asn']) || null
   const networkOrganization = header(request, ['x-network-organization', 'x-geo-organization', 'cf-organization']) || null
@@ -699,4 +707,96 @@ export async function getVisitorXrayProfile(_context: MarketplaceRequestContext,
   }
   const sessions = rowsToSessions((data || []) as Row[])
   return buildVisitorProfiles(sessions)[0] || null
+}
+
+
+/** R6 historical intelligence. This RPC runs aggregate queries in PostgreSQL and never
+ * downloads an unbounded stream of individual telemetry events to the admin browser.
+ * No stored history is synthesized; the production retention boundary remains unknown
+ * until an explicit database audit is carried out. */
+export async function getXrayHistoricalR6(
+  _context: MarketplaceRequestContext,
+  filters: XrayHistoricalFilters,
+): Promise<XrayHistoricalSummary> {
+  const fromMs = Date.parse(filters.from)
+  const toMs = Date.parse(filters.to)
+  if (!Number.isFinite(fromMs) || !Number.isFinite(toMs) ||
+      fromMs >= toMs || toMs > Date.now() + 60_000 ||
+      toMs - fromMs > 367 * 86_400_000) {
+    throw new MarketplaceError('VALIDATION_ERROR', 'Invalid historical time range (maximum 367 days).')
+  }
+  if (!['hour', 'day', 'week', 'month'].includes(filters.granularity)) {
+    throw new MarketplaceError('VALIDATION_ERROR', 'Unsupported historical granularity.')
+  }
+  try { new Intl.DateTimeFormat('en-US', { timeZone: filters.timezone }).format(0) }
+  catch { throw new MarketplaceError('VALIDATION_ERROR', 'Unsupported analytics timezone.') }
+
+  const field = (name: keyof XrayHistoricalFilters, max = 120) => {
+    const value = String(filters[name] || '').trim()
+    if (value.length > max) throw new MarketplaceError('VALIDATION_ERROR', 'Analytics filter too long.')
+    return value || null
+  }
+  const db = await createServiceClient()
+  const { data, error } = await db.rpc('angelcare_xray_historical_r6', {
+    p_start: new Date(fromMs).toISOString(),
+    p_end: new Date(toMs).toISOString(),
+    p_granularity: filters.granularity,
+    p_timezone: filters.timezone,
+    p_country: field('country', 2),
+    p_device: field('device', 30),
+    p_route: field('route', 240),
+    p_source: field('source', 80),
+    p_intent: field('intent', 60),
+    p_campaign: field('campaign', 80),
+    p_locale: field('locale', 2),
+    p_event: field('event', 50),
+    p_search: field('search', 120),
+  })
+  if (error) {
+    if (/function .*angelcare_xray_historical_r6.*does not exist|PGRST202/i.test(error.message || '')) {
+      throw new MarketplaceError('CONFIGURATION_ERROR', 'Historical intelligence migration has not been applied.')
+    }
+    fail('charger Store X-Ray historique', error)
+  }
+  const raw = object(data)
+  const locations = array(raw.locations).map((value) => object(value)).filter((value) =>
+    Number.isFinite(Number(value.lat)) && Number.isFinite(Number(value.lng)) &&
+    Math.abs(Number(value.lat)) <= 90 && Math.abs(Number(value.lng)) <= 180 &&
+    !(Number(value.lat) === 0 && Number(value.lng) === 0))
+  return {
+    from: String(raw.from || filters.from),
+    to: String(raw.to || filters.to),
+    timezone: filters.timezone,
+    granularity: filters.granularity,
+    events: num(raw.events),
+    sessions: num(raw.sessions),
+    known: num(raw.known),
+    errors: num(raw.errors),
+    commerce: num(raw.commerce),
+    firstObserved: typeof raw.firstObserved === 'string' ? raw.firstObserved : null,
+    lastObserved: typeof raw.lastObserved === 'string' ? raw.lastObserved : null,
+    exact: true,
+    retentionVerified: false,
+    geoSessions: num(raw.geoSessions),
+    geoCellsTotal: num(raw.geoCellsTotal),
+    countries: array(raw.countries).map((value) => {
+      const v = object(value)
+      return { code: text(v.code) || '??', sessions: num(v.sessions), events: num(v.events),
+        commerce: num(v.commerce), errors: num(v.errors) }
+    }),
+    timeline: array(raw.timeline).map((value) => {
+      const v = object(value)
+      return { bucket: text(v.bucket), sessions: num(v.sessions), events: num(v.events),
+        commerce: num(v.commerce), errors: num(v.errors) }
+    }),
+    locations: locations.map((v) => ({
+      code: text(v.code), region: text(v.region) || null, city: text(v.city) || null,
+      lat: num(v.lat), lng: num(v.lng), sessions: num(v.sessions),
+      commerce: num(v.commerce), errors: num(v.errors),
+    })),
+    countryTimeline: array(raw.countryTimeline).map((value) => {
+      const v = object(value)
+      return { code: text(v.code), bucket: text(v.bucket), sessions: num(v.sessions) }
+    }),
+  }
 }

@@ -1,0 +1,64 @@
+name: AngelCare Store X-Ray R6 — History and Geographic Integrity
+on:
+  push:
+    branches:
+      - feat/angelcare-store-xray-r6-time-geo-20261119
+      - upgrade/next-angelcare-upgrade
+    paths:
+      - 'apps/marketplace-web/angelcare-marketplace/store-xray/**'
+      - 'apps/marketplace-web/app/api/angelcare-marketplace/analytics/xray/**'
+      - 'apps/marketplace-web/supabase/migrations/20261119110000_angelcare_store_xray_r6_historical_intelligence.sql'
+      - 'apps/marketplace-web/scripts/verify-store-xray-r6.test.mjs'
+      - 'apps/marketplace-web/scripts/verify-store-xray-r6-postgres.sql'
+      - 'apps/marketplace-web/tsconfig.store-xray-r6.json'
+      - '.github/workflows/store-xray-global-intelligence-r6.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  analytics-r6:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: apps/marketplace-web/package-lock.json
+      - name: Verify historical accuracy, geolocation, privacy and live compatibility
+        working-directory: apps/marketplace-web
+        run: node --test scripts/verify-store-xray-r6.test.mjs
+      - name: Execute R6 migration in disposable PostgreSQL and verify exact aggregates and permissions
+        working-directory: apps/marketplace-web
+        env:
+          PGPASSWORD: postgres
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y postgresql-client >/dev/null
+          psql -h localhost -U postgres -d postgres -v ON_ERROR_STOP=1 -f scripts/verify-store-xray-r6-postgres.sql
+      - name: Install locked Marketplace dependencies
+        working-directory: apps/marketplace-web
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Strict R6 TypeScript
+        working-directory: apps/marketplace-web
+        run: npx tsc -p tsconfig.store-xray-r6.json --noEmit --pretty false
+      - name: Protected Hospitality and Imagery Studio regression
+        working-directory: apps/marketplace-web
+        run: |
+          node --test scripts/verify-hospitality-executive-r3.test.mjs scripts/verify-hospitality-imagery-r4.test.mjs
+          node --experimental-strip-types --test scripts/verify-establishments-imagery-r12.test.mjs

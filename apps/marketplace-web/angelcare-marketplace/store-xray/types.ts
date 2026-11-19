@@ -267,3 +267,72 @@ export interface XraySummary {
   sessionsLive: XraySession[]
   feed: XrayFeedItem[]
 }
+
+
+/** R6 historical aggregates come from a single exact server-side filtered population.
+ * No individual IP, precise device location, identity or raw events are exported. */
+export type XrayHistoricalGranularity = 'hour' | 'day' | 'week' | 'month'
+export type XrayHistoricalLayer = 'presence' | 'commerce' | 'risk' | 'density'
+export interface XrayHistoricalFilters {
+  from: string
+  to: string
+  timezone: string
+  granularity: XrayHistoricalGranularity
+  country?: string
+  device?: string
+  route?: string
+  source?: string
+  intent?: string
+  campaign?: string
+  locale?: string
+  event?: string
+  search?: string
+}
+export interface XrayHistoricalCountry {
+  code: string
+  sessions: number
+  events: number
+  commerce: number
+  errors: number
+}
+export interface XrayHistoricalBucket {
+  bucket: string
+  sessions: number
+  events: number
+  commerce: number
+  errors: number
+}
+export interface XrayHistoricalLocation {
+  code: string
+  region: string | null
+  city: string | null
+  lat: number
+  lng: number
+  sessions: number
+  commerce: number
+  errors: number
+}
+export interface XrayHistoricalCountryTrend { bucket: string; code: string; sessions: number }
+export interface XrayHistoricalSummary {
+  from: string
+  to: string
+  timezone: string
+  granularity: XrayHistoricalGranularity
+  events: number
+  sessions: number
+  known: number
+  errors: number
+  commerce: number
+  firstObserved: string | null
+  lastObserved: string | null
+  /** Exact within the selected period, never a capped raw event sample. */
+  exact: true
+  /** Coverage is only known after the production retention audit. */
+  retentionVerified: false
+  geoSessions: number
+  geoCellsTotal: number
+  countries: XrayHistoricalCountry[]
+  timeline: XrayHistoricalBucket[]
+  locations: XrayHistoricalLocation[]
+  countryTimeline: XrayHistoricalCountryTrend[]
+}

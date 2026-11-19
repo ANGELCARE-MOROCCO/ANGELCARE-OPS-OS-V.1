@@ -1,0 +1,22 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "angelcare-marketplace/store-xray/types.ts",
+    "angelcare-marketplace/store-xray/repository.ts",
+    "angelcare-marketplace/store-xray/StoreXrayCommand.tsx",
+    "angelcare-marketplace/store-xray/GlobalRadarCommand.tsx",
+    "angelcare-marketplace/store-xray/GlobalRadarMap.tsx",
+    "angelcare-marketplace/store-xray/HistoricalIntelligenceR6.tsx",
+    "angelcare-marketplace/store-xray/HistoricalGeoMapR6.tsx",
+    "app/api/angelcare-marketplace/analytics/xray/historical/route.ts",
+    "app/api/angelcare-marketplace/analytics/xray/snapshot/route.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next"
+  ]
+}
