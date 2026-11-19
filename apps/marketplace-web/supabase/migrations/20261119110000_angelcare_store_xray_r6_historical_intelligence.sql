@@ -117,6 +117,30 @@ begin
     'events', (select count(*) from normalized),
     'sessions', (select count(distinct sid) from normalized),
     'known', (select count(distinct sid) from normalized where customer_account_id is not null),
+    'geoSessions', (select count(distinct sid) from normalized
+       where country ~ '^[A-Z]{2} (select count(*) from normalized where is_error),
+    'commerce', (select count(*) from normalized where is_commerce),
+    'firstObserved', (select min(created_at) from normalized),
+    'lastObserved', (select max(created_at) from normalized),
+    'countries',coalesce((select jsonb_agg(to_jsonb(x) order by x.sessions desc) from
+       (select * from countries order by sessions desc limit 250) x),'[]'::jsonb),
+    'timeline',coalesce((select jsonb_agg(to_jsonb(x) order by x.bucket) from
+       (select * from timeseries order by bucket limit 1500) x),'[]'::jsonb),
+    'locations',coalesce((select jsonb_agg(to_jsonb(x) order by x.sessions desc) from
+       (select * from geographical order by sessions desc limit 800) x),'[]'::jsonb)
+  ) into result;
+  return result;
+end;
+$function$;
+
+revoke all on function public.angelcare_xray_historical_r6(
+ timestamptz,timestamptz,text,text,text,text,text,text,text,text,text,text,text
+) from public, anon, authenticated;
+grant execute on function public.angelcare_xray_historical_r6(
+ timestamptz,timestamptz,text,text,text,text,text,text,text,text,text,text,text
+) to service_role;
+ and city is not null and geo_valid is true
+       and not (lat=0 and lng=0)),
     'errors', (select count(*) from normalized where is_error),
     'commerce', (select count(*) from normalized where is_commerce),
     'firstObserved', (select min(created_at) from normalized),
