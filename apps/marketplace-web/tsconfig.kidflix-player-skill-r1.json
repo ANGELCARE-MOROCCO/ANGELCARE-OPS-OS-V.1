@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "skipLibCheck": true,
+    "incremental": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "angelcare-marketplace/kidflix/detail/UniversalInteractivePlayer.tsx",
+    "angelcare-marketplace/kidflix/detail/DiscoveryRails.tsx",
+    "angelcare-marketplace/kidflix/detail/Detail.tsx",
+    "angelcare-marketplace/css-modules.d.ts",
+    "components/angelcare360/transport/sovereign/transport-sovereign-css.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next"
+  ]
+}
