@@ -260,12 +260,19 @@ export function HistoricalIntelligenceR6(){
        view==='live'?<div className={css.notice}><Activity size={18}/> Pour l’activité réellement instantanée, utilisez le premier onglet « Live Store ». Cette vue présente uniquement la période historique sélectionnée et ne simule pas de présences en direct.</div>:
       <div className={css.mapGrid}>
         <HistoryMap locations={history.locations} mode={layer} selected={selected?.city||null} onSelect={setSelected}/>
-        <aside className={css.countries}><div className={css.countryHeading}><h4>Pays & territoires</h4><span>{formatInt(countries.length)} zones</span></div>
+        <aside className={css.countries}>{view==='region'?<>
+          <div className={css.countryHeading}><h4>Régions & villes</h4><span>{formatInt(history.locations.length)} cellules</span></div>
+          {history.locations.map((l,i)=><button key={l.code+l.city+i} onClick={()=>setSelected(l)} className={css.countryRow}>
+            <span>{flag(l.code)}</span><div><strong>{l.city||l.region||l.code}</strong><small>{l.region||'Région non renseignée'} · {formatInt(l.commerce)} commerce</small></div><b>{formatInt(l.sessions)}</b>
+          </button>)}
+          {!history.locations.length?<p className={css.empty}>Aucune ville géographiquement qualifiée disponible.</p>:null}
+        </>:<>
+          <div className={css.countryHeading}><h4>Pays & territoires</h4><span>{formatInt(countries.length)} zones</span></div>
           {countries.map((c,i)=><button key={c.code+String(i)} onClick={()=>{const next={...draft,country:c.code};setDraft(next);apply(next)}} className={css.countryRow}>
             <span>{flag(c.code)}</span><div><strong>{c.code==='??'?'Non résolu':c.code}</strong><small>{formatInt(c.events)} événements · {formatInt(c.commerce)} commerce</small></div><b>{formatInt(c.sessions)}</b>
           </button>)}
           {!countries.length?<p className={css.empty}>Aucun pays observé pour les filtres sélectionnés.</p>:null}
-        </aside>
+        </>}</aside>
       </div>}
       {selected?<div className={css.locationDetail}><MapPin size={16}/><strong>{selected.city||selected.region||selected.code}</strong><span>{formatInt(selected.sessions)} sessions · {formatInt(selected.commerce)} commerce · {formatInt(selected.errors)} risques</span><small>Position approximative par IP, cellule de 0,1 degré, jamais adresse ou GPS</small><button onClick={()=>setSelected(null)}><X size={14}/></button></div>:null}
       <div className={css.foot}><CheckCircle2 size={16}/> {formatInt(mapped)} sessions distinctes associées à des villes approximatives · {formatInt(unmapped)} sans zone de ville fiable. Les cellules de carte peuvent représenter plusieurs visites ; les sessions sans ville valide ne reçoivent aucun marqueur.</div>
