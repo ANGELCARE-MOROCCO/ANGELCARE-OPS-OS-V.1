@@ -113,6 +113,48 @@ begin
     where country ~ '^[A-Z]{2}$' and city is not null
       and geo_valid is true and not (lat=0 and lng=0)
     group by country,region,city,round(lat,1),round(lng,1)
+  ),
+  geo_series as (
+    select date_trunc('day', timezone(p_timezone,n.created_at)) as bucket,
+           n.country as code, count(distinct n.sid)::integer as sessions
+    from normalized n
+    where n.country in (
+      select code from countries where code ~ '^[A-Z]{2}
+    'from',p_start,'to',p_end,'timezone',p_timezone,'granularity',p_granularity,
+    'events', (select count(*) from normalized),
+    'sessions', (select count(distinct sid) from normalized),
+    'known', (select count(distinct sid) from normalized where customer_account_id is not null),
+    'geoSessions', (select count(distinct sid) from normalized
+       where country ~ '^[A-Z]{2}$' and city is not null
+         and geo_valid is true and not (lat=0 and lng=0)),
+    'errors', (select count(*) from normalized where is_error),
+    'commerce', (select count(*) from normalized where is_commerce),
+    'firstObserved', (select min(created_at) from normalized),
+    'lastObserved', (select max(created_at) from normalized),
+    'geoCellsTotal', (select count(*) from geographical),
+    'countries',coalesce((select jsonb_agg(to_jsonb(x) order by x.sessions desc) from
+       (select * from countries order by sessions desc limit 250) x),'[]'::jsonb),
+    'timeline',coalesce((select jsonb_agg(to_jsonb(x) order by x.bucket) from
+       (select * from timeseries order by bucket limit 9000) x),'[]'::jsonb),
+    'locations',coalesce((select jsonb_agg(to_jsonb(x) order by x.sessions desc) from
+       (select * from geographical order by sessions desc limit 800) x),'[]'::jsonb),
+    'countryTimeline',coalesce((select jsonb_agg(to_jsonb(x) order by x.bucket, x.code) from
+       (select * from geo_series order by bucket, code limit 3000) x),'[]'::jsonb)
+  ) into result;
+  return result;
+end;
+$function$;
+
+revoke all on function public.angelcare_xray_historical_r6(
+ timestamptz,timestamptz,text,text,text,text,text,text,text,text,text,text,text
+) from public, anon, authenticated;
+grant execute on function public.angelcare_xray_historical_r6(
+ timestamptz,timestamptz,text,text,text,text,text,text,text,text,text,text,text
+) to service_role;
+
+      order by sessions desc limit 8
+    )
+    group by 1,2
   )
   select jsonb_build_object(
     'from',p_start,'to',p_end,'timezone',p_timezone,'granularity',p_granularity,
