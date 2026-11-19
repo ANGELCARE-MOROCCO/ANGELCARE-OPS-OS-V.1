@@ -387,18 +387,23 @@ export async function businessExposure(
     }
     // Offers solely in draft/hidden categories never become eligible through a schema bridge.
     const placement = normalizePlacement(row.storefront_placement);
-    const reason = categories.length
-      ? placement.mode === "manual"
-        ? placement.storefronts.includes(world) &&
-          ![
-            "hidden",
-            "territory_restricted",
-            "cancelled",
-            "suspended",
-          ].includes(string(row.availability_status))
-          ? ("manual_placement" as const)
-          : null
-        : candidateReason(world, schema, categories, audience)
+    // Native storefront doctrine is always evaluated, including when an
+    // optional manual distribution record exists. Manual selection adds a
+    // destination but never suppresses automatic eligibility or identity.
+    const publicAvailability = ![
+      "hidden",
+      "territory_restricted",
+      "cancelled",
+      "suspended",
+    ].includes(string(row.availability_status));
+    const nativeReason = categories.length
+      ? candidateReason(world, schema, categories, audience)
+      : null;
+    const optionalAddition = placement.mode === "manual" &&
+      placement.storefronts.includes(world) && publicAvailability &&
+      categories.length > 0;
+    const reason = publicAvailability
+      ? nativeReason || (optionalAddition ? ("manual_placement" as const) : null)
       : null;
     const valid = Boolean(reason && id && string(row.slug));
     records.push({
@@ -413,9 +418,8 @@ export async function businessExposure(
           ? "NO_PUBLIC_CATEGORY"
           : !string(row.slug)
             ? "NO_PUBLIC_SLUG"
-            : placement.mode === "manual" &&
-                !placement.storefronts.includes(world)
-              ? "MANUAL_EXCLUSION"
+            : !publicAvailability
+              ? "PUBLIC_VISIBILITY_RESTRICTED"
               : "OTHER_AUDIENCE_OR_DOCTRINE",
       destination: valid
         ? `/angelcare-marketplace/${locale}/marketplace/item/${encodeURIComponent(string(row.slug))}`
