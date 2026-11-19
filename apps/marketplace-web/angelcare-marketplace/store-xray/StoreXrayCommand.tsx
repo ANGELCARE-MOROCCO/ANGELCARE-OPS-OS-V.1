@@ -12,9 +12,10 @@ import {
 import type { XraySession, XraySummary, XrayVisitorProfile } from './types'
 import styles from './store-xray.module.css'
 import { GlobalRadarCommand } from './GlobalRadarCommand'
+import { HistoricalIntelligenceR6 } from './HistoricalIntelligenceR6'
 
 type ApiEnvelope<T> = { data?: T; error?: { message?: string } }
-type Tab = 'live' | 'visitors' | 'journeys' | 'commerce' | 'discovery' | 'experience' | 'performance' | 'errors' | 'alerts' | 'capabilities'
+type Tab = 'historical' | 'live' | 'visitors' | 'journeys' | 'commerce' | 'discovery' | 'experience' | 'performance' | 'errors' | 'alerts' | 'capabilities'
 type Segment = 'all' | 'active' | 'returning' | 'known' | 'high-intent' | 'friction' | 'errors' | 'sanila' | 'checkout' | 'booking'
 
 function flag(code: string | null | undefined) {
@@ -99,7 +100,7 @@ export function StoreXrayCommand({ initial }: { initial: XraySummary }) {
   const [compare, setCompare] = useState<string[]>([])
 
   async function refresh() {
-    if (document.visibilityState !== 'visible') return
+    if (document.visibilityState !== 'visible' || tab === 'historical') return
     setLoading(true)
     try {
       const response = await fetch(`/api/angelcare-marketplace/analytics/xray/snapshot?window=${windowMinutes}`, { cache: 'no-store', credentials: 'same-origin' })
@@ -117,16 +118,16 @@ export function StoreXrayCommand({ initial }: { initial: XraySummary }) {
   }
 
   useEffect(() => {
-    if (paused) return
+    if (paused || tab === 'historical') return
     const id = window.setInterval(() => { void refresh() }, refreshMs)
     return () => window.clearInterval(id)
-  }, [paused, refreshMs, windowMinutes, selected?.sessionKey, follow])
+  }, [paused, tab, refreshMs, windowMinutes, selected?.sessionKey, follow])
 
   useEffect(() => {
-    const onVisibility = () => { if (document.visibilityState === 'visible' && !paused) void refresh() }
+    const onVisibility = () => { if (document.visibilityState === 'visible' && !paused && tab !== 'historical') void refresh() }
     document.addEventListener('visibilitychange', onVisibility)
     return () => document.removeEventListener('visibilitychange', onVisibility)
-  }, [paused, windowMinutes])
+  }, [paused, tab, windowMinutes])
 
   const returningVisitors = useMemo(() => new Set(snapshot.visitorProfiles.filter((profile) => profile.sessions > 1).map((profile) => profile.visitorKey)), [snapshot.visitorProfiles])
   const filtered = useMemo(() => snapshot.sessionsLive.filter((session) => {
@@ -151,7 +152,7 @@ export function StoreXrayCommand({ initial }: { initial: XraySummary }) {
   const compareSessions = compare.map((key) => snapshot.sessionsLive.find((session) => session.sessionKey === key)).filter((value): value is XraySession => Boolean(value))
 
   const tabs: Array<[Tab, string]> = [
-    ['live', 'Live Store'], ['visitors', 'Visiteurs'], ['journeys', 'Journeys'], ['commerce', 'Commerce'], ['discovery', 'Discovery'],
+    ['live', 'Live Store'], ['historical', 'Historique & carte R6'], ['visitors', 'Visiteurs'], ['journeys', 'Journeys'], ['commerce', 'Commerce'], ['discovery', 'Discovery'],
     ['experience', 'Experience'], ['performance', 'Performance'], ['errors', 'Erreurs'], ['alerts', `Alertes ${snapshot.alerts.filter((x) => x.level !== 'success').length || ''}`.trim()], ['capabilities', 'X-Ray MAX'],
   ]
 
@@ -173,6 +174,7 @@ export function StoreXrayCommand({ initial }: { initial: XraySummary }) {
     {lastError ? <div className={styles.errorBanner}><AlertTriangle size={14}/>{lastError}</div> : null}
     {snapshot.truncated ? <div className={styles.warningBanner}><AlertTriangle size={14}/>Fenêtre volumineuse plafonnée au registre de sécurité. Réduisez la période pour une lecture exhaustive session par session.</div> : null}
 
+    {tab === 'historical' ? <HistoricalIntelligenceR6/> : null}
     {tab === 'live' ? <>
       <section className={styles.kpiGridMax}>
         <Kpi icon={UsersRound} label="Live maintenant" value={snapshot.activeNow} note={`${snapshot.known} connus · ${snapshot.anonymous} anonymes`} emphasis/>
