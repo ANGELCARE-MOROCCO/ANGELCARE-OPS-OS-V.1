@@ -794,5 +794,9 @@ export async function getXrayHistoricalR6(
       lat: num(v.lat), lng: num(v.lng), sessions: num(v.sessions),
       commerce: num(v.commerce), errors: num(v.errors),
     })),
+    countryTimeline: array(raw.countryTimeline).map((value) => {
+      const v = object(value)
+      return { code: text(v.code), bucket: text(v.bucket), sessions: num(v.sessions) }
+    }),
   }
 }
