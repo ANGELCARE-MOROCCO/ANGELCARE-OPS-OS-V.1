@@ -312,6 +312,7 @@ export interface XrayHistoricalLocation {
   commerce: number
   errors: number
 }
+export interface XrayHistoricalCountryTrend { bucket: string; code: string; sessions: number }
 export interface XrayHistoricalSummary {
   from: string
   to: string
@@ -333,4 +334,5 @@ export interface XrayHistoricalSummary {
   countries: XrayHistoricalCountry[]
   timeline: XrayHistoricalBucket[]
   locations: XrayHistoricalLocation[]
+  countryTimeline: XrayHistoricalCountryTrend[]
 }
