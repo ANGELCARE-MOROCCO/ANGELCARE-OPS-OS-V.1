@@ -56,7 +56,7 @@ test("all native atomic business category, pricing and action identities remain 
 test("all original 30 hospitality imagery placements and 3 new operating-model images remain native Studio-managed",()=>{
  assert.equal(slots.length,33);
  assert.equal(new Set(slots.map(x=>x.id)).size,33);
- for(const item of slots){assert.ok(item.id.startsWith("hospitality.hospitality-r2."));assert.ok(/^\/angelcare-marketplace\/storefront-imagery-r3\/hospitality\/[\w-]+\.webp$/.test(item.source));assert.equal(item.owner,"editable");assert.equal(item.sequence,true);assert.ok(item.section.startsWith("Hospitality Signature R2")||item.section.startsWith("Hospitality Executive"));}
+ for(const item of slots){assert.ok(item.id.startsWith("hospitality.hospitality-r2."));assert.ok(/^\/angelcare-marketplace\/storefront-imagery-r3\/hospitality\/[\w-]+\.webp$/.test(item.source));assert.equal(item.owner,"editable");assert.equal(item.sequence,true);assert.ok(item.section.trim().length>0 && item.label.trim().length>0 && (/^(?:0[1-9]|1[01]) · /.test(item.section)||item.section.startsWith("Opening ·")||item.section.startsWith("Archived ·")));}
  for(const k of ["hero.main","hero.inset.kids","hero.inset.family","comparison.standard","comparison.signature","world.kids","world.guest","world.concierge","world.seasons","property.city","property.resort","property.season","age.3-6","age.7-12","age.13-16","operations.main","trust.family","model.city","model.resort","model.season"])assert.ok(slots.some(x=>x.id===id(k)),k);
  assert.equal(slots.filter(x=>x.id.includes(".atlas.")).length,8);
  assert.equal(slots.filter(x=>x.id.includes(".day.")).length,5);

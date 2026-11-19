@@ -1,0 +1,50 @@
+name: AngelCare Hospitality Imagery Studio R4 — Zero Unmanaged Editorial Images
+on:
+  push:
+    branches:
+      - feat/hospitality-imagery-studio-r4-20261119
+      - upgrade/next-angelcare-upgrade
+    paths:
+      - 'apps/marketplace-web/angelcare-marketplace/business-worlds/HospitalityExecutiveR3.tsx'
+      - 'apps/marketplace-web/angelcare-marketplace/business-worlds/HospitalitySignatureR2.tsx'
+      - 'apps/marketplace-web/angelcare-marketplace/marketplace-imagery/**'
+      - 'apps/marketplace-web/scripts/verify-hospitality-imagery-r4.test.mjs'
+      - 'apps/marketplace-web/scripts/verify-hospitality-signature-r2.test.mjs'
+      - 'apps/marketplace-web/scripts/verify-hospitality-executive-r3.test.mjs'
+      - '.github/workflows/hospitality-imagery-r4.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  imagery-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: apps/marketplace-web/package-lock.json
+      - name: Verify all 33 registered Hospitality slots and direct conditional previews
+        working-directory: apps/marketplace-web
+        run: node --test scripts/verify-hospitality-imagery-r4.test.mjs
+      - name: Verify visual chapter, hero, catalogue and atomic business regression
+        working-directory: apps/marketplace-web
+        run: node --test scripts/verify-hospitality-executive-r3.test.mjs scripts/verify-hospitality-signature-r2.test.mjs
+      - name: Verify sibling storefronts and existing Imagery Studio contracts
+        working-directory: apps/marketplace-web
+        run: |
+          node --experimental-strip-types --test scripts/verify-establishments-imagery-r12.test.mjs
+          node --test scripts/verify-conseil-r6.test.mjs scripts/verify-partner-os-r2.test.mjs scripts/verify-establishments-shared-nav-r7.test.mjs
+          node --experimental-strip-types --test scripts/verify-equipment-r8.test.mjs
+          node --test scripts/verify-equipment-r9.test.mjs scripts/verify-equipment-r10.test.mjs scripts/verify-equipment-r11.test.mjs scripts/verify-equipment-r111.test.mjs
+      - name: Install locked Marketplace dependencies
+        working-directory: apps/marketplace-web
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Strict TypeScript for Hospitality and image preview
+        working-directory: apps/marketplace-web
+        run: npx tsc -p tsconfig.hospitality-r3.json --noEmit --pretty false
+      - name: Strict TypeScript for existing Imagery Studio integration
+        working-directory: apps/marketplace-web
+        run: npx tsc -p tsconfig.establishments-imagery-r12.json --noEmit --pretty false
