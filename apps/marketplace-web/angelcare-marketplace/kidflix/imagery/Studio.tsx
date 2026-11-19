@@ -708,14 +708,14 @@ export function ImageryStudio() {
             <p>Homepage, category worlds and shared navigation · Native images, framing, slideshows and visual effects.</p></div>
         </div>
         <div className={s.headerActions}>
-          <span className={s.status} data-state={dirty ? "unsaved" : changed.length || hostChanged ? "pending" : "saved"}>
-            {dirty || changed.length || hostChanged ? <AlertCircle size={15} /> : <CheckCircle2 size={15} />}
-            {dirty ? "Unsaved changes" : changed.length || hostChanged ? "Draft differs from live" : "Saved configuration"}
+          <span className={s.status} data-state={dirty ? "unsaved" : changed.length ? "pending" : "saved"}>
+            {dirty || changed.length ? <AlertCircle size={15} /> : <CheckCircle2 size={15} />}
+            {dirty ? "Unsaved changes" : changed.length ? "Draft differs from live" : "Saved configuration"}
             <small>r{revision}</small>
           </span>
           <button type="button" className={s.headerSecondary} disabled={!canEdit || busy || loading || !dirty} onClick={() => void operate("kidflix_imagery_save")}><Save size={15} /> Save draft</button>
           <button type="button" className={s.headerSecondary} onClick={() => { setDirectory(false); setEditing(false); setBefore(false); }}><Eye size={15} /> Preview</button>
-          <button type="button" className={s.headerPublish} disabled={!canPublish || busy || loading || dirty || (!changed.length && !hostChanged)} onClick={() => { setPublishTargets(changed); setReview(true); }}><Send size={15} /> Publish</button>
+          <button type="button" className={s.headerPublish} disabled={!canPublish || busy || loading || dirty || !changed.length} onClick={() => { setPublishTargets(changed); setReview(true); }}><Send size={15} /> Publish</button>
         </div>
       </header>
       <section className={s.scopeBar} aria-label="KidFlix preview settings">
