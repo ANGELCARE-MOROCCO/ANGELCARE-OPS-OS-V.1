@@ -77,7 +77,7 @@ test('map uses actual location bins and weighted density, not national approxima
  assert.doesNotMatch(geo,/COUNTRY_CENTROIDS|Math\.random/)
  assert.match(history,/historical-r6\.module\.css/)
  assert.match(history,/retentionVerified|La rétention/)
- assert.match(history,/history\.geoSessions/)
+ assert.match(history,/history\?\.geoSessions/)
  assert.match(history,/active/)
 })
 
@@ -88,7 +88,7 @@ test('historical map and KPIs are derived from one applied history payload',()=>
  assert.match(history,/history\.sessions/)
  assert.match(history,/history\.commerce/)
  assert.match(history,/history\.errors/)
- assert.match(history,/set\('country'/)
+ assert.match(history,/country:c\.code/)
  assert.match(types,/export interface XrayHistoricalSummary/)
  assert.match(types,/geoSessions: number/)
  assert.match(types,/exact: true/)
