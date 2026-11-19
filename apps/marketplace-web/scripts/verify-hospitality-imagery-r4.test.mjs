@@ -90,7 +90,7 @@ test("Studio retains native vault pickers, all 12 slides, mobile framing, badges
  for(const token of ['NativeImagePicker','angelcare_imagery_save','angelcare_imagery_publish','mobileFocal','badgesEnabled','Math.max(1, 12 - images.length)','previewLocale','imageryPlacementPreviewUrl','pageSlots(page)'])assert.ok(studio.includes(token),token);
  assert.match(studio,/12 - images\.length/);
  assert.match(studio,/descriptor\?\.sequence \? 12 : 1/);
- assert.match(runtime,/setting\?\.mode === "slideshow"/);
+ assert.match(runtime,/setting\?\.mode !== "slideshow"/);
  assert.match(runtime,/prefers-reduced-motion/);
  assert.match(runtime,/nextPlayableIndex/);
  assert.match(runtime,/ctx\.config/);
