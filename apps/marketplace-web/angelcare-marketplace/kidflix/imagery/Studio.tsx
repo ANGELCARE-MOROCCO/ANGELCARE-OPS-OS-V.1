@@ -35,6 +35,8 @@ import {
   Copy,
   History,
   SlidersHorizontal,
+  GripVertical,
+  FolderOpen,
 } from "lucide-react";
 import {
   useUI,
@@ -139,6 +141,7 @@ type UploadItem = {
   page: string;
   slot: string;
   mobileFor?: string;
+  replaceFor?: string;
 };
 async function nativePost(url: string, data: any) {
   const r = await fetch("/api/angelcare-marketplace/admin/media" + url, {
@@ -157,7 +160,7 @@ export function ImageryStudio() {
     canPublish = boot.actor.rights.publish;
   const [scopeKey, setScopeKey] = useState(""),
     [page, setPage] = useState("home"),
-    [directory, setDirectory] = useState(true),
+    [directory, setDirectory] = useState(false),
     [summaries, setSummaries] = useState<any[]>([]),
     [config, setConfig] = useState<Config>(emptyConfig),
     [shared, setShared] = useState<Config>(emptyConfig),
@@ -170,6 +173,7 @@ export function ImageryStudio() {
     [filter, setFilter] = useState("all"),
     [tab, setTab] = useState("images"),
     [device, setDevice] = useState(1440),
+    [previewLocale, setPreviewLocale] = useState<"fr" | "en" | "ar">("en"),
     [editing, setEditing] = useState(true),
     [before, setBefore] = useState(false),
     [busy, setBusy] = useState(false),
@@ -199,6 +203,7 @@ export function ImageryStudio() {
     activeSlot = useRef(selected),
     queue = useRef<UploadItem[]>([]),
     uploading = useRef(false),
+    uploadInput = useRef<HTMLInputElement>(null),
     alive = useRef(true);
   activePage.current = page;
   activeSlot.current = selected;
@@ -584,7 +589,23 @@ export function ImageryStudio() {
             mobileZoom: 1,
             duration: 0,
           };
-          if (p.images.length >= 12) return old;
+          const sequential = !!pageSlots(item.page).find((slot) => slot.id === item.slot)?.sequence;
+          if (item.replaceFor) {
+            if (!p.images.some((scene) => scene.id === item.replaceFor)) return old;
+            return {
+              ...old,
+              slots: {
+                ...old.slots,
+                [item.slot]: {
+                  ...p,
+                  images: p.images.map((scene) => scene.id === item.replaceFor
+                    ? { ...scene, src: asset.url, assetId: asset.id, alt: asset.title || item.name }
+                    : scene),
+                },
+              },
+            };
+          }
+          if (sequential && p.images.length >= 12) return old;
           return {
             ...old,
             slots: {
@@ -613,7 +634,10 @@ export function ImageryStudio() {
       setError("Choose one replacement for small navigation artwork.");
       return;
     }
-    if (files.length + images.length > 12) {
+    const pending = queue.current.filter((item) =>
+      item.page === page && item.slot === descriptor.id && !item.replaceFor &&
+      !["ready", "failed"].includes(item.state)).length;
+    if (descriptor.sequence && files.length + images.length + pending > 12) {
       setError("Use up to twelve images per placement.");
       return;
     }
@@ -630,6 +654,21 @@ export function ImageryStudio() {
     setUploads([...queue.current]);
     void processQueue();
   }
+  function uploadReplace(files: FileList | null, targetId: string) {
+    if (!canEdit || !files?.length) return;
+    if (files.length !== 1 || !images.some((entry) => entry.id === targetId)) {
+      setError("Select one valid replacement image.");
+      return;
+    }
+    const file = files[0];
+    queue.current.push({
+      id: newId(), name: file.name, file, state: "queued", progress: 0,
+      page, slot: descriptor.id, replaceFor: targetId,
+    });
+    setSlideId(targetId);
+    setUploads([...queue.current]);
+    void processQueue();
+  }
   const badgeOverride = !!image && image.badges !== undefined,
     badges = badgeOverride ? image!.badges! : current.badges;
   function setBadges(next: Badge[]) {
@@ -643,7 +682,7 @@ export function ImageryStudio() {
     scale = Math.min(1, (stageWidth - 24) / device),
     url =
       path(
-        "en",
+        previewLocale,
         page === "home" || page === "shared" ? "" : "/explore/" + page,
       ) + "?imageryPreview=1",
     visibleSlots = slots.filter(
@@ -662,21 +701,31 @@ export function ImageryStudio() {
   return (
     <div className={s.studio}>
       <header className={s.title}>
-        <div>
-          <span className={s.eyebrow}>KIDFLIX · VISUAL OPERATIONS</span>
-          <h1>Page Imagery Studio</h1>
-          <p>Manage every editorial image, from opening to footer.</p>
+        <div className={s.titleLead}>
+          <span className={s.titleSymbol}><Images size={23} /></span>
+          <div><span className={s.eyebrow}>KIDFLIX · VISUAL OPERATIONS</span>
+            <h1>KidFlix Imagery Studio</h1>
+            <p>Homepage, category worlds and shared navigation · Native images, framing, slideshows and visual effects.</p></div>
         </div>
-        <span className={s.status}>
-          <CheckCircle2 size={15} />
-          {dirty
-            ? "Unsaved changes"
-            : changed.length
-              ? "Draft differs from live"
-              : "Saved configuration"}{" "}
-          · r{revision}
-        </span>
+        <div className={s.headerActions}>
+          <span className={s.status} data-state={dirty ? "unsaved" : changed.length ? "pending" : "saved"}>
+            {dirty || changed.length ? <AlertCircle size={15} /> : <CheckCircle2 size={15} />}
+            {dirty ? "Unsaved changes" : changed.length ? "Draft differs from live" : "Saved configuration"}
+            <small>r{revision}</small>
+          </span>
+          <button type="button" className={s.headerSecondary} disabled={!canEdit || busy || loading || !dirty} onClick={() => void operate("kidflix_imagery_save")}><Save size={15} /> Save draft</button>
+          <button type="button" className={s.headerSecondary} onClick={() => { setDirectory(false); setEditing(false); setBefore(false); }}><Eye size={15} /> Preview</button>
+          <button type="button" className={s.headerPublish} disabled={!canPublish || busy || loading || dirty || !changed.length} onClick={() => { setPublishTargets(changed); setReview(true); }}><Send size={15} /> Publish</button>
+        </div>
       </header>
+      <section className={s.scopeBar} aria-label="KidFlix preview settings">
+        <label>Preview language
+          <select aria-label="KidFlix preview language" value={previewLocale} onChange={(e) => setPreviewLocale(e.target.value as "fr" | "en" | "ar")}>
+            <option value="en">English</option><option value="fr">Français</option><option value="ar">العربية</option>
+          </select>
+        </label>
+        <p>KidFlix native imagery scope · Product and collection covers retain their source-dossier authority · Draft changes remain private until published.</p>
+      </section>
       <div className={s.topbar}>
         <button onClick={() => setDirectory(!directory)}>
           <Images size={17} />
@@ -813,7 +862,7 @@ export function ImageryStudio() {
         <>
           <div className={s.editor} aria-busy={loading || busy}>
             <aside className={s.map}>
-              <h2>Page image map</h2>
+              <div className={s.mapHeading}><div><h2>Page image map</h2><p>Manage the visual placements of {title(page)}.</p></div><span>{slots.length} slots</span></div>
               <label className={s.search}>
                 <Search size={15} />
                 <input
@@ -824,13 +873,14 @@ export function ImageryStudio() {
                 />
               </label>
               <div className={s.filters}>
-                {["all", "changed", "defaults", "attention"].map((k) => (
-                  <button
-                    key={k}
-                    aria-pressed={filter === k}
-                    onClick={() => setFilter(k)}
-                  >
-                    {k === "attention" ? "Needs attention" : k}
+                {([
+                  ["all", slots.length],
+                  ["changed", slots.filter((d) => changed.includes(d.id)).length],
+                  ["defaults", slots.filter((d) => !config.slots[d.id]).length],
+                  ["attention", slots.filter((d) => (!d.condition && frameReady && rendered.length > 0 && !rendered.includes(d.id)) || !!config.slots[d.id]?.images.some((i) => !i.enabled)).length],
+                ] as const).map(([key, count]) => (
+                  <button key={key} type="button" aria-pressed={filter === key} onClick={() => setFilter(key)}>
+                    {key === "all" ? "All" : key === "changed" ? "Changed" : key === "defaults" ? "Defaults" : "Attention"} <b>{count}</b>
                   </button>
                 ))}
               </div>
@@ -838,7 +888,7 @@ export function ImageryStudio() {
                 {[...new Set(visibleSlots.map((d) => d.section))].map(
                   (section) => (
                     <section key={section}>
-                      <h3>{section.replaceAll(".", " · ")}</h3>
+                      <h3>{section.replaceAll(".", " · ")} <span>{visibleSlots.filter((d) => d.section === section).length}</span></h3>
                       {visibleSlots
                         .filter((d) => d.section === section)
                         .map((d) => (
@@ -858,10 +908,8 @@ export function ImageryStudio() {
                             </span>
                             <span>
                               <strong>{d.label}</strong>
-                              <small>
-                                {d.owner === "shared" ? "Shared" : "Page only"}
-                                {changed.includes(d.id) ? " · Changed" : ""}
-                              </small>
+                              <small>{config.slots[d.id]?.images.length || 0} / {d.sequence ? 12 : 1} images · {config.slots[d.id]?.images.length ? config.slots[d.id]?.mode || "Single" : "Original"}</small>
+                              <small>{changed.includes(d.id) ? "● Changed · " : ""}{d.owner === "shared" ? "Shared" : "Page only"}</small>
                             </span>
                           </button>
                         ))}
@@ -906,6 +954,7 @@ export function ImageryStudio() {
               ) : null}
             </aside>
             <section className={s.canvas}>
+              <div className={s.canvasHeading}><div><h2>Workspace page preview</h2><p>{title(page)} · {before ? "Published snapshot (not a browser live audit)" : "Current draft (not live)"}</p></div><span data-ready={frameReady}>{frameReady ? "Preview connected" : "Loading preview"}</span></div>
               <div className={s.canvasBar}>
                 <button
                   aria-pressed={editing}
@@ -936,11 +985,12 @@ export function ImageryStudio() {
                   {before ? "Before" : "After"}
                 </button>
               </div>
+              <div className={s.previewAddress}><span>{path(previewLocale, page === "home" || page === "shared" ? "" : "/explore/" + page)}</span><small>{previewLocale.toUpperCase()} · {Math.round(scale * 100)}%</small></div>
               <div ref={stage} className={s.stage}>
                 <div style={{ width: device * scale, height: 1050 * scale }}>
                   <iframe
                     title="Actual KidFlix page imagery preview"
-                    key={page}
+                    key={page + ":" + url}
                     ref={frame}
                     src={url}
                     onLoad={() => {
@@ -966,16 +1016,16 @@ export function ImageryStudio() {
             </section>
             <aside className={s.inspector}>
               <div className={s.inspectHeading}>
-                <div>
-                  <h2>{descriptor?.label}</h2>
-                  <small>
-                    {descriptor?.section} · {descriptor?.id}
-                  </small>
-                </div>
-                <span>{page === "shared" ? "Shared" : "Page only"}</span>
+                <span className={s.inspectThumbnail}><Thumbnail slot={descriptor} src={source} /></span>
+                <div className={s.inspectMeta}><h2>{descriptor?.label || "Image placement"}</h2>
+                  <p>{descriptor?.section} · {descriptor?.sequence ? "Slideshow-ready" : "Static artwork"}</p>
+                  <small>{images.length} / {descriptor?.sequence ? 12 : 1} images · {current.mode} · {descriptor?.id}</small></div>
+                <span className={s.inspectStatus}>{changed.includes(descriptor?.id) || dirty ? "Modified" : "Ready"}</span>
               </div>
-              <div className={s.largeThumb}>
-                <Thumbnail slot={descriptor} src={source} />
+              <div className={s.inspectAux}>
+                <strong>{title(page)}</strong>
+                <small>{descriptor?.sequence ? "Up to 12 images per placement" : "One static image for this placement"}</small>
+                <span className={s.capacity} data-full={images.length === (descriptor?.sequence ? 12 : 1)}>{images.length} / {descriptor?.sequence ? 12 : 1} used</span>
               </div>
               <div className={s.tabs}>
                 {["images", "framing", "playback", "badges"].map((t) => (
@@ -994,118 +1044,118 @@ export function ImageryStudio() {
               >
                 {tab === "images" ? (
                   <>
-                    <h3>Image sequence</h3>
-                    <div className={s.sequence}>
-                      {images.map((i, n) => (
-                        <div
-                          key={i.id}
-                          draggable
-                          onDragStart={() => {
-                            drag.current = i.id;
-                          }}
-                          onDragOver={(e) => e.preventDefault()}
-                          onDrop={() => reorder(drag.current, i.id)}
-                          className={image?.id === i.id ? s.activeSlide : ""}
-                        >
-                          <button
-                            onClick={() => setSlideId(i.id)}
-                            aria-label={"Select image " + (n + 1)}
-                          >
-                            <img src={i.src} alt="" />
-                          </button>
-                          <span>
-                            {n + 1}
-                            <input
-                              type="checkbox"
-                              aria-label={"Enable image " + (n + 1)}
-                              checked={i.enabled}
-                              onChange={(e) =>
-                                patch({
-                                  images: images.map((v) =>
-                                    v.id === i.id
-                                      ? { ...v, enabled: e.target.checked }
-                                      : v,
-                                  ),
-                                })
-                              }
-                            />
-                            <button
-                              aria-label={"Move image " + (n + 1) + " earlier"}
-                              disabled={n === 0}
-                              onClick={() => reorder(i.id, images[n - 1].id)}
-                            >
-                              <ArrowUp size={11} />
-                            </button>
-                            <button
-                              aria-label={"Remove image " + (n + 1)}
-                              onClick={() =>
-                                patch({
-                                  images: images.filter((v) => v.id !== i.id),
-                                })
-                              }
-                            >
-                              <Trash2 size={11} />
-                            </button>
-                          </span>
-                        </div>
-                      ))}
+                    <div className={s.inspectorSectionTitle}>
+                      <div><h3>Placement images</h3><p>{descriptor?.sequence ? "Manage up to 12 images, order and visibility." : "Static artwork: one approved image."}</p></div>
+                      <span>{images.length} / {descriptor?.sequence ? 12 : 1} used</span>
                     </div>
-                    {!images.length ? (
-                      <p className={s.help}>
-                        Original page artwork is active. Upload or select an
-                        image to replace it.
-                      </p>
-                    ) : null}
-                    <label
-                      className={s.upload}
-                      onDragOver={(e) => e.preventDefault()}
-                      onDrop={(e) => {
-                        e.preventDefault();
-                        upload(e.dataTransfer.files);
-                      }}
-                    >
-                      <Upload size={20} />
-                      <strong>Upload images</strong>
-                      <small>Drop files or choose from your computer</small>
-                      <input
-                        type="file"
-                        multiple
-                        accept="image/png,image/jpeg,image/webp,image/avif"
-                        onChange={(e) => {
-                          upload(e.target.files);
-                          e.target.value = "";
-                        }}
-                      />
-                    </label>
-                    <NativeImagePicker
-                      onSelect={(asset) => addAsset(asset)}
-                      onSelectMany={descriptor?.sequence ? addAssets : undefined}
-                      max={descriptor?.sequence ? Math.max(1, 12 - images.length) : 1}
-                      excludeIds={images.map(item => item.assetId)}
-                      disabled={!canEdit || busy || loading || images.length >= (descriptor?.sequence ? 12 : 1)}
-                    />
-                    {image ? (
-                      <>
-                        <button onClick={() => setMobilePick(!mobilePick)}>
-                          Choose a mobile replacement
-                        </button>
-                        {mobilePick ? (
-                          <NativeImagePicker
-                            onSelect={(a) => {
-                              addAsset(a, true);
-                              setMobilePick(false);
-                            }}
-                          />
-                        ) : null}
-                        <Field label="Image description">
-                          <textarea
-                            maxLength={500}
-                            value={image.alt}
-                            onChange={(e) =>
-                              patchImage({ alt: e.target.value })
-                            }
-                          />
-                        </Field>
+                    <div className={s.ingestRow}>
+                      <label className={s.upload} onDragOver={(e) => e.preventDefault()}
+                        onDrop={(e) => { e.preventDefault(); upload(e.dataTransfer.files); }}>
+                        <Upload size={21} /><strong>Upload images</strong>
+                        <small>Drop PNG, JPEG, WebP or AVIF · 30 MB max / image</small>
+                        <input ref={uploadInput} type="file" multiple={!!descriptor?.sequence}
+                          accept="image/png,image/jpeg,image/webp,image/avif"
+                          onChange={(e) => { upload(e.target.files); e.target.value = ""; }} />
+                      </label>
+                      <div className={s.libraryAction}>
+                        <FolderOpen size={18} /><strong>Native media library</strong>
+                        <NativeImagePicker
+                          onSelect={(asset) => addAsset(asset)}
+                          onSelectMany={descriptor?.sequence ? addAssets : undefined}
+                          max={descriptor?.sequence ? Math.max(1, 12 - images.length) : 1}
+                          excludeIds={images.map(item => item.assetId)}
+                          disabled={!canEdit || busy || loading || images.length >= (descriptor?.sequence ? 12 : 1)}
+                        />
+                      </div>
+                    </div>
+                    <div className={s.sequenceBar}>
+                      <div><strong>{descriptor?.sequence ? "Image sequence" : "Static placement"}</strong>
+                        <span>{images.filter((i) => i.enabled).length} enabled · {images.length} / {descriptor?.sequence ? 12 : 1} used</span></div>
+                      <small><GripVertical size={13} /> Drag to reorder</small>
+                    </div>
+                    <div className={s.sequenceGrid} role="list" aria-label="Images in the selected placement">
+                      {Array.from({ length: descriptor?.sequence ? 12 : 1 }, (_, n) => {
+                        const entry = images[n];
+                        return entry ? (
+                          <div role="listitem" key={entry.id} className={s.sequenceTile}
+                            data-active={image?.id === entry.id} data-enabled={entry.enabled}
+                            draggable onDragStart={() => { drag.current = entry.id; }}
+                            onDragOver={(e) => e.preventDefault()}
+                            onDrop={(e) => { e.preventDefault(); reorder(drag.current, entry.id); }}>
+                            <div className={s.tileTop}><b>{n + 1}</b>
+                              <label className={s.tileToggle} title="Enable image">
+                                <input type="checkbox" aria-label={"Enable image " + (n + 1)} checked={entry.enabled}
+                                  onChange={(e) => patch({ images: images.map((v) => v.id === entry.id ? { ...v, enabled: e.target.checked } : v) })} />
+                                <span />
+                              </label>
+                            </div>
+                            <button type="button" className={s.tileImage} aria-pressed={image?.id === entry.id}
+                              aria-label={"Select image " + (n + 1)} onClick={() => { setSlideId(entry.id); setMobilePick(false); }}>
+                              <img src={entry.src} alt={entry.alt || "Image"} loading="lazy" />
+                              {entry.mobile ? <span className={s.mobileBadge}>Mobile</span> : null}
+                            </button>
+                            <div className={s.tileActions}>
+                              <span title="Drag to reorder"><GripVertical size={13} /></span>
+                              <button type="button" disabled={n === 0} aria-label={"Move image " + (n + 1) + " earlier"}
+                                onClick={() => reorder(entry.id, images[n - 1].id)}><ArrowUp size={12} /></button>
+                              <button type="button" disabled={n === images.length - 1} aria-label={"Move image " + (n + 1) + " later"}
+                                onClick={() => reorder(entry.id, images[n + 1].id)}><ArrowDown size={12} /></button>
+                              <label className={s.tileReplace} title={"Replace image " + (n + 1)}>
+                                <RotateCcw size={12} />
+                                <input type="file" accept="image/png,image/jpeg,image/webp,image/avif"
+                                  aria-label={"Replace image " + (n + 1)}
+                                  onChange={(e) => { uploadReplace(e.target.files, entry.id); e.target.value = ""; }} />
+                              </label>
+                              <button type="button" aria-label={"Remove image " + (n + 1)}
+                                onClick={() => patch({ images: images.filter((v) => v.id !== entry.id) })}><Trash2 size={12} /></button>
+                            </div>
+                          </div>
+                        ) : (
+                          <button key={"empty-" + n} type="button" className={s.emptyTile}
+                            disabled={!canEdit || busy || loading}
+                            aria-label={"Upload image into empty position " + (n + 1)}
+                            onClick={() => uploadInput.current?.click()}>
+                            <span>{n + 1}</span><Plus size={18} /><small>Add image</small>
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <div className={s.editorDetails}>
+                      <section className={s.detailCard}>
+                        <div className={s.detailHeading}><h3>Selected image settings</h3><span>{image ? "Image " + (images.indexOf(image) + 1) : "Choose an image"}</span></div>
+                        {image ? (<>
+                          <Field label="Alternative text"><input type="text" maxLength={500} value={image.alt}
+                            onChange={(e) => patchImage({ alt: e.target.value })} /></Field>
+                          <div className={s.focalInline}>
+                            <button type="button" className={s.focalCompact}
+                              aria-label="Set desktop focal point" style={{ backgroundImage: "url(" + JSON.stringify(image.src) + ")" }}
+                              onClick={(e) => {
+                                const box = e.currentTarget.getBoundingClientRect();
+                                patchImage({ focal: {
+                                  x: Math.round(Math.max(0, Math.min(100, (e.clientX - box.left) / box.width * 100))),
+                                  y: Math.round(Math.max(0, Math.min(100, (e.clientY - box.top) / box.height * 100))),
+                                } });
+                              }}>
+                              <span style={{ left: image.focal.x + "%", top: image.focal.y + "%" }}>+</span>
+                            </button>
+                            <div className={s.compactControls}>
+                              <Field label="Zoom"><input type="number" min={1} max={2} step={0.05}
+                                value={image.zoom} onChange={(e) => patchImage({ zoom: Number(e.target.value) })} /></Field>
+                              <Field label="Image fit"><select value={image.fit}
+                                onChange={(e) => patchImage({ fit: e.target.value as Scene["fit"] })}>
+                                <option value="contain">Contain · show all</option>
+                                <option value="cover">Cover · fill frame</option>
+                              </select></Field>
+                            </div>
+                          </div>
+                          <div className={s.mobileAction}>
+                            <span><Smartphone size={15} /> {image.mobile ? "Mobile variant assigned" : "No mobile variant"}</span>
+                            <button type="button" onClick={() => setMobilePick(!mobilePick)}>{mobilePick ? "Close" : image.mobile ? "Change" : "Set mobile image"}</button>
+                          </div>
+                          {mobilePick ? <NativeImagePicker onSelect={(asset) => {
+                            patchImage({ mobile: asset.url, mobileAssetId: asset.id }); setMobilePick(false);
+                          }} /> : null}
+                          <small className={s.usageNote}>Settings apply only to this placement. The original media-vault asset is preserved.</small>
                         <details className={s.usage}>
                           <summary>Where this image is assigned</summary>
                           <p>
@@ -1143,27 +1193,38 @@ export function ImageryStudio() {
                             <small key={item}>{item}</small>
                           ))}
                         </details>
-                      </>
-                    ) : null}
-                    <Toggle
-                      label="Hide this editorial artwork"
-                      value={current.hidden}
-                      disabled={page === "shared"}
-                      onChange={(hidden) => patch({ hidden })}
-                    />
-                    <button
-                      onClick={() => {
-                        setTargets([]);
-                        setCopyOpen(true);
-                      }}
-                    >
-                      <Copy size={14} />
-                      Apply to other placements…
-                    </button>
-                    <p className={s.help}>
-                      Replacement affects this position only. Shared navigation
-                      changes affect all public pages.
-                    </p>
+
+                        </>) : <p className={s.help}>Upload or choose an image to edit its framing and alternative text.</p>}
+                      </section>
+                      <section className={s.detailCard}>
+                        <div className={s.detailHeading}><h3>Playback preview</h3><span>{descriptor?.sequence ? "Slideshow-ready" : "Static"}</span></div>
+                        {descriptor?.sequence ? (<>
+                          <div className={s.modeSwitch}>
+                            <button type="button" aria-pressed={current.mode === "slideshow"} onClick={() => patch({ mode: "slideshow" })}>Slideshow</button>
+                            <button type="button" aria-pressed={current.mode === "single"} onClick={() => patch({ mode: "single" })}>Single image</button>
+                          </div>
+                          <div className={s.two}>
+                            <Field label="Interval (seconds)"><input type="number" min={1.5} max={30} step={0.5}
+                              value={current.interval / 1000} onChange={(e) => patch({ interval: Number(e.target.value) * 1000 })} /></Field>
+                            <Field label="Transition"><select value={current.transition}
+                              onChange={(e) => patch({ transition: e.target.value as Placement["transition"] })}>
+                              <option value="fade">Fade</option><option value="slide">Slide</option><option value="cut">Cut</option>
+                            </select></Field>
+                          </div>
+                          <Toggle label="Autoplay" value={current.autoplay} onChange={(autoplay) => patch({ autoplay })} />
+                          <Toggle label="Loop sequence" value={current.loop} onChange={(loop) => patch({ loop })} />
+                          <Toggle label="Visitor arrows & pause" value={current.controls} onChange={(controls) => patch({ controls })} />
+                        </>) : <p className={s.help}>Static artwork has no slideshow playback.</p>}
+                        <div className={s.detailsFooter}>
+                          <button type="button" onClick={() => setTab("framing")}><SlidersHorizontal size={13} /> Advanced framing</button>
+                          <button type="button" onClick={() => setTab("playback")}><Eye size={13} /> Full playback</button>
+                        </div>
+                      </section>
+                    </div>
+                    <div className={s.placementUtilities}>
+                      <Toggle label="Hide this editorial artwork" value={current.hidden} disabled={page === "shared"} onChange={(hidden) => patch({ hidden })} />
+                      <button type="button" onClick={() => { setTargets([]); setCopyOpen(true); }}><Copy size={14} /> Apply to other placements</button>
+                    </div>
                   </>
                 ) : null}
                 {tab === "framing" ? (
