@@ -1,0 +1,150 @@
+name: Export Exact AngelCare Analytics and Store X-Ray Source
+on:
+  push:
+    branches:
+      - export/analytics-xray-source-20261119
+    paths:
+      - '.github/workflows/export-angelcare-analytics-xray.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  export-verified-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact consolidated Marketplace commit
+        uses: actions/checkout@v4
+        with:
+          ref: f46abf422656dd6a5176f68692e2bf387166fa25
+          persist-credentials: false
+      - name: Package source, tests, migrations, map assets and file manifest
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess, json, hashlib, zipfile, datetime, re
+          source_sha="f46abf422656dd6a5176f68692e2bf387166fa25"
+          actual=subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip()
+          assert actual==source_sha, f"Source mismatch: {actual}"
+          root="apps/marketplace-web/"
+          selected_prefixes=[
+            root+"angelcare-marketplace/store-xray/",
+            root+"angelcare-marketplace/analytics-security/",
+            root+"angelcare-marketplace/visitor-country/",
+            root+"app/angelcare-marketplace/(protected)/admin/analytics/",
+            root+"app/api/angelcare-marketplace/analytics/",
+            root+"public/angelcare-marketplace/visitor-country/",
+          ]
+          selected_exact={
+            root+"app/angelcare-marketplace/(protected)/admin/live-map/page.tsx",
+            root+"app/api/angelcare-marketplace/admin/enterprise-command/live-map/route.ts",
+            root+"angelcare-marketplace/enterprise-command/components/LiveVisitorGeoMap.tsx",
+            root+"angelcare-marketplace/enterprise-command/components/LiveVisitorSpatialCommand.tsx",
+            root+"angelcare-marketplace/auth/context.ts",
+            root+"angelcare-marketplace/server/request.ts",
+            root+"components/compliance/consent-policy.ts",
+            root+"components/analytics/AngelCareAnalytics.tsx",
+            root+"package.json",
+            root+"package-lock.json",
+            root+"tsconfig.json",
+            root+"scripts/verify-store-xray-r6.test.mjs",
+            root+"scripts/verify-store-xray-r6-postgres.sql",
+            root+"supabase/migrations/20261119110000_angelcare_store_xray_r6_historical_intelligence.sql",
+            root+"supabase/migrations/20260801180000_angelcare_marketplace_ultra_05_mz20_analytics_security_recovery.sql",
+            ".github/workflows/store-xray-global-intelligence-r6.yml",
+          }
+          tracked=subprocess.check_output(["git","ls-files","-z"]).decode().split("\0")
+          included=sorted(p for p in tracked if p and (any(p.startswith(prefix) for prefix in selected_prefixes) or p in selected_exact))
+          assert len(included)>=300, f"Unexpected source coverage ({len(included)} files)"
+          must_have=[
+            root+"angelcare-marketplace/store-xray/StoreXrayCommand.tsx",
+            root+"angelcare-marketplace/store-xray/repository.ts",
+            root+"angelcare-marketplace/store-xray/HistoricalIntelligenceR6.tsx",
+            root+"app/angelcare-marketplace/(protected)/admin/analytics/page.tsx",
+            root+"app/api/angelcare-marketplace/analytics/xray/snapshot/route.ts",
+            root+"app/api/angelcare-marketplace/analytics/xray/historical/route.ts",
+            root+"supabase/migrations/20261119110000_angelcare_store_xray_r6_historical_intelligence.sql"
+          ]
+          assert all(p in included for p in must_have), "Critical analytics source missing"
+          entries=[]
+          for p in included:
+            raw=Path(p).read_bytes()
+            entries.append({"path":p,"bytes":len(raw),"sha256":hashlib.sha256(raw).hexdigest()})
+          rawset=set(included)
+          aliases=[]
+          importer=re.compile(r'''(?:from\s*|import\s*\()\s*["'](@/[^"']+)["']''')
+          for p in included:
+            if not p.endswith((".ts",".tsx",".mjs",".js")):
+              continue
+            for name in importer.findall(Path(p).read_text(encoding="utf-8",errors="replace")):
+              stem=name[2:]
+              opts=[root+stem+suffix for suffix in ("",".ts",".tsx",".js",".mjs","/index.ts","/index.tsx")]
+              if not any(o in rawset for o in opts):
+                aliases.append({"imported_by":p,"specifier":name})
+          manifest={
+            "repository":"ANGELCARE-MOROCCO/ANGELCARE-OPS-OS-V.1",
+            "branch_at_capture":"upgrade/next-angelcare-upgrade",
+            "source_commit":source_sha,
+            "source_only":True,
+            "file_count":len(included),
+            "file_bytes":sum(e["bytes"] for e in entries),
+            "files":entries
+          }
+          notes=(
+            "# AngelCare Marketplace — Analytics Admin and Store X-Ray Source Export\n\n"
+            "Exact snapshot: "+source_sha+"\n"
+            "Repository: ANGELCARE-MOROCCO/ANGELCARE-OPS-OS-V.1\n\n"
+            "## Included\n"
+            "- Admin Analytics routes and every analytics subsection\n"
+            "- Store X-Ray realtime, visitor, global radar, map and historical R6 components\n"
+            "- Analytics API routes (snapshot, historical, visitor, collection, metrics and refresh)\n"
+            "- Live visitor map workspace and related enterprise components\n"
+            "- Analytics/security business module; visitor-country lookup plus binary databases, flags and license files\n"
+            "- R6 and earlier analytics database migrations; R6 verification tests and CI workflow\n"
+            "- Relevant auth/request/consent helpers and Marketplace package/TypeScript manifests\n\n"
+            "All source files keep their EXACT original repository-relative paths.\n\n"
+            "## IMPORTANT\n"
+            "This is a scoped source export, not a complete runnable clone. Imports from the rest "
+            "of the Marketplace repo are recorded in EXTERNAL_DEPENDENCIES.json.\n"
+            "No production data, database contents, API credentials, .env files or deployment secrets are included.\n"
+            "Historical support requires the corresponding production SQL migrations to have been applied separately.\n"
+            "The archive contains source code, not a live visitor tracking report.\n\n"
+            "Use SOURCE_MANIFEST.json to verify every file against this exact commit.\n"
+          )
+          modulemap=(
+            "# Source navigation\n\n"
+            "| Concern | Repository subtree |\n|---|---|\n"
+            "| Analytics admin pages | apps/marketplace-web/app/angelcare-marketplace/(protected)/admin/analytics/ |\n"
+            "| Store X-Ray UI and live tracking | apps/marketplace-web/angelcare-marketplace/store-xray/ |\n"
+            "| Analytics endpoints | apps/marketplace-web/app/api/angelcare-marketplace/analytics/ |\n"
+            "| Live visitor map | apps/marketplace-web/app/angelcare-marketplace/(protected)/admin/live-map/ |\n"
+            "| Country lookup, flags and datasets | apps/marketplace-web/public/angelcare-marketplace/visitor-country/ |\n"
+            "| Data model R6 | apps/marketplace-web/supabase/migrations/20261119110000_angelcare_store_xray_r6_historical_intelligence.sql |\n"
+            "| Tests | apps/marketplace-web/scripts/verify-store-xray-r6* |\n"
+          )
+          outdir=Path("source-export");outdir.mkdir(exist_ok=True)
+          zipname="ANGELCARE_ANALYTICS_STORE_XRAY_EXACT_SOURCE_f46abf4.zip"
+          dest=outdir/zipname
+          with zipfile.ZipFile(dest,"w",compression=zipfile.ZIP_DEFLATED,compresslevel=7,allowZip64=True) as z:
+            for p in included:z.write(p,arcname=p)
+            z.writestr("EXPORT_README.md",notes)
+            z.writestr("SOURCE_NAVIGATION.md",modulemap)
+            z.writestr("SOURCE_MANIFEST.json",json.dumps(manifest,indent=2))
+            z.writestr("EXTERNAL_DEPENDENCIES.json",json.dumps(aliases,indent=2))
+          with zipfile.ZipFile(dest) as z:
+            assert z.testzip() is None,"ZIP integrity failed"
+            assert len(z.namelist())==len(included)+4
+          print(f"EXPORT_SOURCE_SHA={source_sha}")
+          print(f"EXPORT_FILE_COUNT={len(included)}")
+          print(f"EXPORT_TOTAL_SOURCE_BYTES={manifest['file_bytes']}")
+          print(f"EXPORT_EXTERNAL_IMPORTS={len(aliases)}")
+          print(f"EXPORT_ZIP={dest} BYTES={dest.stat().st_size}")
+          PY
+      - name: Upload downloadable, source-verified ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: angelcare-analytics-store-xray-exact-source-f46abf4
+          path: source-export/ANGELCARE_ANALYTICS_STORE_XRAY_EXACT_SOURCE_f46abf4.zip
+          retention-days: 14
+          if-no-files-found: error
