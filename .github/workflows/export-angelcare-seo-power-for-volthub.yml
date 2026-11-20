@@ -1,0 +1,53 @@
+name: Export AngelCare SEO Power donor for VoltHub
+on:
+  push:
+    branches: ['export/seo-power-volthub-source-20261120']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: f46abf422656dd6a5176f68692e2bf387166fa25
+          persist-credentials: false
+      - name: Export exact donor source only
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="apps/marketplace-web"
+          mkdir -p /tmp/seo-donor
+          for p in \
+            "$ROOT/angelcare-marketplace/seo-power" \
+            "$ROOT/app/angelcare-marketplace/admin/seo-power" \
+            "$ROOT/app/api/angelcare-marketplace/admin/seo-power" \
+            "$ROOT/app/api/angelcare-marketplace/public/seo-power" \
+            "$ROOT/app/seo-power-indexnow-key.txt" \
+            "$ROOT/app/seo-power-sitemap.xml" \
+            "$ROOT/supabase/migrations/20261114012000_seo_power_scale_engine_r4.sql" \
+            "$ROOT/supabase/migrations/20261114034000_seo_power_command360_r5.sql" \
+            "$ROOT/docs/seo-power" \
+            "$ROOT/scripts/seo-power-ci" \
+            "$ROOT/scripts/seo-power-tests"; do
+            if test -e "$p"; then
+              mkdir -p "/tmp/seo-donor/$(dirname "$p")"
+              cp -R "$p" "/tmp/seo-donor/$p"
+            fi
+          done
+          cat > /tmp/seo-donor/SOURCE_COMMIT.txt <<'EOF'
+          repository=ANGELCARE-MOROCCO/ANGELCARE-OPS-OS-V.1
+          commit=f46abf422656dd6a5176f68692e2bf387166fa25
+          source=read-only source snapshot
+          EOF
+          (cd /tmp/seo-donor && find . -type f -print0 | sort -z | xargs -0 sha256sum > SOURCE_SHA256SUMS.txt)
+          (cd /tmp/seo-donor && zip -q -r "$GITHUB_WORKSPACE/angelcare-seo-power-donor-source.zip" .)
+          unzip -tq angelcare-seo-power-donor-source.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: angelcare-seo-power-exact-donor-f46abf4
+          path: angelcare-seo-power-donor-source.zip
+          if-no-files-found: error
+          retention-days: 14
